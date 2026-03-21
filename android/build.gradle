@@ -1,11 +1,11 @@
 buildscript {
     ext {
-        buildToolsVersion = "34.0.0"
-        minSdkVersion = 23
-        compileSdkVersion = 34
-        targetSdkVersion = 34
+        buildToolsVersion = "35.0.0"
+        minSdkVersion = 24
+        compileSdkVersion = 35
+        targetSdkVersion = 35
         ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.25"
+        kotlinVersion = "1.9.24"
     }
     repositories {
         google()
@@ -19,3 +19,13 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        maven { url "$rootDir/../node_modules/react-native/android" }
+        maven { url "https://jitpack.io" }
+    }
+}
