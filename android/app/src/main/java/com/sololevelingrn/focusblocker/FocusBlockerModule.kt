@@ -3,9 +3,11 @@ package com.sololevelingrn.focusblocker
 import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import com.facebook.react.bridge.*
 
 class FocusBlockerModule(reactContext: ReactApplicationContext) :
@@ -112,5 +114,62 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
     @ReactMethod
     fun isFocusModeActive(promise: Promise) {
         promise.resolve(FocusBlockerService.isRunning)
+    }
+
+    // ── Installed apps enumeration ─────────────────────────────────────────────
+
+    @ReactMethod
+    fun getInstalledApps(promise: Promise) {
+        try {
+            val pm = reactApplicationContext.packageManager
+            val ownPkg = reactApplicationContext.packageName
+
+            // queryIntentActivities is the reliable way on Android 11+ to get
+            // all apps that appear in the launcher — doesn't need package visibility tricks
+            val launcherIntent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+            val resolveFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PackageManager.MATCH_ALL
+            } else { 0 }
+            val activities = pm.queryIntentActivities(launcherIntent, resolveFlags)
+            Log.d("FocusBlocker", "getInstalledApps: found ${activities.size} launcher activities")
+
+            val seen = mutableSetOf<String>()
+            val result = Arguments.createArray()
+
+            for (ri in activities) {
+                val pkg = ri.activityInfo.applicationInfo.packageName
+                if (pkg == ownPkg) continue
+                if (!seen.add(pkg)) continue          // deduplicate
+                val label = ri.loadLabel(pm).toString()
+                val map = Arguments.createMap()
+                map.putString("pkg", pkg)
+                map.putString("label", label)
+                result.pushMap(map)
+            }
+
+            Log.d("FocusBlocker", "getInstalledApps: returning ${result.size()} unique apps")
+            promise.resolve(result)
+        } catch (e: Exception) {
+            Log.e("FocusBlocker", "getInstalledApps failed", e)
+            promise.reject("ERR_APPS", e.message)
+        }
+    }
+
+    // ── Hot-reload blocked apps ────────────────────────────────────────────────
+
+    @ReactMethod
+    fun updateBlockedApps(apps: ReadableArray, promise: Promise) {
+        try {
+            val pkgList = ArrayList<String>()
+            for (i in 0 until apps.size()) pkgList.add(apps.getString(i))
+            val intent = Intent(reactApplicationContext, FocusBlockerService::class.java).apply {
+                action = FocusBlockerService.ACTION_UPDATE_APPS
+                putStringArrayListExtra(FocusBlockerService.EXTRA_BLOCKED_PACKAGES, pkgList)
+            }
+            reactApplicationContext.startService(intent)
+            promise.resolve(true)
+        } catch (e: Exception) {
+            promise.reject("ERR_UPDATE", e.message)
+        }
     }
 }

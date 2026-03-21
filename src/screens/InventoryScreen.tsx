@@ -59,11 +59,17 @@ function QuestPickerModal({ onPick, onCancel }: {
 // ── Inventory item card ────────────────────────────────────────────────────────
 
 function InventoryCard({ itemId, quantity }: { itemId: string; quantity: number }) {
-  const item       = CATALOG_MAP[itemId]
-  const useItem    = useGameStore(s => s.useInventoryItem)
-  const addXP      = useGameStore(s => s.addXP)
-  const skipQuest  = useGameStore(s => s.skipQuest)
-  const setPenRed  = useGameStore(s => s.setPenaltyReduced)
+  const item            = CATALOG_MAP[itemId]
+  const useItem         = useGameStore(s => s.useInventoryItem)
+  const addXP           = useGameStore(s => s.addXP)
+  const skipQuest       = useGameStore(s => s.skipQuest)
+  const setPenRed       = useGameStore(s => s.setPenaltyReduced)
+  const removePenalty   = useGameStore(s => s.removePenalty)
+  const setXpBoostNext  = useGameStore(s => s.setXpBoostNext)
+  const setHardcoreMode = useGameStore(s => s.setHardcoreFocusMode)
+  const focusActive     = useGameStore(s => s.system.focusModeActive)
+  const hardcoreActive  = useGameStore(s => s.system.hardcoreFocusMode)
+  const triggerEvent    = useGameStore(s => s.triggerEvent)
 
   const [confirmUse, setConfirmUse] = useState(false)
   const [showPicker, setShowPicker] = useState(false)
@@ -84,16 +90,34 @@ function InventoryCard({ itemId, quantity }: { itemId: string; quantity: number 
     Vibration.vibrate([0, 80, 40, 120])
 
     switch (item.effect) {
-      case 'add_xp':
+      case 'add_xp': {
         const { leveledUp } = addXP(item.effectValue ?? 50)
         setFeedback(leveledUp
           ? `+${item.effectValue} XP — LEVEL UP!`
           : `+${item.effectValue} XP absorvido!`
         )
         break
+      }
       case 'reduce_penalty':
         setPenRed(true)
         setFeedback('Pergaminho ativado! Penalização de amanhã reduzida em 50%.')
+        break
+      case 'remove_penalty':
+        triggerEvent('lagrima_used_during_penalty')
+        removePenalty()
+        setFeedback('Penalização removida! O Sistema purificou o teu registo.')
+        break
+      case 'xp_boost_next':
+        setXpBoostNext(true)
+        setFeedback('Ampulheta ativada! Próxima missão com XP dobrado.')
+        break
+      case 'break_hardcore':
+        if (!hardcoreActive) {
+          setFeedback('Nenhum Modo Hardcore ativo para quebrar.')
+        } else {
+          setHardcoreMode(false)
+          setFeedback('Juramento quebrado! Podes parar o Focus Mode livremente.')
+        }
         break
       default:
         setFeedback('Item utilizado com sucesso!')
@@ -111,6 +135,10 @@ function InventoryCard({ itemId, quantity }: { itemId: string; quantity: number 
     setTimeout(() => setFeedback(null), 3000)
   }
 
+  // Warn if break_hardcore used when no hardcore mode active
+  const isBreakHardcore = item.effect === 'break_hardcore'
+  const breakHardcoreDisabled = isBreakHardcore && !hardcoreActive
+
   return (
     <View style={[ic.card, { borderColor: item.color + '44' }]}>
       <View style={[ic.iconWrap, { backgroundColor: item.color + '18' }]}>
@@ -126,15 +154,18 @@ function InventoryCard({ itemId, quantity }: { itemId: string; quantity: number 
         {feedback && (
           <Text style={[ic.feedback, { color: item.color }]}>{feedback}</Text>
         )}
+        {breakHardcoreDisabled && !feedback && (
+          <Text style={ic.dimNote}>Nenhum Hardcore Mode ativo</Text>
+        )}
       </View>
 
       <TouchableOpacity
-        style={[ic.useBtn, { borderColor: item.color }]}
+        style={[ic.useBtn, { borderColor: item.color }, breakHardcoreDisabled && ic.useBtnDisabled]}
         onPress={handleUse}
-        disabled={quantity === 0}
+        disabled={quantity === 0 || breakHardcoreDisabled}
       >
-        <Icon name="play-circle-outline" size={14} color={item.color} />
-        <Text style={[ic.useTxt, { color: item.color }]}> USAR</Text>
+        <Icon name="play-circle-outline" size={14} color={breakHardcoreDisabled ? C.dimmed : item.color} />
+        <Text style={[ic.useTxt, { color: breakHardcoreDisabled ? C.dimmed : item.color }]}> USAR</Text>
       </TouchableOpacity>
 
       {/* Confirm use */}
@@ -221,16 +252,18 @@ const s = StyleSheet.create({
 })
 
 const ic = StyleSheet.create({
-  card:     { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'center' },
-  iconWrap: { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', position: 'relative', flexShrink: 0 },
-  badge:    { position: 'absolute', top: -4, right: -4, backgroundColor: C.neonBlue, borderRadius: 10, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 },
-  badgeTxt: { color: '#000', fontSize: 9, fontWeight: '900' },
-  info:     { flex: 1 },
-  name:     { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 2 },
-  desc:     { color: C.muted, fontSize: 11, lineHeight: 16 },
-  feedback: { fontSize: 11, marginTop: 4, fontFamily: FONT.orbitron, letterSpacing: 1 },
-  useBtn:   { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.sm, paddingVertical: 8, flexShrink: 0 },
-  useTxt:   { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  card:         { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'center' },
+  iconWrap:     { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', position: 'relative', flexShrink: 0 },
+  badge:        { position: 'absolute', top: -4, right: -4, backgroundColor: C.neonBlue, borderRadius: 10, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 },
+  badgeTxt:     { color: '#000', fontSize: 9, fontWeight: '900' },
+  info:         { flex: 1 },
+  name:         { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 2 },
+  desc:         { color: C.muted, fontSize: 11, lineHeight: 16 },
+  feedback:     { fontSize: 11, marginTop: 4, fontFamily: FONT.orbitron, letterSpacing: 1 },
+  dimNote:      { color: C.dimmed, fontSize: 10, marginTop: 4, fontStyle: 'italic' },
+  useBtn:       { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.sm, paddingVertical: 8, flexShrink: 0 },
+  useBtnDisabled: { opacity: 0.4 },
+  useTxt:       { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 })
 
 const qp = StyleSheet.create({

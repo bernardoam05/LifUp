@@ -7,8 +7,8 @@ export const C = {
   gold:     '#f59e0b',
   purple:   '#a855f7',
   green:    '#22c55e',
-  muted:    '#475569',
-  dimmed:   '#334155',
+  muted:    '#94a3b8',
+  dimmed:   '#64748b',
 } as const
 
 export const FONT = {

@@ -9,19 +9,35 @@ import { C, FONT, SPACING } from '../theme'
 
 // ── Item card ──────────────────────────────────────────────────────────────────
 
-function ItemCard({ item, gold, onBuy }: { item: ShopItem; gold: number; onBuy: () => void }) {
-  const canAfford = gold >= item.cost
+function ItemCard({ item, gold, stockRemaining, onBuy }: {
+  item:           ShopItem
+  gold:           number
+  stockRemaining: number | undefined   // undefined = unlimited
+  onBuy:          () => void
+}) {
+  const soldOut   = stockRemaining !== undefined && stockRemaining <= 0
+  const canAfford = gold >= item.cost && !soldOut
 
   return (
-    <View style={[ic.card, { borderColor: item.color + '44' }]}>
+    <View style={[ic.card, { borderColor: item.color + '44' }, soldOut && ic.cardSoldOut]}>
       {/* Icon */}
       <View style={[ic.iconWrap, { backgroundColor: item.color + '18' }]}>
-        <Icon name={item.icon} size={28} color={item.color} />
+        <Icon name={item.icon} size={28} color={soldOut ? C.dimmed : item.color} />
       </View>
 
       {/* Info */}
       <View style={ic.info}>
-        <Text style={[ic.name, { color: item.color }]}>{item.name}</Text>
+        <View style={ic.nameRow}>
+          <Text style={[ic.name, { color: soldOut ? C.dimmed : item.color }]}>{item.name}</Text>
+          {item.weeklyStock !== undefined && (
+            <View style={[ic.stockBadge, { borderColor: soldOut ? '#374151' : item.color + '55' }]}>
+              <Icon name="refresh-circle" size={9} color={soldOut ? '#374151' : item.color} />
+              <Text style={[ic.stockTxt, { color: soldOut ? '#374151' : item.color }]}>
+                {' '}{soldOut ? 'ESGOTADO' : `${stockRemaining}/sem`}
+              </Text>
+            </View>
+          )}
+        </View>
         <Text style={ic.desc}>{item.description}</Text>
         <Text style={ic.lore}>{item.lore}</Text>
       </View>
@@ -29,16 +45,16 @@ function ItemCard({ item, gold, onBuy }: { item: ShopItem; gold: number; onBuy: 
       {/* Buy */}
       <View style={ic.buyCol}>
         <View style={ic.costRow}>
-          <Icon name="rhombus" size={12} color={C.gold} />
-          <Text style={ic.cost}> {item.cost}</Text>
+          <Icon name="rhombus" size={12} color={soldOut ? C.dimmed : C.gold} />
+          <Text style={[ic.cost, soldOut && { color: C.dimmed }]}> {item.cost}</Text>
         </View>
         <TouchableOpacity
-          style={[ic.buyBtn, { borderColor: item.color }, !canAfford && ic.buyBtnDisabled]}
+          style={[ic.buyBtn, { borderColor: item.color }, (!canAfford || soldOut) && ic.buyBtnDisabled]}
           onPress={onBuy}
           disabled={!canAfford}
         >
           <Text style={[ic.buyTxt, { color: canAfford ? item.color : C.dimmed }]}>
-            {canAfford ? 'COMPRAR' : 'SEM GOLD'}
+            {soldOut ? 'ESGOTADO' : canAfford ? 'COMPRAR' : 'SEM GOLD'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -49,7 +65,8 @@ function ItemCard({ item, gold, onBuy }: { item: ShopItem; gold: number; onBuy: 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function ShopScreen() {
-  const player      = useGameStore(s => s.player)
+  const player       = useGameStore(s => s.player)
+  const shopStocks   = useGameStore(s => s.system.shopStocks)
   const purchaseItem = useGameStore(s => s.purchaseItem)
 
   const [pending,    setPending]    = useState<ShopItem | null>(null)
@@ -96,6 +113,7 @@ export default function ShopScreen() {
             key={item.id}
             item={item}
             gold={player.gold}
+            stockRemaining={item.weeklyStock !== undefined ? (shopStocks[item.id] ?? 0) : undefined}
             onBuy={() => setPending(item)}
           />
         ))}
@@ -136,16 +154,20 @@ const s = StyleSheet.create({
 })
 
 const ic = StyleSheet.create({
-  card:     { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'flex-start' },
-  iconWrap: { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  info:     { flex: 1 },
-  name:     { fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', marginBottom: 3 },
-  desc:     { color: '#94a3b8', fontSize: 12, lineHeight: 17, marginBottom: 3 },
-  lore:     { color: C.dimmed, fontSize: 10, fontStyle: 'italic', lineHeight: 15 },
-  buyCol:   { alignItems: 'flex-end', gap: SPACING.sm, flexShrink: 0 },
-  costRow:  { flexDirection: 'row', alignItems: 'center' },
-  cost:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900' },
-  buyBtn:   { borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.sm, paddingVertical: 6 },
+  card:       { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'flex-start' },
+  cardSoldOut:{ opacity: 0.5 },
+  iconWrap:   { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  info:       { flex: 1 },
+  nameRow:    { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: 3, flexWrap: 'wrap' },
+  name:       { fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700' },
+  stockBadge: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 2 },
+  stockTxt:   { fontFamily: FONT.orbitron, fontSize: 8 },
+  desc:       { color: '#94a3b8', fontSize: 12, lineHeight: 17, marginBottom: 3 },
+  lore:       { color: C.dimmed, fontSize: 10, fontStyle: 'italic', lineHeight: 15 },
+  buyCol:     { alignItems: 'flex-end', gap: SPACING.sm, flexShrink: 0 },
+  costRow:    { flexDirection: 'row', alignItems: 'center' },
+  cost:       { color: C.gold, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900' },
+  buyBtn:     { borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.sm, paddingVertical: 6 },
   buyBtnDisabled: { opacity: 0.4 },
-  buyTxt:   { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  buyTxt:     { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 })

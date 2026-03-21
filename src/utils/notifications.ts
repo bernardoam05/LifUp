@@ -89,3 +89,66 @@ export async function cancelFocusNotification(): Promise<void> {
     pendingTriggerNotifId = null
   }
 }
+
+// ── System daily warnings ──────────────────────────────────────────────────────
+// Three escalating reminders to complete missions before midnight.
+// Each slot has a fixed ID so re-scheduling is idempotent and cancellation
+// is precise — no need to track dynamic IDs at runtime.
+
+const WARNING_SLOTS = [
+  {
+    id:   'warning-18',
+    hour: 18, minute: 0,
+    body: 'O Sistema vigia-te. Ainda tens missões por completar, Hunter.',
+  },
+  {
+    id:   'warning-20',
+    hour: 20, minute: 0,
+    body: 'Aviso do Sistema: Faltam 4 horas. Completa as missões ou enfrentarás a Penalidade.',
+  },
+  {
+    id:   'warning-23',
+    hour: 23, minute: 0,
+    body: 'ALERTA: 1 hora restante! O teu tempo está a esgotar-se, Caçador.',
+  },
+] as const
+
+export async function scheduleSystemWarnings(): Promise<void> {
+  const now = Date.now()
+
+  for (const slot of WARNING_SLOTS) {
+    const fire = new Date()
+    fire.setHours(slot.hour, slot.minute, 0, 0)
+
+    // Skip slots that have already passed today — never schedule in the past
+    if (fire.getTime() <= now) continue
+
+    const trigger: TimestampTrigger = {
+      type:      TriggerType.TIMESTAMP,
+      timestamp: fire.getTime(),
+    }
+
+    // Using a fixed `id` means notifee overwrites any existing scheduled
+    // notification with the same id, making this call fully idempotent.
+    await notifee.createTriggerNotification(
+      {
+        id:    slot.id,
+        title: '⚠ Aviso do Sistema',
+        body:  slot.body,
+        android: {
+          channelId:   CHANNEL_ID,
+          smallIcon:   'ic_launcher',
+          importance:  AndroidImportance.HIGH,
+          pressAction: { id: 'default' },
+        },
+      },
+      trigger
+    )
+  }
+}
+
+export async function cancelSystemWarnings(): Promise<void> {
+  await Promise.all(
+    WARNING_SLOTS.map(slot => notifee.cancelTriggerNotification(slot.id))
+  )
+}

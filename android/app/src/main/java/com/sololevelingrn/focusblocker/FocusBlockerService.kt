@@ -1,6 +1,7 @@
 package com.sololevelingrn.focusblocker
 
 import android.app.*
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
@@ -17,8 +18,9 @@ import com.sololevelingrn.R
 class FocusBlockerService : Service() {
 
     companion object {
-        const val ACTION_START = "com.sololevelingrn.FOCUS_START"
-        const val ACTION_STOP  = "com.sololevelingrn.FOCUS_STOP"
+        const val ACTION_START       = "com.sololevelingrn.FOCUS_START"
+        const val ACTION_STOP        = "com.sololevelingrn.FOCUS_STOP"
+        const val ACTION_UPDATE_APPS = "com.sololevelingrn.FOCUS_UPDATE_APPS"
         const val EXTRA_BLOCKED_PACKAGES = "blocked_packages"
         const val EXTRA_DURATION_MS      = "duration_ms"
         const val CHANNEL_ID = "focus_blocker_channel"
@@ -55,8 +57,15 @@ class FocusBlockerService : Service() {
                 isRunning       = true
                 startForeground(NOTIF_ID, buildNotification())
                 schedulePoll()
+                scheduleNotifUpdates()
             }
             ACTION_STOP -> stopSelf()
+            ACTION_UPDATE_APPS -> {
+                val newPkgs = intent.getStringArrayListExtra(EXTRA_BLOCKED_PACKAGES)
+                if (newPkgs != null) blockedPackages = newPkgs
+                // Immediate re-check so overlay appears/disappears without 500ms delay
+                checkForegroundApp()
+            }
         }
         return START_STICKY
     }
@@ -79,7 +88,7 @@ class FocusBlockerService : Service() {
                 return
             }
             checkForegroundApp()
-            handler.postDelayed(this, 1_000)
+            handler.postDelayed(this, 500)
         }
     }
 
@@ -87,26 +96,54 @@ class FocusBlockerService : Service() {
         handler.post(pollRunnable)
     }
 
-    private fun checkForegroundApp() {
-        val now = System.currentTimeMillis()
-        val stats = usageStatsManager.queryUsageStats(
-            UsageStatsManager.INTERVAL_DAILY,
-            now - 10_000,
-            now
-        )
-        val topPkg = stats?.maxByOrNull { it.lastTimeUsed }?.packageName ?: return
+    // ── Notification timer update ──────────────────────────────────────────────
 
-        // Bug 1 fix: never block our own app — remove overlay immediately if visible
-        if (topPkg == OWN_PACKAGE) {
+    private val notifRunnable = object : Runnable {
+        override fun run() {
+            if (!isRunning) return
+            val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            nm.notify(NOTIF_ID, buildNotification())
+            handler.postDelayed(this, 60_000)
+        }
+    }
+
+    private fun scheduleNotifUpdates() {
+        handler.postDelayed(notifRunnable, 60_000)
+    }
+
+    private fun checkForegroundApp() {
+        val now    = System.currentTimeMillis()
+        val events = usageStatsManager.queryEvents(now - 30_000, now)
+
+        val lastResumed = HashMap<String, Long>()
+        val lastPaused  = HashMap<String, Long>()
+        val ev = UsageEvents.Event()
+
+        while (events.hasNextEvent()) {
+            events.getNextEvent(ev)
+            when (ev.eventType) {
+                UsageEvents.Event.ACTIVITY_RESUMED ->
+                    if ((lastResumed[ev.packageName] ?: 0L) < ev.timeStamp)
+                        lastResumed[ev.packageName] = ev.timeStamp
+                UsageEvents.Event.ACTIVITY_PAUSED  ->
+                    if ((lastPaused[ev.packageName] ?: 0L) < ev.timeStamp)
+                        lastPaused[ev.packageName] = ev.timeStamp
+            }
+        }
+
+        val topPkg = lastResumed.entries
+            .filter { (pkg, resumedAt) -> resumedAt > (lastPaused[pkg] ?: 0L) }
+            .maxByOrNull { it.value }
+            ?.key
+
+        if (topPkg == null) return
+
+        if (!blockedPackages.contains(topPkg)) {
             removeOverlay()
             return
         }
 
-        if (blockedPackages.contains(topPkg)) {
-            showOverlay()
-        } else {
-            removeOverlay()
-        }
+        showOverlay()
     }
 
     // ── Overlay ────────────────────────────────────────────────────────────────
@@ -115,8 +152,6 @@ class FocusBlockerService : Service() {
         if (overlayView != null) return
         if (!android.provider.Settings.canDrawOverlays(this)) return
 
-        // Removed FLAG_NOT_TOUCH_MODAL so the overlay captures all touches
-        // and the "Voltar" button is fully clickable
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
@@ -159,7 +194,6 @@ class FocusBlockerService : Service() {
             setPadding(32, 24, 32, 0)
         }
 
-        // Bug 2 fix: "Voltar" button with FLAG_ACTIVITY_NEW_TASK | FLAG_ACTIVITY_CLEAR_TOP
         val backBtn = TextView(this).apply {
             text     = "[ VOLTAR À APP ]"
             textSize = 14f
@@ -184,13 +218,20 @@ class FocusBlockerService : Service() {
         layout.addView(backBtn)
 
         overlayView = layout
-        windowManager.addView(layout, params)
+        try {
+            windowManager.addView(layout, params)
+        } catch (_: Exception) {
+            overlayView = null
+        }
     }
 
     private fun removeOverlay() {
-        overlayView?.let {
-            try { windowManager.removeView(it) } catch (_: Exception) {}
-            overlayView = null
+        val view = overlayView ?: return
+        overlayView = null
+        try {
+            windowManager.removeViewImmediate(view)
+        } catch (_: Exception) {
+            // View was already detached — safe to ignore
         }
     }
 
@@ -211,8 +252,8 @@ class FocusBlockerService : Service() {
     private fun buildNotification(): Notification {
         val minLeft = ((endTimeMs - System.currentTimeMillis()) / 60_000).coerceAtLeast(0)
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("⚡ Focus Mode Ativo")
-            .setContentText("${minLeft} min restantes — Stay strong, Hunter.")
+            .setContentTitle("⚡ Modo de Foco Ativo")
+            .setContentText("O Sistema está a vigiar — ${minLeft} min restantes")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)

@@ -75,13 +75,13 @@ const s = StyleSheet.create({
   card: {
     width: '100%',
     backgroundColor: C.panel,
-    borderRadius: 16,
+    borderRadius: 4,
     borderWidth: 1,
     padding: SPACING.lg,
     alignItems: 'center',
   },
   iconWrap: {
-    width: 60, height: 60, borderRadius: 30,
+    width: 60, height: 60, borderRadius: 4,
     alignItems: 'center', justifyContent: 'center',
     marginBottom: SPACING.md,
   },
@@ -116,7 +116,7 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: C.border,
-    borderRadius: 10,
+    borderRadius: 4,
     paddingVertical: 12,
   },
   cancelTxt: {
@@ -131,7 +131,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 4,
     paddingVertical: 12,
   },
   confirmTxt: {
