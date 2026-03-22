@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive Icon Foreground — The System Symbol
+  Neon-blue glowing circle (System emblem from Solo Leveling).
+  108dp × 108dp (adaptive icon spec, safe zone: center 72dp).
+  Uses only <path> elements — <circle> is NOT valid in Android VectorDrawable.
+  Arc syntax: M cx,cy-r  a r,r 0 1,0 2r,0  a r,r 0 1,0 -2r,0
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer neon glow ring (r=38) -->
+    <path
+        android:pathData="M54,16 a38,38 0 1,0 0.001,0 Z"
+        android:strokeColor="#3300BFFF"
+        android:strokeWidth="5"
+        android:fillColor="@android:color/transparent" />
+
+    <!-- Mid glow ring (r=33) -->
+    <path
+        android:pathData="M54,21 a33,33 0 1,0 0.001,0 Z"
+        android:strokeColor="#6600CFFF"
+        android:strokeWidth="3.5"
+        android:fillColor="@android:color/transparent" />
+
+    <!-- Main bright neon ring (r=28) -->
+    <path
+        android:pathData="M54,26 a28,28 0 1,0 0.001,0 Z"
+        android:strokeColor="#FF00CFFF"
+        android:strokeWidth="2.5"
+        android:fillColor="@android:color/transparent" />
+
+    <!-- Inner accent ring (r=22) -->
+    <path
+        android:pathData="M54,32 a22,22 0 1,0 0.001,0 Z"
+        android:strokeColor="#CC00E5FF"
+        android:strokeWidth="1.5"
+        android:fillColor="@android:color/transparent" />
+
+    <!-- Vertical cross-hair -->
+    <path
+        android:pathData="M54,26 L54,82"
+        android:strokeColor="#6600CFFF"
+        android:strokeWidth="1"
+        android:fillColor="@android:color/transparent" />
+
+    <!-- Horizontal cross-hair -->
+    <path
+        android:pathData="M26,54 L82,54"
+        android:strokeColor="#6600CFFF"
+        android:strokeWidth="1"
+        android:fillColor="@android:color/transparent" />
+
+    <!-- Center glowing dot (r=5) — filled neon cyan -->
+    <path
+        android:pathData="M54,49 a5,5 0 1,0 0.001,0 Z"
+        android:fillColor="#FF00E5FF" />
+
+    <!-- Center inner bright core (r=2.5) -->
+    <path
+        android:pathData="M54,51.5 a2.5,2.5 0 1,0 0.001,0 Z"
+        android:fillColor="#FFFFFFFF" />
+
+</vector>

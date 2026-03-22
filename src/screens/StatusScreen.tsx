@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import MissionHistoryModal from './MissionHistoryModal'
+import { CATALOG_MAP } from '../data/shopItems'
 
 // Renders a MCI icon with 'help-circle' as fallback for unknown icon names
 function SafeIcon({ name, size, color, style }: { name: string; size: number; color: string; style?: object }) {
@@ -15,13 +17,30 @@ function SafeIcon({ name, size, color, style }: { name: string; size: number; co
     'arrow-up-circle','weather-sunset-up','calendar-check','flag','account-group',
     'trophy','star','lock','flash','arm-flex','help-circle','help-circle-outline',
     'lock-outline','check-circle','star-circle-outline','trophy-outline','timer-sand',
+    'cash-multiple','check',
   ])
   const safeName = KNOWN_SAFE.has(name) ? name : 'help-circle'
   return <Icon name={safeName} size={size} color={color} style={style} />
 }
-import useGameStore, { getRank, xpForLevel, RankKey } from '../store/useGameStore'
-import { ACHIEVEMENTS_CATALOG, Achievement } from '../data/achievements'
+import useGameStore, { getRank, xpForLevel, RankKey, LevelUpReward, CLASS_REQUIREMENTS } from '../store/useGameStore'
+import {
+  ACHIEVEMENTS_CATALOG, Achievement, AchievementProg,
+  TIER_COLORS, getActiveTier, getCompletedTier, isAchievementMaxed, getTierIndex,
+} from '../data/achievements'
+import { SHADOW_MAP } from '../data/shadows'
 import { C, FONT, SPACING } from '../theme'
+
+// Format minutes into "Xh Ym" for focus achievements
+function formatMinutes(min: number): string {
+  const h = Math.floor(min / 60)
+  const m = min % 60
+  return h > 0 ? (m > 0 ? `${h}h ${m}m` : `${h}h`) : `${m}m`
+}
+
+function fmtVal(a: Achievement, val: number): string {
+  if (a.conditionType === 'focus_total_hours') return formatMinutes(val)
+  return String(val)
+}
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 
@@ -122,14 +141,29 @@ function KPICard({ icon, color, label, value }: { icon: string; color: string; l
 // ── Achievement Detail Modal ────────────────────────────────────────────────────
 
 function AchievementDetailModal({
-  achievement, done, onClose,
-}: { achievement: Achievement; done: boolean; onClose: () => void }) {
-  const secret = achievement.isSecret && !done
-  const color  = done ? achievement.color : '#475569'
+  achievement: a, prog, done, onClose,
+}: { achievement: Achievement; prog: AchievementProg | undefined; done: boolean; onClose: () => void }) {
+  const secret    = a.isSecret && !done && !a.tiers
+  const maxed     = a.tiers ? isAchievementMaxed(a, prog) : done
+  const activeTier    = getActiveTier(a, prog)
+  const completedTier = getCompletedTier(a, prog)
+  const displayTier   = maxed ? a.tiers?.[a.tiers.length - 1] : (completedTier ?? activeTier)
+  const tierColor     = displayTier ? TIER_COLORS[displayTier.rank] : a.color
+  const cardColor     = a.tiers ? (maxed ? C.gold : completedTier ? tierColor : '#475569') : (done ? a.color : '#475569')
+
+  // Progress bar for active tier
+  const currentVal  = prog?.currentValue ?? 0
+  const tierIdx     = prog?.currentTierIndex ?? 0
+  const prevTarget  = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0
+  const thisTarget  = activeTier?.targetValue ?? 1
+  const pct = a.tiers
+    ? (maxed ? 100 : Math.min(100, ((currentVal - prevTarget) / (thisTarget - prevTarget)) * 100))
+    : (done ? 100 : 0)
+
   return (
     <Modal transparent animationType="fade" visible onRequestClose={onClose}>
       <View style={am.overlay}>
-        <View style={[am.card, { borderColor: color + '44' }]}>
+        <View style={[am.card, { borderColor: cardColor + '66' }]}>
 
           {/* Header */}
           <View style={am.headerRow}>
@@ -140,30 +174,41 @@ function AchievementDetailModal({
           </View>
 
           {/* Icon */}
-          <View style={[am.iconWrap, { backgroundColor: color + '18' }]}>
-            <SafeIcon
-              name={secret ? 'help-circle-outline' : achievement.icon}
-              size={36}
-              color={color}
-            />
+          <View style={[am.iconWrap, { backgroundColor: cardColor + '18' }]}>
+            <SafeIcon name={secret ? 'help-circle-outline' : a.icon} size={36} color={cardColor} />
           </View>
 
-          {/* Title */}
-          <Text style={[am.title, { color: done ? achievement.color : C.muted }]}>
-            {secret ? '???' : achievement.title}
-          </Text>
+          {/* Title + tier badge */}
+          <View style={am.titleRow}>
+            <Text style={[am.title, { color: cardColor }]}>
+              {secret ? '???' : a.title}
+            </Text>
+            {displayTier && (
+              <View style={[am.tierBadge, { borderColor: TIER_COLORS[displayTier.rank] }]}>
+                <Text style={[am.tierTxt, { color: TIER_COLORS[displayTier.rank] }]}>
+                  {maxed ? displayTier.rank.toUpperCase() : `→ ${displayTier.rank.toUpperCase()}`}
+                </Text>
+              </View>
+            )}
+          </View>
 
           {/* Badges */}
           <View style={am.badgesRow}>
             <View style={am.categoryBadge}>
-              <Text style={am.categoryTxt}>{achievement.category.toUpperCase()}</Text>
+              <Text style={am.categoryTxt}>{a.category.toUpperCase()}</Text>
             </View>
-            {achievement.isSecret && (
+            {a.isSecret && (
               <View style={[am.categoryBadge, { borderColor: '#a855f744' }]}>
                 <Text style={[am.categoryTxt, { color: '#a855f7' }]}>SECRETO</Text>
               </View>
             )}
-            {done && (
+            {maxed && (
+              <View style={[am.categoryBadge, { borderColor: C.gold + '66' }]}>
+                <Icon name="check-circle" size={9} color={C.gold} />
+                <Text style={[am.categoryTxt, { color: C.gold }]}> MAX</Text>
+              </View>
+            )}
+            {!a.tiers && done && (
               <View style={[am.categoryBadge, { borderColor: C.green + '44' }]}>
                 <Icon name="check-circle" size={9} color={C.green} />
                 <Text style={[am.categoryTxt, { color: C.green }]}> DESBLOQUEADO</Text>
@@ -174,18 +219,68 @@ function AchievementDetailModal({
           <View style={am.divider} />
 
           {/* Description */}
-          <Text style={am.desc}>
-            {secret ? '???' : achievement.description}
-          </Text>
+          <Text style={am.desc}>{secret ? '???' : a.description}</Text>
 
-          {/* Reward */}
-          <View style={am.rewardRow}>
-            <Icon name="rhombus" size={12} color={C.gold} />
-            <Text style={am.rewardTxt}> {achievement.rewardGold} G</Text>
-            {achievement.rewardXP != null && (
-              <Text style={am.rewardXP}>{'  '}+{achievement.rewardXP} XP</Text>
-            )}
-          </View>
+          {/* Tier ladder */}
+          {a.tiers && !secret && (
+            <View style={am.tiersSection}>
+              {a.tiers.map((tier, i) => {
+                const isCompleted = i < tierIdx
+                const isActive    = i === tierIdx
+                const tc = TIER_COLORS[tier.rank]
+                return (
+                  <View key={tier.rank} style={[am.tierRow, isActive && { backgroundColor: tc + '12' }]}>
+                    <View style={[am.tierDot, { borderColor: tc, backgroundColor: isCompleted ? tc : 'transparent' }]}>
+                      {isCompleted && <Icon name="check" size={8} color="#000" />}
+                    </View>
+                    <Text style={[am.tierRowRank, { color: isCompleted ? tc : isActive ? tc : C.dimmed }]}>
+                      {tier.rank.toUpperCase()}
+                    </Text>
+                    <Text style={[am.tierRowTarget, { color: isCompleted || isActive ? C.muted : C.dimmed }]}>
+                      {fmtVal(a, tier.targetValue)}
+                    </Text>
+                    <Text style={[am.tierRowReward, { color: isCompleted ? C.gold : C.dimmed }]}>
+                      +{tier.rewardGold}G{tier.rewardXP ? ` +${tier.rewardXP}XP` : ''}
+                    </Text>
+                  </View>
+                )
+              })}
+            </View>
+          )}
+
+          {/* Progress bar (active tier) */}
+          {a.tiers && !secret && !maxed && activeTier && (
+            <View style={am.progSection}>
+              <View style={am.progHeader}>
+                <Text style={am.progLabel}>PROGRESSO ATUAL</Text>
+                <Text style={am.progNums}>
+                  {fmtVal(a, currentVal)} / {fmtVal(a, activeTier.targetValue)}
+                </Text>
+              </View>
+              <View style={am.progTrack}>
+                <View style={[am.progFill, { width: `${Math.max(pct, 0)}%` as any, backgroundColor: tierColor }]} />
+              </View>
+            </View>
+          )}
+          {a.tiers && maxed && (
+            <View style={[am.progSection]}>
+              <View style={am.progTrack}>
+                <View style={[am.progFill, { width: '100%' as any, backgroundColor: C.gold }]} />
+              </View>
+              <Text style={am.maxLabel}>[ MAX ]</Text>
+            </View>
+          )}
+
+          {/* Reward (instant/non-tiered) */}
+          {!a.tiers && (
+            <View style={am.rewardRow}>
+              <Icon name="rhombus" size={12} color={C.gold} />
+              <Text style={am.rewardTxt}> {a.rewardGold} G</Text>
+              {a.rewardXP != null && (
+                <Text style={am.rewardXP}>{'  '}+{a.rewardXP} XP</Text>
+              )}
+            </View>
+          )}
 
         </View>
       </View>
@@ -195,11 +290,16 @@ function AchievementDetailModal({
 
 // ── Achievements panel ─────────────────────────────────────────────────────────
 
-function AchievementsPanel({ onSelect }: { onSelect: (a: Achievement, done: boolean) => void }) {
-  const unlockedIds = useGameStore(s => s.unlockedAchievements)
+function AchievementsPanel({ onSelect }: {
+  onSelect: (a: Achievement, prog: AchievementProg | undefined, done: boolean) => void
+}) {
+  const unlockedIds         = useGameStore(s => s.unlockedAchievements)
+  const achievementProgress = useGameStore(s => s.achievementProgress)
   const unlockedSet = new Set(unlockedIds)
-  const total       = ACHIEVEMENTS_CATALOG.length
-  const unlocked    = unlockedIds.length
+  const total    = ACHIEVEMENTS_CATALOG.length
+  const unlocked = ACHIEVEMENTS_CATALOG.filter(a =>
+    unlockedSet.has(a.id) || (a.tiers && isAchievementMaxed(a, achievementProgress[a.id]))
+  ).length
 
   return (
     <View style={ac.container}>
@@ -212,27 +312,69 @@ function AchievementsPanel({ onSelect }: { onSelect: (a: Achievement, done: bool
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={ac.grid}>
         {ACHIEVEMENTS_CATALOG.map(a => {
-          const done   = unlockedSet.has(a.id)
-          const secret = a.isSecret && !done
-          const color  = done ? a.color : '#334155'
+          const prog          = achievementProgress[a.id]
+          const fullyDone     = unlockedSet.has(a.id) || (a.tiers ? isAchievementMaxed(a, prog) : false)
+          const secret        = a.isSecret && !fullyDone && !a.tiers
+          const completedTier = getCompletedTier(a, prog)
+          const activeTier    = getActiveTier(a, prog)
+          const maxed         = a.tiers ? isAchievementMaxed(a, prog) : fullyDone
+
+          // Card colour: gold if maxed, tier colour if in progress, grey if not started
+          const displayTier = maxed ? a.tiers?.[a.tiers.length - 1] : completedTier
+          const cardColor   = a.tiers
+            ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : '#334155')
+            : (fullyDone ? a.color : '#334155')
+          const iconColor   = a.tiers
+            ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : '#475569')
+            : (fullyDone ? a.color : '#475569')
+
+          // Mini progress bar: % within current tier
+          const currentVal = prog?.currentValue ?? 0
+          const tierIdx    = getTierIndex(prog)
+          const prevTarget = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0
+          const thisTarget = activeTier?.targetValue ?? 1
+          const progressPct = (a.tiers && !maxed && activeTier)
+            ? Math.min(100, ((currentVal - prevTarget) / (thisTarget - prevTarget)) * 100)
+            : (maxed ? 100 : 0)
+
           return (
             <TouchableOpacity
               key={a.id}
-              style={[ac.card, { borderColor: done ? color + '66' : '#1e293b' }]}
-              onPress={() => onSelect(a, done)}
+              style={[ac.card, { borderColor: cardColor + (fullyDone || completedTier ? '88' : '33') }]}
+              onPress={() => onSelect(a, prog, fullyDone)}
               activeOpacity={0.75}
             >
-              <View style={[ac.iconWrap, { backgroundColor: color + (done ? '20' : '10') }]}>
+              <View style={[ac.iconWrap, { backgroundColor: iconColor + '18' }]}>
                 <SafeIcon
                   name={secret ? 'help-circle-outline' : a.icon}
                   size={22}
-                  color={done ? a.color : '#475569'}
+                  color={iconColor}
                 />
               </View>
-              <Text style={[ac.cardTitle, { color: done ? a.color : '#475569' }]} numberOfLines={2}>
+
+              {/* Tier badge on card */}
+              {displayTier && (
+                <View style={[ac.tierChip, { borderColor: TIER_COLORS[displayTier.rank] }]}>
+                  <Text style={[ac.tierChipTxt, { color: TIER_COLORS[displayTier.rank] }]}>
+                    {maxed ? '★' : displayTier.rank.slice(0, 2).toUpperCase()}
+                  </Text>
+                </View>
+              )}
+
+              <Text style={[ac.cardTitle, { color: iconColor }]} numberOfLines={2}>
                 {secret ? '???' : a.title}
               </Text>
-              <Text style={[ac.cardGold, { color: done ? C.gold : '#334155' }]}>◈{a.rewardGold}</Text>
+
+              {maxed ? (
+                <Text style={ac.maxTag}>[ MAX ]</Text>
+              ) : (
+                <View style={ac.miniTrack}>
+                  <View style={[ac.miniFill, {
+                    width: `${Math.max(progressPct, 0)}%` as any,
+                    backgroundColor: completedTier ? TIER_COLORS[completedTier.rank] : C.neonBlue,
+                  }]} />
+                </View>
+              )}
             </TouchableOpacity>
           )
         })}
@@ -241,15 +383,197 @@ function AchievementsPanel({ onSelect }: { onSelect: (a: Achievement, done: bool
   )
 }
 
+// ── Rank Requirements Modal ────────────────────────────────────────────────────
+
+function RankRequirementsModal({
+  currentLevel, totalCompleted, bossesDefeated, questsByRank, onClose,
+}: {
+  currentLevel:    number
+  totalCompleted:  number
+  bossesDefeated:  number
+  questsByRank:    Partial<Record<RankKey, number>>
+  onClose:         () => void
+}) {
+  const currentRank = getRank(currentLevel, totalCompleted, bossesDefeated, questsByRank)
+  const nextRank    = CLASS_REQUIREMENTS.find(r => {
+    if (currentLevel    < r.minLevel)    return true
+    if (totalCompleted  < r.minMissions) return true
+    if (bossesDefeated  < r.minBosses)  return true
+    if (r.minRankMissions > 0 && r.prevRank) {
+      if ((questsByRank[r.prevRank as RankKey] ?? 0) < r.minRankMissions) return true
+    }
+    return false
+  })
+
+  return (
+    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
+      <View style={rm.overlay}>
+        <View style={[rm.card, { borderColor: currentRank.color + '55' }]}>
+
+          <View style={rm.headerRow}>
+            <SafeIcon name="shield-star-outline" size={12} color={currentRank.color} />
+            <Text style={[rm.headerTxt, { color: currentRank.color }]}> [ CLASSIFICAÇÃO DO CAÇADOR ]</Text>
+            <TouchableOpacity onPress={onClose} style={rm.closeBtn}>
+              <SafeIcon name="close" size={16} color={C.muted} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={rm.divider} />
+
+          {CLASS_REQUIREMENTS.map(r => {
+            const isCurrent = r.rank === currentRank.rank
+            const lvlOk     = currentLevel    >= r.minLevel
+            const misOk     = totalCompleted  >= r.minMissions
+            const bossOk    = bossesDefeated  >= r.minBosses
+            const rankMisOk = r.minRankMissions === 0 || !r.prevRank
+              || (questsByRank[r.prevRank as RankKey] ?? 0) >= r.minRankMissions
+            const met = lvlOk && misOk && bossOk && rankMisOk
+            const prevRankCount = r.prevRank ? (questsByRank[r.prevRank as RankKey] ?? 0) : 0
+
+            return (
+              <View key={r.rank} style={[rm.row, isCurrent && { backgroundColor: r.color + '15' }]}>
+                <View style={[rm.badge, { borderColor: r.color + (isCurrent ? 'cc' : '55') }]}>
+                  <Text style={[rm.badgeTxt, { color: r.color }]}>{r.rank}</Text>
+                </View>
+                <View style={rm.rowInfo}>
+                  <Text style={[rm.rowLabel, { color: isCurrent ? r.color : (met ? '#e2e8f0' : C.muted) }]}>{r.label}</Text>
+                  {r.minMissions > 0 ? (
+                    <>
+                      {/* Level */}
+                      <View style={rm.reqRow}>
+                        <Text style={[rm.reqLabel, lvlOk && rm.reqMet]}>Nível {r.minLevel}</Text>
+                        <Text style={[rm.reqVal, lvlOk ? rm.reqMet : rm.reqFail]}>
+                          {Math.min(currentLevel, r.minLevel)}/{r.minLevel}
+                        </Text>
+                      </View>
+                      {/* Total missions */}
+                      <View style={rm.reqRow}>
+                        <Text style={[rm.reqLabel, misOk && rm.reqMet]}>Missões totais</Text>
+                        <Text style={[rm.reqVal, misOk ? rm.reqMet : rm.reqFail]}>
+                          {Math.min(totalCompleted, r.minMissions)}/{r.minMissions}
+                        </Text>
+                      </View>
+                      {/* Bosses */}
+                      <View style={rm.reqRow}>
+                        <Text style={[rm.reqLabel, bossOk && rm.reqMet]}>Bosses</Text>
+                        <Text style={[rm.reqVal, bossOk ? rm.reqMet : rm.reqFail]}>
+                          {Math.min(bossesDefeated, r.minBosses)}/{r.minBosses}
+                        </Text>
+                      </View>
+                      {/* Per-rank missions */}
+                      {r.minRankMissions > 0 && r.prevRank && (
+                        <View style={rm.reqRow}>
+                          <Text style={[rm.reqLabel, rankMisOk && rm.reqMet]}>
+                            Missões {r.prevRank}-Rank
+                          </Text>
+                          <Text style={[rm.reqVal, rankMisOk ? rm.reqMet : rm.reqFail]}>
+                            {Math.min(prevRankCount, r.minRankMissions)}/{r.minRankMissions}
+                          </Text>
+                        </View>
+                      )}
+                    </>
+                  ) : (
+                    <Text style={rm.rowSub}>Rank inicial</Text>
+                  )}
+                </View>
+                {isCurrent && (
+                  <View style={[rm.currentTag, { borderColor: r.color + '55' }]}>
+                    <Text style={[rm.currentTagTxt, { color: r.color }]}>ATUAL</Text>
+                  </View>
+                )}
+                {!isCurrent && met && (
+                  <SafeIcon name="check-circle" size={14} color={r.color + 'aa'} />
+                )}
+              </View>
+            )
+          })}
+
+          {nextRank && (
+            <View style={rm.nextSection}>
+              <SafeIcon name="arrow-up-bold" size={11} color={nextRank.color} />
+              <View style={{ flex: 1, marginLeft: 4 }}>
+                <Text style={[rm.nextTxt, { color: nextRank.color }]}>Próximo: {nextRank.label}</Text>
+                <Text style={[rm.rowSub, { marginTop: 2 }]}>
+                  Nível {nextRank.minLevel} ({Math.max(nextRank.minLevel - currentLevel, 0)} em falta){' · '}
+                  Missões {Math.min(totalCompleted, nextRank.minMissions)}/{nextRank.minMissions}{' · '}
+                  Bosses {Math.min(bossesDefeated, nextRank.minBosses)}/{nextRank.minBosses}
+                  {nextRank.minRankMissions > 0 && nextRank.prevRank ? (
+                    `\nMissões ${nextRank.prevRank}-Rank: ${Math.min(questsByRank[nextRank.prevRank as RankKey] ?? 0, nextRank.minRankMissions)}/${nextRank.minRankMissions}`
+                  ) : ''}
+                </Text>
+              </View>
+            </View>
+          )}
+
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
+// ── Level Up Reward Modal ──────────────────────────────────────────────────────
+
+function LevelUpRewardModal({ reward, onClose }: { reward: LevelUpReward; onClose: () => void }) {
+  return (
+    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
+      <View style={lm.overlay}>
+        <View style={lm.card}>
+
+          <Text style={lm.title}>[ LEVEL UP ]</Text>
+          <Text style={lm.levelTxt}>NÍVEL {reward.level}</Text>
+
+          <View style={lm.divider} />
+
+          {reward.items.length > 0 ? (
+            <>
+              <Text style={lm.rewardLabel}>RECOMPENSA AUTOMÁTICA</Text>
+              {reward.items.map((id, i) => {
+                const item = CATALOG_MAP[id]
+                if (!item) return null
+                return (
+                  <View key={i} style={[lm.itemRow, { borderColor: item.color + '44' }]}>
+                    <View style={[lm.itemIcon, { backgroundColor: item.color + '22' }]}>
+                      <Icon name={item.icon} size={20} color={item.color} />
+                    </View>
+                    <View style={lm.itemInfo}>
+                      <Text style={[lm.itemName, { color: item.color }]}>{item.name}</Text>
+                      <Text style={lm.itemDesc} numberOfLines={2}>{item.description}</Text>
+                    </View>
+                  </View>
+                )
+              })}
+            </>
+          ) : (
+            <Text style={lm.noReward}>Continua a subir de nível para receber recompensas.</Text>
+          )}
+
+          <TouchableOpacity style={lm.btn} onPress={onClose}>
+            <Text style={lm.btnTxt}>[ CONTINUAR ]</Text>
+          </TouchableOpacity>
+
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function StatusScreen() {
-  const player   = useGameStore(st => st.player)
-  const rank     = getRank(player.level)
+  const player             = useGameStore(st => st.player)
+  const statistics         = useGameStore(st => st.statistics)
+  const bossesDefeated     = useGameStore(st => st.system.bossesDefeated)
+  const customShadows      = useGameStore(st => st.customShadows)
+  const levelUpReward      = useGameStore(st => st.levelUpReward)
+  const dismissLevelUpReward = useGameStore(st => st.dismissLevelUpReward)
+
+  const rank     = getRank(player.level, statistics.totalCompleted, bossesDefeated, statistics.questsByRank)
   const xpNeeded = xpForLevel(player.level)
   const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100)
 
-  const [selectedAch, setSelectedAch] = useState<{ a: Achievement; done: boolean } | null>(null)
+  const [selectedAch, setSelectedAch] = useState<{ a: Achievement; prog: AchievementProg | undefined; done: boolean } | null>(null)
+  const [showRankInfo, setShowRankInfo] = useState(false)
+  const [showHistory,  setShowHistory]  = useState(false)
 
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
@@ -261,9 +585,13 @@ export default function StatusScreen() {
 
         {/* Rank card */}
         <View style={[s.rankCard, { borderColor: rank.color + '66' }]}>
-          <View style={[s.rankBadge, { borderColor: C.neonBlue }]}>
+          <TouchableOpacity
+            style={[s.rankBadge, { borderColor: C.neonBlue }]}
+            onPress={() => setShowRankInfo(true)}
+            activeOpacity={0.75}
+          >
             <Text style={[s.rankBig, { color: rank.color }]}>{rank.rank}</Text>
-          </View>
+          </TouchableOpacity>
           <View style={s.rankInfo}>
             <Text style={s.playerName}>{player.name}</Text>
             <Text style={[s.rankLabel, { color: rank.color }]}>{rank.label}</Text>
@@ -300,33 +628,64 @@ export default function StatusScreen() {
         <SectionHeader icon="trophy-outline" label="ESTATÍSTICAS DO CAÇADOR" />
         <StatisticsPanel />
 
+        {/* Mission History button */}
+        <TouchableOpacity style={s.historyBtn} onPress={() => setShowHistory(true)} activeOpacity={0.75}>
+          <Icon name="database-outline" size={13} color={C.neonBlue} />
+          <Text style={s.historyBtnTxt}> [ REGISTOS DO SISTEMA ]</Text>
+          <Icon name="chevron-right" size={14} color={C.dimmed} />
+        </TouchableOpacity>
+
         {/* Shadows */}
         {player.shadows.length > 0 && (
           <>
             <SectionHeader icon="ghost" label="EXÉRCITO DAS SOMBRAS" />
             <View style={s.shadowsBlock}>
-              {player.shadows.map((name, i) => (
-                <View key={i} style={s.shadowRow}>
-                  <Icon name="ghost" size={14} color="#a855f7" />
-                  <Text style={s.shadowName}>{name}</Text>
-                </View>
-              ))}
+              {player.shadows.map((entry, i) => {
+                const data = SHADOW_MAP[entry.id] ?? customShadows.find(cs => cs.id === entry.id)
+                const name = data?.name ?? entry.id
+                return (
+                  <View key={i} style={s.shadowRow}>
+                    <Icon name="ghost" size={14} color="#a855f7" />
+                    <Text style={s.shadowName}>{name}</Text>
+                    {entry.level > 1 && <Text style={s.shadowLevel}>Lv.{entry.level}</Text>}
+                  </View>
+                )
+              })}
             </View>
           </>
         )}
 
         {/* Achievements */}
         <SectionHeader icon="star-circle-outline" label="CONQUISTAS" />
-        <AchievementsPanel onSelect={(a, done) => setSelectedAch({ a, done })} />
+        <AchievementsPanel onSelect={(a, prog, done) => setSelectedAch({ a, prog, done })} />
 
       </ScrollView>
 
       {selectedAch && (
         <AchievementDetailModal
           achievement={selectedAch.a}
+          prog={selectedAch.prog}
           done={selectedAch.done}
           onClose={() => setSelectedAch(null)}
         />
+      )}
+
+      {showRankInfo && (
+        <RankRequirementsModal
+          currentLevel={player.level}
+          totalCompleted={statistics.totalCompleted}
+          bossesDefeated={bossesDefeated}
+          questsByRank={statistics.questsByRank}
+          onClose={() => setShowRankInfo(false)}
+        />
+      )}
+
+      {showHistory && (
+        <MissionHistoryModal onClose={() => setShowHistory(false)} />
+      )}
+
+      {levelUpReward && (
+        <LevelUpRewardModal reward={levelUpReward} onClose={dismissLevelUpReward} />
       )}
 
     </SafeAreaView>
@@ -371,9 +730,13 @@ const s = StyleSheet.create({
 
   shadowsBlock: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: '#a855f733', marginBottom: SPACING.lg, gap: SPACING.sm },
   shadowRow:    { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
-  shadowName:   { color: '#a855f7', fontFamily: FONT.orbitron, fontSize: 11 },
+  shadowName:   { color: '#a855f7', fontFamily: FONT.orbitron, fontSize: 11, flex: 1 },
+  shadowLevel:  { color: '#a855f799', fontFamily: FONT.orbitron, fontSize: 9 },
 
   empty:  { color: C.dimmed, fontSize: 12, fontStyle: 'italic', marginBottom: SPACING.lg },
+
+  historyBtn:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 10, marginBottom: SPACING.lg },
+  historyBtnTxt: { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 })
 
 const kpi = StyleSheet.create({
@@ -408,8 +771,13 @@ const ac = StyleSheet.create({
     padding: SPACING.sm, alignItems: 'center', gap: 6,
   },
   iconWrap:  { width: 44, height: 44, borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
-  cardTitle: { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5, textAlign: 'center', lineHeight: 11 },
-  cardGold:  { fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '700' },
+  cardTitle:  { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5, textAlign: 'center', lineHeight: 11 },
+  cardGold:   { fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '700' },
+  miniTrack:  { width: '100%', height: 3, backgroundColor: '#0f172a', borderRadius: 0, overflow: 'hidden', marginTop: 2 },
+  miniFill:   { height: '100%', backgroundColor: C.neonBlue, borderRadius: 0 },
+  tierChip:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 4, paddingVertical: 1 },
+  tierChipTxt:{ fontFamily: FONT.orbitron, fontSize: 6, letterSpacing: 0.5, fontWeight: '700' },
+  maxTag:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
 })
 
 const am = StyleSheet.create({
@@ -419,13 +787,71 @@ const am = StyleSheet.create({
   headerLabel:   { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   closeBtn:      { padding: 4 },
   iconWrap:      { width: 72, height: 72, borderRadius: 4, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.sm },
-  title:         { fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', letterSpacing: 1, textAlign: 'center', marginBottom: SPACING.sm },
+  title:         { fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', letterSpacing: 1, textAlign: 'center', flex: 1 },
   badgesRow:     { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.md, flexWrap: 'wrap', justifyContent: 'center' },
   categoryBadge: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
   categoryTxt:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
   divider:       { width: '100%', height: 1, backgroundColor: C.border, marginBottom: SPACING.md },
   desc:          { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 18, marginBottom: SPACING.md },
+  titleRow:      { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm },
+  tierBadge:     { borderWidth: 1, borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
+  tierTxt:       { fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
+  progSection:   { width: '100%', marginBottom: SPACING.md },
+  progHeader:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  progLabel:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 2 },
+  progNums:      { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9 },
+  progTrack:     { height: 6, backgroundColor: '#050f1e', borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: C.neonBlue + '30' },
+  progFill:      { height: '100%', borderRadius: 0 },
   rewardRow:     { flexDirection: 'row', alignItems: 'center' },
   rewardTxt:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700' },
   rewardXP:      { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12 },
+
+  tiersSection:  { width: '100%', marginBottom: SPACING.md },
+  tierRow:       { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, paddingVertical: 5, paddingHorizontal: SPACING.sm, borderRadius: 3, marginBottom: 2 },
+  tierDot:       { width: 16, height: 16, borderRadius: 8, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
+  tierRowRank:   { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, fontWeight: '700', width: 56 },
+  tierRowTarget: { flex: 1, fontFamily: FONT.orbitron, fontSize: 9 },
+  tierRowReward: { fontFamily: FONT.orbitron, fontSize: 8 },
+  maxLabel:      { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center', marginTop: 4 },
+})
+
+const rm = StyleSheet.create({
+  overlay:      { flex: 1, backgroundColor: '#000000dd', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  card:         { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg },
+  headerRow:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  headerTxt:    { flex: 1, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  closeBtn:     { padding: 4 },
+  divider:      { height: 1, backgroundColor: C.border, marginBottom: SPACING.md },
+  row:          { flexDirection: 'row', alignItems: 'center', borderRadius: 4, paddingVertical: 8, paddingHorizontal: SPACING.sm, marginBottom: 6, gap: SPACING.sm },
+  badge:        { width: 30, height: 30, borderRadius: 3, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
+  badgeTxt:     { fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900' },
+  rowInfo:      { flex: 1 },
+  rowLabel:     { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+  rowSub:       { color: C.dimmed, fontSize: 10, marginTop: 1 },
+  currentTag:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
+  currentTagTxt:{ fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
+  nextSection:  { flexDirection: 'row', alignItems: 'center', marginTop: SPACING.sm, paddingTop: SPACING.sm, borderTopWidth: 1, borderTopColor: C.border },
+  nextTxt:      { fontSize: 11, flex: 1, fontFamily: FONT.orbitron },
+  reqRow:       { flexDirection: 'row', alignItems: 'center', marginTop: 3, gap: 4 },
+  reqLabel:     { flex: 1, color: C.dimmed, fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 0.5 },
+  reqVal:       { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
+  reqMet:       { color: '#22c55e' },
+  reqFail:      { color: '#ef4444' },
+})
+
+const lm = StyleSheet.create({
+  overlay:   { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  card:      { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.neonBlue + '55', padding: SPACING.lg, alignItems: 'center', gap: SPACING.sm },
+  title:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 4 },
+  levelTxt:  { color: '#fff', fontFamily: FONT.orbitron, fontSize: 28, fontWeight: '900' },
+  divider:   { width: '100%', height: 1, backgroundColor: C.border },
+  rewardLabel: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, alignSelf: 'flex-start' },
+  itemRow:   { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, padding: SPACING.sm, gap: SPACING.sm, width: '100%' },
+  itemIcon:  { width: 40, height: 40, borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
+  itemInfo:  { flex: 1 },
+  itemName:  { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 2 },
+  itemDesc:  { color: C.muted, fontSize: 11, lineHeight: 15 },
+  noReward:  { color: C.dimmed, fontSize: 11, textAlign: 'center' },
+  btn:       { marginTop: SPACING.sm, borderWidth: 1, borderColor: C.neonBlue + '66', borderRadius: 4, paddingVertical: 10, paddingHorizontal: SPACING.xl },
+  btnTxt:    { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 })

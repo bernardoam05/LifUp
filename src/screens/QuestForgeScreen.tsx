@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal,
-  TextInput, Alert, KeyboardAvoidingView, Platform,
+  View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity, Modal,
+  TextInput, KeyboardAvoidingView, Platform,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { QuestDefinition, Quest, INITIAL_QUEST_DICTIONARY } from '../store/useGameStore'
 import CustomModal from '../components/CustomModal'
+import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal'
 import { C, FONT, SPACING } from '../theme'
 
 // ── Config ─────────────────────────────────────────────────────────────────────
@@ -21,6 +22,14 @@ const QUEST_TYPE_OPTS: { value: Quest['type']; label: string; icon: string; colo
 const UNIT_CHIPS = ['reps', 'min', 'km', 'páginas', 'séries', 'horas', 'litros']
 
 const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+
+// Popular MaterialCommunityIcons for the icon picker
+const ICON_GRID = [
+  'sword','sword-cross','shield','shield-cross','skull','fire','water','dumbbell','run','brain',
+  'book-open-variant','clock-outline','heart-pulse','lightning-bolt','star-four-points','target',
+  'trophy','weight-lifter','yoga','meditation','food-apple','cup-water','sleep','code-tags',
+  'briefcase','school','crosshairs-gps','ghost','dragon','flash',
+]
 
 const BLANK_DEF: Omit<QuestDefinition, 'id'> = {
   title:           '',
@@ -106,7 +115,9 @@ function FormModal({
   onSave:  (def: Omit<QuestDefinition, 'id'>) => void
   onClose: () => void
 }) {
-  const [form, setForm] = useState<FormState>(() => toFormState(initial))
+  const [form, setForm]           = useState<FormState>(() => toFormState(initial))
+  const [showIconPicker, setShowIconPicker] = useState(false)
+  const [alertCfg, setAlertCfg]   = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null)
   const isCore     = form.type === 'core'
   const isBoss     = form.type === 'boss'
   const isEditing  = !!initial   // type field locked when editing
@@ -124,7 +135,7 @@ function FormModal({
 
   function handleSave() {
     if (!form.title.trim()) {
-      Alert.alert('Título obrigatório', 'A diretiva precisa de um nome.')
+      setAlertCfg({ title: 'Título obrigatório', message: 'A diretiva precisa de um nome.' })
       return
     }
     const def: Omit<QuestDefinition, 'id'> = {
@@ -378,10 +389,13 @@ function FormModal({
                     placeholder="ex: Golem de Obsidiana"
                     placeholderTextColor="#334155"
                   />
-                  <Text style={fm.label}>
-                    ÍCONE{'  '}
-                    <Text style={fm.hint}>nome do MaterialCommunityIcons</Text>
-                  </Text>
+                  <View style={fm.iconLabelRow}>
+                    <Text style={fm.label}>ÍCONE</Text>
+                    <TouchableOpacity style={fm.iconPickerBtn} onPress={() => setShowIconPicker(true)}>
+                      <Icon name="grid" size={11} color={C.purple} />
+                      <Text style={fm.iconPickerBtnTxt}> VER GRELHA DE ÍCONES</Text>
+                    </TouchableOpacity>
+                  </View>
                   <TextInput
                     style={fm.input}
                     value={form.shadowIcon}
@@ -412,6 +426,52 @@ function FormModal({
           </View>
         </View>
       </KeyboardAvoidingView>
+
+      {/* ── Icon Picker Modal ── */}
+      {showIconPicker && (
+        <Modal transparent animationType="fade" onRequestClose={() => setShowIconPicker(false)}>
+          <View style={ip.overlay}>
+            <View style={ip.card}>
+              <View style={ip.header}>
+                <Icon name="grid" size={14} color={C.purple} />
+                <Text style={ip.headerTxt}> BIBLIOTECA DE ÍCONES</Text>
+                <TouchableOpacity onPress={() => setShowIconPicker(false)}>
+                  <Icon name="close" size={18} color={C.muted} />
+                </TouchableOpacity>
+              </View>
+              <Text style={ip.hint}>Toca para selecionar. O nome preenche automaticamente.</Text>
+              <FlatList
+                data={ICON_GRID}
+                keyExtractor={item => item}
+                numColumns={5}
+                contentContainerStyle={ip.grid}
+                renderItem={({ item: iconName }) => (
+                  <TouchableOpacity
+                    style={[ip.cell, form.shadowIcon === iconName && ip.cellActive]}
+                    onPress={() => { field('shadowIcon', iconName); setShowIconPicker(false) }}
+                    activeOpacity={0.7}
+                  >
+                    <Icon name={iconName} size={24} color={form.shadowIcon === iconName ? C.purple : C.muted} />
+                    <Text style={[ip.cellTxt, form.shadowIcon === iconName && { color: C.purple }]} numberOfLines={1}>
+                      {iconName}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </View>
+        </Modal>
+      )}
+
+      {alertCfg && (
+        <SystemAlertModal
+          title={alertCfg.title}
+          message={alertCfg.message}
+          buttons={alertCfg.buttons}
+          onClose={() => setAlertCfg(null)}
+        />
+      )}
+
     </Modal>
   )
 }
@@ -421,24 +481,13 @@ function FormModal({
 function DefRow({
   def,
   onEdit,
-  onDelete,
+  onDeleteRequest,
 }: {
-  def:      QuestDefinition
-  onEdit:   () => void
-  onDelete: () => void
+  def:             QuestDefinition
+  onEdit:          () => void
+  onDeleteRequest: () => void
 }) {
   const qtCfg = QUEST_TYPE_OPTS.find(o => o.value === def.questType) ?? QUEST_TYPE_OPTS[0]
-
-  function confirmDelete() {
-    Alert.alert(
-      'Apagar Diretiva',
-      `Remover "${def.title}" do Sistema? As missões de hoje não serão afetadas.`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Apagar', style: 'destructive', onPress: onDelete },
-      ]
-    )
-  }
 
   return (
     <View style={dr.row}>
@@ -460,7 +509,7 @@ function DefRow({
         <TouchableOpacity style={dr.editBtn} onPress={onEdit}>
           <Icon name="pencil-outline" size={14} color={C.neonBlue} />
         </TouchableOpacity>
-        <TouchableOpacity style={dr.deleteBtn} onPress={confirmDelete}>
+        <TouchableOpacity style={dr.deleteBtn} onPress={onDeleteRequest}>
           <Icon name="trash-can-outline" size={14} color={C.neonRed} />
         </TouchableOpacity>
       </View>
@@ -478,6 +527,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
   const regenerateDailyQuests = useGameStore(s => s.regenerateDailyQuests)
 
   const [formTarget,      setFormTarget]      = useState<QuestDefinition | null | 'new'>(null)
+  const [deleteTarget,    setDeleteTarget]    = useState<QuestDefinition | null>(null)
   const [showRegen,       setShowRegen]       = useState(false)
   const [showReset,       setShowReset]       = useState(false)
   const [regenResult,     setRegenResult]     = useState<{ success: boolean; reason?: string } | null>(null)
@@ -552,7 +602,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
             <DefRow
               key={def.id} def={def}
               onEdit={() => setFormTarget(def)}
-              onDelete={() => deleteQuestDefinition(def.id)}
+              onDeleteRequest={() => setDeleteTarget(def)}
             />
           ))}
 
@@ -572,7 +622,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
             <DefRow
               key={def.id} def={def}
               onEdit={() => setFormTarget(def)}
-              onDelete={() => deleteQuestDefinition(def.id)}
+              onDeleteRequest={() => setDeleteTarget(def)}
             />
           ))}
 
@@ -592,7 +642,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
             <DefRow
               key={def.id} def={def}
               onEdit={() => setFormTarget(def)}
-              onDelete={() => deleteQuestDefinition(def.id)}
+              onDeleteRequest={() => setDeleteTarget(def)}
             />
           ))}
 
@@ -659,6 +709,19 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
         onConfirm={confirmReset}
         onCancel={() => setShowReset(false)}
       />
+
+      {/* ── Delete directive confirm ──────────────────────────────────────── */}
+      {deleteTarget && (
+        <SystemAlertModal
+          title="Apagar Diretiva"
+          message={`Remover "${deleteTarget.title}" do Sistema? As missões de hoje não serão afetadas.`}
+          buttons={[
+            { text: 'Cancelar', style: 'cancel' },
+            { text: 'Apagar',   style: 'destructive', onPress: () => deleteQuestDefinition(deleteTarget.id) },
+          ]}
+          onClose={() => setDeleteTarget(null)}
+        />
+      )}
     </Modal>
   )
 }
@@ -766,6 +829,22 @@ const fm = StyleSheet.create({
   shadowPreviewTxt:  { color: C.purple, fontFamily: FONT.orbitron, fontSize: 11, flex: 1 },
   shadowRankBadge:   { borderWidth: 1, borderColor: C.purple + '55', borderRadius: 2, paddingHorizontal: 5, paddingVertical: 2 },
   shadowRankTxt:     { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+
+  iconLabelRow:    { flexDirection: 'row', alignItems: 'center', marginTop: SPACING.md, marginBottom: 8 },
+  iconPickerBtn:   { marginLeft: SPACING.sm, flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '18', borderWidth: 1, borderColor: C.purple + '55', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
+  iconPickerBtnTxt:{ color: C.purple, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+})
+
+const ip = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: '#000000', justifyContent: 'center', padding: SPACING.md },
+  card:    { backgroundColor: '#000000', borderRadius: 12, borderWidth: 1, borderColor: C.purple, maxHeight: '80%' },
+  header:  { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, borderBottomWidth: 1, borderBottomColor: C.border },
+  headerTxt: { flex: 1, color: C.purple, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+  hint:    { color: C.dimmed, fontSize: 11, paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm },
+  grid:    { padding: SPACING.sm, paddingBottom: SPACING.lg },
+  cell:    { flex: 1, alignItems: 'center', padding: SPACING.sm, borderRadius: 4, marginBottom: 4 },
+  cellActive: { backgroundColor: C.purple + '18' },
+  cellTxt: { color: C.dimmed, fontSize: 7, fontFamily: FONT.orbitron, marginTop: 3, textAlign: 'center' },
 })
 
 // Chip styles (shared component)

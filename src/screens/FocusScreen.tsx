@@ -1,13 +1,14 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, TextInput, Alert,
+  TouchableOpacity, TextInput, AppState, AppStateStatus,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { NativeModules } from 'react-native'
 import useGameStore from '../store/useGameStore'
 import CustomModal from '../components/CustomModal'
+import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal'
 import { C, FONT, SPACING } from '../theme'
 
 const { FocusBlocker } = NativeModules as {
@@ -39,12 +40,7 @@ const PRESET_APPS = [
   { pkg: 'com.reddit.frontpage',       label: 'Reddit',      icon: 'reddit'     },
 ]
 
-const DURATION_OPTS = [
-  { label: '30 min', ms: 30  * 60_000 },
-  { label: '1 h',    ms: 60  * 60_000 },
-  { label: '2 h',    ms: 120 * 60_000 },
-  { label: '3 h',    ms: 180 * 60_000 },
-]
+const HARDCORE_DURATION_MS = 24 * 60 * 60_000  // infinite = 24h ceiling; native stops when user breaks
 
 // ── App Selector — absolute full-screen overlay (no Modal) ────────────────────
 // Using StyleSheet.absoluteFill avoids the MIUI Modal rendering pipeline
@@ -275,16 +271,101 @@ export default function FocusScreen() {
   const focusActive        = useGameStore(s => s.system.focusModeActive)
   const hardcoreFocusMode  = useGameStore(s => s.system.hardcoreFocusMode)
   const hardcorePunished   = useGameStore(s => s.system.hardcorePunished)
+  const hasPenalty         = useGameStore(s => s.system.hasPenalty)
+  const penaltyBlockEnd    = useGameStore(s => s.system.penaltyBlockEnd)
   const triggerEvent       = useGameStore(s => s.triggerEvent)
+
+  const [nowMs, setNowMs] = useState(Date.now())
+  useEffect(() => {
+    if (!hasPenalty || penaltyBlockEnd <= 0) return
+    const iv = setInterval(() => setNowMs(Date.now()), 60_000)
+    return () => clearInterval(iv)
+  }, [hasPenalty, penaltyBlockEnd])
+
+  const penaltyRemainingMs  = hasPenalty && penaltyBlockEnd > 0 ? Math.max(penaltyBlockEnd - nowMs, 0) : 0
+  const penaltyRemainingH   = Math.ceil(penaltyRemainingMs / 3_600_000)
+
+  const lastFocusDuration = useGameStore(s => s.settings.lastFocusDuration)
+  const updateSettings    = useGameStore(s => s.updateSettings)
 
   const [hasUsage,       setHasUsage]       = useState(false)
   const [hasOverlay,     setHasOverlay]     = useState(false)
-  const [durIdx,         setDurIdx]         = useState(1)
+  const [hours,          setHours]          = useState(() => lastFocusDuration?.hours   ?? 0)
+  const [minutes,        setMinutes]        = useState(() => lastFocusDuration?.minutes ?? 25)
+  const [editingField,   setEditingField]   = useState<'hours' | 'minutes' | null>(null)
+  const [inputValue,     setInputValue]     = useState('')
   const [hardcoreToggle, setHardcoreToggle] = useState(false)
   const [showAppOverlay, setShowAppOverlay] = useState(false)
   const [showBreakModal, setShowBreakModal] = useState(false)
+  const [alertCfg, setAlertCfg] = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null)
+  const appStateRef   = useRef(AppState.currentState)
+  const hoursInputRef = useRef<TextInput>(null)
+  const minsInputRef  = useRef<TextInput>(null)
+
+  function openInput(field: 'hours' | 'minutes') {
+    setEditingField(field)
+    setInputValue(field === 'hours' ? String(hours) : String(minutes))
+    setTimeout(() => {
+      (field === 'hours' ? hoursInputRef : minsInputRef).current?.focus()
+    }, 50)
+  }
+
+  function applyInput(field: 'hours' | 'minutes') {
+    setEditingField(null)
+    const raw = parseInt(inputValue, 10)
+    if (isNaN(raw)) return
+    if (field === 'hours') {
+      const h = Math.min(Math.max(raw, 0), 24)
+      setHours(h)
+      if (h === 24) setMinutes(0)
+    } else {
+      const m = Math.min(Math.max(raw, 0), hours === 24 ? 0 : 59)
+      setMinutes(m)
+    }
+  }
+
+  function incrementHours() {
+    setHours(h => {
+      const next = h >= 24 ? 0 : h + 1
+      if (next === 24) setMinutes(0)
+      return next
+    })
+  }
+  function decrementHours() {
+    setHours(h => {
+      const next = h <= 0 ? 24 : h - 1
+      if (next === 24) setMinutes(0)
+      return next
+    })
+  }
+  function incrementMinutes() {
+    if (hours === 24) return
+    setMinutes(m => m >= 55 ? 0 : m + 5)
+  }
+  function decrementMinutes() {
+    if (hours === 24) return
+    setMinutes(m => m <= 0 ? 55 : m - 5)
+  }
 
   useEffect(() => { checkPerms() }, [])
+
+  // Fix: detect when native focus ends naturally (AppState becomes active again)
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
+      if (appStateRef.current.match(/inactive|background/) && next === 'active') {
+        if (focusActive && FocusBlocker) {
+          FocusBlocker.isFocusModeActive().then(active => {
+            if (!active) {
+              setFocusActive(false)
+              setHardcoreMode(false)
+            }
+          }).catch(() => {})
+        }
+      }
+      appStateRef.current = next
+    })
+    return () => sub.remove()
+  }, [focusActive, setFocusActive, setHardcoreMode])
 
   useEffect(() => {
     if (!focusActive || !FocusBlocker) return
@@ -303,24 +384,41 @@ export default function FocusScreen() {
 
   async function startFocus() {
     if (!hasUsage) {
-      Alert.alert('Permissão necessária', 'Ativa o acesso a estatísticas de uso nas Definições.', [
-        { text: 'Abrir',    onPress: () => FocusBlocker.requestUsagePermission().then(checkPerms) },
-        { text: 'Cancelar', style: 'cancel' },
-      ])
+      setAlertCfg({
+        title: 'Permissão necessária',
+        message: 'Ativa o acesso a estatísticas de uso nas Definições.',
+        buttons: [
+          { text: 'Abrir',    onPress: () => FocusBlocker.requestUsagePermission().then(checkPerms) },
+          { text: 'Cancelar', style: 'cancel' },
+        ],
+      })
       return
     }
     if (!hasOverlay) {
-      Alert.alert('Permissão necessária', 'Permite que esta app apareça sobre outras apps.', [
-        { text: 'Abrir',    onPress: () => FocusBlocker.requestOverlayPermission().then(checkPerms) },
-        { text: 'Cancelar', style: 'cancel' },
-      ])
+      setAlertCfg({
+        title: 'Permissão necessária',
+        message: 'Permite que esta app apareça sobre outras apps.',
+        buttons: [
+          { text: 'Abrir',    onPress: () => FocusBlocker.requestOverlayPermission().then(checkPerms) },
+          { text: 'Cancelar', style: 'cancel' },
+        ],
+      })
       return
     }
     if (blockedApps.length === 0) {
-      Alert.alert('Nenhuma app selecionada', 'Seleciona pelo menos uma app para bloquear.')
+      setAlertCfg({ title: 'Nenhuma app selecionada', message: 'Seleciona pelo menos uma app para bloquear.' })
       return
     }
-    const dur = DURATION_OPTS[durIdx].ms
+    const dur = hardcoreToggle || hardcorePunished
+      ? HARDCORE_DURATION_MS
+      : (hours * 60 + minutes) * 60_000
+    if (!hardcoreToggle && !hardcorePunished && dur < 60_000) {
+      setAlertCfg({ title: 'Duração inválida', message: 'Define pelo menos 1 minuto de duração.' })
+      return
+    }
+    if (!hardcoreToggle && !hardcorePunished) {
+      updateSettings({ lastFocusDuration: { hours, minutes } })
+    }
     await FocusBlocker.startFocusMode(blockedApps, dur)
     setFocusActive(true)
     setHardcoreMode(hardcoreToggle)
@@ -375,6 +473,19 @@ export default function FocusScreen() {
           </TouchableOpacity>
         )}
 
+        {/* Penalty banner */}
+        {hasPenalty && penaltyRemainingMs > 0 && (
+          <View style={s.penaltyBanner}>
+            <Icon name="skull-crossbones" size={14} color={C.neonRed} />
+            <View style={{ marginLeft: 8 }}>
+              <Text style={s.penaltyBannerTxt}>
+                PENITÊNCIA ATIVA: {penaltyRemainingH} {penaltyRemainingH === 1 ? 'HORA' : 'HORAS'} RESTANTES
+              </Text>
+              <Text style={s.penaltyBannerSub}>Completa sessões Focus para reduzir o bloqueio</Text>
+            </View>
+          </View>
+        )}
+
         {/* Active banner */}
         {focusActive && (
           <View style={[s.activeBanner, hardcoreFocusMode && s.activeBannerHardcore]}>
@@ -411,21 +522,78 @@ export default function FocusScreen() {
           </View>
         )}
 
-        {/* Duration selector */}
-        <Text style={s.section}>DURAÇÃO</Text>
-        <View style={s.durRow}>
-          {DURATION_OPTS.map((d, i) => (
-            <TouchableOpacity
-              key={i}
-              style={[s.durBtn, i === durIdx && s.durBtnActive]}
-              onPress={() => setDurIdx(i)}
-              disabled={focusActive}
-            >
-              <Icon name="timer-outline" size={12} color={i === durIdx ? C.neonBlue : C.muted} />
-              <Text style={[s.durTxt, i === durIdx && s.durTxtActive]}> {d.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {/* Duration selector — hidden in hardcore mode */}
+        {!hardcoreToggle && !hardcorePunished && (
+          <>
+            <Text style={s.section}>DURAÇÃO</Text>
+            <View style={s.durRow}>
+              {/* Hours */}
+              <View style={s.durPicker}>
+                <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && incrementHours()} disabled={focusActive}>
+                  <Text style={s.durPickerArrow}>▲</Text>
+                </TouchableOpacity>
+                {editingField === 'hours' ? (
+                  <TextInput
+                    ref={hoursInputRef}
+                    style={s.durPickerInput}
+                    value={inputValue}
+                    onChangeText={v => setInputValue(v.replace(/\D/g, '').slice(0, 2))}
+                    keyboardType="number-pad"
+                    maxLength={2}
+                    selectTextOnFocus
+                    onBlur={() => applyInput('hours')}
+                    onSubmitEditing={() => applyInput('hours')}
+                  />
+                ) : (
+                  <TouchableOpacity disabled={focusActive} onPress={() => !focusActive && openInput('hours')}>
+                    <Text style={s.durPickerVal}>{String(hours).padStart(2, '0')}</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && decrementHours()} disabled={focusActive}>
+                  <Text style={s.durPickerArrow}>▼</Text>
+                </TouchableOpacity>
+                <Text style={s.durPickerLabel}>h</Text>
+              </View>
+
+              <Text style={s.durSep}>:</Text>
+
+              {/* Minutes */}
+              <View style={s.durPicker}>
+                <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && incrementMinutes()} disabled={focusActive}>
+                  <Text style={s.durPickerArrow}>▲</Text>
+                </TouchableOpacity>
+                {editingField === 'minutes' ? (
+                  <TextInput
+                    ref={minsInputRef}
+                    style={s.durPickerInput}
+                    value={inputValue}
+                    onChangeText={v => setInputValue(v.replace(/\D/g, '').slice(0, 2))}
+                    keyboardType="number-pad"
+                    maxLength={2}
+                    selectTextOnFocus
+                    onBlur={() => applyInput('minutes')}
+                    onSubmitEditing={() => applyInput('minutes')}
+                  />
+                ) : (
+                  <TouchableOpacity disabled={focusActive || hours === 24} onPress={() => !focusActive && hours !== 24 && openInput('minutes')}>
+                    <Text style={s.durPickerVal}>{String(minutes).padStart(2, '0')}</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && decrementMinutes()} disabled={focusActive}>
+                  <Text style={s.durPickerArrow}>▼</Text>
+                </TouchableOpacity>
+                <Text style={s.durPickerLabel}>m</Text>
+              </View>
+
+              <View style={s.durTotal}>
+                <Icon name="timer-outline" size={13} color={C.neonBlue} />
+                <Text style={s.durTotalTxt}>
+                  {' '}{hours > 0 ? `${hours}h ` : ''}{minutes}min
+                </Text>
+              </View>
+            </View>
+          </>
+        )}
 
         {/* Hardcore Mode toggle — inline, below duration */}
         {!focusActive && (
@@ -527,6 +695,15 @@ export default function FocusScreen() {
         }}
       />
 
+      {alertCfg && (
+        <SystemAlertModal
+          title={alertCfg.title}
+          message={alertCfg.message}
+          buttons={alertCfg.buttons}
+          onClose={() => setAlertCfg(null)}
+        />
+      )}
+
     </SafeAreaView>
   )
 }
@@ -586,11 +763,20 @@ const s = StyleSheet.create({
   punishBanner:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1a0505', borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   punishBannerTxt:     { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 
-  durRow:       { flexDirection: 'row', gap: SPACING.sm, marginBottom: 4 },
-  durBtn:       { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingVertical: 10 },
-  durBtnActive: { borderColor: C.neonBlue, backgroundColor: C.neonBlue + '15' },
-  durTxt:       { color: C.muted, fontFamily: FONT.orbitron, fontSize: 8 },
-  durTxtActive: { color: C.neonBlue },
+  penaltyBanner:    { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1a0505', borderWidth: 1, borderColor: C.neonRed, borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  penaltyBannerTxt: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1, fontWeight: '900' },
+  penaltyBannerSub: { color: C.neonRed + 'aa', fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1, marginTop: 2 },
+
+  durRow:        { flexDirection: 'row', alignItems: 'center', gap: SPACING.md, marginBottom: 4, backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 4, padding: SPACING.md },
+  durPicker:     { alignItems: 'center', gap: 4 },
+  durPickerBtn:  { paddingHorizontal: SPACING.md, paddingVertical: 4 },
+  durPickerArrow:{ color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11 },
+  durPickerVal:   { color: '#fff', fontFamily: FONT.orbitron, fontSize: 32, fontWeight: '900', letterSpacing: 2, minWidth: 54, textAlign: 'center' },
+  durPickerInput: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 32, fontWeight: '900', letterSpacing: 2, minWidth: 54, textAlign: 'center', borderBottomWidth: 1, borderBottomColor: C.neonBlue },
+  durPickerLabel:{ color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10 },
+  durSep:        { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 28, fontWeight: '900', marginBottom: 12 },
+  durTotal:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
+  durTotalTxt:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 1 },
 
   appSelectorBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.border, gap: SPACING.sm, marginBottom: 4 },
   appSelectorTxt: { color: C.muted, fontSize: 13 },

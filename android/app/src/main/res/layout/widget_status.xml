@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/widget_bg"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/status_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="STATUST DO MONARCA"
+        android:textColor="@color/neon_blue"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/status_rank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/status_header"
+        android:layout_marginTop="8dp"
+        android:text="RANK: E"
+        android:textColor="@color/neon_gold"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/status_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/status_rank"
+        android:text="NÍVEL: 1"
+        android:textColor="@color/text_main"
+        android:textSize="12sp" />
+
+    <ProgressBar
+        android:id="@+id/status_xp_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_below="@id/status_level"
+        android:layout_marginTop="8dp"
+        android:progress="0"
+        android:max="100" />
+
+    <TextView
+        android:id="@+id/status_xp_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/status_xp_progress"
+        android:layout_marginTop="2dp"
+        android:text="XP: 0 / 100"
+        android:textColor="@color/text_dim"
+        android:textSize="8sp" />
+
+</RelativeLayout>

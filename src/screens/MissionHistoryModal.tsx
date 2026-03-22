@@ -1,0 +1,139 @@
+import React from 'react'
+import { View, Text, StyleSheet, Modal, ScrollView, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import useGameStore from '../store/useGameStore'
+import { C, FONT, SPACING } from '../theme'
+
+const QUEST_TYPE_ICON: Record<string, string> = {
+  training:  'arm-flex',
+  knowledge: 'book-open-variant',
+  focus:     'timer-sand',
+  gps:       'run-fast',
+}
+const QUEST_TYPE_COLOR: Record<string, string> = {
+  training:  '#ef4444',
+  knowledge: C.neonBlue,
+  focus:     '#a855f7',
+  gps:       '#22c55e',
+}
+
+function formatSeconds(secs: number): string {
+  const m = Math.floor(secs / 60)
+  const s = secs % 60
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
+// ── MissionHistoryModal ────────────────────────────────────────────────────────
+
+export default function MissionHistoryModal({ onClose }: { onClose: () => void }) {
+  const questRecords    = useGameStore(s => s.questRecords)
+  const questCompletions = useGameStore(s => s.questCompletions)
+  const questDictionary  = useGameStore(s => s.questDictionary)
+
+  // Build display entries from dictionary + records/completions
+  const entries = questDictionary
+    .filter(def => def.type !== 'boss')
+    .map(def => ({
+      id:          def.id,
+      label:       def.title,
+      questType:   def.questType,
+      completions: questCompletions[def.id] ?? 0,
+      bestTime:    questRecords[def.id]?.bestTime ?? 0,
+      lastNote:    questRecords[def.id]?.lastNote ?? '',
+    }))
+    .filter(e => e.completions > 0)
+    .sort((a, b) => b.completions - a.completions)
+
+  return (
+    <Modal visible animationType="slide" onRequestClose={onClose}>
+      <SafeAreaView style={s.safeArea} edges={['top', 'bottom']}>
+
+        <View style={s.header}>
+          <Icon name="database-outline" size={14} color={C.neonBlue} />
+          <Text style={s.headerTxt}> [ REGISTOS DO SISTEMA ]</Text>
+          <TouchableOpacity onPress={onClose} style={s.closeBtn}>
+            <Icon name="close" size={20} color={C.muted} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={s.subHeader}>
+          <Icon name="information-outline" size={11} color={C.dimmed} />
+          <Text style={s.subHeaderTxt}>
+            {' '}Missões completadas pelo menos uma vez · Ordenadas por frequência
+          </Text>
+        </View>
+
+        {entries.length === 0 ? (
+          <View style={s.empty}>
+            <Icon name="ghost" size={40} color={C.border} />
+            <Text style={s.emptyTxt}>Nenhum registo ainda.</Text>
+            <Text style={s.emptySub}>Completa missões para ver o teu historial aqui.</Text>
+          </View>
+        ) : (
+          <ScrollView contentContainerStyle={s.list}>
+            {entries.map(e => {
+              const icon  = QUEST_TYPE_ICON[e.questType]  ?? 'help-circle'
+              const color = QUEST_TYPE_COLOR[e.questType] ?? C.muted
+              return (
+                <View key={e.id} style={s.row}>
+                  <View style={[s.iconWrap, { backgroundColor: color + '18' }]}>
+                    <Icon name={icon} size={18} color={color} />
+                  </View>
+                  <View style={s.info}>
+                    <Text style={s.label} numberOfLines={1}>{e.label}</Text>
+                    <View style={s.metaRow}>
+                      <Icon name="check-circle-outline" size={10} color={C.dimmed} />
+                      <Text style={s.meta}> {e.completions}×</Text>
+                      {e.bestTime > 0 && (
+                        <>
+                          <Icon name="trophy-outline" size={10} color={C.gold} style={{ marginLeft: 10 }} />
+                          <Text style={[s.meta, { color: C.gold }]}> {formatSeconds(e.bestTime)}</Text>
+                        </>
+                      )}
+                    </View>
+                    {e.lastNote ? (
+                      <Text style={s.note} numberOfLines={1}>"{e.lastNote}"</Text>
+                    ) : null}
+                  </View>
+                  <View style={[s.countBadge, { borderColor: color + '55' }]}>
+                    <Text style={[s.countTxt, { color }]}>{e.completions}</Text>
+                  </View>
+                </View>
+              )
+            })}
+          </ScrollView>
+        )}
+
+      </SafeAreaView>
+    </Modal>
+  )
+}
+
+const s = StyleSheet.create({
+  safeArea:   { flex: 1, backgroundColor: C.bg },
+
+  header:     { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: C.border },
+  headerTxt:  { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 3 },
+  closeBtn:   { padding: 6 },
+
+  subHeader:    { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, backgroundColor: C.panel, borderBottomWidth: 1, borderBottomColor: C.border },
+  subHeaderTxt: { flex: 1, color: C.dimmed, fontSize: 11, lineHeight: 16 },
+
+  list: { padding: SPACING.md, paddingBottom: 40 },
+
+  row:      { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
+  iconWrap: { width: 36, height: 36, borderRadius: 4, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  info:     { flex: 1 },
+  label:    { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  metaRow:  { flexDirection: 'row', alignItems: 'center' },
+  meta:     { color: C.dimmed, fontSize: 11 },
+  note:     { color: C.dimmed, fontSize: 10, fontStyle: 'italic', marginTop: 3 },
+
+  countBadge: { width: 36, height: 36, borderRadius: 4, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  countTxt:   { fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '900' },
+
+  empty:    { flex: 1, alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, padding: SPACING.xl },
+  emptyTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 1 },
+  emptySub: { color: C.dimmed, fontSize: 12 },
+})

@@ -4,7 +4,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { NavigationContainer, DarkTheme } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { getRank, xpForLevel } from './src/store/useGameStore'
+import useGameStore, { getRank, xpForLevel, CLASS_REQUIREMENTS } from './src/store/useGameStore'
 import { setupNotifications, requestNotificationPermission } from './src/utils/notifications'
 import { ACHIEVEMENTS_MAP } from './src/data/achievements'
 
@@ -121,11 +121,128 @@ function PenaltyModal({ visible, onDismiss }: { visible: boolean; onDismiss: () 
   )
 }
 
+// ── Rank Requirements Modal (HUD) ─────────────────────────────────────────────
+
+function HudRankModal({
+  level, totalCompleted, bossesDefeated, questsByRank, onClose,
+}: {
+  level:           number
+  totalCompleted:  number
+  bossesDefeated:  number
+  questsByRank:    Partial<Record<string, number>>
+  onClose:         () => void
+}) {
+  const currentRank = getRank(level, totalCompleted, bossesDefeated, questsByRank)
+  const nextRank    = CLASS_REQUIREMENTS.find(r => {
+    if (level          < r.minLevel)    return true
+    if (totalCompleted < r.minMissions) return true
+    if (bossesDefeated < r.minBosses)  return true
+    if (r.minRankMissions > 0 && r.prevRank) {
+      if ((questsByRank[r.prevRank] ?? 0) < r.minRankMissions) return true
+    }
+    return false
+  })
+  return (
+    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
+      <View style={hrm.overlay}>
+        <View style={[hrm.card, { borderColor: currentRank.color + '55' }]}>
+          <View style={hrm.headerRow}>
+            <Icon name="shield-star-outline" size={12} color={currentRank.color} />
+            <Text style={[hrm.headerTxt, { color: currentRank.color }]}> [ CLASSIFICAÇÃO DO CAÇADOR ]</Text>
+            <TouchableOpacity onPress={onClose} style={hrm.closeBtn}>
+              <Icon name="close" size={16} color="#64748b" />
+            </TouchableOpacity>
+          </View>
+          <View style={hrm.divider} />
+          {CLASS_REQUIREMENTS.map(r => {
+            const isCurrent  = r.rank === currentRank.rank
+            const lvlOk      = level          >= r.minLevel
+            const misOk      = totalCompleted  >= r.minMissions
+            const bossOk     = bossesDefeated  >= r.minBosses
+            const rankMisOk  = r.minRankMissions === 0 || !r.prevRank
+              || (questsByRank[r.prevRank] ?? 0) >= r.minRankMissions
+            const met = lvlOk && misOk && bossOk && rankMisOk
+            const prevRankCount = r.prevRank ? (questsByRank[r.prevRank] ?? 0) : 0
+            return (
+              <View key={r.rank} style={[hrm.row, isCurrent && { backgroundColor: r.color + '15' }]}>
+                <View style={[hrm.badge, { borderColor: r.color + (isCurrent ? 'cc' : '55') }]}>
+                  <Text style={[hrm.badgeTxt, { color: r.color }]}>{r.rank}</Text>
+                </View>
+                <View style={hrm.rowInfo}>
+                  <Text style={[hrm.rowLabel, { color: isCurrent ? r.color : (met ? '#e2e8f0' : '#64748b') }]}>{r.label}</Text>
+                  {r.minMissions > 0 ? (
+                    <>
+                      <View style={hrm.reqRow}>
+                        <Text style={[hrm.reqLabel, lvlOk && hrm.reqMet]}>Nível {r.minLevel}</Text>
+                        <Text style={[hrm.reqVal, lvlOk ? hrm.reqMet : hrm.reqFail]}>
+                          {Math.min(level, r.minLevel)}/{r.minLevel}
+                        </Text>
+                      </View>
+                      <View style={hrm.reqRow}>
+                        <Text style={[hrm.reqLabel, misOk && hrm.reqMet]}>Missões totais</Text>
+                        <Text style={[hrm.reqVal, misOk ? hrm.reqMet : hrm.reqFail]}>
+                          {Math.min(totalCompleted, r.minMissions)}/{r.minMissions}
+                        </Text>
+                      </View>
+                      <View style={hrm.reqRow}>
+                        <Text style={[hrm.reqLabel, bossOk && hrm.reqMet]}>Bosses</Text>
+                        <Text style={[hrm.reqVal, bossOk ? hrm.reqMet : hrm.reqFail]}>
+                          {Math.min(bossesDefeated, r.minBosses)}/{r.minBosses}
+                        </Text>
+                      </View>
+                      {r.minRankMissions > 0 && r.prevRank && (
+                        <View style={hrm.reqRow}>
+                          <Text style={[hrm.reqLabel, rankMisOk && hrm.reqMet]}>
+                            Missões {r.prevRank}-Rank
+                          </Text>
+                          <Text style={[hrm.reqVal, rankMisOk ? hrm.reqMet : hrm.reqFail]}>
+                            {Math.min(prevRankCount, r.minRankMissions)}/{r.minRankMissions}
+                          </Text>
+                        </View>
+                      )}
+                    </>
+                  ) : (
+                    <Text style={hrm.rowSub}>Rank inicial</Text>
+                  )}
+                </View>
+                {isCurrent && (
+                  <View style={[hrm.currentTag, { borderColor: r.color + '55' }]}>
+                    <Text style={[hrm.currentTagTxt, { color: r.color }]}>ATUAL</Text>
+                  </View>
+                )}
+                {!isCurrent && met && <Icon name="check-circle" size={14} color={r.color + 'aa'} />}
+              </View>
+            )
+          })}
+          {nextRank && (
+            <View style={hrm.nextSection}>
+              <Icon name="arrow-up-bold" size={11} color={nextRank.color} />
+              <View style={{ flex: 1, marginLeft: 4 }}>
+                <Text style={[hrm.nextTxt, { color: nextRank.color }]}>Próximo: {nextRank.label}</Text>
+                <Text style={[hrm.rowSub, { marginTop: 2 }]}>
+                  Nível {nextRank.minLevel} ({Math.max(nextRank.minLevel - level, 0)} em falta){' · '}
+                  Missões {Math.min(totalCompleted, nextRank.minMissions)}/{nextRank.minMissions}{' · '}
+                  Bosses {Math.min(bossesDefeated, nextRank.minBosses)}/{nextRank.minBosses}
+                  {nextRank.minRankMissions > 0 && nextRank.prevRank ? (
+                    `\nMissões ${nextRank.prevRank}-Rank: ${Math.min(questsByRank[nextRank.prevRank] ?? 0, nextRank.minRankMissions)}/${nextRank.minRankMissions}`
+                  ) : ''}
+                </Text>
+              </View>
+            </View>
+          )}
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
 // ── HUD ────────────────────────────────────────────────────────────────────────
 
-function SystemHUD({ onSettings }: { onSettings: () => void }) {
+function SystemHUD({ onSettings, onRankPress }: { onSettings: () => void; onRankPress: () => void }) {
   const player   = useGameStore(s => s.player)
-  const rank     = getRank(player.level)
+  const stats    = useGameStore(s => s.statistics)
+  const bosses   = useGameStore(s => s.system.bossesDefeated)
+  const rank     = getRank(player.level, stats.totalCompleted, bosses, stats.questsByRank)
   const xpNeeded = xpForLevel(player.level)
   const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100)
   const focusOn  = useGameStore(s => s.system.focusModeActive)
@@ -133,9 +250,9 @@ function SystemHUD({ onSettings }: { onSettings: () => void }) {
   return (
     <View style={hud.container}>
       <View style={hud.row}>
-        <View style={[hud.badge, { borderColor: rank.color }]}>
+        <TouchableOpacity style={[hud.badge, { borderColor: rank.color }]} onPress={onRankPress} activeOpacity={0.75}>
           <Text style={[hud.badgeText, { color: rank.color }]}>{rank.rank}</Text>
-        </View>
+        </TouchableOpacity>
         <View style={hud.info}>
           <View style={hud.nameRow}>
             <Text style={hud.name} numberOfLines={1}>{player.name}</Text>
@@ -197,6 +314,10 @@ export default function App() {
   const dismissAchievement  = useGameStore(s => s.dismissAchievement)
 
   const [showSettings, setShowSettings] = useState(false)
+  const [showRankInfo, setShowRankInfo] = useState(false)
+  const statistics   = useGameStore(s => s.statistics)
+  const bossesDefeated = useGameStore(s => s.system.bossesDefeated)
+  const playerLevel  = useGameStore(s => s.player.level)
 
   useEffect(() => {
     bootSystem()
@@ -211,7 +332,7 @@ export default function App() {
       <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['top']}>
         <StatusBar barStyle="light-content" backgroundColor={C.bg} />
 
-        <SystemHUD onSettings={() => setShowSettings(true)} />
+        <SystemHUD onSettings={() => setShowSettings(true)} onRankPress={() => setShowRankInfo(true)} />
 
         {hasPenalty && (
           <View style={styles.penalBanner}>
@@ -272,6 +393,17 @@ export default function App() {
         {/* Achievement unlock modal — shows one at a time from the queue */}
         {newAchievementIds.length > 0 && !penaltyTriggered && (
           <AchievementModal achievementId={newAchievementIds[0]} onDismiss={dismissAchievement} />
+        )}
+
+        {/* Rank requirements modal */}
+        {showRankInfo && (
+          <HudRankModal
+            level={playerLevel}
+            totalCompleted={statistics.totalCompleted}
+            bossesDefeated={bossesDefeated}
+            questsByRank={statistics.questsByRank}
+            onClose={() => setShowRankInfo(false)}
+          />
         )}
 
         {/* Settings screen */}
@@ -346,6 +478,30 @@ const pm = StyleSheet.create({
   message:  { color: '#94a3b8', fontSize: 13, textAlign: 'center', lineHeight: 22, marginBottom: SPACING.xl },
   btn:      { borderWidth: 1, borderRadius: 4, paddingVertical: 14, paddingHorizontal: SPACING.xl },
   btnTxt:   { fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
+})
+
+const hrm = StyleSheet.create({
+  overlay:      { flex: 1, backgroundColor: '#000000dd', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  card:         { width: '100%', backgroundColor: '#0a0f1a', borderRadius: 4, borderWidth: 1, padding: 16 },
+  headerRow:    { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  headerTxt:    { flex: 1, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  closeBtn:     { padding: 4 },
+  divider:      { height: 1, backgroundColor: '#1e293b', marginBottom: 12 },
+  row:          { flexDirection: 'row', alignItems: 'center', borderRadius: 4, paddingVertical: 8, paddingHorizontal: 8, marginBottom: 6, gap: 10 },
+  badge:        { width: 30, height: 30, borderRadius: 3, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
+  badgeTxt:     { fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900' },
+  rowInfo:      { flex: 1 },
+  rowLabel:     { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+  rowSub:       { color: '#475569', fontSize: 10, marginTop: 1 },
+  currentTag:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
+  currentTagTxt:{ fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
+  nextSection:  { flexDirection: 'row', alignItems: 'flex-start', marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#1e293b' },
+  nextTxt:      { fontSize: 11, fontFamily: FONT.orbitron },
+  reqRow:       { flexDirection: 'row', alignItems: 'center', marginTop: 3, gap: 4 },
+  reqLabel:     { flex: 1, color: '#475569', fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 0.5 },
+  reqVal:       { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
+  reqMet:       { color: '#22c55e' },
+  reqFail:      { color: '#ef4444' },
 })
 
 const am = StyleSheet.create({

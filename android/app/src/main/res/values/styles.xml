@@ -6,4 +6,20 @@
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
     </style>
 
+    <!--
+        Splash Screen Theme — applied to MainActivity at launch.
+        Sets a native window background (black + neon circle) that appears
+        instantly, before any React Native JS is loaded.
+        MainActivity.kt switches back to AppTheme before super.onCreate()
+        so the splash disappears seamlessly when RN renders its first frame.
+    -->
+    <style name="SplashTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <!-- Force opaque — prevents any translucent white flash -->
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+
 </resources>

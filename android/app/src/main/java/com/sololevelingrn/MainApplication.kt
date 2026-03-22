@@ -11,7 +11,7 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
 import com.sololevelingrn.focusblocker.FocusBlockerPackage
-import com.sololevelingrn.WidgetStoragePackage
+import com.sololevelingrn.SharedStoragePackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -20,7 +20,7 @@ class MainApplication : Application(), ReactApplication {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.apply {
               add(FocusBlockerPackage())
-              add(WidgetStoragePackage())
+              add(SharedStoragePackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

@@ -1,11 +1,13 @@
 import React from 'react'
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Modal, Switch,
+  TouchableOpacity, Modal, Switch, TextInput
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import Clipboard from '@react-native-clipboard/clipboard'
 import useGameStore, { PunishmentIntensity, MissionDifficulty } from '../store/useGameStore'
+import SystemAlertModal from '../components/SystemAlertModal'
 import { C, FONT, SPACING } from '../theme'
 
 // ── Difficulty option config ────────────────────────────────────────────────────
@@ -111,6 +113,25 @@ const INTENSITY_OPTIONS: IntensityOption[] = [
   },
 ]
 
+// ── Base64 polyfills ────────────────────────────────────────────────────────
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+function btoa(input: string) {
+  let str = input, output = ''
+  for (let block = 0, charCode, i = 0, map = chars; str.charAt(i | 0) || (map = '=', i % 1); output += map.charAt(63 & block >> 8 - i % 1 * 8)) {
+    charCode = str.charCodeAt(i += 3/4)
+    if (charCode > 0xFF) return input // fallback
+    block = block << 8 | charCode
+  }
+  return output
+}
+function atob(input: string) {
+  let str = input.replace(/=+$/, ''), output = ''
+  for (let bc = 0, bs = 0, buffer, i = 0; buffer = str.charAt(i++); ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer, bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0) {
+    buffer = chars.indexOf(buffer)
+  }
+  return output
+}
+
 // ── Settings Screen ────────────────────────────────────────────────────────────
 
 export default function SettingsScreen({ onClose }: { onClose: () => void }) {
@@ -119,6 +140,44 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
 
   const current = INTENSITY_OPTIONS.find(o => o.value === settings.punishmentIntensity)
     ?? INTENSITY_OPTIONS[1]
+
+  const [alertConfig, setAlertConfig] = React.useState<{ title: string; message: string } | null>(null)
+  const [importVisible, setImportVisible] = React.useState(false)
+  const [importText, setImportText] = React.useState('')
+
+  const handleExport = () => {
+    try {
+      const state = useGameStore.getState()
+      const payload = {
+        player: state.player,
+        system: state.system,
+        statistics: state.statistics,
+        unlockedAchievements: state.unlockedAchievements,
+        achievementProgress: state.achievementProgress,
+        customShadows: state.customShadows,
+      }
+      const json = JSON.stringify(payload)
+      const b64 = btoa(json)
+      Clipboard.setString(b64)
+      setAlertConfig({ title: 'BACKUP CONCLUÍDO', message: 'Código de Backup copiado para a área de transferência!' })
+    } catch (err) {
+      setAlertConfig({ title: 'ERRO', message: 'Falha ao exportar backup.' })
+    }
+  }
+
+  const handleImport = () => {
+    try {
+      if (!importText.trim()) return
+      const json = atob(importText.trim())
+      const data = JSON.parse(json)
+      useGameStore.getState().restoreBackup(data)
+      setImportVisible(false)
+      setImportText('')
+      setAlertConfig({ title: 'RESTAURO CONCLUÍDO', message: 'Alma importada com sucesso. (Podes precisar de reiniciar o painel se houver bugs visuais).' })
+    } catch (err) {
+      setAlertConfig({ title: 'ERRO', message: 'Código inválido ou corrompido.' })
+    }
+  }
 
   return (
     <Modal visible animationType="slide" onRequestClose={onClose}>
@@ -276,6 +335,60 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
             )
           })}
 
+          {/* ── SECTION: Rest Day ── */}
+          <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
+            <View style={[s.sectionDot, { backgroundColor: '#22c55e' }]} />
+            <Text style={s.sectionTitle}>REPOUSO DO MONARCA</Text>
+          </View>
+
+          <View style={s.restDayInfo}>
+            <Icon name="information-outline" size={12} color={C.muted} />
+            <Text style={s.restDayInfoTxt}>
+              {' '}Ativa para declarar hoje como Dia de Descanso. As missões ficam com opacidade reduzida e não haverá punições no reset de amanhã. Desativa automaticamente ao fim do dia.
+            </Text>
+          </View>
+
+          <View style={[s.row, { borderBottomWidth: 0, borderRadius: 4, borderWidth: 1, borderColor: settings.restDay ? '#22c55e44' : C.border, backgroundColor: settings.restDay ? '#22c55e0a' : C.panel }]}>
+            <Icon name="bed" size={18} color={settings.restDay ? '#22c55e' : C.dimmed} />
+            <View style={s.rowInfo}>
+              <Text style={[s.rowLabel, { color: settings.restDay ? '#22c55e' : '#e2e8f0' }]}>Dia de Descanso</Text>
+              <Text style={s.rowSub}>
+                {settings.restDay ? '[ REPOUSO ATIVO — sem punições hoje ]' : 'Inativo — missões normais'}
+              </Text>
+            </View>
+            <Switch
+              value={settings.restDay}
+              onValueChange={v => updateSettings({ restDay: v })}
+              trackColor={{ false: C.border, true: '#22c55e55' }}
+              thumbColor={settings.restDay ? '#22c55e' : C.dimmed}
+            />
+          </View>
+
+          {/* ── SECTION: Base de Dados do Sistema ── */}
+          <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
+            <View style={[s.sectionDot, { backgroundColor: C.gold }]} />
+            <Text style={s.sectionTitle}>BASE DE DADOS DO SISTEMA</Text>
+          </View>
+
+          <View style={s.intensityInfo}>
+            <Icon name="information-outline" size={12} color={C.muted} />
+            <Text style={s.intensityInfoTxt}>
+              {' '}Exporta ou restaura a tua jornada como Monarca das Sombras copiando um código inviolável.
+            </Text>
+          </View>
+
+          <View style={{ gap: SPACING.sm, marginBottom: SPACING.lg }}>
+            <TouchableOpacity style={[s.collectBtn, { borderColor: C.neonBlue }]} onPress={handleExport} activeOpacity={0.8}>
+              <Icon name="upload" size={16} color={C.neonBlue} style={{ marginRight: 6 }} />
+              <Text style={[s.collectTxt, { color: C.neonBlue }]}> EXPORTAR ALMA (BACKUP)</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[s.collectBtn, { borderColor: C.gold }]} onPress={() => setImportVisible(true)} activeOpacity={0.8}>
+              <Icon name="download" size={16} color={C.gold} style={{ marginRight: 6 }} />
+              <Text style={[s.collectTxt, { color: C.gold }]}> IMPORTAR ALMA (RESTORE)</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* ── SECTION: About ── */}
           <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
             <View style={[s.sectionDot, { backgroundColor: C.dimmed }]} />
@@ -299,6 +412,46 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
 
         </ScrollView>
       </SafeAreaView>
+
+      {/* ── Modals & Alerts ── */}
+      {alertConfig && (
+        <SystemAlertModal
+          title={alertConfig.title}
+          message={alertConfig.message}
+          onClose={() => setAlertConfig(null)}
+          buttons={[{ text: 'ENTENDIDO', style: 'default' }]}
+        />
+      )}
+
+      {importVisible && (
+        <Modal transparent animationType="fade" onRequestClose={() => setImportVisible(false)}>
+          <View style={s.importOverlay}>
+            <View style={s.importCard}>
+              <View style={s.importHeader}>
+                <Icon name="database-import" size={20} color={C.gold} />
+                <Text style={s.importTitle}> IMPORTAR ALMA</Text>
+              </View>
+              <Text style={s.importSubtitle}>Cola abaixo o teu código Base64 para sobrescrever a base de dados atual.</Text>
+              <TextInput
+                style={s.importInput}
+                value={importText}
+                onChangeText={setImportText}
+                placeholder="Código de Backup..."
+                placeholderTextColor={C.dimmed}
+                multiline
+              />
+              <View style={{ flexDirection: 'row', gap: SPACING.sm }}>
+                <TouchableOpacity style={[s.collectBtn, { flex: 1, borderColor: C.muted }]} onPress={() => setImportVisible(false)}>
+                  <Text style={[s.collectTxt, { color: C.muted }]}>CANCELAR</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[s.collectBtn, { flex: 1, borderColor: C.gold }]} onPress={handleImport}>
+                  <Text style={[s.collectTxt, { color: C.gold }]}>RESTAURAR</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </Modal>
   )
 }
@@ -337,8 +490,57 @@ const s = StyleSheet.create({
   activeSummary:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderRadius: 4, padding: SPACING.sm, marginTop: SPACING.sm },
   activeSummaryTxt: { fontSize: 12, flex: 1 },
 
+  restDayInfo:    { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.sm, marginBottom: SPACING.md },
+  restDayInfoTxt: { flex: 1, color: C.dimmed, fontSize: 11, lineHeight: 16 },
+
   aboutCard:  { backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.md, gap: 6 },
   aboutLine:  { fontSize: 12 },
   aboutKey:   { color: C.dimmed },
   aboutVal:   { color: C.muted },
+
+  collectBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingVertical: 14,
+    paddingHorizontal: SPACING.md,
+  },
+  collectTxt: {
+    fontFamily: FONT.orbitron,
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+  },
+
+  importOverlay: {
+    flex: 1,
+    backgroundColor: '#000000e0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: SPACING.md,
+  },
+  importCard: {
+    width: '100%',
+    backgroundColor: C.panel,
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 4,
+    padding: SPACING.lg,
+  },
+  importHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  importTitle: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 2 },
+  importSubtitle: { color: C.muted, fontSize: 11, marginBottom: SPACING.md },
+  importInput: {
+    backgroundColor: '#04020e',
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 4,
+    color: '#e2e8f0',
+    padding: SPACING.sm,
+    height: 100,
+    textAlignVertical: 'top',
+    marginBottom: SPACING.lg,
+  },
 })

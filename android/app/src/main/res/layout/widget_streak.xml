@@ -1,67 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Solo Leveling Widget — Safe-Mode layout.
-  All colors hardcoded in XML. Kotlin only calls setTextViewText.
-  No setInt / setTextColor reflection (crashes MIUI AppWidgetHost).
--->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/widget_main_container"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minWidth="110dp"
-    android:minHeight="110dp"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="@drawable/widget_bg"
-    android:padding="2dp">
+    android:background="@color/widget_bg"
+    android:padding="12dp">
 
-    <!-- Inner panel with solid dark bg -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="#050A15"
-        android:padding="8dp">
+    <TextView
+        android:id="@+id/streak_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="COMBATE DIÁRIO"
+        android:textColor="@color/text_dim"
+        android:textSize="10sp"
+        android:textStyle="bold" />
 
-        <!-- System label — neon cyan -->
-        <TextView
-            android:id="@+id/widget_rank_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="[ SYSTEM ]"
-            android:textSize="7sp"
-            android:textColor="#FF00D4FF"
-            android:fontFamily="monospace"
-            android:letterSpacing="0.2"
-            android:includeFontPadding="false"
-            android:layout_marginBottom="2dp" />
+    <TextView
+        android:id="@+id/streak_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="0"
+        android:textColor="@color/neon_blue"
+        android:textSize="48sp"
+        android:textStyle="bold" />
 
-        <!-- Streak count — main display, neon cyan -->
-        <TextView
-            android:id="@+id/widget_count_display"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="38sp"
-            android:textStyle="bold"
-            android:textColor="#FF00D4FF"
-            android:fontFamily="monospace"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="0dp" />
+    <TextView
+        android:id="@+id/streak_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/streak_count"
+        android:layout_centerHorizontal="true"
+        android:text="DIAS EM SEQÜÊNCIA"
+        android:textColor="@color/text_dim"
+        android:textSize="10sp" />
 
-        <!-- Sub-label — muted slate -->
-        <TextView
-            android:id="@+id/widget_label_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DIAS SEGUIDOS"
-            android:textSize="6sp"
-            android:textColor="#94A3B8"
-            android:fontFamily="monospace"
-            android:letterSpacing="0.2"
-            android:layout_marginTop="2dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="O SISTEMA ESTÁ A OBSERVAR"
+        android:textColor="@color/neon_blue"
+        android:textSize="8sp"
+        android:alpha="0.6" />
 
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
