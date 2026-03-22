@@ -17,7 +17,7 @@ const { FocusBlocker } = NativeModules as {
     hasOverlayPermission:     () => Promise<boolean>
     requestUsagePermission:   () => Promise<boolean>
     requestOverlayPermission: () => Promise<boolean>
-    startFocusMode:     (pkgs: string[], durationMs: number) => Promise<boolean>
+    startFocusMode:     (pkgs: string[], durationMs: number, isPenalty: boolean) => Promise<boolean>
     stopFocusMode:      () => Promise<boolean>
     isFocusModeActive:  () => Promise<boolean>
     updateBlockedApps:  (pkgs: string[]) => Promise<boolean>
@@ -61,6 +61,7 @@ function AppSelectorOverlay({
   const [loading, setLoading]         = useState(true)
   const [customPkg, setCustomPkg]     = useState('')
   const [search, setSearch]           = useState('')
+  const [showOnlySelected, setShowOnlySelected] = useState(false)
 
   const loadApps = useCallback(() => {
     setLoading(true)
@@ -91,12 +92,17 @@ function AppSelectorOverlay({
   const installedPkgs = new Set(displayApps.map(a => a.pkg))
   const customApps    = blockedApps.filter(p => !installedPkgs.has(p))
 
+  let displayList = displayApps
+  if (showOnlySelected) {
+    displayList = displayList.filter(a => blockedApps.includes(a.pkg))
+  }
+
   const filtered = search.trim()
-    ? displayApps.filter(a =>
+    ? displayList.filter(a =>
         a.label.toLowerCase().includes(search.toLowerCase()) ||
         a.pkg.toLowerCase().includes(search.toLowerCase())
       )
-    : displayApps
+    : displayList
 
   function addCustom() {
     const pkg = customPkg.trim()
@@ -140,6 +146,12 @@ function AppSelectorOverlay({
             <Icon name="close-circle" size={16} color="#64748b" />
           </TouchableOpacity>
         )}
+        <TouchableOpacity 
+          style={[ov.filterBtn, showOnlySelected && ov.filterBtnActive]} 
+          onPress={() => setShowOnlySelected(!showOnlySelected)}
+        >
+          <Icon name="filter-variant" size={16} color={showOnlySelected ? C.neonBlue : '#64748b'} />
+        </TouchableOpacity>
         <TouchableOpacity style={ov.reloadBtn} onPress={loadApps} disabled={loading}>
           <Icon name="reload" size={15} color={loading ? '#334155' : C.neonBlue} />
         </TouchableOpacity>
@@ -419,7 +431,7 @@ export default function FocusScreen() {
     if (!hardcoreToggle && !hardcorePunished) {
       updateSettings({ lastFocusDuration: { hours, minutes } })
     }
-    await FocusBlocker.startFocusMode(blockedApps, dur)
+    await FocusBlocker.startFocusMode(blockedApps, dur, hardcorePunished)
     setFocusActive(true)
     setHardcoreMode(hardcoreToggle)
     const hour = new Date().getHours()
@@ -613,13 +625,14 @@ export default function FocusScreen() {
                   ? 'HARDCORE ATIVO — PUNIÇÃO DO SISTEMA'
                   : hardcoreToggle
                   ? 'MODO HARDCORE ATIVO — TOQUE PARA DESATIVAR'
-                  : 'ATIVAR MODO HARDCORE'}
+                  : 'MODO HARDCORE'}
               </Text>
               {!hardcorePunished && (
                 <Text style={s.hardcoreInlineSub}>
                   {hardcoreToggle
-                    ? 'Focus não pode ser interrompido manualmente'
-                    : 'Impede paragem manual do Focus Mode'}
+                    ? 'Foco permanente ativo — pausa desativada até ao fim'
+                    : 'Liga para tornar o foco permanente (sem pausa)'
+                  }
                 </Text>
               )}
             </View>
@@ -884,6 +897,16 @@ const ov = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#1e293b',
   },
+  filterBtn: {
+    padding: 6,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#1e293b',
+  },
+  filterBtnActive: {
+    borderColor: C.neonBlue + '55',
+    backgroundColor: C.neonBlue + '18',
+  },
 
   // Status bar
   statusBar: {
@@ -920,7 +943,7 @@ const ov = StyleSheet.create({
 
   // App list
   list:        { flex: 1, backgroundColor: '#080d14' },
-  listContent: { paddingBottom: 80 },   // 80px clears Android nav bar
+  listContent: { flexGrow: 1, paddingBottom: 20 },   // reduced massive padding
 
   // Empty state
   emptyBlock: {

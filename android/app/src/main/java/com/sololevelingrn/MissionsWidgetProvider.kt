@@ -5,6 +5,8 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.graphics.Color
 import android.widget.RemoteViews
+import android.app.PendingIntent
+import android.content.Intent
 import org.json.JSONObject
 
 class MissionsWidgetProvider : AppWidgetProvider() {
@@ -45,6 +47,15 @@ class MissionsWidgetProvider : AppWidgetProvider() {
             } catch (e: Exception) {
                 views.setTextViewText(R.id.mission_1, "Erro ao carregar dados")
             }
+
+            val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            val pendingIntent = PendingIntent.getActivity(
+                context, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }

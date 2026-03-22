@@ -11,11 +11,6 @@ import ExtractionModal from '../components/ExtractionModal'
 import QuestForgeScreen from './QuestForgeScreen'
 import MissionActiveScreen from './MissionActiveScreen'
 import { useLocationTracker } from '../hooks/useLocationTracker'
-import {
-  scheduleFocusCompletionNotification,
-  cancelFocusNotification,
-  notifyFocusComplete,
-} from '../utils/notifications'
 import CustomModal from '../components/CustomModal'
 import { C, FONT, SPACING } from '../theme'
 
@@ -80,89 +75,7 @@ const DUNGEON_MISSIONS: DungeonMission[] = [
   },
 ]
 
-// ── Focus Timer Modal ──────────────────────────────────────────────────────────
 
-function FocusTimerModal({ quest, onClose, onComplete }: {
-  quest: Quest; onClose: () => void; onComplete: () => void
-}) {
-  const duration   = quest.focusDuration ?? 30 * 60_000
-  const startRef   = useRef(Date.now())
-  const doneRef    = useRef(false)
-  const [elapsed, setElapsed] = useState(0)
-  const [done, setDone]       = useState(false)
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      const e = Date.now() - startRef.current
-      setElapsed(e)
-      if (e >= duration && !doneRef.current) {
-        doneRef.current = true
-        setDone(true)
-        clearInterval(id)
-      }
-    }, 1000)
-    return () => clearInterval(id)
-  }, [duration])
-
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
-      if (next === 'active') {
-        const e = Date.now() - startRef.current
-        setElapsed(e)
-        if (e >= duration && !doneRef.current) {
-          doneRef.current = true
-          setDone(true)
-        }
-      }
-    })
-    return () => sub.remove()
-  }, [duration])
-
-  useEffect(() => {
-    scheduleFocusCompletionNotification(duration, quest.label).catch(() => {})
-    return () => { cancelFocusNotification().catch(() => {}) }
-  }, [duration, quest.label])
-
-  useEffect(() => {
-    if (!done) return
-    Vibration.vibrate(VIB_FOCUS)
-    notifyFocusComplete(quest.label).catch(() => {})
-    onComplete()
-  }, [done])
-
-  const remaining = Math.max(duration - elapsed, 0)
-  const mins = Math.floor(remaining / 60000)
-  const secs = Math.floor((remaining % 60000) / 1000)
-  const pct  = Math.min((elapsed / duration) * 100, 100)
-
-  return (
-    <Modal transparent animationType="fade">
-      <View style={fm.overlay}>
-        <View style={fm.card}>
-          <Icon name="timer-sand" size={32} color="#a855f7" style={{ marginBottom: SPACING.sm }} />
-          <Text style={fm.title}>FOCUS MODE</Text>
-          <Text style={fm.subtitle}>{quest.label}</Text>
-
-          <Text style={fm.timerText}>
-            {String(mins).padStart(2, '0')}:{String(secs).padStart(2, '0')}
-          </Text>
-          <Text style={fm.timerSub}>{done ? 'COMPLETO!' : 'restantes'}</Text>
-
-          <View style={fm.track}>
-            <View style={[fm.fill, { width: `${pct}%` as any }]} />
-          </View>
-
-          <TouchableOpacity style={fm.cancelBtn} onPress={onClose}>
-            <Icon name="close-circle-outline" size={14} color={C.muted} />
-            <Text style={fm.cancelTxt}> CANCELAR</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  )
-}
-
-// ── GPS Tracker Modal ──────────────────────────────────────────────────────────
 
 function GPSTrackerModal({ quest, onClose, onComplete }: {
   quest: Quest; onClose: () => void; onComplete: () => void
@@ -234,7 +147,6 @@ function QuestCard({ quest }: { quest: Quest }) {
   const activeStartTs = activeMissionTimers[quest.id] ?? 0
   const isTimerActive = activeStartTs > 0 && !quest.done
 
-  const [showFocus,      setShowFocus]      = useState(false)
   const [showGPS,        setShowGPS]        = useState(false)
   const [showMission,    setShowMission]    = useState(false)
   const [confirmUndo,    setConfirmUndo]    = useState(false)
@@ -247,21 +159,23 @@ function QuestCard({ quest }: { quest: Quest }) {
     Vibration.vibrate(leveledUp ? VIB_FOCUS : VIB_COMPLETE)
   }
 
-  function handleFocusComplete() {
-    setShowFocus(false)
-    const focusMinutes = Math.round((quest.focusDuration ?? 30 * 60_000) / 60_000)
-    recordFocus(focusMinutes)
-    const { leveledUp } = completeQuest(quest.id)
-    Vibration.vibrate(leveledUp ? VIB_FOCUS : VIB_COMPLETE)
-  }
-
   function handleMissionComplete() {
     setShowMission(false)
+    if (quest.type === 'focus') {
+      const focusMinutes = Math.max(1, Math.round((quest.focusDuration ?? 30 * 60_000) / 60_000))
+      recordFocus(focusMinutes)
+    }
     handleComplete()
   }
 
+  const Container = quest.done ? View : TouchableOpacity as any
+
   return (
-    <View style={[qc.card, quest.done && qc.cardDone, isTimerActive && qc.cardActive]}>
+    <Container 
+      style={[qc.card, quest.done && qc.cardDone, isTimerActive && qc.cardActive]}
+      activeOpacity={0.8}
+      onPress={!quest.done ? () => (quest.type === 'gps' ? setShowGPS(true) : setShowMission(true)) : undefined}
+    >
       <View style={qc.header}>
         <View style={[qc.typeTag, { borderColor: cfg.color + '55' }]}>
           <Icon name={cfg.icon} size={14} color={quest.done ? C.muted : cfg.color} />
@@ -297,48 +211,19 @@ function QuestCard({ quest }: { quest: Quest }) {
           </TouchableOpacity>
         </View>
       ) : isTimerActive ? (
-        <TouchableOpacity
-          style={qc.activeTimerRow}
-          onPress={() => setShowMission(true)}
-          activeOpacity={0.75}
-        >
+        <View style={qc.activeTimerRow}>
           <Icon name="timer-outline" size={13} color={C.neonBlue} />
           <Text style={qc.activeTimerTxt}> A DECORRER</Text>
           <View style={{ flex: 1 }} />
           <Icon name="chevron-right" size={14} color={C.neonBlue} />
-        </TouchableOpacity>
-      ) : (
-        <View style={qc.actions}>
-          {quest.type === 'focus' && (
-            <TouchableOpacity style={[qc.actionBtn, { borderColor: '#a855f7' }]} onPress={() => setShowFocus(true)}>
-              <Icon name="timer-sand" size={13} color="#a855f7" />
-              <Text style={[qc.actionTxt, { color: '#a855f7' }]}> INICIAR FOCUS</Text>
-            </TouchableOpacity>
-          )}
-          {quest.type === 'gps' && (
-            <TouchableOpacity style={[qc.actionBtn, { borderColor: C.green }]} onPress={() => setShowGPS(true)}>
-              <Icon name="run-fast" size={13} color={C.green} />
-              <Text style={[qc.actionTxt, { color: C.green }]}> INICIAR GPS</Text>
-            </TouchableOpacity>
-          )}
-          {(quest.type === 'training' || quest.type === 'knowledge') && (
-            <TouchableOpacity
-              style={[qc.actionBtn, { borderColor: cfg.color + '88', flex: 1 }]}
-              onPress={() => setShowMission(true)}
-            >
-              <Icon name="sword" size={13} color={cfg.color} />
-              <Text style={[qc.actionTxt, { color: cfg.color }]}> EXECUTAR</Text>
-            </TouchableOpacity>
-          )}
         </View>
-      )}
-
-      {showFocus && (
-        <FocusTimerModal
-          quest={quest}
-          onClose={() => setShowFocus(false)}
-          onComplete={handleFocusComplete}
-        />
+      ) : (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, opacity: 0.5 }}>
+           <Icon name="gesture-tap" size={14} color={C.neonBlue} />
+           <Text style={{ color: C.neonBlue, fontSize: 10, fontFamily: FONT.orbitron, marginLeft: 4 }}>
+             TOCA PARA INICIAR
+           </Text>
+        </View>
       )}
 
       {showGPS && (
@@ -355,6 +240,7 @@ function QuestCard({ quest }: { quest: Quest }) {
           onClose={() => setShowMission(false)}
           onComplete={handleMissionComplete}
           initialElapsed={activeStartTs > 0 ? Date.now() - activeStartTs : 0}
+          targetSeconds={quest.type === 'focus' ? (quest.focusDuration ? quest.focusDuration / 1000 : 30 * 60) : undefined}
         />
       )}
 
@@ -368,7 +254,7 @@ function QuestCard({ quest }: { quest: Quest }) {
         onConfirm={() => { setConfirmUndo(false); undoQuest(quest.id) }}
         onCancel={() => setConfirmUndo(false)}
       />
-    </View>
+    </Container>
   )
 }
 
@@ -381,7 +267,8 @@ function DungeonModal({ visible, onClose, onSelectMission, customMissions, defea
   customMissions:  DungeonMission[]
   defeatedId?:     string
 }) {
-  const allMissions = [...customMissions]
+  // If weekly rotation returned no missions (stale dictionary), fall back to the hardcoded trio
+  const allMissions = customMissions.length > 0 ? [...customMissions] : DUNGEON_MISSIONS
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose}>
       <View style={dm.overlay}>
@@ -390,7 +277,7 @@ function DungeonModal({ visible, onClose, onSelectMission, customMissions, defea
           <Text style={dm.warning}>⚠ ALERTA DO SISTEMA ⚠</Text>
           <Text style={dm.title}>[ PORTÕES VERMELHOS ABERTOS ESTA SEMANA ]</Text>
           <Text style={dm.sub}>
-            O Sistema gerou 3 dungeons aleatórios para esta semana. Completa UMA Missão para extrair a Sombra do Boss.
+            Completa UMA Missão de Boss para ganhar XP, Gold e extrair uma Sombra do Boss para o teu exército.
           </Text>
 
           {allMissions.map(m => {
@@ -412,10 +299,13 @@ function DungeonModal({ visible, onClose, onSelectMission, customMissions, defea
                     {isDefeated ? '[ MASMORRA LIMPA ]' : m.label}
                   </Text>
                   <Text style={dm.missionDetail}>{m.detail}</Text>
-                  {m.customShadow && !isDefeated && !isLocked && (
+                  {/* Shadow reward hint */}
+                  {!isDefeated && !isLocked && (
                     <View style={dm.shadowExtractTag}>
                       <Icon name="ghost" size={9} color={C.purple} />
-                      <Text style={dm.shadowExtractTxt}> Extrai Sombra Garantida</Text>
+                      <Text style={dm.shadowExtractTxt}>
+                        {' '}Sombra: {m.customShadow?.name ?? m.shadowHint ?? 'Desconhecida'}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -788,13 +678,14 @@ export default function QuestScreen() {
 
       {/* Boss focus timer */}
       {activeBossQuest && activeMission?.type === 'focus' && (
-        <FocusTimerModal
+        <MissionActiveScreen
           quest={activeBossQuest}
           onClose={() => setActiveMission(null)}
           onComplete={() => {
-            const mins = Math.round((activeMission.focusDuration ?? 90 * 60_000) / 60_000)
+            const mins = Math.max(1, Math.round((activeMission.focusDuration ?? 90 * 60_000) / 60_000))
             completeBossMission(activeMission, mins)
           }}
+          targetSeconds={activeMission.focusDuration ? activeMission.focusDuration / 1000 : 90 * 60}
         />
       )}
 

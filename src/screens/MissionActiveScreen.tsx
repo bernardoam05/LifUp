@@ -6,33 +6,38 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { Quest } from '../store/useGameStore'
 import CustomModal from '../components/CustomModal'
+import { showOngoingMissionNotification, clearOngoingMissionNotification } from '../utils/notifications'
 import { C, FONT, SPACING } from '../theme'
 
 // ── MissionActiveScreen ────────────────────────────────────────────────────────
-// Execution modal for training/knowledge quests.
-// Shows a stopwatch, notes field, personal record, and a smart complete button.
+// Execution modal for training/knowledge/focus quests.
+// Shows a stopwatch/countdown, notes field, personal record, and a smart complete button.
 
 type Props = {
   quest:           Quest
   onClose:         () => void
   onComplete:      () => void
   initialElapsed?: number   // ms — set when resuming a background timer
+  targetSeconds?:  number   // If set, timer counts DOWN from this value and auto-completes
 }
 
 function formatTime(ms: number): string {
   const totalSecs = Math.floor(ms / 1000)
-  const mins      = Math.floor(totalSecs / 60)
-  const secs      = totalSecs % 60
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+  const h = Math.floor(totalSecs / 3600)
+  const m = Math.floor((totalSecs % 3600) / 60)
+  const s = totalSecs % 60
+  if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
-export default function MissionActiveScreen({ quest, onClose, onComplete, initialElapsed = 0 }: Props) {
+export default function MissionActiveScreen({ quest, onClose, onComplete, initialElapsed = 0, targetSeconds }: Props) {
   const saveQuestRecord  = useGameStore(s => s.saveQuestRecord)
   const questRecords     = useGameStore(s => s.questRecords)
   const startMissionTimer = useGameStore(s => s.startMissionTimer)
   const clearMissionTimer = useGameStore(s => s.clearMissionTimer)
 
   const record = questRecords[quest.id]
+  const targetMs = targetSeconds ? targetSeconds * 1000 : 0
 
   const [elapsed,    setElapsed]    = useState(initialElapsed)
   const [running,    setRunning]    = useState(false)
@@ -42,6 +47,7 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
   const startRef    = useRef<number | null>(null)
   const accRef      = useRef(initialElapsed)  // pre-fill accumulated ms when resuming
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const doneRef     = useRef(false)
 
   // Auto-start when resuming a background timer
   useEffect(() => {
@@ -52,9 +58,20 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
 
   function startTimer() {
     startRef.current = Date.now()
+    showOngoingMissionNotification(quest.label, Date.now() - accRef.current).catch(() => {})
+    
     intervalRef.current = setInterval(() => {
-      setElapsed(accRef.current + Date.now() - (startRef.current ?? Date.now()))
+      const currentElapsed = accRef.current + Date.now() - (startRef.current ?? Date.now())
+      setElapsed(currentElapsed)
+      
+      // Auto-complete if it's a countdown and reached the target
+      if (targetMs > 0 && currentElapsed >= targetMs && !doneRef.current) {
+        doneRef.current = true
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        finalize(targetMs)
+      }
     }, 500)
+    
     setRunning(true)
     // Register background timer only on first start (not on resume)
     if (initialElapsed === 0) startMissionTimer(quest.id)
@@ -65,6 +82,7 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
     accRef.current = elapsed
     startRef.current = null
     setRunning(false)
+    clearOngoingMissionNotification().catch(() => {})
   }
 
   function resetTimer() {
@@ -73,11 +91,15 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
     startRef.current = null
     setElapsed(0)
     setRunning(false)
+    doneRef.current = false
     clearMissionTimer(quest.id)
+    clearOngoingMissionNotification().catch(() => {})
   }
 
   useEffect(() => {
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+    return () => { 
+      if (intervalRef.current) clearInterval(intervalRef.current) 
+    }
   }, [])
 
   function handleComplete() {
@@ -93,6 +115,7 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
   function finalize(timeMs: number) {
     if (intervalRef.current) clearInterval(intervalRef.current)
     clearMissionTimer(quest.id)
+    clearOngoingMissionNotification().catch(() => {})
     const trimmedNote = note.trim()
     saveQuestRecord(quest.id, Math.floor(timeMs / 1000), trimmedNote)
     onComplete()
@@ -100,7 +123,9 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
 
   const bestSecs = record?.bestTime ?? 0
   const elapsedSecs = Math.floor(elapsed / 1000)
-  const isNewRecord = running && bestSecs > 0 && elapsedSecs > bestSecs
+  const isNewRecord = running && bestSecs > 0 && elapsedSecs > bestSecs && targetMs === 0
+
+  const displayMs = targetMs > 0 ? Math.max(targetMs - elapsed, 0) : elapsed
 
   return (
     <Modal transparent animationType="slide" onRequestClose={onClose}>
@@ -138,7 +163,7 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
 
             {/* Neon Stopwatch */}
             <View style={s.timerBox}>
-              <Text style={s.timerText}>{formatTime(elapsed)}</Text>
+              <Text style={s.timerText}>{formatTime(displayMs)}</Text>
               <Text style={s.timerSub}>{running ? 'a decorrer…' : elapsed > 0 ? 'pausado' : 'parado'}</Text>
             </View>
 

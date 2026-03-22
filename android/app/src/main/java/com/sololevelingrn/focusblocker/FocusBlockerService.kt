@@ -34,6 +34,8 @@ class FocusBlockerService : Service() {
 
     private var blockedPackages: List<String> = emptyList()
     private var endTimeMs: Long = 0L
+    private var isPenaltyMode: Boolean = false
+    private var overlayMessage: String = ""
     private var overlayView: LinearLayout? = null
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var windowManager: WindowManager
@@ -53,6 +55,18 @@ class FocusBlockerService : Service() {
             ACTION_START -> {
                 blockedPackages = intent.getStringArrayListExtra(EXTRA_BLOCKED_PACKAGES) ?: emptyList()
                 val durationMs  = intent.getLongExtra(EXTRA_DURATION_MS, 0L)
+                isPenaltyMode   = intent.getBooleanExtra("extra_is_penalty", false)
+                
+                if (!isPenaltyMode) {
+                    val pool = listOf(
+                        "Os fracos procuram conforto, os guerreiros buscam evolução.",
+                        "Um momento de distração pode custar-te a vitória. Foca-te.",
+                        "Ergue-te! O teu verdadeiro desafio não está nesta app.",
+                        "A grandeza não se alcança a olhar para ecrãs vazios."
+                    )
+                    overlayMessage = pool.random()
+                }
+                
                 endTimeMs       = System.currentTimeMillis() + durationMs
                 isRunning       = true
                 startForeground(NOTIF_ID, buildNotification())
@@ -170,15 +184,15 @@ class FocusBlockerService : Service() {
         }
 
         val title = TextView(this).apply {
-            text      = "⚠ PENALIZAÇÃO ATIVA"
+            text      = if (isPenaltyMode) "⚠ PENALIZAÇÃO ATIVA" else "🛡️ O MONARCA DESCANSA"
             textSize  = 22f
-            setTextColor(Color.parseColor("#ef4444"))
+            setTextColor(Color.parseColor(if (isPenaltyMode) "#ef4444" else "#38bdf8"))
             gravity   = Gravity.CENTER
             setPadding(32, 0, 32, 16)
         }
 
         val sub = TextView(this).apply {
-            text      = "Este app está bloqueado.\nCompleta as tuas missões primeiro."
+            text      = if (isPenaltyMode) "Este app está bloqueado.\nCompleta as tuas missões primeiro." else overlayMessage
             textSize  = 14f
             setTextColor(Color.parseColor("#94a3b8"))
             gravity   = Gravity.CENTER
@@ -187,7 +201,10 @@ class FocusBlockerService : Service() {
 
         val remaining = TextView(this).apply {
             val minLeft = ((endTimeMs - System.currentTimeMillis()) / 60_000).coerceAtLeast(0)
-            text      = "Tempo restante: ${minLeft} min"
+            val h = minLeft / 60
+            val m = minLeft % 60
+            val timeStr = if (h > 0) "${h}h ${m}m" else "${m}m"
+            text      = "Tempo restante: $timeStr"
             textSize  = 12f
             setTextColor(Color.parseColor("#475569"))
             gravity   = Gravity.CENTER
@@ -251,9 +268,13 @@ class FocusBlockerService : Service() {
 
     private fun buildNotification(): Notification {
         val minLeft = ((endTimeMs - System.currentTimeMillis()) / 60_000).coerceAtLeast(0)
+        val h = minLeft / 60
+        val m = minLeft % 60
+        val timeStr = if (h > 0) "${h}h ${m}m" else "${m}m"
+        
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("⚡ Modo de Foco Ativo")
-            .setContentText("O Sistema está a vigiar — ${minLeft} min restantes")
+            .setContentText("O Sistema está a vigiar — $timeStr restantes")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)

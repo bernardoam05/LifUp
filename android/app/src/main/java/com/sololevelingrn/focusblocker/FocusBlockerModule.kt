@@ -76,7 +76,7 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
     // ── Focus mode control ─────────────────────────────────────────────────────
 
     @ReactMethod
-    fun startFocusMode(blockedPackages: ReadableArray, durationMs: Double, promise: Promise) {
+    fun startFocusMode(blockedPackages: ReadableArray, durationMs: Double, isPenalty: Boolean, promise: Promise) {
         try {
             val pkgList = ArrayList<String>()
             for (i in 0 until blockedPackages.size()) {
@@ -86,6 +86,7 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
                 action = FocusBlockerService.ACTION_START
                 putStringArrayListExtra(FocusBlockerService.EXTRA_BLOCKED_PACKAGES, pkgList)
                 putExtra(FocusBlockerService.EXTRA_DURATION_MS, durationMs.toLong())
+                putExtra("extra_is_penalty", isPenalty)
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 reactApplicationContext.startForegroundService(intent)

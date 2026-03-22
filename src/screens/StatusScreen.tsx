@@ -29,6 +29,7 @@ import {
 } from '../data/achievements'
 import { SHADOW_MAP } from '../data/shadows'
 import { C, FONT, SPACING } from '../theme'
+import RankModal from '../components/RankModal'
 
 // Format minutes into "Xh Ym" for focus achievements
 function formatMinutes(min: number): string {
@@ -383,134 +384,6 @@ function AchievementsPanel({ onSelect }: {
   )
 }
 
-// ── Rank Requirements Modal ────────────────────────────────────────────────────
-
-function RankRequirementsModal({
-  currentLevel, totalCompleted, bossesDefeated, questsByRank, onClose,
-}: {
-  currentLevel:    number
-  totalCompleted:  number
-  bossesDefeated:  number
-  questsByRank:    Partial<Record<RankKey, number>>
-  onClose:         () => void
-}) {
-  const currentRank = getRank(currentLevel, totalCompleted, bossesDefeated, questsByRank)
-  const nextRank    = CLASS_REQUIREMENTS.find(r => {
-    if (currentLevel    < r.minLevel)    return true
-    if (totalCompleted  < r.minMissions) return true
-    if (bossesDefeated  < r.minBosses)  return true
-    if (r.minRankMissions > 0 && r.prevRank) {
-      if ((questsByRank[r.prevRank as RankKey] ?? 0) < r.minRankMissions) return true
-    }
-    return false
-  })
-
-  return (
-    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
-      <View style={rm.overlay}>
-        <View style={[rm.card, { borderColor: currentRank.color + '55' }]}>
-
-          <View style={rm.headerRow}>
-            <SafeIcon name="shield-star-outline" size={12} color={currentRank.color} />
-            <Text style={[rm.headerTxt, { color: currentRank.color }]}> [ CLASSIFICAÇÃO DO CAÇADOR ]</Text>
-            <TouchableOpacity onPress={onClose} style={rm.closeBtn}>
-              <SafeIcon name="close" size={16} color={C.muted} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={rm.divider} />
-
-          {CLASS_REQUIREMENTS.map(r => {
-            const isCurrent = r.rank === currentRank.rank
-            const lvlOk     = currentLevel    >= r.minLevel
-            const misOk     = totalCompleted  >= r.minMissions
-            const bossOk    = bossesDefeated  >= r.minBosses
-            const rankMisOk = r.minRankMissions === 0 || !r.prevRank
-              || (questsByRank[r.prevRank as RankKey] ?? 0) >= r.minRankMissions
-            const met = lvlOk && misOk && bossOk && rankMisOk
-            const prevRankCount = r.prevRank ? (questsByRank[r.prevRank as RankKey] ?? 0) : 0
-
-            return (
-              <View key={r.rank} style={[rm.row, isCurrent && { backgroundColor: r.color + '15' }]}>
-                <View style={[rm.badge, { borderColor: r.color + (isCurrent ? 'cc' : '55') }]}>
-                  <Text style={[rm.badgeTxt, { color: r.color }]}>{r.rank}</Text>
-                </View>
-                <View style={rm.rowInfo}>
-                  <Text style={[rm.rowLabel, { color: isCurrent ? r.color : (met ? '#e2e8f0' : C.muted) }]}>{r.label}</Text>
-                  {r.minMissions > 0 ? (
-                    <>
-                      {/* Level */}
-                      <View style={rm.reqRow}>
-                        <Text style={[rm.reqLabel, lvlOk && rm.reqMet]}>Nível {r.minLevel}</Text>
-                        <Text style={[rm.reqVal, lvlOk ? rm.reqMet : rm.reqFail]}>
-                          {Math.min(currentLevel, r.minLevel)}/{r.minLevel}
-                        </Text>
-                      </View>
-                      {/* Total missions */}
-                      <View style={rm.reqRow}>
-                        <Text style={[rm.reqLabel, misOk && rm.reqMet]}>Missões totais</Text>
-                        <Text style={[rm.reqVal, misOk ? rm.reqMet : rm.reqFail]}>
-                          {Math.min(totalCompleted, r.minMissions)}/{r.minMissions}
-                        </Text>
-                      </View>
-                      {/* Bosses */}
-                      <View style={rm.reqRow}>
-                        <Text style={[rm.reqLabel, bossOk && rm.reqMet]}>Bosses</Text>
-                        <Text style={[rm.reqVal, bossOk ? rm.reqMet : rm.reqFail]}>
-                          {Math.min(bossesDefeated, r.minBosses)}/{r.minBosses}
-                        </Text>
-                      </View>
-                      {/* Per-rank missions */}
-                      {r.minRankMissions > 0 && r.prevRank && (
-                        <View style={rm.reqRow}>
-                          <Text style={[rm.reqLabel, rankMisOk && rm.reqMet]}>
-                            Missões {r.prevRank}-Rank
-                          </Text>
-                          <Text style={[rm.reqVal, rankMisOk ? rm.reqMet : rm.reqFail]}>
-                            {Math.min(prevRankCount, r.minRankMissions)}/{r.minRankMissions}
-                          </Text>
-                        </View>
-                      )}
-                    </>
-                  ) : (
-                    <Text style={rm.rowSub}>Rank inicial</Text>
-                  )}
-                </View>
-                {isCurrent && (
-                  <View style={[rm.currentTag, { borderColor: r.color + '55' }]}>
-                    <Text style={[rm.currentTagTxt, { color: r.color }]}>ATUAL</Text>
-                  </View>
-                )}
-                {!isCurrent && met && (
-                  <SafeIcon name="check-circle" size={14} color={r.color + 'aa'} />
-                )}
-              </View>
-            )
-          })}
-
-          {nextRank && (
-            <View style={rm.nextSection}>
-              <SafeIcon name="arrow-up-bold" size={11} color={nextRank.color} />
-              <View style={{ flex: 1, marginLeft: 4 }}>
-                <Text style={[rm.nextTxt, { color: nextRank.color }]}>Próximo: {nextRank.label}</Text>
-                <Text style={[rm.rowSub, { marginTop: 2 }]}>
-                  Nível {nextRank.minLevel} ({Math.max(nextRank.minLevel - currentLevel, 0)} em falta){' · '}
-                  Missões {Math.min(totalCompleted, nextRank.minMissions)}/{nextRank.minMissions}{' · '}
-                  Bosses {Math.min(bossesDefeated, nextRank.minBosses)}/{nextRank.minBosses}
-                  {nextRank.minRankMissions > 0 && nextRank.prevRank ? (
-                    `\nMissões ${nextRank.prevRank}-Rank: ${Math.min(questsByRank[nextRank.prevRank as RankKey] ?? 0, nextRank.minRankMissions)}/${nextRank.minRankMissions}`
-                  ) : ''}
-                </Text>
-              </View>
-            </View>
-          )}
-
-        </View>
-      </View>
-    </Modal>
-  )
-}
-
 // ── Level Up Reward Modal ──────────────────────────────────────────────────────
 
 function LevelUpRewardModal({ reward, onClose }: { reward: LevelUpReward; onClose: () => void }) {
@@ -671,8 +544,8 @@ export default function StatusScreen() {
       )}
 
       {showRankInfo && (
-        <RankRequirementsModal
-          currentLevel={player.level}
+        <RankModal
+          level={player.level}
           totalCompleted={statistics.totalCompleted}
           bossesDefeated={bossesDefeated}
           questsByRank={statistics.questsByRank}

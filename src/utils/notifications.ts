@@ -52,6 +52,31 @@ export async function notifyLevelUp(newLevel: number): Promise<void> {
   })
 }
 
+// ── Ongoing Mission (Pinned Chronometer) ─────────────────────────────────────
+
+const ONGOING_NOTIF_ID = 'ongoing_mission'
+
+export async function showOngoingMissionNotification(questLabel: string, startedAtMs: number): Promise<void> {
+  await notifee.displayNotification({
+    id: ONGOING_NOTIF_ID,
+    title: ' Missão a Decorrer',
+    body: questLabel,
+    android: {
+      channelId: CHANNEL_ID,
+      smallIcon: 'ic_launcher',
+      ongoing: true,
+      showChronometer: true,
+      chronometerDirection: 'up',
+      timestamp: startedAtMs,
+      pressAction: { id: 'default' },
+    },
+  })
+}
+
+export async function clearOngoingMissionNotification(): Promise<void> {
+  await notifee.cancelNotification(ONGOING_NOTIF_ID)
+}
+
 // ── Scheduled trigger ─────────────────────────────────────────────────────────
 // Fires even if the app is in background/closed.
 

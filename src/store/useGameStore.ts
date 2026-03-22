@@ -1419,6 +1419,26 @@ const useGameStore = create<GameState & GameActions>()(
             set((s: GameState & GameActions) => ({ system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }))
           }
 
+          // ── Dictionary sync: merge any new built-in quests (e.g. boss entries added
+          //    after the user first installed) into the persisted questDictionary.
+          //    This keeps weeklyBossIds consistent across app updates.
+          {
+            const storedIds = new Set(get().questDictionary.map(d => d.id))
+            const missing   = INITIAL_QUEST_DICTIONARY.filter(d => !storedIds.has(d.id))
+            if (missing.length > 0) {
+              set(s => ({ questDictionary: [...s.questDictionary, ...missing] }))
+            }
+          }
+
+          // Force weeklyBossIds to refresh whenever the dictionary is empty (safety net)
+          if (get().system.weeklyBossIds.length === 0) {
+            const bossDefs = get().questDictionary.filter(d => d.type === 'boss')
+            if (bossDefs.length > 0) {
+              const picked = seededPick(3, bossDefs.length, Date.now()).map(i => bossDefs[i].id)
+              set(s => ({ system: { ...s.system, weeklyBossIds: picked } }))
+            }
+          }
+
           if (lastResetDate === today) return
 
           const thisMonday = getMondayDateString()
