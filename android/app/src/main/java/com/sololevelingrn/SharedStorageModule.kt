@@ -15,6 +15,7 @@ class SharedStorageModule(reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun setWidgetData(jsonData: String) {
+        android.util.Log.d("SharedStorage", "setWidgetData called with ${jsonData.length} bytes")
         val ctx = reactApplicationContext
 
         // Persist the huge JSON snapshot in SharedPreferences
@@ -36,6 +37,7 @@ class SharedStorageModule(reactContext: ReactApplicationContext) :
             val intent = Intent(ctx, providerClass)
             intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
             val ids = manager.getAppWidgetIds(ComponentName(ctx, providerClass))
+            android.util.Log.d("SharedStorage", "Updating ${providerClass.simpleName} with ${ids.size} instances")
             if (ids.isNotEmpty()) {
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
                 ctx.sendBroadcast(intent)

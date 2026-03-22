@@ -41,9 +41,12 @@ export default function MissionHistoryModal({ onClose }: { onClose: () => void }
       completions: questCompletions[def.id] ?? 0,
       bestTime:    questRecords[def.id]?.bestTime ?? 0,
       lastNote:    questRecords[def.id]?.lastNote ?? '',
+      history:     questRecords[def.id]?.history ?? [],
     }))
     .filter(e => e.completions > 0)
     .sort((a, b) => b.completions - a.completions)
+
+  const [expandedId, setExpandedId] = React.useState<string | null>(null)
 
   return (
     <Modal visible animationType="slide" onRequestClose={onClose}>
@@ -75,30 +78,61 @@ export default function MissionHistoryModal({ onClose }: { onClose: () => void }
             {entries.map(e => {
               const icon  = QUEST_TYPE_ICON[e.questType]  ?? 'help-circle'
               const color = QUEST_TYPE_COLOR[e.questType] ?? C.muted
+              const isExpanded = expandedId === e.id
+              const history = e.history
+
               return (
-                <View key={e.id} style={s.row}>
-                  <View style={[s.iconWrap, { backgroundColor: color + '18' }]}>
-                    <Icon name={icon} size={18} color={color} />
-                  </View>
-                  <View style={s.info}>
-                    <Text style={s.label} numberOfLines={1}>{e.label}</Text>
-                    <View style={s.metaRow}>
-                      <Icon name="check-circle-outline" size={10} color={C.dimmed} />
-                      <Text style={s.meta}> {e.completions}×</Text>
-                      {e.bestTime > 0 && (
-                        <>
-                          <Icon name="trophy-outline" size={10} color={C.gold} style={{ marginLeft: 10 }} />
-                          <Text style={[s.meta, { color: C.gold }]}> {formatSeconds(e.bestTime)}</Text>
-                        </>
+                <View key={e.id} style={{ marginBottom: SPACING.sm }}>
+                  <TouchableOpacity 
+                    activeOpacity={0.7}
+                    onPress={() => setExpandedId(isExpanded ? null : e.id)}
+                    style={[s.row, { marginBottom: 0, borderBottomLeftRadius: isExpanded ? 0 : 4, borderBottomRightRadius: isExpanded ? 0 : 4, borderBottomWidth: isExpanded ? 0 : 1 }]}
+                  >
+                    <View style={[s.iconWrap, { backgroundColor: color + '18' }]}>
+                      <Icon name={icon} size={18} color={color} />
+                    </View>
+                    <View style={s.info}>
+                      <Text style={s.label} numberOfLines={1}>{e.label}</Text>
+                      <View style={s.metaRow}>
+                        <Icon name="check-circle-outline" size={10} color={C.dimmed} />
+                        <Text style={s.meta}> {e.completions}×</Text>
+                        {e.bestTime > 0 && (
+                          <>
+                            <Icon name="trophy-outline" size={10} color={C.gold} style={{ marginLeft: 10 }} />
+                            <Text style={[s.meta, { color: C.gold }]}> {formatSeconds(e.bestTime)}</Text>
+                          </>
+                        )}
+                      </View>
+                      {e.lastNote && !isExpanded ? (
+                        <Text style={s.note} numberOfLines={1}>"{e.lastNote}"</Text>
+                      ) : null}
+                    </View>
+                    <View style={[s.countBadge, { borderColor: color + '55', backgroundColor: isExpanded ? color + '10' : 'transparent' }]}>
+                      <Icon name={isExpanded ? 'chevron-up' : 'chevron-down'} size={20} color={color} />
+                    </View>
+                  </TouchableOpacity>
+
+                  {isExpanded && (
+                    <View style={[s.historyContainer, { borderColor: C.border }]}>
+                      {history.length > 0 ? history.slice().reverse().map((h, i) => (
+                        <View key={i} style={[s.historyItem, i < history.length - 1 && s.historyItemBorder]}>
+                          <View style={s.historyHeader}>
+                            <Text style={s.historyDate}>
+                              <Icon name="calendar-blank" size={10} color={C.dimmed} /> {new Date(h.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })}
+                            </Text>
+                            {h.time > 0 && (
+                              <Text style={s.historyTime}>
+                                <Icon name="timer-outline" size={10} color={color} /> {formatSeconds(h.time)}
+                              </Text>
+                            )}
+                          </View>
+                          {h.note ? <Text style={s.historyNote}>"{h.note}"</Text> : null}
+                        </View>
+                      )) : (
+                        <Text style={s.emptyHistory}>Sem eventos passados.</Text>
                       )}
                     </View>
-                    {e.lastNote ? (
-                      <Text style={s.note} numberOfLines={1}>"{e.lastNote}"</Text>
-                    ) : null}
-                  </View>
-                  <View style={[s.countBadge, { borderColor: color + '55' }]}>
-                    <Text style={[s.countTxt, { color }]}>{e.completions}</Text>
-                  </View>
+                  )}
                 </View>
               )
             })}
@@ -136,4 +170,13 @@ const s = StyleSheet.create({
   empty:    { flex: 1, alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, padding: SPACING.xl },
   emptyTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 1 },
   emptySub: { color: C.dimmed, fontSize: 12 },
+
+  historyContainer: { backgroundColor: C.panel, padding: SPACING.sm, borderBottomLeftRadius: 4, borderBottomRightRadius: 4, borderWidth: 1, borderTopWidth: 0 },
+  historyItem: { paddingVertical: SPACING.sm, paddingHorizontal: 4 },
+  historyItemBorder: { borderBottomWidth: 1, borderBottomColor: C.border + '55' },
+  historyHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
+  historyDate: { color: C.dimmed, fontSize: 11, fontFamily: FONT.orbitron },
+  historyTime: { color: '#e2e8f0', fontSize: 11, fontFamily: FONT.orbitron },
+  historyNote: { color: C.muted, fontSize: 12, fontStyle: 'italic', lineHeight: 18 },
+  emptyHistory: { color: C.dimmed, fontSize: 11, textAlign: 'center', padding: SPACING.md, fontStyle: 'italic' },
 })

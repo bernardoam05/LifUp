@@ -1425,6 +1425,128 @@ export const SHADOW_DATABASE: Shadow[] = [
     lore: '"Carrega trovões na ponta da lança. Nunca falha o primeiro golpe."',
     icon: 'sword', color: '#38bdf8',
   },
+
+  // ── LEGION OF LEGENDS (Crossover Easter Eggs) ──────────────────────────────
+  {
+    id: 'hollow_knight', name: 'O Cavaleiro do Vazio', rank: 'Marshal', type: 'Warrior', dropRate: 0.005,
+    passiveEffect: { type: 'xp_boost', value: 0.15, description: '+15% XP em todas as missões' },
+    lore: '"Um recetáculo que não conhece o medo nem a dor. O seu silêncio é a sua força e a sua alma é feita de sombra pura."',
+    icon: 'knight', color: '#ef4444',
+  },
+  {
+    id: 'legend_guts', name: 'O Cruzado do Aço Negro', rank: 'Marshal', type: 'Warrior', dropRate: 0.005,
+    passiveEffect: { type: 'penalty_reduce', value: 0.25, description: '-25% na perda de XP por penalidade' },
+    lore: '"Sobreviveu ao impensável. A sua espada, grande demais para ser chamada de espada, corta o próprio destino amaldiçoado."',
+    icon: 'sword', color: '#ef4444',
+  },
+  {
+    id: 'legend_saitama', name: 'O Ápice da Singularidade', rank: 'Marshal', type: 'Warrior', dropRate: 0.005,
+    passiveEffect: { type: 'boss_bonus_xp', value: 0.30, description: '+30% XP extra em Boss Raids' },
+    lore: '"Alcançou o limite e quebrou-o. Não há nada que este punho não possa pulverizar num único e aborrecido golpe."',
+    icon: 'hand-back-right', color: '#ef4444',
+  },
+  {
+    id: 'legend_kratos', name: 'O Algoz de Deuses', rank: 'Marshal', type: 'Warrior', dropRate: 0.005,
+    passiveEffect: { type: 'boss_bonus_xp', value: 0.25, description: '+25% XP extra em Boss Raids' },
+    lore: '"A sua fúria derrubou panteões inteiros. Coberto pelas cinzas do passado, ele é agora a lâmina final do Monarca."',
+    icon: 'axe', color: '#ef4444',
+  },
+  {
+    id: 'legend_sukuna', name: 'O Rei das Maldições', rank: 'Marshal', type: 'Magic', dropRate: 0.005,
+    passiveEffect: { type: 'gold_boost', value: 0.25, description: '+25% Gold em todas as missões' },
+    lore: '"Quatro braços, duas faces e um desdém absoluto pela vida. O mal encarnado que agora se curva perante a sombra."',
+    icon: 'skull', color: '#ef4444',
+  },
+  {
+    id: 'legend_artoria', name: 'A Promessa da Távola Redonda', rank: 'Commander', type: 'Warrior', dropRate: 0.02,
+    passiveEffect: { type: 'gold_boost', value: 0.15, description: '+15% Gold em todas as missões' },
+    lore: '"Uma rainha que nunca falhou com o seu povo. A sua lâmina invisível brilha com a esperança de uma era esquecida."',
+    icon: 'sword-cross', color: '#f59e0b',
+  },
+  {
+    id: 'legend_cloud', name: 'O Mercenário do Olhar de Mako', rank: 'Commander', type: 'Warrior', dropRate: 0.02,
+    passiveEffect: { type: 'xp_boost', value: 0.08, description: '+8% XP em todas as missões' },
+    lore: '"Os seus olhos brilham com uma energia proibida. Carrega uma lâmina colossal que desafia a gravidade e a memória."',
+    icon: 'sword', color: '#f59e0b',
+  },
+  {
+    id: 'legend_ichigo', name: 'O Portador do Luar Negro', rank: 'Commander', type: 'Assassin', dropRate: 0.02,
+    passiveEffect: { type: 'focus_bonus', value: 20, description: '+20 min de foco extra por sessão' },
+    lore: '"Move-se entre o mundo dos vivos e dos mortos. O seu corte final é um grito de escuridão absoluta que rasga o céu."',
+    icon: 'moon-waning-crescent', color: '#f59e0b',
+  },
+  {
+    id: 'legend_luffy', name: 'O Rei da Libertação', rank: 'Commander', type: 'Warrior', dropRate: 0.02,
+    passiveEffect: { type: 'daily_bonus', value: 25, description: '+25 XP grátis ao iniciar cada dia' },
+    lore: '"O seu corpo é fluido como borracha, o seu espírito é indomável. Ele traz o ritmo da libertação para o campo de batalha."',
+    icon: 'sun-wireless', color: '#f59e0b',
+  },
+  {
+    id: 'legend_itachi', name: 'O Corvo do Olhar Carmesim', rank: 'Commander', type: 'Magic', dropRate: 0.02,
+    passiveEffect: { type: 'penalty_immunity', value: 1, description: 'Imunidade completa a 1 penalidade por semana' },
+    lore: '"Viveu no sacrifício e na ilusão. O seu olhar consome a própria alma em chamas negras que nunca se apagam."',
+    icon: 'crow', color: '#f59e0b',
+  },
+  {
+    id: 'legend_eren', name: 'O Titã da Inevitabilidade', rank: 'Knight', type: 'Tank', dropRate: 0.05,
+    passiveEffect: { type: 'streak_protect', value: 2, description: 'Protege o streak duas vezes por semana' },
+    lore: '"Avança sempre, sem nunca olhar para trás. A liberdade tem um custo mundial, e ele é o portador do rugido final."',
+    icon: 'account-group', color: '#3b82f6',
+  },
+  {
+    id: 'legend_zoro', name: 'Asura, o Demónio das Lâminas', rank: 'Knight', type: 'Warrior', dropRate: 0.05,
+    passiveEffect: { type: 'boss_bonus_xp', value: 0.10, description: '+10% XP extra em Boss Raids' },
+    lore: '"Três lâminas, um único caminho de sangue e honra. O seu espírito manifesta-se como um demónio de nove braços."',
+    icon: 'sword-cross', color: '#3b82f6',
+  },
+  {
+    id: 'legend_kirito', name: 'O Prisioneiro do Aço', rank: 'Knight', type: 'Warrior', dropRate: 0.05,
+    passiveEffect: { type: 'xp_boost', value: 0.05, description: '+5% XP em todas as missões' },
+    lore: '"Sobreviveu a mundos de ilusão digital através da força bruta. A sua velocidade com lâminas duplas é lendária."',
+    icon: 'sword', color: '#3b82f6',
+  },
+  {
+    id: 'legend_jotaro', name: 'O Arauto do Tempo Imobilizado', rank: 'Knight', type: 'Warrior', dropRate: 0.05,
+    passiveEffect: { type: 'focus_bonus', value: 10, description: '+10 min de foco extra por sessão' },
+    lore: '"Para o mundo por um breve instante apenas para desferir uma barragem de golpes invisíveis e avassaladores."',
+    icon: 'hand-back-right', color: '#3b82f6',
+  },
+  {
+    id: 'legend_rimuru', name: 'O Monarca do Caos Azul', rank: 'Elite', type: 'Magic', dropRate: 0.08,
+    passiveEffect: { type: 'shop_discount', value: 0.10, description: '-10% no custo de todos os itens da Loja' },
+    lore: '"Uma forma pequena e inócua que esconde uma fome infinita por habilidades. Evolui ao consumir o impossível."',
+    icon: 'water-outline', color: '#22c55e',
+  },
+  {
+    id: 'legend_tanjiro', name: 'O Caçador da Alvorada', rank: 'Elite', type: 'Warrior', dropRate: 0.08,
+    passiveEffect: { type: 'xp_boost', value: 0.04, description: '+4% XP em todas as missões' },
+    lore: '"A sua respiração ecoa o calor do sol. Cada golpe é uma dança de purificação contra a escuridão que consome o mundo."',
+    icon: 'fire', color: '#22c55e',
+  },
+  {
+    id: 'legend_dabi', name: 'O Herdeiro das Chamas Azuis', rank: 'Elite', type: 'Magic', dropRate: 0.08,
+    passiveEffect: { type: 'boss_bonus_xp', value: 0.05, description: '+5% XP extra em Boss Raids' },
+    lore: '"Chamas que ardem mais intensamente que o sol, alimentadas por um rancor familiar que nunca arrefece."',
+    icon: 'fire-circle', color: '#22c55e',
+  },
+  {
+    id: 'legend_edward', name: 'O Alquimista de Metal Sombrio', rank: 'Elite', type: 'Warrior', dropRate: 0.08,
+    passiveEffect: { type: 'gold_boost', value: 0.05, description: '+5% Gold em todas as missões' },
+    lore: '"Trocou partes de si por conhecimento proibido. Transmuta o solo em armas letais num piscar de olhos."',
+    icon: 'arm-flex-outline', color: '#22c55e',
+  },
+  {
+    id: 'legend_pikachu', name: 'Trovão Primordial Estático', rank: 'Normal', type: 'Elemental', dropRate: 0.1,
+    passiveEffect: { type: 'daily_bonus', value: 10, description: '+10 XP grátis ao iniciar cada dia' },
+    lore: '"Um roedor que carrega a fúria do relâmpago nas suas bochechas. Pequeno, mas capaz de paralisar gigantes."',
+    icon: 'flash', color: '#94a3b8',
+  },
+  {
+    id: 'legend_sonic', name: 'O Relâmpago Azul Vibrante', rank: 'Normal', type: 'Assassin', dropRate: 0.1,
+    passiveEffect: { type: 'xp_boost', value: 0.02, description: '+2% XP em todas as missões' },
+    lore: '"Ultrapassa a barreira do som num borrão azul frenético. O inimigo cai antes de sequer ouvir o vento passar."',
+    icon: 'run-fast', color: '#94a3b8',
+  },
 ]
 
 // ── Helpers ────────────────────────────────────────────────────────────────────

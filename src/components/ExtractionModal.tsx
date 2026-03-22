@@ -30,53 +30,74 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
   const rankColor  = isCustom ? '#a855f7' : (SHADOW_RANK_COLOR[shadow.rank as keyof typeof SHADOW_RANK_COLOR] ?? '#94a3b8')
   const rankLabel  = RANK_LABELS[shadow.rank] ?? shadow.rank.toUpperCase()
 
+  // Determine friendly origin label
+  const originLabel = (() => {
+    if (isCustom) return 'CRIADA NA FORJA'
+    if (shadow.unlockMethod?.type === 'achievement') return 'CONQUISTA DESBLOQUEADA'
+    if (shadow.unlockMethod?.type === 'boss_drop')   return 'QUEDA DE BOSS'
+    if (shadow.unlockMethod?.type === 'shop')        return 'COMPRA NA LOJA'
+    // Default: standard extraction from completing all daily quests
+    return 'EXTRAÇÃO DIÁRIA'
+  })()
+
   // Animations
   const glowAnim      = useRef(new Animated.Value(0)).current
   const slideAnim     = useRef(new Animated.Value(60)).current
   const fadeAnim      = useRef(new Animated.Value(0)).current
   const iconScaleAnim = useRef(new Animated.Value(0)).current
   const glitchAnim    = useRef(new Animated.Value(0)).current
+  const ariseAnim     = useRef(new Animated.Value(0)).current
+  const ariseScale    = useRef(new Animated.Value(0.2)).current
+  const poolAnim      = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    // Vibration sequence: short burst then long rumble
-    Vibration.vibrate([0, 80, 40, 80, 40, 200, 80, 400])
-
-    // Glitch flicker on appear
+    // Stage 1: "ARISE" Text
     Animated.sequence([
-      Animated.timing(glitchAnim, { toValue: 1, duration: 60,  useNativeDriver: true }),
-      Animated.timing(glitchAnim, { toValue: 0, duration: 40,  useNativeDriver: true }),
-      Animated.timing(glitchAnim, { toValue: 1, duration: 80,  useNativeDriver: true }),
-      Animated.timing(glitchAnim, { toValue: 0, duration: 30,  useNativeDriver: true }),
-      Animated.timing(glitchAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
-    ]).start()
+      Animated.delay(300),
+      Animated.parallel([
+        Animated.timing(ariseAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
+        Animated.timing(ariseScale, { toValue: 1.1, duration: 800, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+      ]),
+      Animated.delay(500),
+      Animated.timing(ariseAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+    ]).start(() => {
+      // Stage 2: Reveal Card
+      Vibration.vibrate([0, 80, 40, 80, 40, 200, 80, 400])
+      
+      Animated.parallel([
+        Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
+        Animated.timing(slideAnim, { toValue: 0, duration: 700, easing: Easing.out(Easing.back(1.5)), useNativeDriver: true }),
+        Animated.timing(poolAnim, { toValue: 1, duration: 800, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+      ]).start()
 
-    // Slide up + fade in
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1, duration: 400, easing: Easing.out(Easing.quad), useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0, duration: 450, easing: Easing.out(Easing.back(1.2)), useNativeDriver: true,
-      }),
-    ]).start()
+      // icon scale bounce
+      setTimeout(() => {
+        Animated.spring(iconScaleAnim, { toValue: 1, friction: 5, tension: 100, useNativeDriver: true }).start()
+      }, 100)
+    })
 
-    // Icon scale bounce (delayed)
+    // Glitch flicker on card appear (Stage 2)
     setTimeout(() => {
-      Animated.spring(iconScaleAnim, {
-        toValue: 1, friction: 5, tension: 100, useNativeDriver: true,
-      }).start()
-    }, 200)
+      Animated.sequence([
+        Animated.timing(glitchAnim, { toValue: 1, duration: 60,  useNativeDriver: true }),
+        Animated.timing(glitchAnim, { toValue: 0, duration: 40,  useNativeDriver: true }),
+        Animated.timing(glitchAnim, { toValue: 1, duration: 80,  useNativeDriver: true }),
+        Animated.timing(glitchAnim, { toValue: 0, duration: 30,  useNativeDriver: true }),
+        Animated.timing(glitchAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.timing(glitchAnim, { toValue: 0, duration: 100, useNativeDriver: true }),
+      ]).start()
+    }, 1800)
 
-    // Continuous glow pulse
+    // Continuous glow
     Animated.loop(
       Animated.sequence([
-        Animated.timing(glowAnim, { toValue: 1, duration: 1200, easing: Easing.inOut(Easing.sine), useNativeDriver: false }),
-        Animated.timing(glowAnim, { toValue: 0, duration: 1200, easing: Easing.inOut(Easing.sine), useNativeDriver: false }),
+        Animated.timing(glowAnim, { toValue: 1, duration: 1500, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        Animated.timing(glowAnim, { toValue: 0, duration: 1500, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
       ])
     ).start()
   }, [])
 
-  const glowOpacity    = glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0.35, 1] })
+  const glowOpacity    = glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1] })
   const glitchOpacity  = glitchAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 1] })
 
   return (
@@ -88,6 +109,18 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
       />
 
       <View style={st.overlay}>
+        {/* Stage 1: ARISE Text overlay — only for new shadows (not level-up/achievement) */}
+        {!isLevelUp && !isAchievement && (
+          <Animated.View style={[st.ariseLayer, { opacity: ariseAnim, transform: [{ scale: ariseScale }] }]}>
+            <Text style={[st.ariseTxt, { color: rankColor }]}>ARISE</Text>
+            <View style={[st.ariseSubLine, { backgroundColor: rankColor }]} />
+            <Text style={st.ariseSubTxt}>PROTOCOLO DE EXTRAÇÃO ATIVADO</Text>
+          </Animated.View>
+        )}
+
+        {/* Shadow Pool effect */}
+        <Animated.View style={[st.pool, { backgroundColor: rankColor + '20', transform: [{ scaleX: poolAnim }] }]} />
+
         <Animated.View
           style={[
             st.card,
@@ -107,6 +140,12 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
           {/* Divider */}
           <Animated.View style={[st.divider, { borderColor: rankColor, opacity: glowOpacity }]} />
 
+          {/* shadow aura layers */}
+          <View style={st.auraContainer}>
+            <Animated.View style={[st.aura, { borderColor: rankColor, opacity: Animated.multiply(glowOpacity, 0.3), transform: [{ scale: Animated.add(iconScaleAnim, 0.2) }] }]} />
+            <Animated.View style={[st.aura, { borderColor: rankColor, opacity: Animated.multiply(glowOpacity, 0.15), transform: [{ scale: Animated.add(iconScaleAnim, 0.5) }] }]} />
+          </View>
+
           {/* Shadow icon */}
           <Animated.View
             style={[
@@ -124,6 +163,12 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
 
           {/* Shadow name */}
           <Text style={[st.shadowName, { color: rankColor }]}>{shadow.name}</Text>
+
+          {/* Origin chip */}
+          <View style={[st.originChip, { borderColor: rankColor + '44' }]}>
+            <Icon name="information-outline" size={10} color={rankColor} />
+            <Text style={[st.originTxt, { color: rankColor }]}> ORIGEM: {originLabel}</Text>
+          </View>
 
           {/* Passive effect */}
           <View style={[st.passiveRow, { borderColor: rankColor + '44', backgroundColor: rankColor + '0d' }]}>
@@ -273,6 +318,21 @@ const st = StyleSheet.create({
     letterSpacing: 0.5,
   },
 
+  originChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    marginBottom: 4,
+  },
+  originTxt: {
+    fontFamily: FONT.orbitron,
+    fontSize: 8,
+    letterSpacing: 1.5,
+  },
+
   awakenBox: {
     width: '100%',
     backgroundColor: '#facc1508',
@@ -345,5 +405,58 @@ const st = StyleSheet.create({
     fontSize: 13,
     fontWeight: '900',
     letterSpacing: 2,
+  },
+
+  // Arise specific
+  ariseLayer: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  ariseTxt: {
+    fontFamily: FONT.orbitron,
+    fontSize: 52,
+    fontWeight: '900',
+    letterSpacing: 15,
+    textShadowColor: '#000',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 20,
+  },
+  ariseSubLine: {
+    width: 200,
+    height: 2,
+    marginVertical: 10,
+  },
+  ariseSubTxt: {
+    color: '#fff',
+    fontFamily: FONT.orbitron,
+    fontSize: 8,
+    letterSpacing: 4,
+    opacity: 0.8,
+  },
+  pool: {
+    position: 'absolute',
+    bottom: '25%',
+    width: '120%',
+    height: 100,
+    borderRadius: 50,
+    zIndex: 0,
+    opacity: 0.5,
+  },
+  auraContainer: {
+    position: 'absolute',
+    top: 150, // rough center of icon area
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    zIndex: -1,
+  },
+  aura: {
+    position: 'absolute',
+    width: 96,
+    height: 96,
+    borderRadius: 16,
+    borderWidth: 2,
   },
 })

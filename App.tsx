@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Fragment } from 'react'
 import { View, Text, StyleSheet, StatusBar, Modal, TouchableOpacity, Vibration } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import { NavigationContainer, DarkTheme } from '@react-navigation/native'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { NavigationContainer, DarkTheme, createNavigationContainerRef } from '@react-navigation/native'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { getRank, xpForLevel, CLASS_REQUIREMENTS } from './src/store/useGameStore'
 import { setupNotifications, requestNotificationPermission } from './src/utils/notifications'
 import { ACHIEVEMENTS_MAP } from './src/data/achievements'
+import { SHADOW_MAP } from './src/data/shadows'
 import RankModal from './src/components/RankModal'
+import ExtractionModal from './src/components/ExtractionModal'
+import TutorialOverlay from './src/components/TutorialOverlay'
 
 import StatusScreen    from './src/screens/StatusScreen'
 import QuestScreen     from './src/screens/QuestScreen'
@@ -18,7 +21,7 @@ import ShadowsScreen   from './src/screens/ShadowsScreen'
 import SettingsScreen  from './src/screens/SettingsScreen'
 import { C, FONT, SPACING } from './src/theme'
 
-const Tab = createBottomTabNavigator()
+const Tab = createMaterialTopTabNavigator()
 
 // ── Achievement Modal (epic) ───────────────────────────────────────────────────
 
@@ -27,7 +30,7 @@ function AchievementModal({ achievementId, onDismiss }: { achievementId: string;
 
   useEffect(() => {
     Vibration.vibrate([0, 100, 50, 200, 50, 100, 50, 400])
-  }, [])
+  }, [achievementId])
 
   if (!achievement) return null
 
@@ -187,6 +190,8 @@ const TAB_ICONS: Record<string, string> = {
   'Sombras':    'account-group-outline',
 }
 
+const navigationRef = createNavigationContainerRef<any>()
+
 // ── App Root ───────────────────────────────────────────────────────────────────
 
 export default function App() {
@@ -196,15 +201,19 @@ export default function App() {
   const dismissPenalty      = useGameStore(s => s.dismissPenaltyModal)
   const inventory           = useGameStore(s => s.player.inventory)
   const invTotal            = inventory.reduce((sum, e) => sum + e.quantity, 0)
-  const newAchievementIds   = useGameStore(s => s.newAchievementIds)
-  const dismissAchievement  = useGameStore(s => s.dismissAchievement)
-  const lastExtraction      = useGameStore(s => s.lastExtraction)
+  const rewardsQueue        = useGameStore(s => s.rewardsQueue)
+  const popReward           = useGameStore(s => s.popReward)
+  const tutorialPhase       = useGameStore(s => s.system.tutorialPhase)
+  const advanceTutorial     = useGameStore(s => s.advanceTutorialPhase)
 
   const [showSettings, setShowSettings] = useState(false)
   const [showRankInfo, setShowRankInfo] = useState(false)
   const statistics   = useGameStore(s => s.statistics)
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated)
   const playerLevel  = useGameStore(s => s.player.level)
+
+  // Decide if tutorial should run
+  const activeTutorialPhase = tutorialPhase === 0 ? 1 : (tutorialPhase === 1 && playerLevel >= 10 ? 2 : null)
 
   useEffect(() => {
     bootSystem()
@@ -231,18 +240,22 @@ export default function App() {
         )}
 
         <NavigationContainer
+          ref={navigationRef}
           theme={{ ...DarkTheme, colors: { ...DarkTheme.colors, background: C.bg, card: C.panel, border: C.border } }}
         >
           <Tab.Navigator
+            tabBarPosition="bottom"
             screenOptions={({ route }) => ({
-              headerShown:             false,
+              tabBarShowIcon:          true,
               tabBarStyle:             styles.tabBar,
+              tabBarIndicatorStyle:    { backgroundColor: C.neonBlue, height: 2, top: 0 },
               tabBarActiveTintColor:   C.neonBlue,
               tabBarInactiveTintColor: C.dimmed,
               tabBarLabelStyle:        styles.tabLabel,
-              tabBarIcon: ({ color, size }) => (
-                <Icon name={TAB_ICONS[route.name] ?? 'circle'} size={size - 2} color={color} />
-              ),
+              tabBarIcon: ({ color, ...rest }) => {
+                const iconSize = (rest as any).size ?? 22
+                return <Icon name={TAB_ICONS[route.name] ?? 'circle'} size={iconSize - 2} color={color} />
+              },
             })}
           >
             <Tab.Screen name="Status"   component={StatusScreen} />
@@ -252,16 +265,22 @@ export default function App() {
               name="Inventário"
               component={InventoryScreen}
               options={{
-                tabBarBadge:      invTotal > 0 ? invTotal : undefined,
-                tabBarBadgeStyle: { backgroundColor: C.neonBlue, fontSize: 9 },
+                tabBarBadge: invTotal > 0 ? () => (
+                  <View style={{ backgroundColor: C.neonBlue, borderRadius: 10, minWidth: 14, height: 14, justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                    <Text style={{ color: '#000', fontSize: 9, fontWeight: 'bold', fontFamily: FONT.orbitron }}>{invTotal}</Text>
+                  </View>
+                ) : undefined
               }}
             />
             <Tab.Screen
               name="Focus Mode"
               component={FocusScreen}
               options={{
-                tabBarBadge:      hasPenalty ? '!' : undefined,
-                tabBarBadgeStyle: { backgroundColor: C.neonRed, fontSize: 9 },
+                tabBarBadge: hasPenalty ? () => (
+                  <View style={{ backgroundColor: C.neonRed, borderRadius: 10, minWidth: 14, height: 14, justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                    <Text style={{ color: '#000', fontSize: 9, fontWeight: 'bold', fontFamily: FONT.orbitron }}>!</Text>
+                  </View>
+                ) : undefined
               }}
             />
             <Tab.Screen
@@ -277,9 +296,26 @@ export default function App() {
         {/* Scary penalty modal */}
         <PenaltyModal visible={penaltyTriggered} onDismiss={dismissPenalty} />
 
-        {/* Achievement unlock modal — shows one at a time from the queue */}
-        {newAchievementIds.length > 0 && !penaltyTriggered && !lastExtraction && (
-          <AchievementModal achievementId={newAchievementIds[0]} onDismiss={dismissAchievement} />
+        {/* Sequential Reward System */}
+        {!penaltyTriggered && rewardsQueue.length > 0 && (
+          <Fragment key={`${rewardsQueue[0].type}-${rewardsQueue[0].id}`}>
+            {rewardsQueue[0].type === 'achievement' && (
+              <AchievementModal
+                achievementId={rewardsQueue[0].id}
+                onDismiss={popReward}
+              />
+            )}
+            {rewardsQueue[0].type === 'shadow' && (
+              <ExtractionModal
+                result={{
+                   shadow: (SHADOW_MAP[rewardsQueue[0].id] || (useGameStore.getState().customShadows.find(cs => cs.id === rewardsQueue[0].id)))!, // fallback to custom if not in SHADOW_MAP
+                   isLevelUp: !!rewardsQueue[0].isLevelUp,
+                   newLevel: rewardsQueue[0].newLevel || 1
+                }}
+                onDismiss={popReward}
+              />
+            )}
+          </Fragment>
         )}
 
         {/* Rank requirements modal */}
@@ -295,6 +331,19 @@ export default function App() {
 
         {/* Settings screen */}
         {showSettings && <SettingsScreen onClose={() => setShowSettings(false)} />}
+
+        {/* Tutorial Overlay */}
+        {activeTutorialPhase !== null && (
+          <TutorialOverlay
+            phase={activeTutorialPhase as 1 | 2}
+            onDone={advanceTutorial}
+            onChangeTab={(tab) => {
+              if (navigationRef.isReady()) {
+                navigationRef.navigate(tab)
+              }
+            }}
+          />
+        )}
 
       </SafeAreaView>
     </SafeAreaProvider>
@@ -329,13 +378,16 @@ const styles = StyleSheet.create({
     backgroundColor: C.panel,
     borderTopWidth:  1,
     borderTopColor:  C.border,
-    height:          58,
-    paddingBottom:   4,
+    height:          62,
+    elevation:       0,
+    shadowOpacity:   0,
   },
   tabLabel: {
     fontFamily:    FONT.orbitron,
     fontSize:      8,
     letterSpacing: 0.5,
+    margin:        0,
+    marginTop:     -4,
   },
   penalBanner: {
     flexDirection:     'row',

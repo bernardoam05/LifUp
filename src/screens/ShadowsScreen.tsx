@@ -22,6 +22,14 @@ const RANK_LABELS: Record<ShadowRank, string> = {
   Normal:    'NORMAL',
 }
 
+const RANK_SHORT: Record<ShadowRank, string> = {
+  Marshal:   'MAR',
+  Commander: 'COM',
+  Knight:    'KNI',
+  Elite:     'ELI',
+  Normal:    'NOR',
+}
+
 const PASSIVE_LABELS: Record<PassiveEffectType, string> = {
   gold_boost:        'Bónus de Gold',
   xp_boost:         'Bónus de XP',
@@ -129,6 +137,16 @@ function PassiveSummaryCard({
           </View>
         ))}
       </View>
+      <View style={ps.vanguardRow}>
+        {activeEntries.map(e => (
+          <View key={e.id} style={[ps.vanguardIconWrap, { borderColor: (shadowLookup[e.id] as any)?.color ?? C.gold }]}>
+             <Icon name={(shadowLookup[e.id] as any)?.icon ?? 'ghost'} size={24} color={(shadowLookup[e.id] as any)?.color ?? C.gold} />
+             <View style={ps.vanguardLvl}>
+               <Text style={ps.vanguardLvlTxt}>LV.{e.level}</Text>
+             </View>
+          </View>
+        ))}
+      </View>
       <Text style={ps.note}>{entries.length} sombras na coleção · {activeEntries.length} na Vanguarda</Text>
     </View>
   )
@@ -199,7 +217,9 @@ function ShadowDetailModal({
   shadowLookup: Record<string, Shadow>
   onClose:      () => void
   onToggleActive: () => void
+  onToggleFavorite: () => void
   onRelease:    () => void
+  isFavorite:   boolean
 }) {
   const isCustom   = (shadow as any).type === 'Custom'
   const rankColor  = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank]
@@ -217,6 +237,14 @@ function ShadowDetailModal({
               <Text style={dm.activeBadgeTxt}> VANGUARDA ATIVA</Text>
             </View>
           )}
+
+          <TouchableOpacity
+            style={dm.favBtn}
+            onPress={onToggleFavorite}
+            activeOpacity={0.7}
+          >
+            <Icon name={isFavorite ? "star" : "star-outline"} size={22} color={isFavorite ? "#facc15" : "#94a3b8"} />
+          </TouchableOpacity>
 
           <View style={[dm.iconWrap, { backgroundColor: rankColor + '18', borderColor: rankColor + '44' }]}>
             <Icon name={shadow.icon} size={48} color={rankColor} />
@@ -298,11 +326,13 @@ function ShadowCard({
   shadow,
   level,
   isActive,
+  isFavorite,
   onPress,
 }: {
   shadow:   Shadow
   level:    number
   isActive: boolean
+  isFavorite: boolean
   onPress:  () => void
 }) {
   const isCustom  = (shadow as any).type === 'Custom'
@@ -313,36 +343,35 @@ function ShadowCard({
     <TouchableOpacity
       style={[
         sc.card,
-        { borderColor: isActive ? '#facc15' : rankColor + '44' },
+        {
+          borderColor: isActive ? '#facc15' : rankColor + '44',
+          backgroundColor: isActive ? '#facc150d' : rankColor + '08',
+        },
         isActive && sc.cardActive,
       ]}
       onPress={onPress}
       activeOpacity={0.75}
     >
-      <View style={[sc.iconWrap, { backgroundColor: rankColor + '18' }]}>
+      <View style={[sc.iconWrap, { backgroundColor: rankColor + '12' }]}>
         <Icon name={shadow.icon} size={22} color={rankColor} />
       </View>
+      
       <View style={sc.info}>
         <View style={sc.nameRow}>
+          {isFavorite && <Icon name="star" size={10} color="#facc15" style={{ marginRight: 4 }} />}
           <Text style={[sc.name, { color: rankColor }]}>{shadow.name}</Text>
-          {level > 1 && (
-            <View style={[sc.lvlBadge, { borderColor: rankColor + '88', backgroundColor: rankColor + '18' }]}>
-              <Text style={[sc.lvlTxt, { color: rankColor }]}>Lv.{level}</Text>
-            </View>
-          )}
-          {isActive && (
-            <View style={sc.activeBadge}>
-              <Icon name="shield-sword" size={9} color="#facc15" />
-              <Text style={sc.activeBadgeTxt}> ATIVO</Text>
-            </View>
-          )}
         </View>
         <Text style={sc.effect} numberOfLines={1}>
-          {formatPassiveValue(shadow.passiveEffect.type, scaledVal)}
-          {' '}{PASSIVE_LABELS[shadow.passiveEffect.type]}
+          {formatPassiveValue(shadow.passiveEffect.type, scaledVal)} {PASSIVE_LABELS[shadow.passiveEffect.type]}
         </Text>
       </View>
-      <Icon name="chevron-right" size={16} color={rankColor + '77'} />
+ 
+      <View style={sc.rightSide}>
+        <View style={[sc.rankBadge, { borderColor: rankColor + '44' }]}>
+          <Text style={[sc.rankTxt, { color: rankColor }]}>{isCustom ? 'CST' : RANK_SHORT[shadow.rank as ShadowRank]}</Text>
+        </View>
+        <Text style={[sc.lvlTxt, { color: rankColor }]}>LV.{level}</Text>
+      </View>
     </TouchableOpacity>
   )
 }
@@ -355,6 +384,7 @@ export default function ShadowsScreen() {
   const activeShadowIds  = useGameStore(s => s.player.activeShadowIds)
   const customShadows    = useGameStore(s => s.customShadows)
   const toggleActive     = useGameStore(s => s.toggleActiveShadow)
+  const toggleFavorite   = useGameStore(s => s.toggleFavoriteShadow)
   const releaseShadow    = useGameStore(s => s.releaseShadow)
 
   const [selected, setSelected]   = useState<{ shadow: Shadow; level: number } | null>(null)
@@ -441,6 +471,7 @@ export default function ShadowsScreen() {
                       shadow={shadow}
                       level={levelMap[shadow.id] ?? 1}
                       isActive={activeShadowIds.includes(shadow.id)}
+                      isFavorite={!!standardEntries.find(e => e.id === shadow.id)?.isFavorite}
                       onPress={() => setSelected({ shadow, level: levelMap[shadow.id] ?? 1 })}
                     />
                   ))}
@@ -467,6 +498,7 @@ export default function ShadowsScreen() {
                       shadow={shadow}
                       level={lvl}
                       isActive={activeShadowIds.includes(id)}
+                      isFavorite={!!customEntries.find(e => e.id === id)?.isFavorite}
                       onPress={() => setSelected({ shadow, level: lvl })}
                     />
                   )
@@ -483,6 +515,7 @@ export default function ShadowsScreen() {
           shadow={selected.shadow}
           level={selected.level}
           isActive={activeShadowIds.includes(selected.shadow.id)}
+          isFavorite={!!shadowEntries.find(e => e.id === selected.shadow.id)?.isFavorite}
           canEquipMore={canEquipMore}
           shadowLookup={shadowLookup}
           onClose={() => setSelected(null)}
@@ -490,6 +523,7 @@ export default function ShadowsScreen() {
             toggleActive(selected.shadow.id)
             setSelected(null)
           }}
+          onToggleFavorite={() => toggleFavorite(selected.shadow.id)}
           onRelease={() => openRelease(selected.shadow, selected.level)}
         />
       )}
@@ -547,10 +581,14 @@ const ps = StyleSheet.create({
   emptyTxt:       { color: C.dimmed, fontSize: 11, fontStyle: 'italic' },
   header:         { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
   title:          { color: '#facc15', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
-  grid:           { gap: 8, marginBottom: SPACING.sm },
+  grid:           { gap: 8, marginBottom: SPACING.md },
   row:            { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   label:          { color: '#94a3b8', fontSize: 12 },
   value:          { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
+  vanguardRow:    { flexDirection: 'row', gap: 10, marginTop: 4, marginBottom: 8 },
+  vanguardIconWrap: { width: 50, height: 50, borderRadius: 8, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#000' },
+  vanguardLvl:    { position: 'absolute', bottom: -5, right: -5, backgroundColor: '#000', borderRadius: 4, paddingHorizontal: 4, borderWidth: 1, borderColor: '#333' },
+  vanguardLvlTxt: { color: '#fff', fontSize: 7, fontWeight: '900', fontFamily: FONT.orbitron },
   note:           { color: C.dimmed, fontSize: 10, fontStyle: 'italic' },
 })
 
@@ -566,6 +604,9 @@ const sc = StyleSheet.create({
   activeBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#facc1520', borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
   activeBadgeTxt: { fontFamily: FONT.orbitron, fontSize: 7, color: '#facc15', fontWeight: '700' },
   effect:      { color: C.muted, fontSize: 10 },
+  rightSide:   { alignItems: 'flex-end', gap: 4 },
+  rankBadge:   { borderWidth: 1, borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 },
+  rankTxt:     { fontFamily: FONT.orbitron, fontSize: 7, fontWeight: '700' },
 })
 
 const dm = StyleSheet.create({
@@ -582,6 +623,7 @@ const dm = StyleSheet.create({
   lore:         { color: '#94a3b8', fontSize: 12, textAlign: 'center', lineHeight: 20, fontStyle: 'italic', marginBottom: SPACING.md },
   effectRow:    { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.sm, paddingVertical: 8, marginBottom: SPACING.sm, width: '100%' },
   effectTxt:    { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', flex: 1 },
+  favBtn:       { position: 'absolute', top: 20, right: 20, padding: 10, zIndex: 10 },
   scaledHint:   { color: C.muted, fontSize: 10, marginBottom: SPACING.md, fontStyle: 'italic' },
   equipBtn:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.neonBlue + '66', borderRadius: 8, paddingVertical: 10, paddingHorizontal: SPACING.md, width: '100%', marginBottom: SPACING.sm },
   equipTxt:     { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },

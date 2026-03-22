@@ -5,7 +5,7 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { QuestDefinition, Quest, INITIAL_QUEST_DICTIONARY } from '../store/useGameStore'
+import useGameStore, { QuestDefinition, Quest, INITIAL_QUEST_DICTIONARY, RankKey, rankFromXP } from '../store/useGameStore'
 import CustomModal from '../components/CustomModal'
 import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal'
 import { C, FONT, SPACING } from '../theme'
@@ -31,6 +31,22 @@ const ICON_GRID = [
   'briefcase','school','crosshairs-gps','ghost','dragon','flash',
 ]
 
+const RANK_OPTS: { value: RankKey; color: string }[] = [
+  { value: 'E', color: '#94a3b8' },
+  { value: 'D', color: '#22c55e' },
+  { value: 'C', color: '#3b82f6' },
+  { value: 'B', color: '#a855f7' },
+  { value: 'A', color: '#f59e0b' },
+  { value: 'S', color: '#ef4444' },
+]
+
+const BOSS_CLASS_OPTS: { value: QuestDefinition['bossClass']; label: string; color: string }[] = [
+  { value: 'A',     label: 'A-Rank',  color: '#f59e0b' },
+  { value: 'S',     label: 'S-Rank',  color: '#ef4444' },
+  { value: 'Event', label: 'Evento',  color: '#fb923c' },
+  { value: 'Raid',  label: 'Raid',    color: '#a855f7' },
+]
+
 const BLANK_DEF: Omit<QuestDefinition, 'id'> = {
   title:           '',
   description:     '',
@@ -43,6 +59,8 @@ const BLANK_DEF: Omit<QuestDefinition, 'id'> = {
   baseXP:          20,
   baseGold:        8,
   daysOfWeek:      undefined,
+  rank:            undefined,
+  bossClass:       undefined,
 }
 
 // ── Form modal ─────────────────────────────────────────────────────────────────
@@ -150,6 +168,8 @@ function FormModal({
       baseXP:          Number(form.baseXP) || 10,
       baseGold:        Number(form.baseGold) || 5,
       daysOfWeek:      isCore && form.daysRaw.length > 0 ? form.daysRaw : undefined,
+      rank:            form.rank ?? undefined,
+      bossClass:       isBoss ? (form.bossClass ?? 'A') : undefined,
       shadowName:      isBoss && form.shadowName.trim() ? form.shadowName.trim() : undefined,
       shadowIcon:      isBoss && form.shadowName.trim() ? form.shadowIcon.trim() || 'ghost' : undefined,
     }
@@ -225,6 +245,48 @@ function FormModal({
                   />
                 ))}
               </View>
+
+              {/* ── DIFICULDADE ── */}
+              <Text style={fm.label}>
+                DIFICULDADE{'  '}
+                <Text style={fm.hint}>deixa vazio para calcular pelo XP</Text>
+              </Text>
+              <View style={fm.chipRow}>
+                {/* Clear selection */}
+                <Chip
+                  label="AUTO"
+                  active={!form.rank}
+                  color="#64748b"
+                  onPress={() => field('rank', undefined)}
+                />
+                {RANK_OPTS.map(r => (
+                  <Chip
+                    key={r.value}
+                    label={r.value}
+                    active={form.rank === r.value}
+                    color={r.color}
+                    onPress={() => field('rank', r.value)}
+                  />
+                ))}
+              </View>
+
+              {/* ── BOSS CLASS (Boss only) ── */}
+              {isBoss && (
+                <>
+                  <Text style={fm.label}>CLASSE DE BOSS</Text>
+                  <View style={fm.chipRow}>
+                    {BOSS_CLASS_OPTS.map(bc => (
+                      <Chip
+                        key={bc.value}
+                        label={bc.label}
+                        active={form.bossClass === bc.value}
+                        color={bc.color}
+                        onPress={() => field('bossClass', bc.value)}
+                      />
+                    ))}
+                  </View>
+                </>
+              )}
 
               {/* ── TÍTULO ── */}
               <Text style={fm.label}>TÍTULO</Text>

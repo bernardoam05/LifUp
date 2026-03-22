@@ -94,7 +94,21 @@ function StatisticsPanel() {
   const hours   = Math.floor(stats.totalFocusMinutes / 60)
   const minutes = stats.totalFocusMinutes % 60
 
-  const totalQuestsByRank = RANK_ORDER.reduce((sum, r) => sum + stats.questsByRank[r], 0)
+  const totalQuestsByRank = RANK_ORDER.reduce((sum, r) => sum + (stats.questsByRank[r] || 0), 0)
+  
+  // Counts for extra categories
+  const extraCount = stats.questsByRank['Extra' as RankKey] || 0
+  const bossCount  = stats.questsByRank['Boss' as RankKey] || 0
+  const eventCount = stats.questsByRank['Event' as RankKey] || 0
+  
+  const categories = [
+    ...RANK_ORDER.map(r => ({ id: r, label: r, count: stats.questsByRank[r] || 0, color: RANK_COLORS[r] })),
+    { id: 'Extra', label: 'EXTRA', count: extraCount, color: C.gold },
+    { id: 'Boss',  label: 'BOSS',  count: bossCount,  color: C.neonRed },
+    { id: 'Event', label: 'EVNT',  count: eventCount, color: '#f97316' },
+  ]
+
+  const grandTotal = totalQuestsByRank + extraCount + bossCount + eventCount
 
   return (
     <View style={sp.container}>
@@ -106,21 +120,19 @@ function StatisticsPanel() {
       </View>
 
       <View style={sp.rankSection}>
-        <Text style={sp.rankTitle}>MISSÕES POR RANK</Text>
+        <Text style={sp.rankTitle}>DETALHE DE OPERAÇÕES</Text>
         <View style={sp.rankGrid}>
-          {RANK_ORDER.map(rank => {
-            const count = stats.questsByRank[rank]
-            const color = RANK_COLORS[rank]
-            const pct   = totalQuestsByRank > 0 ? (count / totalQuestsByRank) * 100 : 0
+          {categories.map(cat => {
+            const pct = grandTotal > 0 ? (cat.count / grandTotal) * 100 : 0
             return (
-              <View key={rank} style={sp.rankItem}>
-                <View style={[sp.rankBadge, { borderColor: color }]}>
-                  <Text style={[sp.rankLetter, { color }]}>{rank}</Text>
+              <View key={cat.id} style={sp.rankItem}>
+                <View style={[sp.rankBadge, { borderColor: cat.color + '44', backgroundColor: cat.color + '0a' }]}>
+                  <Text style={[sp.rankLetter, { color: cat.color, fontSize: cat.label.length > 2 ? 7 : 10 }]}>{cat.label}</Text>
                 </View>
                 <View style={sp.rankBarTrack}>
-                  <View style={[sp.rankBarFill, { width: `${pct}%` as any, backgroundColor: color }]} />
+                  <View style={[sp.rankBarFill, { width: `${pct}%` as any, backgroundColor: cat.color }]} />
                 </View>
-                <Text style={sp.rankCount}>{count}</Text>
+                <Text style={sp.rankCount}>{cat.count}</Text>
               </View>
             )
           })}
@@ -317,12 +329,12 @@ function ShadowDetailModal({
             </Text>
           ) : (
             <>
-              <View style={[sdm.rankBadge, { borderColor: rankColor }]}>
-                <Text style={[sdm.rankTxt, { color: rankColor }]}>{shadow?.rank ?? '???'}</Text>
+              <View style={[sdm.rankBadge, { borderColor: rankColor + '66' }]}>
+                <Text style={[sdm.rankTxt, { color: rankColor }]}>{shadow?.rank.toUpperCase() ?? '???'}</Text>
               </View>
               <Text style={sdm.subTxt}>{shadow?.lore ?? 'Sem registo disponível.'}</Text>
               <Text style={[sdm.levelTxt, { color: rankColor }]}>NÍVEL {level}</Text>
-              <View style={[sdm.effectRow, { borderColor: rankColor + '44' }]}>
+              <View style={[sdm.effectRow, { borderColor: rankColor + '44', backgroundColor: rankColor + '10' }]}>
                 <Icon name="lightning-bolt" size={12} color={rankColor} />
                 <Text style={[sdm.effectTxt, { color: rankColor }]}>
                   {' '} {shadow?.passiveEffect?.description ?? 'Efeito desconhecido'}
@@ -573,8 +585,8 @@ export default function StatusScreen() {
                 const name = data?.name ?? entry.id
                 return (
                   <TouchableOpacity key={i} style={s.shadowRow} onPress={() => setSelectedShadow({ id: entry.id, level: entry.level })} activeOpacity={0.75}>
-                    <Icon name="ghost" size={14} color="#a855f7" />
-                    <Text style={s.shadowName}>{name}</Text>
+                    <Icon name={data?.icon || "ghost"} size={14} color={data?.color || "#a855f7"} />
+                    <Text style={[s.shadowName, { color: data?.color || '#fff' }]}>{name}</Text>
                     {entry.level > 1 && <Text style={s.shadowLevel}>Lv.{entry.level}</Text>}
                   </TouchableOpacity>
                 )

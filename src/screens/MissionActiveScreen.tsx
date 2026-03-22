@@ -18,6 +18,7 @@ type Props = {
   onClose:         () => void
   onComplete:      () => void
   initialElapsed?: number   // ms — set when resuming a background timer
+  initialPaused?:  boolean
   targetSeconds?:  number   // If set, timer counts DOWN from this value and auto-completes
 }
 
@@ -30,7 +31,7 @@ function formatTime(ms: number): string {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
-export default function MissionActiveScreen({ quest, onClose, onComplete, initialElapsed = 0, targetSeconds }: Props) {
+export default function MissionActiveScreen({ quest, onClose, onComplete, initialElapsed = 0, initialPaused, targetSeconds }: Props) {
   const saveQuestRecord  = useGameStore(s => s.saveQuestRecord)
   const questRecords     = useGameStore(s => s.questRecords)
   const startMissionTimer = useGameStore(s => s.startMissionTimer)
@@ -39,42 +40,44 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
   const record = questRecords[quest.id]
   const targetMs = targetSeconds ? targetSeconds * 1000 : 0
 
+  const initialRunning = initialPaused === false
   const [elapsed,    setElapsed]    = useState(initialElapsed)
-  const [running,    setRunning]    = useState(false)
+  const [running,    setRunning]    = useState(initialRunning)
   const [note,       setNote]       = useState(record?.lastNote ?? '')
   const [showNoTime, setShowNoTime] = useState(false)  // confirm when timer < 10s
 
-  const startRef    = useRef<number | null>(null)
+  const startRef    = useRef<number | null>(initialRunning ? Date.now() : null)
   const accRef      = useRef(initialElapsed)  // pre-fill accumulated ms when resuming
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const doneRef     = useRef(false)
 
-  // Auto-start when resuming a background timer
   useEffect(() => {
-    if (initialElapsed > 0) startTimer()
+    if (targetMs > 0 && elapsed >= targetMs && !doneRef.current) {
+      doneRef.current = true
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      setRunning(false)
+      finalize(targetMs)
+    }
+  }, [elapsed, targetMs])
+
+  useEffect(() => {
+    if (running) {
+      intervalRef.current = setInterval(() => {
+        const currentElapsed = accRef.current + Date.now() - (startRef.current ?? Date.now())
+        setElapsed(currentElapsed)
+      }, 500)
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [running])
 
   function startTimer() {
+    accRef.current = elapsed
     startRef.current = Date.now()
-    showOngoingMissionNotification(quest.label, Date.now() - accRef.current).catch(() => {})
-    
-    intervalRef.current = setInterval(() => {
-      const currentElapsed = accRef.current + Date.now() - (startRef.current ?? Date.now())
-      setElapsed(currentElapsed)
-      
-      // Auto-complete if it's a countdown and reached the target
-      if (targetMs > 0 && currentElapsed >= targetMs && !doneRef.current) {
-        doneRef.current = true
-        if (intervalRef.current) clearInterval(intervalRef.current)
-        finalize(targetMs)
-      }
-    }, 500)
-    
     setRunning(true)
-    // Register background timer only on first start (not on resume)
-    if (initialElapsed === 0) startMissionTimer(quest.id)
+    startMissionTimer(quest.id)
+    showOngoingMissionNotification(quest.label, Date.now() - accRef.current).catch(() => {})
   }
 
   function pauseTimer() {
@@ -82,6 +85,8 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
     accRef.current = elapsed
     startRef.current = null
     setRunning(false)
+    const pauseMissionTimer = useGameStore.getState().pauseMissionTimer
+    pauseMissionTimer(quest.id)
     clearOngoingMissionNotification().catch(() => {})
   }
 
@@ -95,12 +100,6 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
     clearMissionTimer(quest.id)
     clearOngoingMissionNotification().catch(() => {})
   }
-
-  useEffect(() => {
-    return () => { 
-      if (intervalRef.current) clearInterval(intervalRef.current) 
-    }
-  }, [])
 
   function handleComplete() {
     const timeMs = elapsed
@@ -172,7 +171,7 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
               {!running ? (
                 <TouchableOpacity style={[s.ctrlBtn, s.ctrlStart]} onPress={startTimer}>
                   <Icon name="play" size={16} color={C.neonBlue} />
-                  <Text style={[s.ctrlTxt, { color: C.neonBlue }]}> INICIAR</Text>
+                  <Text style={[s.ctrlTxt, { color: C.neonBlue }]}> {elapsed > 0 ? 'RETOMAR' : 'INICIAR'}</Text>
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity style={[s.ctrlBtn, s.ctrlPause]} onPress={pauseTimer}>
@@ -248,7 +247,7 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderColor: C.neonBlue + '44',
     padding: SPACING.md,
-    paddingBottom: 40,
+    paddingBottom: SPACING.md,
   },
 
   header:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },

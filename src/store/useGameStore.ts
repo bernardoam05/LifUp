@@ -3,9 +3,10 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { NativeModules, Vibration } from 'react-native'
 import { scheduleSystemWarnings, cancelSystemWarnings } from '../utils/notifications'
-import { ACHIEVEMENTS_CATALOG, ACHIEVEMENTS_MAP, type EventTrigger, type AchievementProg } from '../data/achievements'
+import { ACHIEVEMENTS_CATALOG, ACHIEVEMENTS_MAP, type EventTrigger, type AchievementProg, type AchievementTier } from '../data/achievements'
 import type { Shadow, PassiveEffectType, ShadowRank } from '../data/shadows'
 import { SHADOW_MAP, SHADOW_BY_ACHIEVEMENT, rollShadow } from '../data/shadows'
+import { RAID_BOSSES, type RaidBossRank } from '../data/bosses'
 import SharedStorage from '../native/SharedStorage'
 
 const { WidgetStorage } = NativeModules as {
@@ -30,7 +31,7 @@ type ClassReq = {
   /** The rank whose questsByRank counter is checked for minRankMissions */
   prevRank?: RankLetter
 }
-type RankLetter = 'E' | 'D' | 'C' | 'B' | 'A' | 'S'
+type RankLetter = 'E' | 'D' | 'C' | 'B' | 'A' | 'S' | 'National'
 
 export const CLASS_REQUIREMENTS: ClassReq[] = [
   { rank: 'E', label: 'E-Rank', color: '#94a3b8', minLevel: 1, minMissions: 0, minBosses: 0, minRankMissions: 0 },
@@ -78,12 +79,16 @@ export type Quest = {
   detail: string
   xp: number
   gold: number
-  type: 'training' | 'knowledge' | 'focus' | 'gps'
+  type: 'training' | 'knowledge' | 'focus' | 'gps' | 'forbidden' | 'limit'
+  failed?: boolean
+  currentValue?: number
+  targetValue?: number
   done: boolean
   focusDuration?: number
   gpsTarget?: number
   xpGained?: number
   goldGained?: number
+  rank?: RankKey  // intrinsic quest difficulty — set at creation time
 }
 
 export type SideQuest = {
@@ -96,6 +101,10 @@ export type SideQuest = {
   createdDate: string
   xpGained?: number
   goldGained?: number
+  // New: persistence and timer
+  startTime?: number // Epoch ms
+  duration?: number // Seconds
+  note?: string
 }
 
 export type PunishmentIntensity = 'light' | 'medium' | 'hardcore'
@@ -124,6 +133,7 @@ const INITIAL_SETTINGS: GameSettings = {
 export type ShadowEntry = {
   id: string
   level: number
+  isFavorite?: boolean
 }
 
 // ── Quest Definition (user-editable) ──────────────────────────────────────────
@@ -135,6 +145,7 @@ export type QuestDefinition = {
   description: string
   type: 'core' | 'pool' | 'boss'
   questType: Quest['type']
+  isDescending?: boolean
   baseTarget: number
   /** How much target increases per interval */
   scalingAmount: number
@@ -146,7 +157,10 @@ export type QuestDefinition = {
   baseXP: number
   baseGold: number
   daysOfWeek?: number[]   // 0=Sun … 6=Sat; undefined = all days
-  // Boss-only: optional shadow extraction
+  // Explicit difficulty rank override (auto-derived from XP if absent)
+  rank?: RankKey
+  // Boss-only fields
+  bossClass?: 'A' | 'S' | 'Event' | 'Raid'
   shadowName?: string
   shadowIcon?: string
   dropShadowId?: string
@@ -155,6 +169,16 @@ export type QuestDefinition = {
 // ── Daily quest generation ─────────────────────────────────────────────────────
 
 const TIER_MULT: Record<string, number> = { E: 1, D: 1.5, C: 2.3, S: 3.5 }
+
+/** Derive a quest's intrinsic difficulty rank from its base XP value. */
+export function rankFromXP(xp: number): RankKey {
+  if (xp >= 500) return 'S'
+  if (xp >= 200) return 'A'
+  if (xp >= 80) return 'B'
+  if (xp >= 50) return 'C'
+  if (xp >= 30) return 'D'
+  return 'E'
+}
 
 // Seeded Fisher-Yates pick — returns `count` unique indices from [0, poolSize)
 function seededPick(count: number, poolSize: number, seed: number): number[] {
@@ -230,6 +254,64 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
     type: 'pool', questType: 'training',
     baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'dia',
     baseXP: 28, baseGold: 10,
+  },
+
+  // ── Forbidden Quests (Avoidance) ──
+  {
+    id: 'forbidden_sugar',
+    title: 'Detox de Açúcar',
+    description: 'Evitar doces hoje. O corpo é o templo do Monarca.',
+    type: 'pool',
+    questType: 'forbidden',
+    baseTarget: 0,
+    unit: 'vezes',
+    scalingAmount: 0,
+    scalingInterval: 1,
+    baseXP: 40,
+    baseGold: 10,
+  },
+  {
+    id: 'forbidden_social',
+    title: 'Silêncio Digital',
+    description: 'Não usar redes sociais. Foco no mundo real.',
+    type: 'pool',
+    questType: 'forbidden',
+    baseTarget: 0,
+    unit: 'minutos',
+    scalingAmount: 0,
+    scalingInterval: 1,
+    baseXP: 50,
+    baseGold: 15,
+  },
+
+  // ── Limit Quests (Ceiling) ──
+  {
+    id: 'limit_snacks',
+    title: 'Limite de Snacks',
+    description: 'Não exceder {target} kcal em snacks/doces.',
+    type: 'pool',
+    questType: 'limit',
+    baseTarget: 300,
+    unit: 'kcal',
+    scalingAmount: 20,
+    scalingInterval: 1,
+    isDescending: true,
+    baseXP: 60,
+    baseGold: 20,
+  },
+  {
+    id: 'limit_spending',
+    title: 'Controlo de Gastos',
+    description: 'Gastar menos de {target}€ em futilidades.',
+    type: 'pool',
+    questType: 'limit',
+    baseTarget: 20,
+    unit: '€',
+    scalingAmount: 1,
+    scalingInterval: 1,
+    isDescending: true,
+    baseXP: 50,
+    baseGold: 15,
   },
   {
     id: 'h7', title: 'Conhecimento Antigo',
@@ -1020,7 +1102,8 @@ function defToQuest(def: QuestDefinition, level: number, tier: string): Quest {
   const m = (n: number) => Math.round(n * mult)
   const amount = def.scalingAmount ?? (def as any).scalingPerLevel ?? 0
   const interval = def.scalingInterval ?? 1
-  const target = Math.round(def.baseTarget + Math.floor((level - 1) / interval) * amount)
+  const targetRaw = def.baseTarget + Math.floor((level - 1) / interval) * (def.isDescending ? -amount : amount)
+  const target = Math.max(def.questType === 'forbidden' ? 0 : 1, Math.round(targetRaw))
   const detail = def.description
     .replace(/{target}/g, String(target))
     .replace(/{unit}/g, def.unit)
@@ -1033,9 +1116,12 @@ function defToQuest(def: QuestDefinition, level: number, tier: string): Quest {
     gold: m(def.baseGold),
     type: def.questType,
     done: false,
+    rank: def.rank ?? rankFromXP(def.baseXP),
+    targetValue: target,
   }
   if (def.questType === 'focus') quest.focusDuration = target * 60_000
   if (def.questType === 'gps') quest.gpsTarget = target
+  if (def.questType === 'limit') quest.currentValue = 0
   return quest
 }
 
@@ -1092,18 +1178,26 @@ export type Statistics = {
   questsByRank: Record<RankKey, number>
   totalFocusMinutes: number
   perfectDays: number
+  perfectDaysStreak: number
   totalCompleted: number
   totalGoldSpent: number
   sideQuestsCompletedToday: number
+  /** Bosses completed — counted in questsByRank['A'] or ['S'] */
+  totalBossesCompleted: number
+  /** Side quests completed — counted in questsByRank by side quest rank */
+  totalSideCompleted: number
 }
 
 const INITIAL_STATS: Statistics = {
   questsByRank: { E: 0, D: 0, C: 0, B: 0, A: 0, S: 0 },
   totalFocusMinutes: 0,
   perfectDays: 0,
+  perfectDaysStreak: 0,
   totalCompleted: 0,
   totalGoldSpent: 0,
   sideQuestsCompletedToday: 0,
+  totalBossesCompleted: 0,
+  totalSideCompleted: 0,
 }
 
 export type InventoryEntry = { itemId: string; quantity: number }
@@ -1129,6 +1223,8 @@ export type ExtractionResult = {
   shadow: Shadow
   isLevelUp: boolean
   newLevel: number
+  goldReward?: number
+  success?: boolean
 }
 
 export type SystemState = {
@@ -1163,6 +1259,13 @@ export type SystemState = {
     totalCount: number
     xpLost: number
   }
+  tutorialPhase: 0 | 1 | 2   // 0=intro pending, 1=tab tour done, 2=level-10 done
+  activeRaidBoss?: {
+    defId: string
+    maxHp: number
+    currentHp: number
+    endDate: number // epoch ms
+  } | null
 }
 
 export type LevelUpReward = {
@@ -1182,13 +1285,13 @@ type GameState = {
   statistics: Statistics
   lastResetDate: string
   unlockedAchievements: string[]
-  newAchievementIds: string[]
   achievementProgress: Record<string, AchievementProg>
-  lastExtraction: ExtractionResult | null
-  questRecords: Record<string, { bestTime: number; lastNote: string }>
+  questRecords: Record<string, { bestTime: number; lastNote: string; history?: Array<{ date: string; time: number; note: string }> }>
   questCompletions: Record<string, number>   // total times each quest was completed
   levelUpReward: LevelUpReward | null     // pending level-up item reward to show
-  activeMissionTimers: Record<string, number>   // questId → startTimestamp (ms)
+  lastExtraction: { shadow: Shadow; isLevelUp: boolean; newLevel: number } | null
+  activeMissionTimers: Record<string, { startTime: number; accumulatedMs: number; isPaused: boolean }>
+  rewardsQueue: { type: 'achievement' | 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number }[]
 }
 
 type TriggerPayload = Record<string, unknown>
@@ -1196,15 +1299,26 @@ type TriggerPayload = Record<string, unknown>
 type GameActions = {
   bootSystem: () => void
   dismissPenaltyModal: () => void
+  advanceTutorialPhase: () => void
+  spawnRaidBoss: () => void
+  dealRaidBossDamage: (dmg: number) => void
+  checkRaidBoss: () => void
+  clearExtraction: () => void
   completeQuest: (id: string) => { leveledUp: boolean }
+  failQuest: (id: string) => void
+  updateQuestValue: (id: string, value: number) => void
   skipQuest: (id: string) => void
   undoQuest: (id: string) => void
   addSideQuest: (title: string) => void
   completeSideQuest: (id: string) => { leveledUp: boolean }
+  startSideQuest: (id: string, durationMinutes: number) => void
+  updateSideQuestNote: (id: string, note: string) => void
   removeSideQuest: (id: string) => void
+  toggleFavoriteShadow: (id: string) => void
   recordFocusTime: (minutes: number) => void
   addXP: (amount: number) => { leveledUp: boolean }
   purchaseItem: (itemId: string, cost: number) => boolean
+  purchaseShadow: (shadowId: string, cost: number) => boolean
   useInventoryItem: (itemId: string) => void
   addToInventory: (itemId: string, qty?: number) => void
   toggleBlockedApp: (pkg: string) => void
@@ -1215,7 +1329,7 @@ type GameActions = {
   setPenaltyReduced: (v: boolean) => void
   removePenalty: () => void
   deductGold: (amount: number) => boolean
-  defeatDungeonBoss: (shadowId: string, customDef?: { name: string; icon: string; questType: Quest['type'] }) => { xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean }
+  defeatDungeonBoss: (shadowId: string, customDef?: { name: string; icon: string; questType: Quest['type'] }) => { xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean, isNew?: boolean }
   dismissAchievement: () => void
   triggerEvent: (event: EventTrigger, payload?: TriggerPayload, value?: number) => void
   emitEvent: (event: EventTrigger, value?: number) => void
@@ -1230,6 +1344,7 @@ type GameActions = {
   saveQuestRecord: (questId: string, time: number, note: string) => void
   dismissLevelUpReward: () => void
   startMissionTimer: (id: string) => void
+  pauseMissionTimer: (id: string) => void
   clearMissionTimer: (id: string) => void
   toggleActiveShadow: (id: string) => void
   releaseShadow: (id: string) => { gold: number }
@@ -1238,6 +1353,7 @@ type GameActions = {
   completeEventTrial: (id: string, key: string, required: number, total: number) => { completed: number; required: number }
   markEventBossDefeated: (key: string) => void
   restoreBackup: (data: Partial<GameState>) => void
+  popReward: () => void
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -1246,14 +1362,44 @@ function applyXP(xp: number, level: number, amount: number) {
   let newXp = xp + amount
   let newLevel = level
   let leveledUp = false
+  let levelGain = 0
 
   while (newXp >= xpForLevel(newLevel)) {
     newXp -= xpForLevel(newLevel)
     newLevel++
     leveledUp = true
+    levelGain++
   }
 
-  return { xp: newXp, level: newLevel, leveledUp }
+  return { xp: newXp, level: newLevel, leveledUp, levelGain }
+}
+
+function distributeStats(
+  current: { str: number; agi: number; int: number; vit: number },
+  levelGain: number,
+  type: Quest['type'] | 'boss' | 'side'
+) {
+  let { str, agi, int, vit } = { ...current }
+  for (let i = 0; i < levelGain; i++) {
+    switch (type) {
+      case 'training':
+        str += 2; vit += 1; agi += 1;
+        break
+      case 'knowledge':
+        int += 2; vit += 1; agi += 1;
+        break
+      case 'focus':
+        int += 2; agi += 2;
+        break
+      case 'gps':
+        agi += 2; vit += 2;
+        break
+      default:
+        str += 1; agi += 1; int += 1; vit += 1;
+        break
+    }
+  }
+  return { str, agi, int, vit }
 }
 
 function getMondayDateString(): string {
@@ -1274,6 +1420,7 @@ function getCustomShadowPassive(questType: Quest['type']): { type: PassiveEffect
     case 'knowledge': return { type: 'xp_boost', value: 0.02, description: '+2% XP em missões de conhecimento' }
     case 'focus': return { type: 'focus_bonus', value: 5, description: '+5 min de foco por sessão' }
     case 'gps': return { type: 'boss_bonus_xp', value: 0.05, description: '+5% XP extra em Boss Raids' }
+    default: return { type: 'gold_boost', value: 0, description: '' }
   }
 }
 
@@ -1288,7 +1435,7 @@ const SHADOW_RELEASE_BASE: Partial<Record<string, number>> = {
 }
 
 export function getShadowReleaseGold(shadow: Shadow, level: number): number {
-  if ((shadow as any).type === 'Custom') return 0
+  if ((shadow as Shadow).type === 'Custom') return 0
   const base = SHADOW_RELEASE_BASE[shadow.rank as string] ?? 50
   return Math.round(base * (1 + (level - 1) * 0.5))
 }
@@ -1457,7 +1604,7 @@ function evaluateAchievementCondition(
     case 'event_festival_drake': return payload.missionId === 'event_festival_drake'
 
     // Quests
-    case 'quests_perfect_week': return Boolean(payload.afterPerfectDay)
+    case 'quests_perfect_week': return (statistics.perfectDaysStreak ?? 0) >= 7 && Boolean(payload.afterPerfectDay)
     case 'side_quest_first': return true
     case 'side_quest_daily_five': return (statistics.sideQuestsCompletedToday ?? 0) >= 5
 
@@ -1518,22 +1665,22 @@ function unlockAchievements(ids: string[], { get, set }: StoreRef) {
       Boolean(sh) && !currentShadows.some(e => e.id === sh.id)
     )
 
-  set(s => {
+  set((s: GameState & GameActions) => {
     let { xp, level } = s.player
     if (totalXP > 0) {
       const res = applyXP(xp, level, totalXP)
       xp = res.xp; level = res.level
     }
     const newShadows = shadowRewards.map(sh => ({ id: sh.id, level: 1 }))
-    // Show extraction modal for first granted shadow (if none pending)
-    const pendingExtraction = s.lastExtraction
-    const extractionReveal: Partial<GameState> = (!pendingExtraction && shadowRewards.length > 0)
-      ? { lastExtraction: { shadow: shadowRewards[0], isLevelUp: false, newLevel: 1 } }
-      : {}
+
+    // Add achievements to rewards queue
+    const achievementRewards = ids.map(id => ({ type: 'achievement' as const, id }))
+    // Add shadow rewards to queue
+    const shadowRewardsQueue = shadowRewards.map(sh => ({ type: 'shadow' as const, id: sh.id, isLevelUp: false, newLevel: 1 }))
+
     return {
-      ...extractionReveal,
+      rewardsQueue: [...s.rewardsQueue, ...achievementRewards, ...shadowRewardsQueue],
       unlockedAchievements: [...s.unlockedAchievements, ...ids],
-      newAchievementIds: [...s.newAchievementIds, ...ids],
       player: {
         ...s.player,
         gold: s.player.gold + totalGold,
@@ -1587,7 +1734,7 @@ function getStateValueForTrigger(event: EventTrigger, state: GameState): number 
 }
 
 // True when a tiered achievement has all tiers completed (or non-tiered is fully unlocked).
-function isFullyDone(a: { id: string; tiers?: unknown[] }, state: GameState): boolean {
+function isFullyDone(a: { id: string; tiers?: AchievementTier[] }, state: GameState): boolean {
   if (state.unlockedAchievements.includes(a.id)) return true
   if (!a.tiers) return false
   const prog = state.achievementProgress[a.id]
@@ -1596,57 +1743,67 @@ function isFullyDone(a: { id: string; tiers?: unknown[] }, state: GameState): bo
 }
 
 // Tiered achievement tracking — advances tiers and gives per-tier rewards.
-function progressAchievements(event: EventTrigger, value: number, ref: StoreRef, syncOnly = false) {
-  const state = ref.get()
-  const candidates = ACHIEVEMENTS_CATALOG.filter(
-    a => a.tiers != null && a.conditionType === event && !isFullyDone(a, state)
-  )
-  if (candidates.length === 0) return
+function progressAchievements(event: EventTrigger, value: number, ref: StoreRef, useLiveValue = false) {
+  const { get, set } = ref
+  const state = get()
+  const { unlockedAchievements, achievementProgress, statistics } = state
 
-  const stateValue = getStateValueForTrigger(event, state)
-  const progressUpdates: Record<string, AchievementProg> = {}
-  let totalGold = 0
-  let totalXP = 0
-  const notifyIds: string[] = []
-  const fullyUnlockedIds: string[] = []
+  set((s: GameState & GameActions) => {
+    const nextProgress = { ...s.achievementProgress }
+    let anyUnlocked = false
+    const unlockedInThisPass: string[] = []
+    let totalGold = 0
+    let totalXP = 0
+    const notifyIds: string[] = []
 
-  for (const a of candidates) {
-    const raw = state.achievementProgress[a.id]
-    const prog: AchievementProg = (raw && typeof raw === 'object' && 'currentTierIndex' in raw)
-      ? raw
-      : { currentValue: 0, currentTierIndex: 0 }
+    const candidates = ACHIEVEMENTS_CATALOG.filter(
+      a => a.tiers != null && a.conditionType === event && !isFullyDone(a, s)
+    )
 
-    let { currentValue, currentTierIndex } = prog
-    const newValue = stateValue !== null
-      ? stateValue
-      : (syncOnly ? currentValue : currentValue + value)
+    if (candidates.length === 0) return {}
 
-    let idx = currentTierIndex
-    while (idx < a.tiers!.length && newValue >= a.tiers![idx].targetValue) {
-      const tier = a.tiers![idx]
-      totalGold += tier.rewardGold
-      totalXP += tier.rewardXP ?? 0
-      if (!notifyIds.includes(a.id)) notifyIds.push(a.id)
-      idx++
+    const stateValue = getStateValueForTrigger(event, s)
+
+    for (const a of candidates) {
+      const raw = s.achievementProgress[a.id]
+      const prog: AchievementProg = (raw && typeof raw === 'object' && 'currentTierIndex' in raw)
+        ? raw
+        : { currentValue: 0, currentTierIndex: 0 }
+
+      let { currentValue, currentTierIndex } = prog
+      const newValue = useLiveValue
+        ? (stateValue !== null ? stateValue : currentValue)
+        : currentValue + value
+
+      let idx = currentTierIndex
+      while (idx < a.tiers!.length && newValue >= a.tiers![idx].targetValue) {
+        const tier = a.tiers![idx]
+        totalGold += tier.rewardGold
+        totalXP += tier.rewardXP ?? 0
+        if (!notifyIds.includes(a.id)) notifyIds.push(a.id)
+        idx++
+      }
+
+      nextProgress[a.id] = { currentValue: newValue, currentTierIndex: idx }
+      if (idx >= a.tiers!.length) {
+        unlockedInThisPass.push(a.id)
+        anyUnlocked = true
+      }
     }
 
-    progressUpdates[a.id] = { currentValue: newValue, currentTierIndex: idx }
-    if (idx >= a.tiers!.length) fullyUnlockedIds.push(a.id)
-  }
-
-  ref.set(s => {
     let { xp, level } = s.player
     if (totalXP > 0) {
       const res = applyXP(xp, level, totalXP)
       xp = res.xp; level = res.level
     }
+
+    // Add tier notifications to queue
+    const tierRewards = notifyIds.map(id => ({ type: 'achievement' as const, id }))
+
     return {
-      achievementProgress: { ...s.achievementProgress, ...progressUpdates },
-      unlockedAchievements: [...s.unlockedAchievements, ...fullyUnlockedIds],
-      newAchievementIds: [
-        ...s.newAchievementIds,
-        ...notifyIds.filter(id => !s.newAchievementIds.includes(id)),
-      ],
+      achievementProgress: nextProgress,
+      unlockedAchievements: anyUnlocked ? [...s.unlockedAchievements, ...unlockedInThisPass] : s.unlockedAchievements,
+      rewardsQueue: [...s.rewardsQueue, ...tierRewards],
       player: (totalGold > 0 || totalXP > 0) ? {
         ...s.player, gold: s.player.gold + totalGold, xp, level,
       } : s.player,
@@ -1655,7 +1812,7 @@ function progressAchievements(event: EventTrigger, value: number, ref: StoreRef,
 }
 
 // Event-based checks (triggered by specific behaviors)
-function fireEvent(event: EventTrigger, payload: TriggerPayload, ref: StoreRef, value = 1) {
+function fireEvent(event: EventTrigger, payload: TriggerPayload = {}, ref: StoreRef, value: number = 1) {
   const state = ref.get()
   const now = new Date()
   const time = { hour: now.getHours(), minute: now.getMinutes() }
@@ -1702,7 +1859,6 @@ const useGameStore = create<GameState & GameActions>()(
         settings: INITIAL_SETTINGS,
         statistics: INITIAL_STATS,
         unlockedAchievements: [],
-        newAchievementIds: [],
         achievementProgress: {},
         system: {
           focusModeActive: false,
@@ -1730,6 +1886,8 @@ const useGameStore = create<GameState & GameActions>()(
           eventBossTotal: 0,
           eventBossDefeated: false,
           lastPenaltyInfo: undefined,
+          tutorialPhase: 0,
+          activeRaidBoss: null,
         },
         lastResetDate: '',
         lastExtraction: null,
@@ -1737,25 +1895,30 @@ const useGameStore = create<GameState & GameActions>()(
         questCompletions: {},
         levelUpReward: null,
         activeMissionTimers: {},
+        rewardsQueue: [] as { type: 'achievement' | 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number }[],
+
+        popReward: () => {
+          set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.slice(1) }))
+        },
 
         // ── Event trigger (public) ─────────────────────────────────────────
-        triggerEvent(event, payload = {}, value = 1) {
+        triggerEvent(event: EventTrigger, payload: TriggerPayload = {}, value: number = 1) {
           fireEvent(event, payload, ref, value)
         },
 
         // ── Progressive event emitter (public, no payload needed) ──────────
-        emitEvent(event, value = 1) {
+        emitEvent(event: EventTrigger, value: number = 1) {
           fireEvent(event, {}, ref, value)
         },
 
         // ── Blocked app attempt tracker ────────────────────────────────────
         recordBlockedAttempt() {
           const now = Date.now()
-          set(s => ({
+          set((s: GameState & GameActions) => ({
             system: {
               ...s.system,
               blockedAttemptTimestamps: [
-                ...s.system.blockedAttemptTimestamps.filter(t => now - t < 60_000),
+                ...s.system.blockedAttemptTimestamps.filter((t: number) => now - t < 60_000),
                 now,
               ],
             },
@@ -1780,19 +1943,19 @@ const useGameStore = create<GameState & GameActions>()(
           //    after the user first installed) into the persisted questDictionary.
           //    This keeps weeklyBossIds consistent across app updates.
           {
-            const storedIds = new Set(get().questDictionary.map(d => d.id))
-            const missing   = INITIAL_QUEST_DICTIONARY.filter(d => !storedIds.has(d.id))
+            const storedIds = new Set(get().questDictionary.map((d: QuestDefinition) => d.id))
+            const missing = INITIAL_QUEST_DICTIONARY.filter(d => !storedIds.has(d.id))
             if (missing.length > 0) {
-              set(s => ({ questDictionary: [...s.questDictionary, ...missing] }))
+              set((s: GameState & GameActions) => ({ questDictionary: [...s.questDictionary, ...missing] }))
             }
           }
 
           // Force weeklyBossIds to refresh whenever the dictionary is empty (safety net)
           if (get().system.weeklyBossIds.length === 0) {
-            const bossDefs = get().questDictionary.filter(d => d.type === 'boss')
+            const bossDefs = get().questDictionary.filter((d: QuestDefinition) => d.type === 'boss')
             if (bossDefs.length > 0) {
               const picked = seededPick(3, bossDefs.length, Date.now()).map(i => bossDefs[i].id)
-              set(s => ({ system: { ...s.system, weeklyBossIds: picked } }))
+              set((s: GameState & GameActions) => ({ system: { ...s.system, weeklyBossIds: picked } }))
             }
           }
 
@@ -1808,13 +1971,14 @@ const useGameStore = create<GameState & GameActions>()(
           // The flag is reset to false after each daily reset.
           const wasRestDay = get().settings.restDay
 
-          const allDone = quests.length > 0 && quests.every(q => q.done)
+          const allDone = quests.length > 0 && quests.every((q: Quest) => q.done)
           const isFirstDay = lastResetDate === ''
           const hadPenalty = !allDone && !isFirstDay && !wasRestDay
 
-          const failedCount = quests.filter(q => !q.done).length
+          const failedCount = quests.filter((q: Quest) => !q.done).length
 
           let newXp = player.xp
+          let newGold = player.gold
           let penaltyTriggered = false
           let newPenaltyQuests: Quest[] = []
           let newHardcorePunished = false
@@ -1839,7 +2003,32 @@ const useGameStore = create<GameState & GameActions>()(
           let newHighest = player.highestStreak
 
           if (!wasRestDay && !isFirstDay) {
-            if (allDone) {
+            // New logic: auto-complete successfully avoided or limited quests
+            const pendingRewards = quests.filter((q: Quest) => {
+              if (q.done) return false
+              if (q.type === 'forbidden' && !q.failed) return true
+              if (q.type === 'limit' && (q.currentValue ?? 0) <= (q.gpsTarget ?? q.focusDuration ?? 1)) return true
+              return false
+            })
+
+            if (pendingRewards.length > 0) {
+              const rewardedXp = pendingRewards.reduce((sum: number, q: Quest) => sum + q.xp, 0)
+              const rewardedGold = pendingRewards.reduce((sum: number, q: Quest) => sum + q.gold, 0)
+              newXp += rewardedXp
+              newGold += rewardedGold
+            }
+
+            // Recalculate allDone considering auto-completed quests
+            const effectiveDone = quests.filter((q: Quest) => {
+              if (q.done && !q.failed) return true
+              if (!q.done && q.type === 'forbidden' && !q.failed) return true
+              if (!q.done && q.type === 'limit' && (q.currentValue ?? 0) <= (q.gpsTarget ?? q.focusDuration ?? 1)) return true
+              return false
+            }).length
+
+            const isPerfect = effectiveDone === quests.length && quests.length > 0
+
+            if (isPerfect) {
               newStreak = player.currentStreak + 1
               newHighest = Math.max(player.highestStreak, newStreak)
             } else if (streakReset && !system.penaltyReduced) {
@@ -1849,20 +2038,19 @@ const useGameStore = create<GameState & GameActions>()(
 
           const prevStreak = player.currentStreak
 
-          set(s => ({
+          set((s: GameState & GameActions) => ({
             quests: createDailyQuests(s.player.level, s.questDictionary, s.settings.missionDifficulty),
             extraQuests: [],
             sideQuests: [],
             lastResetDate: today,
-            lastExtraction: null,
             settings: { ...s.settings, restDay: false },  // clear rest day after daily reset
             statistics: {
-              ...(allDone
-                ? { ...s.statistics, perfectDays: s.statistics.perfectDays + 1 }
-                : s.statistics),
+              ...s.statistics,
+              perfectDays: allDone ? s.statistics.perfectDays + 1 : s.statistics.perfectDays,
+              perfectDaysStreak: allDone ? (s.statistics.perfectDaysStreak ?? 0) + 1 : 0,
               sideQuestsCompletedToday: 0,
             },
-            player: { ...s.player, xp: newXp, currentStreak: newStreak, highestStreak: newHighest },
+            player: { ...s.player, xp: newXp, gold: newGold, currentStreak: newStreak, highestStreak: newHighest },
             system: {
               ...s.system,
               hasPenalty: hadPenalty,
@@ -1905,16 +2093,130 @@ const useGameStore = create<GameState & GameActions>()(
           }
           checkAndUnlockAchievements(ref)
           scheduleSystemWarnings().catch(() => { })
+          get().checkRaidBoss()
         },
 
         dismissPenaltyModal() {
-          set(s => ({ system: { ...s.system, penaltyTriggered: false } }))
+          set((s: GameState & GameActions) => ({ system: { ...s.system, penaltyTriggered: false } }))
+        },
+
+        advanceTutorialPhase() {
+          set((s: GameState & GameActions) => ({
+            system: { ...s.system, tutorialPhase: Math.min((s.system.tutorialPhase ?? 0) + 1, 2) as 0 | 1 | 2 },
+          }))
+        },
+
+        spawnRaidBoss() {
+          set((state: GameState & GameActions) => {
+            const pR = getRank(state.player.level)
+            let allowedRanks: RaidBossRank[] = ['B']
+            if (['C', 'B'].includes(pR.rank)) allowedRanks = ['A', 'B']
+            if (['A'].includes(pR.rank)) allowedRanks = ['A', 'S']
+            if (pR.rank === 'S') allowedRanks = ['S', 'National']
+            if (pR.rank === 'National') allowedRanks = ['National', 'S']
+
+            const pool = RAID_BOSSES.filter(b => allowedRanks.includes(b.rank))
+            const bossDef = pool[Math.floor(Math.random() * pool.length)] || RAID_BOSSES[0]
+
+            const scale = 1 + state.player.level * 0.1
+            const maxHp = Math.floor(bossDef.baseHp * scale)
+
+            return {
+              system: {
+                ...state.system,
+                activeRaidBoss: {
+                  defId: bossDef.id,
+                  maxHp,
+                  currentHp: maxHp,
+                  endDate: Date.now() + bossDef.durationDays * 24 * 60 * 60 * 1000
+                }
+              }
+            }
+          })
+        },
+
+        dealRaidBossDamage(dmg: number) {
+          set((state: GameState & GameActions) => {
+            const boss = state.system.activeRaidBoss
+            if (!boss) return {}
+
+            const currentHp = Math.max(0, boss.currentHp - dmg)
+
+            if (currentHp <= 0) {
+              const bDef = RAID_BOSSES.find(b => b.id === boss.defId)
+              if (bDef) {
+                const goldReward = boss.maxHp
+                const xpReward = Math.floor(boss.maxHp / 2)
+                const newGold = state.player.gold + goldReward
+                const res = applyXP(state.player.xp, state.player.level, xpReward)
+
+                // Roll shadow reward
+                const rank = pickExtractionRank(res.level)
+                const shadow = rollShadow(rank, [])
+                let lastExt: { shadow: Shadow; isLevelUp: boolean; newLevel: number } | null = null
+                let updatedShadows = [...state.player.shadows]
+
+                if (shadow) {
+                  const existing = updatedShadows.find(e => e.id === shadow.id)
+                  if (existing) {
+                    const nl = existing.level + 1
+                    updatedShadows = updatedShadows.map(e => e.id === shadow.id ? { ...e, level: nl } : e)
+                    lastExt = { shadow, isLevelUp: true, newLevel: nl }
+                  } else {
+                    updatedShadows.push({ id: shadow.id, level: 1 })
+                    lastExt = { shadow, isLevelUp: false, newLevel: 1 }
+                  }
+                }
+
+                const stats = distributeStats(
+                  { str: state.player.str, agi: state.player.agi, int: state.player.int, vit: state.player.vit },
+                  res.levelGain,
+                  'boss'
+                )
+
+                return {
+                  player: {
+                    ...state.player,
+                    gold: newGold,
+                    xp: res.xp,
+                    level: res.level,
+                    shadows: updatedShadows,
+                    ...stats,
+                    maxLevelReached: Math.max(state.player.maxLevelReached, res.level),
+                  },
+                  statistics: {
+                    ...state.statistics,
+                    totalBossesCompleted: (state.statistics.totalBossesCompleted || 0) + 1,
+                  },
+                  lastExtraction: lastExt || state.lastExtraction,
+                  system: { ...state.system, activeRaidBoss: null }
+                }
+              }
+              return { system: { ...state.system, activeRaidBoss: null } }
+            }
+            return { system: { ...state.system, activeRaidBoss: { ...boss, currentHp } } }
+          })
+        },
+
+        checkRaidBoss() {
+          const s = get().system.activeRaidBoss
+          if (s && Date.now() > s.endDate) {
+            set((state: GameState & GameActions) => ({ system: { ...state.system, activeRaidBoss: null } }))
+          }
+          if (!get().system.activeRaidBoss) {
+            get().spawnRaidBoss()
+          }
+        },
+
+        clearExtraction() {
+          set({ lastExtraction: null })
         },
 
         // ── Complete daily quest ───────────────────────────────────────────
-        completeQuest(id) {
+        completeQuest(id: string) {
           let leveledUp = false
-          set(s => {
+          let finalXpGain = 0
+          set((s: GameState & GameActions) => {
             const quest = s.quests.find(q => q.id === id)
             if (!quest || quest.done) return {}
 
@@ -1923,12 +2225,13 @@ const useGameStore = create<GameState & GameActions>()(
             )
             const baseXP = s.system.xpBoostNext ? quest.xp * 2 : quest.xp
             const xpGain = Math.round(baseXP * (1 + xpBoost))
+            finalXpGain = xpGain
             const goldGain = Math.round(quest.gold * (1 + goldBoost))
             const res = applyXP(s.player.xp, s.player.level, xpGain)
             leveledUp = res.leveledUp
 
             const quests = s.quests.map(q => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: goldGain } : q)
-            
+
             const isTraining = quest.type === 'training'
             const newWeeklyCount = isTraining
               ? Math.min(s.system.weeklyTrainingCount + 1, 7)
@@ -1956,25 +2259,30 @@ const useGameStore = create<GameState & GameActions>()(
               else rewardInv.push({ itemId, quantity: 1 })
             })
 
+            const stats = distributeStats(
+              { str: s.player.str, agi: s.player.agi, int: s.player.int, vit: s.player.vit },
+              res.levelGain,
+              quest.type
+            )
+
             const player: Player = {
               ...s.player,
               xp: res.xp, level: res.level, gold: s.player.gold + goldGain,
-              str: s.player.str + (res.level - s.player.level),
-              agi: s.player.agi + (res.level - s.player.level),
-              int: s.player.int + (res.level - s.player.level),
-              vit: s.player.vit + (res.level - s.player.level),
+              ...stats,
               inventory: rewardItems.length > 0 ? rewardInv : s.player.inventory,
               maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
             }
 
-            const rank = getRank(res.level).rank as RankKey
+            // Use the quest's own intrinsic rank (not the player's current rank)
+            const completedQuest = s.quests.find((q: Quest) => q.id === id)
+            const questRank: RankKey = completedQuest?.rank ?? (getRank(res.level).rank as RankKey)
             return {
               quests, player,
               system: { ...s.system, xpBoostNext: false, weeklyTrainingCount: newWeeklyCount },
               statistics: {
                 ...s.statistics,
                 totalCompleted: s.statistics.totalCompleted + 1,
-                questsByRank: { ...s.statistics.questsByRank, [rank]: (s.statistics.questsByRank[rank] ?? 0) + 1 },
+                questsByRank: { ...s.statistics.questsByRank, [questRank]: (s.statistics.questsByRank[questRank] ?? 0) + 1 },
               },
               questCompletions: { ...s.questCompletions, [id]: (s.questCompletions[id] ?? 0) + 1 },
               levelUpReward: rewardItems.length > 0
@@ -1983,22 +2291,22 @@ const useGameStore = create<GameState & GameActions>()(
             }
           })
 
-          const allNowDone = get().quests.every(q => q.done)
+          const allNowDone = get().quests.every((q: Quest) => q.done)
           if (allNowDone) cancelSystemWarnings().catch(() => { })
 
           // ── Daily shadow extraction ────────────────────────────────────────
           if (allNowDone && !get().system.extractionDoneToday) {
-            const state = get()
-            const rank = pickExtractionRank(state.player.level)
-            const shadow = rollShadow(rank, [])   // no filter: dupes = level up
+            const state: GameState & GameActions = get()
+            const rank: ShadowRank = pickExtractionRank(state.player.level) as ShadowRank
+            const shadow: Shadow | null = rollShadow(rank, [])
             if (shadow) {
-              const existingEntry = state.player.shadows.find(e => e.id === shadow.id)
+              const existingEntry = state.player.shadows.find((e: ShadowEntry) => e.id === shadow.id)
               if (existingEntry) {
                 const newLevel = existingEntry.level + 1
-                set(s => ({
+                set((s: GameState & GameActions) => ({
                   player: {
                     ...s.player,
-                    shadows: s.player.shadows.map(e =>
+                    shadows: s.player.shadows.map((e: ShadowEntry) =>
                       e.id === shadow.id ? { ...e, level: newLevel } : e
                     ),
                   },
@@ -2006,7 +2314,7 @@ const useGameStore = create<GameState & GameActions>()(
                   system: { ...s.system, extractionDoneToday: true },
                 }))
               } else {
-                set(s => ({
+                set((s: GameState & GameActions) => ({
                   player: {
                     ...s.player,
                     shadows: [...s.player.shadows, { id: shadow.id, level: 1 }],
@@ -2034,15 +2342,31 @@ const useGameStore = create<GameState & GameActions>()(
           }
 
           checkAndUnlockAchievements(ref)
+          if (finalXpGain > 0) get().dealRaidBossDamage(finalXpGain)
           return { leveledUp }
         },
 
+        // This function was added by mistake or was meant to be handled differently.
+        // The modal itself handles the state after dismiss.
+
         // ── Skip quest (System Pass) ───────────────────────────────────────
-        skipQuest(id) {
-          set(s => {
-            const quest = s.quests.find(q => q.id === id)
+        failQuest(id: string) {
+          set((s: GameState) => ({
+            quests: s.quests.map((q: Quest) => q.id === id ? { ...q, done: true, failed: true } : q)
+          }))
+        },
+
+        updateQuestValue(id: string, value: number) {
+          set((s: GameState) => ({
+            quests: s.quests.map((q: Quest) => q.id === id ? { ...q, currentValue: value } : q)
+          }))
+        },
+
+        skipQuest(id: string) {
+          set((s: GameState & GameActions) => {
+            const quest = s.quests.find((q: Quest) => q.id === id)
             if (!quest || quest.done) return {}
-            const quests = s.quests.map(q => q.id === id ? { ...q, done: true } : q)
+            const quests = s.quests.map((q: Quest) => q.id === id ? { ...q, done: true } : q)
             const res = applyXP(s.player.xp, s.player.level, quest.xp)
             return {
               quests,
@@ -2056,24 +2380,25 @@ const useGameStore = create<GameState & GameActions>()(
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
             }
           })
-          if (get().quests.every(q => q.done)) cancelSystemWarnings().catch(() => { })
+          if (get().quests.every((q: Quest) => q.done)) cancelSystemWarnings().catch(() => { })
           fireEvent('quest_skipped_via_pass', { itemId: 'system_pass' }, ref)
           checkAndUnlockAchievements(ref)
         },
 
         // ── Undo daily quest ───────────────────────────────────────────────
-        undoQuest(id) {
-          set(s => {
-            const quest = s.quests.find(q => q.id === id)
+        undoQuest(id: string) {
+          let xpToRevert = 0
+          set((s: GameState & GameActions) => {
+            const quest = s.quests.find((q: Quest) => q.id === id)
             if (!quest?.done) return {}
-            const quests = s.quests.map(q => q.id === id ? { ...q, done: false, xpGained: undefined, goldGained: undefined } : q)
-            
-            const xpToRevert = quest.xpGained ?? quest.xp
+            const quests = s.quests.map((q: Quest) => q.id === id ? { ...q, done: false, xpGained: undefined, goldGained: undefined } : q)
+
+            xpToRevert = quest.xpGained ?? quest.xp
             const goldToRevert = quest.goldGained ?? quest.gold
 
             let { xp, level, gold, str, agi, vit, int } = s.player
             gold = Math.max(gold - goldToRevert, 0)
-            
+
             let newXp = xp - xpToRevert
             let newLevel = level
             while (newXp < 0 && newLevel > 1) {
@@ -2082,20 +2407,21 @@ const useGameStore = create<GameState & GameActions>()(
             }
 
             const levelsLost = level - newLevel
-            const rank = getRank(newLevel).rank as RankKey
+            // Reverse the quest's own intrinsic rank (matches how it was originally counted)
+            const questRankToReverse: RankKey = quest.rank ?? (getRank(newLevel).rank as RankKey)
             return {
               quests,
               system: { ...s.system, weeklyTrainingCount: quest.type === 'training' ? Math.max(s.system.weeklyTrainingCount - 1, 0) : s.system.weeklyTrainingCount },
               statistics: {
                 ...s.statistics,
                 totalCompleted: Math.max(s.statistics.totalCompleted - 1, 0),
-                questsByRank: { ...s.statistics.questsByRank, [rank]: Math.max((s.statistics.questsByRank[rank] ?? 0) - 1, 0) },
+                questsByRank: { ...s.statistics.questsByRank, [questRankToReverse]: Math.max((s.statistics.questsByRank[questRankToReverse] ?? 0) - 1, 0) },
               },
               questCompletions: { ...s.questCompletions, [id]: Math.max((s.questCompletions[id] ?? 1) - 1, 0) },
               player: {
-                ...s.player, 
-                xp: Math.max(newXp, 0), 
-                level: newLevel, 
+                ...s.player,
+                xp: Math.max(newXp, 0),
+                level: newLevel,
                 gold,
                 str: Math.max(str - levelsLost, 10),
                 agi: Math.max(agi - levelsLost, 10),
@@ -2104,6 +2430,8 @@ const useGameStore = create<GameState & GameActions>()(
               },
             }
           })
+
+          if (xpToRevert > 0) get().dealRaidBossDamage(-xpToRevert)
         },
 
         // ── Side Quests ────────────────────────────────────────────────────
@@ -2114,15 +2442,16 @@ const useGameStore = create<GameState & GameActions>()(
             id: `sq_${Date.now()}`, title: title.trim(),
             rank, xp, gold, done: false, createdDate: new Date().toDateString(),
           }
-          set(s => ({ sideQuests: [...s.sideQuests, sq] }))
+          set((s: GameState) => ({ sideQuests: [...s.sideQuests, sq] }))
           fireEvent('side_quest_added', {}, ref)
           if (rank === 'C') fireEvent('side_quest_c_rank', { rank }, ref)
         },
 
         completeSideQuest(id: string) {
           let leveledUp = false
-          set(s => {
-            const sq = s.sideQuests.find(q => q.id === id)
+          let finalXpGain = 0
+          set((s: GameState & GameActions) => {
+            const sq = s.sideQuests.find((q: SideQuest) => q.id === id)
             if (!sq || sq.done) return {}
 
             const { xpBoost, goldBoost } = computeActivePassives(
@@ -2130,11 +2459,12 @@ const useGameStore = create<GameState & GameActions>()(
             )
             const baseXP = s.system.xpBoostNext ? sq.xp * 2 : sq.xp
             const xpGain = Math.round(baseXP * (1 + xpBoost))
+            finalXpGain = xpGain
             const goldGain = Math.round(sq.gold * (1 + goldBoost))
             const res = applyXP(s.player.xp, s.player.level, xpGain)
             leveledUp = res.leveledUp
 
-            const sideQuests = s.sideQuests.map(q => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: goldGain } : q)
+            const sideQuests = s.sideQuests.map((q: SideQuest) => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: goldGain } : q)
 
             return {
               sideQuests,
@@ -2150,23 +2480,38 @@ const useGameStore = create<GameState & GameActions>()(
                 ...s.statistics,
                 totalCompleted: s.statistics.totalCompleted + 1,
                 sideQuestsCompletedToday: (s.statistics.sideQuestsCompletedToday ?? 0) + 1,
+                totalSideCompleted: (s.statistics.totalSideCompleted ?? 0) + 1,
+                questsByRank: { ...s.statistics.questsByRank, [sq.rank]: (s.statistics.questsByRank[sq.rank as RankKey] ?? 0) + 1 },
               },
             }
           })
           const todayCount = get().statistics.sideQuestsCompletedToday
           fireEvent('side_quest_completed', { todayCount }, ref)
           checkAndUnlockAchievements(ref)
+          if (finalXpGain > 0) get().dealRaidBossDamage(finalXpGain)
           return { leveledUp }
         },
 
+        startSideQuest(id: string, mins: number) {
+          set((s: GameState) => ({
+            sideQuests: s.sideQuests.map((q: SideQuest) => q.id === id ? { ...q, startTime: Date.now(), duration: mins * 60 } : q)
+          }))
+        },
+
+        updateSideQuestNote(id: string, note: string) {
+          set((s: GameState) => ({
+            sideQuests: s.sideQuests.map((q: SideQuest) => q.id === id ? { ...q, note } : q)
+          }))
+        },
+
         removeSideQuest(id: string) {
-          set(s => ({ sideQuests: s.sideQuests.filter(q => q.id !== id) }))
+          set((s: GameState) => ({ sideQuests: s.sideQuests.filter((q: SideQuest) => q.id !== id) }))
         },
 
         // ── XP / Focus ─────────────────────────────────────────────────────
-        addXP(amount) {
+        addXP(amount: number) {
           let leveledUp = false
-          set(s => {
+          set((s: GameState & GameActions) => {
             const res = applyXP(s.player.xp, s.player.level, amount)
             leveledUp = res.leveledUp
             return {
@@ -2183,10 +2528,21 @@ const useGameStore = create<GameState & GameActions>()(
           return { leveledUp }
         },
 
-        recordFocusTime(minutes) {
+        toggleFavoriteShadow(id: string) {
+          set((s: GameState) => ({
+            player: {
+              ...s.player,
+              shadows: s.player.shadows.map((sh: ShadowEntry) =>
+                sh.id === id ? { ...sh, isFavorite: !sh.isFavorite } : sh
+              ),
+            },
+          }))
+        },
+
+        recordFocusTime(minutes: number) {
           const safeMinutes = Math.max(0, minutes)
           if (safeMinutes === 0) return
-          set(s => {
+          set((s: GameState) => {
             const stats = { ...s.statistics, totalFocusMinutes: s.statistics.totalFocusMinutes + safeMinutes }
             if (!s.system.hasPenalty || s.system.penaltyBlockEnd <= 0) {
               return { statistics: stats }
@@ -2202,16 +2558,17 @@ const useGameStore = create<GameState & GameActions>()(
           checkAndUnlockAchievements(ref)
         },
 
-        // ── Inventory / Shop ───────────────────────────────────────────────
-        purchaseItem(itemId, cost) {
-          if (cost < 0) return false
-          const state = get()
-          if (state.player.gold < cost) return false
-          if (STOCKED_ITEMS.includes(itemId) && (state.system.shopStocks[itemId] ?? 0) <= 0) return false
 
-          set(s => {
+        // ── Inventory / Shop ───────────────────────────────────────────────
+        purchaseItem(itemId: string, cost: number): boolean {
+          let success = false
+          set((s: GameState & GameActions) => {
+            if (s.player.gold < cost) return {}
+            if (STOCKED_ITEMS.includes(itemId) && (s.system.shopStocks[itemId] ?? 0) <= 0) return {}
+
+            success = true
             const inv = [...s.player.inventory]
-            const idx = inv.findIndex(e => e.itemId === itemId)
+            const idx = inv.findIndex((e: InventoryEntry) => e.itemId === itemId)
             if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 }
             else inv.push({ itemId, quantity: 1 })
 
@@ -2231,58 +2588,111 @@ const useGameStore = create<GameState & GameActions>()(
             }
           })
 
+          if (!success) return false
+
           fireEvent('item_purchased', { itemId }, ref)
           fireEvent('gold_spent_total', { itemId }, ref, cost)
           checkAndUnlockAchievements(ref)
           return true
         },
 
-        useInventoryItem(itemId) {
-          set(s => {
+        useInventoryItem(itemId: string) {
+          set((s: GameState) => {
             const inv = s.player.inventory
-              .map(e => e.itemId === itemId ? { ...e, quantity: e.quantity - 1 } : e)
-              .filter(e => e.quantity > 0)
+              .map((e: InventoryEntry) => e.itemId === itemId ? { ...e, quantity: e.quantity - 1 } : e)
+              .filter((e: InventoryEntry) => e.quantity > 0)
             return { player: { ...s.player, inventory: inv } }
           })
         },
 
-        addToInventory(itemId, qty = 1) {
-          set(s => {
+        addToInventory(itemId: string, qty: number = 1) {
+          set((s: GameState) => {
             const inv = [...s.player.inventory]
-            const idx = inv.findIndex(e => e.itemId === itemId)
+            const idx = inv.findIndex((e: InventoryEntry) => e.itemId === itemId)
             if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + qty }
             else inv.push({ itemId, quantity: qty })
             return { player: { ...s.player, inventory: inv } }
           })
         },
 
+        // ── Purchase a shadow from the shop ───────────────────────────────
+        purchaseShadow(shadowId: string, cost: number) {
+          const state = get()
+          if (state.player.gold < cost) return false
+          const existing = state.player.shadows.find((e: ShadowEntry) => e.id === shadowId)
+          const shadow = SHADOW_MAP[shadowId]
+          if (!shadow) return false
+
+          if (existing) {
+            // Already owned: level up instead
+            set((s: GameState) => ({
+              player: {
+                ...s.player,
+                gold: s.player.gold - cost,
+                shadows: s.player.shadows.map((e: ShadowEntry) =>
+                  e.id === shadowId ? { ...e, level: e.level + 1 } : e
+                ),
+              },
+              statistics: {
+                ...s.statistics,
+                totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + cost,
+              },
+              rewardsQueue: [
+                ...s.rewardsQueue,
+                { type: 'shadow', id: shadowId, isLevelUp: true, newLevel: existing.level + 1 },
+              ],
+            }))
+          } else {
+            set((s: GameState) => ({
+              player: {
+                ...s.player,
+                gold: s.player.gold - cost,
+                shadows: [...s.player.shadows, { id: shadowId, level: 1 }],
+              },
+              statistics: {
+                ...s.statistics,
+                totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + cost,
+              },
+              rewardsQueue: [
+                ...s.rewardsQueue,
+                { type: 'shadow', id: shadowId, isLevelUp: false, newLevel: 1 },
+              ],
+            }))
+          }
+          fireEvent('shadow_collected', { shadowId }, ref)
+          checkAndUnlockAchievements(ref)
+          return true
+        },
+
         // ── Boss Raid ──────────────────────────────────────────────────────
-        defeatDungeonBoss(shadowId, customDef) {
-          const { player, customShadows } = get()
-          const xpReward = 150 + player.level * 10
-          const goldReward = 100 + player.level * 5
-          const canDrop = player.level >= 10
+        defeatDungeonBoss(shadowId: string, customDef?: { name: string; icon: string; questType: Quest['type'] }) {
+          const { player, system, customShadows } = get()
+          const xpBase = 800
+          const goldBase = 2000
+          const { xpBoost, goldBoost } = computeActivePassives(player.activeShadowIds, player.shadows, customShadows)
+          const xpReward = Math.round(xpBase * (1 + xpBoost) * (system.xpBoostNext ? 2 : 1))
+          const goldReward = Math.round(goldBase * (1 + goldBoost))
 
           let resultShadowName: string | undefined
           let leveledUpShadow = false
+          let isNew = false
 
-          if (canDrop) {
+          if (shadowId) {
             if (customDef) {
-              // Custom boss shadow: check if already owned by same boss id
-              const existing = player.shadows.find(e => e.id === shadowId)
-              if (existing) {
-                // Level up existing custom shadow
+              const existingCustom = get().customShadows.find((cs: Shadow) => cs.id === shadowId)
+              if (existingCustom) {
                 leveledUpShadow = true
-                set(s => ({
+                set((s: GameState) => ({
                   player: {
                     ...s.player,
-                    shadows: s.player.shadows.map(e =>
+                    shadows: s.player.shadows.map((e: ShadowEntry) =>
                       e.id === shadowId ? { ...e, level: e.level + 1 } : e
                     ),
                   },
                 }))
+                resultShadowName = customDef.name
               } else {
-                // First defeat: create custom Shadow + add entry
+                isNew = true
                 const passive = getCustomShadowPassive(customDef.questType)
                 const newCustomShadow: Shadow = {
                   id: shadowId,
@@ -2295,38 +2705,39 @@ const useGameStore = create<GameState & GameActions>()(
                   icon: customDef.icon,
                   color: '#a855f7',
                 }
-                set(s => ({
+                set((s: GameState) => ({
                   customShadows: [...s.customShadows, newCustomShadow],
                   player: { ...s.player, shadows: [...s.player.shadows, { id: shadowId, level: 1 }] },
                 }))
                 resultShadowName = customDef.name
               }
             } else {
-              // Standard shadow from SHADOW_DATABASE
-              const existing = player.shadows.find(e => e.id === shadowId)
+              const existing = player.shadows.find((e: ShadowEntry) => e.id === shadowId)
               if (existing) {
-                // Already owned → level up
                 leveledUpShadow = true
-                set(s => ({
+                set((s: GameState) => ({
                   player: {
                     ...s.player,
-                    shadows: s.player.shadows.map(e =>
+                    shadows: s.player.shadows.map((e: ShadowEntry) =>
                       e.id === shadowId ? { ...e, level: e.level + 1 } : e
                     ),
                   },
                 }))
+                resultShadowName = SHADOW_MAP[shadowId]?.name ?? shadowId
               } else {
-                // New shadow
-                set(s => ({
+                isNew = true
+                set((s: GameState) => ({
                   player: { ...s.player, shadows: [...s.player.shadows, { id: shadowId, level: 1 }] },
                 }))
-                resultShadowName = shadowId
+                resultShadowName = SHADOW_MAP[shadowId]?.name ?? shadowId
               }
             }
           }
 
-          set(s => {
+          set((s: GameState) => {
             const res = applyXP(s.player.xp, s.player.level, xpReward)
+            // Boss missions are classified A-Rank by default (weekly custom bosses)
+            const bossRank: RankKey = 'A'
             return {
               player: {
                 ...s.player, xp: res.xp, level: res.level,
@@ -2342,33 +2753,52 @@ const useGameStore = create<GameState & GameActions>()(
                 weeklyDefeatedBossId: shadowId,
                 bossesDefeated: s.system.bossesDefeated + 1,
               },
+              statistics: {
+                ...s.statistics,
+                totalCompleted: s.statistics.totalCompleted + 1,
+                totalBossesCompleted: (s.statistics.totalBossesCompleted ?? 0) + 1,
+                questsByRank: {
+                  ...s.statistics.questsByRank,
+                  [bossRank]: (s.statistics.questsByRank[bossRank] ?? 0) + 1,
+                },
+              },
             }
           })
 
-          Vibration.vibrate([0, 100, 50, 200])
           fireEvent('boss_defeated', { missionId: shadowId }, ref, 1)
           if (resultShadowName) fireEvent('shadow_collected', {}, ref)
           checkAndUnlockAchievements(ref)
-          return { xp: xpReward, gold: goldReward, shadowName: resultShadowName, leveledUpShadow }
+
+          // Push shadow report to queue IF it was a shadow drop
+          if (shadowId && (customDef || SHADOW_MAP[shadowId])) {
+            set((s: GameState) => ({
+              rewardsQueue: [
+                ...s.rewardsQueue,
+                { type: 'shadow', id: shadowId, isLevelUp: leveledUpShadow, newLevel: leveledUpShadow ? (player.shadows.find((e: ShadowEntry) => e.id === shadowId)?.level ?? 1) + 1 : 1 }
+              ]
+            }))
+          }
+
+          return { xp: xpReward, gold: goldReward, shadowName: resultShadowName, leveledUpShadow, isNew }
         },
 
         // ── System toggles ─────────────────────────────────────────────────
-        setFocusModeActive(v) { set(s => ({ system: { ...s.system, focusModeActive: v } })) },
-        setHardcoreFocusMode(v) { set(s => ({ system: { ...s.system, hardcoreFocusMode: v } })) },
-        setHardcorePunished(v) { set(s => ({ system: { ...s.system, hardcorePunished: v } })) },
-        setXpBoostNext(v) { set(s => ({ system: { ...s.system, xpBoostNext: v } })) },
-        setPenaltyReduced(v) { set(s => ({ system: { ...s.system, penaltyReduced: v } })) },
+        setFocusModeActive(v: boolean) { set((s: GameState) => ({ system: { ...s.system, focusModeActive: v } })) },
+        setHardcoreFocusMode(v: boolean) { set((s: GameState) => ({ system: { ...s.system, hardcoreFocusMode: v } })) },
+        setHardcorePunished(v: boolean) { set((s: GameState) => ({ system: { ...s.system, hardcorePunished: v } })) },
+        setXpBoostNext(v: boolean) { set((s: GameState) => ({ system: { ...s.system, xpBoostNext: v } })) },
+        setPenaltyReduced(v: boolean) { set((s: GameState) => ({ system: { ...s.system, penaltyReduced: v } })) },
 
         removePenalty() {
-          set(s => ({
+          set((s: GameState) => ({
             system: { ...s.system, hasPenalty: false, penaltyTriggered: false, penaltyQuests: [], penaltyBlockEnd: 0 },
           }))
           fireEvent('penalty_cleared', {}, ref)
         },
 
-        deductGold(amount) {
+        deductGold(amount: number) {
           if (get().player.gold < amount) return false
-          set(s => ({
+          set((s: GameState) => ({
             player: { ...s.player, gold: s.player.gold - amount },
             statistics: {
               ...s.statistics,
@@ -2378,8 +2808,8 @@ const useGameStore = create<GameState & GameActions>()(
           return true
         },
 
-        toggleBlockedApp(pkg) {
-          set(s => {
+        toggleBlockedApp(pkg: string) {
+          set((s: GameState) => {
             const apps = s.system.blockedApps.includes(pkg)
               ? s.system.blockedApps.filter(p => p !== pkg)
               : [...s.system.blockedApps, pkg]
@@ -2388,43 +2818,47 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         dismissAchievement() {
-          set(s => ({ newAchievementIds: s.newAchievementIds.slice(1) }))
+          set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'achievement') }))
         },
 
         // ── Quest Dictionary CRUD ──────────────────────────────────────────
-        addQuestDefinition(def) {
-          set(s => ({ questDictionary: [...s.questDictionary, def] }))
+        addQuestDefinition(def: QuestDefinition) {
+          set((s: GameState) => ({ questDictionary: [...s.questDictionary, def] }))
         },
 
-        updateQuestDefinition(id, patch) {
-          set(s => ({
-            questDictionary: s.questDictionary.map(d =>
+        updateQuestDefinition(id: string, patch: Partial<QuestDefinition>) {
+          set((s: GameState) => ({
+            questDictionary: s.questDictionary.map((d: QuestDefinition) =>
               d.id === id ? { ...d, ...patch } : d
             ),
           }))
         },
 
-        deleteQuestDefinition(id) {
-          set(s => ({
-            questDictionary: s.questDictionary.filter(d => d.id !== id),
+        deleteQuestDefinition(id: string) {
+          set((s: GameState) => ({
+            questDictionary: s.questDictionary.filter((d: QuestDefinition) => d.id !== id),
           }))
         },
 
-        updateSettings(patch) {
-          set(s => ({ settings: { ...s.settings, ...patch } }))
+        updateSettings(patch: Partial<GameSettings>) {
+          set((s: GameState) => ({ settings: { ...s.settings, ...patch } }))
         },
 
         saveQuestRecord(questId: string, time: number, note: string) {
-          set(s => {
+          set((s: GameState & GameActions) => {
             const prev = s.questRecords[questId]
             // Only update bestTime if this run is better (shorter) and valid (> 0)
             const bestTime = time > 0 && (!prev || time < prev.bestTime)
               ? time
               : prev?.bestTime ?? 0
+
+            const newHistory = prev?.history ? [...prev.history] : []
+            newHistory.push({ date: new Date().toISOString(), time, note })
+
             return {
               questRecords: {
                 ...s.questRecords,
-                [questId]: { bestTime, lastNote: note },
+                [questId]: { bestTime, lastNote: note, history: newHistory },
               },
             }
           })
@@ -2434,23 +2868,54 @@ const useGameStore = create<GameState & GameActions>()(
           set({ levelUpReward: null })
         },
 
-        startMissionTimer(id: string) {
-          set(s => ({ activeMissionTimers: { ...s.activeMissionTimers, [id]: Date.now() } }))
+        startMissionTimer: (id: string) => {
+          set((s: GameState & GameActions) => {
+            const t = s.activeMissionTimers[id]
+            if (t && !t.isPaused) return {}
+            return {
+              activeMissionTimers: {
+                ...s.activeMissionTimers,
+                [id]: {
+                  startTime: Date.now(),
+                  accumulatedMs: t?.accumulatedMs ?? 0,
+                  isPaused: false
+                }
+              }
+            }
+          })
+        },
+
+        pauseMissionTimer(id: string) {
+          set((s: GameState) => {
+            const t = s.activeMissionTimers[id]
+            if (!t || t.isPaused) return {}
+            const elapsed = Date.now() - t.startTime
+            return {
+              activeMissionTimers: {
+                ...s.activeMissionTimers,
+                [id]: {
+                  startTime: 0,
+                  accumulatedMs: t.accumulatedMs + elapsed,
+                  isPaused: true
+                }
+              }
+            }
+          })
         },
 
         clearMissionTimer(id: string) {
-          set(s => {
+          set((s: GameState) => {
             const { [id]: _, ...rest } = s.activeMissionTimers
             return { activeMissionTimers: rest }
           })
         },
 
         dismissExtraction() {
-          set({ lastExtraction: null })
+          set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'shadow') }))
         },
 
         // ── Vanguard: equip / unequip shadow ──────────────────────────────
-        toggleActiveShadow(id) {
+        toggleActiveShadow(id: string) {
           const MAX_ACTIVE = 3
           set((s: GameState & GameActions) => {
             const active = s.player.activeShadowIds
@@ -2463,7 +2928,7 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         setEventBossState(key: string, required: number, total: number) {
-          set(s => ({
+          set((s: GameState) => ({
             system: {
               ...s.system,
               eventBossKey: key,
@@ -2477,7 +2942,7 @@ const useGameStore = create<GameState & GameActions>()(
 
         completeEventTrial(id: string, key: string, required: number, total: number) {
           let completed = 0
-          set(s => {
+          set((s: GameState & GameActions) => {
             const reset = s.system.eventBossKey !== key
             const currentIds = reset ? [] : s.system.eventBossCompletedIds
             const nextIds = currentIds.includes(id) ? currentIds : [...currentIds, id]
@@ -2496,7 +2961,7 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         markEventBossDefeated(key: string) {
-          set(s => ({
+          set((s: GameState & GameActions) => ({
             system: {
               ...s.system,
               eventBossKey: key,
@@ -2506,9 +2971,9 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         // ── Release shadow (sell) ──────────────────────────────────────────
-        releaseShadow(id) {
+        releaseShadow(id: string) {
           const { player, customShadows } = get()
-          const entry = player.shadows.find(e => e.id === id)
+          const entry = player.shadows.find((e: ShadowEntry) => e.id === id)
           if (!entry) return { gold: 0 }
 
           const customMap: Record<string, Shadow> = {}
@@ -2516,14 +2981,14 @@ const useGameStore = create<GameState & GameActions>()(
           const shadow = ({ ...SHADOW_MAP, ...customMap })[id]
           const goldGained = shadow ? getShadowReleaseGold(shadow, entry.level) : 0
 
-          set(s => ({
+          set((s: GameState & GameActions) => ({
             player: {
               ...s.player,
               gold: s.player.gold + goldGained,
-              shadows: s.player.shadows.filter(e => e.id !== id),
-              activeShadowIds: s.player.activeShadowIds.filter(a => a !== id),
+              shadows: s.player.shadows.filter((e: ShadowEntry) => e.id !== id),
+              activeShadowIds: s.player.activeShadowIds.filter((a: string) => a !== id),
             },
-            customShadows: s.customShadows.filter(sh => sh.id !== id),
+            customShadows: s.customShadows.filter((sh: Shadow) => sh.id !== id),
           }))
           return { gold: goldGained }
         },
@@ -2541,7 +3006,7 @@ const useGameStore = create<GameState & GameActions>()(
 
           const newQuests = createDailyQuests(player.level, questDictionary, get().settings.missionDifficulty, seed)
 
-          set(s => ({
+          set((s: GameState & GameActions) => ({
             quests: newQuests,
             system: { ...s.system, weeklyRegenCount: s.system.weeklyRegenCount + 1 },
           }))
@@ -2555,12 +3020,12 @@ const useGameStore = create<GameState & GameActions>()(
             return { success: false, reason: 'Limite diário de missões extra atingido.' }
           }
 
-          const poolDefs = questDictionary.filter(def => def.type === 'pool')
+          const poolDefs = questDictionary.filter((def: QuestDefinition) => def.type === 'pool')
           if (poolDefs.length === 0) return { success: false, reason: 'Sem missões na pool.' }
 
           // Pick a random pool mission not already in extraQuests
-          const usedIds = new Set(extraQuests.map(q => q.id))
-          const available = poolDefs.filter(def => !usedIds.has(def.id))
+          const usedIds = new Set(extraQuests.map((q: Quest) => q.id))
+          const available = poolDefs.filter((def: QuestDefinition) => !usedIds.has(def.id))
           if (available.length === 0) return { success: false, reason: 'Todas as missões extra já foram geradas.' }
 
           const tier = getQuestTier(player.level)
@@ -2575,17 +3040,17 @@ const useGameStore = create<GameState & GameActions>()(
             gold: Math.round(quest.gold * 1.5),
           }
 
-          set(s => ({ extraQuests: [...s.extraQuests, extraQuest] }))
+          set((s: GameState) => ({ extraQuests: [...s.extraQuests, extraQuest] }))
           return { success: true }
         },
 
-        completeExtraQuest(id) {
+        completeExtraQuest(id: string) {
           let leveledUp = false
-          set(s => {
-            const quest = s.extraQuests.find(q => q.id === id)
+          set((s: GameState & GameActions) => {
+            const quest = s.extraQuests.find((q: Quest) => q.id === id)
             if (!quest || quest.done) return {}
 
-            const extraQuests = s.extraQuests.map(q => q.id === id ? { ...q, done: true } : q)
+            const extraQuests = s.extraQuests.map((q: Quest) => q.id === id ? { ...q, done: true } : q)
             const { xpBoost, goldBoost } = computeActivePassives(
               s.player.activeShadowIds, s.player.shadows, s.customShadows,
             )
@@ -2640,37 +3105,39 @@ const useGameStore = create<GameState & GameActions>()(
     {
       name: 'solo-leveling-v3',
       storage: createJSONStorage(() => AsyncStorage),
-      merge: (persisted: any, current: any) => {
+      merge: (persisted: any, current: GameState & GameActions) => {
+        const data = (persisted || {}) as any
         // Migrate legacy shadows: string[] → ShadowEntry[]
-        const rawPlayer = persisted.player ?? {}
+        const rawPlayer = data.player ?? {}
         const rawShadows = rawPlayer.shadows ?? []
-        const migratedShadows: ShadowEntry[] = rawShadows.map((s: any) =>
+        const migratedShadows: ShadowEntry[] = rawShadows.map((s: ShadowEntry | string) =>
           typeof s === 'string' ? { id: s, level: 1 } : s
         )
         return {
           ...current,
-          ...persisted,
+          ...data,
           player: { ...current.player, ...rawPlayer, shadows: migratedShadows, activeShadowIds: rawPlayer.activeShadowIds ?? [] },
-          system: { ...current.system, ...(persisted.system ?? {}) },
-          settings: { ...current.settings, ...(persisted.settings ?? {}) },
-          statistics: { ...current.statistics, ...(persisted.statistics ?? {}) },
-          questDictionary: persisted.questDictionary ?? current.questDictionary,
-          customShadows: persisted.customShadows ?? current.customShadows,
-          lastExtraction: persisted.lastExtraction ?? null,
+          system: { ...current.system, ...(data.system ?? {}) },
+          settings: { ...current.settings, ...(data.settings ?? {}) },
+          statistics: { ...current.statistics, ...(data.statistics ?? {}) },
+          questDictionary: data.questDictionary ?? current.questDictionary,
+          customShadows: data.customShadows ?? current.customShadows,
+          lastExtraction: data.lastExtraction ?? null,
           achievementProgress: Object.fromEntries(
-            Object.entries(persisted.achievementProgress ?? {}).map(([id, val]) => {
+            Object.entries(data.achievementProgress ?? {}).map(([id, val]) => {
               if (typeof val === 'number') return [id, { currentValue: val, currentTierIndex: 0 }]
               return [id, val]
             })
           ) as Record<string, AchievementProg>,
-          questRecords: persisted.questRecords ?? {},
-          questCompletions: persisted.questCompletions ?? {},
-          activeMissionTimers: persisted.activeMissionTimers ?? {},
+          questRecords: data.questRecords ?? {},
+          questCompletions: data.questCompletions ?? {},
+          activeMissionTimers: data.activeMissionTimers ?? {},
           newAchievementIds: [],
         }
       },
       partialize: s => ({
         player: s.player,
+        quests: s.quests,
         sideQuests: s.sideQuests,
         extraQuests: s.extraQuests,
         questDictionary: s.questDictionary,
@@ -2679,7 +3146,6 @@ const useGameStore = create<GameState & GameActions>()(
         system: { ...s.system, penaltyTriggered: false },
         statistics: s.statistics,
         lastResetDate: s.lastResetDate,
-        lastExtraction: s.lastExtraction,
         unlockedAchievements: s.unlockedAchievements,
         achievementProgress: s.achievementProgress,
         questRecords: s.questRecords,
@@ -2691,9 +3157,17 @@ const useGameStore = create<GameState & GameActions>()(
 )
 
 // ── Widget Synchronization ───────────────────────────────────────────────────
+let lastWidgetSync = 0
+const WIDGET_SYNC_THROTTLE = 5000 // 5 seconds
 
 useGameStore.subscribe((state: GameState & GameActions) => {
+  const now = Date.now()
+  if (now - lastWidgetSync < WIDGET_SYNC_THROTTLE) return
+  lastWidgetSync = now
+
   try {
+    if (!state || !state.player || !state.statistics || !state.system) return;
+
     const rankObj = getRank(
       state.player.level,
       state.statistics.totalCompleted,
@@ -2703,17 +3177,17 @@ useGameStore.subscribe((state: GameState & GameActions) => {
 
     const snapshot = {
       streak: state.player.currentStreak,
-      dailyQuests: state.quests.map((q: Quest) => ({
+      dailyQuests: Array.isArray(state.quests) ? state.quests.map((q: Quest) => ({
         id: q.id,
         label: q.label,
         done: q.done
-      })),
-      activeShadows: state.player.activeShadowIds.map(id => {
-        const entry = state.player.shadows.find(s => s.id === id);
-        const customShadow = state.customShadows.find(s => s.id === id);
+      })) : [],
+      activeShadows: Array.isArray(state.player.activeShadowIds) ? state.player.activeShadowIds.map(id => {
+        const entry = Array.isArray(state.player.shadows) ? state.player.shadows.find((s: ShadowEntry) => s.id === id) : undefined;
+        const customShadow = Array.isArray(state.customShadows) ? state.customShadows.find((s: Shadow) => s.id === id) : undefined;
         const shadowDef = SHADOW_MAP[id] || customShadow;
         return { name: shadowDef?.name ?? id, level: entry?.level ?? 1 };
-      }),
+      }) : [],
       status: {
         level: state.player.level,
         xp: state.player.xp,

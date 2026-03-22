@@ -32,7 +32,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 export async function notifyFocusComplete(questLabel: string): Promise<void> {
   await notifee.displayNotification({
     title: '⚡ Foco Concluído!',
-    body:  `"${questLabel}" terminado, Hunter. Recolhe o teu XP e Gold.`,
+    body:  `O foco na missão "${questLabel}" foi concluído. Recolhe as tuas recompensas.`,
     android: {
       channelId:   CHANNEL_ID,
       smallIcon:   'ic_launcher',
@@ -43,8 +43,8 @@ export async function notifyFocusComplete(questLabel: string): Promise<void> {
 
 export async function notifyLevelUp(newLevel: number): Promise<void> {
   await notifee.displayNotification({
-    title: `🎖 LEVEL UP — Nível ${newLevel}!`,
-    body:  'Os teus atributos aumentaram. Continua, Hunter.',
+    title: `🎖 EVOLUÇÃO — Nível ${newLevel}`,
+    body:  'Os teus atributos foram atualizados pelo Sistema.',
     android: {
       channelId: CHANNEL_ID,
       smallIcon: 'ic_launcher',
@@ -97,7 +97,7 @@ export async function scheduleFocusCompletionNotification(
   pendingTriggerNotifId = await notifee.createTriggerNotification(
     {
       title: '⚡ Foco Concluído!',
-      body:  `"${questLabel}" terminado, Hunter. Recolhe o teu XP e Gold.`,
+      body:  `O foco na missão "${questLabel}" foi concluído. Recolhe as tuas recompensas.`,
       android: {
         channelId:   CHANNEL_ID,
         smallIcon:   'ic_launcher',
@@ -115,6 +115,35 @@ export async function cancelFocusNotification(): Promise<void> {
   }
 }
 
+export async function scheduleSideQuestNotification(
+  id: string,
+  delayMs: number,
+  title: string
+): Promise<void> {
+  const trigger: TimestampTrigger = {
+    type:      TriggerType.TIMESTAMP,
+    timestamp: Date.now() + delayMs,
+  }
+
+  await notifee.createTriggerNotification(
+    {
+      id,
+      title: '⚡ Lembrete de Missão',
+      body:  `A missão "${title}" ainda aguarda conclusão.`,
+      android: {
+        channelId:   CHANNEL_ID,
+        smallIcon:   'ic_launcher',
+        pressAction: { id: 'default' },
+      },
+    },
+    trigger
+  )
+}
+
+export async function cancelSideQuestNotification(id: string): Promise<void> {
+  await notifee.cancelTriggerNotification(id)
+}
+
 // ── System daily warnings ──────────────────────────────────────────────────────
 // Three escalating reminders to complete missions before midnight.
 // Each slot has a fixed ID so re-scheduling is idempotent and cancellation
@@ -122,19 +151,9 @@ export async function cancelFocusNotification(): Promise<void> {
 
 const WARNING_SLOTS = [
   {
-    id:   'warning-18',
-    hour: 18, minute: 0,
-    body: 'O Sistema vigia-te. Ainda tens missões por completar, Hunter.',
-  },
-  {
-    id:   'warning-20',
-    hour: 20, minute: 0,
-    body: 'Aviso do Sistema: Faltam 4 horas. Completa as missões ou enfrentarás a Penalidade.',
-  },
-  {
-    id:   'warning-23',
-    hour: 23, minute: 0,
-    body: 'ALERTA: 1 hora restante! O teu tempo está a esgotar-se, Caçador.',
+    id:   'warning-final',
+    hour: 21, minute: 0,
+    body: 'Aviso Final: Completa as missões diárias antes da reativação do Sistema à meia-noite.',
   },
 ] as const
 

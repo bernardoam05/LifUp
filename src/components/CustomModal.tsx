@@ -70,7 +70,7 @@ const s = StyleSheet.create({
     backgroundColor: '#000000cc',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: SPACING.lg,
+    padding: 0,
   },
   card: {
     width: '100%',
