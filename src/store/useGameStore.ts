@@ -2721,7 +2721,9 @@ useGameStore.subscribe((state: GameState & GameActions) => {
         nextRankXp: xpForLevel(state.player.level)
       }
     };
-    SharedStorage.setWidgetData(JSON.stringify(snapshot));
+    if (SharedStorage?.setWidgetData && typeof SharedStorage.setWidgetData === 'function') {
+      SharedStorage.setWidgetData(JSON.stringify(snapshot));
+    }
   } catch (err) {
     console.error('Failed to sync widget data:', err);
   }

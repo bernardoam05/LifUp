@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SoloLevelingRN</string>
+    <string name="app_name">Arise</string>
     <string name="widget_missions_description">Missões diárias do Sistema</string>
     <string name="widget_vanguard_description">Exército de Sombras ativo</string>
     <string name="widget_streak_description">Streak de dias consecutivos</string>
