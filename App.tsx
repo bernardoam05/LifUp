@@ -198,6 +198,7 @@ export default function App() {
   const invTotal            = inventory.reduce((sum, e) => sum + e.quantity, 0)
   const newAchievementIds   = useGameStore(s => s.newAchievementIds)
   const dismissAchievement  = useGameStore(s => s.dismissAchievement)
+  const lastExtraction      = useGameStore(s => s.lastExtraction)
 
   const [showSettings, setShowSettings] = useState(false)
   const [showRankInfo, setShowRankInfo] = useState(false)
@@ -277,7 +278,7 @@ export default function App() {
         <PenaltyModal visible={penaltyTriggered} onDismiss={dismissPenalty} />
 
         {/* Achievement unlock modal — shows one at a time from the queue */}
-        {newAchievementIds.length > 0 && !penaltyTriggered && (
+        {newAchievementIds.length > 0 && !penaltyTriggered && !lastExtraction && (
           <AchievementModal achievementId={newAchievementIds[0]} onDismiss={dismissAchievement} />
         )}
 

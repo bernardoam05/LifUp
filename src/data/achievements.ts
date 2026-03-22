@@ -248,6 +248,110 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     category: 'boss', conditionType: 'boss_focus_completed',
     icon: 'sword-cross', color: '#facc15', isSecret: true, rewardGold: 450,
   },
+  {
+    id: 'boss_archlich_prime', title: 'Coroa do Arquilich',
+    description: 'Completa o Boss "Arquilich Primordial (S-Rank)". O ritual antigo agora obedece ao Monarca.',
+    category: 'boss', conditionType: 'boss_focus_completed',
+    icon: 'skull-crossbones', color: '#a855f7', isSecret: true, rewardGold: 500,
+  },
+  {
+    id: 'boss_soul_reaper', title: 'Ceifador do Vazio',
+    description: 'Completa o Boss "Ceifeiro de Almas (S-Rank)". Nenhuma essência te escapa.',
+    category: 'boss', conditionType: 'boss_focus_completed',
+    icon: 'skull', color: '#ef4444', isSecret: true, rewardGold: 520,
+  },
+  {
+    id: 'boss_astral_nebula', title: 'Rei das Nebulosas',
+    description: 'Completa o Boss "Rei Nebulosa (S-Rank)". Caminhaste entre estrelas sem vacilar.',
+    category: 'boss', conditionType: 'boss_gps_completed',
+    icon: 'star-four-points', color: '#38bdf8', isSecret: true, rewardGold: 480,
+  },
+
+  // ── EVENT BOSSES ──────────────────────────────────────────────────────────────
+  {
+    id: 'event_halloween_reaper', title: 'Ceifador de Outono',
+    description: 'Derrota o Boss de evento do Halloween. A névoa abre caminho para o Monarca.',
+    category: 'secret', conditionType: 'boss_focus_completed',
+    icon: 'ghost', color: '#f97316', isSecret: true, rewardGold: 400,
+  },
+  {
+    id: 'event_winter_lich', title: 'Coroa do Solstício',
+    description: 'Derrota o Boss de evento do Inverno. A noite mais longa curvou-se.',
+    category: 'secret', conditionType: 'boss_focus_completed',
+    icon: 'snowflake', color: '#60a5fa', isSecret: true, rewardGold: 420,
+  },
+  {
+    id: 'event_summer_titan', title: 'Fúria do Sol',
+    description: 'Derrota o Boss de evento de Verão. O calor extremo fortaleceu a tua vontade.',
+    category: 'secret', conditionType: 'boss_training_completed',
+    icon: 'weather-sunny', color: '#f59e0b', isSecret: true, rewardGold: 380,
+  },
+  {
+    id: 'event_new_year_ashen', title: 'Renascimento das Cinzas',
+    description: 'Derrota o Boss do Ano Novo. O recomeço foi selado pela tua sombra.',
+    category: 'secret', conditionType: 'boss_focus_completed',
+    icon: 'fire', color: '#f97316', isSecret: true, rewardGold: 380,
+  },
+  {
+    id: 'event_valentine_oath', title: 'Voto Rubro',
+    description: 'Derrota o Boss de Valentim. A promessa foi gravada no Sistema.',
+    category: 'secret', conditionType: 'boss_training_completed',
+    icon: 'star', color: '#fb7185', isSecret: true, rewardGold: 360,
+  },
+  {
+    id: 'event_carnival_mask', title: 'Máscara do Caos',
+    description: 'Derrota o Boss de Carnaval. O caos dançou a teu favor.',
+    category: 'secret', conditionType: 'boss_gps_completed',
+    icon: 'star', color: '#a855f7', isSecret: true, rewardGold: 360,
+  },
+  {
+    id: 'event_equinox_guardian', title: 'Guardião do Equilíbrio',
+    description: 'Derrota o Boss do Equinócio. Mantiveste o equilíbrio perfeito.',
+    category: 'secret', conditionType: 'boss_focus_completed',
+    icon: 'shield-check', color: '#22c55e', isSecret: true, rewardGold: 400,
+  },
+  {
+    id: 'event_easter_hare', title: 'Salto de Páscoa',
+    description: 'Derrota o Boss de Páscoa. O salto da luz foi teu.',
+    category: 'secret', conditionType: 'boss_gps_completed',
+    icon: 'star-circle-outline', color: '#facc15', isSecret: true, rewardGold: 360,
+  },
+  {
+    id: 'event_spring_bloom', title: 'Flor da Renascença',
+    description: 'Derrota o Boss da Primavera. A vida floresceu na tua senda.',
+    category: 'secret', conditionType: 'boss_focus_completed',
+    icon: 'feather', color: '#34d399', isSecret: true, rewardGold: 360,
+  },
+  {
+    id: 'event_harvest_king', title: 'Rei da Colheita',
+    description: 'Derrota o Boss da Colheita. A abundância pertence ao Monarca.',
+    category: 'secret', conditionType: 'boss_training_completed',
+    icon: 'trophy', color: '#f59e0b', isSecret: true, rewardGold: 380,
+  },
+  {
+    id: 'event_black_friday_merchant', title: 'Mercador da Sombra',
+    description: 'Derrota o Boss de Black Friday. O ouro obedece.',
+    category: 'secret', conditionType: 'boss_focus_completed',
+    icon: 'cash-multiple', color: '#0ea5e9', isSecret: true, rewardGold: 360,
+  },
+  {
+    id: 'event_yule_seraph', title: 'Serafim do Yule',
+    description: 'Derrota o Boss do Yule. A noite sagrada cedeu.',
+    category: 'secret', conditionType: 'boss_focus_completed',
+    icon: 'star-four-points', color: '#93c5fd', isSecret: true, rewardGold: 420,
+  },
+  {
+    id: 'event_midnight_wraith', title: 'Wraith da Meia-Noite',
+    description: 'Derrota o Boss das Noites Longas. A escuridão já não te domina.',
+    category: 'secret', conditionType: 'boss_focus_completed',
+    icon: 'skull', color: '#64748b', isSecret: true, rewardGold: 360,
+  },
+  {
+    id: 'event_festival_drake', title: 'Drake do Festival',
+    description: 'Derrota o Boss do Festival. A chama celebrou contigo.',
+    category: 'secret', conditionType: 'boss_gps_completed',
+    icon: 'flag', color: '#f97316', isSecret: true, rewardGold: 380,
+  },
 
   // ── LEVEL / ASCENSÃO ──────────────────────────────────────────────────────────
 

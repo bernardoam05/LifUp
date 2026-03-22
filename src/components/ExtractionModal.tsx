@@ -128,7 +128,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
           {/* Passive effect */}
           <View style={[st.passiveRow, { borderColor: rankColor + '44', backgroundColor: rankColor + '0d' }]}>
             <Icon name="lightning-bolt" size={12} color={rankColor} />
-            <Text style={[st.passiveTxt, { color: rankColor }]}> {shadow.passiveEffect.description}</Text>
+            <Text style={[st.passiveTxt, { color: rankColor }]}> {shadow.passiveEffect?.description ?? ''}</Text>
           </View>
 
           {/* Level-up vs new soul reveal */}

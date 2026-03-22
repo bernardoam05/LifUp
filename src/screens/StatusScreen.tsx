@@ -18,6 +18,7 @@ function SafeIcon({ name, size, color, style }: { name: string; size: number; co
     'trophy','star','lock','flash','arm-flex','help-circle','help-circle-outline',
     'lock-outline','check-circle','star-circle-outline','trophy-outline','timer-sand',
     'cash-multiple','check',
+    'snowflake','skull','weather-sunny','star-four-points','heart','mask','rabbit','flower','corn','dragon',
   ])
   const safeName = KNOWN_SAFE.has(name) ? name : 'help-circle'
   return <Icon name={safeName} size={size} color={color} style={style} />
@@ -27,7 +28,7 @@ import {
   ACHIEVEMENTS_CATALOG, Achievement, AchievementProg,
   TIER_COLORS, getActiveTier, getCompletedTier, isAchievementMaxed, getTierIndex,
 } from '../data/achievements'
-import { SHADOW_MAP } from '../data/shadows'
+import { SHADOW_MAP, SHADOW_RANK_COLOR, type Shadow } from '../data/shadows'
 import { C, FONT, SPACING } from '../theme'
 import RankModal from '../components/RankModal'
 
@@ -289,6 +290,55 @@ function AchievementDetailModal({
   )
 }
 
+// ── Shadow Detail Modal (Status screen) ─────────────────────────────────────────
+
+function ShadowDetailModal({
+  shadow,
+  level,
+  playerLevel,
+  onClose,
+}: {
+  shadow:      Shadow | undefined
+  level:       number
+  playerLevel: number
+  onClose:     () => void
+}) {
+  const isHidden = playerLevel < 10
+  const rankColor = shadow ? (SHADOW_RANK_COLOR[shadow.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.purple) : C.purple
+
+  return (
+    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
+      <View style={sdm.overlay}>
+        <View style={[sdm.card, { borderColor: rankColor + '66' }]}>
+          <Text style={sdm.title}>{isHidden ? 'SOMBRA MISTERIOSA' : (shadow?.name ?? 'SOMBRA DESCONHECIDA')}</Text>
+          {isHidden ? (
+            <Text style={sdm.mysteryTxt}>
+              Um sussurro antigo observa-te das sombras.\nAlcança o nível 10 para revelar a verdadeira forma.
+            </Text>
+          ) : (
+            <>
+              <View style={[sdm.rankBadge, { borderColor: rankColor }]}>
+                <Text style={[sdm.rankTxt, { color: rankColor }]}>{shadow?.rank ?? '???'}</Text>
+              </View>
+              <Text style={sdm.subTxt}>{shadow?.lore ?? 'Sem registo disponível.'}</Text>
+              <Text style={[sdm.levelTxt, { color: rankColor }]}>NÍVEL {level}</Text>
+              <View style={[sdm.effectRow, { borderColor: rankColor + '44' }]}>
+                <Icon name="lightning-bolt" size={12} color={rankColor} />
+                <Text style={[sdm.effectTxt, { color: rankColor }]}>
+                  {' '} {shadow?.passiveEffect?.description ?? 'Efeito desconhecido'}
+                </Text>
+              </View>
+            </>
+          )}
+          <TouchableOpacity style={sdm.closeBtn} onPress={onClose}>
+            <Text style={sdm.closeTxt}>FECHAR</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  )
+}
+
 // ── Achievements panel ─────────────────────────────────────────────────────────
 
 function AchievementsPanel({ onSelect }: {
@@ -445,6 +495,7 @@ export default function StatusScreen() {
   const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100)
 
   const [selectedAch, setSelectedAch] = useState<{ a: Achievement; prog: AchievementProg | undefined; done: boolean } | null>(null)
+  const [selectedShadow, setSelectedShadow] = useState<{ id: string; level: number } | null>(null)
   const [showRankInfo, setShowRankInfo] = useState(false)
   const [showHistory,  setShowHistory]  = useState(false)
 
@@ -508,6 +559,10 @@ export default function StatusScreen() {
           <Icon name="chevron-right" size={14} color={C.dimmed} />
         </TouchableOpacity>
 
+        {/* Achievements */}
+        <SectionHeader icon="star-circle-outline" label="CONQUISTAS" />
+        <AchievementsPanel onSelect={(a, prog, done) => setSelectedAch({ a, prog, done })} />
+
         {/* Shadows */}
         {player.shadows.length > 0 && (
           <>
@@ -517,20 +572,16 @@ export default function StatusScreen() {
                 const data = SHADOW_MAP[entry.id] ?? customShadows.find(cs => cs.id === entry.id)
                 const name = data?.name ?? entry.id
                 return (
-                  <View key={i} style={s.shadowRow}>
+                  <TouchableOpacity key={i} style={s.shadowRow} onPress={() => setSelectedShadow({ id: entry.id, level: entry.level })} activeOpacity={0.75}>
                     <Icon name="ghost" size={14} color="#a855f7" />
                     <Text style={s.shadowName}>{name}</Text>
                     {entry.level > 1 && <Text style={s.shadowLevel}>Lv.{entry.level}</Text>}
-                  </View>
+                  </TouchableOpacity>
                 )
               })}
             </View>
           </>
         )}
-
-        {/* Achievements */}
-        <SectionHeader icon="star-circle-outline" label="CONQUISTAS" />
-        <AchievementsPanel onSelect={(a, prog, done) => setSelectedAch({ a, prog, done })} />
 
       </ScrollView>
 
@@ -540,6 +591,15 @@ export default function StatusScreen() {
           prog={selectedAch.prog}
           done={selectedAch.done}
           onClose={() => setSelectedAch(null)}
+        />
+      )}
+
+      {selectedShadow && (
+        <ShadowDetailModal
+          shadow={SHADOW_MAP[selectedShadow.id] ?? customShadows.find(cs => cs.id === selectedShadow.id)}
+          level={selectedShadow.level}
+          playerLevel={player.level}
+          onClose={() => setSelectedShadow(null)}
         />
       )}
 
@@ -616,6 +676,21 @@ const kpi = StyleSheet.create({
   card:  { flex: 1, backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.sm, alignItems: 'center', gap: 4 },
   value: { fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900' },
   label: { color: C.muted, fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 1 },
+})
+
+const sdm = StyleSheet.create({
+  overlay:   { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  card:      { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 2, padding: SPACING.lg, alignItems: 'center', gap: SPACING.sm },
+  title:     { color: '#fff', fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, textAlign: 'center' },
+  mysteryTxt:{ color: C.dimmed, fontSize: 12, textAlign: 'center', lineHeight: 18, marginTop: SPACING.sm },
+  rankBadge: { borderWidth: 1, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
+  rankTxt:   { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
+  subTxt:    { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 18 },
+  levelTxt:  { fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 1 },
+  effectRow: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 6, gap: 6 },
+  effectTxt: { fontSize: 11 },
+  closeBtn:  { marginTop: SPACING.sm, paddingVertical: 8, paddingHorizontal: SPACING.xl, borderWidth: 1, borderColor: C.border },
+  closeTxt:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
 })
 
 const sp = StyleSheet.create({

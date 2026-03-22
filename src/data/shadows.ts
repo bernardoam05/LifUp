@@ -1388,6 +1388,43 @@ export const SHADOW_DATABASE: Shadow[] = [
     lore: '"Uma criatura que manipula fluxos temporais menores. Concedeu a si próprio juventude até a lâmina do Monarca travar o seu feitiço."',
     icon: 'timer-sand', color: '#ef4444',
   },
+  // ── Low-rank balance additions ─────────────────────────────────────────────
+  {
+    id: 'dune_scamp', name: 'Saqueador das Dunas', rank: 'Normal', type: 'Beast', dropRate: 0.10,
+    passiveEffect: { type: 'gold_boost', value: 0.01, description: '+1% Gold em todas as missões' },
+    lore: '"Aprendeu a sobreviver com quase nada. Leal a quem lhe dá propósito."',
+    icon: 'dog', color: '#22c55e',
+  },
+  {
+    id: 'library_wisp', name: 'Faísca da Biblioteca', rank: 'Normal', type: 'Magic', dropRate: 0.10,
+    passiveEffect: { type: 'focus_bonus', value: 5, description: '+5 min de foco extra por sessão' },
+    lore: '"Sussurra páginas antigas quando o silêncio é total."',
+    icon: 'book-open-variant', color: '#3b82f6',
+  },
+  {
+    id: 'rust_sentinel', name: 'Sentinela Ferrugem', rank: 'Normal', type: 'Tank', dropRate: 0.10,
+    passiveEffect: { type: 'boss_bonus_xp', value: 0.02, description: '+2% XP extra em Boss Raids' },
+    lore: '"Quebrou mil lâminas antes de aceitar a tua."',
+    icon: 'shield-check', color: '#94a3b8',
+  },
+  {
+    id: 'glacier_stalker', name: 'Espreitador Glacial', rank: 'Elite', type: 'Assassin', dropRate: 0.08,
+    passiveEffect: { type: 'xp_boost', value: 0.03, description: '+3% XP em todas as missões' },
+    lore: '"Move-se entre estalidos de gelo. Só deixa pegadas quando quer."',
+    icon: 'snowflake', color: '#60a5fa',
+  },
+  {
+    id: 'ember_squire', name: 'Escudeiro de Brasas', rank: 'Elite', type: 'Warrior', dropRate: 0.08,
+    passiveEffect: { type: 'gold_boost', value: 0.03, description: '+3% Gold em todas as missões' },
+    lore: '"Treinado a servir cavaleiros de fogo. Agora serve o Monarca."',
+    icon: 'fire', color: '#f59e0b',
+  },
+  {
+    id: 'storm_lancer', name: 'Lanceiro da Tempestade', rank: 'Knight', type: 'Warrior', dropRate: 0.06,
+    passiveEffect: { type: 'boss_bonus_xp', value: 0.06, description: '+6% XP extra em Boss Raids' },
+    lore: '"Carrega trovões na ponta da lança. Nunca falha o primeiro golpe."',
+    icon: 'sword', color: '#38bdf8',
+  },
 ]
 
 // ── Helpers ────────────────────────────────────────────────────────────────────

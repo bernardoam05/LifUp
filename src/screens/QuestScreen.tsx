@@ -39,6 +39,10 @@ type DungeonMission = {
   shadowHint:      string
   icon:            string
   color:           string
+  eventName?:      string
+  eventKey?:       string
+  isEventTrial?:   boolean
+  isEventBoss?:    boolean
   // For custom bosses created in Forge
   customShadow?: { name: string; icon: string; questType: Quest['type'] }
 }
@@ -74,6 +78,269 @@ const DUNGEON_MISSIONS: DungeonMission[] = [
     color:       '#ef4444',
   },
 ]
+
+type EventWindow = {
+  name:  string
+  start: string // MM-DD
+  end:   string // MM-DD
+}
+
+type EventBossDef = {
+  id:            string
+  label:         string
+  detail:        string
+  type:          Quest['type']
+  gpsTarget?:    number
+  focusDuration?: number
+  shadowHint:    string
+  icon:          string
+  color:         string
+  event:         EventWindow
+  required:      number
+}
+
+const EVENT_BOSS_DEFS: EventBossDef[] = [
+  {
+    id: 'event_halloween_reaper',
+    label: 'Ceifador de Outono',
+    detail: 'Evento Halloween — 90 min de foco absoluto em silêncio total.',
+    type: 'focus',
+    focusDuration: 90 * 60_000,
+    shadowHint: 'soul_reaper',
+    icon: 'ghost',
+    color: '#f97316',
+    event: { name: 'HALLOWEEN', start: '10-24', end: '10-31' },
+    required: 6,
+  },
+  {
+    id: 'event_winter_lich',
+    label: 'Arquilich do Solstício',
+    detail: 'Evento Inverno — 100 min de foco profundo em estudo denso.',
+    type: 'focus',
+    focusDuration: 100 * 60_000,
+    shadowHint: 'archlich_prime',
+    icon: 'snowflake',
+    color: '#60a5fa',
+    event: { name: 'SOLSTÍCIO DE INVERNO', start: '12-20', end: '12-27' },
+    required: 6,
+  },
+  {
+    id: 'event_summer_titan',
+    label: 'Titã Solar',
+    detail: 'Evento Verão — 140 reps em treino contínuo (sem pausas longas).',
+    type: 'training',
+    shadowHint: 'auto_titan',
+    icon: 'weather-sunny',
+    color: '#f59e0b',
+    event: { name: 'SOLSTÍCIO DE VERÃO', start: '07-01', end: '07-07' },
+    required: 5,
+  },
+  {
+    id: 'event_new_year_ashen',
+    label: 'Fénix das Cinzas',
+    detail: 'Evento Ano Novo — 80 min de foco para reescrever o teu destino.',
+    type: 'focus',
+    focusDuration: 80 * 60_000,
+    shadowHint: 'ash_specter',
+    icon: 'fire',
+    color: '#f97316',
+    event: { name: 'ANO NOVO', start: '01-01', end: '01-07' },
+    required: 5,
+  },
+  {
+    id: 'event_valentine_oath',
+    label: 'Voto Rubro',
+    detail: 'Evento Valentim — 60 min de foco e 60 min de dedicação física.',
+    type: 'training',
+    shadowHint: 'astral_wisp',
+    icon: 'star',
+    color: '#fb7185',
+    event: { name: 'VALENTIM', start: '02-10', end: '02-16' },
+    required: 4,
+  },
+  {
+    id: 'event_carnival_mask',
+    label: 'Máscara do Caos',
+    detail: 'Evento Carnaval — 6 km de marcha rápida entre distrações.',
+    type: 'gps',
+    gpsTarget: 6,
+    shadowHint: 'astral_echo',
+    icon: 'star',
+    color: '#a855f7',
+    event: { name: 'CARNAVAL', start: '02-28', end: '03-06' },
+    required: 5,
+  },
+  {
+    id: 'event_equinox_guardian',
+    label: 'Guardião do Equinócio',
+    detail: 'Evento Equinócio — 90 min de foco equilibrado sem quebras.',
+    type: 'focus',
+    focusDuration: 90 * 60_000,
+    shadowHint: 'astral_guardian',
+    icon: 'shield-check',
+    color: '#22c55e',
+    event: { name: 'EQUINÓCIO', start: '03-19', end: '03-25' },
+    required: 6,
+  },
+  {
+    id: 'event_easter_hare',
+    label: 'Lebre do Sistema',
+    detail: 'Evento Páscoa — 7 km em ritmo estável e 70 reps rápidas.',
+    type: 'gps',
+    gpsTarget: 7,
+    shadowHint: 'wolf_pup',
+    icon: 'star-circle-outline',
+    color: '#facc15',
+    event: { name: 'PÁSCOA', start: '03-27', end: '04-02' },
+    required: 4,
+  },
+  {
+    id: 'event_spring_bloom',
+    label: 'Flor da Renascença',
+    detail: 'Evento Primavera — 75 min de foco com estudo leve e contínuo.',
+    type: 'focus',
+    focusDuration: 75 * 60_000,
+    shadowHint: 'mud_elemental',
+    icon: 'feather',
+    color: '#34d399',
+    event: { name: 'PRIMAVERA', start: '04-15', end: '04-21' },
+    required: 4,
+  },
+  {
+    id: 'event_harvest_king',
+    label: 'Rei da Colheita',
+    detail: 'Evento Colheita — 150 reps de treino com cadência perfeita.',
+    type: 'training',
+    shadowHint: 'hollow_peasant',
+    icon: 'trophy',
+    color: '#f59e0b',
+    event: { name: 'COLHEITA', start: '09-15', end: '09-21' },
+    required: 6,
+  },
+  {
+    id: 'event_black_friday_merchant',
+    label: 'Mercador da Sombra',
+    detail: 'Evento Black Friday — 90 min de foco em tarefas económicas/planeamento.',
+    type: 'focus',
+    focusDuration: 90 * 60_000,
+    shadowHint: 'auto_omega',
+    icon: 'cash-multiple',
+    color: '#0ea5e9',
+    event: { name: 'BLACK FRIDAY', start: '11-22', end: '11-28' },
+    required: 4,
+  },
+  {
+    id: 'event_yule_seraph',
+    label: 'Serafim do Yule',
+    detail: 'Evento Yule — 100 min de foco em silêncio com luz baixa.',
+    type: 'focus',
+    focusDuration: 100 * 60_000,
+    shadowHint: 'god_seraphim',
+    icon: 'star',
+    color: '#93c5fd',
+    event: { name: 'YULE', start: '12-24', end: '12-31' },
+    required: 6,
+  },
+  {
+    id: 'event_midnight_wraith',
+    label: 'Wraith da Meia-Noite',
+    detail: 'Evento Noites Longas — 80 min de foco após as 00:00.',
+    type: 'focus',
+    focusDuration: 80 * 60_000,
+    shadowHint: 'death_wraith',
+    icon: 'skull',
+    color: '#64748b',
+    event: { name: 'NOITES LONGAS', start: '11-01', end: '11-07' },
+    required: 4,
+  },
+  {
+    id: 'event_festival_drake',
+    label: 'Drake do Festival',
+    detail: 'Evento Festival — 10 km de marcha e 120 reps no total.',
+    type: 'gps',
+    gpsTarget: 10,
+    shadowHint: 'shadow_dragon',
+    icon: 'flag',
+    color: '#f97316',
+    event: { name: 'FESTIVAL', start: '08-10', end: '08-16' },
+    required: 5,
+  },
+]
+
+function mdToDayIndex(mmdd: string): number {
+  const [m, d] = mmdd.split('-').map(n => parseInt(n, 10))
+  // Use a non-leap year for stable indexing
+  const base = new Date(2001, m - 1, d)
+  const start = new Date(2001, 0, 1)
+  return Math.floor((base.getTime() - start.getTime()) / 86_400_000)
+}
+
+function isDateInWindow(now: Date, start: string, end: string): boolean {
+  const nowIdx = mdToDayIndex(`${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`)
+  const startIdx = mdToDayIndex(start)
+  const endIdx = mdToDayIndex(end)
+  if (endIdx >= startIdx) return nowIdx >= startIdx && nowIdx <= endIdx
+  // Window spans year end
+  return nowIdx >= startIdx || nowIdx <= endIdx
+}
+
+function getActiveEventBossMissions(now = new Date()): DungeonMission[] {
+  return EVENT_BOSS_DEFS
+    .filter(def => isDateInWindow(now, def.event.start, def.event.end))
+    .map(def => ({
+      id: def.id,
+      label: def.label,
+      detail: `${def.detail} [${def.event.name}]`,
+      type: def.type,
+      gpsTarget: def.gpsTarget,
+      focusDuration: def.focusDuration,
+      shadowHint: def.shadowHint,
+      icon: def.icon,
+      color: def.color,
+      eventName: def.event.name,
+      eventKey: `${def.id}-${now.getFullYear()}`,
+      isEventBoss: true,
+    }))
+}
+
+const EVENT_TRIAL_TEMPLATES: Array<{
+  key: string
+  label: string
+  type: Quest['type']
+  minutes?: number
+  km?: number
+  reps?: number
+}> = [
+  { key: 'focus_ritual', label: 'Ritual de Foco', type: 'focus', minutes: 45 },
+  { key: 'focus_vow', label: 'Voto de Silêncio', type: 'focus', minutes: 60 },
+  { key: 'gps_pilgrimage', label: 'Peregrinação', type: 'gps', km: 5 },
+  { key: 'training_burst', label: 'Explosão Física', type: 'training', reps: 120 },
+  { key: 'gps_march', label: 'Marcha Ritual', type: 'gps', km: 7 },
+  { key: 'focus_sigil', label: 'Selo Mental', type: 'focus', minutes: 75 },
+  { key: 'training_endurance', label: 'Resistência', type: 'training', reps: 150 },
+]
+
+function buildEventTrials(def: EventBossDef, now = new Date()): DungeonMission[] {
+  const eventKey = `${def.id}-${now.getFullYear()}`
+  return EVENT_TRIAL_TEMPLATES.map((t, idx) => ({
+    id: `trial_${def.id}_${t.key}`,
+    label: `${t.label} ${idx + 1}`,
+    detail: `${def.event.name} — ${t.type === 'focus'
+      ? `${t.minutes} min de foco absoluto`
+      : t.type === 'gps'
+        ? `${t.km} km em marcha contínua`
+        : `${t.reps} reps sem pausas longas`}`,
+    type: t.type,
+    gpsTarget: t.km,
+    focusDuration: t.minutes ? t.minutes * 60_000 : undefined,
+    shadowHint: def.shadowHint,
+    icon: def.icon,
+    color: def.color,
+    eventName: def.event.name,
+    eventKey,
+    isEventTrial: true,
+  }))
+}
 
 
 
@@ -260,15 +527,19 @@ function QuestCard({ quest }: { quest: Quest }) {
 
 // ── Dungeon Modal ──────────────────────────────────────────────────────────────
 
-function DungeonModal({ visible, onClose, onSelectMission, customMissions, defeatedId }: {
+function DungeonModal({ visible, onClose, onSelectMission, customMissions, eventTrials, eventBossMission, eventProgress, defeatedId }: {
   visible:         boolean
   onClose:         () => void
   onSelectMission: (m: DungeonMission) => void
   customMissions:  DungeonMission[]
+  eventTrials:     DungeonMission[]
+  eventBossMission: DungeonMission | null
+  eventProgress:   { completedIds: string[]; required: number; defeated: boolean } | null
   defeatedId?:     string
 }) {
   // If weekly rotation returned no missions (stale dictionary), fall back to the hardcoded trio
-  const allMissions = customMissions.length > 0 ? [...customMissions] : DUNGEON_MISSIONS
+  const weeklyMissions = customMissions.length > 0 ? [...customMissions] : DUNGEON_MISSIONS
+  const hasEvent = eventTrials.length > 0
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onClose}>
       <View style={dm.overlay}>
@@ -280,7 +551,75 @@ function DungeonModal({ visible, onClose, onSelectMission, customMissions, defea
             Completa UMA Missão de Boss para ganhar XP, Gold e extrair uma Sombra do Boss para o teu exército.
           </Text>
 
-          {allMissions.map(m => {
+          {hasEvent && (
+            <>
+              <View style={dm.eventHeader}>
+                <Icon name="calendar-star" size={14} color="#f97316" />
+                <Text style={dm.eventHeaderTxt}> BOSSROOM DE EVENTO</Text>
+              </View>
+              {eventProgress && (
+                <Text style={dm.eventProgressTxt}>
+                  Progresso: {eventProgress.completedIds.length}/{eventProgress.required} provas completas
+                </Text>
+              )}
+              {eventTrials.map(m => {
+                const completed = eventProgress?.completedIds.includes(m.id) ?? false
+                return (
+                  <TouchableOpacity
+                    key={m.id}
+                    style={[dm.missionBtn, { borderColor: m.color + '88', opacity: completed ? 0.3 : 1 }]}
+                    onPress={() => { if (!completed) { onClose(); onSelectMission(m) } }}
+                    activeOpacity={0.7}
+                  >
+                    <View style={[dm.missionIcon, { backgroundColor: m.color + '18' }]}>
+                      <Icon name={m.icon} size={20} color={m.color} />
+                    </View>
+                    <View style={dm.missionInfo}>
+                      <Text style={[dm.missionLabel, { color: m.color }]}>
+                        {completed ? '[ PROVA COMPLETA ]' : m.label}
+                      </Text>
+                      <Text style={dm.missionDetail}>{m.detail}</Text>
+                    </View>
+                    <Icon name={completed ? "check-circle" : "chevron-right"} size={18} color={completed ? C.green : m.color} />
+                  </TouchableOpacity>
+                )
+              })}
+
+              {eventBossMission ? (
+                <TouchableOpacity
+                  key={eventBossMission.id}
+                  style={[dm.missionBtn, { borderColor: eventBossMission.color + '88', opacity: eventProgress?.defeated ? 0.3 : 1 }]}
+                  onPress={() => { if (!eventProgress?.defeated) { onClose(); onSelectMission(eventBossMission) } }}
+                  activeOpacity={0.7}
+                >
+                  <View style={[dm.missionIcon, { backgroundColor: eventBossMission.color + '18' }]}>
+                    <Icon name={eventBossMission.icon} size={20} color={eventBossMission.color} />
+                  </View>
+                  <View style={dm.missionInfo}>
+                    <Text style={[dm.missionLabel, { color: eventBossMission.color }]}>
+                      {eventProgress?.defeated ? '[ EVENTO CONCLUÍDO ]' : eventBossMission.label}
+                    </Text>
+                    <Text style={dm.missionDetail}>{eventBossMission.detail}</Text>
+                    {!eventProgress?.defeated && (
+                      <View style={dm.shadowExtractTag}>
+                        <Icon name="ghost" size={9} color={C.purple} />
+                        <Text style={dm.shadowExtractTxt}>
+                          {' '}Sombra: {eventBossMission.shadowHint ?? 'Desconhecida'}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <Icon name={eventProgress?.defeated ? "check-circle" : "chevron-right"} size={18} color={eventProgress?.defeated ? C.green : eventBossMission.color} />
+                </TouchableOpacity>
+              ) : (
+                <Text style={dm.eventLockedTxt}>
+                  Completa as provas acima para desbloquear o Boss do evento.
+                </Text>
+              )}
+            </>
+          )}
+
+          {weeklyMissions.map(m => {
             const isDefeated = defeatedId === m.shadowHint
             const isLocked   = !!defeatedId && !isDefeated
 
@@ -392,6 +731,13 @@ export default function QuestScreen() {
 
   // Custom boss missions filtered by weekly rotation
   const weeklyBossIds        = useGameStore(s => s.system.weeklyBossIds || [])
+  const eventBossKey         = useGameStore(s => s.system.eventBossKey)
+  const eventBossCompletedIds = useGameStore(s => s.system.eventBossCompletedIds)
+  const eventBossRequired    = useGameStore(s => s.system.eventBossRequired)
+  const eventBossDefeated    = useGameStore(s => s.system.eventBossDefeated)
+  const setEventBossState    = useGameStore(s => s.setEventBossState)
+  const completeEventTrial   = useGameStore(s => s.completeEventTrial)
+  const markEventBossDefeated = useGameStore(s => s.markEventBossDefeated)
   const customBossMissions: DungeonMission[] = questDictionary
     .filter(def => def.type === 'boss' && weeklyBossIds.includes(def.id))
     .map(def => ({
@@ -408,6 +754,16 @@ export default function QuestScreen() {
         ? { name: def.shadowName, icon: def.shadowIcon ?? 'ghost', questType: def.questType }
         : undefined),
     }))
+  const eventBossMissions = getActiveEventBossMissions()
+  const activeEventDef = EVENT_BOSS_DEFS.find(def => eventBossMissions.some(m => m.id === def.id))
+  const eventTrials = activeEventDef ? buildEventTrials(activeEventDef) : []
+  const activeEventKey = activeEventDef ? `${activeEventDef.id}-${new Date().getFullYear()}` : ''
+  const eventCompleted = (activeEventKey && eventBossKey === activeEventKey) ? eventBossCompletedIds : []
+  const eventRequired = activeEventDef?.required ?? 0
+  const eventUnlocked = activeEventDef ? eventCompleted.length >= eventRequired : false
+  const eventBossMission = (activeEventDef && eventUnlocked)
+    ? eventBossMissions.find(m => m.id === activeEventDef.id) ?? null
+    : null
 
   const extraQuests          = useGameStore(s => s.extraQuests)
   const generateExtraQuests  = useGameStore(s => s.generateExtraQuests)
@@ -426,6 +782,14 @@ export default function QuestScreen() {
   const [activeMission,   setActiveMission]   = useState<DungeonMission | null>(null)
   const [confirmBossTraining, setConfirmBossTraining] = useState(false)
   const [victoryInfo,     setVictoryInfo]     = useState<{ xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean } | null>(null)
+  const [eventProgressInfo, setEventProgressInfo] = useState<{ name: string; completed: number; required: number } | null>(null)
+
+  useEffect(() => {
+    if (!activeEventDef || !activeEventKey) return
+    if (eventBossKey !== activeEventKey) {
+      setEventBossState(activeEventKey, activeEventDef.required, eventTrials.length)
+    }
+  }, [activeEventKey, activeEventDef?.required, eventTrials.length])
 
   function handleMissionSelect(m: DungeonMission) {
     setActiveMission(m)
@@ -434,13 +798,28 @@ export default function QuestScreen() {
 
   function completeBossMission(m: DungeonMission, focusMinutes?: number) {
     setActiveMission(null)
+    if (m.isEventTrial && m.eventKey) {
+      if (focusMinutes) recordFocus(focusMinutes)
+      const res = completeEventTrial(m.id, m.eventKey, eventRequired, eventTrials.length)
+      setEventProgressInfo({ name: m.eventName ?? 'EVENTO', completed: res.completed, required: res.required })
+      return
+    }
     if (focusMinutes) recordFocus(focusMinutes)
     const result = defeatBoss(m.shadowHint, m.customShadow)
     setVictoryInfo(result)
-    // Fire boss-specific achievement triggers alongside the generic boss_defeated
-    if (m.id === 'boss_gps')      triggerEvent('boss_gps_completed',      { missionId: m.id })
-    if (m.id === 'boss_focus')    triggerEvent('boss_focus_completed',    { missionId: m.id })
-    if (m.id === 'boss_training') triggerEvent('boss_training_completed', { missionId: m.id })
+    // Fire boss-specific achievement triggers alongside the generic boss_defeated.
+    // For fixed missions use m.id directly; for custom bosses strip the prefix so
+    // the missionId matches the quest definition id used in evaluateAchievementCondition.
+    const missionId = m.id.startsWith('custom_boss_') ? m.id.slice('custom_boss_'.length) : m.id
+    if (m.id === 'boss_gps'   || (m.id.startsWith('custom_boss_') && m.type === 'gps') || (m.isEventBoss && m.type === 'gps'))
+      triggerEvent('boss_gps_completed',      { missionId })
+    if (m.id === 'boss_focus' || (m.id.startsWith('custom_boss_') && m.type === 'focus') || (m.isEventBoss && m.type === 'focus'))
+      triggerEvent('boss_focus_completed',    { missionId })
+    if (m.id === 'boss_training' || (m.id.startsWith('custom_boss_') && m.type === 'training') || (m.isEventBoss && m.type === 'training'))
+      triggerEvent('boss_training_completed', { missionId })
+    if (m.isEventBoss && m.eventKey) {
+      markEventBossDefeated(m.eventKey)
+    }
   }
 
   // Convert active dungeon mission to Quest shape for existing tracker modals
@@ -653,6 +1032,41 @@ export default function QuestScreen() {
                 <Text style={s.bossDefeatedTxt}> MASMORRA LIMPA — Clica para ver detalhes</Text>
               </TouchableOpacity>
             )}
+
+            {activeEventDef && (
+              <View style={s.eventCard}>
+                <View style={s.eventHeaderRow}>
+                  <Icon name="calendar-star" size={14} color="#f97316" />
+                  <Text style={s.eventHeaderTxt}> EVENTO ATIVO — {activeEventDef.event.name}</Text>
+                </View>
+                <Text style={s.eventSub}>
+                  Progresso: {eventCompleted.length}/{eventRequired} provas completas
+                </Text>
+                <View style={s.eventTrack}>
+                  <View style={[s.eventFill, { width: `${eventRequired > 0 ? Math.min(eventCompleted.length / eventRequired, 1) * 100 : 0}%` as any }]} />
+                </View>
+                <View style={s.eventTrialsList}>
+                  {eventTrials.map(trial => {
+                    const done = eventCompleted.includes(trial.id)
+                    return (
+                      <View key={trial.id} style={s.eventTrialRow}>
+                        <Icon name={done ? 'check-circle' : 'checkbox-blank-circle-outline'} size={10} color={done ? C.green : C.dimmed} />
+                        <Text style={[s.eventTrialTxt, done && s.eventTrialDone]}>
+                          {trial.label}
+                        </Text>
+                      </View>
+                    )
+                  })}
+                </View>
+                <Text style={s.eventHint}>
+                  {eventBossDefeated && eventBossKey === activeEventKey
+                    ? 'Boss do evento derrotado.'
+                    : eventUnlocked
+                      ? 'Boss do evento desbloqueado — entra na Bossroom.'
+                      : 'Completa as provas do evento para desbloquear o Boss.'}
+                </Text>
+              </View>
+            )}
           </>
         )}
 
@@ -673,6 +1087,9 @@ export default function QuestScreen() {
         onClose={() => setShowDungeon(false)}
         onSelectMission={handleMissionSelect}
         customMissions={customBossMissions}
+        eventTrials={eventTrials}
+        eventBossMission={eventBossMission}
+        eventProgress={activeEventDef ? { completedIds: eventCompleted, required: eventRequired, defeated: eventBossDefeated && eventBossKey === activeEventKey } : null}
         defeatedId={weeklyDefeatedBossId}
       />
 
@@ -712,6 +1129,19 @@ export default function QuestScreen() {
         />
       )}
 
+      {eventProgressInfo && (
+        <CustomModal
+          visible={Boolean(eventProgressInfo)}
+          title="PROGRESSO DE EVENTO"
+          message={`Evento ${eventProgressInfo.name} — ${eventProgressInfo.completed}/${eventProgressInfo.required} provas concluídas.`}
+          confirmLabel="OK"
+          confirmIcon="check"
+          confirmColor={C.neonBlue}
+          onConfirm={() => setEventProgressInfo(null)}
+          onCancel={() => setEventProgressInfo(null)}
+        />
+      )}
+
       {/* Victory modal */}
       {victoryInfo && (
         <BossVictoryModal
@@ -722,7 +1152,7 @@ export default function QuestScreen() {
 
       {showForge && <QuestForgeScreen onClose={() => setShowForge(false)} />}
 
-      {lastExtraction && (
+      {!victoryInfo && lastExtraction && (
         <ExtractionModal
           result={lastExtraction}
           onDismiss={dismissExtraction}
@@ -886,6 +1316,17 @@ const s = StyleSheet.create({
   bossSub:        { color: '#94a3b8', fontSize: 10, marginTop: 2 },
   bossDefeatedBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.green + '12', borderWidth: 1, borderColor: C.green + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   bossDefeatedTxt: { color: C.green, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+  eventCard:      { backgroundColor: '#0f0a00', borderWidth: 1, borderColor: '#f9731644', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  eventHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  eventHeaderTxt: { color: '#f97316', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+  eventSub:       { color: C.dimmed, fontSize: 10, marginBottom: 6 },
+  eventTrack:     { height: 6, backgroundColor: '#1a1200', borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: '#f9731633', marginBottom: 6 },
+  eventFill:      { height: '100%', backgroundColor: '#f97316' },
+  eventTrialsList:{ marginBottom: 6 },
+  eventTrialRow:  { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 3 },
+  eventTrialTxt:  { color: C.muted, fontSize: 10 },
+  eventTrialDone: { color: C.green },
+  eventHint:      { color: C.muted, fontSize: 10 },
 
   weeklyCard:    { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm, borderWidth: 1, borderColor: C.border },
   weeklyHeader:  { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
@@ -997,6 +1438,10 @@ const dm = StyleSheet.create({
   missionInfo:   { flex: 1 },
   missionLabel:  { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 3 },
   missionDetail: { color: C.muted, fontSize: 11, lineHeight: 15 },
+  eventHeader:   { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', marginBottom: SPACING.sm, paddingHorizontal: 4 },
+  eventHeaderTxt:{ color: '#f97316', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  eventProgressTxt: { color: C.dimmed, fontSize: 11, marginBottom: SPACING.sm, alignSelf: 'flex-start' },
+  eventLockedTxt: { color: C.dimmed, fontSize: 11, marginTop: SPACING.xs, marginBottom: SPACING.sm, textAlign: 'center' },
   cancelBtn:        { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl },
   cancelTxt:        { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   shadowExtractTag: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },

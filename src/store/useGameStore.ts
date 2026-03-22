@@ -484,12 +484,153 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
     baseTarget: 3, scalingAmount: 0, scalingInterval: 1, unit: 'palavras',
     baseXP: 18, baseGold: 6,
   },
+  // ── NOVAS MISSÕES: POLIVALÊNCIA ──
+  {
+    id: 'h43', title: 'Esboço Rápido',
+    description: 'Desenha o que tens à tua frente em {target} min — apenas caneta, sem apagar. O objetivo é observar com atenção, não a perfeição.',
+    type: 'pool', questType: 'training',
+    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 20, baseGold: 8,
+  },
+  {
+    id: 'h44', title: 'Escrita Livre',
+    description: 'Escreve {target} palavras seguidas sem parar nem apagar — começa com a primeira palavra que vier à cabeça. Não edites enquanto escreves.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 200, scalingAmount: 50, scalingInterval: 3, unit: 'palavras',
+    baseXP: 22, baseGold: 9,
+  },
+  {
+    id: 'h45', title: 'Conexão Real',
+    description: 'Conversa {target} min com alguém cara a cara ou por chamada, sem tocar no telemóvel durante toda a conversa.',
+    type: 'pool', questType: 'training',
+    baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 25, baseGold: 10,
+  },
+  {
+    id: 'h46', title: 'Gratidão Específica',
+    description: 'Envia 1 mensagem de agradecimento genuíno — especifica o que a pessoa fez e como te afetou. Nada de genérico.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'mensagem',
+    baseXP: 18, baseGold: 7,
+  },
+  {
+    id: 'h47', title: 'Auditoria Financeira',
+    description: 'Revê as despesas dos últimos 7 dias: categoriza tudo e identifica 1 gasto a cortar ou otimizar. Regista a decisão.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'auditoria',
+    baseXP: 28, baseGold: 11,
+  },
+  {
+    id: 'h48', title: 'Literacia Financeira',
+    description: 'Aprende 1 conceito de finanças ou investimento (juro composto, ETF, inflação, etc.) e explica-o por escrito em 3 frases simples.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'conceito',
+    baseXP: 22, baseGold: 9,
+  },
+  {
+    id: 'h49', title: 'Advogado do Diabo',
+    description: 'Escolhe uma crença forte que tens — escreve o argumento mais sólido possível CONTRA ela, sem descartar à partida. Sê honesto.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'argumento',
+    baseXP: 25, baseGold: 10,
+  },
+  {
+    id: 'h50', title: 'Active Recall',
+    description: 'Após estudares algo hoje, fecha tudo e escreve de memória tudo o que retiveste. Verifica depois o que faltou e anota as lacunas.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'sessão',
+    baseXP: 28, baseGold: 11,
+  },
+  {
+    id: 'h51', title: 'Pitch Cronometrado',
+    description: 'Explica um projeto, ideia ou tema em exatamente {target} min — grava-te ou faz ao vivo. Ouve de volta e aponta 1 coisa a melhorar.',
+    type: 'pool', questType: 'training',
+    baseTarget: 2, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 25, baseGold: 10,
+  },
+  {
+    id: 'h52', title: 'Manutenção do Ambiente',
+    description: 'Repara, arruma ou mantém algo no teu espaço que estavas a ignorar há mais de 3 dias — leva-o até ao fim.',
+    type: 'pool', questType: 'training',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'coisa',
+    baseXP: 22, baseGold: 9,
+  },
+  {
+    id: 'h53', title: 'Primeiros Socorros',
+    description: 'Revê 1 procedimento de primeiros socorros (RCP, Heimlich, hemorragia) e pratica os movimentos fisicamente durante {target} min.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 25, baseGold: 10,
+  },
+  {
+    id: 'h54', title: 'Automação',
+    description: 'Automatiza uma tarefa repetitiva, por mais simples que seja (script, atalho de teclado, template, macro ou regra de e-mail).',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'automação',
+    baseXP: 30, baseGold: 12,
+  },
+  {
+    id: 'h55', title: 'Princípio Estoico',
+    description: 'Escolhe 1 princípio (Memento Mori, Amor Fati, Dicotomia do Controlo) e aplica-o conscientemente durante o dia. Escreve à noite o que aconteceu.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'princípio',
+    baseXP: 22, baseGold: 9,
+  },
+  {
+    id: 'h56', title: 'Equilíbrio e Propriocepção',
+    description: '{target} min de treino de equilíbrio: apoio numa perna com olhos fechados, progressões em superfície instável, ou heel-to-toe walk.',
+    type: 'pool', questType: 'training',
+    baseTarget: 5, scalingAmount: 1, scalingInterval: 3, unit: 'min',
+    baseXP: 20, baseGold: 8,
+  },
+  {
+    id: 'h57', title: 'Sentido Rítmico',
+    description: '{target} min de ritmo: usa as mãos ou uma superfície como bateria — segue um padrão básico (1-e-2-e) com metrónomo ou música.',
+    type: 'pool', questType: 'training',
+    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 20, baseGold: 8,
+  },
+  {
+    id: 'h58', title: 'Ferramenta Nova',
+    description: 'Explora um software, app ou ferramenta que nunca usaste. Faz o tutorial básico e aplica-o a uma tarefa real hoje.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'ferramenta',
+    baseXP: 25, baseGold: 10,
+  },
+  {
+    id: 'h59', title: 'Sistema em Dia',
+    description: 'Fecha os loops abertos: arquiva tarefas concluídas, captura 3 insights da semana e revê os objetivos ativos — tudo em {target} min.',
+    type: 'pool', questType: 'knowledge',
+    baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 22, baseGold: 9,
+  },
+  {
+    id: 'h60', title: 'Observação Natural',
+    description: 'Passa {target} min ao ar livre apenas a observar — sem telemóvel. Identifica 3 plantas, sons ou animais pelo nome (pesquisa depois se não souberes).',
+    type: 'pool', questType: 'training',
+    baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 20, baseGold: 8,
+  },
+  {
+    id: 'h61', title: 'Refeição Desconhecida',
+    description: 'Come ou cozinha algo que nunca provaste antes. Regista o nome, a origem e o que achaste.',
+    type: 'pool', questType: 'training',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'refeição',
+    baseXP: 18, baseGold: 7,
+  },
+  {
+    id: 'h62', title: 'Coordenação Neuromotora',
+    description: '{target} min de malabares, movimentos espelhados mão/pé ou padrões rítmicos alternados — treino de novas conexões neurais.',
+    type: 'pool', questType: 'training',
+    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 22, baseGold: 9,
+  },
 
 
   // ── BOSSES DA EXPANSÃO (Drops Reais) ──
   {
     id: 'boss_arachnid', title: 'A Viúva Furtiva (A-Rank)',
-    description: 'Sobrevive 3 dias seguidos sem falhar missões e derrota no Foco.',
+    description: 'Foco absoluto: {target} min numa única tarefa, sem notificações.',
     type: 'boss', questType: 'focus',
     baseTarget: 60, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 500, baseGold: 150,
@@ -513,7 +654,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_gladiator_champ', title: 'Veterano Invicto da Arena (A-Rank)',
-    description: 'Resistência brutal: Deste modo, aguentar {target} min de corrida sem vacilar.',
+    description: 'Resistência brutal: {target} min de corrida contínua (sem parar).',
     type: 'boss', questType: 'gps',
     baseTarget: 40, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 650, baseGold: 200,
@@ -521,7 +662,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_astral_nova', title: 'General Supernova (S-Rank)',
-    description: 'Ataque de choque contínuo: Focus absoluto de {target} min e 100 exercícios.',
+    description: 'Ataque de choque contínuo: completa {target} min de Foco (ativa o modo Foco) e, em seguida, realiza 100 burpees controlados.',
     type: 'boss', questType: 'focus',
     baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 1000, baseGold: 400,
@@ -529,7 +670,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_crypt_omega', title: 'Arma Ómega (S-Rank)',
-    description: 'Sobrevivência final das Máquinas: 5 km ou mais ({target} passos) na marcha.',
+    description: 'Sobrevivência final das Máquinas: percorre {target} passos em marcha contínua, sem pausas superiores a 5 min.',
     type: 'boss', questType: 'gps',
     baseTarget: 10000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
     baseXP: 1200, baseGold: 500,
@@ -561,7 +702,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_astral_eclipse', title: 'Eclipse Cósmico (S-Rank)',
-    description: 'A Fome Cósmica engole o sistema. Sobrevive consumindo {target} min de conteúdo super-denso (estudo).',
+    description: 'Conteúdo super-denso: estuda {target} min de um tema técnico sem multitarefa.',
     type: 'boss', questType: 'knowledge',
     baseTarget: 120, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 1500, baseGold: 600,
@@ -569,7 +710,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_kargal', title: 'Kargal, o Devorador de Mentes (S-Rank)',
-    description: 'A tua sanidade é testada. Mantém o Foco Profundo por {target} min ininterruptos num espaço escuro.',
+    description: 'Foco profundo: ativa o modo Foco por {target} min num espaço totalmente silencioso (sem música, sem notificações), com o ecrã em brilho mínimo.',
     type: 'boss', questType: 'focus',
     baseTarget: 120, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 1300, baseGold: 550,
@@ -585,7 +726,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_abyss_mage', title: 'Arquimago do Abismo (A-Rank)',
-    description: 'O Arquimago lança ilusões. Combate-o escrevendo/programando intensamente por {target} min.',
+    description: 'Desafia a mente: resolve 3 desafios de lógica/matemática em {target} min.',
     type: 'boss', questType: 'focus',
     baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 750, baseGold: 220,
@@ -601,7 +742,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_hollow_king', title: 'O Rei Vazio (S-Rank)',
-    description: 'O nada aproxima-se. Faz jejum de {target}h seguidas sem quebrar o estado de cetose.',
+    description: 'Jejum disciplinado: mantém {target}h sem refeições (hidratação permitida).',
     type: 'boss', questType: 'training',
     baseTarget: 24, scalingAmount: 0, scalingInterval: 1, unit: 'h',
     baseXP: 1800, baseGold: 800,
@@ -617,7 +758,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_wind_walker', title: 'Caminhante do Vento Silencioso (A-Rank)',
-    description: 'O Vento sopra. Faz {target} min de alongamentos dinâmicos sem perder o equilíbrio.',
+    description: 'Realiza {target} min de alongamentos dinâmicos contínuos (balanços de pernas, rotações de ombros, hip circles) sem pausas superiores a 30s.',
     type: 'boss', questType: 'training',
     baseTarget: 45, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 680, baseGold: 210,
@@ -633,7 +774,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_goliath', title: 'Golias das Rochas Negras (A-Rank)',
-    description: 'A montanha não cai. Permanece {target} min em isometria pesada (Wall Sit/Prancha acumulada).',
+    description: 'Isometria pesada: {target} min de wall-sit ou prancha (tempo acumulado).',
     type: 'boss', questType: 'training',
     baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 800, baseGold: 250,
@@ -641,7 +782,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_shadow_blade', title: 'Lâmina Negra Assustadora (A-Rank)',
-    description: 'A escuridão corta. Domina-a lendo {target} páginas de literatura de estratégia.',
+    description: 'Tática sombria: lê {target} páginas de estratégia (sem interrupções).',
     type: 'boss', questType: 'knowledge',
     baseTarget: 80, scalingAmount: 0, scalingInterval: 1, unit: 'páginas',
     baseXP: 700, baseGold: 230,
@@ -649,7 +790,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   { // 21
     id: 'boss_iron_jaw', title: 'O Quebra-Mandíbulas (A-Rank)',
-    description: 'A agressividade é a resposta. Golpear {target} rounds de sombra (Shadowboxing).',
+    description: 'Shadowboxing: {target} rounds de 2 min cada, com descanso de 30–45s entre rounds.',
     type: 'boss', questType: 'training',
     baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'rounds',
     baseXP: 600, baseGold: 190,
@@ -657,7 +798,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   { // 22
     id: 'boss_astral_drake', title: 'Dragão Astral (S-Rank)',
-    description: 'O voo exige controlo. {target} min de respiração Wim Hof profunda seguida de meditação.',
+    description: 'Ativa o modo Foco por {target} min: realiza ciclos de respiração Wim Hof (30 respirações profundas + retenção do ar) e finaliza com 5 min de meditação silenciosa.',
     type: 'boss', questType: 'focus',
     baseTarget: 60, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 1400, baseGold: 500,
@@ -665,7 +806,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   { // 23
     id: 'boss_lich_king', title: 'Rei Lich Esquecido (S-Rank)',
-    description: 'O gelo congela o cérebro. Mantém o foco sem distração por {target} min enquanto exposto a desconforto.',
+    description: 'Foco resistente: {target} min sentado e imóvel, sem distrações.',
     type: 'boss', questType: 'focus',
     baseTarget: 100, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 1500, baseGold: 700,
@@ -673,7 +814,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   { // 24
     id: 'boss_tarantula', title: 'Tarântula Imperial (A-Rank)',
-    description: 'Supera a claustrofobia. {target} passos num trilho fechado ou natureza.',
+    description: 'Marcha controlada: percorre {target} passos num percurso definido à partida (evita desvios), sem música.',
     type: 'boss', questType: 'gps',
     baseTarget: 8000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
     baseXP: 650, baseGold: 200,
@@ -681,11 +822,195 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   { // 25
     id: 'boss_fallen_monk', title: 'Monge Caído (A-Rank)',
-    description: 'Limpa a tua mente e supera as limitações com {target} min de jejum de dopamina contínuo.',
+    description: 'Jejum de estímulos: ativa o modo Foco por {target} min sem aceder a redes sociais, vídeos ou streaming — mantém a atenção numa única tarefa produtiva.',
     type: 'boss', questType: 'focus',
     baseTarget: 150, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 800, baseGold: 280,
     dropShadowId: 'fallen_monk',
+  },
+  { // 26
+    id: 'boss_swamp_wraith', title: 'Espectro do Pântano (A-Rank)',
+    description: 'Autoanálise escrita: ativa o modo Foco por {target} min e escreve livremente sobre um desafio pessoal atual — o que está a acontecer, por que ainda não resolveste, e uma coisa concreta que podes fazer hoje.',
+    type: 'boss', questType: 'focus',
+    baseTarget: 40, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 720, baseGold: 230,
+    dropShadowId: 'swamp_wraith',
+  },
+  { // 27
+    id: 'boss_titan_ape', title: 'Primata Titânico (A-Rank)',
+    description: 'Força bruta total: {target} reps alternadas de push-ups + squats.',
+    type: 'boss', questType: 'training',
+    baseTarget: 130, scalingAmount: 0, scalingInterval: 1, unit: 'reps',
+    baseXP: 850, baseGold: 260,
+    dropShadowId: 'titan_ape',
+  },
+  { // 28
+    id: 'boss_astral_seer', title: 'Oráculo Astral (A-Rank)',
+    description: 'Conhecimento profundo: lê {target} páginas de conteúdo técnico sem pausas longas.',
+    type: 'boss', questType: 'knowledge',
+    baseTarget: 80, scalingAmount: 0, scalingInterval: 1, unit: 'páginas',
+    baseXP: 780, baseGold: 240,
+    dropShadowId: 'astral_seer',
+  },
+  { // 29
+    id: 'boss_astral_hound', title: 'Cão Cósmico Errante (A-Rank)',
+    description: 'Resistência em campo aberto: percorre {target} km em ritmo constante.',
+    type: 'boss', questType: 'gps',
+    baseTarget: 8, scalingAmount: 0, scalingInterval: 1, unit: 'km',
+    baseXP: 820, baseGold: 250,
+    dropShadowId: 'astral_hound',
+  },
+  { // 30
+    id: 'boss_archlich_prime', title: 'Arquilich Primordial (S-Rank)',
+    description: 'Projeto com entregável: define um resultado concreto antes de começar (protótipo, esboço, plano detalhado ou artigo curto). Ativa o modo Foco por {target} min e termina com algo tangível para mostrar.',
+    type: 'boss', questType: 'focus',
+    baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 1600, baseGold: 720,
+    dropShadowId: 'archlich_prime',
+  },
+  { // 31
+    id: 'boss_soul_reaper', title: 'Ceifeiro de Almas (S-Rank)',
+    description: 'Resiliência mental: {target} min de trabalho criativo (escrita leve, desenho ou plano de projeto).',
+    type: 'boss', questType: 'focus',
+    baseTarget: 120, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 1700, baseGold: 760,
+    dropShadowId: 'soul_reaper',
+  },
+  { // 32
+    id: 'boss_astral_nebula', title: 'Rei Nebulosa (S-Rank)',
+    description: 'Travessia cósmica: atinge {target} passos em marcha longa e focada.',
+    type: 'boss', questType: 'gps',
+    baseTarget: 12000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
+    baseXP: 1750, baseGold: 780,
+    dropShadowId: 'astral_nebula',
+  },
+  { // 33
+    id: 'boss_goblin_warlord', title: 'Senhor Goblin (A-Rank)',
+    description: 'Tabata: completa {target} rounds de 20s de esforço máximo + 10s de repouso. Define um único exercício antes de começar (burpees, saltos ou sprints) e mantém a intensidade máxima em cada round.',
+    type: 'boss', questType: 'training',
+    baseTarget: 8, scalingAmount: 0, scalingInterval: 1, unit: 'rounds',
+    baseXP: 680, baseGold: 220,
+    dropShadowId: 'goblin_grunt',
+  },
+  { // 34
+    id: 'boss_cave_spider_matriarch', title: 'Matriarca da Caverna (A-Rank)',
+    description: 'Técnica Feynman: ativa o modo Foco por {target} min e explica por escrito (ou em voz alta gravada) um conceito que estás a aprender, como se ensinasses a um iniciante — sem consultar fontes durante a explicação.',
+    type: 'boss', questType: 'focus',
+    baseTarget: 35, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 700, baseGold: 230,
+    dropShadowId: 'cave_spider',
+  },
+  { // 35
+    id: 'boss_ant_worker_prime', title: 'Operária Primordial (A-Rank)',
+    description: 'Rota de exploração: percorre {target} passos num trajeto que nunca fizeste antes, escolhendo o caminho no momento (sem rota pré-definida). Nota 3 coisas novas que descobriste ao longo do percurso.',
+    type: 'boss', questType: 'gps',
+    baseTarget: 6000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
+    baseXP: 690, baseGold: 210,
+    dropShadowId: 'ant_worker',
+  },
+  { // 36
+    id: 'boss_stone_golem_shard', title: 'Fragmento do Golem (A-Rank)',
+    description: 'Experimenta uma prática física nova (yoga, capoeira, calistenia, tai chi ou outra que nunca tentaste): segue um tutorial e pratica {target} min sem interrupção. Repete os movimentos no final sem guia.',
+    type: 'boss', questType: 'training',
+    baseTarget: 30, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 670, baseGold: 200,
+    dropShadowId: 'stone_golem_shard',
+  },
+  { // 37
+    id: 'boss_stringsinger', title: 'O Cantor das Cordas (A-Rank)',
+    description: 'Guitarra: {target} min de prática com metrónomo (3 acordes + 1 ritmo básico).',
+    type: 'boss', questType: 'focus',
+    baseTarget: 35, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 720, baseGold: 230,
+    dropShadowId: 'silent_blade',
+  },
+  { // 38
+    id: 'boss_polyglot_trial', title: 'Provação do Poliglota (A-Rank)',
+    description: 'Idioma: aprende {target} palavras + escreve 5 frases usando-as.',
+    type: 'boss', questType: 'knowledge',
+    baseTarget: 20, scalingAmount: 0, scalingInterval: 1, unit: 'palavras',
+    baseXP: 740, baseGold: 240,
+    dropShadowId: 'blind_seer',
+  },
+  { // 39
+    id: 'boss_culinary_ritual', title: 'Ritual Culinário (A-Rank)',
+    description: 'Cozinha: prepara 1 refeição saudável + 1 acompanhamento (do zero).',
+    type: 'boss', questType: 'training',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'refeição',
+    baseXP: 760, baseGold: 250,
+    dropShadowId: 'iron_maid',
+  },
+  { // 40
+    id: 'boss_memory_labyrinth', title: 'Labirinto da Memória (A-Rank)',
+    description: 'Memória: cria um palácio mental com {target} itens e revê-os 2x.',
+    type: 'boss', questType: 'focus',
+    baseTarget: 12, scalingAmount: 0, scalingInterval: 1, unit: 'itens',
+    baseXP: 780, baseGold: 260,
+    dropShadowId: 'library_wisp',
+  },
+  { // 41
+    id: 'boss_new_frontier', title: 'Fronteira Inédita (A-Rank)',
+    description: 'Experimenta algo novo: 1 aula curta (20–30 min) + 3 notas do que aprendeste.',
+    type: 'boss', questType: 'knowledge',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'aula',
+    baseXP: 800, baseGold: 270,
+    dropShadowId: 'cursed_samurai',
+  },
+  { // 42
+    id: 'boss_artisan_trial', title: 'Prova do Artesão (A-Rank)',
+    description: 'Constrói algo pequeno: 1 objeto útil (ex.: suporte, organizador, remendo).',
+    type: 'boss', questType: 'training',
+    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'objeto',
+    baseXP: 820, baseGold: 280,
+    dropShadowId: 'ember_squire',
+  },
+  { // 43
+    id: 'boss_storm_bringer', title: 'Invocador de Tempestades (S-Rank)',
+    description: 'Skill sprint: define uma micro-skill específica que queres aprender. Estuda-a em modo Foco por {target} min e pratica-a imediatamente durante 15 min adicionais — sem avançar para outro tema antes de terminar.',
+    type: 'boss', questType: 'focus',
+    baseTarget: 45, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 1700, baseGold: 760,
+    dropShadowId: 'storm_bringer',
+  },
+  { // 44
+    id: 'boss_chrono_master', title: 'Senhor do Tempo (S-Rank)',
+    description: 'Timeboxing: planeia 5 blocos de 25 min e executa pelo menos 3.',
+    type: 'boss', questType: 'focus',
+    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'blocos',
+    baseXP: 1800, baseGold: 820,
+    dropShadowId: 'chrono_master',
+  },
+  { // 45
+    id: 'boss_star_breaker', title: 'Quebrador de Estrelas (S-Rank)',
+    description: 'Exploração documentada: percorre {target} km a pé num percurso nunca feito antes. Durante a marcha, identifica e regista (por escrito ou foto) pelo menos 3 elementos novos que nunca tinhas reparado.',
+    type: 'boss', questType: 'gps',
+    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'km',
+    baseXP: 1900, baseGold: 880,
+    dropShadowId: 'star_breaker',
+  },
+  { // 46
+    id: 'boss_cold_philosopher', title: 'O Filósofo da Montanha (A-Rank)',
+    description: 'Análise de problema real: define um problema pessoal concreto que estás a adiar. Pesquisa contexto e opiniões opostas durante {target} min (modo Foco ativo) e termina com uma decisão escrita.',
+    type: 'boss', questType: 'focus',
+    baseTarget: 50, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 760, baseGold: 245,
+    dropShadowId: 'astral_seer',
+  },
+  { // 47
+    id: 'boss_digital_craftsman', title: 'O Artesão Digital (A-Rank)',
+    description: 'Constrói algo digital do zero em {target} min: uma página web simples, um script útil, uma apresentação estruturada ou um protótipo. O resultado tem de ser funcional ou apresentável no final.',
+    type: 'boss', questType: 'knowledge',
+    baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 850, baseGold: 280,
+    dropShadowId: 'library_wisp',
+  },
+  { // 48
+    id: 'boss_stoic_challenge', title: 'A Prova do Estoico (A-Rank)',
+    description: 'Desconforto voluntário: faz {target} min de exercício num ambiente frio real (ao ar livre no frio, ou janelas abertas no inverno) sem roupa extra. Regista como te sentiste antes e depois.',
+    type: 'boss', questType: 'training',
+    baseTarget: 20, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseXP: 700, baseGold: 220,
+    dropShadowId: 'rebel_leader',
   },
 ]
 
@@ -827,6 +1152,11 @@ export type SystemState = {
   blockedAttemptTimestamps: number[]   // for spam detection
   extractionDoneToday: boolean
   penaltyBlockEnd: number     // ms timestamp when block lifts (0 = no timed block)
+  eventBossKey: string
+  eventBossCompletedIds: string[]
+  eventBossRequired: number
+  eventBossTotal: number
+  eventBossDefeated: boolean
   lastPenaltyInfo?: {
     intensity: PunishmentIntensity
     failedCount: number
@@ -904,6 +1234,9 @@ type GameActions = {
   toggleActiveShadow: (id: string) => void
   releaseShadow: (id: string) => { gold: number }
   dismissExtraction: () => void
+  setEventBossState: (key: string, required: number, total: number) => void
+  completeEventTrial: (id: string, key: string, required: number, total: number) => { completed: number; required: number }
+  markEventBossDefeated: (key: string) => void
   restoreBackup: (data: Partial<GameState>) => void
 }
 
@@ -1103,6 +1436,25 @@ function evaluateAchievementCondition(
     case 'boss_omega_slayer': return payload.missionId === 'boss_crypt_omega'
     case 'boss_eclipse_survivor': return payload.missionId === 'boss_astral_eclipse'
     case 'boss_seraph_fall': return payload.missionId === 'boss_seraphim'
+    case 'boss_archlich_prime': return payload.missionId === 'boss_archlich_prime'
+    case 'boss_soul_reaper': return payload.missionId === 'boss_soul_reaper'
+    case 'boss_astral_nebula': return payload.missionId === 'boss_astral_nebula'
+
+    // Event bosses
+    case 'event_halloween_reaper': return payload.missionId === 'event_halloween_reaper'
+    case 'event_winter_lich': return payload.missionId === 'event_winter_lich'
+    case 'event_summer_titan': return payload.missionId === 'event_summer_titan'
+    case 'event_new_year_ashen': return payload.missionId === 'event_new_year_ashen'
+    case 'event_valentine_oath': return payload.missionId === 'event_valentine_oath'
+    case 'event_carnival_mask': return payload.missionId === 'event_carnival_mask'
+    case 'event_equinox_guardian': return payload.missionId === 'event_equinox_guardian'
+    case 'event_easter_hare': return payload.missionId === 'event_easter_hare'
+    case 'event_spring_bloom': return payload.missionId === 'event_spring_bloom'
+    case 'event_harvest_king': return payload.missionId === 'event_harvest_king'
+    case 'event_black_friday_merchant': return payload.missionId === 'event_black_friday_merchant'
+    case 'event_yule_seraph': return payload.missionId === 'event_yule_seraph'
+    case 'event_midnight_wraith': return payload.missionId === 'event_midnight_wraith'
+    case 'event_festival_drake': return payload.missionId === 'event_festival_drake'
 
     // Quests
     case 'quests_perfect_week': return Boolean(payload.afterPerfectDay)
@@ -1372,6 +1724,11 @@ const useGameStore = create<GameState & GameActions>()(
           blockedAttemptTimestamps: [],
           extractionDoneToday: false,
           penaltyBlockEnd: 0,
+          eventBossKey: '',
+          eventBossCompletedIds: [],
+          eventBossRequired: 0,
+          eventBossTotal: 0,
+          eventBossDefeated: false,
           lastPenaltyInfo: undefined,
         },
         lastResetDate: '',
@@ -1617,7 +1974,7 @@ const useGameStore = create<GameState & GameActions>()(
               statistics: {
                 ...s.statistics,
                 totalCompleted: s.statistics.totalCompleted + 1,
-                questsByRank: { ...s.statistics.questsByRank, [rank]: s.statistics.questsByRank[rank] + 1 },
+                questsByRank: { ...s.statistics.questsByRank, [rank]: (s.statistics.questsByRank[rank] ?? 0) + 1 },
               },
               questCompletions: { ...s.questCompletions, [id]: (s.questCompletions[id] ?? 0) + 1 },
               levelUpReward: rewardItems.length > 0
@@ -1732,8 +2089,9 @@ const useGameStore = create<GameState & GameActions>()(
               statistics: {
                 ...s.statistics,
                 totalCompleted: Math.max(s.statistics.totalCompleted - 1, 0),
-                questsByRank: { ...s.statistics.questsByRank, [rank]: Math.max(s.statistics.questsByRank[rank] - 1, 0) },
+                questsByRank: { ...s.statistics.questsByRank, [rank]: Math.max((s.statistics.questsByRank[rank] ?? 0) - 1, 0) },
               },
+              questCompletions: { ...s.questCompletions, [id]: Math.max((s.questCompletions[id] ?? 1) - 1, 0) },
               player: {
                 ...s.player, 
                 xp: Math.max(newXp, 0), 
@@ -1750,6 +2108,7 @@ const useGameStore = create<GameState & GameActions>()(
 
         // ── Side Quests ────────────────────────────────────────────────────
         addSideQuest(title: string) {
+          if (!title.trim()) return
           const { rank, xp, gold } = generateSideQuestReward()
           const sq: SideQuest = {
             id: `sq_${Date.now()}`, title: title.trim(),
@@ -1825,24 +2184,27 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         recordFocusTime(minutes) {
+          const safeMinutes = Math.max(0, minutes)
+          if (safeMinutes === 0) return
           set(s => {
-            const stats = { ...s.statistics, totalFocusMinutes: s.statistics.totalFocusMinutes + minutes }
+            const stats = { ...s.statistics, totalFocusMinutes: s.statistics.totalFocusMinutes + safeMinutes }
             if (!s.system.hasPenalty || s.system.penaltyBlockEnd <= 0) {
               return { statistics: stats }
             }
-            const newEnd = s.system.penaltyBlockEnd - minutes * 60_000
+            const newEnd = s.system.penaltyBlockEnd - safeMinutes * 60_000
             if (newEnd <= Date.now()) {
               return { statistics: stats, system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }
             }
             return { statistics: stats, system: { ...s.system, penaltyBlockEnd: newEnd } }
           })
-          fireEvent('focus_total_hours', {}, ref, minutes)
-          fireEvent('focus_session_completed', { minutes }, ref, 1)
+          fireEvent('focus_total_hours', {}, ref, safeMinutes)
+          fireEvent('focus_session_completed', { minutes: safeMinutes }, ref, 1)
           checkAndUnlockAchievements(ref)
         },
 
         // ── Inventory / Shop ───────────────────────────────────────────────
         purchaseItem(itemId, cost) {
+          if (cost < 0) return false
           const state = get()
           if (state.player.gold < cost) return false
           if (STOCKED_ITEMS.includes(itemId) && (state.system.shopStocks[itemId] ?? 0) <= 0) return false
@@ -2100,6 +2462,49 @@ const useGameStore = create<GameState & GameActions>()(
           })
         },
 
+        setEventBossState(key: string, required: number, total: number) {
+          set(s => ({
+            system: {
+              ...s.system,
+              eventBossKey: key,
+              eventBossCompletedIds: [],
+              eventBossRequired: required,
+              eventBossTotal: total,
+              eventBossDefeated: false,
+            },
+          }))
+        },
+
+        completeEventTrial(id: string, key: string, required: number, total: number) {
+          let completed = 0
+          set(s => {
+            const reset = s.system.eventBossKey !== key
+            const currentIds = reset ? [] : s.system.eventBossCompletedIds
+            const nextIds = currentIds.includes(id) ? currentIds : [...currentIds, id]
+            completed = nextIds.length
+            return {
+              system: {
+                ...s.system,
+                eventBossKey: key,
+                eventBossCompletedIds: nextIds,
+                eventBossRequired: required,
+                eventBossTotal: total,
+              },
+            }
+          })
+          return { completed, required }
+        },
+
+        markEventBossDefeated(key: string) {
+          set(s => ({
+            system: {
+              ...s.system,
+              eventBossKey: key,
+              eventBossDefeated: true,
+            },
+          }))
+        },
+
         // ── Release shadow (sell) ──────────────────────────────────────────
         releaseShadow(id) {
           const { player, customShadows } = get()
@@ -2216,7 +2621,19 @@ const useGameStore = create<GameState & GameActions>()(
           return { leveledUp }
         },
         restoreBackup(data: Partial<GameState>) {
-          set((s: GameState & GameActions) => ({ ...s, ...data } as Partial<GameState & GameActions>))
+          if (!data || typeof data !== 'object') return
+          // Only merge known top-level keys to prevent injecting arbitrary shape
+          const safe: Partial<GameState> = {}
+          const allowed: Array<keyof GameState> = [
+            'player', 'quests', 'extraQuests', 'sideQuests', 'questDictionary',
+            'customShadows', 'settings', 'statistics', 'system', 'lastResetDate',
+            'unlockedAchievements', 'achievementProgress', 'questRecords',
+            'questCompletions', 'activeMissionTimers',
+          ]
+          for (const key of allowed) {
+            if (key in data) (safe as any)[key] = (data as any)[key]
+          }
+          set((s: GameState & GameActions) => ({ ...s, ...safe } as Partial<GameState & GameActions>))
         },
       }
     },
