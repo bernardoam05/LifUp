@@ -9,7 +9,9 @@ import { NativeModules } from 'react-native'
 import useGameStore from '../store/useGameStore'
 import CustomModal from '../components/CustomModal'
 import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal'
-import { C, FONT, SPACING } from '../theme'
+
+import { useTheme, FONT, SPACING } from '../theme'
+
 
 const { FocusBlocker } = NativeModules as {
   FocusBlocker: {
@@ -52,11 +54,15 @@ function AppSelectorOverlay({
   blockedApps,
   onToggle,
   onClose,
+  C,
 }: {
   blockedApps: string[]
   onToggle:    (pkg: string) => void
   onClose:     () => void
+  C: any
 }) {
+  const ov = getOVStyles(C)
+
   const [displayApps, setDisplayApps] = useState<AppEntry[]>(PRESET_APPS)
   const [loading, setLoading]         = useState(true)
   const [customPkg, setCustomPkg]     = useState('')
@@ -138,8 +144,9 @@ function AppSelectorOverlay({
           value={search}
           onChangeText={setSearch}
           placeholder="Pesquisar app..."
-          placeholderTextColor="#334155"
+          placeholderTextColor={C.dimmed}
           autoCapitalize="none"
+
         />
         {search.length > 0 && (
           <TouchableOpacity onPress={() => setSearch('')}>
@@ -276,6 +283,9 @@ function AppSelectorOverlay({
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function FocusScreen() {
+  const C = useTheme()
+  const s = React.useMemo(() => getStyles(C), [C])
+
   const blockedApps        = useGameStore(s => s.system.blockedApps)
   const toggleApp          = useGameStore(s => s.toggleBlockedApp)
   const setFocusActive     = useGameStore(s => s.setFocusModeActive)
@@ -284,18 +294,15 @@ export default function FocusScreen() {
   const hardcoreFocusMode  = useGameStore(s => s.system.hardcoreFocusMode)
   const hardcorePunished   = useGameStore(s => s.system.hardcorePunished)
   const hasPenalty         = useGameStore(s => s.system.hasPenalty)
-  const penaltyBlockEnd    = useGameStore(s => s.system.penaltyBlockEnd)
+  const penaltyBlockEnd = useGameStore(s => s.system.penaltyBlockEnd)
+  const isPenaltyActive = penaltyBlockEnd > Date.now()
+  const penaltyMsRemaining = isPenaltyActive ? penaltyBlockEnd - Date.now() : 0
   const triggerEvent       = useGameStore(s => s.triggerEvent)
 
-  const [nowMs, setNowMs] = useState(Date.now())
-  useEffect(() => {
-    if (!hasPenalty || penaltyBlockEnd <= 0) return
-    const iv = setInterval(() => setNowMs(Date.now()), 60_000)
-    return () => clearInterval(iv)
-  }, [hasPenalty, penaltyBlockEnd])
+  // No longer need interval to track penalty expiration as it's now a manual/focus-based duration.
+  // const [nowMs, setNowMs] = useState(Date.now()) ...
 
-  const penaltyRemainingMs  = hasPenalty && penaltyBlockEnd > 0 ? Math.max(penaltyBlockEnd - nowMs, 0) : 0
-  const penaltyRemainingH   = Math.ceil(penaltyRemainingMs / 3_600_000)
+  const penaltyRemainingH   = Math.ceil(penaltyMsRemaining / 3_600_000)
 
   const lastFocusDuration = useGameStore(s => s.settings.lastFocusDuration)
   const updateSettings    = useGameStore(s => s.updateSettings)
@@ -486,7 +493,7 @@ export default function FocusScreen() {
         )}
 
         {/* Penalty banner */}
-        {hasPenalty && penaltyRemainingMs > 0 && (
+        {hasPenalty && penaltyMsRemaining > 0 && (
           <View style={s.penaltyBanner}>
             <Icon name="skull-crossbones" size={14} color={C.neonRed} />
             <View style={{ marginLeft: 8 }}>
@@ -670,13 +677,16 @@ export default function FocusScreen() {
             label="Acesso a Uso de Apps"
             ok={hasUsage}
             onFix={() => FocusBlocker?.requestUsagePermission().then(checkPerms)}
+            C={C}
           />
           <PermRow
             label="Overlay (Desenhar por cima)"
             ok={hasOverlay}
             onFix={() => FocusBlocker?.requestOverlayPermission().then(checkPerms)}
+            C={C}
           />
         </View>
+
 
       </ScrollView>
 
@@ -686,8 +696,10 @@ export default function FocusScreen() {
           blockedApps={blockedApps}
           onToggle={toggleApp}
           onClose={() => setShowAppOverlay(false)}
+          C={C}
         />
       )}
+
 
       {/* ── Hardcore break confirmation modal ──────────────────────────────── */}
       <CustomModal
@@ -706,7 +718,9 @@ export default function FocusScreen() {
           triggerEvent('hardcore_cancel_attempt')
           setShowBreakModal(false)
         }}
+        C={C}
       />
+
 
       {alertCfg && (
         <SystemAlertModal
@@ -714,8 +728,10 @@ export default function FocusScreen() {
           message={alertCfg.message}
           buttons={alertCfg.buttons}
           onClose={() => setAlertCfg(null)}
+          C={C}
         />
       )}
+
 
     </SafeAreaView>
   )
@@ -723,7 +739,8 @@ export default function FocusScreen() {
 
 // ── PermRow sub-component ──────────────────────────────────────────────────────
 
-function PermRow({ label, ok, onFix }: { label: string; ok: boolean; onFix: () => void }) {
+function PermRow({ label, ok, onFix, C }: { label: string; ok: boolean; onFix: () => void; C: any }) {
+  const p = getPRStyles(C)
   return (
     <View style={p.row}>
       <Icon
@@ -744,7 +761,7 @@ function PermRow({ label, ok, onFix }: { label: string; ok: boolean; onFix: () =
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
-const s = StyleSheet.create({
+const getStyles = (C: any) => StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
   content:  { padding: SPACING.md, paddingBottom: SPACING.xl },
 
@@ -807,18 +824,19 @@ const s = StyleSheet.create({
   hardcoreInlineSub:       { color: C.dimmed, fontSize: 10, marginTop: 3 },
 })
 
-const p = StyleSheet.create({
+const getPRStyles = (C: any) => StyleSheet.create({
   row:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
-  label:  { flex: 1, color: '#94a3b8', fontSize: 12, marginLeft: SPACING.sm },
+  label:  { flex: 1, color: C.muted, fontSize: 12, marginLeft: SPACING.sm },
   fixBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.neonRed, borderRadius: 6, paddingHorizontal: SPACING.sm, paddingVertical: 4 },
   fixTxt: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 })
 
+
 // Overlay styles — absolute full-screen, no Modal involved
-const ov = StyleSheet.create({
+const getOVStyles = (C: any) => StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#080d14',
+    backgroundColor: C.bg,
     zIndex: 999,
     flexDirection: 'column',
   },
@@ -828,9 +846,9 @@ const ov = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#0a0f1a',
+    backgroundColor: C.panel,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
+    borderBottomColor: C.border,
     paddingHorizontal: SPACING.md,
     paddingVertical: 14,
     paddingTop: 48,   // clears status bar on most Android devices
@@ -853,7 +871,7 @@ const ov = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#1e293b',
+    borderColor: C.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -862,7 +880,7 @@ const ov = StyleSheet.create({
     backgroundColor: C.neonBlue + '18',
   },
   headerBtnTxtClose: {
-    color: '#94a3b8',
+    color: C.muted,
     fontFamily: FONT.orbitron,
     fontSize: 11,
     fontWeight: '700',
@@ -878,9 +896,9 @@ const ov = StyleSheet.create({
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0f172a',
+    backgroundColor: C.panel,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
+    borderBottomColor: C.border,
     paddingHorizontal: SPACING.md,
     paddingVertical: 10,
     gap: SPACING.sm,
@@ -895,13 +913,13 @@ const ov = StyleSheet.create({
     padding: 6,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#1e293b',
+    borderColor: C.border,
   },
   filterBtn: {
     padding: 6,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#1e293b',
+    borderColor: C.border,
   },
   filterBtnActive: {
     borderColor: C.neonBlue + '55',
@@ -910,14 +928,14 @@ const ov = StyleSheet.create({
 
   // Status bar
   statusBar: {
-    backgroundColor: '#0a0f1a',
+    backgroundColor: C.panel,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
+    borderBottomColor: C.border,
     paddingHorizontal: SPACING.md,
     paddingVertical: 5,
   },
   statusTxt: {
-    color: '#475569',
+    color: C.dimmed,
     fontFamily: FONT.orbitron,
     fontSize: 9,
     letterSpacing: 1,
@@ -937,12 +955,12 @@ const ov = StyleSheet.create({
     letterSpacing: 2,
   },
   loadingSub: {
-    color: '#334155',
+    color: C.dimmed,
     fontSize: 11,
   },
 
   // App list
-  list:        { flex: 1, backgroundColor: '#080d14' },
+  list:        { flex: 1, backgroundColor: C.bg },
   listContent: { flexGrow: 1, paddingBottom: 20 },   // reduced massive padding
 
   // Empty state
@@ -953,7 +971,7 @@ const ov = StyleSheet.create({
     gap: 16,
   },
   emptyTxt: {
-    color: '#475569',
+    color: C.dimmed,
     fontSize: 13,
     textAlign: 'center',
   },
@@ -961,7 +979,7 @@ const ov = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ef4444',
+    backgroundColor: C.neonRed,
     borderRadius: 4,
     paddingVertical: 16,
     paddingHorizontal: 24,
@@ -983,9 +1001,9 @@ const ov = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#0f172a',
+    borderBottomColor: C.border,
     gap: SPACING.sm,
-    backgroundColor: '#080d14',
+    backgroundColor: C.bg,
   },
   rowActive: {
     backgroundColor: '#0d2818',
@@ -993,7 +1011,7 @@ const ov = StyleSheet.create({
   },
   rowInfo: { flex: 1 },
   rowLabel: {
-    color: '#94a3b8',
+    color: C.muted,
     fontSize: 14,
   },
   rowLabelActive: {
@@ -1001,7 +1019,7 @@ const ov = StyleSheet.create({
     fontWeight: '600',
   },
   rowPkg: {
-    color: '#334155',
+    color: C.dimmed,
     fontSize: 10,
     marginTop: 2,
   },
@@ -1012,16 +1030,16 @@ const ov = StyleSheet.create({
     alignItems: 'center',
     padding: SPACING.md,
     gap: SPACING.sm,
-    backgroundColor: '#080d14',
+    backgroundColor: C.bg,
     borderTopWidth: 1,
-    borderTopColor: '#1e293b',
+    borderTopColor: C.border,
     marginTop: 8,
   },
   customInput: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: C.panel,
     borderWidth: 1,
-    borderColor: '#1e293b',
+    borderColor: C.border,
     borderRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -1043,3 +1061,4 @@ const ov = StyleSheet.create({
     letterSpacing: 1,
   },
 })
+

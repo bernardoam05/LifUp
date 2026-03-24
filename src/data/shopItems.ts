@@ -5,6 +5,7 @@ export type ItemEffect =
   | 'remove_penalty'
   | 'xp_boost_next'
   | 'break_hardcore'
+  | 'open_loot_box'
   | 'cosmetic'
 
 export type ShopItem = {
@@ -94,6 +95,36 @@ export const SHOP_CATALOG: ShopItem[] = [
     icon:        'shield-off-outline',
     color:       '#ef4444',
     effect:      'break_hardcore',
+  },
+  {
+    id:          'loot_box',
+    name:        'Cofre Misterioso',
+    description: 'Um cofre trancado por magia do Sistema. Pode conter Gold, XP ou Chaves Raras.',
+    lore:        '"O que está lá dentro? Apenas o Sistema decide."',
+    cost:        500,
+    icon:        'muffin', // using 'muffin' as it looks like a box/bag in some icon sets, or maybe 'bag-personal'
+    color:       '#fbbf24',
+    effect:      'open_loot_box',
+  },
+  {
+    id:          'theme_monarch',
+    name:        'Tema: Monarca das Sombras',
+    description: 'Um visual UI negro e roxo profundo que reflete o poder absoluto.',
+    lore:        '"Ergue-te com a coroa que governa os mortos."',
+    cost:        8000,
+    icon:        'palette-outline',
+    color:       '#a855f7',
+    effect:      'cosmetic',
+  },
+  {
+    id:          'theme_blood',
+    name:        'Tema: Noite de Sangue',
+    description: 'Um UI focado em escarlate escuro para os caçadores implacáveis.',
+    lore:        '"Sedento. Impiedoso. Carniceiro."',
+    cost:        8000,
+    icon:        'water-pump',
+    color:       '#ef4444',
+    effect:      'cosmetic',
   },
 ]
 

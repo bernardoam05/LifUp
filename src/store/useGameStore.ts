@@ -7,6 +7,8 @@ import { ACHIEVEMENTS_CATALOG, ACHIEVEMENTS_MAP, type EventTrigger, type Achieve
 import type { Shadow, PassiveEffectType, ShadowRank } from '../data/shadows'
 import { SHADOW_MAP, SHADOW_BY_ACHIEVEMENT, rollShadow } from '../data/shadows'
 import { RAID_BOSSES, type RaidBossRank } from '../data/bosses'
+import { LEVEL_GATED_KEYS, BOX_KEYS, ALL_DUNGEON_KEYS } from '../data/dungeonKeys'
+import { APP_THEMES } from '../data/themes'
 import SharedStorage from '../native/SharedStorage'
 
 const { WidgetStorage } = NativeModules as {
@@ -31,7 +33,7 @@ type ClassReq = {
   /** The rank whose questsByRank counter is checked for minRankMissions */
   prevRank?: RankLetter
 }
-type RankLetter = 'E' | 'D' | 'C' | 'B' | 'A' | 'S' | 'National'
+export type RankLetter = 'E' | 'D' | 'C' | 'B' | 'A' | 'S' | 'National'
 
 export const CLASS_REQUIREMENTS: ClassReq[] = [
   { rank: 'E', label: 'E-Rank', color: '#94a3b8', minLevel: 1, minMissions: 0, minBosses: 0, minRankMissions: 0 },
@@ -117,6 +119,7 @@ export type GameSettings = {
   missionDifficulty: MissionDifficulty
   restDay: boolean   // user-activated rest day for today
   lastFocusDuration: { hours: number; minutes: number }
+  dynamicTheme: boolean // Rank-based theme colors
 }
 
 const INITIAL_SETTINGS: GameSettings = {
@@ -126,6 +129,7 @@ const INITIAL_SETTINGS: GameSettings = {
   missionDifficulty: 'normal',
   restDay: false,
   lastFocusDuration: { hours: 0, minutes: 25 },
+  dynamicTheme: true,
 }
 
 // ── Shadow entry (owned shadow with level) ────────────────────────────────────
@@ -744,7 +748,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_astral_nova', title: 'General Supernova (S-Rank)',
-    description: 'Ataque de choque contínuo: completa {target} min de Foco (ativa o modo Foco) e, em seguida, realiza 100 burpees controlados.',
+    description: 'Ataque de choque contínuo: completa {target} min de Foco (ativa o modo Foco) e, em seguida, realiza 100 burpees controlados. Se não conseguires burpees, faz flexões explosivas.',
     type: 'boss', questType: 'focus',
     baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 1000, baseGold: 400,
@@ -760,7 +764,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_executioner', title: 'O Carrasco da Arena (A-Rank)',
-    description: 'Suporta a dor: Toma um banho 100% gelado de pelo menos {target} min.',
+    description: 'Suporta a dor: Toma um banho 100% gelado de pelo menos {target} min. Podes começar morno, mas o tempo só conta quando a água estiver no máximo de frio.',
     type: 'boss', questType: 'training',
     baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 550, baseGold: 150,
@@ -1126,11 +1130,12 @@ function defToQuest(def: QuestDefinition, level: number, tier: string): Quest {
 }
 
 function getDailyMissionTarget(level: number, difficulty: MissionDifficulty): number {
+  // Now represents exclusively the number of POOL missions
   switch (difficulty) {
-    case 'easy': return 3
-    case 'hard': return Math.min(4 + Math.floor(level / 5), 8)
+    case 'easy': return 2
+    case 'hard': return Math.min(4 + Math.floor(level / 8), 7)
     case 'normal':
-    default: return Math.min(3 + Math.floor(level / 10), 5)
+    default: return Math.min(3 + Math.floor(level / 12), 5)
   }
 }
 
@@ -1145,15 +1150,14 @@ function createDailyQuests(
   const d = new Date()
   const seed = overrideSeed ?? (d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate())
 
-  const totalTarget = getDailyMissionTarget(level, difficulty)
-
+  // Core missions are ALWAYS included and don't count towards the random pool limit
   const coreDefs = questDictionary
     .filter(def => def.type === 'core')
     .filter(def => !def.daysOfWeek || def.daysOfWeek.includes(dayOfWeek))
 
   const poolDefs = questDictionary.filter(def => def.type === 'pool')
-  const randomCount = Math.max(0, totalTarget - coreDefs.length)
-  const picks = seededPick(randomCount, poolDefs.length, seed)
+  const poolCount = getDailyMissionTarget(level, difficulty)
+  const picks = seededPick(poolCount, poolDefs.length, seed)
 
   return [
     ...coreDefs.map(def => defToQuest(def, level, tier)),
@@ -1203,10 +1207,17 @@ const INITIAL_STATS: Statistics = {
 export type InventoryEntry = { itemId: string; quantity: number }
 
 export type Player = {
+  rank?: RankLetter
   name: string
   level: number
   xp: number
   gold: number
+  // Attribute XP (accumulated from quest completions)
+  strXp: number
+  agiXp: number
+  intXp: number
+  vitXp: number
+  // Derived display values — always computed from xp fields via attrLevelFromXP()
   str: number
   agi: number
   int: number
@@ -1216,7 +1227,10 @@ export type Player = {
   highestStreak: number
   shadows: ShadowEntry[]   // shadow entries with levels
   activeShadowIds: string[]        // ids of equipped (vanguard) shadows (max 3)
+  dungeonKeys: string[]            // ids of unlocked dungeon master keys
   maxLevelReached: number          // anti-exploit: highest level ever attained
+  unlockedThemes: string[]
+  activeThemeId: string
 }
 
 export type ExtractionResult = {
@@ -1292,11 +1306,14 @@ type GameState = {
   lastExtraction: { shadow: Shadow; isLevelUp: boolean; newLevel: number } | null
   activeMissionTimers: Record<string, { startTime: number; accumulatedMs: number; isPaused: boolean }>
   rewardsQueue: { type: 'achievement' | 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number }[]
+  extraQuestRerolledIds: string[]    // extra quest IDs (extra_…) that have been rerolled today
+  extraQuestUsedPoolIds: string[]    // pool def IDs used in extra quests today (to avoid picking same def again)
 }
 
 type TriggerPayload = Record<string, unknown>
 
 type GameActions = {
+  rankUp: () => void
   bootSystem: () => void
   dismissPenaltyModal: () => void
   advanceTutorialPhase: () => void
@@ -1336,8 +1353,10 @@ type GameActions = {
   recordBlockedAttempt: () => void
   addQuestDefinition: (def: QuestDefinition) => void
   updateQuestDefinition: (id: string, def: Partial<QuestDefinition>) => void
+  setActiveTheme: (themeId: string) => void
   deleteQuestDefinition: (id: string) => void
-  regenerateDailyQuests: () => { success: boolean; reason?: string }
+  regenerateSingleDailyQuest: (questId: string) => { success: boolean; reason?: string }
+  replaceExtraQuest: (questId: string) => { success: boolean; reason?: string }
   generateExtraQuests: () => { success: boolean; reason?: string }
   completeExtraQuest: (id: string) => { leveledUp: boolean }
   updateSettings: (patch: Partial<GameSettings>) => void
@@ -1354,6 +1373,8 @@ type GameActions = {
   markEventBossDefeated: (key: string) => void
   restoreBackup: (data: Partial<GameState>) => void
   popReward: () => void
+  openLootBox: () => { reward: string; detail: string; color: string }
+  enterDungeon: (keyId: string) => boolean
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -1374,32 +1395,56 @@ function applyXP(xp: number, level: number, amount: number) {
   return { xp: newXp, level: newLevel, leveledUp, levelGain }
 }
 
-function distributeStats(
-  current: { str: number; agi: number; int: number; vit: number },
-  levelGain: number,
-  type: Quest['type'] | 'boss' | 'side'
-) {
-  let { str, agi, int, vit } = { ...current }
-  for (let i = 0; i < levelGain; i++) {
-    switch (type) {
-      case 'training':
-        str += 2; vit += 1; agi += 1;
-        break
-      case 'knowledge':
-        int += 2; vit += 1; agi += 1;
-        break
-      case 'focus':
-        int += 2; agi += 2;
-        break
-      case 'gps':
-        agi += 2; vit += 2;
-        break
-      default:
-        str += 1; agi += 1; int += 1; vit += 1;
-        break
-    }
+/**
+ * Converts accumulated attribute XP into a display stat level.
+ * Uses a square-root curve so early gains come fast, then slow down.
+ * At 0 xp → 10; at 500 xp → 20; at 2000 xp → 30; at 4500 xp → 40.
+ */
+export function attrLevelFromXP(xp: number): number {
+  return 10 + Math.floor(Math.sqrt(Math.max(0, xp) / 5))
+}
+
+/** XP granted to each attribute when completing a quest of a given type */
+const ATTR_XP_PER_QUEST: Record<Quest['type'] | 'boss' | 'side', { strXp: number; agiXp: number; intXp: number; vitXp: number }> = {
+  training:   { strXp: 12, agiXp: 0, intXp: 0, vitXp: 6 },
+  gps:        { strXp: 0,  agiXp: 12, intXp: 0, vitXp: 6 },
+  knowledge:  { strXp: 0,  agiXp: 0, intXp: 12, vitXp: 0 },
+  focus:      { strXp: 0,  agiXp: 0, intXp: 12, vitXp: 0 },
+  forbidden:  { strXp: 3,  agiXp: 3, intXp: 3, vitXp: 3 },
+  limit:      { strXp: 3,  agiXp: 3, intXp: 3, vitXp: 3 },
+  boss:       { strXp: 6,  agiXp: 6, intXp: 6, vitXp: 6 },
+  side:       { strXp: 3,  agiXp: 3, intXp: 3, vitXp: 3 },
+}
+
+/**
+ * Returns new attribute XP fields + their computed display values after earning
+ * attribute XP for completing a quest of a given type.
+ */
+function getAttrXpBoost(
+  player: Pick<Player, 'strXp' | 'agiXp' | 'intXp' | 'vitXp'>,
+  questType: Quest['type'] | 'boss' | 'side',
+): Pick<Player, 'strXp' | 'agiXp' | 'intXp' | 'vitXp' | 'str' | 'agi' | 'int' | 'vit'> {
+  const gain = ATTR_XP_PER_QUEST[questType] ?? ATTR_XP_PER_QUEST['side']
+  const strXp = (player.strXp ?? 0) + gain.strXp
+  const agiXp = (player.agiXp ?? 0) + gain.agiXp
+  const intXp = (player.intXp ?? 0) + gain.intXp
+  const vitXp = (player.vitXp ?? 0) + gain.vitXp
+  return {
+    strXp, agiXp, intXp, vitXp,
+    str: attrLevelFromXP(strXp),
+    agi: attrLevelFromXP(agiXp),
+    int: attrLevelFromXP(intXp),
+    vit: attrLevelFromXP(vitXp),
   }
-  return { str, agi, int, vit }
+}
+
+/**
+ * Checks for level-gated dungeon keys and returns new dungeonKeys array.
+ */
+function getNewLevelKeys(currentKeys: string[], newLevel: number): string[] {
+  const granted = LEVEL_GATED_KEYS.filter(k => (k.unlockLevel ?? 0) <= newLevel).map(k => k.id)
+  const merged = [...new Set([...currentKeys, ...granted])]
+  return merged
 }
 
 function getMondayDateString(): string {
@@ -1667,9 +1712,13 @@ function unlockAchievements(ids: string[], { get, set }: StoreRef) {
 
   set((s: GameState & GameActions) => {
     let { xp, level } = s.player
+    let leveledUp = false
+    let isNewLevel = false
     if (totalXP > 0) {
       const res = applyXP(xp, level, totalXP)
       xp = res.xp; level = res.level
+      leveledUp = res.leveledUp
+      isNewLevel = level > s.player.maxLevelReached
     }
     const newShadows = shadowRewards.map(sh => ({ id: sh.id, level: 1 }))
 
@@ -1681,18 +1730,45 @@ function unlockAchievements(ids: string[], { get, set }: StoreRef) {
     return {
       rewardsQueue: [...s.rewardsQueue, ...achievementRewards, ...shadowRewardsQueue],
       unlockedAchievements: [...s.unlockedAchievements, ...ids],
+      ...(leveledUp && isNewLevel ? { levelUpReward: { level, items: [] } } : {}),
       player: {
         ...s.player,
         gold: s.player.gold + totalGold,
         xp, level,
         shadows: [...s.player.shadows, ...newShadows],
+        maxLevelReached: isNewLevel ? level : s.player.maxLevelReached,
       },
     }
   })
 }
 
 // State-threshold based checks (run after any state-altering action)
+function checkAndUnlockThemes(ref: StoreRef) {
+  const state = ref.get()
+  const p = state.player
+  const currentRankInfo = getRank(p.level, state.statistics.totalCompleted, state.system.bossesDefeated, state.statistics.questsByRank)
+  
+  const rankIndex = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank)
+  const newlyUnlocked = [...(p.unlockedThemes || ['theme_e_rank'])]
+  let hasNew = false
+
+  APP_THEMES.forEach(theme => {
+    if (theme.unlockRank && !newlyUnlocked.includes(theme.id)) {
+      const themeRankIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === theme.unlockRank)
+      if (themeRankIdx !== -1 && rankIndex >= themeRankIdx) {
+        newlyUnlocked.push(theme.id)
+        hasNew = true
+      }
+    }
+  })
+
+  if (hasNew) {
+    ref.set((s: GameState & GameActions) => ({ player: { ...s.player, unlockedThemes: newlyUnlocked } }))
+  }
+}
+
 function checkAndUnlockAchievements(ref: StoreRef) {
+  checkAndUnlockThemes(ref)
   const { player, statistics, unlockedAchievements } = ref.get()
 
   const conditions: Record<string, boolean> = {
@@ -1792,9 +1868,13 @@ function progressAchievements(event: EventTrigger, value: number, ref: StoreRef,
     }
 
     let { xp, level } = s.player
+    let leveledUp = false
+    let isNewLevel = false
     if (totalXP > 0) {
       const res = applyXP(xp, level, totalXP)
       xp = res.xp; level = res.level
+      leveledUp = res.leveledUp
+      isNewLevel = level > s.player.maxLevelReached
     }
 
     // Add tier notifications to queue
@@ -1804,8 +1884,13 @@ function progressAchievements(event: EventTrigger, value: number, ref: StoreRef,
       achievementProgress: nextProgress,
       unlockedAchievements: anyUnlocked ? [...s.unlockedAchievements, ...unlockedInThisPass] : s.unlockedAchievements,
       rewardsQueue: [...s.rewardsQueue, ...tierRewards],
+      ...(leveledUp && isNewLevel ? { levelUpReward: { level, items: [] } } : {}),
       player: (totalGold > 0 || totalXP > 0) ? {
-        ...s.player, gold: s.player.gold + totalGold, xp, level,
+        ...s.player, 
+        gold: s.player.gold + totalGold, 
+        xp, 
+        level,
+        maxLevelReached: isNewLevel ? level : s.player.maxLevelReached,
       } : s.player,
     }
   })
@@ -1835,11 +1920,15 @@ function fireEvent(event: EventTrigger, payload: TriggerPayload = {}, ref: Store
 // ── Initial state ──────────────────────────────────────────────────────────────
 
 const INITIAL_PLAYER: Player = {
-  name: 'Hunter', level: 1, xp: 0, gold: 0,
-  str: 10, agi: 10, int: 10, vit: 10,
+  rank: 'E', name: 'Hunter', level: 1, xp: 0, gold: 0,
+  strXp: 0, agiXp: 0, intXp: 0, vitXp: 0,
+  str: attrLevelFromXP(0), agi: attrLevelFromXP(0), int: attrLevelFromXP(0), vit: attrLevelFromXP(0),
   inventory: [], currentStreak: 0, highestStreak: 0,
   shadows: [] as ShadowEntry[], activeShadowIds: [],
+  dungeonKeys: [],
   maxLevelReached: 1,
+  unlockedThemes: ['theme_e_rank'],
+  activeThemeId: 'theme_e_rank',
 }
 
 // ── Store ──────────────────────────────────────────────────────────────────────
@@ -1853,6 +1942,8 @@ const useGameStore = create<GameState & GameActions>()(
         player: INITIAL_PLAYER,
         quests: createDailyQuests(1, INITIAL_QUEST_DICTIONARY, 'normal'),
         extraQuests: [],
+        extraQuestRerolledIds: [],
+        extraQuestUsedPoolIds: [],
         sideQuests: [],
         questDictionary: INITIAL_QUEST_DICTIONARY,
         customShadows: [],
@@ -1898,7 +1989,11 @@ const useGameStore = create<GameState & GameActions>()(
         rewardsQueue: [] as { type: 'achievement' | 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number }[],
 
         popReward: () => {
-          set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.slice(1) }))
+          // Give React Native's Modal time to complete its dismissal cycle
+          // before we put the next reward into the active slot.
+          setTimeout(() => {
+            set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.slice(1) }))
+          }, 350)
         },
 
         // ── Event trigger (public) ─────────────────────────────────────────
@@ -1930,6 +2025,12 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         // ── Boot & daily reset ─────────────────────────────────────────────
+        rankUp() {
+          set((s: GameState) => {
+            const qualifiedRank = getRank(s.player.level, s.statistics.totalCompleted, s.system.bossesDefeated, s.statistics.questsByRank).rank
+            return { player: { ...s.player, rank: qualifiedRank } }
+          })
+        },
         bootSystem() {
           const today = new Date().toDateString()
           const { lastResetDate, quests, player, system } = get()
@@ -2041,6 +2142,8 @@ const useGameStore = create<GameState & GameActions>()(
           set((s: GameState & GameActions) => ({
             quests: createDailyQuests(s.player.level, s.questDictionary, s.settings.missionDifficulty),
             extraQuests: [],
+            extraQuestRerolledIds: [],
+            extraQuestUsedPoolIds: [],
             sideQuests: [],
             lastResetDate: today,
             settings: { ...s.settings, restDay: false },  // clear rest day after daily reset
@@ -2110,16 +2213,47 @@ const useGameStore = create<GameState & GameActions>()(
           set((state: GameState & GameActions) => {
             const pR = getRank(state.player.level)
             let allowedRanks: RaidBossRank[] = ['B']
-            if (['C', 'B'].includes(pR.rank)) allowedRanks = ['A', 'B']
-            if (['A'].includes(pR.rank)) allowedRanks = ['A', 'S']
-            if (pR.rank === 'S') allowedRanks = ['S', 'National']
-            if (pR.rank === 'National') allowedRanks = ['National', 'S']
+            
+            // Stricter mapping based on player class for progressive difficulty
+            if (['E', 'D'].includes(pR.rank)) {
+              allowedRanks = ['B']
+            } else if (pR.rank === 'C') {
+              allowedRanks = ['B', 'A']
+            } else if (pR.rank === 'B') {
+              allowedRanks = ['A']
+            } else if (pR.rank === 'A') {
+              allowedRanks = ['A', 'S']
+            } else if (pR.rank === 'S') {
+              allowedRanks = ['S', 'National']
+            } else if (pR.rank === 'National') {
+              allowedRanks = ['National']
+            }
 
             const pool = RAID_BOSSES.filter(b => allowedRanks.includes(b.rank))
             const bossDef = pool[Math.floor(Math.random() * pool.length)] || RAID_BOSSES[0]
 
-            const scale = 1 + state.player.level * 0.1
-            const maxHp = Math.floor(bossDef.baseHp * scale)
+            // Calculate dynamic HP based on expected daily XP capacity
+            const tier = getQuestTier(state.player.level)
+            const mult = TIER_MULT[tier] || 1
+
+            const poolQuests = state.questDictionary.filter(q => q.type === 'pool')
+            const avgPoolBaseXp = poolQuests.length > 0
+              ? poolQuests.reduce((sum, q) => sum + q.baseXP, 0) / poolQuests.length
+              : 50
+
+            const coreQuests = state.questDictionary.filter(q => q.type === 'core')
+            const totalCoreBaseXp = coreQuests.reduce((sum, q) => sum + q.baseXP, 0)
+
+            const poolTarget = getDailyMissionTarget(state.player.level, state.settings.missionDifficulty)
+            // Total expected daily XP combining all Core quests + the randomized Pool limit
+            const expectedDailyBaseXp = totalCoreBaseXp + (avgPoolBaseXp * poolTarget)
+            const expectedDailyXp = expectedDailyBaseXp * mult
+
+            // Challenge factor defines what percentage of max daily XP is needed per day
+            const rankReq: Record<string, number> = { B: 0.6, A: 0.75, S: 0.9, National: 1.2 }
+            const challengeFactor = rankReq[bossDef.rank] || 0.7
+
+            const maxHp = Math.max(100, Math.floor(expectedDailyXp * bossDef.durationDays * challengeFactor))
 
             return {
               system: {
@@ -2168,11 +2302,12 @@ const useGameStore = create<GameState & GameActions>()(
                   }
                 }
 
-                const stats = distributeStats(
-                  { str: state.player.str, agi: state.player.agi, int: state.player.int, vit: state.player.vit },
-                  res.levelGain,
+                const attrBoost = getAttrXpBoost(
+                  { strXp: state.player.strXp ?? 0, agiXp: state.player.agiXp ?? 0, intXp: state.player.intXp ?? 0, vitXp: state.player.vitXp ?? 0 },
                   'boss'
                 )
+
+                const isNewLevel = res.level > state.player.maxLevelReached
 
                 return {
                   player: {
@@ -2181,9 +2316,11 @@ const useGameStore = create<GameState & GameActions>()(
                     xp: res.xp,
                     level: res.level,
                     shadows: updatedShadows,
-                    ...stats,
-                    maxLevelReached: Math.max(state.player.maxLevelReached, res.level),
+                    dungeonKeys: getNewLevelKeys(state.player.dungeonKeys ?? [], res.level),
+                    ...attrBoost,
+                    maxLevelReached: isNewLevel ? res.level : state.player.maxLevelReached,
                   },
+                  ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
                   statistics: {
                     ...state.statistics,
                     totalBossesCompleted: (state.statistics.totalBossesCompleted || 0) + 1,
@@ -2251,6 +2388,11 @@ const useGameStore = create<GameState & GameActions>()(
               }
             }
 
+            // Chance to drop a Loot Box (10%)
+            if (Math.random() < 0.10) {
+              rewardItems.push('loot_box')
+            }
+
             // Add reward items to inventory within the same set call
             const rewardInv = [...s.player.inventory]
             rewardItems.forEach(itemId => {
@@ -2259,17 +2401,14 @@ const useGameStore = create<GameState & GameActions>()(
               else rewardInv.push({ itemId, quantity: 1 })
             })
 
-            const stats = distributeStats(
-              { str: s.player.str, agi: s.player.agi, int: s.player.int, vit: s.player.vit },
-              res.levelGain,
-              quest.type
-            )
+            const attrBoost = getAttrXpBoost(s.player, quest.type)
 
             const player: Player = {
               ...s.player,
               xp: res.xp, level: res.level, gold: s.player.gold + goldGain,
-              ...stats,
+              ...attrBoost,
               inventory: rewardItems.length > 0 ? rewardInv : s.player.inventory,
+              dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
               maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
             }
 
@@ -2285,7 +2424,7 @@ const useGameStore = create<GameState & GameActions>()(
                 questsByRank: { ...s.statistics.questsByRank, [questRank]: (s.statistics.questsByRank[questRank] ?? 0) + 1 },
               },
               questCompletions: { ...s.questCompletions, [id]: (s.questCompletions[id] ?? 0) + 1 },
-              levelUpReward: rewardItems.length > 0
+              levelUpReward: (res.leveledUp && isNewLevel)
                 ? { level: res.level, items: rewardItems }
                 : s.levelUpReward,
             }
@@ -2368,15 +2507,16 @@ const useGameStore = create<GameState & GameActions>()(
             if (!quest || quest.done) return {}
             const quests = s.quests.map((q: Quest) => q.id === id ? { ...q, done: true } : q)
             const res = applyXP(s.player.xp, s.player.level, quest.xp)
+            const isNewLevel = res.level > s.player.maxLevelReached
             return {
               quests,
               player: {
                 ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + quest.gold,
-                str: s.player.str + (res.leveledUp ? 1 : 0),
-                agi: s.player.agi + (res.leveledUp ? 1 : 0),
-                int: s.player.int + (res.leveledUp ? 1 : 0),
-                vit: s.player.vit + (res.leveledUp ? 1 : 0),
+                ...getAttrXpBoost(s.player, quest.type),
+                dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
+                maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
               },
+              ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
             }
           })
@@ -2409,8 +2549,25 @@ const useGameStore = create<GameState & GameActions>()(
             const levelsLost = level - newLevel
             // Reverse the quest's own intrinsic rank (matches how it was originally counted)
             const questRankToReverse: RankKey = quest.rank ?? (getRank(newLevel).rank as RankKey)
+            
+            // Revert record history
+            const prevRecord = s.questRecords[id]
+            let newRecords = s.questRecords
+            if (prevRecord && prevRecord.history) {
+              const todayStr = new Date().toISOString().split('T')[0]
+              const history = prevRecord.history.filter(h => !h.date.startsWith(todayStr))
+              newRecords = {
+                ...s.questRecords,
+                [id]: {
+                  ...prevRecord,
+                  history
+                }
+              }
+            }
+
             return {
               quests,
+              questRecords: newRecords,
               system: { ...s.system, weeklyTrainingCount: quest.type === 'training' ? Math.max(s.system.weeklyTrainingCount - 1, 0) : s.system.weeklyTrainingCount },
               statistics: {
                 ...s.statistics,
@@ -2423,10 +2580,6 @@ const useGameStore = create<GameState & GameActions>()(
                 xp: Math.max(newXp, 0),
                 level: newLevel,
                 gold,
-                str: Math.max(str - levelsLost, 10),
-                agi: Math.max(agi - levelsLost, 10),
-                int: Math.max(int - levelsLost, 10),
-                vit: Math.max(vit - levelsLost, 10),
               },
             }
           })
@@ -2466,16 +2619,18 @@ const useGameStore = create<GameState & GameActions>()(
 
             const sideQuests = s.sideQuests.map((q: SideQuest) => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: goldGain } : q)
 
+            const isNewLevel = res.level > s.player.maxLevelReached
+
             return {
               sideQuests,
               system: { ...s.system, xpBoostNext: false },
               player: {
                 ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + goldGain,
-                str: s.player.str + (res.level - s.player.level),
-                agi: s.player.agi + (res.level - s.player.level),
-                int: s.player.int + (res.level - s.player.level),
-                vit: s.player.vit + (res.level - s.player.level),
+                ...getAttrXpBoost(s.player, 'side'),
+                dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
+                maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
               },
+              ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               statistics: {
                 ...s.statistics,
                 totalCompleted: s.statistics.totalCompleted + 1,
@@ -2514,14 +2669,15 @@ const useGameStore = create<GameState & GameActions>()(
           set((s: GameState & GameActions) => {
             const res = applyXP(s.player.xp, s.player.level, amount)
             leveledUp = res.leveledUp
+            const isNewLevel = res.level > s.player.maxLevelReached
             return {
               player: {
                 ...s.player, xp: res.xp, level: res.level,
-                str: s.player.str + (res.leveledUp ? 1 : 0),
-                agi: s.player.agi + (res.leveledUp ? 1 : 0),
-                int: s.player.int + (res.leveledUp ? 1 : 0),
-                vit: s.player.vit + (res.leveledUp ? 1 : 0),
+                ...getAttrXpBoost(s.player, 'side'),
+                dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
+                maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
               },
+              ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {})
             }
           })
           checkAndUnlockAchievements(ref)
@@ -2567,6 +2723,21 @@ const useGameStore = create<GameState & GameActions>()(
             if (STOCKED_ITEMS.includes(itemId) && (s.system.shopStocks[itemId] ?? 0) <= 0) return {}
 
             success = true
+
+            // Handle Theme Purchase directly (Cosmetic, not inventory)
+            if (itemId.startsWith('theme_')) {
+              if (s.player.unlockedThemes?.includes(itemId)) return {}
+              return {
+                player: {
+                  ...s.player,
+                  gold: s.player.gold - cost,
+                  unlockedThemes: [...(s.player.unlockedThemes ?? []), itemId],
+                  activeThemeId: itemId // Auto-equip upon purchase!
+                },
+                statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + cost },
+              }
+            }
+
             const inv = [...s.player.inventory]
             const idx = inv.findIndex((e: InventoryEntry) => e.itemId === itemId)
             if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 }
@@ -2603,6 +2774,77 @@ const useGameStore = create<GameState & GameActions>()(
               .filter((e: InventoryEntry) => e.quantity > 0)
             return { player: { ...s.player, inventory: inv } }
           })
+        },
+
+        openLootBox() {
+          let result = { reward: 'Vazio', detail: 'O cofre estava vazio...', color: '#94a3b8' }
+          set((s: GameState & GameActions) => {
+            const hasBox = s.player.inventory.find(e => e.itemId === 'loot_box' && e.quantity > 0)
+            if (!hasBox) return {}
+
+            const roll = Math.random()
+            let goldReward = 0
+            let xpReward = 0
+            let keyReward: string | null = null
+
+            if (roll < 0.70) {
+              goldReward = 100 + Math.floor(Math.random() * 201)
+              result = { reward: 'GOLD', detail: `Encontraste ${goldReward} Gold!`, color: '#fbbf24' }
+            } else if (roll < 0.90) {
+              xpReward = 50 + Math.floor(Math.random() * 51)
+              result = { reward: 'XP', detail: `Absorveste ${xpReward} XP!`, color: '#3b82f6' }
+            } else {
+              // Rare Key drop
+              const ownedKeys = s.player.dungeonKeys ?? []
+              const availableKeys = BOX_KEYS.filter(k => !ownedKeys.includes(k.id))
+              if (availableKeys.length > 0) {
+                const key = availableKeys[Math.floor(Math.random() * availableKeys.length)]
+                keyReward = key.id
+                result = { reward: 'CHAVE RARA', detail: `Obtiveste a ${key.name}!`, color: key.color }
+              } else {
+                // Fallback to gold if all rare keys owned
+                goldReward = 500
+                result = { reward: 'GOLD', detail: `Já tens todas as chaves raras. Recebeste 500 Gold!`, color: '#fbbf24' }
+              }
+            }
+
+            // Consume box
+            const inv = s.player.inventory
+              .map((e: InventoryEntry) => e.itemId === 'loot_box' ? { ...e, quantity: e.quantity - 1 } : e)
+              .filter((e: InventoryEntry) => e.quantity > 0)
+
+            const xpRes = applyXP(s.player.xp, s.player.level, xpReward)
+
+            return {
+              player: {
+                ...s.player,
+                gold: s.player.gold + goldReward,
+                xp: xpRes.xp,
+                level: xpRes.level,
+                inventory: inv,
+                dungeonKeys: keyReward ? [...new Set([...(s.player.dungeonKeys ?? []), keyReward])] : getNewLevelKeys(s.player.dungeonKeys ?? [], xpRes.level),
+                maxLevelReached: xpRes.level > s.player.maxLevelReached ? xpRes.level : s.player.maxLevelReached,
+              },
+              ...(xpRes.leveledUp && xpRes.level > s.player.maxLevelReached ? { levelUpReward: { level: xpRes.level, items: [] } } : {})
+            }
+          })
+          return result
+        },
+
+        enterDungeon(keyId: string) {
+          let success = false
+          set((s: GameState) => {
+            const hasKey = s.player.dungeonKeys?.includes(keyId)
+            if (!hasKey) return {}
+            success = true
+            return {
+              player: {
+                ...s.player,
+                dungeonKeys: s.player.dungeonKeys.filter(id => id !== keyId),
+              }
+            }
+          })
+          return success
         },
 
         addToInventory(itemId: string, qty: number = 1) {
@@ -2738,15 +2980,15 @@ const useGameStore = create<GameState & GameActions>()(
             const res = applyXP(s.player.xp, s.player.level, xpReward)
             // Boss missions are classified A-Rank by default (weekly custom bosses)
             const bossRank: RankKey = 'A'
+            const isNewLevel = res.level > s.player.maxLevelReached
             return {
               player: {
                 ...s.player, xp: res.xp, level: res.level,
                 gold: s.player.gold + goldReward,
-                str: s.player.str + (res.leveledUp ? 1 : 0),
-                agi: s.player.agi + (res.leveledUp ? 1 : 0),
-                int: s.player.int + (res.leveledUp ? 1 : 0),
-                vit: s.player.vit + (res.leveledUp ? 1 : 0),
+                ...getAttrXpBoost(s.player, 'boss'),
+                maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
               },
+              ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               system: {
                 ...s.system,
                 bossDefeatedThisWeek: true,
@@ -2832,6 +3074,10 @@ const useGameStore = create<GameState & GameActions>()(
               d.id === id ? { ...d, ...patch } : d
             ),
           }))
+        },
+
+        setActiveTheme(themeId: string) {
+          set((s: GameState) => ({ player: { ...s.player, activeThemeId: themeId } }))
         },
 
         deleteQuestDefinition(id: string) {
@@ -2993,22 +3239,95 @@ const useGameStore = create<GameState & GameActions>()(
           return { gold: goldGained }
         },
 
-        regenerateDailyQuests() {
-          const { system, player, questDictionary } = get()
-          const MAX_REGENS_PER_WEEK = 3
+        regenerateSingleDailyQuest(questId: string) {
+          const { system, player, questDictionary, quests } = get()
+          const MAX_REGENS_PER_WEEK = 7
           if (system.weeklyRegenCount >= MAX_REGENS_PER_WEEK) {
-            return { success: false, reason: 'Limite semanal de regenerações atingido.' }
+            return { success: false, reason: 'Limite semanal atingido (7/7).' }
           }
 
-          const d = new Date()
-          // Varied seed: Date + current regen count to ensure different results each time
-          const seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate() + system.weeklyRegenCount + 1
+          const targetQuest = quests.find(q => q.id === questId)
+          if (!targetQuest) return { success: false, reason: 'Missão não encontrada.' }
+          if (targetQuest.done) return { success: false, reason: 'Missões concluídas não podem ser trocadas.' }
 
-          const newQuests = createDailyQuests(player.level, questDictionary, get().settings.missionDifficulty, seed)
+          const d = new Date()
+          const baseSeed = d.getTime() + system.weeklyRegenCount
+
+          let newQuest: Quest | null = null
+          const activeIds = quests.map(q => q.id)
+
+          for (let i = 0; i < 20; i++) {
+            const candidates = createDailyQuests(player.level, questDictionary, get().settings.missionDifficulty, baseSeed + i)
+            const unique = candidates.find(q => !activeIds.includes(q.id))
+            if (unique) {
+              newQuest = unique
+              break
+            }
+          }
+
+          // Fallback if no unique pool mission found
+          if (!newQuest) {
+            for (let i = 0; i < 20; i++) {
+              const candidates = createDailyQuests(player.level, questDictionary, get().settings.missionDifficulty, baseSeed + i + 100)
+              const unique = candidates.find(q => !activeIds.includes(q.id))
+              if (unique) { newQuest = unique; break; }
+            }
+          }
+
+          if (!newQuest) return { success: false, reason: 'Não há outras missões no sistema hoje.' }
+
+          const newQuests = quests.map(q => q.id === questId ? newQuest! : q)
 
           set((s: GameState & GameActions) => ({
             quests: newQuests,
             system: { ...s.system, weeklyRegenCount: s.system.weeklyRegenCount + 1 },
+          }))
+          return { success: true }
+        },
+
+        replaceExtraQuest(questId: string): { success: boolean; reason?: string } {
+          const { extraQuests, extraQuestRerolledIds, extraQuestUsedPoolIds, questDictionary, player } = get()
+
+          if (extraQuestRerolledIds.includes(questId)) {
+            return { success: false, reason: 'Esta missão extra já foi substituída hoje.' }
+          }
+
+          const targetQuest = extraQuests.find((q: Quest) => q.id === questId)
+          if (!targetQuest) return { success: false, reason: 'Missão não encontrada.' }
+          if (targetQuest.done) return { success: false, reason: 'Não podes substituir uma missão concluída.' }
+
+          // Pool defs currently in use as extras (by their def ID embedded in extra ID)
+          const poolDefs = questDictionary.filter((def: QuestDefinition) => def.type === 'pool')
+          const usedPoolIds = new Set([
+            ...extraQuestUsedPoolIds,
+            // also exclude IDs still in extraQuests except the one being replaced
+            ...extraQuests
+              .filter((q: Quest) => q.id !== questId)
+              .map((q: Quest) => {
+                // extra IDs are like "extra_<poolDefId>_<timestamp>"
+                const parts = q.id.split('_')
+                return parts.length >= 3 ? parts.slice(1, -1).join('_') : ''
+              })
+              .filter(Boolean),
+          ])
+
+          const available = poolDefs.filter((def: QuestDefinition) => !usedPoolIds.has(def.id))
+          if (available.length === 0) return { success: false, reason: 'Sem mais missões disponíveis na pool.' }
+
+          const tier = getQuestTier(player.level)
+          const chosen = available[Math.floor(Math.random() * available.length)]
+          const baseQuest = defToQuest(chosen, player.level, tier)
+          const newExtraQuest: Quest = {
+            ...baseQuest,
+            id: `extra_${chosen.id}_${Date.now()}`,
+            xp: Math.round(baseQuest.xp * 1.5),
+            gold: Math.round(baseQuest.gold * 1.5),
+          }
+
+          set((s: GameState) => ({
+            extraQuests: s.extraQuests.map((q: Quest) => q.id === questId ? newExtraQuest : q),
+            extraQuestRerolledIds: [...s.extraQuestRerolledIds, questId],
+            extraQuestUsedPoolIds: [...s.extraQuestUsedPoolIds, chosen.id],
           }))
           return { success: true }
         },
@@ -3059,17 +3378,17 @@ const useGameStore = create<GameState & GameActions>()(
             const goldGain = Math.round(quest.gold * (1 + goldBoost))
             const res = applyXP(s.player.xp, s.player.level, xpGain)
             leveledUp = res.leveledUp
+            const isNewLevel = res.level > s.player.maxLevelReached
 
             const player: Player = {
               ...s.player,
               xp: res.xp, level: res.level, gold: s.player.gold + goldGain,
-              str: s.player.str + (res.leveledUp ? 1 : 0),
-              agi: s.player.agi + (res.leveledUp ? 1 : 0),
-              int: s.player.int + (res.leveledUp ? 1 : 0),
-              vit: s.player.vit + (res.leveledUp ? 1 : 0),
+              ...getAttrXpBoost(s.player, quest.type),
+              maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
             }
             return {
               extraQuests, player,
+              ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               system: { ...s.system, xpBoostNext: false },
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
             }
@@ -3116,7 +3435,22 @@ const useGameStore = create<GameState & GameActions>()(
         return {
           ...current,
           ...data,
-          player: { ...current.player, ...rawPlayer, shadows: migratedShadows, activeShadowIds: rawPlayer.activeShadowIds ?? [] },
+          player: {
+            ...current.player, ...rawPlayer,
+            // Migrate attr XP fields — if absent (old saves), initialise from old flat stat values
+            strXp: rawPlayer.strXp ?? Math.pow(Math.max(0, (rawPlayer.str ?? 10) - 10), 2) * 5,
+            agiXp: rawPlayer.agiXp ?? Math.pow(Math.max(0, (rawPlayer.agi ?? 10) - 10), 2) * 5,
+            intXp: rawPlayer.intXp ?? Math.pow(Math.max(0, (rawPlayer.int ?? 10) - 10), 2) * 5,
+            vitXp: rawPlayer.vitXp ?? Math.pow(Math.max(0, (rawPlayer.vit ?? 10) - 10), 2) * 5,
+            // Always recompute display values from XP
+            str: attrLevelFromXP(rawPlayer.strXp ?? Math.pow(Math.max(0, (rawPlayer.str ?? 10) - 10), 2) * 5),
+            agi: attrLevelFromXP(rawPlayer.agiXp ?? Math.pow(Math.max(0, (rawPlayer.agi ?? 10) - 10), 2) * 5),
+            int: attrLevelFromXP(rawPlayer.intXp ?? Math.pow(Math.max(0, (rawPlayer.int ?? 10) - 10), 2) * 5),
+            vit: attrLevelFromXP(rawPlayer.vitXp ?? Math.pow(Math.max(0, (rawPlayer.vit ?? 10) - 10), 2) * 5),
+            shadows: migratedShadows,
+            activeShadowIds: rawPlayer.activeShadowIds ?? [],
+            dungeonKeys: getNewLevelKeys(rawPlayer.dungeonKeys ?? [], rawPlayer.level ?? 1),
+          },
           system: { ...current.system, ...(data.system ?? {}) },
           settings: { ...current.settings, ...(data.settings ?? {}) },
           statistics: { ...current.statistics, ...(data.statistics ?? {}) },
@@ -3132,6 +3466,8 @@ const useGameStore = create<GameState & GameActions>()(
           questRecords: data.questRecords ?? {},
           questCompletions: data.questCompletions ?? {},
           activeMissionTimers: data.activeMissionTimers ?? {},
+          extraQuestRerolledIds: data.extraQuestRerolledIds ?? [],
+          extraQuestUsedPoolIds: data.extraQuestUsedPoolIds ?? [],
           newAchievementIds: [],
         }
       },
@@ -3151,6 +3487,8 @@ const useGameStore = create<GameState & GameActions>()(
         questRecords: s.questRecords,
         questCompletions: s.questCompletions,
         activeMissionTimers: s.activeMissionTimers,
+        extraQuestRerolledIds: s.extraQuestRerolledIds,
+        extraQuestUsedPoolIds: s.extraQuestUsedPoolIds,
       }),
     }
   )
@@ -3180,6 +3518,7 @@ useGameStore.subscribe((state: GameState & GameActions) => {
       dailyQuests: Array.isArray(state.quests) ? state.quests.map((q: Quest) => ({
         id: q.id,
         label: q.label,
+        type: q.type,
         done: q.done
       })) : [],
       activeShadows: Array.isArray(state.player.activeShadowIds) ? state.player.activeShadowIds.map(id => {
@@ -3189,10 +3528,12 @@ useGameStore.subscribe((state: GameState & GameActions) => {
         return { name: shadowDef?.name ?? id, level: entry?.level ?? 1 };
       }) : [],
       status: {
+        name: state.player.name,
         level: state.player.level,
         xp: state.player.xp,
         rank: rankObj.rank,
-        nextRankXp: xpForLevel(state.player.level)
+        nextRankXp: xpForLevel(state.player.level),
+        totalCompleted: state.statistics.totalCompleted || 0
       }
     };
     if (SharedStorage?.setWidgetData && typeof SharedStorage.setWidgetData === 'function') {

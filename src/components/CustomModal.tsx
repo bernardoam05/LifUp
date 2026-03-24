@@ -1,7 +1,8 @@
 import React from 'react'
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { C, FONT, SPACING } from '../theme'
+import { FONT, SPACING } from '../theme'
+
 
 type Props = {
   visible:       boolean
@@ -13,58 +14,83 @@ type Props = {
   confirmIcon?:  string
   onConfirm:     () => void
   onCancel:      () => void
+  useNativeModal?: boolean
+  C: any
 }
+
 
 export default function CustomModal({
   visible, title, message,
   confirmLabel = 'CONFIRMAR',
   cancelLabel  = 'CANCELAR',
-  confirmColor = C.neonBlue,
+  confirmColor,
   confirmIcon  = 'check-circle-outline',
   onConfirm, onCancel,
+  useNativeModal = true,
+  C,
 }: Props) {
-  return (
-    <Modal transparent animationType="fade" visible={visible} onRequestClose={onCancel}>
-      <View style={s.overlay}>
-        <View style={[s.card, { borderColor: confirmColor + '55' }]}>
+  const s = getStyles(C)
+  const finalConfirmColor = confirmColor || C.neonBlue
 
-          {/* Icon accent */}
-          <View style={[s.iconWrap, { backgroundColor: confirmColor + '18' }]}>
-            <Icon name={confirmIcon} size={28} color={confirmColor} />
-          </View>
+  const content = (
+    <View style={s.overlay}>
+      <View style={[s.card, { borderColor: finalConfirmColor + '55' }]}>
 
-          {/* Title */}
-          <Text style={[s.title, { color: confirmColor }]}>{title}</Text>
+        {/* Icon accent */}
+        <View style={[s.iconWrap, { backgroundColor: finalConfirmColor + '18' }]}>
+          <Icon name={confirmIcon} size={28} color={finalConfirmColor} />
+        </View>
 
-          {/* Message */}
-          <Text style={s.message}>{message}</Text>
+        {/* Title */}
+        <Text style={[s.title, { color: finalConfirmColor }]}>{title}</Text>
 
-          {/* Divider */}
-          <View style={[s.divider, { backgroundColor: confirmColor + '33' }]} />
+        {/* Message */}
+        <Text style={s.message}>{message}</Text>
 
-          {/* Buttons */}
-          <View style={s.btnRow}>
-            <TouchableOpacity style={s.cancelBtn} onPress={onCancel}>
-              <Icon name="close-circle-outline" size={15} color={C.muted} />
-              <Text style={s.cancelTxt}> {cancelLabel}</Text>
-            </TouchableOpacity>
+        {/* Divider */}
+        <View style={[s.divider, { backgroundColor: finalConfirmColor + '33' }]} />
 
-            <TouchableOpacity
-              style={[s.confirmBtn, { borderColor: confirmColor, backgroundColor: confirmColor + '18' }]}
-              onPress={onConfirm}
-            >
-              <Icon name={confirmIcon} size={15} color={confirmColor} />
-              <Text style={[s.confirmTxt, { color: confirmColor }]}> {confirmLabel}</Text>
-            </TouchableOpacity>
-          </View>
+
+        {/* Buttons */}
+        <View style={s.btnRow}>
+          <TouchableOpacity style={s.cancelBtn} onPress={onCancel}>
+            <Icon name="close-circle-outline" size={15} color={C.muted} />
+            <Text style={s.cancelTxt}> {cancelLabel}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[s.confirmBtn, { borderColor: finalConfirmColor, backgroundColor: finalConfirmColor + '18' }]}
+            onPress={onConfirm}
+          >
+            <Icon name={confirmIcon} size={15} color={finalConfirmColor} />
+            <Text style={[s.confirmTxt, { color: finalConfirmColor }]}> {confirmLabel}</Text>
+          </TouchableOpacity>
 
         </View>
+
       </View>
+    </View>
+  )
+
+  if (!useNativeModal) {
+    if (!visible) return null
+    return (
+      <View style={[StyleSheet.absoluteFill, { zIndex: 9999 }]} pointerEvents="box-none">
+        {content}
+      </View>
+    )
+  }
+
+  return (
+    <Modal transparent animationType="fade" visible={visible} onRequestClose={onCancel}>
+      {content}
     </Modal>
   )
 }
 
-const s = StyleSheet.create({
+// ── Styles ─────────────────────────────────────────────────────────────────────
+
+const getStyles = (C: any) => StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: '#000000cc',
@@ -140,3 +166,4 @@ const s = StyleSheet.create({
     letterSpacing: 1,
   },
 })
+

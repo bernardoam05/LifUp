@@ -20,9 +20,9 @@ class VanguardWidgetProvider : AppWidgetProvider() {
                 val json = JSONObject(jsonData)
                 val level = if (json.has("status")) json.getJSONObject("status").getInt("level") else 1
 
-                if (level < 19) {
+                if (level < 10) {
                     views.setTextViewText(R.id.shadow_1, "SISTEMA BLOQUEADO")
-                    views.setTextViewText(R.id.shadow_2, "NÍVEL INSUFICIENTE (Néc. 19)")
+                    views.setTextViewText(R.id.shadow_2, "NÍVEL INSUFICIENTE (Nvl. 10)")
                     views.setTextViewText(R.id.shadow_3, "")
                 } else if (json.has("activeShadows")) {
                     val shadows = json.getJSONArray("activeShadows")

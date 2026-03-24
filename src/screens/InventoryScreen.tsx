@@ -5,15 +5,20 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Vibration } from 'react-native'
 import useGameStore from '../store/useGameStore'
 import { CATALOG_MAP } from '../data/shopItems'
+import { ALL_DUNGEON_KEYS } from '../data/dungeonKeys'
 import CustomModal from '../components/CustomModal'
-import { C, FONT, SPACING } from '../theme'
+import { useTheme, FONT, SPACING } from '../theme'
+
 
 // ── Quest picker modal (for System Pass) ──────────────────────────────────────
 
-function QuestPickerModal({ onPick, onCancel }: {
+function QuestPickerModal({ onPick, onCancel, C }: {
   onPick: (questId: string) => void
   onCancel: () => void
+  C: any
 }) {
+  const qp = getQPStyles(C)
+
   const quests = useGameStore(s => s.quests).filter(q => !q.done)
 
   return (
@@ -58,7 +63,9 @@ function QuestPickerModal({ onPick, onCancel }: {
 
 // ── Inventory item card ────────────────────────────────────────────────────────
 
-function InventoryCard({ itemId, quantity }: { itemId: string; quantity: number }) {
+function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: number; C: any }) {
+  const ic = getICStyles(C)
+
   const item            = CATALOG_MAP[itemId]
   const useItem         = useGameStore(s => s.useInventoryItem)
   const addXP           = useGameStore(s => s.addXP)
@@ -70,6 +77,7 @@ function InventoryCard({ itemId, quantity }: { itemId: string; quantity: number 
   const focusActive     = useGameStore(s => s.system.focusModeActive)
   const hardcoreActive  = useGameStore(s => s.system.hardcoreFocusMode)
   const triggerEvent    = useGameStore(s => s.triggerEvent)
+  const openLootBox     = useGameStore(s => s.openLootBox)
 
   const [confirmUse, setConfirmUse] = useState(false)
   const [showPicker, setShowPicker] = useState(false)
@@ -111,6 +119,11 @@ function InventoryCard({ itemId, quantity }: { itemId: string; quantity: number 
         setXpBoostNext(true)
         setFeedback('Ampulheta ativada! Próxima missão com XP dobrado.')
         break
+      case 'open_loot_box': {
+        const res = openLootBox()
+        setFeedback(`${res.reward}: ${res.detail}`)
+        break
+      }
       case 'break_hardcore':
         if (!hardcoreActive) {
           setFeedback('Nenhum Modo Hardcore ativo para quebrar.')
@@ -178,14 +191,18 @@ function InventoryCard({ itemId, quantity }: { itemId: string; quantity: number 
         confirmColor={item.color}
         onConfirm={applyEffect}
         onCancel={() => setConfirmUse(false)}
+        C={C}
       />
+
 
       {/* Quest picker for System Pass */}
       {showPicker && (
         <QuestPickerModal
           onPick={handleSkip}
           onCancel={() => setShowPicker(false)}
+          C={C}
         />
+
       )}
     </View>
   )
@@ -194,7 +211,12 @@ function InventoryCard({ itemId, quantity }: { itemId: string; quantity: number 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function InventoryScreen() {
+  const C = useTheme()
+  const s = React.useMemo(() => getStyles(C), [C])
+  const sk = React.useMemo(() => getSKStyles(C), [C])
   const inventory = useGameStore(s => s.player.inventory)
+  const dungeonKeys = useGameStore(s => s.player.dungeonKeys)
+
   const gold      = useGameStore(s => s.player.gold)
 
   const total = inventory.reduce((sum, e) => sum + e.quantity, 0)
@@ -219,6 +241,41 @@ export default function InventoryScreen() {
           </View>
         </View>
 
+        {/* Vault Section */}
+        <View style={s.sectionHeader}>
+          <Icon name="safe" size={14} color={C.neonBlue} />
+          <Text style={s.sectionTitle}> COFRE DE CHAVES</Text>
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={sk.keyGrid}>
+          {dungeonKeys && dungeonKeys.length > 0 ? (
+            dungeonKeys.map((keyId, idx) => {
+              const key = ALL_DUNGEON_KEYS.find(k => k.id === keyId)
+              if (!key) return null
+              return (
+                <View key={idx} style={[sk.keyCard, { borderColor: key.color + '44' }]}>
+                  <View style={[sk.keyIconWrap, { backgroundColor: key.color + '15' }]}>
+                    <Icon name="key-variant" size={18} color={key.color} />
+                  </View>
+                  <View style={sk.keyInfo}>
+                    <Text style={[sk.keyName, { color: key.color }]}>{key.name}</Text>
+                    <Text style={sk.keyBoss}>Destino: {key.bossId}</Text>
+                  </View>
+                </View>
+              )
+            })
+          ) : (
+            <View style={sk.emptyKeys}>
+              <Text style={sk.emptyKeysTxt}>Nenhuma Chave obtida</Text>
+              <Text style={sk.emptyKeysSub}>Sobe de nível ou abre Cofres para encontrar chaves de masmorra.</Text>
+            </View>
+          )}
+        </ScrollView>
+
+        <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
+          <Icon name="bag-personal-outline" size={14} color={C.neonBlue} />
+          <Text style={s.sectionTitle}> ITENS</Text>
+        </View>
+
         {inventory.length === 0 ? (
           <View style={s.emptyWrap}>
             <Icon name="bag-personal-outline" size={48} color={C.dimmed} />
@@ -227,9 +284,10 @@ export default function InventoryScreen() {
           </View>
         ) : (
           inventory.map(entry => (
-            <InventoryCard key={entry.itemId} itemId={entry.itemId} quantity={entry.quantity} />
+            <InventoryCard key={entry.itemId} itemId={entry.itemId} quantity={entry.quantity} C={C} />
           ))
         )}
+
 
       </ScrollView>
     </SafeAreaView>
@@ -238,7 +296,7 @@ export default function InventoryScreen() {
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
-const s = StyleSheet.create({
+const getStyles = (C: any) => StyleSheet.create({
   safeArea:   { flex: 1, backgroundColor: C.bg },
   content:    { padding: SPACING.md, paddingBottom: SPACING.xl },
   titleRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
@@ -249,10 +307,25 @@ const s = StyleSheet.create({
   emptyWrap:  { alignItems: 'center', paddingTop: 60, gap: SPACING.md },
   emptyTitle: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2 },
   emptyDesc:  { color: C.dimmed, fontSize: 12, textAlign: 'center' },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },
+  sectionTitle:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, fontWeight: '700' },
 })
 
-const ic = StyleSheet.create({
+const getSKStyles = (C: any) => StyleSheet.create({
+  keyGrid: { gap: SPACING.sm, paddingRight: SPACING.md },
+  keyCard: { width: 140, backgroundColor: C.panel, borderWidth: 1, borderRadius: 8, padding: SPACING.md, alignItems: 'center', gap: 6 },
+  keyIconWrap: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
+  keyInfo: { alignItems: 'center' },
+  keyName: { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', textAlign: 'center', marginBottom: 2 },
+  keyBoss: { color: C.dimmed, fontSize: 8, textAlign: 'center', textTransform: 'uppercase' },
+  emptyKeys: { backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 8, padding: SPACING.md, width: '100%', alignItems: 'center' },
+  emptyKeysTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 11, marginBottom: 4 },
+  emptyKeysSub: { color: C.muted, fontSize: 10, textAlign: 'center' },
+})
+
+const getICStyles = (C: any) => StyleSheet.create({
   card:         { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'center' },
+
   iconWrap:     { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', position: 'relative', flexShrink: 0 },
   badge:        { position: 'absolute', top: -4, right: -4, backgroundColor: C.neonBlue, borderRadius: 10, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 },
   badgeTxt:     { color: '#000', fontSize: 9, fontWeight: '900' },
@@ -266,8 +339,9 @@ const ic = StyleSheet.create({
   useTxt:       { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 })
 
-const qp = StyleSheet.create({
+const getQPStyles = (C: any) => StyleSheet.create({
   overlay:    { flex: 1, backgroundColor: '#000d', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+
   card:       { backgroundColor: C.panel, borderRadius: 16, padding: SPACING.lg, width: '100%', alignItems: 'center', borderWidth: 1, borderColor: C.gold + '55' },
   title:      { color: C.gold, fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, marginBottom: 4 },
   sub:        { color: C.muted, fontSize: 12, textAlign: 'center', marginBottom: SPACING.md },

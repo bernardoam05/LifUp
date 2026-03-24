@@ -12,7 +12,8 @@ import {
   Animated, Easing, ScrollView, PanResponder
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { C, FONT, SPACING } from '../theme'
+import { useTheme, FONT, SPACING } from '../theme'
+
 
 const { width: SW, height: SH } = Dimensions.get('window')
 
@@ -45,7 +46,7 @@ const TAB_W       = SW / TAB_COUNT
 // Approximate center X of each tab (0-indexed)
 const tabX = (i: number) => TAB_W * i + TAB_W / 2 - SW / 2   // offset from center of screen
 
-const PHASE1_STEPS: TutorialStep[] = [
+const getPhase1Steps = (C: any): TutorialStep[] => [
   {
     splash: true,
     icon:   'sword-cross',
@@ -104,9 +105,7 @@ const PHASE1_STEPS: TutorialStep[] = [
   },
 ]
 
-// ─── Phase 2 steps ────────────────────────────────────────────────────────────
-
-const PHASE2_STEPS: TutorialStep[] = [
+const getPhase2Steps = (C: any): TutorialStep[] => [
   {
     splash: true,
     icon:   'ghost',
@@ -119,7 +118,7 @@ const PHASE2_STEPS: TutorialStep[] = [
     icon:  'account-group-outline',
     color: C.purple,
     title: 'A TUA SOMBRA',
-    body:  'Cada sombra tem um Efeito Passivo único — bónus automáticos que se aplicam às tuas missões.\n\nRanks mais altos (Commander, Marshal) têm efeitos muito mais poderosos.',
+    body:  'Cada sombra tem um EFEITO PASSIVO ÚNICO — bónus automáticos que se aplicam às tuas missões.\n\nRanks mais altos (Commander, Marshal) têm efeitos muito mais poderosos.',
     arrow: { side: 'bottom', offsetX: tabX(5) },
     targetTab: 'Sombras',
   },
@@ -149,6 +148,7 @@ const PHASE2_STEPS: TutorialStep[] = [
   },
 ]
 
+
 // ── Component ──────────────────────────────────────────────────────────────────
 
 interface Props {
@@ -158,8 +158,11 @@ interface Props {
 }
 
 export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
-  const steps    = phase === 1 ? PHASE1_STEPS : PHASE2_STEPS
+  const C = useTheme()
+  const st = React.useMemo(() => getStyles(C), [C])
+  const steps = React.useMemo(() => (phase === 1 ? getPhase1Steps(C) : getPhase2Steps(C)), [phase, C])
   const [step, setStep] = useState(0)
+
   const [direction, setDirection] = useState<1 | -1>(1)
   
   const fadeAnim   = useRef(new Animated.Value(0)).current
@@ -356,8 +359,8 @@ export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
-
-const st = StyleSheet.create({
+ 
+const getStyles = (C: any) => StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: '#00000099', // Slightly lighter to let spotlight stand out

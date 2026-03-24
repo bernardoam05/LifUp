@@ -7,7 +7,8 @@ import { SHOP_CATALOG, ShopItem } from '../data/shopItems'
 import { SHADOW_SHOP, SHADOW_RANK_COLOR } from '../data/shadows'
 import type { Shadow } from '../data/shadows'
 import CustomModal from '../components/CustomModal'
-import { C, FONT, SPACING } from '../theme'
+import { useTheme, FONT, SPACING } from '../theme'
+
 
 // Price table by shadow rank
 const SHADOW_RANK_COST: Record<string, number> = {
@@ -20,12 +21,22 @@ const SHADOW_RANK_COST: Record<string, number> = {
 
 // ── Item card ──────────────────────────────────────────────────────────────────
 
-function ItemCard({ item, gold, stockRemaining, onBuy }: {
+function ItemCard({
+  item,
+  gold,
+  stockRemaining,
+  onBuy,
+  C,
+}: {
   item: ShopItem
   gold: number
   stockRemaining: number | undefined   // undefined = unlimited
   onBuy: () => void
+  C: any
 }) {
+
+  const ic = getICStyles(C)
+
   const soldOut = stockRemaining !== undefined && stockRemaining <= 0
   const canAfford = gold >= item.cost && !soldOut
 
@@ -75,12 +86,22 @@ function ItemCard({ item, gold, stockRemaining, onBuy }: {
 
 // ── Shadow card ────────────────────────────────────────────────────────────────
 
-function ShadowCard({ shadow, gold, owned, onBuy }: {
+function ShadowCard({
+  shadow,
+  gold,
+  owned,
+  onBuy,
+  C,
+}: {
   shadow: Shadow
   gold: number
   owned: boolean   // already in army?
   onBuy: () => void
+  C: any
 }) {
+
+  const sc = getSCStyles(C)
+
   const rankColor = SHADOW_RANK_COLOR[shadow.rank as keyof typeof SHADOW_RANK_COLOR] ?? '#94a3b8'
   const cost = SHADOW_RANK_COST[shadow.rank] ?? 500
   const canAfford = gold >= cost
@@ -122,6 +143,9 @@ function ShadowCard({ shadow, gold, owned, onBuy }: {
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function ShopScreen() {
+  const C = useTheme()
+  const s = getStyles(C)
+
   const player = useGameStore(s => s.player)
   const shopStocks = useGameStore(s => s.system.shopStocks)
   const purchaseItem = useGameStore(s => s.purchaseItem)
@@ -182,7 +206,9 @@ export default function ShopScreen() {
             gold={player.gold}
             stockRemaining={item.weeklyStock !== undefined ? (shopStocks[item.id] ?? 0) : undefined}
             onBuy={() => setPending(item)}
+            C={C}
           />
+
         ))}
 
         {/* ── Shadow Section ── */}
@@ -204,7 +230,9 @@ export default function ShopScreen() {
               gold={player.gold}
               owned={player.shadows.some(e => e.id === shadow.id)}
               onBuy={() => setPendingShadow(shadow)}
+              C={C}
             />
+
           ))
         )}
 
@@ -224,7 +252,9 @@ export default function ShopScreen() {
         confirmColor={pending?.color ?? C.gold}
         onConfirm={confirmBuy}
         onCancel={() => setPending(null)}
+        C={C}
       />
+
 
       {/* Shadow purchase modal */}
       <CustomModal
@@ -240,14 +270,18 @@ export default function ShopScreen() {
         confirmColor="#a855f7"
         onConfirm={confirmBuyShadow}
         onCancel={() => setPendingShadow(null)}
+        C={C}
       />
+
     </SafeAreaView>
   )
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
-const s = StyleSheet.create({
+// ── Styles ─────────────────────────────────────────────────────────────────────
+
+const getStyles = (C: any) => StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
   content: { padding: SPACING.md, paddingBottom: SPACING.xl },
   titleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
@@ -263,7 +297,7 @@ const s = StyleSheet.create({
   lockedTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
 })
 
-const sc = StyleSheet.create({
+const getSCStyles = (C: any) => StyleSheet.create({
   card: { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'flex-start' },
   iconWrap: { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   info: { flex: 1 },
@@ -281,7 +315,7 @@ const sc = StyleSheet.create({
   buyTxt: { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 })
 
-const ic = StyleSheet.create({
+const getICStyles = (C: any) => StyleSheet.create({
   card: { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'flex-start' },
   cardSoldOut: { opacity: 0.5 },
   iconWrap: { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
@@ -299,3 +333,4 @@ const ic = StyleSheet.create({
   buyBtnDisabled: { opacity: 0.4 },
   buyTxt: { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 })
+

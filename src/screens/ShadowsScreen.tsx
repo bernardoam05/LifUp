@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import SoloLevelingModal from '../components/SoloLevelingModal'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { ShadowEntry, getShadowReleaseGold } from '../store/useGameStore'
 import {
   SHADOW_MAP, SHADOW_BY_RANK, SHADOW_RANK_COLOR,
   Shadow, ShadowRank, PassiveEffectType,
 } from '../data/shadows'
-import { C, FONT, SPACING } from '../theme'
+import { useTheme, FONT, SPACING } from '../theme'
+
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 
@@ -69,7 +71,9 @@ function scaledValue(base: number, level: number): number {
 
 // ── Locked screen ─────────────────────────────────────────────────────────────
 
-function LockedScreen({ currentLevel }: { currentLevel: number }) {
+function LockedScreen({ currentLevel, C }: { currentLevel: number; C: any }) {
+  const lk = getLKStyles(C)
+
   return (
     <View style={lk.container}>
       <View style={lk.glowWrap}>
@@ -100,11 +104,16 @@ function PassiveSummaryCard({
   entries,
   activeShadowIds,
   shadowLookup,
+  C,
+
 }: {
   entries:         ShadowEntry[]
   activeShadowIds: string[]
   shadowLookup:    Record<string, Shadow>
+  C: any
 }) {
+  const ps = getPSStyles(C)
+
   const activeEntries = entries.filter(e => activeShadowIds.includes(e.id))
   if (activeEntries.length === 0) return (
     <View style={ps.emptyContainer}>
@@ -159,42 +168,45 @@ function ReleaseConfirmModal({
   gold,
   onConfirm,
   onCancel,
+  C,
+
 }: {
   shadow:    Shadow
   gold:      number
   onConfirm: () => void
   onCancel:  () => void
+  C: any
 }) {
+  const rel = getRELStyles(C)
+
   const isCustom   = (shadow as any).type === 'Custom'
   const rankColor  = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank]
 
   return (
-    <Modal transparent animationType="fade" visible onRequestClose={onCancel}>
-      <View style={rel.overlay}>
-        <View style={rel.card}>
-          <Icon name="alert-circle-outline" size={36} color={C.neonRed} style={{ marginBottom: SPACING.sm }} />
-          <Text style={rel.title}>LIBERTAR SOMBRA</Text>
-          <View style={[rel.shadowRow, { borderColor: rankColor + '44', backgroundColor: rankColor + '0d' }]}>
-            <Icon name={shadow.icon} size={20} color={rankColor} />
-            <Text style={[rel.shadowName, { color: rankColor }]}>{shadow.name}</Text>
-          </View>
-          <Text style={rel.warning}>
-            {gold > 0
-              ? `Recebes ${gold}G mas a sombra é libertada permanentemente.\nSe a recuperares, voltará ao Nível 1.`
-              : 'Sombras custom não têm valor. A sombra será libertada permanentemente.\nSe a recuperares, voltará ao Nível 1.'}
-          </Text>
-          <View style={rel.btnRow}>
-            <TouchableOpacity style={rel.cancelBtn} onPress={onCancel}>
-              <Text style={rel.cancelTxt}>CANCELAR</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={rel.confirmBtn} onPress={onConfirm}>
-              <Icon name="sword-cross" size={14} color={C.neonRed} />
-              <Text style={rel.confirmTxt}> LIBERTAR{gold > 0 ? ` +${gold}G` : ''}</Text>
-            </TouchableOpacity>
-          </View>
+    <SoloLevelingModal visible onRequestClose={onCancel}>
+      <View style={rel.card}>
+        <Icon name="alert-circle-outline" size={36} color={C.neonRed} style={{ marginBottom: SPACING.sm }} />
+        <Text style={rel.title}>LIBERTAR SOMBRA</Text>
+        <View style={[rel.shadowRow, { borderColor: rankColor + '44', backgroundColor: rankColor + '0d' }]}>
+          <Icon name={shadow.icon} size={20} color={rankColor} />
+          <Text style={[rel.shadowName, { color: rankColor }]}>{shadow.name}</Text>
+        </View>
+        <Text style={rel.warning}>
+          {gold > 0
+            ? `Recebes ${gold}G mas a sombra é libertada permanentemente.\nSe a recuperares, voltará ao Nível 1.`
+            : 'Sombras custom não têm valor. A sombra será libertada permanentemente.\nSe a recuperares, voltará ao Nível 1.'}
+        </Text>
+        <View style={rel.btnRow}>
+          <TouchableOpacity style={rel.cancelBtn} onPress={onCancel}>
+            <Text style={rel.cancelTxt}>CANCELAR</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={rel.confirmBtn} onPress={onConfirm}>
+            <Icon name="sword-cross" size={14} color={C.neonRed} />
+            <Text style={rel.confirmTxt}> LIBERTAR{gold > 0 ? ` +${gold}G` : ''}</Text>
+          </TouchableOpacity>
         </View>
       </View>
-    </Modal>
+    </SoloLevelingModal>
   )
 }
 
@@ -208,7 +220,11 @@ function ShadowDetailModal({
   shadowLookup,
   onClose,
   onToggleActive,
+  onToggleFavorite,
   onRelease,
+  isFavorite,
+  C,
+
 }: {
   shadow:       Shadow
   level:        number
@@ -220,7 +236,10 @@ function ShadowDetailModal({
   onToggleFavorite: () => void
   onRelease:    () => void
   isFavorite:   boolean
+  C: any
 }) {
+  const dm = getDMStyles(C)
+
   const isCustom   = (shadow as any).type === 'Custom'
   const rankColor  = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank]
   const baseValue  = shadow.passiveEffect.value
@@ -228,95 +247,93 @@ function ShadowDetailModal({
   const releaseGold = getShadowReleaseGold(shadow, level)
 
   return (
-    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
-      <View style={dm.overlay}>
-        <View style={[dm.card, { borderColor: rankColor + '66' }]}>
-          {isActive && (
-            <View style={[dm.activeBadge, { borderColor: '#facc15', backgroundColor: '#facc1518' }]}>
-              <Icon name="shield-sword" size={10} color="#facc15" />
-              <Text style={dm.activeBadgeTxt}> VANGUARDA ATIVA</Text>
-            </View>
-          )}
-
-          <TouchableOpacity
-            style={dm.favBtn}
-            onPress={onToggleFavorite}
-            activeOpacity={0.7}
-          >
-            <Icon name={isFavorite ? "star" : "star-outline"} size={22} color={isFavorite ? "#facc15" : "#94a3b8"} />
-          </TouchableOpacity>
-
-          <View style={[dm.iconWrap, { backgroundColor: rankColor + '18', borderColor: rankColor + '44' }]}>
-            <Icon name={shadow.icon} size={48} color={rankColor} />
+    <SoloLevelingModal visible onRequestClose={onClose}>
+      <View style={[dm.card, { borderColor: rankColor + '66' }]}>
+        {isActive && (
+          <View style={[dm.activeBadge, { borderColor: '#facc15', backgroundColor: '#facc1518' }]}>
+            <Icon name="shield-sword" size={10} color="#facc15" />
+            <Text style={dm.activeBadgeTxt}> VANGUARDA ATIVA</Text>
           </View>
+        )}
 
-          <View style={[dm.rankBadge, { borderColor: rankColor }]}>
-            <Text style={[dm.rankTxt, { color: rankColor }]}>
-              {isCustom ? 'CUSTOM' : RANK_LABELS[shadow.rank as ShadowRank]}
-            </Text>
-          </View>
+        <TouchableOpacity
+          style={dm.favBtn}
+          onPress={onToggleFavorite}
+          activeOpacity={0.7}
+        >
+          <Icon name={isFavorite ? "star" : "star-outline"} size={22} color={isFavorite ? "#facc15" : "#94a3b8"} />
+        </TouchableOpacity>
 
-          <Text style={[dm.name, { color: rankColor }]}>{shadow.name}</Text>
-
-          <View style={dm.levelRow}>
-            <Icon name="chevron-up-circle" size={12} color={rankColor} />
-            <Text style={[dm.levelTxt, { color: rankColor }]}> NÍV. {level}</Text>
-          </View>
-
-          <Text style={dm.lore}>{shadow.lore}</Text>
-
-          <View style={[dm.effectRow, { borderColor: rankColor + '44', backgroundColor: rankColor + '0e' }]}>
-            <Icon name="lightning-bolt" size={13} color={rankColor} />
-            <Text style={[dm.effectTxt, { color: rankColor }]}>
-              {' '}{shadow.passiveEffect.description}
-              {level > 1 && ` (×${(1 + (level - 1) * 0.1).toFixed(1)})`}
-            </Text>
-          </View>
-
-          {level > 1 && (
-            <Text style={dm.scaledHint}>
-              {formatPassiveValue(shadow.passiveEffect.type, baseValue)}
-              {' → '}
-              {formatPassiveValue(shadow.passiveEffect.type, scaledVal)}
-            </Text>
-          )}
-
-          {/* Equip/Unequip button */}
-          <TouchableOpacity
-            style={[
-              dm.equipBtn,
-              isActive
-                ? { borderColor: '#facc1566', backgroundColor: '#facc1510' }
-                : (!canEquipMore && { opacity: 0.45 }),
-            ]}
-            onPress={isActive || canEquipMore ? onToggleActive : undefined}
-            activeOpacity={0.8}
-          >
-            <Icon
-              name={isActive ? 'shield-off-outline' : 'shield-sword'}
-              size={14}
-              color={isActive ? '#facc15' : C.neonBlue}
-            />
-            <Text style={[dm.equipTxt, { color: isActive ? '#facc15' : C.neonBlue }]}>
-              {isActive ? ' RETIRAR DA VANGUARDA' : canEquipMore ? ' EQUIPAR VANGUARDA' : ` VANGUARDA CHEIA (${MAX_ACTIVE}/${MAX_ACTIVE})`}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Release button */}
-          <TouchableOpacity style={dm.releaseBtn} onPress={onRelease}>
-            <Icon name="sword-cross" size={12} color={C.neonRed} />
-            <Text style={dm.releaseTxt}>
-              {' LIBERTAR SOMBRA'}
-              {releaseGold > 0 ? ` · +${releaseGold}G` : ''}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[dm.closeBtn, { borderColor: rankColor + '88' }]} onPress={onClose}>
-            <Text style={[dm.closeTxt, { color: rankColor }]}>DISPENSAR</Text>
-          </TouchableOpacity>
+        <View style={[dm.iconWrap, { backgroundColor: rankColor + '18', borderColor: rankColor + '44' }]}>
+          <Icon name={shadow.icon} size={48} color={rankColor} />
         </View>
+
+        <View style={[dm.rankBadge, { borderColor: rankColor }]}>
+          <Text style={[dm.rankTxt, { color: rankColor }]}>
+            {isCustom ? 'CUSTOM' : RANK_LABELS[shadow.rank as ShadowRank]}
+          </Text>
+        </View>
+
+        <Text style={[dm.name, { color: rankColor }]}>{shadow.name}</Text>
+
+        <View style={dm.levelRow}>
+          <Icon name="chevron-up-circle" size={12} color={rankColor} />
+          <Text style={[dm.levelTxt, { color: rankColor }]}> NÍV. {level}</Text>
+        </View>
+
+        <Text style={dm.lore}>{shadow.lore}</Text>
+
+        <View style={[dm.effectRow, { borderColor: rankColor + '44', backgroundColor: rankColor + '0e' }]}>
+          <Icon name="lightning-bolt" size={13} color={rankColor} />
+          <Text style={[dm.effectTxt, { color: rankColor }]}>
+            {' '}{shadow.passiveEffect.description}
+            {level > 1 && ` (×${(1 + (level - 1) * 0.1).toFixed(1)})`}
+          </Text>
+        </View>
+
+        {level > 1 && (
+          <Text style={dm.scaledHint}>
+            {formatPassiveValue(shadow.passiveEffect.type, baseValue)}
+            {' → '}
+            {formatPassiveValue(shadow.passiveEffect.type, scaledVal)}
+          </Text>
+        )}
+
+        {/* Equip/Unequip button */}
+        <TouchableOpacity
+          style={[
+            dm.equipBtn,
+            isActive
+              ? { borderColor: '#facc1566', backgroundColor: '#facc1510' }
+              : (!canEquipMore && { opacity: 0.45 }),
+          ]}
+          onPress={isActive || canEquipMore ? onToggleActive : undefined}
+          activeOpacity={0.8}
+        >
+          <Icon
+            name={isActive ? 'shield-off-outline' : 'shield-sword'}
+            size={14}
+            color={isActive ? '#facc15' : C.neonBlue}
+          />
+          <Text style={[dm.equipTxt, { color: isActive ? '#facc15' : C.neonBlue }]}>
+            {isActive ? ' RETIRAR DA VANGUARDA' : canEquipMore ? ' EQUIPAR VANGUARDA' : ` VANGUARDA CHEIA (${MAX_ACTIVE}/${MAX_ACTIVE})`}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Release button */}
+        <TouchableOpacity style={dm.releaseBtn} onPress={onRelease}>
+          <Icon name="sword-cross" size={12} color={C.neonRed} />
+          <Text style={dm.releaseTxt}>
+            {' LIBERTAR SOMBRA'}
+            {releaseGold > 0 ? ` · +${releaseGold}G` : ''}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[dm.closeBtn, { borderColor: rankColor + '88' }]} onPress={onClose}>
+          <Text style={[dm.closeTxt, { color: rankColor }]}>DISPENSAR</Text>
+        </TouchableOpacity>
       </View>
-    </Modal>
+    </SoloLevelingModal>
   )
 }
 
@@ -328,13 +345,18 @@ function ShadowCard({
   isActive,
   isFavorite,
   onPress,
+  C,
+
 }: {
   shadow:   Shadow
   level:    number
   isActive: boolean
   isFavorite: boolean
   onPress:  () => void
+  C: any
 }) {
+  const sc = getSCStyles(C)
+
   const isCustom  = (shadow as any).type === 'Custom'
   const rankColor = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank]
   const scaledVal = scaledValue(shadow.passiveEffect.value, level)
@@ -379,6 +401,9 @@ function ShadowCard({
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function ShadowsScreen() {
+  const C = useTheme()
+  const s = getStyles(C)
+
   const level            = useGameStore(s => s.player.level)
   const shadowEntries    = useGameStore(s => s.player.shadows) as ShadowEntry[]
   const activeShadowIds  = useGameStore(s => s.player.activeShadowIds)
@@ -392,11 +417,12 @@ export default function ShadowsScreen() {
 
   if (level < 10) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#000' }} edges={['bottom']}>
-        <LockedScreen currentLevel={level} />
+      <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['bottom']}>
+        <LockedScreen currentLevel={level} C={C} />
       </SafeAreaView>
     )
   }
+
 
   // Build unified lookup: standard + custom shadows
   const customMap: Record<string, Shadow> = {}
@@ -447,7 +473,9 @@ export default function ShadowsScreen() {
               entries={shadowEntries}
               activeShadowIds={activeShadowIds}
               shadowLookup={shadowLookup}
+              C={C}
             />
+
 
             {/* Standard rank groups */}
             {RANK_ORDER.map(rank => {
@@ -473,7 +501,9 @@ export default function ShadowsScreen() {
                       isActive={activeShadowIds.includes(shadow.id)}
                       isFavorite={!!standardEntries.find(e => e.id === shadow.id)?.isFavorite}
                       onPress={() => setSelected({ shadow, level: levelMap[shadow.id] ?? 1 })}
+                      C={C}
                     />
+
                   ))}
                 </View>
               )
@@ -500,7 +530,9 @@ export default function ShadowsScreen() {
                       isActive={activeShadowIds.includes(id)}
                       isFavorite={!!customEntries.find(e => e.id === id)?.isFavorite}
                       onPress={() => setSelected({ shadow, level: lvl })}
+                      C={C}
                     />
+
                   )
                 })}
               </View>
@@ -525,7 +557,9 @@ export default function ShadowsScreen() {
           }}
           onToggleFavorite={() => toggleFavorite(selected.shadow.id)}
           onRelease={() => openRelease(selected.shadow, selected.level)}
+          C={C}
         />
+
       )}
 
       {toRelease && (
@@ -534,7 +568,9 @@ export default function ShadowsScreen() {
           gold={toRelease.gold}
           onConfirm={confirmRelease}
           onCancel={() => setToRelease(null)}
+          C={C}
         />
+
       )}
     </SafeAreaView>
   )
@@ -542,14 +578,16 @@ export default function ShadowsScreen() {
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
-const s = StyleSheet.create({
+// ── Styles ─────────────────────────────────────────────────────────────────────
+
+const getStyles = (C: any) => StyleSheet.create({
   safeArea:  { flex: 1, backgroundColor: C.bg },
   content:   { padding: SPACING.md, paddingBottom: SPACING.xl },
   pageTitle: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 4, marginBottom: 2 },
   pageSub:   { color: C.muted, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 2, marginBottom: SPACING.lg },
 
   emptyWrap:  { alignItems: 'center', paddingTop: 60, gap: SPACING.md },
-  emptyTitle: { color: '#a855f766', fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2 },
+  emptyTitle: { color: C.purple + '66', fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2 },
   emptyDesc:  { color: C.dimmed, fontSize: 12, textAlign: 'center', lineHeight: 18 },
 
   rankGroup:      { marginBottom: SPACING.lg },
@@ -560,67 +598,67 @@ const s = StyleSheet.create({
   rankCount:      { fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '700' },
 })
 
-const lk = StyleSheet.create({
-  container:    { flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.xl, backgroundColor: '#000' },
+const getLKStyles = (C: any) => StyleSheet.create({
+  container:    { flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.xl, backgroundColor: C.bg },
   glowWrap:     { marginBottom: SPACING.lg },
   icon:         { opacity: 0.55 },
-  title:        { color: '#ef444488', fontFamily: FONT.orbitron, fontSize: 18, letterSpacing: 5, marginBottom: SPACING.sm },
-  divider:      { width: 80, height: 1, backgroundColor: '#ef444433', marginBottom: SPACING.lg },
-  body:         { color: '#475569', fontSize: 14, textAlign: 'center', lineHeight: 24, marginBottom: SPACING.xl },
+  title:        { color: C.neonRed + '88', fontFamily: FONT.orbitron, fontSize: 18, letterSpacing: 5, marginBottom: SPACING.sm },
+  divider:      { width: 80, height: 1, backgroundColor: C.neonRed + '33', marginBottom: SPACING.lg },
+  body:         { color: C.muted, fontSize: 14, textAlign: 'center', lineHeight: 24, marginBottom: SPACING.xl },
   progressRow:  { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.lg, width: '100%' },
-  progressTrack:{ flex: 1, height: 4, backgroundColor: '#1a0505', borderRadius: 2, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: '#ef4444', borderRadius: 2 },
-  progressTxt:  { color: '#ef444488', fontFamily: FONT.orbitron, fontSize: 9 },
+  progressTrack:{ flex: 1, height: 4, backgroundColor: C.border, borderRadius: 2, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: C.neonRed, borderRadius: 2 },
+  progressTxt:  { color: C.neonRed + '88', fontFamily: FONT.orbitron, fontSize: 9 },
   sealRow:      { flexDirection: 'row', alignItems: 'center' },
-  sealTxt:      { color: '#ef444444', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  sealTxt:      { color: C.neonRed + '44', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
 })
 
-const ps = StyleSheet.create({
-  container:      { backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: '#facc1544', padding: SPACING.md, marginBottom: SPACING.lg },
+const getPSStyles = (C: any) => StyleSheet.create({
+  container:      { backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: C.gold + '44', padding: SPACING.md, marginBottom: SPACING.lg },
   emptyContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 8, borderWidth: 1, borderColor: C.border, padding: SPACING.sm, marginBottom: SPACING.md },
   emptyTxt:       { color: C.dimmed, fontSize: 11, fontStyle: 'italic' },
   header:         { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
-  title:          { color: '#facc15', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  title:          { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   grid:           { gap: 8, marginBottom: SPACING.md },
   row:            { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  label:          { color: '#94a3b8', fontSize: 12 },
+  label:          { color: C.muted, fontSize: 12 },
   value:          { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
-  vanguardRow:    { flexDirection: 'row', gap: 10, marginTop: 4, marginBottom: 8 },
-  vanguardIconWrap: { width: 50, height: 50, borderRadius: 8, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: '#000' },
-  vanguardLvl:    { position: 'absolute', bottom: -5, right: -5, backgroundColor: '#000', borderRadius: 4, paddingHorizontal: 4, borderWidth: 1, borderColor: '#333' },
+  vanguardRow:    { flexDirection: 'row', gap: 10, marginTop: 4, marginBottom: 8, justifyContent: 'center' },
+  vanguardIconWrap: { width: 50, height: 50, borderRadius: 8, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: C.bg },
+  vanguardLvl:    { position: 'absolute', bottom: -5, right: -5, backgroundColor: C.bg, borderRadius: 4, paddingHorizontal: 4, borderWidth: 1, borderColor: C.border },
   vanguardLvlTxt: { color: '#fff', fontSize: 7, fontWeight: '900', fontFamily: FONT.orbitron },
   note:           { color: C.dimmed, fontSize: 10, fontStyle: 'italic' },
 })
 
-const sc = StyleSheet.create({
+const getSCStyles = (C: any) => StyleSheet.create({
   card:        { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 10, borderWidth: 1, padding: SPACING.sm, marginBottom: 6, gap: SPACING.sm },
-  cardActive:  { backgroundColor: '#facc1508' },
+  cardActive:  { backgroundColor: C.gold + '08' },
   iconWrap:    { width: 40, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   info:        { flex: 1 },
   nameRow:     { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 2, flexWrap: 'wrap' },
   name:        { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
   lvlBadge:    { borderWidth: 1, borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
   lvlTxt:      { fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '700' },
-  activeBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#facc1520', borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
-  activeBadgeTxt: { fontFamily: FONT.orbitron, fontSize: 7, color: '#facc15', fontWeight: '700' },
+  activeBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.gold + '20', borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
+  activeBadgeTxt: { fontFamily: FONT.orbitron, fontSize: 7, color: C.gold, fontWeight: '700' },
   effect:      { color: C.muted, fontSize: 10 },
   rightSide:   { alignItems: 'flex-end', gap: 4 },
   rankBadge:   { borderWidth: 1, borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 },
   rankTxt:     { fontFamily: FONT.orbitron, fontSize: 7, fontWeight: '700' },
 })
 
-const dm = StyleSheet.create({
+const getDMStyles = (C: any) => StyleSheet.create({
   overlay:      { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
-  card:         { backgroundColor: '#07050f', borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
+  card:         { backgroundColor: C.panel, borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
   activeBadge:  { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3, marginBottom: SPACING.sm },
-  activeBadgeTxt: { fontFamily: FONT.orbitron, fontSize: 8, color: '#facc15', letterSpacing: 2 },
+  activeBadgeTxt: { fontFamily: FONT.orbitron, fontSize: 8, color: C.gold, letterSpacing: 2 },
   iconWrap:     { width: 88, height: 88, borderRadius: 22, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.sm },
   rankBadge:    { borderWidth: 1, borderRadius: 6, paddingHorizontal: 10, paddingVertical: 3, marginBottom: SPACING.sm },
   rankTxt:      { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3 },
   name:         { fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '900', letterSpacing: 2, marginBottom: 4, textAlign: 'center' },
   levelRow:     { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },
   levelTxt:     { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
-  lore:         { color: '#94a3b8', fontSize: 12, textAlign: 'center', lineHeight: 20, fontStyle: 'italic', marginBottom: SPACING.md },
+  lore:         { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 20, fontStyle: 'italic', marginBottom: SPACING.md },
   effectRow:    { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.sm, paddingVertical: 8, marginBottom: SPACING.sm, width: '100%' },
   effectTxt:    { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', flex: 1 },
   favBtn:       { position: 'absolute', top: 20, right: 20, padding: 10, zIndex: 10 },
@@ -633,16 +671,17 @@ const dm = StyleSheet.create({
   closeTxt:     { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 })
 
-const rel = StyleSheet.create({
+const getRELStyles = (C: any) => StyleSheet.create({
   overlay:    { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
-  card:       { backgroundColor: '#0d0508', borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2, borderColor: C.neonRed + '44' },
+  card:       { backgroundColor: C.panel, borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2, borderColor: C.neonRed + '44' },
   title:      { fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 3, color: C.neonRed, marginBottom: SPACING.md },
   shadowRow:  { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, marginBottom: SPACING.md, width: '100%' },
   shadowName: { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
-  warning:    { color: '#94a3b8', fontSize: 12, textAlign: 'center', lineHeight: 20, marginBottom: SPACING.lg },
+  warning:    { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 20, marginBottom: SPACING.lg },
   btnRow:     { flexDirection: 'row', gap: SPACING.sm, width: '100%' },
   cancelBtn:  { flex: 1, borderWidth: 1, borderColor: C.border, borderRadius: 8, paddingVertical: 12, alignItems: 'center' },
   cancelTxt:  { fontFamily: FONT.orbitron, fontSize: 10, color: C.muted, letterSpacing: 1 },
   confirmBtn: { flex: 1, flexDirection: 'row', borderWidth: 1, borderColor: C.neonRed + '66', borderRadius: 8, paddingVertical: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: C.neonRed + '10' },
   confirmTxt: { fontFamily: FONT.orbitron, fontSize: 10, color: C.neonRed, fontWeight: '700' },
 })
+

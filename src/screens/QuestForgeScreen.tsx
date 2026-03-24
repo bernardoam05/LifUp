@@ -1,23 +1,27 @@
 import React, { useState } from 'react'
 import {
-  View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity, Modal,
+  View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity,
   TextInput, KeyboardAvoidingView, Platform,
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import SoloLevelingModal from '../components/SoloLevelingModal'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { QuestDefinition, Quest, INITIAL_QUEST_DICTIONARY, RankKey, rankFromXP } from '../store/useGameStore'
 import CustomModal from '../components/CustomModal'
 import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal'
-import { C, FONT, SPACING } from '../theme'
+import BottomSheetModal from '../components/BottomSheetModal'
+import { useTheme, FONT, SPACING } from '../theme'
+
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 
-const QUEST_TYPE_OPTS: { value: Quest['type']; label: string; icon: string; color: string }[] = [
-  { value: 'training',  label: 'Treino',       icon: 'arm-flex',          color: '#ef4444' },
-  { value: 'focus',     label: 'Foco',         icon: 'timer-sand',        color: '#a855f7' },
+const getQuestTypeOpts = (C: any) => [
+  { value: 'training', label: 'Treino', icon: 'arm-flex', color: '#ef4444' },
+  { value: 'focus', label: 'Foco', icon: 'timer-sand', color: '#a855f7' },
   { value: 'knowledge', label: 'Conhecimento', icon: 'book-open-variant', color: C.neonBlue },
-  { value: 'gps',       label: 'GPS',          icon: 'run-fast',          color: '#22c55e' },
+  { value: 'gps', label: 'GPS', icon: 'run-fast', color: '#22c55e' },
 ]
+
 
 const UNIT_CHIPS = ['reps', 'min', 'km', 'páginas', 'séries', 'horas', 'litros']
 
@@ -25,10 +29,10 @@ const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
 // Popular MaterialCommunityIcons for the icon picker
 const ICON_GRID = [
-  'sword','sword-cross','shield','shield-cross','skull','fire','water','dumbbell','run','brain',
-  'book-open-variant','clock-outline','heart-pulse','lightning-bolt','star-four-points','target',
-  'trophy','weight-lifter','yoga','meditation','food-apple','cup-water','sleep','code-tags',
-  'briefcase','school','crosshairs-gps','ghost','dragon','flash',
+  'sword', 'sword-cross', 'shield', 'shield-cross', 'skull', 'fire', 'water', 'dumbbell', 'run', 'brain',
+  'book-open-variant', 'clock-outline', 'heart-pulse', 'lightning-bolt', 'star-four-points', 'target',
+  'trophy', 'weight-lifter', 'yoga', 'meditation', 'food-apple', 'cup-water', 'sleep', 'code-tags',
+  'briefcase', 'school', 'crosshairs-gps', 'ghost', 'dragon', 'flash',
 ]
 
 const RANK_OPTS: { value: RankKey; color: string }[] = [
@@ -41,34 +45,34 @@ const RANK_OPTS: { value: RankKey; color: string }[] = [
 ]
 
 const BOSS_CLASS_OPTS: { value: QuestDefinition['bossClass']; label: string; color: string }[] = [
-  { value: 'A',     label: 'A-Rank',  color: '#f59e0b' },
-  { value: 'S',     label: 'S-Rank',  color: '#ef4444' },
-  { value: 'Event', label: 'Evento',  color: '#fb923c' },
-  { value: 'Raid',  label: 'Raid',    color: '#a855f7' },
+  { value: 'A', label: 'A-Rank', color: '#f59e0b' },
+  { value: 'S', label: 'S-Rank', color: '#ef4444' },
+  { value: 'Event', label: 'Evento', color: '#fb923c' },
+  { value: 'Raid', label: 'Raid', color: '#a855f7' },
 ]
 
 const BLANK_DEF: Omit<QuestDefinition, 'id'> = {
-  title:           '',
-  description:     '',
-  type:            'pool',
-  questType:       'training',
-  baseTarget:      10,
-  scalingAmount:   0,
+  title: '',
+  description: '',
+  type: 'pool',
+  questType: 'training',
+  baseTarget: 10,
+  scalingAmount: 0,
   scalingInterval: 1,
-  unit:            'reps',
-  baseXP:          20,
-  baseGold:        8,
-  daysOfWeek:      undefined,
-  rank:            undefined,
-  bossClass:       undefined,
+  unit: 'reps',
+  baseXP: 20,
+  baseGold: 8,
+  daysOfWeek: undefined,
+  rank: undefined,
+  bossClass: undefined,
 }
 
 // ── Form modal ─────────────────────────────────────────────────────────────────
 
 type FormState = Omit<QuestDefinition, 'id'> & {
-  daysRaw:     number[]
-  shadowName:  string
-  shadowIcon:  string
+  daysRaw: number[]
+  shadowName: string
+  shadowIcon: string
 }
 
 function toFormState(def?: QuestDefinition): FormState {
@@ -76,69 +80,94 @@ function toFormState(def?: QuestDefinition): FormState {
   return {
     ...def,
     // migrate legacy field
-    scalingAmount:   def.scalingAmount   ?? def.scalingPerLevel ?? 0,
+    scalingAmount: def.scalingAmount ?? def.scalingPerLevel ?? 0,
     scalingInterval: def.scalingInterval ?? 1,
-    daysRaw:         def.daysOfWeek ?? [],
-    shadowName:      def.shadowName ?? '',
-    shadowIcon:      def.shadowIcon ?? 'ghost',
+    daysRaw: def.daysOfWeek ?? [],
+    shadowName: def.shadowName ?? '',
+    shadowIcon: def.shadowIcon ?? 'ghost',
   }
 }
 
 // Chip — reusable small selectable pill
 function Chip({
-  label, active, color, onPress,
+  label, active, color, onPress, C
 }: {
-  label:   string
-  active:  boolean
-  color:   string
+
+  label: string
+  active: boolean
+  color: string
   onPress: () => void
+  C: any
 }) {
+  const ch = getCHStyles(C)
   return (
     <TouchableOpacity
       style={[ch.base, active ? { backgroundColor: color + '22', borderColor: color } : ch.inactive]}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Text style={[ch.txt, { color: active ? color : '#64748b' }]}>{label}</Text>
+      <Text style={[ch.txt, { color: active ? color : C.muted }]}>{label}</Text>
     </TouchableOpacity>
   )
 }
 
+
 // CategoryChip — chip with icon + label
 function CategoryChip({
-  opt, active, onPress,
+  opt, active, onPress, C
 }: {
-  opt:     typeof QUEST_TYPE_OPTS[number]
-  active:  boolean
+
+  opt: any
+  active: boolean
   onPress: () => void
+  C: any
 }) {
+  const ch = getCHStyles(C)
   return (
     <TouchableOpacity
       style={[ch.base, ch.catBase, active ? { backgroundColor: opt.color + '22', borderColor: opt.color } : ch.inactive]}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Icon name={opt.icon} size={13} color={active ? opt.color : '#64748b'} />
-      <Text style={[ch.txt, { color: active ? opt.color : '#64748b' }]}>{opt.label}</Text>
+      <Icon name={opt.icon} size={13} color={active ? opt.color : C.muted} />
+      <Text style={[ch.txt, { color: active ? opt.color : C.muted }]}>{opt.label}</Text>
     </TouchableOpacity>
   )
 }
 
+
 function FormModal({
   initial,
+  visible,
   onSave,
   onClose,
+  C,
 }: {
+
   initial?: QuestDefinition
-  onSave:  (def: Omit<QuestDefinition, 'id'>) => void
+  visible: boolean
+  onSave: (def: Omit<QuestDefinition, 'id'>) => void
   onClose: () => void
+  C: any
 }) {
-  const [form, setForm]           = useState<FormState>(() => toFormState(initial))
+  const fm = getFMStyles(C)
+  const ip = getIPStyles(C)
+  const QUEST_TYPE_OPTS = getQuestTypeOpts(C)
+
+  const insets = useSafeAreaInsets()
+  const [form, setForm] = useState<FormState>(() => toFormState(initial))
   const [showIconPicker, setShowIconPicker] = useState(false)
-  const [alertCfg, setAlertCfg]   = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null)
-  const isCore     = form.type === 'core'
-  const isBoss     = form.type === 'boss'
-  const isEditing  = !!initial   // type field locked when editing
+  const [alertCfg, setAlertCfg] = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null)
+
+  React.useEffect(() => {
+    if (visible) {
+      setForm(toFormState(initial))
+    }
+  }, [visible, initial])
+
+  const isCore = form.type === 'core'
+  const isBoss = form.type === 'boss'
+  const isEditing = !!initial   // type field locked when editing
 
   function field<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm(f => ({ ...f, [key]: value }))
@@ -157,372 +186,382 @@ function FormModal({
       return
     }
     const def: Omit<QuestDefinition, 'id'> = {
-      title:           form.title.trim(),
-      description:     form.description.trim(),
-      type:            form.type,
-      questType:       form.questType,
-      baseTarget:      Number(form.baseTarget) || 0,
-      scalingAmount:   Number(form.scalingAmount) || 0,
+      title: form.title.trim(),
+      description: form.description.trim(),
+      type: form.type,
+      questType: form.questType,
+      baseTarget: Number(form.baseTarget) || 0,
+      scalingAmount: Number(form.scalingAmount) || 0,
       scalingInterval: Math.max(1, Number(form.scalingInterval) || 1),
-      unit:            form.unit.trim() || 'reps',
-      baseXP:          Number(form.baseXP) || 10,
-      baseGold:        Number(form.baseGold) || 5,
-      daysOfWeek:      isCore && form.daysRaw.length > 0 ? form.daysRaw : undefined,
-      rank:            form.rank ?? undefined,
-      bossClass:       isBoss ? (form.bossClass ?? 'A') : undefined,
-      shadowName:      isBoss && form.shadowName.trim() ? form.shadowName.trim() : undefined,
-      shadowIcon:      isBoss && form.shadowName.trim() ? form.shadowIcon.trim() || 'ghost' : undefined,
+      unit: form.unit.trim() || 'reps',
+      baseXP: Number(form.baseXP) || 10,
+      baseGold: Number(form.baseGold) || 5,
+      daysOfWeek: isCore && form.daysRaw.length > 0 ? form.daysRaw : undefined,
+      rank: form.rank ?? undefined,
+      bossClass: isBoss ? (form.bossClass ?? 'A') : undefined,
+      shadowName: isBoss && form.shadowName.trim() ? form.shadowName.trim() : undefined,
+      shadowIcon: isBoss && form.shadowName.trim() ? form.shadowIcon.trim() || 'ghost' : undefined,
     }
     onSave(def)
   }
 
   return (
-    <Modal
-      transparent
-      animationType="slide"
-      visible
-      onRequestClose={onClose}
-    >
+    <BottomSheetModal visible={visible} onClose={onClose} contentStyle={{ backgroundColor: 'transparent' }} useNativeModal={false}>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={{ width: '100%', justifyContent: 'flex-end' }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* Full-black overlay for Android focus */}
-        <View style={fm.overlay}>
-          <View style={fm.sheet}>
+        <View style={[fm.sheet, { paddingBottom: Math.max(SPACING.xl, insets.bottom + SPACING.sm) }]}>
+          {/* ── Header ── */}
+          <View style={fm.header}>
+            <Icon name="hammer" size={15} color={C.gold} />
+            <Text style={fm.headerTxt}>{initial ? ' EDITAR DIRETIVA' : ' NOVA DIRETIVA'}</Text>
+            <TouchableOpacity onPress={onClose} style={fm.closeBtn}>
+              <Icon name="close" size={20} color={C.muted} />
+            </TouchableOpacity>
 
-            {/* ── Header ── */}
-            <View style={fm.header}>
-              <Icon name="hammer" size={15} color={C.gold} />
-              <Text style={fm.headerTxt}>{initial ? ' EDITAR DIRETIVA' : ' NOVA DIRETIVA'}</Text>
-              <TouchableOpacity onPress={onClose} style={fm.closeBtn}>
-                <Icon name="close" size={20} color="#64748b" />
-              </TouchableOpacity>
+          </View>
+
+          <ScrollView contentContainerStyle={fm.body} keyboardShouldPersistTaps="handled">
+            {/* ── TIPO (Core / Pool / Boss) — locked when editing ── */}
+            <View style={fm.labelRow}>
+              <Text style={fm.label}>TIPO DE MISSÃO</Text>
+              {isEditing && (
+                <View style={fm.lockBadge}>
+                  <Icon name="lock-outline" size={10} color={C.dimmed} />
+                  <Text style={fm.lockTxt}> BLOQUEADO</Text>
+                </View>
+              )}
+            </View>
+            <View style={[fm.chipRow, isEditing && fm.chipRowLocked]}>
+              <Chip
+                label="CORE · Diária fixa"
+                active={form.type === 'core'}
+                color={C.neonBlue}
+                onPress={() => !isEditing && field('type', 'core')}
+                C={C}
+              />
+
+              <Chip
+                label="POOL · Hábito rotativo"
+                active={form.type === 'pool'}
+                color={C.purple}
+                onPress={() => !isEditing && field('type', 'pool')}
+                C={C}
+              />
+              <Chip
+                label="BOSS · Desafio épico"
+                active={form.type === 'boss'}
+                color="#ef4444"
+                onPress={() => !isEditing && field('type', 'boss')}
+                C={C}
+              />
+
             </View>
 
-            <ScrollView contentContainerStyle={fm.body} keyboardShouldPersistTaps="handled">
+            {/* ── CATEGORIA ── */}
+            <Text style={fm.label}>CATEGORIA</Text>
+            <View style={fm.chipRow}>
+              {QUEST_TYPE_OPTS.map(opt => (
+                <CategoryChip
+                  key={opt.value}
+                  opt={opt}
+                  active={form.questType === opt.value}
+                  onPress={() => field('questType', opt.value as any)}
+                  C={C}
 
-              {/* ── TIPO (Core / Pool / Boss) — locked when editing ── */}
-              <View style={fm.labelRow}>
-                <Text style={fm.label}>TIPO DE MISSÃO</Text>
-                {isEditing && (
-                  <View style={fm.lockBadge}>
-                    <Icon name="lock-outline" size={10} color={C.dimmed} />
-                    <Text style={fm.lockTxt}> BLOQUEADO</Text>
+                />
+
+              ))}
+            </View>
+
+            {/* ── DIFICULDADE ── */}
+            <Text style={fm.label}>
+              DIFICULDADE{'  '}
+              <Text style={fm.hint}>deixa vazio para calcular pelo XP</Text>
+            </Text>
+            <View style={fm.chipRow}>
+              <Chip
+                label="AUTO"
+                active={!form.rank}
+                color="#64748b"
+                onPress={() => field('rank', undefined)}
+                C={C}
+              />
+              {RANK_OPTS.map(r => (
+                <Chip
+                  key={r.value}
+                   label={r.value}
+                   active={form.rank === r.value}
+                   color={r.color}
+                   onPress={() => field('rank', r.value)}
+                   C={C}
+                 />
+
+              ))}
+            </View>
+
+            {/* ── BOSS CLASS (Boss only) ── */}
+            {isBoss && (
+              <>
+                <Text style={fm.label}>CLASSE DE BOSS</Text>
+                <View style={fm.chipRow}>
+                  {BOSS_CLASS_OPTS.map(bc => (
+                    <Chip
+                      key={bc.value}
+                       label={bc.label}
+                       active={form.bossClass === bc.value}
+                       color={bc.color}
+                       onPress={() => field('bossClass', bc.value)}
+                       C={C}
+                     />
+                  ))}
+                </View>
+              </>
+            )}
+
+            {/* ── TÍTULO ── */}
+            <Text style={fm.label}>TÍTULO</Text>
+            <TextInput
+              style={fm.input}
+              value={form.title}
+              onChangeText={v => field('title', v)}
+              placeholder="ex: Força Bruta"
+              placeholderTextColor={C.muted}
+            />
+
+
+            {/* ── DESCRIÇÃO ── */}
+            <Text style={fm.label}>
+              DESCRIÇÃO{'  '}
+              <Text style={fm.hint}>usa {'{target}'} e {'{unit}'} como variáveis</Text>
+            </Text>
+            <TextInput
+              style={[fm.input, fm.inputMulti]}
+              value={form.description}
+              onChangeText={v => field('description', v)}
+              placeholder="ex: Completa {target} {unit} hoje"
+              placeholderTextColor={C.muted}
+              multiline
+
+              numberOfLines={3}
+            />
+
+            {/* ── VALOR BASE + UNIDADE ── */}
+            <View style={fm.row2}>
+              <View style={fm.col}>
+                <Text style={fm.label}>VALOR BASE</Text>
+                <TextInput
+                  style={fm.input}
+                  value={String(form.baseTarget)}
+                   onChangeText={v => field('baseTarget', Number(v) || 0)}
+                   keyboardType="numeric"
+                   placeholder="10"
+                   placeholderTextColor={C.muted}
+                 />
+
+              </View>
+              <View style={fm.col}>
+                <Text style={fm.label}>XP · GOLD</Text>
+                <View style={fm.row2}>
+                  <TextInput
+                    style={[fm.input, { flex: 1 }]}
+                     value={String(form.baseXP)}
+                     onChangeText={v => field('baseXP', Number(v) || 0)}
+                     keyboardType="numeric"
+                     placeholder="20"
+                     placeholderTextColor={C.muted}
+                   />
+
+                  <TextInput
+                    style={[fm.input, { flex: 1 }]}
+                     value={String(form.baseGold)}
+                     onChangeText={v => field('baseGold', Number(v) || 0)}
+                     keyboardType="numeric"
+                     placeholder="8"
+                     placeholderTextColor={C.muted}
+                   />
+
+                </View>
+              </View>
+            </View>
+
+            {/* ── UNIDADE (Chips) ── */}
+            <Text style={fm.label}>UNIDADE</Text>
+            <View style={fm.chipRow}>
+              {UNIT_CHIPS.map(u => (
+                <Chip
+                  key={u}
+                   label={u}
+                   active={form.unit === u}
+                   color={C.neonBlue}
+                   onPress={() => field('unit', u)}
+                   C={C}
+                 />
+
+              ))}
+            </View>
+            <TextInput
+              style={[fm.input, { marginTop: 6 }]}
+               value={UNIT_CHIPS.includes(form.unit) ? '' : form.unit}
+               onChangeText={v => { if (v) field('unit', v) }}
+               placeholder="Outra unidade (ex: passadas)..."
+               placeholderTextColor={C.muted}
+               autoCapitalize="none"
+
+            />
+
+            {/* ── ESCALAMENTO ── */}
+            <Text style={fm.label}>ESCALAMENTO</Text>
+            <View style={fm.row2}>
+              <View style={fm.col}>
+                <Text style={fm.scalingHint}>Aumenta</Text>
+                <View style={fm.scalingRow}>
+                  <TextInput
+                    style={[fm.input, fm.scalingInput]}
+                     value={String(form.scalingAmount)}
+                     onChangeText={v => field('scalingAmount', Number(v) || 0)}
+                     keyboardType="numeric"
+                     placeholder="0"
+                     placeholderTextColor={C.muted}
+                   />
+
+                  <Text style={fm.scalingUnit}>{form.unit || 'unid.'}</Text>
+                </View>
+              </View>
+              <View style={fm.col}>
+                <Text style={fm.scalingHint}>A cada</Text>
+                <View style={fm.scalingRow}>
+                  <TextInput
+                    style={[fm.input, fm.scalingInput]}
+                     value={String(form.scalingInterval)}
+                     onChangeText={v => field('scalingInterval', Math.max(1, Number(v) || 1))}
+                     keyboardType="numeric"
+                     placeholder="1"
+                     placeholderTextColor={C.muted}
+                   />
+
+                  <Text style={fm.scalingUnit}>níveis</Text>
+                </View>
+              </View>
+            </View>
+            {(form.scalingAmount > 0) && (
+              <Text style={fm.scalingPreview}>
+                ↗ +{form.scalingAmount} {form.unit || 'unid.'} a cada {form.scalingInterval} nível{form.scalingInterval > 1 ? 's' : ''}
+              </Text>
+            )}
+
+            {/* ── DIAS DA SEMANA (Core only) ── */}
+            {isCore && (
+              <>
+                <Text style={fm.label}>
+                  DIAS DA SEMANA{'  '}
+                  <Text style={fm.hint}>vazio = todos os dias</Text>
+                </Text>
+                <View style={fm.chipRow}>
+                  {DAY_LABELS.map((label, i) => (
+                    <Chip
+                      key={i}
+                       label={label}
+                       active={form.daysRaw.includes(i)}
+                       color={C.neonBlue}
+                       onPress={() => toggleDay(i)}
+                       C={C}
+                     />
+                  ))}
+                </View>
+              </>
+            )}
+
+            {/* ── EXTRAÇÃO DE SOMBRA (Boss only) ── */}
+            {isBoss && (
+              <>
+                <View style={fm.shadowDivider}>
+                  <View style={fm.shadowDividerLine} />
+                  <Icon name="ghost" size={12} color={C.purple + 'aa'} />
+                  <Text style={fm.shadowDividerTxt}>EXTRAÇÃO DE SOMBRA</Text>
+                  <View style={fm.shadowDividerLine} />
+                </View>
+                <Text style={fm.shadowHint}>
+                  Opcional. Se preenchido, derrotar este Boss extrai uma Sombra para o teu exército.
+                </Text>
+                <Text style={fm.label}>NOME DA SOMBRA</Text>
+                <TextInput
+                  style={fm.input}
+                   value={form.shadowName}
+                   onChangeText={v => field('shadowName', v)}
+                   placeholder="ex: Golem de Obsidiana"
+                   placeholderTextColor={C.muted}
+                 />
+
+                <View style={fm.iconLabelRow}>
+                  <Text style={fm.label}>ÍCONE</Text>
+                  <TouchableOpacity style={fm.iconPickerBtn} onPress={() => setShowIconPicker(true)}>
+                    <Icon name="grid" size={11} color={C.purple} />
+                    <Text style={fm.iconPickerBtnTxt}> VER GRELHA DE ÍCONES</Text>
+                  </TouchableOpacity>
+                </View>
+                <TextInput
+                  style={fm.input}
+                   value={form.shadowIcon}
+                   onChangeText={v => field('shadowIcon', v)}
+                   placeholder="ex: ghost, sword-cross, skull..."
+                   placeholderTextColor={C.muted}
+                   autoCapitalize="none"
+
+                />
+                {form.shadowName.trim() !== '' && (
+                  <View style={fm.shadowPreview}>
+                    <Icon name={form.shadowIcon || 'ghost'} size={22} color={C.purple} />
+                    <Text style={fm.shadowPreviewTxt}> {form.shadowName}</Text>
+                    <View style={fm.shadowRankBadge}>
+                      <Text style={fm.shadowRankTxt}>CUSTOM · Lv.1</Text>
+                    </View>
                   </View>
                 )}
-              </View>
-              <View style={[fm.chipRow, isEditing && fm.chipRowLocked]}>
-                <Chip
-                  label="CORE · Diária fixa"
-                  active={form.type === 'core'}
-                  color={C.neonBlue}
-                  onPress={() => !isEditing && field('type', 'core')}
-                />
-                <Chip
-                  label="POOL · Hábito rotativo"
-                  active={form.type === 'pool'}
-                  color={C.purple}
-                  onPress={() => !isEditing && field('type', 'pool')}
-                />
-                <Chip
-                  label="BOSS · Desafio épico"
-                  active={form.type === 'boss'}
-                  color="#ef4444"
-                  onPress={() => !isEditing && field('type', 'boss')}
-                />
-              </View>
+              </>
+            )}
 
-              {/* ── CATEGORIA ── */}
-              <Text style={fm.label}>CATEGORIA</Text>
-              <View style={fm.chipRow}>
-                {QUEST_TYPE_OPTS.map(opt => (
-                  <CategoryChip
-                    key={opt.value}
-                    opt={opt}
-                    active={form.questType === opt.value}
-                    onPress={() => field('questType', opt.value)}
-                  />
-                ))}
-              </View>
-
-              {/* ── DIFICULDADE ── */}
-              <Text style={fm.label}>
-                DIFICULDADE{'  '}
-                <Text style={fm.hint}>deixa vazio para calcular pelo XP</Text>
-              </Text>
-              <View style={fm.chipRow}>
-                {/* Clear selection */}
-                <Chip
-                  label="AUTO"
-                  active={!form.rank}
-                  color="#64748b"
-                  onPress={() => field('rank', undefined)}
-                />
-                {RANK_OPTS.map(r => (
-                  <Chip
-                    key={r.value}
-                    label={r.value}
-                    active={form.rank === r.value}
-                    color={r.color}
-                    onPress={() => field('rank', r.value)}
-                  />
-                ))}
-              </View>
-
-              {/* ── BOSS CLASS (Boss only) ── */}
-              {isBoss && (
-                <>
-                  <Text style={fm.label}>CLASSE DE BOSS</Text>
-                  <View style={fm.chipRow}>
-                    {BOSS_CLASS_OPTS.map(bc => (
-                      <Chip
-                        key={bc.value}
-                        label={bc.label}
-                        active={form.bossClass === bc.value}
-                        color={bc.color}
-                        onPress={() => field('bossClass', bc.value)}
-                      />
-                    ))}
-                  </View>
-                </>
-              )}
-
-              {/* ── TÍTULO ── */}
-              <Text style={fm.label}>TÍTULO</Text>
-              <TextInput
-                style={fm.input}
-                value={form.title}
-                onChangeText={v => field('title', v)}
-                placeholder="ex: Força Bruta"
-                placeholderTextColor="#334155"
-              />
-
-              {/* ── DESCRIÇÃO ── */}
-              <Text style={fm.label}>
-                DESCRIÇÃO{'  '}
-                <Text style={fm.hint}>usa {'{target}'} e {'{unit}'} como variáveis</Text>
-              </Text>
-              <TextInput
-                style={[fm.input, fm.inputMulti]}
-                value={form.description}
-                onChangeText={v => field('description', v)}
-                placeholder="ex: Completa {target} {unit} hoje"
-                placeholderTextColor="#334155"
-                multiline
-                numberOfLines={3}
-              />
-
-              {/* ── VALOR BASE + UNIDADE ── */}
-              <View style={fm.row2}>
-                <View style={fm.col}>
-                  <Text style={fm.label}>VALOR BASE</Text>
-                  <TextInput
-                    style={fm.input}
-                    value={String(form.baseTarget)}
-                    onChangeText={v => field('baseTarget', Number(v) || 0)}
-                    keyboardType="numeric"
-                    placeholder="10"
-                    placeholderTextColor="#334155"
-                  />
-                </View>
-                <View style={fm.col}>
-                  <Text style={fm.label}>XP · GOLD</Text>
-                  <View style={fm.row2}>
-                    <TextInput
-                      style={[fm.input, { flex: 1 }]}
-                      value={String(form.baseXP)}
-                      onChangeText={v => field('baseXP', Number(v) || 0)}
-                      keyboardType="numeric"
-                      placeholder="20"
-                      placeholderTextColor="#334155"
-                    />
-                    <TextInput
-                      style={[fm.input, { flex: 1 }]}
-                      value={String(form.baseGold)}
-                      onChangeText={v => field('baseGold', Number(v) || 0)}
-                      keyboardType="numeric"
-                      placeholder="8"
-                      placeholderTextColor="#334155"
-                    />
-                  </View>
-                </View>
-              </View>
-
-              {/* ── UNIDADE (Chips) ── */}
-              <Text style={fm.label}>UNIDADE</Text>
-              <View style={fm.chipRow}>
-                {UNIT_CHIPS.map(u => (
-                  <Chip
-                    key={u}
-                    label={u}
-                    active={form.unit === u}
-                    color={C.neonBlue}
-                    onPress={() => field('unit', u)}
-                  />
-                ))}
-              </View>
-              {/* Custom unit input */}
-              <TextInput
-                style={[fm.input, { marginTop: 6 }]}
-                value={UNIT_CHIPS.includes(form.unit) ? '' : form.unit}
-                onChangeText={v => { if (v) field('unit', v) }}
-                placeholder="Outra unidade (ex: passadas)..."
-                placeholderTextColor="#334155"
-                autoCapitalize="none"
-              />
-
-              {/* ── ESCALAMENTO ── */}
-              <Text style={fm.label}>ESCALAMENTO</Text>
-              <View style={fm.row2}>
-                <View style={fm.col}>
-                  <Text style={fm.scalingHint}>Aumenta</Text>
-                  <View style={fm.scalingRow}>
-                    <TextInput
-                      style={[fm.input, fm.scalingInput]}
-                      value={String(form.scalingAmount)}
-                      onChangeText={v => field('scalingAmount', Number(v) || 0)}
-                      keyboardType="numeric"
-                      placeholder="0"
-                      placeholderTextColor="#334155"
-                    />
-                    <Text style={fm.scalingUnit}>{form.unit || 'unid.'}</Text>
-                  </View>
-                </View>
-                <View style={fm.col}>
-                  <Text style={fm.scalingHint}>A cada</Text>
-                  <View style={fm.scalingRow}>
-                    <TextInput
-                      style={[fm.input, fm.scalingInput]}
-                      value={String(form.scalingInterval)}
-                      onChangeText={v => field('scalingInterval', Math.max(1, Number(v) || 1))}
-                      keyboardType="numeric"
-                      placeholder="1"
-                      placeholderTextColor="#334155"
-                    />
-                    <Text style={fm.scalingUnit}>níveis</Text>
-                  </View>
-                </View>
-              </View>
-              {(form.scalingAmount > 0) && (
-                <Text style={fm.scalingPreview}>
-                  ↗ +{form.scalingAmount} {form.unit || 'unid.'} a cada {form.scalingInterval} nível{form.scalingInterval > 1 ? 's' : ''}
-                </Text>
-              )}
-
-              {/* ── DIAS DA SEMANA (Core only) ── */}
-              {isCore && (
-                <>
-                  <Text style={fm.label}>
-                    DIAS DA SEMANA{'  '}
-                    <Text style={fm.hint}>vazio = todos os dias</Text>
-                  </Text>
-                  <View style={fm.chipRow}>
-                    {DAY_LABELS.map((label, i) => (
-                      <Chip
-                        key={i}
-                        label={label}
-                        active={form.daysRaw.includes(i)}
-                        color={C.neonBlue}
-                        onPress={() => toggleDay(i)}
-                      />
-                    ))}
-                  </View>
-                </>
-              )}
-
-              {/* ── EXTRAÇÃO DE SOMBRA (Boss only) ── */}
-              {isBoss && (
-                <>
-                  <View style={fm.shadowDivider}>
-                    <View style={fm.shadowDividerLine} />
-                    <Icon name="ghost" size={12} color={C.purple + 'aa'} />
-                    <Text style={fm.shadowDividerTxt}>EXTRAÇÃO DE SOMBRA</Text>
-                    <View style={fm.shadowDividerLine} />
-                  </View>
-                  <Text style={fm.shadowHint}>
-                    Opcional. Se preenchido, derrotar este Boss extrai uma Sombra para o teu exército.
-                  </Text>
-                  <Text style={fm.label}>NOME DA SOMBRA</Text>
-                  <TextInput
-                    style={fm.input}
-                    value={form.shadowName}
-                    onChangeText={v => field('shadowName', v)}
-                    placeholder="ex: Golem de Obsidiana"
-                    placeholderTextColor="#334155"
-                  />
-                  <View style={fm.iconLabelRow}>
-                    <Text style={fm.label}>ÍCONE</Text>
-                    <TouchableOpacity style={fm.iconPickerBtn} onPress={() => setShowIconPicker(true)}>
-                      <Icon name="grid" size={11} color={C.purple} />
-                      <Text style={fm.iconPickerBtnTxt}> VER GRELHA DE ÍCONES</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <TextInput
-                    style={fm.input}
-                    value={form.shadowIcon}
-                    onChangeText={v => field('shadowIcon', v)}
-                    placeholder="ex: ghost, sword-cross, skull..."
-                    placeholderTextColor="#334155"
-                    autoCapitalize="none"
-                  />
-                  {form.shadowName.trim() !== '' && (
-                    <View style={fm.shadowPreview}>
-                      <Icon name={form.shadowIcon || 'ghost'} size={22} color={C.purple} />
-                      <Text style={fm.shadowPreviewTxt}> {form.shadowName}</Text>
-                      <View style={fm.shadowRankBadge}>
-                        <Text style={fm.shadowRankTxt}>CUSTOM · Lv.1</Text>
-                      </View>
-                    </View>
-                  )}
-                </>
-              )}
-
-              {/* ── SAVE ── */}
-              <TouchableOpacity style={fm.saveBtn} onPress={handleSave} activeOpacity={0.85}>
-                <Icon name="check-bold" size={18} color="#FFFFFF" />
-                <Text style={fm.saveTxt}>{initial ? ' GUARDAR ALTERAÇÕES' : ' CRIAR DIRETIVA'}</Text>
-              </TouchableOpacity>
-
-            </ScrollView>
-          </View>
+            {/* ── SAVE ── */}
+            <TouchableOpacity style={fm.saveBtn} onPress={handleSave} activeOpacity={0.85}>
+              <Icon name="check-bold" size={18} color="#FFFFFF" />
+              <Text style={fm.saveTxt}>{initial ? ' GUARDAR ALTERAÇÕES' : ' CRIAR DIRETIVA'}</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
 
       {/* ── Icon Picker Modal ── */}
       {showIconPicker && (
-        <Modal transparent animationType="fade" onRequestClose={() => setShowIconPicker(false)}>
-          <View style={ip.overlay}>
-            <View style={ip.card}>
-              <View style={ip.header}>
-                <Icon name="grid" size={14} color={C.purple} />
-                <Text style={ip.headerTxt}> BIBLIOTECA DE ÍCONES</Text>
-                <TouchableOpacity onPress={() => setShowIconPicker(false)}>
-                  <Icon name="close" size={18} color={C.muted} />
-                </TouchableOpacity>
-              </View>
-              <Text style={ip.hint}>Toca para selecionar. O nome preenche automaticamente.</Text>
-              <FlatList
-                data={ICON_GRID}
-                keyExtractor={item => item}
-                numColumns={5}
-                contentContainerStyle={ip.grid}
-                renderItem={({ item: iconName }) => (
-                  <TouchableOpacity
-                    style={[ip.cell, form.shadowIcon === iconName && ip.cellActive]}
-                    onPress={() => { field('shadowIcon', iconName); setShowIconPicker(false) }}
-                    activeOpacity={0.7}
-                  >
-                    <Icon name={iconName} size={24} color={form.shadowIcon === iconName ? C.purple : C.muted} />
-                    <Text style={[ip.cellTxt, form.shadowIcon === iconName && { color: C.purple }]} numberOfLines={1}>
-                      {iconName}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              />
+        <SoloLevelingModal visible onRequestClose={() => setShowIconPicker(false)} useNativeModal={false}>
+          <View style={ip.card}>
+            <View style={ip.header}>
+              <Text style={ip.headerTxt}> BIBLIOTECA DE ÍCONES</Text>
+              <TouchableOpacity onPress={() => setShowIconPicker(false)}>
+                <Icon name="close" size={18} color={C.muted} />
+              </TouchableOpacity>
             </View>
+            <Text style={ip.hint}>Toca para selecionar. O nome preenche automaticamente.</Text>
+            <FlatList
+              data={ICON_GRID}
+              keyExtractor={item => item}
+              numColumns={5}
+              contentContainerStyle={ip.grid}
+              renderItem={({ item: iconName }) => (
+                <TouchableOpacity
+                  style={[ip.cell, form.shadowIcon === iconName && ip.cellActive]}
+                  onPress={() => { field('shadowIcon', iconName); setShowIconPicker(false) }}
+                  activeOpacity={0.7}
+                >
+                  <Icon name={iconName} size={24} color={form.shadowIcon === iconName ? C.purple : C.muted} />
+                  <Text style={[ip.cellTxt, form.shadowIcon === iconName && { color: C.purple }]} numberOfLines={1}>
+                    {iconName}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
           </View>
-        </Modal>
+        </SoloLevelingModal>
       )}
 
       {alertCfg && (
@@ -531,10 +570,12 @@ function FormModal({
           message={alertCfg.message}
           buttons={alertCfg.buttons}
           onClose={() => setAlertCfg(null)}
+          useNativeModal={false}
+          C={C}
         />
-      )}
 
-    </Modal>
+      )}
+    </BottomSheetModal>
   )
 }
 
@@ -544,11 +585,18 @@ function DefRow({
   def,
   onEdit,
   onDeleteRequest,
+  C,
 }: {
-  def:             QuestDefinition
-  onEdit:          () => void
+
+
+  def: QuestDefinition
+  onEdit: () => void
   onDeleteRequest: () => void
+  C: any
 }) {
+  const dr = getDRStyles(C)
+  const QUEST_TYPE_OPTS = getQuestTypeOpts(C)
+
   const qtCfg = QUEST_TYPE_OPTS.find(o => o.value === def.questType) ?? QUEST_TYPE_OPTS[0]
 
   return (
@@ -558,7 +606,7 @@ function DefRow({
       </View>
       <View style={dr.info}>
         <Text style={dr.title} numberOfLines={1}>{def.title}</Text>
-        <Text style={dr.desc}  numberOfLines={1}>{def.description || '—'}</Text>
+        <Text style={dr.desc} numberOfLines={1}>{def.description || '—'}</Text>
         <Text style={dr.meta}>
           {def.baseTarget} {def.unit}
           {(def.scalingAmount ?? def.scalingPerLevel ?? 0) > 0
@@ -582,17 +630,20 @@ function DefRow({
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
-  const questDictionary       = useGameStore(s => s.questDictionary)
-  const addQuestDefinition    = useGameStore(s => s.addQuestDefinition)
+  const C = useTheme()
+  const s = getSStyles(C)
+
+  const questDictionary = useGameStore(s => s.questDictionary)
+  const addQuestDefinition = useGameStore(s => s.addQuestDefinition)
   const updateQuestDefinition = useGameStore(s => s.updateQuestDefinition)
   const deleteQuestDefinition = useGameStore(s => s.deleteQuestDefinition)
-  const regenerateDailyQuests = useGameStore(s => s.regenerateDailyQuests)
+  const regenerateDailyQuests = useGameStore(s => (s as any).regenerateDailyQuests)
 
-  const [formTarget,      setFormTarget]      = useState<QuestDefinition | null | 'new'>(null)
-  const [deleteTarget,    setDeleteTarget]    = useState<QuestDefinition | null>(null)
-  const [showRegen,       setShowRegen]       = useState(false)
-  const [showReset,       setShowReset]       = useState(false)
-  const [regenResult,     setRegenResult]     = useState<{ success: boolean; reason?: string } | null>(null)
+  const [formTarget, setFormTarget] = useState<QuestDefinition | null | 'new'>(null)
+  const [deleteTarget, setDeleteTarget] = useState<QuestDefinition | null>(null)
+  const [showRegen, setShowRegen] = useState(false)
+  const [showReset, setShowReset] = useState(false)
+  const [regenResult, setRegenResult] = useState<{ success: boolean; reason?: string } | null>(null)
 
   const coreDefs = questDictionary.filter(d => d.type === 'core')
   const poolDefs = questDictionary.filter(d => d.type === 'pool')
@@ -607,11 +658,6 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
     setFormTarget(null)
   }
 
-  function handleRegenerate() {
-    const result = regenerateDailyQuests()
-    setRegenResult(result)
-  }
-
   function confirmReset() {
     questDictionary.forEach(d => deleteQuestDefinition(d.id))
     INITIAL_QUEST_DICTIONARY.forEach(d => addQuestDefinition(d))
@@ -619,35 +665,31 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <Modal
+    <SoloLevelingModal
       visible
-      animationType="slide"
       onRequestClose={onClose}
-      // Android: renders full screen (presentationStyle not applicable)
     >
-      <SafeAreaView style={s.safeArea} edges={['top', 'bottom']}>
+      <View style={s.safeArea}>
 
         {/* Header */}
         <View style={s.header}>
           <Icon name="hammer-wrench" size={16} color={C.gold} />
           <Text style={s.headerTxt}> FORJA DE MISSÕES</Text>
-          <TouchableOpacity onPress={onClose} style={s.closeBtn}>
-            <Icon name="close" size={22} color="#64748b" />
-          </TouchableOpacity>
+           <TouchableOpacity onPress={onClose} style={s.closeBtn}>
+             <Icon name="close" size={22} color={C.muted} />
+           </TouchableOpacity>
+
         </View>
 
         <ScrollView contentContainerStyle={s.content}>
 
           {/* Action row */}
           <View style={s.actionRow}>
-            <TouchableOpacity style={[s.actionBtn, s.regenBtn]} onPress={() => setShowRegen(true)}>
-              <Icon name="refresh" size={14} color={C.neonBlue} />
-              <Text style={[s.actionTxt, { color: C.neonBlue }]}> REGENERAR HOJE</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[s.actionBtn, s.resetBtn]} onPress={() => setShowReset(true)}>
-              <Icon name="restore" size={14} color="#64748b" />
-              <Text style={[s.actionTxt, { color: '#64748b' }]}> RESTAURAR</Text>
-            </TouchableOpacity>
+             <TouchableOpacity style={[s.actionBtn, s.resetBtn]} onPress={() => setShowReset(true)}>
+               <Icon name="restore" size={14} color={C.muted} />
+               <Text style={[s.actionTxt, { color: C.muted }]}> RESTAURAR</Text>
+             </TouchableOpacity>
+
           </View>
 
           {/* Core section */}
@@ -665,6 +707,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
               key={def.id} def={def}
               onEdit={() => setFormTarget(def)}
               onDeleteRequest={() => setDeleteTarget(def)}
+              C={C}
             />
           ))}
 
@@ -685,6 +728,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
               key={def.id} def={def}
               onEdit={() => setFormTarget(def)}
               onDeleteRequest={() => setDeleteTarget(def)}
+              C={C}
             />
           ))}
 
@@ -705,6 +749,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
               key={def.id} def={def}
               onEdit={() => setFormTarget(def)}
               onDeleteRequest={() => setDeleteTarget(def)}
+              C={C}
             />
           ))}
 
@@ -716,47 +761,16 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
           <Text style={s.fabTxt}> CRIAR NOVA DIRETIVA</Text>
         </TouchableOpacity>
 
-      </SafeAreaView>
+      </View>
 
-      {formTarget !== null && (
-        <FormModal
-          initial={formTarget === 'new' ? undefined : formTarget}
-          onSave={handleSave}
-          onClose={() => setFormTarget(null)}
-        />
-      )}
+      <FormModal
+        visible={formTarget !== null}
+         initial={formTarget && formTarget !== 'new' ? formTarget : undefined}
+         onSave={handleSave}
+         onClose={() => setFormTarget(null)}
+         C={C}
+       />
 
-      {/* ── Regen confirm modal ──────────────────────────────────────────── */}
-      <CustomModal
-        visible={showRegen}
-        title="REGENERAR MISSÕES"
-        message={
-          'As missões da pool de hoje serão re-sorteadas.\n\n' +
-          'As missões core já concluídas mantêm o estado.\n\n' +
-          'Limite: 3 regenerações por semana.'
-        }
-        confirmLabel="REGENERAR"
-        confirmIcon="refresh"
-        confirmColor={C.neonBlue}
-        onConfirm={() => { setShowRegen(false); handleRegenerate() }}
-        onCancel={() => setShowRegen(false)}
-      />
-
-      {/* ── Regen result modal (success or limit reached) ─────────────── */}
-      <CustomModal
-        visible={regenResult !== null}
-        title={regenResult?.success ? 'SISTEMA ATUALIZADO' : 'LIMITE ATINGIDO'}
-        message={
-          regenResult?.success
-            ? 'As missões de hoje foram recalculadas com o dicionário atual.'
-            : (regenResult?.reason ?? 'Não foi possível regenerar.')
-        }
-        confirmLabel="OK"
-        confirmIcon={regenResult?.success ? 'check-circle-outline' : 'alert-circle-outline'}
-        confirmColor={regenResult?.success ? C.neonBlue : C.neonRed}
-        onConfirm={() => setRegenResult(null)}
-        onCancel={() => setRegenResult(null)}
-      />
 
       {/* ── Reset confirm modal ──────────────────────────────────────────── */}
       <CustomModal
@@ -770,149 +784,154 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
         confirmColor={C.neonRed}
         onConfirm={confirmReset}
         onCancel={() => setShowReset(false)}
+        useNativeModal={false}
+        C={C}
       />
 
+
       {/* ── Delete directive confirm ──────────────────────────────────────── */}
-      {deleteTarget && (
-        <SystemAlertModal
-          title="Apagar Diretiva"
-          message={`Remover "${deleteTarget.title}" do Sistema? As missões de hoje não serão afetadas.`}
-          buttons={[
-            { text: 'Cancelar', style: 'cancel' },
-            { text: 'Apagar',   style: 'destructive', onPress: () => deleteQuestDefinition(deleteTarget.id) },
-          ]}
-          onClose={() => setDeleteTarget(null)}
-        />
-      )}
-    </Modal>
+      <SystemAlertModal
+        visible={!!deleteTarget}
+        title="Apagar Diretiva"
+        message={`Remover "${deleteTarget?.title || ''}" do Sistema? As missões de hoje não serão afetadas.`}
+        buttons={[
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Apagar', style: 'destructive', onPress: () => { if (deleteTarget) deleteQuestDefinition(deleteTarget.id) } },
+        ]}
+        onClose={() => setDeleteTarget(null)}
+        useNativeModal={false}
+        C={C}
+      />
+
+    </SoloLevelingModal>
   )
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
-const s = StyleSheet.create({
-  safeArea:     { flex: 1, backgroundColor: '#080d14' },
-  header:       { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#1e293b' },
-  headerTxt:    { flex: 1, color: C.gold, fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 3 },
-  closeBtn:     { padding: 6 },
-  content:      { padding: SPACING.md, paddingBottom: 110 },
+const getSStyles = (C: any) => StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: C.bg, width: '100%' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: C.border },
+  headerTxt: { flex: 1, color: C.gold, fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 3 },
+  closeBtn: { padding: 6 },
+  content: { padding: SPACING.md, paddingBottom: 110 },
 
-  actionRow:    { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.lg },
-  actionBtn:    { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 10, paddingVertical: 13, borderWidth: 1 },
-  regenBtn:     { borderColor: C.neonBlue + '55', backgroundColor: C.neonBlue + '0c' },
-  resetBtn:     { borderColor: '#1e293b', backgroundColor: '#0f172a' },
-  actionTxt:    { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+  actionRow: { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.lg },
+  actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 10, paddingVertical: 13, borderWidth: 1 },
+  regenBtn: { borderColor: C.neonBlue + '55', backgroundColor: C.neonBlue + '0c' },
+  resetBtn: { borderColor: C.border, backgroundColor: C.panel },
+  actionTxt: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
 
-  sectionHeader:{ flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: 4 },
-  sectionDot:   { width: 8, height: 8, borderRadius: 4 },
-  sectionTitle: { flex: 1, color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
-  sectionCount: { color: '#64748b', fontFamily: FONT.orbitron, fontSize: 10 },
-  sectionSub:   { color: '#475569', fontSize: 11, marginBottom: SPACING.sm },
-  empty:        { color: '#475569', fontSize: 11, fontStyle: 'italic', marginBottom: SPACING.sm },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: 4 },
+  sectionDot: { width: 8, height: 8, borderRadius: 4 },
+  sectionTitle: { flex: 1, color: C.text, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+  sectionCount: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10 },
+  sectionSub: { color: C.muted, fontSize: 11, marginBottom: SPACING.sm },
+  empty: { color: C.muted, fontSize: 11, fontStyle: 'italic', marginBottom: SPACING.sm },
 
   fab: {
     position: 'absolute', bottom: 24, left: SPACING.md, right: SPACING.md,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#6d28d9',   // rich purple — distinct from gold
+    backgroundColor: '#6d28d9',   // rich purple
     borderRadius: 14, paddingVertical: 16,
     shadowColor: '#6d28d9', shadowOpacity: 0.5, shadowRadius: 12, elevation: 8,
   },
   fabTxt: { color: '#FFFFFF', fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 2 },
 })
 
-const dr = StyleSheet.create({
-  row:      { flexDirection: 'row', alignItems: 'center', backgroundColor: '#0f172a', borderRadius: 12, borderWidth: 1, borderColor: '#1e293b', padding: SPACING.sm, marginBottom: 8, gap: SPACING.sm },
+const getDRStyles = (C: any) => StyleSheet.create({
+  row: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: C.border, padding: SPACING.sm, marginBottom: 8, gap: SPACING.sm },
   iconWrap: { width: 40, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  info:     { flex: 1 },
-  title:    { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', marginBottom: 2 },
-  desc:     { color: '#64748b', fontSize: 11 },
-  meta:     { color: '#334155', fontSize: 10, marginTop: 3 },
-  actions:  { flexDirection: 'row', gap: 6, flexShrink: 0 },
-  editBtn:  { padding: 8, borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 8, backgroundColor: C.neonBlue + '0a' },
-  deleteBtn:{ padding: 8, borderWidth: 1, borderColor: C.neonRed  + '44', borderRadius: 8, backgroundColor: C.neonRed  + '0a' },
+  info: { flex: 1 },
+  title: { color: C.text, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', marginBottom: 2 },
+  desc: { color: C.muted, fontSize: 11 },
+  meta: { color: C.dimmed, fontSize: 10, marginTop: 3 },
+  actions: { flexDirection: 'row', gap: 6, flexShrink: 0 },
+  editBtn: { padding: 8, borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 8, backgroundColor: C.neonBlue + '0a' },
+  deleteBtn: { padding: 8, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 8, backgroundColor: C.neonRed + '0a' },
 })
 
-const fm = StyleSheet.create({
-  overlay:   { flex: 1, backgroundColor: '#000000e8', justifyContent: 'flex-end' },
-  sheet:     { backgroundColor: '#0a0f1a', borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '94%', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#1e293b' },
-  header:    { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#1e293b' },
-  headerTxt: { flex: 1, color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
-  closeBtn:  { padding: 6 },
-  body:      { padding: SPACING.md, paddingBottom: 32 },
+const getCHStyles = (C: any) => StyleSheet.create({
+  base: { borderRadius: 20, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 7 },
+  catBase: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  inactive: { borderColor: C.border, backgroundColor: C.panel },
+  txt: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+})
 
-  label:     { color: '#00D4FF', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginBottom: 8, marginTop: SPACING.md },
-  hint:      { color: '#334155', fontFamily: FONT.system, fontSize: 9, letterSpacing: 0 },
+const getFMStyles = (C: any) => StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: '#000000e8', justifyContent: 'flex-end' },
+  sheet: { backgroundColor: C.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '94%', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: C.border },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: C.border },
+  headerTxt: { flex: 1, color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
+  closeBtn: { padding: 6 },
+  body: { padding: SPACING.md, paddingBottom: 32 },
+
+  label: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginBottom: 8, marginTop: SPACING.md },
+  hint: { color: C.dimmed, fontFamily: FONT.system, fontSize: 9, letterSpacing: 0 },
 
   // Clean input: thin border, proper padding for fingers
-  input:     {
-    backgroundColor: '#0f172a',
-    borderWidth: 1, borderColor: '#1e293b', borderRadius: 10,
+  input: {
+    backgroundColor: C.panel,
+    borderWidth: 1, borderColor: C.border, borderRadius: 10,
     paddingHorizontal: 14, paddingVertical: 12,
     color: '#FFFFFF', fontSize: 14, marginBottom: 4,
   },
   inputMulti: { minHeight: 72, textAlignVertical: 'top' },
 
-  chipRow:  { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 4 },
-  row2:     { flexDirection: 'row', gap: SPACING.sm },
-  col:      { flex: 1 },
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 4 },
+  row2: { flexDirection: 'row', gap: SPACING.sm },
+  col: { flex: 1 },
 
   // Scaling inputs
-  scalingHint:    { color: '#64748b', fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginBottom: 6, marginTop: 4 },
-  scalingRow:     { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  scalingInput:   { flex: 1, marginBottom: 0 },
-  scalingUnit:    { color: '#64748b', fontSize: 11, minWidth: 38 },
+  scalingHint: { color: '#64748b', fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginBottom: 6, marginTop: 4 },
+  scalingRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  scalingInput: { flex: 1, marginBottom: 0 },
+  scalingUnit: { color: '#64748b', fontSize: 11, minWidth: 38 },
   scalingPreview: { color: '#22c55e', fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginTop: 6, marginBottom: 4 },
 
-  daysRow:  { flexDirection: 'row', gap: 6, flexWrap: 'wrap', marginBottom: 4 },
-  dayBtn:   { width: 38, height: 38, borderRadius: 10, borderWidth: 1, borderColor: '#1e293b', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a' },
+  daysRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap', marginBottom: 4 },
+  dayBtn: { width: 38, height: 38, borderRadius: 10, borderWidth: 1, borderColor: '#1e293b', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a' },
   dayBtnActive: { borderColor: C.neonBlue, backgroundColor: C.neonBlue + '18' },
-  dayTxt:   { color: '#475569', fontFamily: FONT.orbitron, fontSize: 8 },
+  dayTxt: { color: '#475569', fontFamily: FONT.orbitron, fontSize: 8 },
   dayTxtActive: { color: C.neonBlue },
 
   // Save button — solid purple/blue gradient-feel
-  saveBtn:  {
+  saveBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     backgroundColor: '#4f46e5',   // indigo — clean, bold
     borderRadius: 14, paddingVertical: 16, marginTop: SPACING.lg,
     shadowColor: '#4f46e5', shadowOpacity: 0.4, shadowRadius: 10, elevation: 6,
   },
-  saveTxt:  { color: '#FFFFFF', fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 1 },
+  saveTxt: { color: '#FFFFFF', fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 1 },
 
-  labelRow:        { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm, marginTop: SPACING.md },
-  lockBadge:       { flexDirection: 'row', alignItems: 'center', backgroundColor: C.border + '44', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
-  lockTxt:         { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
-  chipRowLocked:   { opacity: 0.45 },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm, marginTop: SPACING.md },
+  lockBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.border + '44', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
+  lockTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  chipRowLocked: { opacity: 0.45 },
 
-  shadowDivider:     { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginTop: SPACING.lg, marginBottom: SPACING.sm },
+  shadowDivider: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginTop: SPACING.lg, marginBottom: SPACING.sm },
   shadowDividerLine: { flex: 1, height: 1, backgroundColor: C.purple + '44' },
-  shadowDividerTxt:  { color: C.purple, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
-  shadowHint:        { color: C.dimmed, fontSize: 11, lineHeight: 16, marginBottom: SPACING.sm },
-  shadowPreview:     { flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '15', borderWidth: 1, borderColor: C.purple + '44', borderRadius: 4, padding: SPACING.sm, marginTop: SPACING.sm },
-  shadowPreviewTxt:  { color: C.purple, fontFamily: FONT.orbitron, fontSize: 11, flex: 1 },
-  shadowRankBadge:   { borderWidth: 1, borderColor: C.purple + '55', borderRadius: 2, paddingHorizontal: 5, paddingVertical: 2 },
-  shadowRankTxt:     { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  shadowDividerTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  shadowHint: { color: C.dimmed, fontSize: 11, lineHeight: 16, marginBottom: SPACING.sm },
+  shadowPreview: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '15', borderWidth: 1, borderColor: C.purple + '44', borderRadius: 4, padding: SPACING.sm, marginTop: SPACING.sm },
+  shadowPreviewTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 11, flex: 1 },
+  shadowRankBadge: { borderWidth: 1, borderColor: C.purple + '55', borderRadius: 2, paddingHorizontal: 5, paddingVertical: 2 },
+  shadowRankTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 
-  iconLabelRow:    { flexDirection: 'row', alignItems: 'center', marginTop: SPACING.md, marginBottom: 8 },
-  iconPickerBtn:   { marginLeft: SPACING.sm, flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '18', borderWidth: 1, borderColor: C.purple + '55', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
-  iconPickerBtnTxt:{ color: C.purple, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  iconLabelRow: { flexDirection: 'row', alignItems: 'center', marginTop: SPACING.md, marginBottom: 8 },
+  iconPickerBtn: { marginLeft: SPACING.sm, flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '18', borderWidth: 1, borderColor: C.purple + '55', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
+  iconPickerBtnTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 })
 
-const ip = StyleSheet.create({
+const getIPStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: '#000000', justifyContent: 'center', padding: SPACING.md },
-  card:    { backgroundColor: '#000000', borderRadius: 12, borderWidth: 1, borderColor: C.purple, maxHeight: '80%' },
-  header:  { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, borderBottomWidth: 1, borderBottomColor: C.border },
+  card: { backgroundColor: C.bg, borderRadius: 12, borderWidth: 1, borderColor: C.purple, maxHeight: '80%' },
+  header: { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, borderBottomWidth: 1, borderBottomColor: C.border },
   headerTxt: { flex: 1, color: C.purple, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
-  hint:    { color: C.dimmed, fontSize: 11, paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm },
-  grid:    { padding: SPACING.sm, paddingBottom: SPACING.lg },
-  cell:    { flex: 1, alignItems: 'center', padding: SPACING.sm, borderRadius: 4, marginBottom: 4 },
+  hint: { color: C.dimmed, fontSize: 11, paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm },
+  grid: { padding: SPACING.sm, paddingBottom: SPACING.lg },
+  cell: { flex: 1, alignItems: 'center', padding: SPACING.sm, borderRadius: 4, marginBottom: 4 },
   cellActive: { backgroundColor: C.purple + '18' },
   cellTxt: { color: C.dimmed, fontSize: 7, fontFamily: FONT.orbitron, marginTop: 3, textAlign: 'center' },
 })
 
-// Chip styles (shared component)
-const ch = StyleSheet.create({
-  base:     { borderRadius: 20, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 7 },
-  catBase:  { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  inactive: { borderColor: '#1e293b', backgroundColor: '#0f172a' },
-  txt:      { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-})

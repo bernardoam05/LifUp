@@ -1,133 +1,169 @@
 import React, { useRef, useState, useEffect } from 'react'
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Modal, AppState, AppStateStatus,
-  Vibration, TextInput, BackHandler,
+  TouchableOpacity, AppState, AppStateStatus,
+  Vibration, TextInput, BackHandler, Alert,
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { Quest, SideQuest } from '../store/useGameStore'
 import { SHADOW_MAP } from '../data/shadows'
 import { RAID_BOSSES } from '../data/bosses'
+import { ALL_DUNGEON_KEYS, getKeyByBossId } from '../data/dungeonKeys'
 import QuestForgeScreen from './QuestForgeScreen'
 import MissionActiveScreen from './MissionActiveScreen'
 import CustomModal from '../components/CustomModal'
+import SoloLevelingModal from '../components/SoloLevelingModal'
 import { useLocationTracker } from '../hooks/useLocationTracker'
 import { scheduleSideQuestNotification, cancelSideQuestNotification } from '../utils/notifications'
-import { C, FONT, SPACING } from '../theme'
+import BottomSheetModal from '../components/BottomSheetModal'
+import { useTheme, FONT, SPACING } from '../theme'
 
 // Vibration patterns
 const VIB_COMPLETE = [0, 80, 40, 120]
-const VIB_FOCUS    = [0, 200, 80, 200, 80, 400]
+const VIB_FOCUS = [0, 200, 80, 200, 80, 400]
 
-const s = StyleSheet.create({
-  safeArea:      { flex: 1, backgroundColor: C.bg },
-  content:       { padding: SPACING.md, paddingBottom: 96 },
-  titleRow:      { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
-  title:         { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, letterSpacing: 3 },
-  forgeBtn:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1, borderColor: C.neonBlue, borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 16, marginBottom: 4 },
-  forgeBtnTxt:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 1, fontWeight: '700' },
+const RANK_COLORS: Record<string, string> = {
+  E: '#94a3b8', D: '#22c55e', C: '#3b82f6', B: '#a855f7', A: '#f59e0b', S: '#ef4444',
+}
+
+// ── Styles ─────────────────────────────────────────────────────────────────────
+
+const getStyles = (C: any) => StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: C.bg },
+  content: { padding: SPACING.md, paddingBottom: 96 },
+  titleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  title: { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, letterSpacing: 3 },
+  forgeBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1, borderColor: C.neonBlue, borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 16, marginBottom: 4 },
+  forgeBtnTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 1, fontWeight: '700' },
   forgeSubtitle: { color: '#94a3b8', fontSize: 12, textAlign: 'center', marginTop: 4, marginBottom: SPACING.md },
-  restBadge:        { flexDirection: 'row', alignItems: 'center', backgroundColor: C.green + '18', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 3, borderWidth: 1, borderColor: C.green + '44' },
-  restTxt:          { color: C.green, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
-  actionRow:        { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.sm },
-  actionBtn:        { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingVertical: 10, backgroundColor: C.panel },
-  actionBtnTxt:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  actionBtnSub:     { color: C.dimmed, fontSize: 9, marginTop: 2 },
-  restDayBanner:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.green + '12', borderWidth: 1, borderColor: C.green + '55', borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.md },
+  restBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.green + '18', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 3, borderWidth: 1, borderColor: C.green + '44' },
+  restTxt: { color: C.green, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  actionRow: { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.sm },
+  actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingVertical: 10, backgroundColor: C.panel },
+  actionBtnTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+  actionBtnSub: { color: C.dimmed, fontSize: 9, marginTop: 2 },
+  restDayBanner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.green + '12', borderWidth: 1, borderColor: C.green + '55', borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.md },
   restDayBannerTxt: { color: C.green, fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', letterSpacing: 2 },
   progressTrack: { height: 4, backgroundColor: C.border, borderRadius: 0, overflow: 'hidden' },
-  progressFill:  { height: '100%', backgroundColor: C.neonBlue, borderRadius: 0 },
+  progressFill: { height: '100%', backgroundColor: C.neonBlue, borderRadius: 0 },
 
-  bossBanner:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#1a0505', borderWidth: 1, borderColor: C.neonRed + '88', borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.sm },
+  bossBanner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#1a0505', borderWidth: 1, borderColor: C.neonRed + '88', borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.sm },
   bossBannerLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-  bossTitle:      { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '900', letterSpacing: 1 },
-  bossSub:        { color: '#94a3b8', fontSize: 10, marginTop: 2 },
+  bossTitle: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '900', letterSpacing: 1 },
+  bossSub: { color: '#94a3b8', fontSize: 10, marginTop: 2 },
   bossDefeatedBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.green + '12', borderWidth: 1, borderColor: C.green + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   bossDefeatedTxt: { color: C.green, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  eventCard:      { backgroundColor: '#0f0a00', borderWidth: 1, borderColor: '#f9731644', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  eventCard: { backgroundColor: '#0f0a00', borderWidth: 1, borderColor: '#f9731644', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   eventHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   eventHeaderTxt: { color: '#f97316', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  eventSub:       { color: C.dimmed, fontSize: 10, marginBottom: 6 },
-  eventTrack:     { height: 6, backgroundColor: '#1a1200', borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: '#f9731633', marginBottom: 6 },
-  eventFill:      { height: '100%', backgroundColor: '#f97316' },
-  eventTrialsList:{ marginBottom: 6 },
-  eventTrialRow:  { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 3 },
-  eventTrialTxt:  { color: C.muted, fontSize: 10 },
+  eventSub: { color: C.dimmed, fontSize: 10, marginBottom: 6 },
+  eventTrack: { height: 6, backgroundColor: '#1a1200', borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: '#f9731633', marginBottom: 6 },
+  eventFill: { height: '100%', backgroundColor: '#f97316' },
+  eventTrialsList: { marginBottom: 6 },
+  eventTrialRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 3 },
+  eventTrialTxt: { color: C.muted, fontSize: 10 },
   eventTrialDone: { color: C.green },
-  eventHint:      { color: C.muted, fontSize: 10 },
+  eventHint: { color: C.muted, fontSize: 10 },
 
-  weeklyCard:    { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm, borderWidth: 1, borderColor: C.border },
-  weeklyHeader:  { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
-  weeklyTitle:   { flex: 1, color: '#94a3b8', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  weeklyCount:   { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
-  weeklyTrack:   { height: 4, backgroundColor: C.border, borderRadius: 0, overflow: 'hidden', marginBottom: 4 },
-  weeklyFill:    { height: '100%', borderRadius: 0 },
-  weeklyDone:    { color: C.green, fontSize: 10, fontStyle: 'italic' },
-  boostBanner:   { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fbbf2415', borderWidth: 1, borderColor: '#fbbf2444', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
-  boostTxt:      { color: '#fbbf24', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  penalSection:  { marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm },
-  penalHeader:   { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
-  penalTitle:    { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+  weeklyCard: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm, borderWidth: 1, borderColor: C.border },
+  weeklyHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
+  weeklyTitle: { flex: 1, color: '#94a3b8', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+  weeklyCount: { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
+  weeklyTrack: { height: 4, backgroundColor: C.border, borderRadius: 0, overflow: 'hidden', marginBottom: 4 },
+  weeklyFill: { height: '100%', borderRadius: 0 },
+  weeklyDone: { color: C.green, fontSize: 10, fontStyle: 'italic' },
+  boostBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fbbf2415', borderWidth: 1, borderColor: '#fbbf2444', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  boostTxt: { color: '#fbbf24', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+  penalSection: { marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm },
+  penalHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  penalTitle: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 
   sectionDivider: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.md, marginTop: 4 },
-  sectionLine:    { flex: 1, height: 1, backgroundColor: C.neonBlue + '33' },
-  sectionLabel:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, fontWeight: '700' },
+  sectionLine: { flex: 1, height: 1, backgroundColor: C.neonBlue + '33' },
+  sectionLabel: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, fontWeight: '700' },
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.md },
-  regenBtnInline:   { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: C.neonBlue + '15', borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
-  regenBtnTxt:      { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+  regenBtnInline: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: C.neonBlue + '15', borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
+  regenBtnTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
 
-  statusBar:          { backgroundColor: C.panel, borderWidth: 1, borderColor: C.neonBlue + '33', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.md },
-  statusBarRow:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  statusBarLabel:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 2 },
-  statusBarCounter:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900' },
-  statusBarSlash:     { color: C.dimmed, fontSize: 14, fontWeight: '400' },
-  statusBarBossRow:   { flexDirection: 'row', alignItems: 'center', marginTop: 6, borderTopWidth: 1, borderTopColor: C.border, paddingTop: 5 },
+  statusBar: { backgroundColor: C.panel, borderWidth: 1, borderColor: C.neonBlue + '33', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.md },
+  statusBarRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  statusBarLabel: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 2 },
+  statusBarCounter: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900' },
+  statusBarSlash: { color: C.dimmed, fontSize: 14, fontWeight: '400' },
+  statusBarBossRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6, borderTopWidth: 1, borderTopColor: C.border, paddingTop: 5 },
   statusBarBossLabel: { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 
-  extraInfoBox:      { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
-  extraInfoTxt:      { flex: 1, color: C.gold, fontSize: 11, lineHeight: 16 },
+  extraInfoBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  extraInfoTxt: { flex: 1, color: C.gold, fontSize: 11, lineHeight: 16 },
 
-  extraCard:         { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
-  extraCardDone:     { opacity: 0.45 },
-  extraCardLeft:     { width: 32, alignItems: 'center' },
-  extraCardLabel:    { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', letterSpacing: 0.5, marginBottom: 3 },
-  extraCardDetail:   { color: C.muted, fontSize: 11, lineHeight: 16, marginBottom: 5 },
-  extraRewards:      { flexDirection: 'row', alignItems: 'center' },
-  extraRewardTxt:    { color: C.gold, fontSize: 11, fontWeight: '700' },
-  extraBonusBadge:   { marginLeft: 8, backgroundColor: C.gold + '22', borderWidth: 1, borderColor: C.gold + '55', borderRadius: 2, paddingHorizontal: 4, paddingVertical: 1 },
-  extraBonusTxt:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5 },
-  extraCompleteBtn:  { width: 36, height: 36, borderRadius: 4, borderWidth: 1, borderColor: C.gold, backgroundColor: C.gold + '15', alignItems: 'center', justifyContent: 'center' },
+  extraCard: { opacity: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
+  extraCardDone: { opacity: 0.45 },
+  extraCardLeft: { width: 32, alignItems: 'center' },
+  extraCardLabel: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', letterSpacing: 0.5, marginBottom: 3 },
+  extraCardDetail: { color: C.muted, fontSize: 11, lineHeight: 16, marginBottom: 5 },
+  extraRewards: { flexDirection: 'row', alignItems: 'center' },
+  extraRewardTxt: { color: C.gold, fontSize: 11, fontWeight: '700' },
+  extraBonusBadge: { marginLeft: 8, backgroundColor: C.gold + '22', borderWidth: 1, borderColor: C.gold + '55', borderRadius: 2, paddingHorizontal: 4, paddingVertical: 1 },
+  extraBonusTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5 },
+  extraCompleteBtn: { width: 36, height: 36, borderRadius: 4, borderWidth: 1, borderColor: C.gold, backgroundColor: C.gold + '15', alignItems: 'center', justifyContent: 'center' },
 
-  generateExtraBtn:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1, borderColor: C.gold + '66', borderRadius: 4, paddingVertical: 14, marginBottom: SPACING.sm },
-  generateExtraTxt:  { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
-  generateExtraSub:  { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9 },
+  generateExtraBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1, borderColor: C.gold + '66', borderRadius: 4, paddingVertical: 14, marginBottom: SPACING.sm },
+  generateExtraTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
+  generateExtraSub: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9 },
 })
 
-const qc = StyleSheet.create({
-  card:      { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, marginBottom: 16, borderWidth: 1, borderColor: C.neonBlue + '33' },
-  cardDone:  { opacity: 0.55 },
-  header:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm, gap: SPACING.sm },
-  typeTag:   { width: 28, height: 28, borderRadius: 2, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  label:     { flex: 1, color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
+
+const getSKStyles = (C: any) => StyleSheet.create({
+  keyCard: {
+    width: 120,
+    backgroundColor: C.panel,
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: SPACING.md,
+    alignItems: 'center',
+    gap: 4,
+  },
+  keyLabel: {
+    fontFamily: FONT.orbitron,
+    fontSize: 9,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  keyBoss: {
+    color: C.dimmed,
+    fontSize: 8,
+    textAlign: 'center',
+    marginTop: 2,
+    textTransform: 'uppercase',
+  },
+})
+
+const getQCStyles = (C: any) => StyleSheet.create({
+  card: { opacity: 1, backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, marginBottom: 16, borderWidth: 1, borderColor: C.neonBlue + '33' },
+  cardDone: { opacity: 0.55 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm, gap: SPACING.sm },
+  typeTag: { width: 28, height: 28, borderRadius: 2, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  label: { flex: 1, color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
   labelDone: { color: C.muted },
-  rewards:   { flexDirection: 'row', alignItems: 'center' },
-  xp:        { color: C.neonBlue, fontSize: 11, fontWeight: '700' },
-  gold:      { color: C.gold, fontSize: 11, fontWeight: '700' },
+  rewards: { flexDirection: 'row', alignItems: 'center' },
+  xp: { color: C.neonBlue, fontSize: 11, fontWeight: '700' },
+  gold: { color: C.gold, fontSize: 11, fontWeight: '700' },
   dimmedTxt: { color: C.dimmed },
-  detail:    { color: C.muted, fontSize: 12, marginBottom: SPACING.md, lineHeight: 18 },
-  actions:   { flexDirection: 'row', gap: SPACING.sm },
+  detail: { color: C.muted, fontSize: 12, marginBottom: SPACING.md, lineHeight: 18 },
+  actions: { flexDirection: 'row', gap: SPACING.sm },
   actionBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 8 },
   actionTxt: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  doneRow:   { flexDirection: 'row', alignItems: 'center' },
-  doneTag:   { color: C.green, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  undoBtn:      { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.dimmed, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 5 },
-  undoTxt:      { color: C.muted, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
-  recordChip:    { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '33', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2, marginBottom: SPACING.sm },
+  doneRow: { flexDirection: 'row', alignItems: 'center' },
+  doneTag: { color: C.green, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+  undoBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.dimmed, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 5 },
+  undoTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  recordChip: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '33', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2, marginBottom: SPACING.sm },
   recordChipTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9 },
-  cardActive:    { borderColor: C.neonBlue + '99', shadowColor: C.neonBlue, shadowOpacity: 0.4, shadowRadius: 6, elevation: 4 },
-  activeTimerRow:{ flexDirection: 'row', alignItems: 'center', backgroundColor: C.neonBlue + '12', borderWidth: 1, borderColor: C.neonBlue + '55', borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 10 },
-  activeTimerTxt:{ color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+  cardActive: { borderColor: C.neonBlue + '99', shadowColor: C.neonBlue, shadowOpacity: 0.4, shadowRadius: 6, elevation: 4 },
+  activeTimerRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.neonBlue + '12', borderWidth: 1, borderColor: C.neonBlue + '55', borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 10 },
+  activeTimerTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
   forbiddenRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -185,107 +221,114 @@ const qc = StyleSheet.create({
   },
 })
 
-const fm = StyleSheet.create({
-  overlay:   { flex: 1, backgroundColor: '#000d', alignItems: 'center', justifyContent: 'center' },
-  card:      { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.xl, width: '85%', alignItems: 'center', borderWidth: 1, borderColor: '#a855f755' },
-  title:     { color: '#a855f7', fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, marginBottom: 4 },
-  subtitle:  { color: C.muted, fontSize: 12, marginBottom: SPACING.lg },
+
+const getFMStyles = (C: any) => StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: '#000d', alignItems: 'center', justifyContent: 'center' },
+  card: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.xl, width: '95%', alignItems: 'center', borderWidth: 1, borderColor: '#a855f755' },
+  title: { color: '#a855f7', fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, marginBottom: 4 },
+  subtitle: { color: C.muted, fontSize: 12, marginBottom: SPACING.lg },
   timerText: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 52, fontWeight: '900' },
-  timerSub:  { color: C.dimmed, fontSize: 11, marginTop: 4, marginBottom: SPACING.md },
-  track:     { width: '100%', height: 6, backgroundColor: '#a855f718', borderRadius: 0, overflow: 'hidden', marginBottom: SPACING.lg },
-  fill:      { height: '100%', backgroundColor: '#a855f7' },
+  timerSub: { color: C.dimmed, fontSize: 11, marginTop: 4, marginBottom: SPACING.md },
+  track: { width: '100%', height: 6, backgroundColor: '#a855f718', borderRadius: 0, overflow: 'hidden', marginBottom: SPACING.lg },
+  fill: { height: '100%', backgroundColor: '#a855f7' },
   cancelBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.dimmed, borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 10 },
   cancelTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
 })
 
-const gm = StyleSheet.create({
-  overlay:  { flex: 1, backgroundColor: '#000d', justifyContent: 'flex-end' },
-  card:     { backgroundColor: C.panel, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.xl, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.green + '55' },
-  title:    { color: C.green, fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, marginBottom: 4 },
+
+const getGMStyles = (C: any) => StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: '#000d', justifyContent: 'flex-end' },
+  card: { backgroundColor: C.panel, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.xl, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.green + '55' },
+  title: { color: C.green, fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, marginBottom: 4 },
   subtitle: { color: C.muted, fontSize: 12, marginBottom: SPACING.lg },
-  dist:     { color: '#fff', fontFamily: FONT.orbitron, fontSize: 42, fontWeight: '900' },
+  dist: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 42, fontWeight: '900' },
   distUnit: { color: C.muted, fontSize: 16 },
-  track:    { width: '100%', height: 6, backgroundColor: C.green + '18', borderRadius: 0, overflow: 'hidden', marginVertical: SPACING.md },
-  fill:     { height: '100%', backgroundColor: C.green },
-  warnRow:  { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
-  warn:     { color: C.neonRed, fontSize: 11 },
-  error:    { color: C.neonRed, fontSize: 12, textAlign: 'center', marginBottom: SPACING.md },
-  cancelBtn:{ flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.dimmed, borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 10, marginTop: SPACING.sm },
-  cancelTxt:{ color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  timerBox:  { alignItems: 'center', marginVertical: SPACING.md },
+  track: { width: '100%', height: 6, backgroundColor: C.green + '18', borderRadius: 0, overflow: 'hidden', marginVertical: SPACING.md },
+  fill: { height: '100%', backgroundColor: C.green },
+  warnRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  warn: { color: C.neonRed, fontSize: 11 },
+  error: { color: C.neonRed, fontSize: 12, textAlign: 'center', marginBottom: SPACING.md },
+  cancelBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.dimmed, borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 10, marginTop: SPACING.sm },
+  cancelTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+  timerBox: { alignItems: 'center', marginVertical: SPACING.md },
   timerText: { color: C.green, fontFamily: FONT.orbitron, fontSize: 42, fontWeight: '900', letterSpacing: 2 },
-  timerSub:  { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: 4 },
+  timerSub: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: 4 },
   completeBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 4, paddingVertical: 14 },
 })
 
-const dm = StyleSheet.create({
-  overlay:   { flex: 1, backgroundColor: '#000000ee', justifyContent: 'flex-end' },
-  card:          { backgroundColor: '#0a0005', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.lg, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.neonRed + '88' },
-  warning:       { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3, marginBottom: 4 },
-  title:         { color: '#fff', fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm },
-  sub:           { color: '#94a3b8', fontSize: 12, textAlign: 'center', lineHeight: 18, marginBottom: SPACING.lg },
-  missionBtn:    { flexDirection: 'row', alignItems: 'center', width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
-  missionIcon:   { width: 40, height: 40, borderRadius: 4, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  missionInfo:   { flex: 1 },
-  missionLabel:  { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 3 },
+
+const getDMStyles = (C: any) => StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: '#000000ee', justifyContent: 'flex-end' },
+  card: { backgroundColor: '#0a0005', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.lg, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.neonRed + '88' },
+  warning: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3, marginBottom: 4 },
+  title: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm },
+  sub: { color: '#94a3b8', fontSize: 12, textAlign: 'center', lineHeight: 18, marginBottom: SPACING.lg },
+  missionBtn: { flexDirection: 'row', alignItems: 'center', width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
+  missionIcon: { width: 40, height: 40, borderRadius: 4, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  missionInfo: { flex: 1 },
+  missionLabel: { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 3 },
   missionDetail: { color: C.muted, fontSize: 11, lineHeight: 15 },
-  eventHeader:   { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', marginBottom: SPACING.sm, paddingHorizontal: 4 },
-  eventHeaderTxt:{ color: '#f97316', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  eventHeader: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', marginBottom: SPACING.sm, paddingHorizontal: 4 },
+  eventHeaderTxt: { color: '#f97316', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   eventProgressTxt: { color: C.dimmed, fontSize: 11, marginBottom: SPACING.sm, alignSelf: 'flex-start' },
   eventLockedTxt: { color: C.dimmed, fontSize: 11, marginTop: SPACING.xs, marginBottom: SPACING.sm, textAlign: 'center' },
-  cancelBtn:        { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl },
-  cancelTxt:        { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  cancelBtn: { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl },
+  cancelTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   shadowExtractTag: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },
   shadowExtractTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5 },
 })
 
-const bv = StyleSheet.create({
-  overlay:    { flex: 1, backgroundColor: '#000000ee', justifyContent: 'flex-end' },
-  card:       { backgroundColor: '#050a00', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.xl, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.gold + '66' },
-  header:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 22, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm },
-  sub:        { color: '#94a3b8', fontSize: 12, textAlign: 'center', marginBottom: SPACING.lg },
+
+const getBVStyles = (C: any) => StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: '#000000ee', justifyContent: 'flex-end' },
+  card: { backgroundColor: '#050a00', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.xl, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.gold + '66' },
+  header: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 22, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm },
+  sub: { color: '#94a3b8', fontSize: 12, textAlign: 'center', marginBottom: SPACING.lg },
   rewardsBox: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, width: '100%', gap: SPACING.sm, marginBottom: SPACING.md },
-  rewardRow:  { flexDirection: 'row', alignItems: 'center' },
-  rewardTxt:  { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '700' },
+  rewardRow: { flexDirection: 'row', alignItems: 'center' },
+  rewardTxt: { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '700' },
   shadowHint: { color: C.dimmed, fontSize: 10, fontStyle: 'italic', textAlign: 'center', marginBottom: SPACING.md },
-  btn:        { backgroundColor: C.gold + '22', borderWidth: 1, borderColor: C.gold, borderRadius: 4, paddingVertical: 14, paddingHorizontal: SPACING.xl },
-  btnTxt:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
+  btn: { backgroundColor: C.gold + '22', borderWidth: 1, borderColor: C.gold, borderRadius: 4, paddingVertical: 14, paddingHorizontal: SPACING.xl },
+  btnTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
 })
 
-const side = StyleSheet.create({
+
+const getSideStyles = (C: any) => StyleSheet.create({
   container: { marginTop: SPACING.md, borderWidth: 1, borderColor: C.purple + '44', borderRadius: 4, overflow: 'hidden' },
-  header:    { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, backgroundColor: C.purple + '0d' },
-  title:     { color: C.purple, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
-  badge:     { backgroundColor: C.purple + '22', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2, marginLeft: SPACING.sm },
-  badgeTxt:  { color: C.purple, fontFamily: FONT.orbitron, fontSize: 9 },
-  sub:       { color: C.dimmed, fontSize: 11, paddingHorizontal: SPACING.md, paddingBottom: SPACING.sm, lineHeight: 16 },
-  inputRow:  { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingBottom: SPACING.sm, gap: SPACING.sm },
-  input:     { flex: 1, backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 10, color: '#e2e8f0', fontSize: 13 },
-  addBtn:    { backgroundColor: C.purple + '18', borderWidth: 1, borderColor: C.purple + '66', borderRadius: 4, padding: 10 },
-  empty:     { color: C.dimmed, fontSize: 11, fontStyle: 'italic', textAlign: 'center', paddingVertical: SPACING.md, paddingHorizontal: SPACING.md },
+  header: { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, backgroundColor: C.purple + '0d' },
+  title: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+  badge: { backgroundColor: C.purple + '22', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2, marginLeft: SPACING.sm },
+  badgeTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 9 },
+  sub: { color: C.dimmed, fontSize: 11, paddingHorizontal: SPACING.md, paddingBottom: SPACING.sm, lineHeight: 16 },
+  inputRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingBottom: SPACING.sm, gap: SPACING.sm },
+  input: { flex: 1, backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 10, color: '#e2e8f0', fontSize: 13 },
+  addBtn: { backgroundColor: C.purple + '18', borderWidth: 1, borderColor: C.purple + '66', borderRadius: 4, padding: 10 },
+  empty: { color: C.dimmed, fontSize: 11, fontStyle: 'italic', textAlign: 'center', paddingVertical: SPACING.md, paddingHorizontal: SPACING.md },
 })
 
-const sq_s = StyleSheet.create({
-  card:       { flexDirection: 'row', alignItems: 'center', backgroundColor: C.bg, paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, borderTopWidth: 1, borderTopColor: C.border + '55', gap: SPACING.sm, borderLeftWidth: 2, borderLeftColor: 'transparent' },
-  cardDone:   { opacity: 0.5 },
+
+const getSQSStyles = (C: any) => StyleSheet.create({
+  card: { opacity: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: C.bg, paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, borderTopWidth: 1, borderTopColor: C.border + '55', gap: SPACING.sm, borderLeftWidth: 2, borderLeftColor: 'transparent' },
+  cardDone: { opacity: 0.5 },
   cardActive: { borderLeftColor: C.purple, backgroundColor: C.purple + '08' },
-  rankBadge:  { width: 28, height: 28, borderRadius: 2, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  rankTxt:    { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
-  info:       { flex: 1 },
-  title:      { color: '#e2e8f0', fontSize: 13, lineHeight: 17 },
-  titleDone:  { color: C.muted, textDecorationLine: 'line-through' },
-  rewardRow:  { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
-  xp:         { color: C.neonBlue, fontSize: 10, fontWeight: '700' },
-  gold:       { color: C.gold, fontSize: 10, fontWeight: '700' },
-  dimmed:     { color: C.dimmed },
-  noteLine:   { color: C.purple, fontSize: 10, marginTop: 4, fontStyle: 'italic' },
-  timerRow:   { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
-  timerTxt:   { color: C.purple, fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '700' },
-  doneBtn:    { width: 32, height: 32, borderWidth: 1, borderRadius: 4, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  doneWrap:   { width: 32, height: 32, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  actionBtn:  { width: 32, height: 32, alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: 0.7 },
-  delBtn:     { width: 28, height: 28, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  rankBadge: { width: 28, height: 28, borderRadius: 2, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  rankTxt: { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+  info: { flex: 1 },
+  title: { color: '#e2e8f0', fontSize: 13, lineHeight: 17 },
+  titleDone: { color: C.muted, textDecorationLine: 'line-through' },
+  rewardRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  xp: { color: C.neonBlue, fontSize: 10, fontWeight: '700' },
+  gold: { color: C.gold, fontSize: 10, fontWeight: '700' },
+  dimmed: { color: C.dimmed },
+  noteLine: { color: C.purple, fontSize: 10, marginTop: 4, fontStyle: 'italic' },
+  timerRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
+  timerTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '700' },
+  doneBtn: { width: 32, height: 32, borderWidth: 1, borderRadius: 4, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  doneWrap: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  actionBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: 0.7 },
+  delBtn: { width: 28, height: 28, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
 })
+
 
 function formatTime(ms: number): string {
   const totalSecs = Math.floor(ms / 1000)
@@ -298,85 +341,87 @@ function formatTime(ms: number): string {
 
 // ── Quest type config ──────────────────────────────────────────────────────────
 
-const QUEST_CONFIG: Record<Quest['type'], { icon: string; color: string }> = {
-  training:  { icon: 'arm-flex',          color: '#ef4444' },
+const getQuestConfig = (C: any): Record<Quest['type'], { icon: string; color: string }> => ({
+  training: { icon: 'arm-flex', color: '#ef4444' },
   knowledge: { icon: 'book-open-variant', color: C.neonBlue },
-  focus:     { icon: 'timer-sand',        color: '#a855f7' },
-  gps:       { icon: 'run-fast',          color: '#22c55e' },
-  forbidden: { icon: 'cancel',            color: '#f43f5e' },
-  limit:     { icon: 'speedometer',       color: '#f59e0b' },
-}
+  focus: { icon: 'timer-sand', color: '#a855f7' },
+  gps: { icon: 'run-fast', color: '#22c55e' },
+  forbidden: { icon: 'cancel', color: '#f43f5e' },
+  limit: { icon: 'speedometer', color: '#f59e0b' },
+})
+
 
 // ── Dungeon Missions ───────────────────────────────────────────────────────────
 
 type DungeonMission = {
-  id:              string
-  label:           string
-  detail:          string
-  type:            Quest['type']
-  gpsTarget?:      number
-  focusDuration?:  number
-  shadowHint:      string
-  icon:            string
-  color:           string
-  eventName?:      string
-  eventKey?:       string
-  isEventTrial?:   boolean
-  isEventBoss?:    boolean
+  id: string
+  label: string
+  detail: string
+  type: Quest['type']
+  gpsTarget?: number
+  focusDuration?: number
+  shadowHint: string
+  icon: string
+  color: string
+  eventName?: string
+  eventKey?: string
+  isEventTrial?: boolean
+  isEventBoss?: boolean
   // For custom bosses created in Forge
   customShadow?: { name: string; icon: string; questType: Quest['type'] }
 }
 
-const DUNGEON_MISSIONS: DungeonMission[] = [
+const getDungeonMissions = (C: any): DungeonMission[] => [
   {
-    id:          'boss_gps',
-    label:       'Veneno de Kasaka',
-    detail:      'Corre 5km sem parar. A serpente aguarda no final.',
-    type:        'gps',
-    gpsTarget:   5,
-    shadowHint:  'Kasaka',
-    icon:        'run-fast',
-    color:       '#22c55e',
+    id: 'boss_gps',
+    label: 'Veneno de Kasaka',
+    detail: 'Corre 5km ou pedala 15km sem parar. A serpente aguarda no final.',
+    type: 'gps',
+    gpsTarget: 5,
+    shadowHint: 'Kasaka',
+    icon: 'run-fast',
+    color: '#22c55e',
   },
   {
-    id:          'boss_focus',
-    label:       'O Trono de Igris',
-    detail:      '90 min de foco absoluto. O cavaleiro negro observa. Sem distrações.',
-    type:        'focus',
+    id: 'boss_focus',
+    label: 'O Trono de Igris',
+    detail: '90 min de foco absoluto. O cavaleiro negro observa. Sem distrações.',
+    type: 'focus',
     focusDuration: 90 * 60_000,
-    shadowHint:  'Igris',
-    icon:        'timer-sand',
-    color:       '#a855f7',
+    shadowHint: 'Igris',
+    icon: 'timer-sand',
+    color: '#a855f7',
   },
   {
-    id:          'boss_training',
-    label:       'Rugido de Cerberus',
-    detail:      '100 push-ups + 100 squats + 30 burpees. Paga com suor.',
-    type:        'training',
-    shadowHint:  'Cerberus',
-    icon:        'arm-flex',
-    color:       '#ef4444',
+    id: 'boss_training',
+    label: 'Rugido de Cerberus',
+    detail: '100 push-ups + 100 squats + 30 burpees. Paga com suor.',
+    type: 'training',
+    shadowHint: 'Cerberus',
+    icon: 'arm-flex',
+    color: '#ef4444',
   },
 ]
 
+
 type EventWindow = {
-  name:  string
+  name: string
   start: string // MM-DD
-  end:   string // MM-DD
+  end: string // MM-DD
 }
 
 type EventBossDef = {
-  id:            string
-  label:         string
-  detail:        string
-  type:          Quest['type']
-  gpsTarget?:    number
+  id: string
+  label: string
+  detail: string
+  type: Quest['type']
+  gpsTarget?: number
   focusDuration?: number
-  shadowHint:    string
-  icon:          string
-  color:         string
-  event:         EventWindow
-  required:      number
+  shadowHint: string
+  icon: string
+  color: string
+  event: EventWindow
+  required: number
 }
 
 const EVENT_BOSS_DEFS: EventBossDef[] = [
@@ -407,7 +452,7 @@ const EVENT_BOSS_DEFS: EventBossDef[] = [
   {
     id: 'event_summer_titan',
     label: 'Titã Solar',
-    detail: 'Evento Verão — 140 reps em treino contínuo (sem pausas longas).',
+    detail: 'Evento Verão — 140 repetições (Flexões/Agachamentos/Abdominais) em treino contínuo.',
     type: 'training',
     shadowHint: 'auto_titan',
     icon: 'weather-sunny',
@@ -430,8 +475,9 @@ const EVENT_BOSS_DEFS: EventBossDef[] = [
   {
     id: 'event_valentine_oath',
     label: 'Voto Rubro',
-    detail: 'Evento Valentim — 60 min de foco e 60 min de dedicação física.',
-    type: 'training',
+    detail: 'Evento Valentim — 60 min de foco absoluto NO que mais amas fazer.',
+    type: 'focus',
+    focusDuration: 60 * 60_000,
     shadowHint: 'astral_wisp',
     icon: 'star',
     color: '#fb7185',
@@ -591,16 +637,16 @@ const EVENT_TRIAL_TEMPLATES: Array<{
   km?: number
   reps?: number
 }> = [
-  { key: 'focus_ritual', label: 'Ritual de Foco', type: 'focus', minutes: 45 },
-  { key: 'focus_vow', label: 'Voto de Silêncio', type: 'focus', minutes: 60 },
-  { key: 'gps_pilgrimage', label: 'Peregrinação', type: 'gps', km: 5 },
-  { key: 'training_burst', label: 'Explosão Física', type: 'training', reps: 120 },
-  { key: 'gps_march', label: 'Marcha Ritual', type: 'gps', km: 7 },
-  { key: 'focus_sigil', label: 'Selo Mental', type: 'focus', minutes: 75 },
-  { key: 'training_endurance', label: 'Resistência', type: 'training', reps: 150 },
-]
+    { key: 'focus_ritual', label: 'Ritual de Foco', type: 'focus', minutes: 45 },
+    { key: 'focus_vow', label: 'Voto de Silêncio', type: 'focus', minutes: 60 },
+    { key: 'gps_pilgrimage', label: 'Peregrinação', type: 'gps', km: 5 },
+    { key: 'training_burst', label: 'Explosão Física', type: 'training', reps: 120 },
+    { key: 'gps_march', label: 'Marcha Ritual', type: 'gps', km: 7 },
+    { key: 'focus_sigil', label: 'Selo Mental', type: 'focus', minutes: 75 },
+    { key: 'training_endurance', label: 'Resistência', type: 'training', reps: 150 },
+  ]
 
-function buildEventTrials(def: EventBossDef, now = new Date()): DungeonMission[] {
+function buildEventTrials(def: EventBossDef, C: any, now = new Date()): DungeonMission[] {
   const eventKey = `${def.id}-${now.getFullYear()}`
   return EVENT_TRIAL_TEMPLATES.map((t, idx) => ({
     id: `trial_${def.id}_${t.key}`,
@@ -622,11 +668,14 @@ function buildEventTrials(def: EventBossDef, now = new Date()): DungeonMission[]
   }))
 }
 
-function GPSTrackerModal({ quest, onClose, onComplete }: {
-  quest: Quest; onClose: () => void; onComplete: () => void
+
+function GPSTrackerModal({ quest, onClose, onComplete, C }: {
+  quest: Quest; onClose: () => void; onComplete: () => void; C: any
 }) {
-  const target  = quest.gpsTarget ?? 1.5
-  const record  = useGameStore(s => s.questRecords[quest.id])
+
+  const insets = useSafeAreaInsets()
+  const target = quest.gpsTarget ?? 1.5
+  const record = useGameStore(s => s.questRecords[quest.id])
   const saveRec = useGameStore(s => s.saveQuestRecord)
   const timerStore = useGameStore(s => s.activeMissionTimers[quest.id])
   const startT = useGameStore(s => s.startMissionTimer)
@@ -698,11 +747,12 @@ function GPSTrackerModal({ quest, onClose, onComplete }: {
     onComplete()
   }
 
+  const gm = getGMStyles(C)
+
   return (
-    <Modal transparent animationType="slide" onRequestClose={onClose}>
-      <View style={gm.overlay}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1, width: '100%' }}>
-        <View style={gm.card}>
+    <BottomSheetModal visible={true} onClose={onClose} contentStyle={{ backgroundColor: 'transparent' }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, width: '100%' }}>
+        <View style={[gm.card, { paddingBottom: Math.max(SPACING.xl, insets.bottom + SPACING.sm) }]}>
           <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.sm }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Icon name="run-fast" size={16} color={C.green} />
@@ -712,12 +762,12 @@ function GPSTrackerModal({ quest, onClose, onComplete }: {
               <Icon name="close" size={20} color={C.dimmed} />
             </TouchableOpacity>
           </View>
-          
+
           <Text style={gm.subtitle}>{quest.label}</Text>
 
           <View style={gm.timerBox}>
-             <Text style={gm.timerText}>{formatTime(elapsed)}</Text>
-             <Text style={gm.timerSub}>{running ? 'em movimento…' : 'pausado'}</Text>
+            <Text style={gm.timerText}>{formatTime(elapsed)}</Text>
+            <Text style={gm.timerSub}>{running ? 'em movimento…' : 'pausado'}</Text>
           </View>
 
           {tracker.error ? (
@@ -731,11 +781,11 @@ function GPSTrackerModal({ quest, onClose, onComplete }: {
               <View style={gm.track}>
                 <View style={[gm.fill, { width: `${tracker.pct}%` as any }]} />
               </View>
-              
+
               <View style={{ flexDirection: 'row', gap: 10, marginBottom: 20 }}>
-                <TouchableOpacity 
-                   style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: running ? C.gold + '22' : C.green + '22', borderWidth: 1, borderColor: running ? C.gold : C.green, padding: 12, borderRadius: 4 }}
-                   onPress={togglePause}
+                <TouchableOpacity
+                  style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: running ? C.gold + '22' : C.green + '22', borderWidth: 1, borderColor: running ? C.gold : C.green, padding: 12, borderRadius: 4 }}
+                  onPress={togglePause}
                 >
                   <Icon name={running ? 'pause' : 'play'} size={16} color={running ? C.gold : C.green} />
                   <Text style={{ color: running ? C.gold : C.green, fontFamily: FONT.orbitron, fontSize: 10, marginLeft: 8 }}>
@@ -760,15 +810,15 @@ function GPSTrackerModal({ quest, onClose, onComplete }: {
           )}
 
           <View style={{ width: '100%', marginBottom: 20 }}>
-             <Text style={{ color: C.dimmed, fontSize: 9, fontFamily: FONT.orbitron, marginBottom: 6 }}>NOTAS DE CAMPO</Text>
-             <TextInput 
-                style={{ backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 4, padding: 8, color: '#fff', fontSize: 12, minHeight: 60 }}
-                placeholder="Regista o teu progresso..."
-                placeholderTextColor={C.dimmed}
-                multiline
-                value={note}
-                onChangeText={setNote}
-             />
+            <Text style={{ color: C.dimmed, fontSize: 9, fontFamily: FONT.orbitron, marginBottom: 6 }}>NOTAS DE CAMPO</Text>
+            <TextInput
+              style={{ backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 4, padding: 8, color: '#fff', fontSize: 12, minHeight: 60 }}
+              placeholder="Regista o teu progresso..."
+              placeholderTextColor={C.dimmed}
+              multiline
+              value={note}
+              onChangeText={setNote}
+            />
           </View>
 
           <TouchableOpacity style={[gm.completeBtn, { width: '100%', backgroundColor: C.green, paddingVertical: 14 }]} onPress={handleFinalize}>
@@ -776,33 +826,43 @@ function GPSTrackerModal({ quest, onClose, onComplete }: {
             <Text style={{ color: C.bg, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900', marginLeft: 8 }}>TERMINAR MISSÃO</Text>
           </TouchableOpacity>
         </View>
-        </ScrollView>
-      </View>
-    </Modal>
+      </ScrollView>
+    </BottomSheetModal>
   )
 }
 
 // ── Quest Card ─────────────────────────────────────────────────────────────────
 
-function QuestCard({ quest, isExtra }: { quest: Quest; isExtra?: boolean }) {
-  const completeQuest       = useGameStore(s => isExtra ? s.completeExtraQuest : s.completeQuest)
+function QuestCard({ quest, isExtra, C }: { quest: Quest; isExtra?: boolean; C: any }) {
+  const qc = getQCStyles(C)
+  const s = getStyles(C)
+  const cfg = getQuestConfig(C)[quest.type]
+
+  const completeQuest = useGameStore(s => isExtra ? s.completeExtraQuest : s.completeQuest)
   // Use a stable identity for the no-op function
-  const undoQuest           = useGameStore(s => isExtra ? undefined : s.undoQuest)
-  const recordFocus         = useGameStore(s => s.recordFocusTime)
-  const questRecords        = useGameStore(s => s.questRecords)
+  const undoQuest = useGameStore(s => isExtra ? undefined : s.undoQuest)
+  const recordFocus = useGameStore(s => s.recordFocusTime)
+  const questRecords = useGameStore(s => s.questRecords)
   const activeMissionTimers = useGameStore(s => s.activeMissionTimers)
-  const failQuest           = useGameStore(s => s.failQuest)
-  const updateQuestValue    = useGameStore(s => s.updateQuestValue)
+  const failQuest = useGameStore(s => s.failQuest)
+  const updateQuestValue = useGameStore(s => s.updateQuestValue)
+  const regenerateSingleDailyQuest = useGameStore(s => isExtra ? undefined : s.regenerateSingleDailyQuest)
+  const weeklyRegenCount = useGameStore(s => s.system.weeklyRegenCount)
+  const replaceExtraQuest = useGameStore(s => isExtra ? s.replaceExtraQuest : undefined)
+  const extraQuestRerolledIds = useGameStore(s => s.extraQuestRerolledIds)
 
   const timer = activeMissionTimers[quest.id]
   const isTimerActive = !!timer && !quest.done
 
-  const [showGPS,        setShowGPS]        = useState(false)
-  const [showMission,    setShowMission]    = useState(false)
-  const [confirmUndo,    setConfirmUndo]    = useState(false)
+  const [showGPS, setShowGPS] = useState(false)
+  const [showMission, setShowMission] = useState(false)
+  const [confirmUndo, setConfirmUndo] = useState(false)
+  const [showRegenConfirm, setShowRegenConfirm] = useState(false)
+  const [showExtraRegenConfirm, setShowExtraRegenConfirm] = useState(false)
+  const [extraRegenMsg, setExtraRegenMsg] = useState<string | null>(null)
 
-  const cfg    = QUEST_CONFIG[quest.type]
   const record = questRecords[quest.id]
+
 
   function handleComplete() {
     const { leveledUp } = completeQuest(quest.id)
@@ -821,149 +881,234 @@ function QuestCard({ quest, isExtra }: { quest: Quest; isExtra?: boolean }) {
   const Container = (quest.done ? View : TouchableOpacity) as React.ElementType
 
   return (
-    <Container 
-      style={[qc.card, quest.done && qc.cardDone, isTimerActive && qc.cardActive]}
-      activeOpacity={0.8}
-      onPress={!quest.done ? () => {
-        if (quest.type === 'gps') setShowGPS(true)
-        else if (quest.type === 'forbidden' || quest.type === 'limit') { /* handled via inline buttons or state */ }
-        else setShowMission(true)
-      } : undefined}
-    >
-      <View style={qc.header}>
-        <View style={[qc.typeTag, { borderColor: cfg.color + '55' }]}>
-          <Icon name={cfg.icon} size={14} color={quest.done ? C.muted : cfg.color} />
-        </View>
-        <Text style={[qc.label, quest.done && qc.labelDone]} numberOfLines={1}>{quest.label}</Text>
-        <View style={qc.rewards}>
-          {isExtra && (
-            <View style={s.extraBonusBadge}>
-              <Text style={s.extraBonusTxt}>×1.5</Text>
-            </View>
-          )}
-          <Icon name="star-four-points" size={10} color={quest.done ? C.dimmed : (isExtra ? C.gold : C.neonBlue)} />
-          <Text style={[qc.xp, quest.done && qc.dimmedTxt, isExtra && { color: C.gold }]}> {quest.xp}</Text>
-          <Text style={[qc.gold, quest.done && qc.dimmedTxt, isExtra && { color: C.gold }]}>  ◈{quest.gold}</Text>
-        </View>
-      </View>
-
-      <Text style={[qc.detail, quest.done && qc.dimmedTxt]}>{quest.detail}</Text>
-
-      {/* Personal record chip */}
-      {record && record.bestTime > 0 && !quest.done && (
-        <View style={qc.recordChip}>
-          <Icon name="trophy-outline" size={10} color={C.gold} />
-          <Text style={qc.recordChipTxt}>
-            {' '}PR: {Math.floor(record.bestTime / 60).toString().padStart(2, '0')}:{(record.bestTime % 60).toString().padStart(2, '0')}
-          </Text>
-        </View>
-      )}
-
-      {quest.done ? (
-        <View style={qc.doneRow}>
-          <Icon name="check-circle" size={14} color={C.green} />
-          <Text style={qc.doneTag}> CONCLUÍDA</Text>
-          <View style={{ flex: 1 }} />
-          <TouchableOpacity style={qc.undoBtn} onPress={() => setConfirmUndo(true)}>
-            <Icon name="undo-variant" size={13} color={C.muted} />
-            <Text style={qc.undoTxt}> DESFAZER</Text>
-          </TouchableOpacity>
-        </View>
-      ) : quest.type === 'forbidden' ? (
-        <View style={qc.forbiddenRow}>
-          <TouchableOpacity style={qc.failBtn} onPress={() => failQuest(quest.id)}>
-            <Icon name="close-circle-outline" size={14} color={C.neonRed} />
-            <Text style={qc.failBtnTxt}> FALHEI</Text>
-          </TouchableOpacity>
-          <View style={{ flex: 1 }} />
-          <Text style={qc.forbiddenStatus}>[ EM VIGOR ]</Text>
-        </View>
-      ) : quest.type === 'limit' ? (
-        <View style={qc.limitRow}>
-          <View style={qc.limitControls}>
-             <TouchableOpacity onPress={() => updateQuestValue(quest.id, Math.max(0, (quest.currentValue ?? 0) - 10))}>
-               <Icon name="minus-box-outline" size={20} color={C.dimmed} />
-             </TouchableOpacity>
-             <Text style={qc.limitValue}>{(quest.currentValue ?? 0).toString()}</Text>
-             <TouchableOpacity onPress={() => updateQuestValue(quest.id, (quest.currentValue ?? 0) + 10)}>
-               <Icon name="plus-box-outline" size={20} color={C.neonBlue} />
-             </TouchableOpacity>
+    <>
+      <Container
+        style={[qc.card, quest.done && qc.cardDone, isTimerActive && qc.cardActive]}
+        activeOpacity={0.8}
+        onPress={!quest.done ? () => {
+          if (quest.type === 'gps') setShowGPS(true)
+          else if (quest.type === 'forbidden' || quest.type === 'limit') { /* handled via inline buttons or state */ }
+          else setShowMission(true)
+        } : undefined}
+      >
+        <View style={qc.header}>
+          <View style={[qc.typeTag, { borderColor: cfg.color + '55' }]}>
+            <Icon name={cfg.icon} size={14} color={quest.done ? C.muted : cfg.color} />
           </View>
-          <View style={{ flex: 1 }} />
-          <Text style={[qc.limitStatus, (quest.currentValue ?? 0) > (quest.targetValue ?? 0) ? { color: C.neonRed } : { color: C.green }]}>
-            MAX: {quest.targetValue}
+          <Text style={[qc.label, quest.done && qc.labelDone]} numberOfLines={1}>{quest.label}</Text>
+          <View style={qc.rewards}>
+            {isExtra && (
+              <View style={s.extraBonusBadge}>
+                <Text style={s.extraBonusTxt}>×1.5</Text>
+              </View>
+            )}
+            {isExtra && !quest.done && replaceExtraQuest && !extraQuestRerolledIds.includes(quest.id) && (
+              <TouchableOpacity
+                style={{ padding: 4, marginRight: 4 }}
+                onPress={() => setShowExtraRegenConfirm(true)}
+                activeOpacity={0.7}
+              >
+                <Icon name="refresh" size={14} color={C.gold} />
+              </TouchableOpacity>
+            )}
+            {!isExtra && !quest.done && regenerateSingleDailyQuest && (
+              <TouchableOpacity
+                style={{ padding: 2, marginRight: SPACING.sm }}
+                onPress={() => {
+                  if (weeklyRegenCount >= 7) {
+                    Alert.alert('Esgotado', 'Já usaste as tuas 7 trocas desta semana.')
+                  } else {
+                    setShowRegenConfirm(true)
+                  }
+                }}
+                activeOpacity={0.7}
+              >
+                <Icon name="refresh" size={14} color={C.neonBlue} />
+              </TouchableOpacity>
+            )}
+            <Icon name="star-four-points" size={10} color={quest.done ? C.dimmed : (isExtra ? C.gold : C.neonBlue)} />
+            <Text style={[qc.xp, quest.done && qc.dimmedTxt, isExtra && { color: C.gold }]}> {quest.xp}</Text>
+            <Text style={[qc.gold, quest.done && qc.dimmedTxt, isExtra && { color: C.gold }]}>  ◈{quest.gold}</Text>
+          </View>
+        </View>
+
+        <Text style={[qc.detail, quest.done && qc.dimmedTxt]}>{quest.detail}</Text>
+
+        {/* Personal record chip */}
+        {record && record.bestTime > 0 && !quest.done && (
+          <View style={qc.recordChip}>
+            <Icon name="trophy-outline" size={10} color={C.gold} />
+            <Text style={qc.recordChipTxt}>
+              {' '}PR: {Math.floor(record.bestTime / 60).toString().padStart(2, '0')}:{(record.bestTime % 60).toString().padStart(2, '0')}
+            </Text>
+          </View>
+        )}
+
+        {quest.done ? (
+          <View style={[qc.doneRow, { paddingRight: 50 }]}>
+            <Icon name="check-circle" size={14} color={C.green} />
+            <Text style={qc.doneTag}> CONCLUÍDA</Text>
+            <View style={{ flex: 1 }} />
+            <TouchableOpacity style={qc.undoBtn} onPress={() => setConfirmUndo(true)}>
+              <Icon name="undo-variant" size={13} color={C.muted} />
+              <Text style={qc.undoTxt}> DESFAZER</Text>
+            </TouchableOpacity>
+          </View>
+        ) : quest.type === 'forbidden' ? (
+          <View style={[qc.forbiddenRow, { paddingRight: 50 }]}>
+            <TouchableOpacity style={qc.failBtn} onPress={() => failQuest(quest.id)}>
+              <Icon name="close-circle-outline" size={14} color={C.neonRed} />
+              <Text style={qc.failBtnTxt}> FALHEI</Text>
+            </TouchableOpacity>
+            <View style={{ flex: 1 }} />
+            <Text style={qc.forbiddenStatus}>[ EM VIGOR ]</Text>
+          </View>
+        ) : quest.type === 'limit' ? (
+          <View style={[qc.limitRow, { paddingRight: 50 }]}>
+            <View style={qc.limitControls}>
+              <TouchableOpacity onPress={() => updateQuestValue(quest.id, Math.max(0, (quest.currentValue ?? 0) - 10))}>
+                <Icon name="minus-box-outline" size={20} color={C.dimmed} />
+              </TouchableOpacity>
+              <Text style={qc.limitValue}>{(quest.currentValue ?? 0).toString()}</Text>
+              <TouchableOpacity onPress={() => updateQuestValue(quest.id, (quest.currentValue ?? 0) + 10)}>
+                <Icon name="plus-box-outline" size={20} color={C.neonBlue} />
+              </TouchableOpacity>
+            </View>
+            <View style={{ flex: 1 }} />
+            <Text style={[qc.limitStatus, (quest.currentValue ?? 0) > (quest.targetValue ?? 0) ? { color: C.neonRed } : { color: C.green }]}>
+              MAX: {quest.targetValue}
+            </Text>
+          </View>
+        ) : isTimerActive ? (
+          <View style={[qc.activeTimerRow, { paddingRight: 50 }]}>
+            <Icon name="timer-outline" size={13} color={C.neonBlue} />
+            <Text style={qc.activeTimerTxt}> A DECORRER</Text>
+            <View style={{ flex: 1 }} />
+            <Icon name="chevron-right" size={14} color={C.neonBlue} />
+          </View>
+        ) : (
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, opacity: 1, paddingRight: 50 }}>
+            <Icon name="gesture-tap" size={14} color={C.neonBlue} style={{ opacity: 0.5 }} />
+            <Text style={{ color: C.neonBlue, fontSize: 10, fontFamily: FONT.orbitron, marginLeft: 4, opacity: 0.5 }}>
+              TOCA PARA INICIAR
+            </Text>
+            <View style={{ flex: 1 }} />
+          </View>
+        )}
+
+        {showGPS && (
+          <GPSTrackerModal
+            quest={quest}
+            onClose={() => setShowGPS(false)}
+            onComplete={() => { setShowGPS(false); handleComplete() }}
+            C={C}
+          />
+        )}
+
+
+        {showMission && (
+          <MissionActiveScreen
+            quest={quest}
+            onClose={() => setShowMission(false)}
+            onComplete={handleMissionComplete}
+            initialElapsed={timer ? (timer.accumulatedMs + (timer.isPaused ? 0 : Date.now() - timer.startTime)) : 0}
+            initialPaused={timer?.isPaused}
+            targetSeconds={quest.type === 'focus' ? (quest.focusDuration ? quest.focusDuration / 1000 : 30 * 60) : undefined}
+            C={C}
+          />
+        )}
+
+
+        <CustomModal
+          visible={confirmUndo}
+          title="DESFAZER MISSÃO"
+          message={`Reverter a conclusão de "${quest.label}"?\nO XP e Gold ganhos serão deduzidos.`}
+          confirmLabel="DESFAZER"
+          confirmIcon="undo-variant"
+          confirmColor={C.neonRed}
+          onConfirm={() => { setConfirmUndo(false); undoQuest?.(quest.id) }}
+          onCancel={() => setConfirmUndo(false)}
+          C={C}
+        />
+
+        {/* Indicador de Classe */}
+        <View style={{ position: 'absolute', bottom: 12, right: 12, flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ color: (quest.rank ? RANK_COLORS[quest.rank] : '#94a3b8') + (quest.done ? '88' : ''), fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', letterSpacing: 1 }}>
+
+
+            {quest.rank || 'E'}-RANK
           </Text>
         </View>
-      ) : isTimerActive ? (
-        <View style={qc.activeTimerRow}>
-          <Icon name="timer-outline" size={13} color={C.neonBlue} />
-          <Text style={qc.activeTimerTxt}> A DECORRER</Text>
-          <View style={{ flex: 1 }} />
-          <Icon name="chevron-right" size={14} color={C.neonBlue} />
-        </View>
-      ) : (
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, opacity: 0.5 }}>
-           <Icon name="gesture-tap" size={14} color={C.neonBlue} />
-           <Text style={{ color: C.neonBlue, fontSize: 10, fontFamily: FONT.orbitron, marginLeft: 4 }}>
-             TOCA PARA INICIAR
-           </Text>
-        </View>
-      )}
+      </Container>
 
-      {showGPS && (
-        <GPSTrackerModal
-          quest={quest}
-          onClose={() => setShowGPS(false)}
-          onComplete={() => { setShowGPS(false); handleComplete() }}
+      {/* Reroll extra quest Modal */}
+      {isExtra && replaceExtraQuest && (
+        <CustomModal
+          visible={showExtraRegenConfirm}
+          title="SUBSTITUIR MISSÃO EXTRA"
+          message={`Queres substituir esta missão extra por outra da pool?\nCada extra só pode ser substituída uma vez por dia.`}
+          confirmLabel="SUBSTITUIR"
+          confirmIcon="refresh"
+          confirmColor={C.gold}
+          onConfirm={() => {
+            setShowExtraRegenConfirm(false)
+            const res = replaceExtraQuest(quest.id)
+            if (!res.success && res.reason) {
+              setExtraRegenMsg(res.reason)
+              setTimeout(() => setExtraRegenMsg(null), 3000)
+            }
+          }}
+          cancelLabel="CANCELAR"
+          onCancel={() => setShowExtraRegenConfirm(false)}
+          C={C}
         />
       )}
 
-      {showMission && (
-        <MissionActiveScreen
-          quest={quest}
-          onClose={() => setShowMission(false)}
-          onComplete={handleMissionComplete}
-          initialElapsed={timer ? (timer.accumulatedMs + (timer.isPaused ? 0 : Date.now() - timer.startTime)) : 0}
-          initialPaused={timer?.isPaused}
-          targetSeconds={quest.type === 'focus' ? (quest.focusDuration ? quest.focusDuration / 1000 : 30 * 60) : undefined}
+      {/* Reroll single quest Modal */}
+      {!isExtra && regenerateSingleDailyQuest && (
+        <CustomModal
+          visible={showRegenConfirm}
+          title="TROCAR MISSÃO"
+          message={`Queres trocar esta missão por outra aleatória?\nRestam-te ${Math.max(0, 7 - weeklyRegenCount)} de 7 trocas semanais.`}
+          confirmLabel="TROCAR"
+          onConfirm={() => {
+            setShowRegenConfirm(false)
+            regenerateSingleDailyQuest(quest.id)
+          }}
+          cancelLabel="CANCELAR"
+          onCancel={() => setShowRegenConfirm(false)}
+          C={C}
         />
       )}
-
-      <CustomModal
-        visible={confirmUndo}
-        title="DESFAZER MISSÃO"
-        message={`Reverter a conclusão de "${quest.label}"?\nO XP e Gold ganhos serão deduzidos.`}
-        confirmLabel="DESFAZER"
-        confirmIcon="undo-variant"
-        confirmColor={C.neonRed}
-        onConfirm={() => { setConfirmUndo(false); undoQuest?.(quest.id) }}
-        onCancel={() => setConfirmUndo(false)}
-      />
-    </Container>
+    </>
   )
 }
 
 // ── Weekly Dungeon Modal ──────────────────────────────────────────────────────
-function WeeklyDungeonModal({ visible, onClose, onRequestClose, onSelectMission, customMissions, defeatedId }: {
-  visible: boolean; onClose: () => void; onRequestClose?: () => void; onSelectMission: (m: DungeonMission) => void; 
-  customMissions: DungeonMission[]; defeatedId?: string
+function WeeklyDungeonModal({ visible, onClose, onRequestClose, onSelectMission, customMissions, defeatedId, playerKeys, C }: {
+  visible: boolean; onClose: () => void; onRequestClose?: () => void; onSelectMission: (m: DungeonMission) => void;
+  customMissions: DungeonMission[]; defeatedId?: string; playerKeys: string[]; C: any;
 }) {
-  const weeklyMissions = customMissions.length > 0 ? [...customMissions] : DUNGEON_MISSIONS
-  return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onRequestClose}>
-      <View style={dm.overlay}>
-        <View style={dm.card}>
-          <Icon name="gate" size={40} color={C.neonRed} style={{ marginBottom: SPACING.sm }} />
-          <Text style={dm.warning}>⚠ ALERTA DO SISTEMA ⚠</Text>
-          <Text style={dm.title}>[ PORTÕES VERMELHOS SEMANAIS ]</Text>
-          <Text style={dm.sub}>
-            Completa uma Missão de Boss para ganhares XP, Gold e extraíres uma Sombra.
-          </Text>
+  const insets = useSafeAreaInsets()
+  const dm = getDMStyles(C)
+  const weeklyMissions = customMissions.length > 0 ? [...customMissions] : getDungeonMissions(C)
 
-          <ScrollView style={{ width: '100%', maxHeight: 400 }} contentContainerStyle={{ alignItems: 'center' }} showsVerticalScrollIndicator={false}>
-            {weeklyMissions.map(m => {
+  return (
+    <BottomSheetModal visible={visible} onClose={onRequestClose ?? onClose} contentStyle={{ backgroundColor: 'transparent' }}>
+      <View style={[dm.card, { paddingBottom: Math.max(40, insets.bottom + SPACING.sm) }]}>
+        <Icon name="gate" size={40} color={C.neonRed} style={{ marginBottom: SPACING.sm }} />
+        <Text style={dm.warning}>⚠ ALERTA DO SISTEMA ⚠</Text>
+        <Text style={dm.title}>[ PORTÕES VERMELHOS SEMANAIS ]</Text>
+        <Text style={dm.sub}>
+          Completa uma Missão de Boss para ganhares XP, Gold e extraíres uma Sombra.
+        </Text>
+
+        <ScrollView style={{ width: '100%', maxHeight: 400 }} contentContainerStyle={{ alignItems: 'center' }} showsVerticalScrollIndicator={false}>
+          {weeklyMissions.map(m => {
               const isDefeated = defeatedId === m.shadowHint
-              const isLocked = !!defeatedId && !isDefeated
+              const key = getKeyByBossId(m.shadowHint)
+              const hasKey = key ? playerKeys.includes(key.id) : true // fallback true for event/special
+              const isLocked = (!!defeatedId && !isDefeated) || (!isDefeated && !hasKey)
 
               return (
                 <TouchableOpacity
@@ -981,231 +1126,244 @@ function WeeklyDungeonModal({ visible, onClose, onRequestClose, onSelectMission,
                     </Text>
                     <Text style={dm.missionDetail}>{m.detail}</Text>
                     {!isDefeated && (
-                      <View style={dm.shadowExtractTag}>
-                        <Icon name="ghost" size={9} color={C.purple} />
-                        <Text style={dm.shadowExtractTxt}>
-                          {' '}Sombra: {m.customShadow?.name ?? (SHADOW_MAP[m.shadowHint]?.name ?? m.shadowHint)}
-                        </Text>
+                      <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
+                        <View style={dm.shadowExtractTag}>
+                          <Icon name="ghost" size={9} color={C.purple} />
+                          <Text style={dm.shadowExtractTxt}>
+                            {' '}Sombra: {m.customShadow?.name ?? (SHADOW_MAP[m.shadowHint]?.name ?? m.shadowHint)}
+                          </Text>
+                        </View>
+                        {!hasKey && key && (
+                          <View style={[dm.shadowExtractTag, { borderColor: C.neonRed + '66' }]}>
+                            <Icon name="key-remove" size={9} color={C.neonRed} />
+                            <Text style={[dm.shadowExtractTxt, { color: C.neonRed }]}> CHAVE EM FALTA</Text>
+                          </View>
+                        )}
+                        {hasKey && key && !isDefeated && (
+                          <View style={[dm.shadowExtractTag, { borderColor: C.gold + '66' }]}>
+                            <Icon name="key-check" size={9} color={C.gold} />
+                            <Text style={[dm.shadowExtractTxt, { color: C.gold }]}> MASTER KEY PRONTA</Text>
+                          </View>
+                        )}
                       </View>
                     )}
                   </View>
                 </TouchableOpacity>
               )
-            })}
-          </ScrollView>
+          })}
+        </ScrollView>
 
-          <TouchableOpacity style={dm.cancelBtn} onPress={onClose}>
-            <Text style={dm.cancelTxt}>RECUAR</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={dm.cancelBtn} onPress={onClose}>
+          <Text style={dm.cancelTxt}>RECUAR</Text>
+        </TouchableOpacity>
       </View>
-    </Modal>
+    </BottomSheetModal>
   )
 }
 
-function EventDungeonModal({ visible, onClose, onRequestClose, onSelectMission, eventTrials, eventBossMission, eventProgress }: {
+function EventDungeonModal({ visible, onClose, onRequestClose, onSelectMission, eventTrials, eventBossMission, eventProgress, C }: {
   visible: boolean; onClose: () => void; onRequestClose?: () => void; onSelectMission: (m: DungeonMission) => void;
   eventTrials: DungeonMission[]; eventBossMission: DungeonMission | null;
-  eventProgress: { completedIds: string[]; required: number; defeated: boolean } | null
+  eventProgress: { completedIds: string[]; required: number; defeated: boolean } | null; C: any;
 }) {
   if (!eventProgress) return null
+  const insets = useSafeAreaInsets()
+  const dm = getDMStyles(C)
+
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onRequestClose}>
-      <View style={dm.overlay}>
-        <View style={dm.card}>
-          <Icon name="calendar-star" size={40} color="#f97316" style={{ marginBottom: SPACING.sm }} />
-          <Text style={[dm.warning, { color: '#f97316' }]}>⚠ EVENTO LIMITADO ⚠</Text>
-          <Text style={[dm.title, { color: '#fbbf24' }]}>[ MASMORRA ESPECIAL DE EVENTO ]</Text>
+    <BottomSheetModal visible={visible} onClose={onRequestClose ?? onClose} contentStyle={{ backgroundColor: 'transparent' }}>
+      <View style={[dm.card, { paddingBottom: Math.max(40, insets.bottom + SPACING.sm) }]}>
+        <Icon name="calendar-star" size={40} color="#f97316" style={{ marginBottom: SPACING.sm }} />
+        <Text style={[dm.warning, { color: '#f97316' }]}>⚠ EVENTO LIMITADO ⚠</Text>
+        <Text style={[dm.title, { color: '#fbbf24' }]}>[ MASMORRA ESPECIAL DE EVENTO ]</Text>
 
-          <View style={dm.eventHeader}>
-            <Text style={dm.eventHeaderTxt}>PROVAS DO EVENTO</Text>
-          </View>
-          <Text style={dm.eventProgressTxt}>
-            Progresso: {eventProgress.completedIds.length}/{eventProgress.required} provas completas
-          </Text>
+        <View style={dm.eventHeader}>
+          <Text style={dm.eventHeaderTxt}>PROVAS DO EVENTO</Text>
+        </View>
+        <Text style={dm.eventProgressTxt}>
+          Progresso: {eventProgress.completedIds.length}/{eventProgress.required} provas completas
+        </Text>
 
-          <ScrollView style={{ width: '100%', maxHeight: 380 }} contentContainerStyle={{ alignItems: 'center' }} showsVerticalScrollIndicator={false}>
-            {eventTrials.map(m => {
-              const completed = eventProgress.completedIds.includes(m.id)
-              return (
-                <TouchableOpacity
-                  key={m.id}
-                  style={[dm.missionBtn, { borderColor: m.color + '88', opacity: completed ? 0.3 : 1 }]}
-                  onPress={() => { if (!completed) { onClose(); onSelectMission(m) } }}
-                  activeOpacity={0.7}
-                >
-                  <View style={[dm.missionIcon, { backgroundColor: m.color + '22', borderColor: m.color + '66', borderWidth: 1 }]}>
-                    <Icon name={m.icon} size={20} color={m.color} />
-                  </View>
-                  <View style={dm.missionInfo}>
-                    <Text style={[dm.missionLabel, { color: m.color }]}>
-                      {completed ? '[ PROVA COMPLETA ]' : m.label}
-                    </Text>
-                    <Text style={dm.missionDetail}>{m.detail}</Text>
-                  </View>
-                  <Icon name={completed ? "check-circle" : "chevron-right"} size={18} color={completed ? C.green : m.color} />
-                </TouchableOpacity>
-              )
-            })}
-
-            <View style={[dm.eventHeader, { marginTop: SPACING.md }]}>
-              <Text style={dm.eventHeaderTxt}>BOSS FINAL DO EVENTO</Text>
-            </View>
-
-            {eventBossMission ? (
+        <ScrollView style={{ width: '100%', maxHeight: 380 }} contentContainerStyle={{ alignItems: 'center' }} showsVerticalScrollIndicator={false}>
+          {eventTrials.map(m => {
+            const completed = eventProgress.completedIds.includes(m.id)
+            return (
               <TouchableOpacity
-                style={[dm.missionBtn, { borderColor: eventBossMission.color + '88', opacity: eventProgress.defeated ? 0.3 : 1 }]}
-                onPress={() => { if (!eventProgress.defeated) { onClose(); onSelectMission(eventBossMission) } }}
+                key={m.id}
+                style={[dm.missionBtn, { borderColor: m.color + '88', opacity: completed ? 0.3 : 1 }]}
+                onPress={() => { if (!completed) { onClose(); onSelectMission(m) } }}
                 activeOpacity={0.7}
               >
-                <View style={[dm.missionIcon, { backgroundColor: eventBossMission.color + '22', borderColor: eventBossMission.color + '66', borderWidth: 1 }]}>
-                  <Icon name={eventBossMission.icon} size={20} color={eventBossMission.color} />
+                <View style={[dm.missionIcon, { backgroundColor: m.color + '22', borderColor: m.color + '66', borderWidth: 1 }]}>
+                  <Icon name={m.icon} size={20} color={m.color} />
                 </View>
                 <View style={dm.missionInfo}>
-                  <Text style={[dm.missionLabel, { color: eventBossMission.color }]}>
-                    {eventProgress.defeated ? '[ EVENTO CONCLUÍDO ]' : eventBossMission.label}
+                  <Text style={[dm.missionLabel, { color: m.color }]}>
+                    {completed ? '[ PROVA COMPLETA ]' : m.label}
                   </Text>
-                  <Text style={dm.missionDetail}>{eventBossMission.detail}</Text>
-                  {!eventProgress.defeated && (
-                    <View style={dm.shadowExtractTag}>
-                      <Icon name="ghost" size={9} color={C.purple} />
-                      <Text style={dm.shadowExtractTxt}>
-                        {' '}Sombra: {SHADOW_MAP[eventBossMission.shadowHint!]?.name ?? eventBossMission.shadowHint ?? 'Desconhecida'}
-                      </Text>
-                    </View>
-                  )}
+                  <Text style={dm.missionDetail}>{m.detail}</Text>
                 </View>
-                <Icon name={eventProgress.defeated ? "check-circle" : "chevron-right"} size={18} color={eventProgress.defeated ? C.green : eventBossMission.color} />
+                <Icon name={completed ? "check-circle" : "chevron-right"} size={18} color={completed ? C.green : m.color} />
               </TouchableOpacity>
-            ) : (
-              <Text style={dm.eventLockedTxt}>
-                Completa as provas acima para desbloquear o Boss do evento.
-              </Text>
-            )}
-          </ScrollView>
+            )
+          })}
 
-          <TouchableOpacity style={dm.cancelBtn} onPress={onClose}>
-            <Text style={dm.cancelTxt}>RECUAR</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={[dm.eventHeader, { marginTop: SPACING.md }]}>
+            <Text style={dm.eventHeaderTxt}>BOSS FINAL DO EVENTO</Text>
+          </View>
+
+          {eventBossMission ? (
+            <TouchableOpacity
+              style={[dm.missionBtn, { borderColor: eventBossMission.color + '88', opacity: eventProgress.defeated ? 0.3 : 1 }]}
+              onPress={() => { if (!eventProgress.defeated) { onClose(); onSelectMission(eventBossMission) } }}
+              activeOpacity={0.7}
+            >
+              <View style={[dm.missionIcon, { backgroundColor: eventBossMission.color + '22', borderColor: eventBossMission.color + '66', borderWidth: 1 }]}>
+                <Icon name={eventBossMission.icon} size={20} color={eventBossMission.color} />
+              </View>
+              <View style={dm.missionInfo}>
+                <Text style={[dm.missionLabel, { color: eventBossMission.color }]}>
+                  {eventProgress.defeated ? '[ EVENTO CONCLUÍDO ]' : eventBossMission.label}
+                </Text>
+                <Text style={dm.missionDetail}>{eventBossMission.detail}</Text>
+                {!eventProgress.defeated && (
+                  <View style={dm.shadowExtractTag}>
+                    <Icon name="ghost" size={9} color={C.purple} />
+                    <Text style={dm.shadowExtractTxt}>
+                      {' '}Sombra: {SHADOW_MAP[eventBossMission.shadowHint!]?.name ?? eventBossMission.shadowHint ?? 'Desconhecida'}
+                    </Text>
+                  </View>
+                )}
+              </View>
+              <Icon name={eventProgress.defeated ? "check-circle" : "chevron-right"} size={18} color={eventProgress.defeated ? C.green : eventBossMission.color} />
+            </TouchableOpacity>
+          ) : (
+            <Text style={dm.eventLockedTxt}>
+              Completa as provas acima para desbloquear o Boss do evento.
+            </Text>
+          )}
+        </ScrollView>
+
+        <TouchableOpacity style={dm.cancelBtn} onPress={onClose}>
+          <Text style={dm.cancelTxt}>RECUAR</Text>
+        </TouchableOpacity>
       </View>
-    </Modal>
+    </BottomSheetModal>
   )
 }
 
 // ── Boss Victory Modal ─────────────────────────────────────────────────────────
 
-function BossVictoryModal({ visible, onClose, onRequestClose, info }: {
-  visible: boolean; onClose: () => void; onRequestClose?: () => void; info: { xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean }
+function BossVictoryModal({ visible, onClose, onRequestClose, info, C }: {
+  visible: boolean; onClose: () => void; onRequestClose?: () => void; info: { xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean }; C: any
 }) {
+  const bv = getBVStyles(C)
   useEffect(() => { Vibration.vibrate([0, 100, 50, 300, 50, 500]) }, [])
 
+
   return (
-    <Modal transparent animationType="fade" visible={visible} onRequestClose={onRequestClose}>
-      <View style={bv.overlay}>
-        <View style={bv.card}>
-          <Icon name="sword" size={48} color={C.gold} style={{ marginBottom: SPACING.sm }} />
-          <Text style={bv.header}>BOSS DERROTADO!</Text>
-          <Text style={bv.sub}>O dungeon foi limpo. O Sistema reconhece a tua força.</Text>
+    <SoloLevelingModal transparent visible={visible} onRequestClose={onRequestClose}>
+      <View style={bv.card}>
+        <Icon name="sword" size={48} color={C.gold} style={{ marginBottom: SPACING.sm }} />
+        <Text style={bv.header}>BOSS DERROTADO!</Text>
+        <Text style={bv.sub}>O dungeon foi limpo. O Sistema reconhece a tua força.</Text>
 
-          <View style={bv.rewardsBox}>
-            <View style={bv.rewardRow}>
-              <Icon name="star-four-points" size={16} color={C.neonBlue} />
-              <Text style={bv.rewardTxt}> +{info.xp} XP</Text>
-            </View>
-            <View style={bv.rewardRow}>
-              <Icon name="rhombus" size={16} color={C.gold} />
-              <Text style={bv.rewardTxt}> +{info.gold} Gold</Text>
-            </View>
-            {info.shadowName && (
-              <View style={[bv.rewardRow, { marginTop: SPACING.sm }]}>
-                <Icon name="ghost" size={16} color="#a855f7" />
-                <Text style={[bv.rewardTxt, { color: '#a855f7' }]}>
-                  {info.leveledUpShadow
-                    ? ` ${info.shadowName} subiu de nível!`
-                    : ` Sombra obtida: ${info.shadowName}`}
-                </Text>
-              </View>
-            )}
+        <View style={bv.rewardsBox}>
+          <View style={bv.rewardRow}>
+            <Icon name="star-four-points" size={16} color={C.neonBlue} />
+            <Text style={bv.rewardTxt}> +{info.xp} XP</Text>
           </View>
-
-          {!info.shadowName && (
-            <Text style={bv.shadowHint}>Atinge o nível 10 para receber Sombras de boss raids.</Text>
+          <View style={bv.rewardRow}>
+            <Icon name="rhombus" size={16} color={C.gold} />
+            <Text style={bv.rewardTxt}> +{info.gold} Gold</Text>
+          </View>
+          {info.shadowName && (
+            <View style={[bv.rewardRow, { marginTop: SPACING.sm }]}>
+              <Icon name="ghost" size={16} color="#a855f7" />
+              <Text style={[bv.rewardTxt, { color: '#a855f7' }]}>
+                {info.leveledUpShadow
+                  ? ` ${info.shadowName} subiu de nível!`
+                  : ` Sombra obtida: ${info.shadowName}`}
+              </Text>
+            </View>
           )}
-
-          <TouchableOpacity style={bv.btn} onPress={onClose}>
-            <Text style={bv.btnTxt}>CONTINUAR</Text>
-          </TouchableOpacity>
         </View>
+
+        {!info.shadowName && (
+          <Text style={bv.shadowHint}>Atinge o nível 10 para receber Sombras de boss raids.</Text>
+        )}
+
+        <TouchableOpacity style={bv.btn} onPress={onClose}>
+          <Text style={bv.btnTxt}>CONTINUAR</Text>
+        </TouchableOpacity>
       </View>
-    </Modal>
+    </SoloLevelingModal>
   )
 }
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function QuestScreen() {
-  const quests               = useGameStore(s => s.quests)
-  const hasPenalty           = useGameStore(s => s.system.hasPenalty)
-  const penaltyQ             = useGameStore(s => s.system.penaltyQuests)
-  const xpBoostNext          = useGameStore(s => s.system.xpBoostNext)
+  const C = useTheme()
+  const s = getStyles(C)
+
+  const sk = getSKStyles(C)
+  const dm = getDMStyles(C)
+  const insets = useSafeAreaInsets()
+
+  const quests = useGameStore(s => s.quests)
+  const hasPenalty = useGameStore(s => s.system.hasPenalty)
+  const penaltyQ = useGameStore(s => s.system.penaltyQuests)
+  const xpBoostNext = useGameStore(s => s.system.xpBoostNext)
   const bossDefeatedThisWeek = useGameStore(s => s.system.bossDefeatedThisWeek)
   const weeklyDefeatedBossId = useGameStore(s => s.system.weeklyDefeatedBossId)
-  const defeatBoss           = useGameStore(s => s.defeatDungeonBoss)
-  const recordFocus          = useGameStore(s => s.recordFocusTime)
-  const triggerEvent         = useGameStore(s => s.triggerEvent)
-  const questDictionary      = useGameStore(s => s.questDictionary)
-  const updateSettings       = useGameStore(s => s.updateSettings)
-  const activeRaidBoss       = useGameStore(s => s.system.activeRaidBoss)
-
-  const regenerateDailyQuests = useGameStore(s => s.regenerateDailyQuests)
-  const weeklyRegenCount      = useGameStore(s => s.system.weeklyRegenCount)
-  const [showRegen, setShowRegen] = React.useState(false)
-  const [regenResult, setRegenResult] = React.useState<{ success: boolean; reason?: string } | null>(null)
-
-  function handleRegenerate() {
-    const result = regenerateDailyQuests()
-    setRegenResult(result)
-  }
-
+  const defeatBoss = useGameStore(s => s.defeatDungeonBoss)
+  const recordFocus = useGameStore(s => s.recordFocusTime)
+  const triggerEvent = useGameStore(s => s.triggerEvent)
+  const questDictionary = useGameStore(s => s.questDictionary)
+  const updateSettings = useGameStore(s => s.updateSettings)
+  const activeRaidBoss = useGameStore(s => s.system.activeRaidBoss)
   // Custom boss missions filtered by weekly rotation
-  const weeklyBossIds        = useGameStore(s => s.system.weeklyBossIds || [])
-  const eventBossKey         = useGameStore(s => s.system.eventBossKey)
+  const weeklyBossIds = useGameStore(s => s.system.weeklyBossIds || [])
+  const eventBossKey = useGameStore(s => s.system.eventBossKey)
   const eventBossCompletedIds = useGameStore(s => s.system.eventBossCompletedIds)
-  const eventBossRequired    = useGameStore(s => s.system.eventBossRequired)
-  const eventBossDefeated    = useGameStore(s => s.system.eventBossDefeated)
-  const setEventBossState    = useGameStore(s => s.setEventBossState)
-  const completeEventTrial   = useGameStore(s => s.completeEventTrial)
+  const eventBossRequired = useGameStore(s => s.system.eventBossRequired)
+  const eventBossDefeated = useGameStore(s => s.system.eventBossDefeated)
+  const setEventBossState = useGameStore(s => s.setEventBossState)
+  const completeEventTrial = useGameStore(s => s.completeEventTrial)
   const markEventBossDefeated = useGameStore(s => s.markEventBossDefeated)
+  const playerDungeonKeys = useGameStore(s => s.player.dungeonKeys)
+  const enterDungeon = useGameStore(s => s.enterDungeon)
   const customBossMissions: DungeonMission[] = questDictionary
     .filter(def => def.type === 'boss' && weeklyBossIds.includes(def.id))
     .map(def => ({
-      id:           `custom_boss_${def.id}`,
-      label:        def.title,
-      detail:       def.description
+      id: `custom_boss_${def.id}`,
+      label: def.title,
+      detail: def.description
         .replace(/{target}/g, String(def.baseTarget))
         .replace(/{unit}/g, def.unit),
-      type:         def.questType,
-      shadowHint:   def.dropShadowId ?? `custom:${def.id}`,
-      icon:         'sword',
-      color:        '#f59e0b',
+      type: def.questType,
+      shadowHint: def.dropShadowId ?? `custom:${def.id}`,
+      icon: 'sword',
+      color: '#f59e0b',
       customShadow: def.dropShadowId ? undefined : (def.shadowName
         ? { name: def.shadowName, icon: def.shadowIcon ?? 'ghost', questType: def.questType }
         : undefined),
     }))
   const eventBossMissions = React.useMemo(() => getActiveEventBossMissions(), [])
-  const activeEventDef = React.useMemo(() => 
+  const activeEventDef = React.useMemo(() =>
     EVENT_BOSS_DEFS.find(def => eventBossMissions.some(m => m.id === def.id)),
-  [eventBossMissions])
-  
-  const eventTrials = React.useMemo(() => 
-    activeEventDef ? buildEventTrials(activeEventDef) : [],
-  [activeEventDef])
-  
-  const activeEventKey = React.useMemo(() => 
+    [eventBossMissions])
+
+  const eventTrials = React.useMemo(() =>
+    activeEventDef ? buildEventTrials(activeEventDef, C) : [],
+    [activeEventDef, C])
+
+
+  const activeEventKey = React.useMemo(() =>
     activeEventDef ? `${activeEventDef.id}-${new Date().getFullYear()}` : '',
-  [activeEventDef])
+    [activeEventDef])
 
   const eventCompleted = (activeEventKey && eventBossKey === activeEventKey) ? eventBossCompletedIds : []
   const eventRequired = activeEventDef?.required ?? 0
@@ -1214,11 +1372,11 @@ export default function QuestScreen() {
     ? eventBossMissions.find(m => m.id === activeEventDef.id) ?? null
     : null
 
-  const extraQuests          = useGameStore(s => s.extraQuests)
-  const generateExtraQuests  = useGameStore(s => s.generateExtraQuests)
-  const completeExtraQuest   = useGameStore(s => s.completeExtraQuest)
+  const extraQuests = useGameStore(s => s.extraQuests)
+  const generateExtraQuests = useGameStore(s => s.generateExtraQuests)
+  const completeExtraQuest = useGameStore(s => s.completeExtraQuest)
 
-  const done  = quests.filter(q => q.done).length
+  const done = quests.filter(q => q.done).length
   const total = quests.length
   const allDailyDone = done === total && total > 0
 
@@ -1226,12 +1384,12 @@ export default function QuestScreen() {
   const isRestDay = useGameStore(s => s.settings.restDay)
   const isBossDay = dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0  // Fri/Sat/Sun
 
-  const [showDungeon,     setShowDungeon]     = useState(false)
+  const [showDungeon, setShowDungeon] = useState(false)
   const [showEventDungeon, setShowEventDungeon] = useState(false)
-  const [showForge,       setShowForge]       = useState(false)
-  const [activeMission,   setActiveMission]   = useState<DungeonMission | null>(null)
+  const [showForge, setShowForge] = useState(false)
+  const [activeMission, setActiveMission] = useState<DungeonMission | null>(null)
   const [confirmBossTraining, setConfirmBossTraining] = useState(false)
-  const [victoryInfo,     setVictoryInfo]     = useState<{ xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean } | null>(null)
+  const [victoryInfo, setVictoryInfo] = useState<{ xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean } | null>(null)
   const [eventProgressInfo, setEventProgressInfo] = useState<{ name: string; completed: number; required: number } | null>(null)
 
   useEffect(() => {
@@ -1289,10 +1447,10 @@ export default function QuestScreen() {
     // For fixed missions use m.id directly; for custom bosses strip the prefix so
     // the missionId matches the quest definition id used in evaluateAchievementCondition.
     const missionId = m.id.startsWith('custom_boss_') ? m.id.slice('custom_boss_'.length) : m.id
-    if (m.id === 'boss_gps'   || (m.id.startsWith('custom_boss_') && m.type === 'gps') || (m.isEventBoss && m.type === 'gps'))
-      triggerEvent('boss_gps_completed',      { missionId })
+    if (m.id === 'boss_gps' || (m.id.startsWith('custom_boss_') && m.type === 'gps') || (m.isEventBoss && m.type === 'gps'))
+      triggerEvent('boss_gps_completed', { missionId })
     if (m.id === 'boss_focus' || (m.id.startsWith('custom_boss_') && m.type === 'focus') || (m.isEventBoss && m.type === 'focus'))
-      triggerEvent('boss_focus_completed',    { missionId })
+      triggerEvent('boss_focus_completed', { missionId })
     if (m.id === 'boss_training' || (m.id.startsWith('custom_boss_') && m.type === 'training') || (m.isEventBoss && m.type === 'training'))
       triggerEvent('boss_training_completed', { missionId })
     if (m.isEventBoss && m.eventKey) {
@@ -1302,14 +1460,14 @@ export default function QuestScreen() {
 
   // Convert active dungeon mission to Quest shape for existing tracker modals
   const activeBossQuest: Quest | null = activeMission ? {
-    id:            activeMission.id,
-    label:         activeMission.label,
-    detail:        activeMission.detail,
-    xp:            0,
-    gold:          0,
-    type:          activeMission.type,
-    done:          false,
-    gpsTarget:     activeMission.gpsTarget,
+    id: activeMission.id,
+    label: activeMission.label,
+    detail: activeMission.detail,
+    xp: 0,
+    gold: 0,
+    type: activeMission.type,
+    done: false,
+    gpsTarget: activeMission.gpsTarget,
     focusDuration: activeMission.focusDuration,
   } : null
 
@@ -1328,40 +1486,86 @@ export default function QuestScreen() {
 
           return (
             <View style={{ marginBottom: 20, padding: 12, backgroundColor: def.color + '15', borderWidth: 1, borderColor: def.color + '50', borderRadius: 8 }}>
-               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                 <Icon name={def.icon} size={24} color={def.color} style={{ marginRight: 10 }} />
-                 <View style={{ flex: 1 }}>
-                   <Text style={{ fontFamily: FONT.orbitron, fontSize: 10, color: def.color, letterSpacing: 1 }}>RAID BOSS GLOBAL · RANK {def.rank}</Text>
-                   <Text style={{ fontFamily: FONT.orbitron, fontSize: 14, color: '#fff', fontWeight: 'bold', marginTop: 2 }}>{def.name}</Text>
-                 </View>
-                 <View style={{ alignItems: 'flex-end' }}>
-                    <Icon name="timer-sand" size={12} color={C.dimmed} />
-                    <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed, marginTop: 2 }}>{daysLeft}d {hrsLeft}h</Text>
-                 </View>
-               </View>
-               
-               <View style={{ height: 6, backgroundColor: '#000', borderRadius: 3, overflow: 'hidden', marginBottom: 4 }}>
-                  <View style={{ width: `${progress * 100}%`, height: '100%', backgroundColor: def.color }} />
-               </View>
-               
-               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed }}>HP RESTANTE</Text>
-                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 10, color: '#fff' }}>{Math.floor(activeRaidBoss.currentHp)} <Text style={{ fontSize: 9, color: C.dimmed }}>/ {activeRaidBoss.maxHp}</Text></Text>
-               </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                <Icon name={def.icon} size={24} color={def.color} style={{ marginRight: 10 }} />
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 10, color: def.color, letterSpacing: 1 }}>RAID BOSS GLOBAL · RANK {def.rank}</Text>
+                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 14, color: '#fff', fontWeight: 'bold', marginTop: 2 }}>{def.name}</Text>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Icon name="timer-sand" size={12} color={C.dimmed} />
+                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed, marginTop: 2 }}>{daysLeft}d {hrsLeft}h</Text>
+                </View>
+              </View>
+
+              <View style={{ height: 6, backgroundColor: '#000', borderRadius: 3, overflow: 'hidden', marginBottom: 4 }}>
+                <View style={{ width: `${progress * 100}%`, height: '100%', backgroundColor: def.color }} />
+              </View>
+
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed }}>HP RESTANTE</Text>
+                <Text style={{ fontFamily: FONT.orbitron, fontSize: 10, color: '#fff' }}>{Math.floor(activeRaidBoss.currentHp)} <Text style={{ fontSize: 9, color: C.dimmed }}>/ {activeRaidBoss.maxHp}</Text></Text>
+              </View>
             </View>
           )
         })()}
 
-        <View style={s.titleRow}>
-          <Icon name="clipboard-list-outline" size={16} color={C.neonBlue} />
-          <Text style={s.title}> MISSÕES DO DIA</Text>
-          {isRestDay && (
-            <View style={s.restBadge}>
-              <Icon name="bed" size={10} color={C.green} />
-              <Text style={s.restTxt}> DESCANSO</Text>
+        {/* ── KEY INVENTORY / INSTANT ACCESS ── */}
+        {playerDungeonKeys.length > 0 && (
+          <View style={{ marginBottom: SPACING.lg }}>
+            <View style={s.sectionHeaderRow}>
+               <View style={[s.sectionDivider, { marginBottom: 0, flex: 1 }]}>
+                <View style={s.sectionLine} />
+                <Text style={s.sectionLabel}>CHAVES DE MASMORRA</Text>
+                <View style={s.sectionLine} />
+              </View>
             </View>
-          )}
-        </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -SPACING.md }} contentContainerStyle={{ paddingHorizontal: SPACING.md, gap: SPACING.sm }}>
+              {playerDungeonKeys.map(keyId => {
+                const key = ALL_DUNGEON_KEYS.find(k => k.id === keyId)
+                if (!key) return null
+                return (
+                  <TouchableOpacity
+                    key={keyId}
+                    style={[sk.keyCard, { borderColor: key.color + '44' }]}
+                    onPress={() => {
+                      const mission: DungeonMission = {
+                        id: `key_mission_${key.id}`,
+                        label: key.name,
+                        detail: key.missionDetail,
+                        type: key.missionType,
+                        shadowHint: key.bossId,
+                        icon: 'gate',
+                        color: key.color,
+                        focusDuration: key.missionType === 'focus' ? key.missionTarget : undefined,
+                        gpsTarget: key.missionType === 'gps' ? key.missionTarget : undefined,
+                      }
+                      Alert.alert(
+                        'USAR CHAVE',
+                        `Desejas usar a ${key.name} para abrir este portão?\nA chave será consumida.`,
+                        [
+                          { text: 'CANCELAR', style: 'cancel' },
+                          {
+                            text: 'ENTRAR',
+                            onPress: () => {
+                              if (enterDungeon(key.id)) {
+                                handleMissionSelect(mission)
+                              }
+                            }
+                          }
+                        ]
+                      )
+                    }}
+                  >
+                    <Icon name="key-variant" size={20} color={key.color} />
+                    <Text style={[sk.keyLabel, { color: key.color }]}>{key.name}</Text>
+                    <Text style={sk.keyBoss}>{key.bossId.replace(/_/g, ' ')}</Text>
+                  </TouchableOpacity>
+                )
+              })}
+            </ScrollView>
+          </View>
+        )}
 
         {/* Compact tactical action row */}
         <View style={s.actionRow}>
@@ -1395,6 +1599,18 @@ export default function QuestScreen() {
           </View>
         )}
 
+        <View style={s.titleRow}>
+          <Icon name="clipboard-list-outline" size={16} color={C.neonBlue} />
+          <Text style={s.title}> MISSÕES DO DIA</Text>
+          {isRestDay && (
+            <View style={s.restBadge}>
+              <Icon name="bed" size={10} color={C.green} />
+              <Text style={s.restTxt}> DESCANSO</Text>
+            </View>
+          )}
+        </View>
+
+
         {/* Unified daily status bar */}
         <View style={s.statusBar}>
           <View style={s.statusBarRow}>
@@ -1427,14 +1643,6 @@ export default function QuestScreen() {
             <Text style={s.sectionLabel}>MISSÕES DIÁRIAS</Text>
             <View style={s.sectionLine} />
           </View>
-          <TouchableOpacity 
-            style={s.regenBtnInline} 
-            onPress={() => setShowRegen(true)}
-            activeOpacity={0.7}
-          >
-            <Icon name="refresh" size={14} color={C.neonBlue} />
-            <Text style={s.regenBtnTxt}>{Math.max(0, 3 - weeklyRegenCount)}/3</Text>
-          </TouchableOpacity>
         </View>
 
         {/* XP Boost active indicator */}
@@ -1451,13 +1659,14 @@ export default function QuestScreen() {
               <Icon name="alert-circle" size={12} color={C.neonRed} />
               <Text style={s.penalTitle}> MISSÕES DE PENALIZAÇÃO</Text>
             </View>
-            {penaltyQ.map(q => <QuestCard key={q.id} quest={q} />)}
+            {penaltyQ.map(q => <QuestCard key={q.id} quest={q} C={C} />)}
           </View>
         )}
 
         <View style={isRestDay ? { opacity: 0.45 } : undefined}>
-          {quests.map(q => <QuestCard key={q.id} quest={q} />)}
+          {quests.map(q => <QuestCard key={q.id} quest={q} C={C} />)}
         </View>
+
 
         {/* ── SECTION: MISSÕES EXTRA (pool bonus) ── */}
         {allDailyDone && (
@@ -1475,7 +1684,7 @@ export default function QuestScreen() {
               </Text>
             </View>
 
-            {extraQuests.map(q => <QuestCard key={q.id} quest={q} isExtra />)}
+            {extraQuests.map(q => <QuestCard key={q.id} quest={q} isExtra C={C} />)}
 
             {extraQuests.length < 2 && (
               <TouchableOpacity
@@ -1541,6 +1750,8 @@ export default function QuestScreen() {
           </>
         )}
 
+
+
         {/* Forge button — at end of list so combat is the visual priority */}
         <View style={{ marginTop: SPACING.md }}>
           <TouchableOpacity style={s.forgeBtn} onPress={() => setShowForge(true)}>
@@ -1557,10 +1768,36 @@ export default function QuestScreen() {
         visible={showDungeon}
         onClose={() => setShowDungeon(false)}
         onRequestClose={() => setShowDungeon(false)}
-        onSelectMission={handleMissionSelect}
+        onSelectMission={(m) => {
+          const key = getKeyByBossId(m.shadowHint)
+          if (key && weeklyDefeatedBossId !== m.shadowHint) {
+            Alert.alert(
+              'ABRIR PORTÃO',
+              `Desejas usar a ${key.name} para entrar na Masmorra?\nA chave será consumida.`,
+              [
+                { text: 'RECUAR', style: 'cancel' },
+                {
+                  text: 'ENTRAR',
+                  onPress: () => {
+                    if (enterDungeon(key.id)) {
+                      setShowDungeon(false)
+                      handleMissionSelect(m)
+                    }
+                  }
+                }
+              ]
+            )
+          } else {
+            setShowDungeon(false)
+            handleMissionSelect(m)
+          }
+        }}
         customMissions={customBossMissions}
-        defeatedId={weeklyDefeatedBossId}
+        defeatedId={weeklyDefeatedBossId ?? undefined}
+        playerKeys={playerDungeonKeys}
+        C={C}
       />
+
 
       {/* Event Dungeon selection modal */}
       <EventDungeonModal
@@ -1571,7 +1808,9 @@ export default function QuestScreen() {
         eventTrials={eventTrials}
         eventBossMission={eventBossMission}
         eventProgress={activeEventDef ? { completedIds: eventCompleted, required: eventRequired, defeated: eventBossDefeated && eventBossKey === activeEventKey } : null}
+        C={C}
       />
+
 
       {/* Boss focus timer */}
       {activeBossQuest && activeMission?.type === 'focus' && (
@@ -1583,7 +1822,9 @@ export default function QuestScreen() {
             completeBossMission(activeMission, mins)
           }}
           targetSeconds={activeMission.focusDuration ? activeMission.focusDuration / 1000 : 90 * 60}
+          C={C}
         />
+
       )}
 
       {/* Boss GPS tracker */}
@@ -1592,7 +1833,9 @@ export default function QuestScreen() {
           quest={activeBossQuest}
           onClose={() => setActiveMission(null)}
           onComplete={() => completeBossMission(activeMission)}
+          C={C}
         />
+
       )}
 
       {/* Boss training confirm */}
@@ -1606,19 +1849,21 @@ export default function QuestScreen() {
           confirmColor={activeMission?.isEventTrial ? '#f97316' : C.neonRed}
           onConfirm={() => { setConfirmBossTraining(false); completeBossMission(activeMission) }}
           onCancel={() => { setConfirmBossTraining(false); setActiveMission(null) }}
+          C={C}
         />
       )}
 
       {eventProgressInfo && (
         <CustomModal
-          visible={Boolean(eventProgressInfo)}
-          title="PROGRESSO DE EVENTO"
+          visible={!!eventProgressInfo}
+          title={eventProgressInfo.name}
           message={`Evento ${eventProgressInfo.name} — ${eventProgressInfo.completed}/${eventProgressInfo.required} provas concluídas.`}
           confirmLabel="OK"
           confirmIcon="check"
           confirmColor={C.neonBlue}
           onConfirm={() => setEventProgressInfo(null)}
           onCancel={() => setEventProgressInfo(null)}
+          C={C}
         />
       )}
 
@@ -1629,77 +1874,82 @@ export default function QuestScreen() {
           info={victoryInfo}
           onClose={() => setVictoryInfo(null)}
           onRequestClose={() => setVictoryInfo(null)}
+          C={C}
         />
+
       )}
 
-      {/* ── Regen Confirm Modal ── */}
-      <CustomModal
-        visible={showRegen}
-        title="REGENERAR MISSÕES"
-        message={
-          'A tua daily pool será regenerada.\n\n' +
-          'Limite: 3 regenerações por semana.'
-        }
-        confirmLabel="REGENERAR"
-        confirmIcon="refresh"
-        confirmColor={C.neonBlue}
-        onConfirm={() => { setShowRegen(false); handleRegenerate() }}
-        onCancel={() => setShowRegen(false)}
-      />
-
-      {/* ── Regen Result Modal ── */}
-      <CustomModal
-        visible={regenResult !== null}
-        title={regenResult?.success ? 'SISTEMA ATUALIZADO' : 'LIMITE ATINGIDO'}
-        message={
-          regenResult?.success
-            ? 'As missões de hoje foram recalculadas.'
-            : (regenResult?.reason ?? 'Não foi possível regenerar.')
-        }
-        confirmLabel="OK"
-        confirmIcon={regenResult?.success ? 'check-circle-outline' : 'alert-circle-outline'}
-        confirmColor={regenResult?.success ? C.neonBlue : C.neonRed}
-        onConfirm={() => setRegenResult(null)}
-        onCancel={() => setRegenResult(null)}
-      />
-
-      {/* ── Regen Confirm Modal ── */}
-      <CustomModal
-        visible={showRegen}
-        title="REGENERAR MISSÕES"
-        message={
-          'A tua daily pool será regenerada.\n\n' +
-          'Limite: 3 regenerações por semana.'
-        }
-        confirmLabel="REGENERAR"
-        confirmIcon="refresh"
-        confirmColor={C.neonBlue}
-        onConfirm={() => { setShowRegen(false); handleRegenerate() }}
-        onCancel={() => setShowRegen(false)}
-      />
-
-      {/* ── Regen Result Modal ── */}
-      <CustomModal
-        visible={regenResult !== null}
-        title={regenResult?.success ? 'SISTEMA ATUALIZADO' : 'LIMITE ATINGIDO'}
-        message={
-          regenResult?.success
-            ? 'As missões de hoje foram recalculadas.'
-            : (regenResult?.reason ?? 'Não foi possível regenerar.')
-        }
-        confirmLabel="OK"
-        confirmIcon={regenResult?.success ? 'check-circle-outline' : 'alert-circle-outline'}
-        confirmColor={regenResult?.success ? C.neonBlue : C.neonRed}
-        onConfirm={() => setRegenResult(null)}
-        onCancel={() => setRegenResult(null)}
-      />
 
       {showForge && <QuestForgeScreen onClose={() => setShowForge(false)} />}
     </View>
   )
 }
 
-// ── Side Quest rank config ──────────────────────────────────────────────────────
+// ── Side Quest Section ──────────────────────────────────────────────────────────
+function SideQuestSection({ C }: { C: any }) {
+  const side = getSideStyles(C)
+  const list = useGameStore(s => s.sideQuests)
+  const addSQ = useGameStore(s => s.addSideQuest)
+  const [collapsed, setCollapsed] = useState(false)
+  const [input, setInput] = useState('')
+
+  function handleAdd() {
+    const title = input.trim()
+    if (!title) return
+    addSQ(title)
+    setInput('')
+  }
+
+  function formatTime(totalSeconds: number) {
+    const minutes = Math.floor(totalSeconds / 60)
+    const seconds = totalSeconds % 60
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  }
+
+  return (
+    <View style={side.container}>
+      <TouchableOpacity style={side.header} onPress={() => setCollapsed(v => !v)} activeOpacity={0.7}>
+        <Icon name="sword-cross" size={14} color={C.purple} />
+        <Text style={side.title}> MISSÕES SECUNDÁRIAS</Text>
+        <View style={side.badge}>
+          <Text style={side.badgeTxt}>{list.filter(q => q.done).length}/{list.length}</Text>
+        </View>
+        <Icon name={collapsed ? 'chevron-down' : 'chevron-up'} size={16} color={C.muted} style={{ marginLeft: 'auto' }} />
+      </TouchableOpacity>
+
+      {!collapsed && (
+        <>
+          <Text style={side.sub}>
+            Tarefas pessoais. Não contam para streak. O Sistema atribui recompensa aleatória.
+          </Text>
+
+          <View style={side.inputRow}>
+            <TextInput
+              style={side.input}
+              placeholder="Nova tarefa..."
+              placeholderTextColor={C.dimmed}
+              value={input}
+              onChangeText={setInput}
+              onSubmitEditing={handleAdd}
+              returnKeyType="done"
+            />
+            <TouchableOpacity style={side.addBtn} onPress={handleAdd}>
+              <Icon name="plus" size={20} color={C.purple} />
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            {list.length === 0 ? (
+              <Text style={side.empty}>Sem missões secundárias. Adiciona uma acima.</Text>
+            ) : (
+              list.map(sq => <SideQuestCard key={sq.id} sq={sq} C={C} formatTime={formatTime} />)
+            )}
+          </View>
+        </>
+      )}
+    </View>
+  )
+}
 
 const SIDE_RANK_COLOR: Record<string, string> = {
   E: '#94a3b8',
@@ -1709,11 +1959,13 @@ const SIDE_RANK_COLOR: Record<string, string> = {
 
 // ── Side Quest Card ────────────────────────────────────────────────────────────
 
-function SideQuestCard({ sq }: { sq: SideQuest }) {
+function SideQuestCard({ sq, C, formatTime }: { sq: SideQuest; C: any; formatTime: (seconds: number) => string }) {
+  const sq_s = getSQSStyles(C)
+  const insets = useSafeAreaInsets()
   const completeSQ = useGameStore(s => s.completeSideQuest)
-  const startSQ    = useGameStore(s => s.startSideQuest)
+  const startSQ = useGameStore(s => s.startSideQuest)
   const updateNote = useGameStore(s => s.updateSideQuestNote)
-  const removeSQ   = useGameStore(s => s.removeSideQuest)
+  const removeSQ = useGameStore(s => s.removeSideQuest)
 
   const [confirm, setConfirm] = useState(false)
   const [showTimerSelect, setShowTimerSelect] = useState(false)
@@ -1721,7 +1973,9 @@ function SideQuestCard({ sq }: { sq: SideQuest }) {
   const [noteText, setNoteText] = useState(sq.note || '')
 
   const rankColor = SIDE_RANK_COLOR[sq.rank] ?? C.muted
-  const isActive  = sq.startTime && !sq.done && (Date.now() - sq.startTime < (sq.duration ?? 0) * 1000)
+  const isActive = !!(sq.startTime && !sq.done && (Date.now() - sq.startTime < (sq.duration ?? 0) * 1000))
+
+
 
   // Timer logic
   const [timeLeft, setTimeLeft] = useState(0)
@@ -1738,36 +1992,36 @@ function SideQuestCard({ sq }: { sq: SideQuest }) {
   }, [sq.startTime, sq.duration, sq.done])
 
   function handleComplete() {
-    cancelSideQuestNotification(sq.id).catch(() => {})
+    cancelSideQuestNotification(sq.id).catch(() => { })
     const { leveledUp } = completeSQ(sq.id)
     // Removed redundant vibration
   }
 
-  const mm = Math.floor(timeLeft / 60)
-  const ss = Math.floor(timeLeft % 60)
-
   return (
-    <View style={[sq_s.card, { borderLeftColor: rankColor }, sq.done && sq_s.cardDone, !!isActive && sq_s.cardActive]}>
-      <View style={[sq_s.rankBadge, { backgroundColor: rankColor + '18', borderColor: rankColor + '66' }]}>
+    <View style={[sq_s.card, sq.done && sq_s.cardDone, isActive && sq_s.cardActive]}>
+      <View style={[sq_s.rankBadge, { borderColor: rankColor + '55', backgroundColor: rankColor + '10' }]}>
         <Text style={[sq_s.rankTxt, { color: rankColor }]}>{sq.rank}</Text>
       </View>
 
       <View style={sq_s.info}>
-        <Text style={[sq_s.title, sq.done && sq_s.titleDone]} numberOfLines={2}>{sq.title}</Text>
-        {sq.note && !sq.done && <Text style={sq_s.noteLine}>{sq.note}</Text>}
-        
+        <Text style={[sq_s.title, sq.done && sq_s.titleDone]} numberOfLines={2}>
+          {sq.title}
+        </Text>
+
+
+        {sq.note ? <Text style={sq_s.noteLine}>{sq.note}</Text> : null}
+
         <View style={sq_s.rewardRow}>
           <Icon name="star-four-points" size={9} color={sq.done ? C.dimmed : C.neonBlue} />
           <Text style={[sq_s.xp, sq.done && sq_s.dimmed]}> {sq.xp} XP</Text>
           <Text style={[sq_s.gold, sq.done && sq_s.dimmed]}>  ◈{sq.gold}</Text>
-          
-          {sq.startTime && !sq.done && (
-            <View style={[sq_s.timerRow, { marginLeft: 12 }]}>
-              <Icon name="clock-outline" size={10} color={C.purple} />
-              <Text style={sq_s.timerTxt}>{mm}:{ss.toString().padStart(2, '0')}</Text>
-            </View>
-          )}
         </View>
+        {isActive && (
+          <View style={sq_s.timerRow}>
+            <Icon name="timer-sand" size={10} color={C.purple} />
+            <Text style={sq_s.timerTxt}>{formatTime(timeLeft)}</Text>
+          </View>
+        )}
       </View>
 
       {!sq.done && (
@@ -1775,7 +2029,7 @@ function SideQuestCard({ sq }: { sq: SideQuest }) {
           <TouchableOpacity style={sq_s.actionBtn} onPress={() => setShowNoteInput(true)}>
             <Icon name="note-edit-outline" size={16} color={C.dimmed} />
           </TouchableOpacity>
-          
+
           {!sq.startTime && (
             <TouchableOpacity style={sq_s.actionBtn} onPress={() => setShowTimerSelect(true)}>
               <Icon name="timer-outline" size={17} color={C.purple} />
@@ -1795,7 +2049,7 @@ function SideQuestCard({ sq }: { sq: SideQuest }) {
       )}
 
       <TouchableOpacity style={sq_s.delBtn} onPress={() => {
-        cancelSideQuestNotification(sq.id).catch(() => {})
+        cancelSideQuestNotification(sq.id).catch(() => { })
         removeSQ(sq.id)
       }}>
         <Icon name="close" size={13} color={C.dimmed} />
@@ -1810,124 +2064,65 @@ function SideQuestCard({ sq }: { sq: SideQuest }) {
         onConfirm={() => {
           setShowTimerSelect(false)
           startSQ(sq.id, 30)
-          scheduleSideQuestNotification(sq.id, 30 * 60_000, sq.title).catch(() => {})
+          scheduleSideQuestNotification(sq.id, 30 * 60_000, sq.title).catch(() => { })
         }}
+
         cancelLabel="60 MIN"
         onCancel={() => {
           setShowTimerSelect(false)
           startSQ(sq.id, 60)
-          scheduleSideQuestNotification(sq.id, 60 * 60_000, sq.title).catch(() => {})
+          scheduleSideQuestNotification(sq.id, 60 * 60_000, sq.title).catch(() => { })
         }}
+        C={C}
       />
 
       {/* Note Input Modal */}
-      <Modal transparent visible={showNoteInput} animationType="slide">
-        <View style={{ flex: 1, backgroundColor: '#000a', justifyContent: 'flex-end' }}>
-          <View style={{ backgroundColor: C.panel, padding: 20, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
-            <Text style={{ color: C.purple, fontFamily: FONT.orbitron, marginBottom: 10 }}>NOTA DA MISSÃO</Text>
-            <TextInput
-              style={{ backgroundColor: C.bg, color: '#fff', padding: 12, borderRadius: 8, textAlignVertical: 'top', height: 100 }}
-              multiline
-              value={noteText}
-              onChangeText={setNoteText}
-              placeholder="Escreve aqui..."
-              placeholderTextColor={C.dimmed}
-              autoFocus
-            />
-            <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
-              <TouchableOpacity
-                style={{ flex: 1, backgroundColor: C.purple, padding: 12, borderRadius: 8, alignItems: 'center' }}
-                onPress={() => { updateNote(sq.id, noteText); setShowNoteInput(false) }}
-              >
-                <Text style={{ color: '#fff', fontWeight: '700' }}>GUARDAR</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{ flex: 1, borderWidth: 1, borderColor: C.dimmed, padding: 12, borderRadius: 8, alignItems: 'center' }}
-                onPress={() => setShowNoteInput(false)}
-              >
-                <Text style={{ color: C.dimmed }}>CANCELAR</Text>
-              </TouchableOpacity>
-            </View>
+      <BottomSheetModal visible={showNoteInput} onClose={() => setShowNoteInput(false)} contentStyle={{ backgroundColor: 'transparent' }}>
+        <View style={{ backgroundColor: C.panel, padding: 20, paddingBottom: Math.max(20, insets.bottom + SPACING.sm), borderTopLeftRadius: 16, borderTopRightRadius: 16, width: '100%' }}>
+          <Text style={{ color: C.purple, fontFamily: FONT.orbitron, marginBottom: 10 }}>NOTA DA MISSÃO</Text>
+          <TextInput
+            style={{ backgroundColor: C.bg, color: '#fff', padding: 12, borderRadius: 8, textAlignVertical: 'top', height: 100 }}
+            multiline
+            value={noteText}
+            onChangeText={setNoteText}
+            placeholder="Escreve aqui..."
+            placeholderTextColor={C.dimmed}
+            autoFocus
+          />
+          <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
+            <TouchableOpacity
+              style={{ flex: 1, backgroundColor: C.purple, padding: 12, borderRadius: 8, alignItems: 'center' }}
+              onPress={() => { updateNote(sq.id, noteText); setShowNoteInput(false) }}
+            >
+              <Text style={{ color: '#fff', fontWeight: '700' }}>GUARDAR</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ flex: 1, borderWidth: 1, borderColor: C.dimmed, padding: 12, borderRadius: 8, alignItems: 'center' }}
+              onPress={() => setShowNoteInput(false)}
+            >
+              <Text style={{ color: C.dimmed }}>CANCELAR</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </BottomSheetModal>
 
       <CustomModal
         visible={confirm}
         title="MISSÃO SECUNDÁRIA"
         message={`Concluíste:\n"${sq.title}"?`}
+
         confirmLabel="SIM, CONCLUÍ"
         confirmIcon="check-circle-outline"
         confirmColor={rankColor}
         onConfirm={() => { setConfirm(false); handleComplete() }}
         onCancel={() => setConfirm(false)}
+        C={C}
       />
     </View>
   )
 }
 
-// ── Side Quest Section ─────────────────────────────────────────────────────────
 
-function SideQuestSection() {
-  const sideQuests = useGameStore(s => s.sideQuests)
-  const addSQ      = useGameStore(s => s.addSideQuest)
-  const [collapsed, setCollapsed] = useState(false)
-  const [input, setInput]         = useState('')
-
-  function handleAdd() {
-    const title = input.trim()
-    if (!title) return
-    addSQ(title)
-    setInput('')
-  }
-
-  const doneCount  = sideQuests.filter(q => q.done).length
-  const totalCount = sideQuests.length
-
-  return (
-    <View style={side.container}>
-      <TouchableOpacity style={side.header} onPress={() => setCollapsed(v => !v)} activeOpacity={0.7}>
-        <Icon name="sword-cross" size={14} color={C.purple} />
-        <Text style={side.title}> MISSÕES SECUNDÁRIAS</Text>
-        {totalCount > 0 && (
-          <View style={side.badge}>
-            <Text style={side.badgeTxt}>{doneCount}/{totalCount}</Text>
-          </View>
-        )}
-        <Icon name={collapsed ? 'chevron-down' : 'chevron-up'} size={16} color={C.muted} style={{ marginLeft: 'auto' }} />
-      </TouchableOpacity>
-
-      {!collapsed && (
-        <>
-          <Text style={side.sub}>
-            Tarefas pessoais. Não contam para streak. O Sistema atribui recompensa aleatória.
-          </Text>
-
-          <View style={side.inputRow}>
-            <TextInput
-              style={side.input}
-              value={input}
-              onChangeText={setInput}
-              placeholder="Nova tarefa..."
-              placeholderTextColor={C.dimmed}
-              onSubmitEditing={handleAdd}
-              returnKeyType="done"
-            />
-            <TouchableOpacity style={side.addBtn} onPress={handleAdd}>
-              <Icon name="plus" size={18} color={C.purple} />
-            </TouchableOpacity>
-          </View>
-
-          {sideQuests.length === 0 ? (
-            <Text style={side.empty}>Sem missões secundárias. Adiciona uma acima.</Text>
-          ) : (
-            sideQuests.map(sq => <SideQuestCard key={sq.id} sq={sq} />)
-          )}
-        </>
-      )}
-    </View>
-  )
-}
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 

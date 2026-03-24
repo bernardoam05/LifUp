@@ -12,13 +12,16 @@ import RankModal from './src/components/RankModal'
 import ExtractionModal from './src/components/ExtractionModal'
 import TutorialOverlay from './src/components/TutorialOverlay'
 
-import StatusScreen    from './src/screens/StatusScreen'
-import QuestScreen     from './src/screens/QuestScreen'
-import ShopScreen      from './src/screens/ShopScreen'
+
+import LevelUpToast from "./src/components/LevelUpToast"
+
+import StatusScreen from './src/screens/StatusScreen'
+import QuestScreen from './src/screens/QuestScreen'
+import ShopScreen from './src/screens/ShopScreen'
 import InventoryScreen from './src/screens/InventoryScreen'
-import FocusScreen     from './src/screens/FocusScreen'
-import ShadowsScreen   from './src/screens/ShadowsScreen'
-import SettingsScreen  from './src/screens/SettingsScreen'
+import FocusScreen from './src/screens/FocusScreen'
+import ShadowsScreen from './src/screens/ShadowsScreen'
+import SettingsScreen from './src/screens/SettingsScreen'
 import { C, FONT, SPACING } from './src/theme'
 
 const Tab = createMaterialTopTabNavigator()
@@ -61,9 +64,9 @@ function AchievementModal({ achievementId, onDismiss }: { achievementId: string;
 // ── Penalty Modal (scary, dynamic) ────────────────────────────────────────────
 
 const INTENSITY_FLAVOR: Record<string, { title: string; icon: string; color: string }> = {
-  light:    { title: 'ZONA DE PENALIDADE',     icon: 'shield-alert-outline', color: '#22c55e' },
-  medium:   { title: 'ZONA DE PENALIDADE',     icon: 'alert-octagon',        color: C.gold },
-  hardcore: { title: 'PUNIÇÃO DO MONARCA',     icon: 'skull-crossbones',     color: C.neonRed },
+  light: { title: 'ZONA DE PENALIDADE', icon: 'shield-alert-outline', color: '#22c55e' },
+  medium: { title: 'ZONA DE PENALIDADE', icon: 'alert-octagon', color: C.gold },
+  hardcore: { title: 'PUNIÇÃO DO MONARCA', icon: 'skull-crossbones', color: C.neonRed },
 }
 
 function PenaltyModal({ visible, onDismiss }: { visible: boolean; onDismiss: () => void }) {
@@ -77,9 +80,9 @@ function PenaltyModal({ visible, onDismiss }: { visible: boolean; onDismiss: () 
     else Vibration.vibrate([0, 100])
   }, [visible])
 
-  const info      = lastPenaltyInfo
+  const info = lastPenaltyInfo
   const intensity = info?.intensity ?? 'medium'
-  const flavor    = INTENSITY_FLAVOR[intensity] ?? INTENSITY_FLAVOR.medium
+  const flavor = INTENSITY_FLAVOR[intensity] ?? INTENSITY_FLAVOR.medium
 
   const failLine = info
     ? `${info.failedCount} de ${info.totalCount} missões falhadas.`
@@ -128,19 +131,32 @@ function PenaltyModal({ visible, onDismiss }: { visible: boolean; onDismiss: () 
 // ── HUD ────────────────────────────────────────────────────────────────────────
 
 function SystemHUD({ onSettings, onRankPress }: { onSettings: () => void; onRankPress: () => void }) {
-  const player   = useGameStore(s => s.player)
-  const stats    = useGameStore(s => s.statistics)
-  const bosses   = useGameStore(s => s.system.bossesDefeated)
-  const rank     = getRank(player.level, stats.totalCompleted, bosses, stats.questsByRank)
+  const player = useGameStore(s => s.player)
+  const stats = useGameStore(s => s.statistics)
+  const bosses = useGameStore(s => s.system.bossesDefeated)
+  const qualifiedRankInfo = getRank(player.level, stats.totalCompleted, bosses, stats.questsByRank)
+  
+  const playerRankLetter = player.rank || 'E'
+  const currentRankInfo = CLASS_REQUIREMENTS.find(r => r.rank === playerRankLetter) || CLASS_REQUIREMENTS[0]
+  
+  const currentIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank)
+  const qualifiedIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === qualifiedRankInfo.rank)
+  const canRankUp = qualifiedIdx > currentIdx
+  
   const xpNeeded = xpForLevel(player.level)
-  const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100)
-  const focusOn  = useGameStore(s => s.system.focusModeActive)
+  const xpPct = Math.min((player.xp / xpNeeded) * 100, 100)
+  const focusOn = useGameStore(s => s.system.focusModeActive)
 
   return (
     <View style={hud.container}>
       <View style={hud.row}>
-        <TouchableOpacity style={[hud.badge, { borderColor: rank.color }]} onPress={onRankPress} activeOpacity={0.75}>
-          <Text style={[hud.badgeText, { color: rank.color }]}>{rank.rank}</Text>
+        <TouchableOpacity style={[hud.badge, { borderColor: currentRankInfo.color }]} onPress={onRankPress} activeOpacity={0.75}>
+          <Text style={[hud.badgeText, { color: currentRankInfo.color }]}>{currentRankInfo.rank}</Text>
+          {canRankUp && (
+            <View style={hud.rankUpIndicator}>
+              <Text style={hud.rankUpIndicatorText}>!</Text>
+            </View>
+          )}
         </TouchableOpacity>
         <View style={hud.info}>
           <View style={hud.nameRow}>
@@ -182,12 +198,12 @@ function SystemHUD({ onSettings, onRankPress }: { onSettings: () => void; onRank
 // ── Tab icon map ───────────────────────────────────────────────────────────────
 
 const TAB_ICONS: Record<string, string> = {
-  'Status':     'sword-cross',
-  'Missões':    'clipboard-list-outline',
-  'Loja':       'shopping-outline',
+  'Status': 'sword-cross',
+  'Missões': 'clipboard-list-outline',
+  'Loja': 'shopping-outline',
   'Inventário': 'bag-personal',
   'Focus Mode': 'brain',
-  'Sombras':    'account-group-outline',
+  'Sombras': 'account-group-outline',
 }
 
 const navigationRef = createNavigationContainerRef<any>()
@@ -195,22 +211,25 @@ const navigationRef = createNavigationContainerRef<any>()
 // ── App Root ───────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const bootSystem          = useGameStore(s => s.bootSystem)
-  const hasPenalty          = useGameStore(s => s.system.hasPenalty)
-  const penaltyTriggered    = useGameStore(s => s.system.penaltyTriggered)
-  const dismissPenalty      = useGameStore(s => s.dismissPenaltyModal)
-  const inventory           = useGameStore(s => s.player.inventory)
-  const invTotal            = inventory.reduce((sum, e) => sum + e.quantity, 0)
-  const rewardsQueue        = useGameStore(s => s.rewardsQueue)
-  const popReward           = useGameStore(s => s.popReward)
-  const tutorialPhase       = useGameStore(s => s.system.tutorialPhase)
-  const advanceTutorial     = useGameStore(s => s.advanceTutorialPhase)
+  const levelUpReward = useGameStore(s => s.levelUpReward)
+  const dismissLevelUpReward = useGameStore(s => s.dismissLevelUpReward)
+
+  const bootSystem = useGameStore(s => s.bootSystem)
+  const hasPenalty = useGameStore(s => s.system.hasPenalty)
+  const penaltyTriggered = useGameStore(s => s.system.penaltyTriggered)
+  const dismissPenalty = useGameStore(s => s.dismissPenaltyModal)
+  const inventory = useGameStore(s => s.player.inventory)
+  const invTotal = inventory.reduce((sum, e) => sum + e.quantity, 0)
+  const rewardsQueue = useGameStore(s => s.rewardsQueue)
+  const popReward = useGameStore(s => s.popReward)
+  const tutorialPhase = useGameStore(s => s.system.tutorialPhase)
+  const advanceTutorial = useGameStore(s => s.advanceTutorialPhase)
 
   const [showSettings, setShowSettings] = useState(false)
   const [showRankInfo, setShowRankInfo] = useState(false)
-  const statistics   = useGameStore(s => s.statistics)
+  const statistics = useGameStore(s => s.statistics)
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated)
-  const playerLevel  = useGameStore(s => s.player.level)
+  const playerLevel = useGameStore(s => s.player.level)
 
   // Decide if tutorial should run
   const activeTutorialPhase = tutorialPhase === 0 ? 1 : (tutorialPhase === 1 && playerLevel >= 10 ? 2 : null)
@@ -219,7 +238,7 @@ export default function App() {
     bootSystem()
     setupNotifications()
       .then(() => requestNotificationPermission())
-      .catch(() => {})
+      .catch(() => { })
   }, [])
 
 
@@ -241,26 +260,39 @@ export default function App() {
 
         <NavigationContainer
           ref={navigationRef}
+          linking={{
+            prefixes: ['sololeveling://'],
+            config: {
+              screens: {
+                "Status": 'status',
+                "Missões": 'missions',
+                "Focus Mode": 'focus',
+                "Loja": 'shop',
+                "Inventário": 'inventory',
+                "Sombras": 'shadows'
+              }
+            }
+          }}
           theme={{ ...DarkTheme, colors: { ...DarkTheme.colors, background: C.bg, card: C.panel, border: C.border } }}
         >
           <Tab.Navigator
             tabBarPosition="bottom"
             screenOptions={({ route }) => ({
-              tabBarShowIcon:          true,
-              tabBarStyle:             styles.tabBar,
-              tabBarIndicatorStyle:    { backgroundColor: C.neonBlue, height: 2, top: 0 },
-              tabBarActiveTintColor:   C.neonBlue,
+              tabBarShowIcon: true,
+              tabBarStyle: styles.tabBar,
+              tabBarIndicatorStyle: { backgroundColor: C.neonBlue, height: 2, top: 0 },
+              tabBarActiveTintColor: C.neonBlue,
               tabBarInactiveTintColor: C.dimmed,
-              tabBarLabelStyle:        styles.tabLabel,
+              tabBarLabelStyle: styles.tabLabel,
               tabBarIcon: ({ color, ...rest }) => {
                 const iconSize = (rest as any).size ?? 22
                 return <Icon name={TAB_ICONS[route.name] ?? 'circle'} size={iconSize - 2} color={color} />
               },
             })}
           >
-            <Tab.Screen name="Status"   component={StatusScreen} />
-            <Tab.Screen name="Missões"  component={QuestScreen} />
-            <Tab.Screen name="Loja"     component={ShopScreen} />
+            <Tab.Screen name="Status" component={StatusScreen} />
+            <Tab.Screen name="Missões" component={QuestScreen} />
+            <Tab.Screen name="Loja" component={ShopScreen} />
             <Tab.Screen
               name="Inventário"
               component={InventoryScreen}
@@ -308,9 +340,9 @@ export default function App() {
             {rewardsQueue[0].type === 'shadow' && (
               <ExtractionModal
                 result={{
-                   shadow: (SHADOW_MAP[rewardsQueue[0].id] || (useGameStore.getState().customShadows.find(cs => cs.id === rewardsQueue[0].id)))!, // fallback to custom if not in SHADOW_MAP
-                   isLevelUp: !!rewardsQueue[0].isLevelUp,
-                   newLevel: rewardsQueue[0].newLevel || 1
+                  shadow: (SHADOW_MAP[rewardsQueue[0].id] || (useGameStore.getState().customShadows.find(cs => cs.id === rewardsQueue[0].id)))!, // fallback to custom if not in SHADOW_MAP
+                  isLevelUp: !!rewardsQueue[0].isLevelUp,
+                  newLevel: rewardsQueue[0].newLevel || 1
                 }}
                 onDismiss={popReward}
               />
@@ -331,6 +363,7 @@ export default function App() {
 
         {/* Settings screen */}
         {showSettings && <SettingsScreen onClose={() => setShowSettings(false)} />}
+        <LevelUpToast reward={levelUpReward} onDismiss={dismissLevelUpReward} />
 
         {/* Tutorial Overlay */}
         {activeTutorialPhase !== null && (
@@ -353,106 +386,108 @@ export default function App() {
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
 const hud = StyleSheet.create({
-  container:  { backgroundColor: C.panel, borderBottomWidth: 1, borderBottomColor: C.border, paddingHorizontal: SPACING.md, paddingVertical: 10 },
-  row:        { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  badge:      { width: 48, height: 48, borderRadius: 12, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  badgeText:  { fontSize: 20, fontFamily: FONT.orbitron, fontWeight: '900' },
-  info:       { flex: 1 },
-  nameRow:    { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  name:       { color: '#fff', fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', maxWidth: 120 },
-  level:      { color: C.muted, fontSize: 11 },
-  gold:       { color: C.gold, fontSize: 13, fontWeight: '700' },
-  xpTrack:    { height: 5, backgroundColor: C.neonBlue + '18', borderRadius: 3, overflow: 'hidden' },
-  xpFill:     { height: '100%', backgroundColor: C.neonBlue, borderRadius: 3 },
-  xpRow:       { flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 },
-  xpText:      { color: C.dimmed, fontSize: 9 },
-  focusTag:    { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
+  container: { backgroundColor: C.panel, borderBottomWidth: 1, borderBottomColor: C.border, paddingHorizontal: SPACING.md, paddingVertical: 10 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  badge: { width: 48, height: 48, borderRadius: 12, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  badgeText: { fontSize: 20, fontFamily: FONT.orbitron, fontWeight: '900' },
+  rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonRed, borderRadius: 10, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#fff' },
+  rankUpIndicatorText: { color: '#fff', fontSize: 11, fontFamily: FONT.orbitron, fontWeight: '900' },
+  info: { flex: 1 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  name: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', maxWidth: 120 },
+  level: { color: C.muted, fontSize: 11 },
+  gold: { color: C.gold, fontSize: 13, fontWeight: '700' },
+  xpTrack: { height: 5, backgroundColor: C.neonBlue + '18', borderRadius: 3, overflow: 'hidden' },
+  xpFill: { height: '100%', backgroundColor: C.neonBlue, borderRadius: 3 },
+  xpRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 },
+  xpText: { color: C.dimmed, fontSize: 9 },
+  focusTag: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
   streakBadge: { flexDirection: 'row', alignItems: 'center', marginRight: 8, backgroundColor: '#1a0f0022', borderRadius: 6, paddingHorizontal: 4, paddingVertical: 1 },
-  streakFire:  { fontSize: 11 },
-  streakNum:   { color: '#f97316', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
-  gearBtn:     { padding: 6, marginLeft: 4 },
+  streakFire: { fontSize: 11 },
+  streakNum: { color: '#f97316', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
+  gearBtn: { padding: 6, marginLeft: 4 },
 })
 
 const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: C.panel,
-    borderTopWidth:  1,
-    borderTopColor:  C.border,
-    height:          62,
-    elevation:       0,
-    shadowOpacity:   0,
+    borderTopWidth: 1,
+    borderTopColor: C.border,
+    height: 62,
+    elevation: 0,
+    shadowOpacity: 0,
   },
   tabLabel: {
-    fontFamily:    FONT.orbitron,
-    fontSize:      8,
+    fontFamily: FONT.orbitron,
+    fontSize: 8,
     letterSpacing: 0.5,
-    margin:        0,
-    marginTop:     -4,
+    margin: 0,
+    marginTop: -4,
   },
   penalBanner: {
-    flexDirection:     'row',
-    alignItems:        'center',
-    justifyContent:    'center',
-    backgroundColor:   '#1a0505',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#1a0505',
     borderBottomWidth: 1,
     borderBottomColor: '#ef444455',
-    paddingVertical:   6,
+    paddingVertical: 6,
     paddingHorizontal: SPACING.md,
   },
   penalBannerText: {
-    color:         C.neonRed,
-    fontSize:      11,
-    fontWeight:    '700',
+    color: C.neonRed,
+    fontSize: 11,
+    fontWeight: '700',
     letterSpacing: 0.5,
   },
 })
 
 const pm = StyleSheet.create({
-  overlay:  { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
-  card:     { backgroundColor: '#0a0005', borderRadius: 4, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
-  warning:  { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 3, marginBottom: SPACING.sm },
-  title:    { color: '#fff', fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.md },
-  badge:    { borderWidth: 1, borderRadius: 2, paddingHorizontal: 10, paddingVertical: 4, marginBottom: SPACING.md },
+  overlay: { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  card: { backgroundColor: '#0a0005', borderRadius: 4, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
+  warning: { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 3, marginBottom: SPACING.sm },
+  title: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.md },
+  badge: { borderWidth: 1, borderRadius: 2, paddingHorizontal: 10, paddingVertical: 4, marginBottom: SPACING.md },
   badgeTxt: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, fontWeight: '700' },
-  message:  { color: '#94a3b8', fontSize: 13, textAlign: 'center', lineHeight: 22, marginBottom: SPACING.xl },
-  btn:      { borderWidth: 1, borderRadius: 4, paddingVertical: 14, paddingHorizontal: SPACING.xl },
-  btnTxt:   { fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
+  message: { color: '#94a3b8', fontSize: 13, textAlign: 'center', lineHeight: 22, marginBottom: SPACING.xl },
+  btn: { borderWidth: 1, borderRadius: 4, paddingVertical: 14, paddingHorizontal: SPACING.xl },
+  btnTxt: { fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
 })
 
 const hrm = StyleSheet.create({
-  overlay:      { flex: 1, backgroundColor: '#000000dd', alignItems: 'center', justifyContent: 'center', padding: 20 },
-  card:         { width: '100%', backgroundColor: '#0a0f1a', borderRadius: 4, borderWidth: 1, padding: 16 },
-  headerRow:    { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  headerTxt:    { flex: 1, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
-  closeBtn:     { padding: 4 },
-  divider:      { height: 1, backgroundColor: '#1e293b', marginBottom: 12 },
-  row:          { flexDirection: 'row', alignItems: 'center', borderRadius: 4, paddingVertical: 8, paddingHorizontal: 8, marginBottom: 6, gap: 10 },
-  badge:        { width: 30, height: 30, borderRadius: 3, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
-  badgeTxt:     { fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900' },
-  rowInfo:      { flex: 1 },
-  rowLabel:     { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
-  rowSub:       { color: '#475569', fontSize: 10, marginTop: 1 },
-  currentTag:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
-  currentTagTxt:{ fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
-  nextSection:  { flexDirection: 'row', alignItems: 'flex-start', marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#1e293b' },
-  nextTxt:      { fontSize: 11, fontFamily: FONT.orbitron },
-  reqRow:       { flexDirection: 'row', alignItems: 'center', marginTop: 3, gap: 4 },
-  reqLabel:     { flex: 1, color: '#475569', fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 0.5 },
-  reqVal:       { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
-  reqMet:       { color: '#22c55e' },
-  reqFail:      { color: '#ef4444' },
+  overlay: { flex: 1, backgroundColor: '#000000dd', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  card: { width: '100%', backgroundColor: '#0a0f1a', borderRadius: 4, borderWidth: 1, padding: 16 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  headerTxt: { flex: 1, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  closeBtn: { padding: 4 },
+  divider: { height: 1, backgroundColor: '#1e293b', marginBottom: 12 },
+  row: { flexDirection: 'row', alignItems: 'center', borderRadius: 4, paddingVertical: 8, paddingHorizontal: 8, marginBottom: 6, gap: 10 },
+  badge: { width: 30, height: 30, borderRadius: 3, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
+  badgeTxt: { fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900' },
+  rowInfo: { flex: 1 },
+  rowLabel: { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+  rowSub: { color: '#475569', fontSize: 10, marginTop: 1 },
+  currentTag: { borderWidth: 1, borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
+  currentTagTxt: { fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
+  nextSection: { flexDirection: 'row', alignItems: 'flex-start', marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#1e293b' },
+  nextTxt: { fontSize: 11, fontFamily: FONT.orbitron },
+  reqRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3, gap: 4 },
+  reqLabel: { flex: 1, color: '#475569', fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 0.5 },
+  reqVal: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
+  reqMet: { color: '#22c55e' },
+  reqFail: { color: '#ef4444' },
 })
 
 const am = StyleSheet.create({
-  overlay:  { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
-  card:     { backgroundColor: '#050810', borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
-  system:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3, marginBottom: 4 },
-  header:   { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, marginBottom: SPACING.md },
+  overlay: { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  card: { backgroundColor: '#050810', borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
+  system: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3, marginBottom: 4 },
+  header: { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, marginBottom: SPACING.md },
   iconWrap: { width: 88, height: 88, borderRadius: 22, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.md },
-  title:    { fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm, textAlign: 'center' },
-  desc:     { color: '#94a3b8', fontSize: 13, textAlign: 'center', lineHeight: 20, marginBottom: SPACING.lg },
-  rewardRow:{ flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.xl },
-  reward:   { color: C.gold, fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900' },
-  btn:      { borderWidth: 1, borderRadius: 10, paddingVertical: 14, paddingHorizontal: SPACING.xl },
-  btnTxt:   { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+  title: { fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm, textAlign: 'center' },
+  desc: { color: '#94a3b8', fontSize: 13, textAlign: 'center', lineHeight: 20, marginBottom: SPACING.lg },
+  rewardRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.xl },
+  reward: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900' },
+  btn: { borderWidth: 1, borderRadius: 10, paddingVertical: 14, paddingHorizontal: SPACING.xl },
+  btnTxt: { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 })

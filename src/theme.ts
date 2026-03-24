@@ -1,15 +1,13 @@
-export const C = {
-  bg:       '#050810',
-  panel:    '#0a0f1e',
-  border:   '#1e3a5f',
-  neonBlue: '#00d4ff',
-  neonRed:  '#ef4444',
-  gold:     '#f59e0b',
-  purple:   '#a855f7',
-  green:    '#22c55e',
-  muted:    '#94a3b8',
-  dimmed:   '#64748b',
-} as const
+import { APP_THEMES } from './data/themes'
+import useGameStore from './store/useGameStore'
+
+export const C = APP_THEMES[0].colors
+
+export function useTheme() {
+  const activeThemeId = useGameStore(s => s.player?.activeThemeId)
+  const theme = APP_THEMES.find(t => t.id === activeThemeId) || APP_THEMES[0]
+  return theme.colors
+}
 
 export const FONT = {
   // Place Orbitron-Bold.ttf in android/app/src/main/assets/fonts/ to enable

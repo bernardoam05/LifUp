@@ -18,7 +18,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     rank: 'B',
     baseHp: 1800,
     durationDays: 3,
-    icon: 'wolf',
+    icon: 'dog',
     color: '#94a3b8'
   },
   {

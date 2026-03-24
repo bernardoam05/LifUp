@@ -29,7 +29,9 @@ import {
   TIER_COLORS, getActiveTier, getCompletedTier, isAchievementMaxed, getTierIndex,
 } from '../data/achievements'
 import { SHADOW_MAP, SHADOW_RANK_COLOR, type Shadow } from '../data/shadows'
-import { C, FONT, SPACING } from '../theme'
+import SharedStorage from '../native/SharedStorage'
+import SoloLevelingModal from '../components/SoloLevelingModal'
+import { useTheme, FONT, SPACING } from '../theme'
 import RankModal from '../components/RankModal'
 
 // Format minutes into "Xh Ym" for focus achievements
@@ -44,40 +46,51 @@ function fmtVal(a: Achievement, val: number): string {
   return String(val)
 }
 
-// ── Config ─────────────────────────────────────────────────────────────────────
-
-const ATTR_ICONS: Record<string, { icon: string; color: string }> = {
-  STR: { icon: 'arm-flex',    color: '#ef4444' },
-  AGI: { icon: 'run-fast',    color: '#22c55e' },
-  INT: { icon: 'brain',       color: C.neonBlue },
-  VIT: { icon: 'heart-pulse', color: '#a855f7' },
-}
-
-const RANK_ORDER: RankKey[] = ['E', 'D', 'C', 'B', 'A', 'S']
-const RANK_COLORS: Record<RankKey, string> = {
-  E: '#94a3b8', D: '#22c55e', C: '#3b82f6', B: '#a855f7', A: '#f59e0b', S: '#ef4444',
-}
-
 // ── Stat bar ───────────────────────────────────────────────────────────────────
 
-function StatBar({ label, value }: { label: string; value: number }) {
+function StatBar({ label, level, xp, C }: { label: string; level: number; xp: number; C: any }) {
+  const ATTR_ICONS: Record<string, { icon: string; color: string }> = {
+    STR: { icon: 'arm-flex',    color: '#ef4444' },
+    AGI: { icon: 'run-fast',    color: '#22c55e' },
+    INT: { icon: 'brain',       color: C.neonBlue },
+    VIT: { icon: 'heart-pulse', color: '#a855f7' },
+  }
   const { icon, color } = ATTR_ICONS[label]
-  const pct = Math.min((value / 100) * 100, 100)
+
+  
+  // Calculate progress to next level
+  // level = floor(sqrt(xp/10))
+  // L = level
+  // xp_cur = 10 * L^2
+  // xp_next = 10 * (L+1)^2
+  // Formula: level = 10 + floor(sqrt(xp/5))
+  // => (level - 10)^2 = xp/5 => xp_cur = 5 * (level - 10)^2
+  const xpCur = 5 * Math.pow(Math.max(0, level - 10), 2)
+  const xpNext = 5 * Math.pow(Math.max(0, level + 1 - 10), 2)
+  const progress = xpNext === xpCur ? 0 : Math.min(1, (xp - xpCur) / (xpNext - xpCur))
+  const pct = progress * 100
+  const s = getStyles(C)
+
   return (
     <View style={s.statRow}>
       <Icon name={icon} size={16} color={color} style={s.statIcon} />
-      <Text style={[s.statLabel, { color }]}>{label}</Text>
-      <View style={s.track}>
-        <View style={[s.fill, { width: `${pct}%` as any, backgroundColor: color }]} />
+      <View style={s.statInfo}>
+        <View style={s.statHeader}>
+          <Text style={[s.statLabel, { color }]}>{label}</Text>
+          <Text style={s.statVal}>{level}</Text>
+        </View>
+        <View style={s.track}>
+          <View style={[s.fill, { width: `${pct}%` as any, backgroundColor: color }]} />
+        </View>
       </View>
-      <Text style={s.statVal}>{value}</Text>
     </View>
   )
 }
 
 // ── Section header ─────────────────────────────────────────────────────────────
 
-function SectionHeader({ icon, label }: { icon: string; label: string }) {
+function SectionHeader({ icon, label, C }: { icon: string; label: string; C: any }) {
+  const s = getStyles(C) // Assuming getStyles is defined later and contains sectionHeader, sectionTitle
   return (
     <View style={s.sectionHeader}>
       <Icon name={icon} size={12} color={C.neonBlue} />
@@ -88,11 +101,18 @@ function SectionHeader({ icon, label }: { icon: string; label: string }) {
 
 // ── Statistics panel ───────────────────────────────────────────────────────────
 
-function StatisticsPanel() {
+function StatisticsPanel({ C }: { C: any }) {
+  const sp = getSPStyles(C) // Assuming getSPStyles is defined later
+  const kpi = getKPIStyles(C) // Assuming getKPIStyles is defined later
   const stats = useGameStore(st => st.statistics)
 
   const hours   = Math.floor(stats.totalFocusMinutes / 60)
   const minutes = stats.totalFocusMinutes % 60
+
+  const RANK_ORDER: RankKey[] = ['E', 'D', 'C', 'B', 'A', 'S']
+  const RANK_COLORS: Record<RankKey, string> = {
+    E: C.rankE, D: C.rankD, C: C.rankC, B: C.rankB, A: C.rankA, S: C.rankS,
+  }
 
   const totalQuestsByRank = RANK_ORDER.reduce((sum, r) => sum + (stats.questsByRank[r] || 0), 0)
   
@@ -113,10 +133,10 @@ function StatisticsPanel() {
   return (
     <View style={sp.container}>
       <View style={sp.kpiRow}>
-        <KPICard icon="trophy" color={C.gold}     label="Missões"       value={String(stats.totalCompleted)} />
-        <KPICard icon="calendar-star" color="#a855f7" label="Dias Perfeitos" value={String(stats.perfectDays)} />
+        <KPICard icon="trophy" color={C.gold}     label="Missões"       value={String(stats.totalCompleted)} C={C} />
+        <KPICard icon="calendar-star" color="#a855f7" label="Dias Perfeitos" value={String(stats.perfectDays)} C={C} />
         <KPICard icon="timer-outline" color={C.neonBlue} label="Foco"
-          value={hours > 0 ? `${hours}h${minutes}m` : `${minutes}m`} />
+          value={hours > 0 ? `${hours}h${minutes}m` : `${minutes}m`} C={C} />
       </View>
 
       <View style={sp.rankSection}>
@@ -142,7 +162,8 @@ function StatisticsPanel() {
   )
 }
 
-function KPICard({ icon, color, label, value }: { icon: string; color: string; label: string; value: string }) {
+function KPICard({ icon, color, label, value, C }: { icon: string; color: string; label: string; value: string; C: any }) {
+  const kpi = getKPIStyles(C) // Assuming getKPIStyles is defined later
   return (
     <View style={[kpi.card, { borderColor: color + '44' }]}>
       <Icon name={icon} size={20} color={color} />
@@ -155,8 +176,9 @@ function KPICard({ icon, color, label, value }: { icon: string; color: string; l
 // ── Achievement Detail Modal ────────────────────────────────────────────────────
 
 function AchievementDetailModal({
-  achievement: a, prog, done, onClose,
-}: { achievement: Achievement; prog: AchievementProg | undefined; done: boolean; onClose: () => void }) {
+  achievement: a, prog, done, onClose, C,
+}: { achievement: Achievement; prog: AchievementProg | undefined; done: boolean; onClose: () => void; C: any }) {
+  const am = getAMStyles(C) // Assuming getAMStyles is defined later
   const secret    = a.isSecret && !done && !a.tiers
   const maxed     = a.tiers ? isAchievementMaxed(a, prog) : done
   const activeTier    = getActiveTier(a, prog)
@@ -175,9 +197,8 @@ function AchievementDetailModal({
     : (done ? 100 : 0)
 
   return (
-    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
-      <View style={am.overlay}>
-        <View style={[am.card, { borderColor: cardColor + '66' }]}>
+    <SoloLevelingModal visible onRequestClose={onClose}>
+      <View style={[am.card, { borderColor: cardColor + '66' }]}>
 
           {/* Header */}
           <View style={am.headerRow}>
@@ -297,8 +318,7 @@ function AchievementDetailModal({
           )}
 
         </View>
-      </View>
-    </Modal>
+    </SoloLevelingModal>
   )
 }
 
@@ -309,23 +329,25 @@ function ShadowDetailModal({
   level,
   playerLevel,
   onClose,
+  C,
 }: {
   shadow:      Shadow | undefined
   level:       number
   playerLevel: number
   onClose:     () => void
+  C: any
 }) {
+  const sdm = getSDMStyles(C) // Assuming getSDMStyles is defined later
   const isHidden = playerLevel < 10
   const rankColor = shadow ? (SHADOW_RANK_COLOR[shadow.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.purple) : C.purple
 
   return (
-    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
-      <View style={sdm.overlay}>
-        <View style={[sdm.card, { borderColor: rankColor + '66' }]}>
+    <SoloLevelingModal visible onRequestClose={onClose}>
+      <View style={[sdm.card, { borderColor: rankColor + '66' }]}>
           <Text style={sdm.title}>{isHidden ? 'SOMBRA MISTERIOSA' : (shadow?.name ?? 'SOMBRA DESCONHECIDA')}</Text>
           {isHidden ? (
             <Text style={sdm.mysteryTxt}>
-              Um sussurro antigo observa-te das sombras.\nAlcança o nível 10 para revelar a verdadeira forma.
+              {`Um sussurro antigo observa-te das sombras.\nAlcança o nível 10 para revelar a verdadeira forma.`}
             </Text>
           ) : (
             <>
@@ -346,16 +368,16 @@ function ShadowDetailModal({
             <Text style={sdm.closeTxt}>FECHAR</Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </Modal>
+    </SoloLevelingModal>
   )
 }
 
 // ── Achievements panel ─────────────────────────────────────────────────────────
 
-function AchievementsPanel({ onSelect }: {
-  onSelect: (a: Achievement, prog: AchievementProg | undefined, done: boolean) => void
+function AchievementsPanel({ onSelect, C }: {
+  onSelect: (a: Achievement, prog: AchievementProg | undefined, done: boolean) => void; C: any
 }) {
+  const ac = getACStyles(C) // Assuming getACStyles is defined later
   const unlockedIds         = useGameStore(s => s.unlockedAchievements)
   const achievementProgress = useGameStore(s => s.achievementProgress)
   const unlockedSet = new Set(unlockedIds)
@@ -448,11 +470,11 @@ function AchievementsPanel({ onSelect }: {
 
 // ── Level Up Reward Modal ──────────────────────────────────────────────────────
 
-function LevelUpRewardModal({ reward, onClose }: { reward: LevelUpReward; onClose: () => void }) {
+function LevelUpRewardModal({ visible = true, reward, onClose, C }: { visible?: boolean; reward: LevelUpReward; onClose: () => void; C: any }) {
+  const lm = getLMStyles(C) // Assuming getLMStyles is defined later
   return (
-    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
-      <View style={lm.overlay}>
-        <View style={lm.card}>
+    <SoloLevelingModal visible={visible} onRequestClose={onClose}>
+      <View style={lm.card}>
 
           <Text style={lm.title}>[ LEVEL UP ]</Text>
           <Text style={lm.levelTxt}>NÍVEL {reward.level}</Text>
@@ -486,23 +508,39 @@ function LevelUpRewardModal({ reward, onClose }: { reward: LevelUpReward; onClos
             <Text style={lm.btnTxt}>[ CONTINUAR ]</Text>
           </TouchableOpacity>
 
-        </View>
       </View>
-    </Modal>
+    </SoloLevelingModal>
   )
 }
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
-export default function StatusScreen() {
-  const player             = useGameStore(st => st.player)
+export default function StatusScreen({ onClose }: { onClose: () => void }) {
+  const C = useTheme()
+  const s = React.useMemo(() => getStyles(C), [C])
+  const am = React.useMemo(() => getAMStyles(C), [C])
+  const lm = React.useMemo(() => getLMStyles(C), [C])
+  const sp = React.useMemo(() => getSPStyles(C), [C])
+  const kpi = React.useMemo(() => getKPIStyles(C), [C])
+  const sdm = React.useMemo(() => getSDMStyles(C), [C])
+  const ac = React.useMemo(() => getACStyles(C), [C])
+
+  const player = useGameStore(st => st.player)
   const statistics         = useGameStore(st => st.statistics)
-  const bossesDefeated     = useGameStore(st => st.system.bossesDefeated)
+  const system             = useGameStore(st => st.system)
   const customShadows      = useGameStore(st => st.customShadows)
   const levelUpReward      = useGameStore(st => st.levelUpReward)
   const dismissLevelUpReward = useGameStore(st => st.dismissLevelUpReward)
 
-  const rank     = getRank(player.level, statistics.totalCompleted, bossesDefeated, statistics.questsByRank)
+  const qualifiedRankInfo = getRank(player.level, statistics.totalCompleted, system.bossesDefeated, statistics.questsByRank)
+  const playerRankLetter = player.rank || 'E'
+  const currentRankInfo = CLASS_REQUIREMENTS.find(r => r.rank === playerRankLetter) || CLASS_REQUIREMENTS[0]
+  
+  const currentIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank)
+  const qualifiedIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === qualifiedRankInfo.rank)
+  const canRankUp = qualifiedIdx > currentIdx
+  const rank = currentRankInfo
+
   const xpNeeded = xpForLevel(player.level)
   const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100)
 
@@ -527,6 +565,11 @@ export default function StatusScreen() {
             activeOpacity={0.75}
           >
             <Text style={[s.rankBig, { color: rank.color }]}>{rank.rank}</Text>
+            {canRankUp && (
+              <View style={s.rankUpIndicator}>
+                <Text style={s.rankUpIndicatorText}>!</Text>
+              </View>
+            )}
           </TouchableOpacity>
           <View style={s.rankInfo}>
             <Text style={s.playerName}>{player.name}</Text>
@@ -552,86 +595,92 @@ export default function StatusScreen() {
         </View>
 
         {/* Attributes */}
-        <SectionHeader icon="trending-up" label="ATRIBUTOS" />
+        <SectionHeader icon="trending-up" label="ATRIBUTOS" C={C} />
         <View style={s.statsBlock}>
-          <StatBar label="STR" value={player.str} />
-          <StatBar label="AGI" value={player.agi} />
-          <StatBar label="INT" value={player.int} />
-          <StatBar label="VIT" value={player.vit} />
+          <StatBar label="STR" level={player.str} xp={player.strXp ?? 0} C={C} />
+          <StatBar label="AGI" level={player.agi} xp={player.agiXp ?? 0} C={C} />
+          <StatBar label="INT" level={player.int} xp={player.intXp ?? 0} C={C} />
+          <StatBar label="VIT" level={player.vit} xp={player.vitXp ?? 0} C={C} />
         </View>
 
-        {/* Hunter Statistics */}
-        <SectionHeader icon="trophy-outline" label="ESTATÍSTICAS DO CAÇADOR" />
-        <StatisticsPanel />
-
-        {/* Mission History button */}
-        <TouchableOpacity style={s.historyBtn} onPress={() => setShowHistory(true)} activeOpacity={0.75}>
-          <Icon name="database-outline" size={13} color={C.neonBlue} />
-          <Text style={s.historyBtnTxt}> [ REGISTOS DO SISTEMA ]</Text>
-          <Icon name="chevron-right" size={14} color={C.dimmed} />
+        {/* History */}
+        <SectionHeader icon="history" label="HISTÓRICO DE MISSÕES" C={C} />
+        <TouchableOpacity style={s.historyBtn} onPress={() => setShowHistory(true)}>
+          <Text style={s.historyBtnTxt}>VER HISTÓRICO COMPLETO</Text>
+          <Icon name="chevron-right" size={18} color={C.neonBlue} />
         </TouchableOpacity>
 
-        {/* Achievements */}
-        <SectionHeader icon="star-circle-outline" label="CONQUISTAS" />
-        <AchievementsPanel onSelect={(a, prog, done) => setSelectedAch({ a, prog, done })} />
+        {/* Statistics Panel */}
+        <StatisticsPanel C={C} />
 
-        {/* Shadows */}
+        {/* Achievements Panel */}
+        <AchievementsPanel onSelect={(a, pr, d) => setSelectedAch({ a, prog: pr, done: d })} C={C} />
+
+        {/* Shadows List */}
+        <SectionHeader icon="ghost" label="EXÉRCITO DE SOMBRAS" C={C} />
         {player.shadows.length > 0 && (
-          <>
-            <SectionHeader icon="ghost" label="EXÉRCITO DAS SOMBRAS" />
-            <View style={s.shadowsBlock}>
-              {player.shadows.map((entry, i) => {
-                const data = SHADOW_MAP[entry.id] ?? customShadows.find(cs => cs.id === entry.id)
-                const name = data?.name ?? entry.id
-                return (
-                  <TouchableOpacity key={i} style={s.shadowRow} onPress={() => setSelectedShadow({ id: entry.id, level: entry.level })} activeOpacity={0.75}>
-                    <Icon name={data?.icon || "ghost"} size={14} color={data?.color || "#a855f7"} />
-                    <Text style={[s.shadowName, { color: data?.color || '#fff' }]}>{name}</Text>
-                    {entry.level > 1 && <Text style={s.shadowLevel}>Lv.{entry.level}</Text>}
-                  </TouchableOpacity>
-                )
-              })}
-            </View>
-          </>
+          <View style={s.shadowsBlock}>
+            {player.shadows.map((entry, i) => {
+              const data = SHADOW_MAP[entry.id] ?? customShadows.find(cs => cs.id === entry.id)
+              const name = data?.name ?? entry.id
+              return (
+                <TouchableOpacity key={i} style={s.shadowRow} onPress={() => setSelectedShadow({ id: entry.id, level: entry.level })} activeOpacity={0.75}>
+                  <Icon name={data?.icon || "ghost"} size={14} color={data?.color || "#a855f7"} />
+                  <Text style={[s.shadowName, { color: data?.color || '#fff' }]}>{name}</Text>
+                  {entry.level > 1 && <Text style={s.shadowLevel}>Lv.{entry.level}</Text>}
+                </TouchableOpacity>
+              )
+            })}
+          </View>
         )}
 
       </ScrollView>
 
+      {/* Modals */}
       {selectedAch && (
         <AchievementDetailModal
           achievement={selectedAch.a}
           prog={selectedAch.prog}
           done={selectedAch.done}
           onClose={() => setSelectedAch(null)}
+          C={C}
         />
       )}
 
       {selectedShadow && (
         <ShadowDetailModal
-          shadow={SHADOW_MAP[selectedShadow.id] ?? customShadows.find(cs => cs.id === selectedShadow.id)}
+          shadow={SHADOW_MAP[selectedShadow.id as keyof typeof SHADOW_MAP] ?? customShadows.find(cs => cs.id === selectedShadow.id)}
           level={selectedShadow.level}
           playerLevel={player.level}
           onClose={() => setSelectedShadow(null)}
+          C={C}
         />
       )}
 
-      {showRankInfo && (
-        <RankModal
-          level={player.level}
-          totalCompleted={statistics.totalCompleted}
-          bossesDefeated={bossesDefeated}
-          questsByRank={statistics.questsByRank}
-          onClose={() => setShowRankInfo(false)}
-        />
-      )}
+      <RankModal
+        visible={showRankInfo}
+        level={player.level}
+        totalCompleted={statistics.totalCompleted}
+        bossesDefeated={system.bossesDefeated}
+        questsByRank={statistics.questsByRank}
+        onClose={() => setShowRankInfo(false)}
+        C={C}
+      />
 
-      {showHistory && (
-        <MissionHistoryModal onClose={() => setShowHistory(false)} />
-      )}
+
+
+      <MissionHistoryModal visible={showHistory} onClose={() => setShowHistory(false)} C={C} />
+
 
       {levelUpReward && (
-        <LevelUpRewardModal reward={levelUpReward} onClose={dismissLevelUpReward} />
+        <LevelUpRewardModal
+          reward={levelUpReward}
+          onClose={dismissLevelUpReward}
+          C={C}
+        />
       )}
+
+
 
     </SafeAreaView>
   )
@@ -639,7 +688,7 @@ export default function StatusScreen() {
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
-const s = StyleSheet.create({
+const getStyles = (C: any) => StyleSheet.create({
   safeArea:   { flex: 1, backgroundColor: C.bg },
   content:    { padding: SPACING.md, paddingBottom: SPACING.xl },
   titleRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },
@@ -647,6 +696,8 @@ const s = StyleSheet.create({
   rankCard:   { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderRadius: 4, padding: SPACING.md, gap: 12, marginBottom: 12 },
   rankBadge:  { width: 52, height: 52, borderRadius: 4, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   rankBig:    { fontSize: 28, fontFamily: FONT.orbitron, fontWeight: '900' },
+  rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonRed, borderRadius: 12, minWidth: 20, height: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#fff' },
+  rankUpIndicatorText: { color: '#fff', fontSize: 13, fontFamily: FONT.orbitron, fontWeight: '900' },
   rankInfo:   { flex: 1 },
   playerName: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '700' },
   rankLabel:  { fontSize: 11, marginTop: 2 },
@@ -668,10 +719,12 @@ const s = StyleSheet.create({
   statsBlock: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.border, marginBottom: SPACING.lg },
   statRow:    { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: 12 },
   statIcon:   { width: 20 },
-  statLabel:  { fontFamily: FONT.orbitron, fontSize: 10, width: 32 },
-  track:      { flex: 1, height: 5, backgroundColor: C.border, borderRadius: 0, overflow: 'hidden' },
+  statInfo:   { flex: 1 },
+  statHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 },
+  statLabel:  { fontFamily: FONT.orbitron, fontSize: 10 },
+  track:      { height: 4, backgroundColor: '#050f1e', borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: C.border },
   fill:       { height: '100%', borderRadius: 0 },
-  statVal:    { color: '#94a3b8', fontSize: 12, width: 30, textAlign: 'right' },
+  statVal:    { color: '#fff', fontSize: 12, fontFamily: FONT.orbitron, fontWeight: '700' },
 
   shadowsBlock: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: '#a855f733', marginBottom: SPACING.lg, gap: SPACING.sm },
   shadowRow:    { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
@@ -684,13 +737,14 @@ const s = StyleSheet.create({
   historyBtnTxt: { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 })
 
-const kpi = StyleSheet.create({
+const getKPIStyles = (C: any) => StyleSheet.create({
   card:  { flex: 1, backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.sm, alignItems: 'center', gap: 4 },
   value: { fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900' },
   label: { color: C.muted, fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 1 },
 })
 
-const sdm = StyleSheet.create({
+
+const getSDMStyles = (C: any) => StyleSheet.create({
   overlay:   { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
   card:      { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 2, padding: SPACING.lg, alignItems: 'center', gap: SPACING.sm },
   title:     { color: '#fff', fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, textAlign: 'center' },
@@ -705,7 +759,7 @@ const sdm = StyleSheet.create({
   closeTxt:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
 })
 
-const sp = StyleSheet.create({
+const getSPStyles = (C: any) => StyleSheet.create({
   container:    { marginBottom: SPACING.lg },
   kpiRow:       { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.sm },
   rankSection:  { backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.md },
@@ -719,7 +773,7 @@ const sp = StyleSheet.create({
   rankCount:    { color: C.muted, fontSize: 12, fontFamily: FONT.orbitron, width: 28, textAlign: 'right' },
 })
 
-const ac = StyleSheet.create({
+const getACStyles = (C: any) => StyleSheet.create({
   container: { marginBottom: SPACING.lg },
   header:    { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm },
   headerTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
@@ -740,8 +794,7 @@ const ac = StyleSheet.create({
   maxTag:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
 })
 
-const am = StyleSheet.create({
-  overlay:       { flex: 1, backgroundColor: '#000000dd', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+const getAMStyles = (C: any) => StyleSheet.create({
   card:          { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg, alignItems: 'center' },
   headerRow:     { flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: SPACING.md },
   headerLabel:   { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
@@ -775,7 +828,7 @@ const am = StyleSheet.create({
   maxLabel:      { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center', marginTop: 4 },
 })
 
-const rm = StyleSheet.create({
+const getRMStyles = (C: any) => StyleSheet.create({
   overlay:      { flex: 1, backgroundColor: '#000000dd', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
   card:         { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg },
   headerRow:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
@@ -799,7 +852,7 @@ const rm = StyleSheet.create({
   reqFail:      { color: '#ef4444' },
 })
 
-const lm = StyleSheet.create({
+const getLMStyles = (C: any) => StyleSheet.create({
   overlay:   { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
   card:      { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.neonBlue + '55', padding: SPACING.lg, alignItems: 'center', gap: SPACING.sm },
   title:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 4 },
@@ -814,4 +867,66 @@ const lm = StyleSheet.create({
   noReward:  { color: C.dimmed, fontSize: 11, textAlign: 'center' },
   btn:       { marginTop: SPACING.sm, borderWidth: 1, borderColor: C.neonBlue + '66', borderRadius: 4, paddingVertical: 10, paddingHorizontal: SPACING.xl },
   btnTxt:    { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+})
+
+const getSKStyles = (C: any) => StyleSheet.create({
+  keyGrid: {
+    gap: SPACING.sm,
+    marginBottom: SPACING.lg,
+  },
+  keyCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: C.panel,
+    borderRadius: 4,
+    borderWidth: 1,
+    padding: SPACING.md,
+    gap: SPACING.sm,
+  },
+  keyIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#ffffff10',
+  },
+  keyInfo: {
+    flex: 1,
+  },
+  keyName: {
+    fontFamily: FONT.orbitron,
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginBottom: 2,
+  },
+  keyBoss: {
+    color: C.muted,
+    fontSize: 9,
+    fontStyle: 'italic',
+  },
+  emptyKeys: {
+    padding: SPACING.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: C.panel,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: C.border,
+    borderStyle: 'dashed',
+  },
+  emptyKeysTxt: {
+    color: C.dimmed,
+    fontFamily: FONT.orbitron,
+    fontSize: 10,
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  emptyKeysSub: {
+    color: C.dimmed,
+    fontSize: 9,
+    textAlign: 'center',
+  },
 })

@@ -8,9 +8,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Clipboard from '@react-native-clipboard/clipboard'
 import useGameStore, { PunishmentIntensity, MissionDifficulty } from '../store/useGameStore'
 import SystemAlertModal from '../components/SystemAlertModal'
-import { C, FONT, SPACING } from '../theme'
+import { useTheme, FONT, SPACING } from '../theme'
+import { APP_THEMES } from '../data/themes'
 
 // ── Difficulty option config ────────────────────────────────────────────────────
+
+// ── Difficulty option config moved inside component ──
 
 type DifficultyOption = {
   value:       MissionDifficulty
@@ -21,7 +24,16 @@ type DifficultyOption = {
   description: string[]
 }
 
-const DIFFICULTY_OPTIONS: DifficultyOption[] = [
+type IntensityOption = {
+  value:       PunishmentIntensity
+  label:       string
+  sublabel:    string
+  icon:        string
+  color:       string
+  description: string[]
+}
+
+const getDifficultyOptions = (C: any): DifficultyOption[] => [
   {
     value:    'easy',
     label:    'FÁCIL',
@@ -60,18 +72,7 @@ const DIFFICULTY_OPTIONS: DifficultyOption[] = [
   },
 ]
 
-// ── Intensity option config ────────────────────────────────────────────────────
-
-type IntensityOption = {
-  value:       PunishmentIntensity
-  label:       string
-  sublabel:    string
-  icon:        string
-  color:       string
-  description: string[]
-}
-
-const INTENSITY_OPTIONS: IntensityOption[] = [
+const getIntensityOptions = (C: any): IntensityOption[] => [
   {
     value:    'light',
     label:    'LEVE',
@@ -135,8 +136,16 @@ function atob(input: string) {
 // ── Settings Screen ────────────────────────────────────────────────────────────
 
 export default function SettingsScreen({ onClose }: { onClose: () => void }) {
+  const C = useTheme()
+  const s = React.useMemo(() => getStyles(C), [C])
+
+  const player         = useGameStore(s => s.player)
   const settings       = useGameStore(s => s.settings)
   const updateSettings = useGameStore(s => s.updateSettings)
+  const setActiveTheme = useGameStore(s => s.setActiveTheme)
+
+  const DIFFICULTY_OPTIONS = React.useMemo(() => getDifficultyOptions(C), [C])
+  const INTENSITY_OPTIONS = React.useMemo(() => getIntensityOptions(C), [C])
 
   const current = INTENSITY_OPTIONS.find(o => o.value === settings.punishmentIntensity)
     ?? INTENSITY_OPTIONS[1]
@@ -228,6 +237,51 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
             />
           </View>
 
+          {/* ── SECTION: Theme Selection ── */}
+          <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
+            <View style={[s.sectionDot, { backgroundColor: C.purple }]} />
+            <Text style={s.sectionTitle}>ASPETO DO SISTEMA</Text>
+          </View>
+
+          <View style={s.intensityInfo}>
+            <Icon name="palette-outline" size={12} color={C.muted} />
+            <Text style={s.intensityInfoTxt}>
+              {' '}Seleciona o tema visual do teu Sistema de Monarca.
+              Novos temas são desbloqueados ao subir de Classe ou na Loja.
+            </Text>
+          </View>
+
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.themeScroll}>
+            {APP_THEMES.map(theme => {
+              const uThemes = player.unlockedThemes || ['theme_e_rank']
+              const isUnlocked = uThemes.includes(theme.id)
+              const isActive = player.activeThemeId === theme.id
+              
+              if (!isUnlocked) return null
+
+              return (
+                <TouchableOpacity
+                  key={theme.id}
+                  style={[
+                    s.themeCard,
+                    { borderColor: theme.colors.neonBlue + (isActive ? 'ff' : '44') },
+                    isActive && { backgroundColor: theme.colors.neonBlue + '11' }
+                  ]}
+                  onPress={() => setActiveTheme(theme.id)}
+                >
+                  <View style={[s.themePreview, { backgroundColor: theme.colors.bg }]}>
+                    <View style={[s.themePreviewAccent, { backgroundColor: theme.colors.neonBlue }]} />
+                  </View>
+                  <Text style={[s.themeName, { color: isActive ? theme.colors.neonBlue : C.muted }]}>
+                    {theme.name.replace(' (Standard)', '').replace(' (Premium)', '')}
+                  </Text>
+                  {isActive && <Icon name="check-circle" size={12} color={theme.colors.neonBlue} style={s.themeCheck} />}
+                </TouchableOpacity>
+              )
+            })}
+          </ScrollView>
+
+
           {/* ── SECTION: Punishment Intensity ── */}
           <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
             <View style={[s.sectionDot, { backgroundColor: C.neonRed }]} />
@@ -271,7 +325,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
 
                 {/* Description lines */}
                 <View style={s.intensityDesc}>
-                  {opt.description.map((line, i) => (
+                  {opt.description.map((line: string, i: number) => (
                     <Text key={i} style={[s.intensityDescLine, active && { color: C.muted }]}>
                       {line}
                     </Text>
@@ -327,7 +381,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
                     : <Icon name="radiobox-blank"  size={20} color={C.border} />}
                 </View>
                 <View style={s.intensityDesc}>
-                  {opt.description.map((line, i) => (
+                  {opt.description.map((line: string, i: number) => (
                     <Text key={i} style={[s.intensityDescLine, active && { color: C.muted }]}>{line}</Text>
                   ))}
                 </View>
@@ -420,7 +474,9 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
           message={alertConfig.message}
           onClose={() => setAlertConfig(null)}
           buttons={[{ text: 'ENTENDIDO', style: 'default' }]}
+          C={C}
         />
+
       )}
 
       {importVisible && (
@@ -458,7 +514,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
-const s = StyleSheet.create({
+const getStyles = (C: any) => StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
 
   header:    { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: C.border },
@@ -542,5 +598,43 @@ const s = StyleSheet.create({
     height: 100,
     textAlignVertical: 'top',
     marginBottom: SPACING.lg,
+  },
+  themeScroll: {
+    flexDirection: 'row',
+    marginBottom: SPACING.md,
+  },
+  themeCard: {
+    width: 100,
+    marginRight: SPACING.sm,
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: 8,
+    alignItems: 'center',
+  },
+  themePreview: {
+    width: '100%',
+    height: 40,
+    borderRadius: 2,
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: '#ffffff10',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  themePreviewAccent: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
+  themeName: {
+    fontFamily: FONT.orbitron,
+    fontSize: 7,
+    textAlign: 'center',
+    fontWeight: '700',
+  },
+  themeCheck: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
   },
 })
