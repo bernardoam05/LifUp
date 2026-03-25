@@ -15,7 +15,6 @@ export function useDayWatcher() {
     const interval = setInterval(() => {
       const today = new Date().toDateString()
       if (lastResetDate && lastResetDate !== today) {
-        console.log('[DayWatcher] Periodic check: Day changed, triggering reset.')
         checkDailyReset()
       }
       checkDynamicPortalSpawn()
@@ -29,7 +28,6 @@ export function useDayWatcher() {
       ) {
         const today = new Date().toDateString()
         if (lastResetDate && lastResetDate !== today) {
-          console.log('[DayWatcher] Foreground check: Day changed, triggering reset.')
           checkDailyReset()
         }
         checkDynamicPortalSpawn()

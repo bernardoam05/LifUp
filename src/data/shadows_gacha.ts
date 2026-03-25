@@ -92,7 +92,7 @@ export const SHADOWS_GACHA: Shadow[] = [
           rank: 'Knight', type: 'Tank', dropRate: 0.08,
           passiveEffect: { type: 'streak_protect', value: 1, description: 'Protege o streak uma vez por semana' },
           lore: '"Altura equivalente a um edifício de cinco andares. Força equivalente a uma catástrofe natural. Lealdade equivalente a uma rocha."',
-          icon: 'mountain', color: '#3b82f6',
+          icon: 'pine-tree', color: '#3b82f6',
           unlockMethod: { type: 'gacha' },
         },
   {
@@ -204,7 +204,7 @@ export const SHADOWS_GACHA: Shadow[] = [
           rank: 'Commander', type: 'Beast', dropRate: 0.04,
           passiveEffect: { type: 'penalty_reduce', value: 0.10, description: '-10% na perda de XP por penalidade' },
           lore: '"A primeira sombra que o Monarca recolheu de um Boss Raid. Não é o mais inteligente, mas nenhuma barreira resiste ao seu peso."',
-          icon: 'gorilla', color: '#f59e0b',
+          icon: 'ape', color: '#f59e0b',
           unlockMethod: { type: 'gacha' },
         },
   {
@@ -258,7 +258,7 @@ export const SHADOWS_GACHA: Shadow[] = [
           rank: 'Commander', type: 'Beast', dropRate: 0.03,
           passiveEffect: { type: 'gold_boost', value: 0.08, description: '+8% Gold em todas as missões' },
           lore: '"Um tigre albino sagrado do dungeon das montanhas nevadas. As tribos locais oravam para ele. O Monarca combateu-o durante três dias. Ambos sobreviveram. Apenas um continua de pé."',
-          icon: 'cat-outline', color: '#f59e0b',
+          icon: 'cat', color: '#f59e0b',
           unlockMethod: { type: 'gacha' },
         },
   {
@@ -396,7 +396,7 @@ export const SHADOWS_GACHA: Shadow[] = [
           id: 'auto_cannon', name: 'Torreta Móvel', rank: 'Elite', type: 'Magic', dropRate: 0.08,
           passiveEffect: { type: 'boss_bonus_xp', value: 0.05, description: '+5% XP extra em Boss Raids' },
           lore: '"Dispara energia mágica concentrada. Lento, mas de um poder destrutivo incomparável na sua categoria."',
-          icon: 'car-artillery', color: '#22c55e',
+          icon: 'car-cog', color: '#22c55e',
           unlockMethod: { type: 'gacha' },
         },
   {
@@ -466,7 +466,7 @@ export const SHADOWS_GACHA: Shadow[] = [
           id: 'astral_weaver', name: 'Tecelã de Constelações', rank: 'Elite', type: 'Magic', dropRate: 0.08,
           passiveEffect: { type: 'penalty_reduce', value: 0.04, description: '-4% na perda de XP por penalidade' },
           lore: '"Poder capaz de ligar estrelas. Agora liga e fortifica os fragmentos mágicos do Monarca."',
-          icon: 'constellation', color: '#22c55e',
+          icon: 'star-four-points', color: '#22c55e',
           unlockMethod: { type: 'gacha' },
         },
   {
@@ -924,7 +924,7 @@ export const SHADOWS_GACHA: Shadow[] = [
           id: 'titan_ape', name: 'Primata Titânico', rank: 'Knight', type: 'Beast', dropRate: 0.05,
           passiveEffect: { type: 'gold_boost', value: 0.04, description: '+4% Gold em todas as missões' },
           lore: '"Derrubava florestas antigas apenas para aquecer os músculos. Adora a carnificina."',
-          icon: 'monkey', color: '#3b82f6',
+          icon: 'ape', color: '#3b82f6',
           unlockMethod: { type: 'gacha' },
         },
   {
@@ -989,7 +989,7 @@ export const SHADOWS_GACHA: Shadow[] = [
           id: 'hollow_knight', name: 'O Cavaleiro do Vazio', rank: 'Marshal', type: 'Warrior', dropRate: 0.005,
           passiveEffect: { type: 'xp_boost', value: 0.15, description: '+15% XP em todas as missões' },
           lore: '"Um recetáculo que não conhece o medo nem a dor. O seu silêncio é a sua força e a sua alma é feita de sombra pura."',
-          icon: 'knight', color: '#ef4444',
+          icon: 'chess-knight', color: '#ef4444',
           unlockMethod: { type: 'gacha' },
         },
   {
@@ -1052,7 +1052,7 @@ export const SHADOWS_GACHA: Shadow[] = [
           id: 'legend_itachi', name: 'O Corvo do Olhar Carmesim', rank: 'Commander', type: 'Magic', dropRate: 0.02,
           passiveEffect: { type: 'penalty_immunity', value: 1, description: 'Imunidade completa a 1 penalidade por semana' },
           lore: '"Viveu no sacrifício e na ilusão. O seu olhar consome a própria alma em chamas negras que nunca se apagam."',
-          icon: 'crow', color: '#f59e0b',
+          icon: 'bird', color: '#f59e0b',
           unlockMethod: { type: 'gacha' },
         },
   {

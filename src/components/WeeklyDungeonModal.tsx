@@ -2,11 +2,29 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { DungeonMission, getDungeonMissions } from '../data/bosses';
+import { DungeonMission, getDungeonMissions, RAID_BOSSES } from '../data/bosses';
 import { getKeyByBossId } from '../data/dungeonKeys';
 import { SHADOW_MAP, getBossDropPreview } from '../data/shadows';
 import BottomSheetModal from './BottomSheetModal';
 import { FONT, SPACING } from '../theme';
+
+// Helper function to get boss name from bossId
+function getBossName(bossId: string): string {
+  // Try to find in RAID_BOSSES first
+  const raidBoss = RAID_BOSSES.find(b => b.id === bossId)
+  if (raidBoss) return raidBoss.name
+  
+  // Try to get from drop shadow name
+  const shadow = getBossDropPreview(bossId)
+  if (shadow) return shadow.name
+  
+  // Try direct lookup in SHADOW_MAP
+  const shadowMapEntry = SHADOW_MAP[bossId as keyof typeof SHADOW_MAP]
+  if (shadowMapEntry) return shadowMapEntry.name
+  
+  // Fallback: format the ID nicely
+  return bossId.replace(/_/g, ' ').replace(/(^|\s)\w/g, c => c.toUpperCase())
+}
 
 export const getDMStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.bg + 'cc', justifyContent: 'flex-end' },
@@ -97,7 +115,7 @@ export default function WeeklyDungeonModal({
                       <View style={dm.shadowExtractTag}>
                         <Icon name="ghost" size={9} color={C.purple} />
                         <Text style={dm.shadowExtractTxt}>
-                          {' '}Sombra: {m.customShadow?.name ?? (getBossDropPreview(m.shadowHint)?.name ?? SHADOW_MAP[m.shadowHint as keyof typeof SHADOW_MAP]?.name ?? m.shadowHint)}
+                          {' '}Sombra: {m.customShadow?.name ?? (getBossDropPreview(m.shadowHint)?.name ?? getBossName(m.shadowHint))}
                         </Text>
                       </View>
                       {!hasKey && key && (

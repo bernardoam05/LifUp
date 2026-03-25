@@ -126,7 +126,7 @@ export const SHADOWS_BOSS_MIXED: Shadow[] = [
     type: 'Warrior',
     passiveEffect: { type: 'xp_boost', value: 0.18, description: '+18% XP em todas as missões' },
     lore: '"O ferro obedece à repetição. O sangue lembra cada rep."',
-    icon: 'blood',
+    icon: 'water-droplet',
     color: '#ef4444',
   }),
   bossDrop('boss_hollow_king', {
@@ -256,7 +256,7 @@ export const SHADOWS_BOSS_MIXED: Shadow[] = [
     type: 'Beast',
     passiveEffect: { type: 'xp_boost', value: 0.11, description: '+11% XP em todas as missões' },
     lore: '"Alterna força bruta até o chão tremer de respeito."',
-    icon: 'monkey',
+    icon: 'ape',
     color: '#92400e',
   }),
   bossDrop('boss_astral_seer', {

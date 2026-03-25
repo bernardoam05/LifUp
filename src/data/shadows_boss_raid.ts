@@ -80,7 +80,7 @@ export const SHADOWS_BOSS_RAID: Shadow[] = [
       rank: 'Elite', type: 'Assassin', dropRate: 0,
       passiveEffect: { type: 'xp_boost', value: 0.05, description: '+5% XP em todas as missões' },
       lore: '"Invisível no gelo, letal na sombra. O Monarca deu-lhe um novo alvo: A fraqueza."',
-      icon: 'dagger', color: '#22c55e',
+      icon: 'knife-military', color: '#22c55e',
       unlockMethod: { type: 'boss_drop', bossId: 'dark_elf_assassin_leader', category: 'raid' },
     },
     {
@@ -107,7 +107,7 @@ export const SHADOWS_BOSS_RAID: Shadow[] = [
       rank: 'Knight', type: 'Undead', dropRate: 0,
       passiveEffect: { type: 'xp_boost', value: 0.10, description: '+10% XP em todas as missões' },
       lore: '"Bebeu o sangue de mil caçadores. Agora serve o único que não sangra."',
-      icon: 'vampire', color: '#3b82f6',
+      icon: 'bat', color: '#3b82f6',
       unlockMethod: { type: 'boss_drop', bossId: 'vampire_noble_valerius', category: 'raid' },
     },
     {
@@ -179,7 +179,7 @@ export const SHADOWS_BOSS_RAID: Shadow[] = [
       rank: 'Marshal', type: 'General', dropRate: 0,
       passiveEffect: { type: 'xp_boost', value: 0.40, description: '+40% XP em todas as missões' },
       lore: '"A mão direita da destruição. Onde passa, apenas cinzas e silêncio."',
-      icon: 'dragon-variant', color: '#ef4444',
+      icon: 'dinosaur-variant', color: '#ef4444',
       unlockMethod: { type: 'boss_drop', bossId: 'dragon_monarch_general_1', category: 'raid' },
     },
     {

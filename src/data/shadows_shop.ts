@@ -129,7 +129,7 @@ export const SHADOWS_SHOP: Shadow[] = [
           rank: 'Elite', type: 'Assassin', dropRate: 0,
           passiveEffect: { type: 'gold_boost', value: 0.05, description: '+5% Gold em todas as missões' },
           lore: '"A morte não rescindiu o seu contrato. Apenas mudou o beneficiário."',
-          icon: 'dagger', color: '#22c55e',
+          icon: 'knife-military', color: '#22c55e',
           unlockMethod: { type: 'shop', price: 3000 },
         },
         {
@@ -255,7 +255,7 @@ export const SHADOWS_SHOP: Shadow[] = [
           rank: 'Marshal', type: 'Ancient', dropRate: 0,
           passiveEffect: { type: 'xp_boost', value: 0.30, description: '+30% XP em todas as missões' },
           lore: '"A voz que anuncia o fim de todas as coisas. O seu silêncio é a tua maior arma."',
-          icon: 'megaphone', color: '#ef4444',
+          icon: 'speaker-multiple', color: '#ef4444',
           unlockMethod: { type: 'shop', price: 75000 },
         },
         {

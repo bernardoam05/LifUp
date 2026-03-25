@@ -62,7 +62,7 @@ export const SHADOWS_BOSS_DUNGEON_BREAK: Shadow[] = [
     rank: 'Elite', type: 'Beast', dropRate: 0,
     passiveEffect: { type: 'gold_boost', value: 0.03, description: '+3% Gold em todas as missões' },
     lore: '"O que devorava montanhas agora devora as tuas dificuldades."',
-    icon: 'worm', color: '#22c55e',
+    icon: 'caterpillar', color: '#22c55e',
     unlockMethod: { type: 'boss_drop', bossId: 'break_boss_giant_worm_abyss', category: 'dungeon_break' },
   },
   {

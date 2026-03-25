@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, Vibration } from 'reac
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ACHIEVEMENTS_MAP } from '../data/achievements'
 import { useTheme, FONT, SPACING } from '../theme'
+import { playSound } from '../utils/audioService'
 
 const getStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.surface.overlay, justifyContent: 'center', alignItems: 'center' },
@@ -26,6 +27,7 @@ export default function AchievementModal({ achievementId, onDismiss }: { achieve
 
   useEffect(() => {
     Vibration.vibrate([0, 100, 50, 200, 50, 100, 50, 400])
+    playSound('achievement')
   }, [achievementId])
 
   if (!achievement) return null

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { Animated, StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTheme } from '../theme'
+import { playSound } from '../utils/audioService'
 
 
 const { width: SW } = Dimensions.get('window')
@@ -24,6 +25,9 @@ export default function LevelUpToast({ reward, onDismiss }: Props) {
 
   useEffect(() => {
     if (reward) {
+      // Play level up sound
+      playSound('levelUp')
+      
       // Animate in
       Animated.spring(slideAnim, {
         toValue: 50, // slide down to visible
@@ -85,7 +89,7 @@ const getStyles = (C: any) => StyleSheet.create({
   },
   card: {
     width: '100%',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: C.panel,
     borderWidth: 1,
     borderColor: C.gold,
     borderRadius: 8,
@@ -112,7 +116,7 @@ const getStyles = (C: any) => StyleSheet.create({
     marginBottom: 2,
   },
   desc: {
-    color: '#ccc',
+    color: C.muted,
     fontSize: 14,
   },
   closeWrap: {

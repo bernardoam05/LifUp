@@ -116,7 +116,7 @@ export const SHADOWS_ACHIEVEMENT: Shadow[] = [
     rank: 'Knight', type: 'Support', dropRate: 0,
     passiveEffect: { type: 'streak_protect', value: 1, description: 'Protege a tua Streak adicionalmente' },
     lore: '"Ele vigia o teu sono e a tua vontade. 30 dias de foco ininterrupto evocaram esta sombra persistente."',
-    icon: 'timer-check', color: '#3b82f6',
+    icon: 'timer', color: '#3b82f6',
     unlockMethod: { type: 'achievement', id: 'streak_chain' },
   },
   {

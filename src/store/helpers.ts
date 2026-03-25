@@ -1,4 +1,4 @@
-import type { Player, Quest, RankLetter, PunishmentIntensity, ShadowEntry } from './types'
+import type { Player, Quest, RankLetter, PunishmentIntensity, ShadowEntry, JobClass } from './types'
 import { SHADOW_MAP } from '../data/shadows'
 import type { Shadow, ShadowRank } from '../data/shadows'
 
@@ -6,9 +6,9 @@ import type { Shadow, ShadowRank } from '../data/shadows'
 
 /** Computes total XP required to *reach* the given level */
 export function xpForLevel(level: number): number {
-  if (level <= 1) return 0
-  const base = 50
-  const multiplier = 1.15
+  if (level < 1) return 0
+  const base = 80
+  const multiplier = 1.12
   return Math.floor(base * Math.pow(multiplier, level - 1))
 }
 
@@ -100,12 +100,15 @@ export const CLASS_REQUIREMENTS = [
 
 export function getNewLevelKeys(currentKeys: string[], level: number): string[] {
   const newKeys = [...(currentKeys || [])]
-  if (level >= 5 && !newKeys.includes('key_crypt')) newKeys.push('key_crypt')
-  if (level >= 15 && !newKeys.includes('key_astral')) newKeys.push('key_astral')
-  if (level >= 30 && !newKeys.includes('key_seraphim')) newKeys.push('key_seraphim')
-  if (level >= 50 && !newKeys.includes('key_monarch')) newKeys.push('key_monarch')
-  if (level >= 75 && !newKeys.includes('key_abyss')) newKeys.push('key_abyss')
-  if (level >= 100 && !newKeys.includes('key_sovereign')) newKeys.push('key_sovereign')
+  if (level >= 5 && !newKeys.includes('key_kasaka')) newKeys.push('key_kasaka')
+  if (level >= 10 && !newKeys.includes('key_baruka')) newKeys.push('key_baruka')
+  if (level >= 15 && !newKeys.includes('key_kargalgan')) newKeys.push('key_kargalgan')
+  if (level >= 20 && !newKeys.includes('key_vulcan')) newKeys.push('key_vulcan')
+  if (level >= 30 && !newKeys.includes('key_metus')) newKeys.push('key_metus')
+  if (level >= 40 && !newKeys.includes('key_beru')) newKeys.push('key_beru')
+  if (level >= 50 && !newKeys.includes('key_kamish')) newKeys.push('key_kamish')
+  if (level >= 70 && !newKeys.includes('key_statue_god')) newKeys.push('key_statue_god')
+  if (level >= 100 && !newKeys.includes('key_ashborn')) newKeys.push('key_ashborn')
   return Array.from(new Set(newKeys))
 }
 
@@ -185,23 +188,25 @@ export function getMondayDateString(): string {
   return d.toDateString()
 }
 
-/** Returns `count` unique random indices from `0` to `max - 1` using `seed` */
+/** Returns `count` unique random indices from `0` to `max - 1` using `seed`.
+ *  Uses a seeded Fisher-Yates shuffle to guarantee exactly `count` unique results.
+ */
 export function seededPick(count: number, max: number, seed: number): number[] {
-  if (max === 0) return []
+  if (max === 0 || count <= 0) return []
   let s = seed
   const rand = () => {
     s = (s * 9301 + 49297) % 233280
     return s / 233280
   }
-  const result = new Set<number>()
-  const attempts = max * 2 // safety breakout
-  let a = 0
-  while (result.size < Math.min(count, max) && a < attempts) {
-    result.add(Math.floor(rand() * max))
-    a++
+  // Build index array and shuffle via Fisher-Yates
+  const indices = Array.from({ length: max }, (_, i) => i)
+  for (let i = max - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1)) // 0 ≤ j ≤ i
+    ;[indices[i], indices[j]] = [indices[j], indices[i]]
   }
-  return Array.from(result)
+  return indices.slice(0, Math.min(count, max))
 }
+
 
 // ── Shadows ───────────────────────────────────────────────────────────────────
 
@@ -384,13 +389,8 @@ export function computePunishment(
   }
 }
 
-// ── Job Class ─────────────────────────────────────────────────────────────────
-
-export type JobClass = {
-  name: string
-  color: string
-  minLevel: number
-}
+// JobClass type is defined in ./types to serve as the single source of truth.
+// It is imported above and re-used throughout this module.
 
 export const JOB_CLASSES: JobClass[] = [
   { name: 'Civilian',          color: '#94a3b8', minLevel: 1  },

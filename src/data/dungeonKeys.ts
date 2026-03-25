@@ -399,7 +399,7 @@ export const BOX_KEYS: DungeonKey[] = [
     lore: 'Descendente de Cthulhu. Sua existência não obedece lógica. A realidade falha perto dele.',
     environment: 'Dimensão paralela impossível, geometria que quebra a mente, sussurros de loucura, nada faz sentido.',
     difficulty: '???'
-  }
+  },
 ]
 
 export const ALL_DUNGEON_KEYS = [...LEVEL_GATED_KEYS, ...BOX_KEYS]

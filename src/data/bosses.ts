@@ -47,7 +47,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     rank: 'A',
     baseHp: 5000,
     durationDays: 4,
-    icon: 'bear',
+    icon: 'dog',
     color: '#38bdf8'
   },
   {
@@ -143,7 +143,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     rank: 'S',
     baseHp: 35000,
     durationDays: 6,
-    icon: 'dragon',
+    icon: 'dinosaur',
     color: '#b91c1c'
   },
   {
@@ -152,7 +152,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     rank: 'S',
     baseHp: 45000,
     durationDays: 7,
-    icon: 'fox',
+    icon: 'dog-side',
     color: '#ea580c'
   },
   {
@@ -188,7 +188,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     rank: 'National',
     baseHp: 250000,
     durationDays: 18,
-    icon: 'volcano',
+    icon: 'fire-alert',
     color: '#1e293b'
   },
   {
@@ -229,7 +229,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
   {
     id: 'dark_elf_assassin_leader',
     name: 'Líder Assassino Elfo Negro',
-    rank: 'A', baseHp: 6500, durationDays: 4, icon: 'dagger', color: '#38bdf8'
+    rank: 'A', baseHp: 6500, durationDays: 4, icon: 'knife-military', color: '#38bdf8'
   },
   {
     id: 'harpy_matriarch',
@@ -244,7 +244,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
   {
     id: 'vampire_noble_valerius',
     name: 'Nobre Vampiro Valerius',
-    rank: 'S', baseHp: 19000, durationDays: 5, icon: 'vampire', color: '#ef4444'
+    rank: 'S', baseHp: 19000, durationDays: 5, icon: 'bat', color: '#ef4444'
   },
   {
     id: 'archdemon_malphas',
@@ -284,7 +284,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
   {
     id: 'dragon_monarch_general_1',
     name: 'General de Antares',
-    rank: 'National', baseHp: 130000, durationDays: 11, icon: 'dragon-variant', color: '#991b1b'
+    rank: 'National', baseHp: 130000, durationDays: 11, icon: 'dinosaur-variant', color: '#991b1b'
   },
   {
     id: 'abyssal_void_walker',
@@ -330,7 +330,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
   {
     id: 'key_boss_undead_dragon_king',
     name: 'Rei Dragão Morto-Vivo',
-    rank: 'S', baseHp: 45000, durationDays: 8, icon: 'dragon', color: '#475569'
+    rank: 'S', baseHp: 45000, durationDays: 8, icon: 'dinosaur', color: '#475569'
   },
   {
     id: 'key_boss_titania_queen_dark',
@@ -360,7 +360,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
   {
     id: 'key_boss_fenrir_wolf_star',
     name: 'Fenrir, o Devorador de Estrelas',
-    rank: 'National', baseHp: 180000, durationDays: 14, icon: 'wolf', color: '#f97316'
+    rank: 'National', baseHp: 180000, durationDays: 14, icon: 'dog-side', color: '#f97316'
   },
   {
     id: 'key_boss_odin_simulation_valhalla',
@@ -386,7 +386,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
   {
     id: 'break_boss_giant_worm_abyss',
     name: 'Verme Gigante do Abismo',
-    rank: 'B', baseHp: 3200, durationDays: 3, icon: 'worm', color: '#94a3b8'
+    rank: 'B', baseHp: 3200, durationDays: 3, icon: 'caterpillar', color: '#94a3b8'
   },
   {
     id: 'break_boss_dark_knight_traitor',

@@ -110,7 +110,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
           rank: 'Elite', type: 'Beast', dropRate: 0.09,
           passiveEffect: { type: 'xp_boost', value: 0.03, description: '+3% XP em todas as missões' },
           lore: '"As suas asas já não cortam o ar. Mas o rugido que emite antes de cada batalha ainda faz vibrar as paredes do dungeon."',
-          icon: 'dragon', color: '#22c55e',
+          icon: 'dinosaur', color: '#22c55e',
           unlockMethod: { type: 'boss_drop', bossId: 'key_boss_fenrir_wolf_star', category: 'key' },
         },
   {
@@ -128,7 +128,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
           rank: 'Elite', type: 'Magic', dropRate: 0.10,
           passiveEffect: { type: 'xp_boost', value: 0.03, description: '+3% XP em todas as missões' },
           lore: '"Invocava esqueletos com a magia do osso. Na morte, a ironia é completa — ele próprio tornou-se o esqueleto que invocava."',
-          icon: 'book-skull', color: '#22c55e',
+          icon: 'book-open-variant', color: '#22c55e',
           unlockMethod: { type: 'boss_drop', bossId: 'kratos_ghost_sparta', category: 'key' },
         },
   // ── NEW KEY-GATED SHADOW DROPS (BATCH 2) ──────────────────────────────────
@@ -183,7 +183,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
     rank: 'Commander', type: 'Undead', dropRate: 0,
     passiveEffect: { type: 'xp_boost', value: 0.15, description: '+15% XP em todas as missões' },
     lore: '"O soberano dos ossos e do fogo frio. O seu rugido faz o Sistema tremer."',
-    icon: 'dragon', color: '#f59e0b',
+    icon: 'dinosaur', color: '#f59e0b',
     unlockMethod: { type: 'boss_drop', bossId: 'key_boss_undead_dragon_king', category: 'key' },
   },
   {
@@ -237,7 +237,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
     rank: 'Marshal', type: 'Beast', dropRate: 0,
     passiveEffect: { type: 'xp_boost', value: 0.35, description: '+35% XP em todas as missões' },
     lore: '"A besta que devora o destino. Torna-te imparável como o lobo do apocalipse."',
-    icon: 'wolf', color: '#ef4444',
+    icon: 'dog-side', color: '#ef4444',
     unlockMethod: { type: 'boss_drop', bossId: 'key_boss_fenrir_wolf_star', category: 'key' },
   },
   {

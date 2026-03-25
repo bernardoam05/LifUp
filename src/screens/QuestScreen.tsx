@@ -175,6 +175,20 @@ function formatCountdown(ms: number): string {
   return `Termina em ${m}m`
 }
 
+function getEventCountdownMs(endDate: string): number {
+  const now = new Date()
+  const [month, day] = endDate.split('-').map(n => parseInt(n, 10))
+  const year = now.getFullYear()
+  const eventEnd = new Date(year, month - 1, day, 23, 59, 59, 999)
+  
+  // If the date has already passed this year, assume it's next year
+  if (eventEnd.getTime() < now.getTime()) {
+    eventEnd.setFullYear(year + 1)
+  }
+  
+  return Math.max(0, eventEnd.getTime() - now.getTime())
+}
+
 
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
@@ -280,12 +294,15 @@ export default function QuestScreen() {
   const [selectedKey, setSelectedKey] = useState<DungeonKey | null>(null)
   const [activeMission, setActiveMission] = useState<DungeonMission | null>(null)
   const [confirmBossTraining, setConfirmBossTraining] = useState(false)
+  const [portalConfirm, setPortalConfirm] = useState<DungeonMission | null>(null)
+  const [acceptedPortal, setAcceptedPortal] = useState<DungeonMission | null>(null)
   const [victoryInfo, setVictoryInfo] = useState<{ xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean } | null>(null)
   const [eventProgressInfo, setEventProgressInfo] = useState<{ name: string; completed: number; required: number } | null>(null)
   const [extractionBossId, setExtractionBossId] = useState<string | null>(null)
   const [extractionCategory, setExtractionCategory] = useState<'dungeon' | 'dungeon_break' | 'event' | 'key' | 'raid'>('dungeon')
   const [pendingMission, setPendingMission] = useState<{ m: DungeonMission, focusMinutes?: number } | null>(null)
   const [keyConfirm, setKeyConfirm] = useState<{ type: 'normal' | 'weekly', mission: DungeonMission, key: any } | null>(null)
+  const [eventCountdownMs, setEventCountdownMs] = useState(0)
   const [sectionsOpen, setSectionsOpen] = useState({
     now: true,
     today: true,
@@ -334,12 +351,30 @@ export default function QuestScreen() {
   useEffect(() => {
     if (!activeEventDef || !activeEventKey) return
     // Only reset/initialize if the key actually changed
-    // Use a ref or the current state from store to compare
     if (eventBossKey !== activeEventKey) {
-      console.log('[QuestScreen] Event key changed, updating boss state:', activeEventKey);
       setEventBossState(activeEventKey, activeEventDef.required, eventTrials.length)
     }
   }, [activeEventKey, activeEventDef?.required, eventTrials.length, eventBossKey, setEventBossState])
+
+  // Update event countdown timer every second
+  useEffect(() => {
+    if (!activeEventDef) {
+      setEventCountdownMs(0)
+      return
+    }
+    
+    const updateCountdown = () => {
+      const ms = getEventCountdownMs(activeEventDef.event.end)
+      setEventCountdownMs(ms)
+    }
+    
+    // Update immediately
+    updateCountdown()
+    
+    // Then update every second
+    const interval = setInterval(updateCountdown, 1000)
+    return () => clearInterval(interval)
+  }, [activeEventDef?.event.end])
 
   useEffect(() => {
     const onBackPress = () => {
@@ -393,14 +428,18 @@ export default function QuestScreen() {
   }
   function completeBossMission(m: DungeonMission, focusMinutes?: number) {
     setActiveMission(null)
-    if (focusMinutes) recordFocus(focusMinutes)
+    // Clear accepted portal when mission is completed successfully
+    setAcceptedPortal(null)
 
-    // Event trials just progress the event, no extraction
+    // Event trials just progress the event, no extraction, no time recording (they're practice)
     if (m.isEventTrial && m.eventKey) {
       const res = completeEventTrial(m.id, m.eventKey, eventRequired, eventTrials.length)
       setEventProgressInfo({ name: m.eventName ?? 'EVENTO', completed: res.completed, required: res.required })
       return
     }
+
+    // Only real boss missions (not trials) record focus time
+    if (focusMinutes) recordFocus(focusMinutes)
 
     // All real boss kills trigger the Shadow Extraction (Arise) modal
     setExtractionBossId(m.shadowHint)
@@ -558,8 +597,20 @@ export default function QuestScreen() {
           )}
         </View>
 
+        {/* Accepted Portal Card - Show after entering a portal */}
+        {acceptedPortal && !activeMission && (
+          <TouchableOpacity
+            style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: acceptedPortal.color || C.neonRed }]}
+            onPress={() => handleMissionSelect(acceptedPortal)}
+          >
+            <Icon name={acceptedPortal.icon || 'gate'} size={24} color={acceptedPortal.color || C.neonRed} />
+            <Text style={s.dungeonBreakTxt}>{acceptedPortal.label?.toUpperCase()}</Text>
+            <Text style={s.dungeonBreakSub}>{acceptedPortal.detail || 'Pressiona para abrir a missão.'}</Text>
+          </TouchableOpacity>
+        )}
+
         {/* Dungeon Break Alert */}
-        {system.activeDungeonBreak &&
+        {!acceptedPortal && system.activeDungeonBreak &&
           Date.now() >= (system.activeDungeonBreak.startsAt ?? 0) &&
           Date.now() < system.activeDungeonBreak.expiresAt && (
           <TouchableOpacity
@@ -580,7 +631,7 @@ export default function QuestScreen() {
                   color: def.questType === 'focus' ? C.purple : def.questType === 'gps' ? C.green : C.neonRed,
                   category: 'dungeon',
                 }
-                handleMissionSelect(mission)
+                setPortalConfirm(mission)
                 return
               }
 
@@ -599,7 +650,7 @@ export default function QuestScreen() {
                 focusDuration: targetFocus,
                 category: 'dungeon_break',
               }
-              handleMissionSelect(mission)
+              setPortalConfirm(mission)
             }}
           >
             <Icon name="skull-scan" size={24} color={C.neonRed} />
@@ -729,9 +780,12 @@ export default function QuestScreen() {
               >
                 <View style={s.bossBannerLeft}>
                   <Icon name="calendar-star" size={20} color={C.gold} />
-                  <View style={{ marginLeft: SPACING.sm }}>
+                  <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
                     <Text style={[s.bossTitle, { color: C.gold }]}>Masmorra de evento disponivel</Text>
-                    <Text style={s.bossSub}>Provas de {activeEventDef.event.name} disponíveis</Text>
+                    <Text style={s.bossSub}>Evento: {activeEventDef.event.name} · Provas: {eventCompleted.length}/{eventRequired}</Text>
+                    <Text style={[s.bossSub, { fontSize: 10, marginTop: 2, color: C.gold }]}>
+                      {eventCountdownMs > 0 ? formatCountdown(eventCountdownMs) : 'Evento terminado'}
+                    </Text>
                   </View>
                 </View>
                 <Icon name="chevron-right" size={18} color={C.gold} />
@@ -784,6 +838,7 @@ export default function QuestScreen() {
         eventTrials={eventTrials}
         eventBossMission={eventBossMission}
         eventProgress={activeEventDef ? { completedIds: eventCompleted, required: eventRequired, defeated: eventBossDefeated && eventBossKey === activeEventKey } : null}
+        eventWindow={activeEventDef?.event ?? null}
         C={C}
       />
 
@@ -825,6 +880,25 @@ export default function QuestScreen() {
           confirmColor={activeMission?.isEventTrial ? C.gold : C.neonRed}
           onConfirm={() => { setConfirmBossTraining(false); completeBossMission(activeMission) }}
           onCancel={() => { setConfirmBossTraining(false); setActiveMission(null) }}
+          C={C}
+        />
+      )}
+
+      {/* Portal dinâmico - show details before entry */}
+      {portalConfirm && (
+        <CustomModal
+          visible={!!portalConfirm}
+          title={portalConfirm.label?.toUpperCase() || 'PORTAL DINÂMICO'}
+          message={portalConfirm.detail || ''}
+          confirmLabel="ENTRAR"
+          confirmIcon="play"
+          confirmColor={portalConfirm.color || C.neonRed}
+          onConfirm={() => { 
+            setAcceptedPortal(portalConfirm)
+            handleMissionSelect(portalConfirm)
+            setPortalConfirm(null)
+          }}
+          onCancel={() => { setPortalConfirm(null) }}
           C={C}
         />
       )}

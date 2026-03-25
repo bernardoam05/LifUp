@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { SHADOW_RANK_COLOR } from '../data/shadows'
 import type { ExtractionResult } from '../store/useGameStore'
 import { useTheme, FONT, SPACING } from '../theme'
+import { playSound } from '../utils/audioService'
 
 import SoloLevelingModal from './SoloLevelingModal'
 
@@ -70,6 +71,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
     ]).start(() => {
       // Stage 2: Reveal Card
       Vibration.vibrate([0, 80, 40, 80, 40, 200, 80, 400])
+      playSound('shadow')
 
       Animated.parallel([
         Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
@@ -460,6 +462,7 @@ const getStyles = (C: any) => StyleSheet.create({
     textShadowColor: C.bg,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 20,
+    textAlign: 'center',
   },
   ariseSubLine: {
     width: 200,

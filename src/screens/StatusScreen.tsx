@@ -378,7 +378,7 @@ function AchievementsPanel({ onSelect, C }: {
         </View>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={ac.grid}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} nestedScrollEnabled={true} contentContainerStyle={ac.grid}>
         {ACHIEVEMENTS_CATALOG.map(a => {
           const prog          = achievementProgress[a.id]
           const fullyDone     = unlockedSet.has(a.id) || (a.tiers ? isAchievementMaxed(a, prog) : false)

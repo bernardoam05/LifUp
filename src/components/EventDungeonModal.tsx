@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { DungeonMission } from '../data/bosses';
+import { DungeonMission, EventWindow } from '../data/bosses';
 import { SHADOW_MAP } from '../data/shadows';
 import BottomSheetModal from './BottomSheetModal';
 import { SPACING, FONT } from '../theme';
@@ -16,6 +16,7 @@ interface EventDungeonModalProps {
   eventTrials: DungeonMission[];
   eventBossMission: DungeonMission | null;
   eventProgress: { completedIds: string[]; required: number; defeated: boolean } | null;
+  eventWindow: EventWindow | null;
   C: any;
 }
 
@@ -27,6 +28,7 @@ export default function EventDungeonModal({
   eventTrials,
   eventBossMission,
   eventProgress,
+  eventWindow,
   C
 }: EventDungeonModalProps) {
   if (!eventProgress) return null;
@@ -40,6 +42,14 @@ export default function EventDungeonModal({
         <Icon name="calendar-star" size={40} color={C.gold} style={{ marginBottom: SPACING.sm }} />
         <Text style={[ed.warning, { color: C.gold }]}>⚠ EVENTO LIMITADO ⚠</Text>
         <Text style={[ed.title, { color: C.gold }]}>[ MASMORRA ESPECIAL DE EVENTO ]</Text>
+        
+        {eventWindow && (
+          <View style={[ed.eventWindowTag, { borderColor: C.gold + '66' }]}>
+            <Text style={ed.eventWindowTxt}>
+              Disponível {eventWindow.start} a {eventWindow.end}
+            </Text>
+          </View>
+        )}
 
         <View style={ed.eventHeader}>
           <Text style={ed.eventHeaderTxt}>PROVAS DO EVENTO</Text>
@@ -55,7 +65,7 @@ export default function EventDungeonModal({
               <TouchableOpacity
                 key={m.id}
                 style={[ed.missionBtn, { borderColor: m.color + '88', opacity: completed ? 0.3 : 1 }]}
-                onPress={() => { if (!completed) { onClose(); onSelectMission(m); } }}
+                onPress={() => { if (!completed) { onSelectMission(m); } }}
                 activeOpacity={0.7}
               >
                 <View style={[ed.missionIcon, { backgroundColor: m.color + '22', borderColor: m.color + '66', borderWidth: 1 }]}>
@@ -79,7 +89,7 @@ export default function EventDungeonModal({
           {eventBossMission ? (
             <TouchableOpacity
               style={[ed.missionBtn, { borderColor: eventBossMission.color + '88', opacity: eventProgress.defeated ? 0.3 : 1 }]}
-              onPress={() => { if (!eventProgress.defeated) { onClose(); onSelectMission(eventBossMission); } }}
+              onPress={() => { if (!eventProgress.defeated) { onSelectMission(eventBossMission); } }}
               activeOpacity={0.7}
             >
               <View style={[ed.missionIcon, { backgroundColor: eventBossMission.color + '22', borderColor: eventBossMission.color + '66', borderWidth: 1 }]}>
@@ -134,6 +144,9 @@ const getEDStyles = (C: any) => StyleSheet.create({
   eventHeaderTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   eventProgressTxt: { color: C.dimmed, fontSize: 11, marginBottom: SPACING.sm, alignSelf: 'flex-start' },
   eventLockedTxt: { color: C.dimmed, fontSize: 11, marginTop: SPACING.xs, marginBottom: SPACING.sm, textAlign: 'center' },
+  
+  eventWindowTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.gold + '08', borderWidth: 1, borderColor: C.gold + '66', borderRadius: 6, paddingHorizontal: SPACING.sm, paddingVertical: 6, marginBottom: SPACING.md, alignSelf: 'flex-start' },
+  eventWindowTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
   
   shadowExtractTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '12', borderWidth: 1, borderColor: C.purple + '33', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2, marginTop: 4, alignSelf: 'flex-start' },
   shadowExtractTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8 },

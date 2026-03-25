@@ -32,7 +32,7 @@ export const SHADOWS_BOSS_EVENT: Shadow[] = [
         id: 'auto_titan', name: 'Titã de Sucata', rank: 'Knight', type: 'Tank', dropRate: 0.05,
         passiveEffect: { type: 'gold_boost', value: 0.08, description: '+8% Gold em todas as missões' },
         lore: '"Nasceu da fusão de centenas de autómatos quebrados. Uma montanha de metal que segue o Monarca de forma desajeitada mas letal."',
-        icon: 'train-car-flatbed-tank', color: '#3b82f6',
+        icon: 'train-car', color: '#3b82f6',
         unlockMethod: { type: 'boss_drop', bossId: 'event_summer_titan', category: 'event' },
       },
   {
@@ -54,14 +54,14 @@ export const SHADOWS_BOSS_EVENT: Shadow[] = [
         id: 'astral_echo', name: 'Eco do Cometa', rank: 'Normal', type: 'Magic', dropRate: 0.1,
         passiveEffect: { type: 'focus_mastery', value: 0.05, description: '-5% tempo de foco necessário' },
         lore: '"O som residual de um impacto estelar que durou um milénio. Acalma a mente mortal."',
-        icon: 'comet', color: '#94a3b8',
+        icon: 'star-shooting', color: '#94a3b8',
         unlockMethod: { type: 'boss_drop', bossId: 'event_carnival_mask', category: 'event' },
       },
   {
         id: 'astral_guardian', name: 'Vigia Orbital', rank: 'Elite', type: 'Tank', dropRate: 0.08,
         passiveEffect: { type: 'gold_boost', value: 0.04, description: '+4% Gold em todas as missões' },
         lore: '"Pedaços gravitacionais de meteoritos servem como a sua armadura giratória. Um satélite de defesa perfeito."',
-        icon: 'planet', color: '#22c55e',
+        icon: 'earth', color: '#22c55e',
         unlockMethod: { type: 'boss_drop', bossId: 'event_equinox_guardian', category: 'event' },
       },
   {
@@ -75,7 +75,7 @@ export const SHADOWS_BOSS_EVENT: Shadow[] = [
         id: 'shadow_dragon', name: 'Filhote de Dragão Sombrio', rank: 'Commander', type: 'Beast', dropRate: 0.02,
         passiveEffect: { type: 'boss_bonus_xp', value: 0.15, description: '+15% XP extra em Boss Raids' },
         lore: '"Um pálido eco do poder dracónico, mas cresce dia após dia no exército real do Monarca."',
-        icon: 'dragon', color: '#f59e0b',
+        icon: 'dinosaur', color: '#f59e0b',
         unlockMethod: { type: 'boss_drop', bossId: 'event_festival_drake', category: 'event' },
       },
   // ── TERCEIRA VAGA: LEGIÃO DOS ESQUECIDOS (Mais 30 Sombras) ──

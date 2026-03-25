@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Vibration } from 'react-nativ
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SoloLevelingModal from './SoloLevelingModal';
 import { FONT, SPACING } from '../theme';
+import { playSound } from '../utils/audioService';
 
 export const getBVStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.bg + 'cc', justifyContent: 'flex-end' },
@@ -42,6 +43,7 @@ export default function BossVictoryModal({
   useEffect(() => {
     if (visible) {
       Vibration.vibrate([0, 100, 50, 300, 50, 500]);
+      playSound('victory');
     }
   }, [visible]);
 

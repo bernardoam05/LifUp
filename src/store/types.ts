@@ -6,6 +6,9 @@ import type { AchievementProg, EventTrigger } from '../data/achievements'
 export type RankLetter = 'E' | 'D' | 'C' | 'B' | 'A' | 'S' | 'National'
 export type RankKey = 'E' | 'D' | 'C' | 'B' | 'A' | 'S'
 
+// ── Job Class ─────────────────────────────────────────────────────────────
+export type JobClass = { name: string; color: string; minLevel: number }
+
 // ── Quest & SideQuest types ────────────────────────────────────────────────────
 
 export type Quest = {
@@ -282,10 +285,11 @@ export type GameState = {
   questRecords: Record<string, { bestTime: number; lastNote: string; history?: Array<{ date: string; time: number; note: string }> }>
   questCompletions: Record<string, number>   // total times each quest was completed
   levelUpReward: LevelUpReward | null     // pending level-up item reward to show
-  jobChangeReward: any | null             // pending job change reward to show
+  levelUpToast: number | null             // simple toast for every level-up (just the level number)
+  jobChangeReward: JobClass | null        // pending job change reward to show
   lastExtraction: { shadow: Shadow; isLevelUp: boolean; newLevel: number } | null
   activeMissionTimers: Record<string, { startTime: number; accumulatedMs: number; isPaused: boolean }>
-  rewardsQueue: { type: 'achievement' | 'shadow' | 'level_up' | 'job_change'; id: string; isLevelUp?: boolean; newLevel?: number; data?: any }[]
+  rewardsQueue: { type: 'achievement' | 'shadow' | 'level_up' | 'job_change'; id: string; isLevelUp?: boolean; newLevel?: number; data?: Record<string, unknown> }[]
   extraQuestRerolledIds: string[]    // extra quest IDs (extra_…) that have been rerolled today
   extraQuestUsedPoolIds: string[]    // pool def IDs used in extra quests today (to avoid picking same def again)
   activeBuffs: {             // consumable-activated buffs with expiry
@@ -296,6 +300,7 @@ export type GameState = {
     expiresAt: number        // epoch ms
   }[]
   newAchievementIds: string[]
+  currentLootReward: { type: string; title: string; gold: number; xp: number; items: string[] } | null
 }
 
 export type TriggerPayload = Record<string, unknown>
@@ -355,6 +360,8 @@ export type GameActions = {
   updateSettings: (patch: Partial<GameSettings>) => void
   saveQuestRecord: (questId: string, time: number, note: string) => void
   dismissLevelUpReward: () => void
+  dismissLevelUpToast: () => void
+  dismissLootReward: () => void
   dismissJobChangeReward: () => void
   startMissionTimer: (id: string) => void
   pauseMissionTimer: (id: string) => void
@@ -368,7 +375,7 @@ export type GameActions = {
   restoreBackup: (data: Partial<GameState>) => void
   popReward: () => void
   extractShadow: (shadowId: string) => void
-  openLootBox: () => { reward: string; detail: string; color: string }
+  openLootBox: () => boolean
   enterDungeon: (keyId: string) => boolean
   applyBuff: (buff: { id: string; label: string; multiplier: number; stat: 'xp' | 'gold' }, duration: number) => void
   clearPendingRaidExtraction: () => void

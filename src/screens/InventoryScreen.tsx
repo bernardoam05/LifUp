@@ -5,7 +5,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Vibration } from 'react-native'
 import useGameStore from '../store/useGameStore'
 import { CATALOG_MAP } from '../data/shopItems'
-import { ALL_DUNGEON_KEYS } from '../data/dungeonKeys'
+import { ALL_DUNGEON_KEYS, DungeonKey } from '../data/dungeonKeys'
+import DungeonKeyModal from '../components/DungeonKeyModal'
+import KeyVaultModal from '../components/KeyVaultModal'
 import CustomModal from '../components/CustomModal'
 import { useTheme, FONT, SPACING } from '../theme'
 
@@ -94,11 +96,11 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
   }
 
   function applyEffect() {
-    useItem(itemId)
     Vibration.vibrate([0, 80, 40, 120])
 
     switch (item.effect) {
       case 'add_xp': {
+        useItem(itemId)
         const { leveledUp } = addXP(item.effectValue ?? 50)
         setFeedback(leveledUp
           ? `+${item.effectValue} XP — LEVEL UP!`
@@ -106,25 +108,37 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
         )
         break
       }
-      case 'reduce_penalty':
+      case 'reduce_penalty': {
+        useItem(itemId)
         setPenRed(true)
         setFeedback('Pergaminho ativado! Penalização de amanhã reduzida em 50%.')
         break
-      case 'remove_penalty':
+      }
+      case 'remove_penalty': {
+        useItem(itemId)
         triggerEvent('lagrima_used_during_penalty')
         removePenalty()
         setFeedback('Penalização removida! O Sistema purificou o teu registo.')
         break
-      case 'xp_boost_next':
+      }
+      case 'xp_boost_next': {
+        useItem(itemId)
         setXpBoostNext(true)
         setFeedback('Ampulheta ativada! Próxima missão com XP dobrado.')
         break
+      }
       case 'open_loot_box': {
-        const res = openLootBox()
-        setFeedback(`${res.reward}: ${res.detail}`)
+        // openLootBox handles useItem internally
+        const success = openLootBox()
+        if (success) {
+          setFeedback('Cofre aberto! Verifica a recompensa...')
+        } else {
+          setFeedback('Nenhum cofre disponível!')
+        }
         break
       }
-      case 'break_hardcore':
+      case 'break_hardcore': {
+        useItem(itemId)
         if (!hardcoreActive) {
           setFeedback('Nenhum Modo Hardcore ativo para quebrar.')
         } else {
@@ -132,7 +146,8 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
           setFeedback('Juramento quebrado! Podes parar o Focus Mode livremente.')
         }
         break
-      case 'material':
+      }
+      case 'material': {
         useItem(itemId)
         if (itemId === 'shadow_essence') {
           setFeedback('O Sistema cedeu! Extração resetada para hoje.')
@@ -140,8 +155,11 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
           setFeedback('Consumível ativado! Verifica os teus Status.')
         }
         break
-      default:
+      }
+      default: {
+        useItem(itemId)
         setFeedback('Item utilizado com sucesso!')
+      }
     }
     setConfirmUse(false)
     setTimeout(() => setFeedback(null), 3000)
@@ -171,7 +189,7 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
 
       <View style={ic.info}>
         <Text style={[ic.name, { color: item.color }]}>{item.name.toUpperCase()}</Text>
-        <Text style={ic.desc} numberOfLines={2}>{item.description}</Text>
+        <Text style={[ic.desc, { color: C.text.secondary }]} numberOfLines={2}>{item.description}</Text>
         {feedback && (
           <Text style={[ic.feedback, { color: item.color }]}>{feedback}</Text>
         )}
@@ -217,13 +235,15 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
 export default function InventoryScreen() {
   const C = useTheme()
   const s = React.useMemo(() => getStyles(C), [C])
-  const sk = React.useMemo(() => getSKStyles(C), [C])
   const inventory = useGameStore(s => s.player.inventory)
   const dungeonKeys = useGameStore(s => s.player.dungeonKeys)
 
   const gold      = useGameStore(s => s.player.gold)
-
   const total = inventory.reduce((sum, e) => sum + e.quantity, 0)
+
+  const [showKeyModal, setShowKeyModal] = useState(false)
+  const [showVaultModal, setShowVaultModal] = useState(false)
+  const [selectedKey, setSelectedKey] = useState<DungeonKey | null>(null)
 
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
@@ -245,35 +265,25 @@ export default function InventoryScreen() {
           </View>
         </View>
 
-        {/* Vault Section */}
-        <View style={s.sectionHeader}>
-          <Icon name="safe" size={14} color={C.neonBlue} />
-          <Text style={s.sectionTitle}> COFRE DE CHAVES</Text>
-        </View>
-        {dungeonKeys && dungeonKeys.length > 0 ? (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={sk.keyGrid}>
-            {dungeonKeys.map((keyId, idx) => {
-              const key = ALL_DUNGEON_KEYS.find(k => k.id === keyId)
-              if (!key) return null
-              return (
-                <View key={idx} style={[sk.keyCard, { borderColor: key.color + '44' }]}>
-                  <View style={[sk.keyIconWrap, { backgroundColor: key.color + '12', borderColor: key.color + '44' }]}>
-                    <Icon name="key-variant" size={20} color={key.color} />
-                  </View>
-                  <View style={sk.keyInfo}>
-                    <Text style={[sk.keyName, { color: key.color }]} numberOfLines={1}>{key.name.toUpperCase()}</Text>
-                    <Text style={sk.keyBoss} numberOfLines={1}>ALVO: {key.bossId.replace(/_/g, ' ')}</Text>
-                  </View>
-                </View>
-              )
-            })}
-          </ScrollView>
-        ) : (
-          <View style={sk.emptyKeys}>
-            <Text style={sk.emptyKeysTxt}>Nenhuma Chave obtida</Text>
-            <Text style={sk.emptyKeysSub}>Sobe de nível ou abre Cofres para encontrar chaves de masmorra.</Text>
+        {/* Vault Button */}
+        <TouchableOpacity
+          style={[s.vaultBtn, { borderColor: C.neonBlue + '44' }]}
+          onPress={() => setShowVaultModal(true)}
+          activeOpacity={0.7}
+        >
+          <View style={[s.vaultIconWrap, { backgroundColor: C.neonBlue + '12' }]}>
+            <Icon name="safe" size={32} color={C.neonBlue} />
           </View>
-        )}
+          <View style={s.vaultInfo}>
+            <Text style={s.vaultTitle}>COFRE DE CHAVES</Text>
+            <Text style={s.vaultCount}>
+              {dungeonKeys && dungeonKeys.length > 0
+                ? `${dungeonKeys.length} chave${dungeonKeys.length !== 1 ? 's' : ''} guardada${dungeonKeys.length !== 1 ? 's' : ''}`
+                : 'Nenhuma chave'}
+            </Text>
+          </View>
+          <Icon name="chevron-right" size={24} color={C.neonBlue} />
+        </TouchableOpacity>
 
         <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
           <Icon name="bag-personal-outline" size={14} color={C.neonBlue} />
@@ -294,6 +304,29 @@ export default function InventoryScreen() {
 
 
       </ScrollView>
+
+      {/* Modals */}
+      <KeyVaultModal
+        visible={showVaultModal}
+        onClose={() => setShowVaultModal(false)}
+        keys={dungeonKeys || []}
+        C={C}
+      />
+
+      {showKeyModal && selectedKey && (
+        <DungeonKeyModal
+          visible={showKeyModal}
+          onClose={() => setShowKeyModal(false)}
+          onRequestClose={() => setShowKeyModal(false)}
+          onStartMission={() => {
+            // Após clicar em "ACEITAR DESAFIO", a missão será iniciada
+            // O comportamento específico será tratado pelo QuestScreen
+            setShowKeyModal(false)
+          }}
+          dungeonKey={selectedKey}
+          C={C}
+        />
+      )}
     </SafeAreaView>
   )
 }
@@ -302,7 +335,7 @@ export default function InventoryScreen() {
 
 const getStyles = (C: any) => StyleSheet.create({
   safeArea:   { flex: 1, backgroundColor: C.bg },
-  content:    { padding: SPACING.md, paddingBottom: SPACING.xl },
+  content:    { padding: SPACING.md, paddingBottom: SPACING.lg, gap: SPACING.md },
   titleRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
   title:      { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, letterSpacing: 3 },
   statsRow:   { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.md },
@@ -313,35 +346,11 @@ const getStyles = (C: any) => StyleSheet.create({
   emptyDesc:  { color: C.dimmed, fontSize: 12, textAlign: 'center' },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },
   sectionTitle:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, fontWeight: '700' },
-})
-
-const getSKStyles = (C: any) => StyleSheet.create({
-  keyGrid: { gap: SPACING.md, paddingRight: SPACING.md },
-  keyCard: { 
-    flexDirection: 'row', 
-    width: 200, 
-    height: 70, 
-    backgroundColor: C.panel, 
-    borderWidth: 1, 
-    borderRadius: 8, 
-    padding: SPACING.sm, 
-    alignItems: 'center', 
-    gap: SPACING.sm 
-  },
-  keyIconWrap: { 
-    width: 44, 
-    height: 44, 
-    borderRadius: 8, 
-    alignItems: 'center', 
-    justifyContent: 'center',
-    borderWidth: 1,
-  },
-  keyInfo: { flex: 1, justifyContent: 'center' },
-  keyName: { fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '900', marginBottom: 2 },
-  keyBoss: { color: C.dimmed, fontSize: 7, textTransform: 'uppercase', fontFamily: FONT.orbitron },
-  emptyKeys: { backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 8, padding: SPACING.md, width: '100%', alignItems: 'center' },
-  emptyKeysTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 11, marginBottom: 4 },
-  emptyKeysSub: { color: C.muted, fontSize: 10, textAlign: 'center' },
+  vaultBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 8, borderWidth: 1, padding: SPACING.md, gap: SPACING.md, marginBottom: SPACING.md },
+  vaultIconWrap: { width: 56, height: 56, borderRadius: 8, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.neonBlue + '44' },
+  vaultInfo: { flex: 1 },
+  vaultTitle: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 1 },
+  vaultCount: { color: C.muted, fontSize: 10, marginTop: 2 },
 })
 
 const getICStyles = (C: any) => StyleSheet.create({
@@ -351,10 +360,10 @@ const getICStyles = (C: any) => StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     padding: SPACING.md,
-    marginBottom: 10,
+    marginBottom: SPACING.sm,
     gap: SPACING.md,
     alignItems: 'center',
-    height: 90,
+    minHeight: 70,
   },
   iconWrap: {
     width: 60,

@@ -456,7 +456,7 @@ export default function FocusScreen() {
         title: '🔒 FOCO TRAVADO PELA PENALIDADE',
         message: `Você está sob penalidade! Só pode sair do modo foco daqui a ${hoursRemaining}h.\nComplete as missões de penalização para se livrar mais rápido.`,
         buttons: [
-          { text: 'Entendi', color: C.neonRed }
+          { text: 'Entendi', style: 'destructive' }
         ]
       })
       return
@@ -545,6 +545,26 @@ export default function FocusScreen() {
         <View style={s.titleRow}>
           <Icon name="shield-lock" size={16} color={C.neonBlue} />
           <Text style={s.title}> FOCUS MODE</Text>
+        </View>
+
+        {/* Explanation card */}
+        <View style={[s.explanationCard]}>
+          <View style={{ gap: SPACING.sm, marginBottom: SPACING.md }}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
+              <Icon name="lightning-bolt" size={14} color={C.neonBlue} />
+              <View style={{ flex: 1 }}>
+                <Text style={[s.modeLabel, { color: C.neonBlue }]}>MODO STANDARD</Text>
+                <Text style={s.modeDesc}>Bloqueia apps por tempo definido • Podes fazer pausa a qualquer momento • Recomendado para sessões controladas</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
+            <Icon name="skull" size={14} color={C.neonRed} />
+            <View style={{ flex: 1 }}>
+              <Text style={[s.modeLabel, { color: C.neonRed }]}>MODO HARDCORE</Text>
+              <Text style={s.modeDesc}>Dedicação Total • Sem pausas até ao fim • Testa a tua força • Ganha favor do Sistema</Text>
+            </View>
+          </View>
         </View>
 
         {/* Native module missing warning */}
@@ -782,32 +802,36 @@ const getStyles = (C: any) => StyleSheet.create({
   titleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md, marginTop: SPACING.md },
   title:    { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, letterSpacing: 3 },
 
-  warnBox:  { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1a0505', borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.md },
+  explanationCard: { backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.md, gap: SPACING.sm },
+  modeLabel: { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', letterSpacing: 1 },
+  modeDesc: { color: C.dimmed, fontSize: 11, lineHeight: 16 },
+
+  warnBox:  { flexDirection: 'row', alignItems: 'center', backgroundColor: C.surface?.base || C.bg, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.md },
   warnTxt:  { color: C.neonRed, fontSize: 12 },
 
   section:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2, marginBottom: SPACING.sm, marginTop: SPACING.md },
 
   mainBtn:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.neonBlue + '15', borderWidth: 1, borderColor: C.neonBlue, borderRadius: 4, paddingVertical: SPACING.md, marginBottom: SPACING.sm },
   stopBtn:         { borderColor: C.neonRed, backgroundColor: C.neonRed + '15' },
-  hardcoreStopBtn: { borderColor: C.neonRed, backgroundColor: '#1a0505', borderWidth: 2 },
+  hardcoreStopBtn: { borderColor: C.neonRed, backgroundColor: C.surface?.danger || C.bg, borderWidth: 2 },
   mainBtnDisabled: { opacity: 0.4 },
   mainBtnTxt:      { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, letterSpacing: 2 },
 
-  activeBanner:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0d2a1a', borderWidth: 1, borderColor: C.green + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
-  activeBannerHardcore: { backgroundColor: '#1a0505', borderColor: C.neonRed + '44' },
+  activeBanner:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.surface?.success || C.bg, borderWidth: 1, borderColor: C.green + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  activeBannerHardcore: { backgroundColor: C.surface?.danger || C.bg, borderColor: C.neonRed + '44' },
   activeTxt:            { color: C.green, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 
   hardcoreRow:         { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.sm, borderWidth: 1, borderColor: C.border, gap: SPACING.sm },
-  hardcoreRowPunished: { borderColor: C.neonRed + '66', backgroundColor: '#1a0505' },
+  hardcoreRowPunished: { borderColor: C.neonRed + '66', backgroundColor: C.surface?.danger || C.bg },
   hardcoreInfo:        { flex: 1 },
   hardcoreLabel:       { color: C.muted, fontFamily: FONT.orbitron, fontSize: 11 },
   hardcoreSub:         { color: C.dimmed, fontSize: 10, marginTop: 4, lineHeight: 15 },
   punishBadge:         { flexDirection: 'row', alignItems: 'center', backgroundColor: C.neonRed + '22', borderWidth: 1, borderColor: C.neonRed + '55', borderRadius: 4, paddingHorizontal: 5, paddingVertical: 2 },
   punishTxt:           { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
-  punishBanner:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#1a0505', borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  punishBanner:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.surface?.danger || C.bg, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   punishBannerTxt:     { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 
-  penaltyBanner:    { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1a0505', borderWidth: 1, borderColor: C.neonRed, borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  penaltyBanner:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.surface?.danger || C.bg, borderWidth: 1, borderColor: C.neonRed, borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   penaltyBannerTxt: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1, fontWeight: '900' },
   penaltyBannerSub: { color: C.neonRed + 'aa', fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1, marginTop: 2 },
 
@@ -828,12 +852,12 @@ const getStyles = (C: any) => StyleSheet.create({
 
   permBlock: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.border, marginBottom: 4 },
 
-  hardcoreFooterBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, paddingVertical: 16, paddingHorizontal: SPACING.md, borderTopWidth: 1, borderTopColor: C.neonRed + '44', backgroundColor: '#0d0000' },
-  hardcoreFooterBtnActive: { backgroundColor: '#1a0000', borderTopColor: C.neonRed },
+  hardcoreFooterBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, paddingVertical: 16, paddingHorizontal: SPACING.md, borderTopWidth: 1, borderTopColor: C.neonRed + '44', backgroundColor: C.surface?.danger || C.bg },
+  hardcoreFooterBtnActive: { backgroundColor: C.surface?.dangerHover || C.bg, borderTopColor: C.neonRed },
   hardcoreFooterBtnTxt:    { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1.5, textAlign: 'center', flex: 1 },
 
-  hardcoreInlineBtn:       { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, backgroundColor: '#0d0000', borderWidth: 1, borderColor: C.neonRed + '55', borderRadius: 4, padding: SPACING.md, marginTop: SPACING.sm, marginBottom: 4 },
-  hardcoreInlineBtnActive: { borderColor: C.neonRed, backgroundColor: '#1a0000' },
+  hardcoreInlineBtn:       { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, backgroundColor: C.surface?.danger || C.bg, borderWidth: 1, borderColor: C.neonRed + '55', borderRadius: 4, padding: SPACING.md, marginTop: SPACING.sm, marginBottom: 4 },
+  hardcoreInlineBtnActive: { borderColor: C.neonRed, backgroundColor: C.surface?.dangerHover || C.bg },
   hardcoreInlineBtnTxt:    { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
   hardcoreInlineSub:       { color: C.dimmed, fontSize: 10, marginTop: 3 },
 })
@@ -1020,8 +1044,8 @@ const getOVStyles = (C: any) => StyleSheet.create({
     backgroundColor: C.bg,
   },
   rowActive: {
-    backgroundColor: '#0d2818',
-    borderBottomColor: '#0d2818',
+    backgroundColor: C.surface?.success || C.bg,
+    borderBottomColor: C.green + '44',
   },
   rowInfo: { flex: 1 },
   rowLabel: {

@@ -6,11 +6,12 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { getRank, xpForLevel, CLASS_REQUIREMENTS } from './src/store/useGameStore'
 import { setupNotifications, requestNotificationPermission } from './src/utils/notifications'
+import { initializeAudio } from './src/utils/audioService'
 import { ACHIEVEMENTS_MAP } from './src/data/achievements'
 import { SHADOW_MAP } from './src/data/shadows'
 import RankModal from './src/components/RankModal'
 import ExtractionModal from './src/components/ExtractionModal'
-import TutorialOverlay from './src/components/TutorialOverlay'
+import LevelUpModal from './src/components/LevelUpModal'
 
 
 import LevelUpToast from "./src/components/LevelUpToast"
@@ -26,9 +27,11 @@ import { C, FONT, SPACING } from './src/theme'
 import { useDayWatcher } from './src/hooks/useDayWatcher'
 
 import AchievementModal from './src/components/AchievementModal'
-import { LevelUpRewardModal, JobChangeModal } from './src/screens/StatusScreen'
+import { JobChangeModal } from './src/screens/StatusScreen'
+import TutorialOverlay from './src/components/TutorialOverlay'
 import PenaltyModal from './src/components/PenaltyModal'
 import SystemHUD from './src/components/SystemHUD'
+import { LootBoxModal } from './src/components/LootBoxModal'
 
 const Tab = createMaterialTopTabNavigator()
 
@@ -48,6 +51,12 @@ const navigationRef = createNavigationContainerRef<any>()
 export default function App() {
   const levelUpReward = useGameStore(s => s.levelUpReward)
   const dismissLevelUpReward = useGameStore(s => s.dismissLevelUpReward)
+  const levelUpToast = useGameStore(s => s.levelUpToast)
+  const dismissLevelUpToast = useGameStore(s => s.dismissLevelUpToast)
+  const currentLootReward = useGameStore(s => s.currentLootReward)
+  const dismissLootReward = useGameStore(s => {
+    return s.dismissLootReward
+  })
 
   const bootSystem = useGameStore(s => s.bootSystem)
   const hasPenalty = useGameStore(s => s.system.hasPenalty)
@@ -75,6 +84,7 @@ export default function App() {
 
   useEffect(() => {
     bootSystem()
+    initializeAudio().catch(() => { })
     setupNotifications()
       .then(() => requestNotificationPermission())
       .catch(() => { })
@@ -176,38 +186,40 @@ export default function App() {
 
         {/* Sequential Reward System */}
         {!penaltyTriggered && rewardsQueue.length > 0 && (
-          <Fragment key={`${rewardsQueue[0].type}-${rewardsQueue[0].id}`}>
-            {rewardsQueue[0].type === 'achievement' && (
-              <AchievementModal
-                achievementId={rewardsQueue[0].id}
-                onDismiss={popReward}
-              />
-            )}
-            {rewardsQueue[0].type === 'shadow' && (
-              <ExtractionModal
-                result={{
-                  shadow: (SHADOW_MAP[rewardsQueue[0].id] || (useGameStore.getState().customShadows.find(cs => cs.id === rewardsQueue[0].id)))!,
-                  isLevelUp: !!rewardsQueue[0].isLevelUp,
-                  newLevel: rewardsQueue[0].newLevel || 1
-                }}
-                onDismiss={popReward}
-              />
-            )}
-            {rewardsQueue[0].type === 'level_up' && (
-              <LevelUpRewardModal
-                reward={rewardsQueue[0].data}
-                onClose={popReward}
-                C={C}
-              />
-            )}
-            {rewardsQueue[0].type === 'job_change' && (
-              <JobChangeModal
-                job={rewardsQueue[0].data}
-                onClose={popReward}
-                C={C}
-              />
-            )}
-          </Fragment>
+          <View style={{ zIndex: 10000 }}>
+            <Fragment key={`${rewardsQueue[0].type}-${rewardsQueue[0].id}`}>
+              {rewardsQueue[0].type === 'achievement' && (
+                <AchievementModal
+                  achievementId={rewardsQueue[0].id}
+                  onDismiss={popReward}
+                />
+              )}
+              {rewardsQueue[0].type === 'shadow' && (
+                <ExtractionModal
+                  result={{
+                    shadow: (SHADOW_MAP[rewardsQueue[0].id] || (useGameStore.getState().customShadows.find(cs => cs.id === rewardsQueue[0].id)))!,
+                    isLevelUp: !!rewardsQueue[0].isLevelUp,
+                    newLevel: rewardsQueue[0].newLevel || 1
+                  }}
+                  onDismiss={popReward}
+                />
+              )}
+              {rewardsQueue[0].type === 'level_up' && rewardsQueue[0].data && (
+                <LevelUpModal
+                  level={(rewardsQueue[0].data as any).level}
+                  items={(rewardsQueue[0].data as any).items || []}
+                  onDismiss={popReward}
+                />
+              )}
+              {rewardsQueue[0].type === 'job_change' && (
+                <JobChangeModal
+                  job={rewardsQueue[0].data}
+                  onClose={popReward}
+                  C={C}
+                />
+              )}
+            </Fragment>
+          </View>
         )}
 
         {/* Rank requirements modal */}
@@ -222,15 +234,31 @@ export default function App() {
           />
         )}
 
+        {/* Loot Box Modal */}
+        {currentLootReward && (
+          <LootBoxModal
+            reward={currentLootReward}
+            onClose={dismissLootReward}
+          />
+        )}
+
         {/* Settings screen */}
         {showSettings && <SettingsScreen onClose={() => setShowSettings(false)} />}
+
+        {/* Simple level-up toast for non-multiples of 5 (levels 1,2,3,4,6,7,8,9...) */}
+        <View style={{ zIndex: 9999 }}>
+          <LevelUpToast
+            reward={levelUpToast ? { level: levelUpToast, items: [] } : null}
+            onDismiss={dismissLevelUpToast}
+          />
+        </View>
 
         {/* Tutorial Overlay */}
         {activeTutorialPhase !== null && (
           <TutorialOverlay
             phase={activeTutorialPhase as 1 | 2}
             onDone={advanceTutorial}
-            onChangeTab={(tab) => {
+            onChangeTab={(tab: string) => {
               if (navigationRef.isReady()) {
                 navigationRef.navigate(tab)
               }

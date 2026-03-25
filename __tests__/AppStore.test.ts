@@ -1,13 +1,8 @@
 
+import { describe, test, expect, jest } from '@jest/globals';
 import useGameStore from '../src/store/useGameStore';
 
 // Mocking required for native modules
-jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-}));
-
 jest.mock('react-native', () => ({
   Vibration: { vibrate: jest.fn() },
   Dimensions: { get: jest.fn(() => ({ width: 400, height: 800 })) },
@@ -106,13 +101,13 @@ describe('AppStore - General Logic Verification', () => {
     const buff = { id: 'test_buff', label: 'Test', multiplier: 1.1, stat: 'xp' as const };
     
     state.applyBuff(buff, duration);
-    const firstExpiry = useGameStore.getState().activeBuffs[0].expiresAt;
+    const firstExpiry = useGameStore.getState().activeBuffs.find((b: any) => b.id === 'test_buff')!.expiresAt;
     
     state.applyBuff(buff, duration);
-    const secondExpiry = useGameStore.getState().activeBuffs[0].expiresAt;
+    const secondExpiry = useGameStore.getState().activeBuffs.find((b: any) => b.id === 'test_buff')!.expiresAt;
     
     expect(secondExpiry).toBe(firstExpiry + duration);
-    expect(useGameStore.getState().activeBuffs.length).toBe(1);
+    expect(useGameStore.getState().activeBuffs.filter((b: any) => b.id === 'test_buff').length).toBe(1);
   });
 
   test('Portal Boss Completion tracking', () => {

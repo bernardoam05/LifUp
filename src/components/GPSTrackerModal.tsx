@@ -75,13 +75,8 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
     }
   }, [running])
 
-  // Persistent store sync
-  useEffect(() => {
-    if (!timerStore) {
-      startT(quest.id)
-      setRunning(true)
-    }
-  }, [])
+  // NO AUTO-START: Timer will only start when user clicks the play button
+  // Persistent store sync happens via tracker state changes
 
   function togglePause() {
     if (running) {
@@ -91,6 +86,13 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
       startT(quest.id)
       setRunning(true)
     }
+  }
+
+  function handleRestart() {
+    clearT(quest.id)
+    setElapsed(0)
+    setRunning(false)
+    tracker.reset?.()
   }
 
   function handleFinalize() {
@@ -144,6 +146,12 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
                   <Text style={{ color: running ? C.gold : C.green, fontFamily: FONT.orbitron, fontSize: 10, marginLeft: 8 }}>
                     {running ? 'PAUSAR' : (elapsed > 1000 ? 'RETOMAR' : 'INICIAR')}
                   </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.neonRed + '18', borderWidth: 1, borderColor: C.neonRed, padding: 12, borderRadius: 4, paddingHorizontal: 16 }}
+                  onPress={handleRestart}
+                >
+                  <Icon name="refresh" size={16} color={C.neonRed} />
                 </TouchableOpacity>
               </View>
 

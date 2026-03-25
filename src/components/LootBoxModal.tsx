@@ -16,25 +16,30 @@ export function LootBoxModal({ reward, onClose }: Props) {
   const C = useTheme()
   const st = React.useMemo(() => getStyles(C), [C])
   const fadeAnim = useRef(new Animated.Value(0)).current
-
   const scaleAnim = useRef(new Animated.Value(0.8)).current
+  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     if (reward) {
+      setIsVisible(true)
       Animated.parallel([
         Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
         Animated.spring(scaleAnim, { toValue: 1, friction: 5, useNativeDriver: true })
       ]).start()
     } else {
-      fadeAnim.setValue(0)
-      scaleAnim.setValue(0.8)
+      Animated.parallel([
+        Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
+        Animated.timing(scaleAnim, { toValue: 0.8, duration: 200, useNativeDriver: true })
+      ]).start(() => {
+        setIsVisible(false)
+      })
     }
-  }, [reward])
+  }, [reward, fadeAnim, scaleAnim])
 
-  if (!reward) return null
+  if (!isVisible || !reward) return null
 
   return (
-    <Modal transparent animationType="none" visible onRequestClose={onClose}>
+    <Modal transparent animationType="fade" visible onRequestClose={onClose}>
       <View style={st.overlay}>
         <Animated.View style={[st.card, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
           <Icon name="treasure-chest" size={56} color={C.gold} style={st.icon} />
