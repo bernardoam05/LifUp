@@ -304,6 +304,7 @@ export type GameActions = {
   rankUp: () => void
   bootSystem: () => void
   dismissPenaltyModal: () => void
+  setPenaltyTriggered: (value: boolean) => void
   advanceTutorialPhase: () => void
   spawnRaidBoss: () => void
   dealRaidBossDamage: (dmg: number) => void

@@ -448,6 +448,20 @@ export default function FocusScreen() {
   }
 
   async function stopFocus() {
+    // Bloqueia saída do foco durante penalidade ativa
+    const isPenaltyBlocking = hasPenalty && isPenaltyActive
+    if (isPenaltyBlocking) {
+      const hoursRemaining = penaltyRemainingH
+      setAlertCfg({
+        title: '🔒 FOCO TRAVADO PELA PENALIDADE',
+        message: `Você está sob penalidade! Só pode sair do modo foco daqui a ${hoursRemaining}h.\nComplete as missões de penalização para se livrar mais rápido.`,
+        buttons: [
+          { text: 'Entendi', color: C.neonRed }
+        ]
+      })
+      return
+    }
+
     await FocusBlocker.stopFocusMode()
     setFocusActive(false)
     setHardcoreMode(false)

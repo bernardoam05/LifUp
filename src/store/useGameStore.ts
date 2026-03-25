@@ -449,6 +449,10 @@ const useGameStore = create<GameState & GameActions>()(
           set((s: GameState & GameActions) => ({ system: { ...s.system, penaltyTriggered: false } }))
         },
 
+        setPenaltyTriggered(value: boolean) {
+          set((s: GameState & GameActions) => ({ system: { ...s.system, penaltyTriggered: value } }))
+        },
+
         advanceTutorialPhase() {
           set((s: GameState & GameActions) => ({
             system: { ...s.system, tutorialPhase: Math.min((s.system.tutorialPhase ?? 0) + 1, 2) as 0 | 1 | 2 },

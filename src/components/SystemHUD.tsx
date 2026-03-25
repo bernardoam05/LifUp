@@ -3,6 +3,7 @@ import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { getRank, xpForLevel, CLASS_REQUIREMENTS } from '../store/useGameStore'
+import { getJobClass } from '../store/helpers'
 import { C, FONT, SPACING } from '../theme'
 
 const hud = StyleSheet.create({
@@ -127,6 +128,7 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
   const player = useGameStore(s => s.player)
   const stats = useGameStore(s => s.statistics)
   const bosses = useGameStore(s => s.system.bossesDefeated)
+  const jobClass = getJobClass(player.level)
   
   // Note: getRank, xpForLevel, CLASS_REQUIREMENTS are re-exported from useGameStore for convenience
   // but they are technically in helpers.ts or types.ts
@@ -156,7 +158,7 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
         </TouchableOpacity>
         <View style={hud.info}>
           <View style={hud.nameRow}>
-            <Text style={hud.name} numberOfLines={1}>{player.name}</Text>
+            <Text style={hud.name} numberOfLines={1} ellipsizeMode='tail'>{jobClass.name}</Text>
             <Text style={hud.level}> LVL {player.level}</Text>
             <View style={{ flex: 1 }} />
             {/* Streak badge */}

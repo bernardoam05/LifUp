@@ -37,15 +37,10 @@ export function LootBoxModal({ reward, onClose }: Props) {
     <Modal transparent animationType="none" visible onRequestClose={onClose}>
       <View style={st.overlay}>
         <Animated.View style={[st.card, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
-          <Animated.View style={{ transform: [{ rotate: fadeAnim.interpolate({
-            inputRange: [0, 1],
-            outputRange: ['0deg', '360deg']
-          }) }] }}>
-            <Icon name="treasure-chest" size={56} color={C.gold} style={st.icon} />
-          </Animated.View>
+          <Icon name="treasure-chest" size={56} color={C.gold} style={st.icon} />
           
           <Text style={st.title}>{reward.title}</Text>
-          <Text style={st.subTitle}>RECOMPENSAS OBTIDAS:</Text>
+          <Text style={st.subTitle}>RECOMPENSAS ABERTAS</Text>
           
           <View style={st.rewardsContainer}>
             {reward.gold > 0 && (
@@ -63,17 +58,12 @@ export function LootBoxModal({ reward, onClose }: Props) {
             
             {reward.items && reward.items.length > 0 && (
               <View style={st.itemsContainer}>
-                <Text style={st.itemsTitle}>ITENS RECEBIDOS ({reward.items.length}):</Text>
+                <Text style={st.itemsTitle}>ITENS ADQUIRIDOS:</Text>
                 {reward.items.map((itemId, i) => {
                   const item = CATALOG_MAP[itemId]
                   return (
                     <View key={`${itemId}-${i}`} style={st.itemRow}>
-                      <Animated.View style={{ transform: [{ rotate: fadeAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['0deg', '360deg']
-                      }) }] }}>
-                        <Icon name={item?.icon || 'help-box'} size={20} color={C.purple} />
-                      </Animated.View>
+                      <Icon name={item?.icon || 'help-box'} size={20} color={C.purple} />
                       <Text style={st.itemText}>{item?.name || itemId}</Text>
                     </View>
                   )

@@ -60,7 +60,12 @@ export default function WeeklyDungeonModal({
       <View style={[dm.card, { paddingBottom: Math.max(40, insets.bottom + SPACING.sm) }]}>
         <Icon name="gate" size={40} color={C.neonRed} style={{ marginBottom: SPACING.sm }} />
         <Text style={dm.warning}>⚠ ALERTA DO SISTEMA ⚠</Text>
-        <Text style={dm.title}>[ PORTAL DIÁRIO DO BOSS ]</Text>
+        <Text 
+          style={[dm.title, { maxWidth: '90%' }]} 
+          numberOfLines={1}
+        >
+          {weeklyMissions.length > 0 ? `[ ${weeklyMissions[0].label.toUpperCase()} ]` : '[ PORTAL DIÁRIO ]'}
+        </Text>
         <Text style={dm.sub}>
           Completa a Missão do Boss Diário para ganhares XP, Gold e extraíres a sua Sombra.
         </Text>

@@ -124,7 +124,6 @@ export default function QuestCard({ quest, isExtra, C }: { quest: Quest; isExtra
 
   const [showGPS, setShowGPS] = useState(false)
   const [showMission, setShowMission] = useState(false)
-  const [showMissionOptions, setShowMissionOptions] = useState(false)
   const [confirmUndo, setConfirmUndo] = useState(false)
   const [showRegenConfirm, setShowRegenConfirm] = useState(false)
   const [showExtraRegenConfirm, setShowExtraRegenConfirm] = useState(false)
@@ -249,15 +248,12 @@ export default function QuestCard({ quest, isExtra, C }: { quest: Quest; isExtra
             </Text>
           </View>
         ) : isTimerActive ? (
-          <TouchableOpacity 
-            style={[qc.activeTimerRow, { paddingRight: 50, minHeight: 40 }]}
-            onPress={() => setShowMission(true)}
-          >
+          <View style={[qc.activeTimerRow, { paddingRight: 110 }]}>
             <Icon name="timer-outline" size={13} color={C.neonBlue} />
             <Text style={qc.activeTimerTxt}> A DECORRER</Text>
             <View style={{ flex: 1 }} />
             <Icon name="chevron-right" size={14} color={C.neonBlue} />
-          </TouchableOpacity>
+          </View>
         ) : (
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, opacity: 1, paddingRight: 50 }}>
             <Icon name="gesture-tap" size={14} color={C.neonBlue} style={{ opacity: 0.5 }} />

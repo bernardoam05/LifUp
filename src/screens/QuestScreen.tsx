@@ -23,7 +23,9 @@ import WeeklyDungeonModal from '../components/WeeklyDungeonModal'
 import EventDungeonModal from '../components/EventDungeonModal'
 import BossVictoryModal from '../components/BossVictoryModal'
 import ShadowExtractionModal from '../components/ShadowExtractionModal'
+import DungeonKeyModal from '../components/DungeonKeyModal'
 import { useTheme, FONT, SPACING, RANK_COLORS } from '../theme'
+import { DungeonKey } from '../data/dungeonKeys'
 
 // Vibration patterns
 const VIB_COMPLETE = [0, 80, 40, 120]
@@ -274,6 +276,8 @@ export default function QuestScreen() {
   const [showDungeon, setShowDungeon] = useState(false)
   const [showEventDungeon, setShowEventDungeon] = useState(false)
   const [showForge, setShowForge] = useState(false)
+  const [showKeyModal, setShowKeyModal] = useState(false)
+  const [selectedKey, setSelectedKey] = useState<DungeonKey | null>(null)
   const [activeMission, setActiveMission] = useState<DungeonMission | null>(null)
   const [confirmBossTraining, setConfirmBossTraining] = useState(false)
   const [victoryInfo, setVictoryInfo] = useState<{ xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean } | null>(null)
@@ -285,13 +289,39 @@ export default function QuestScreen() {
   const [sectionsOpen, setSectionsOpen] = useState({
     now: true,
     today: true,
-    portals: true,
     events: true,
     extras: true,
   })
+  const scrollViewRef = useRef<ScrollView>(null)
+  const sectionPositions = useRef<Record<string, number>>({})
+
+  const scrollToSection = (sectionKey: string) => {
+    // Open the section first
+    setSectionsOpen(prev => ({ ...prev, [sectionKey]: true }))
+    
+    // Scroll to the section after a short delay to allow re-render
+    setTimeout(() => {
+      const yOffset = sectionPositions.current[sectionKey] ?? 0
+      scrollViewRef.current?.scrollTo({ y: Math.max(0, yOffset - 100), animated: true })
+    }, 100)
+  }
 
   const toggleSection = (key: keyof typeof sectionsOpen) => {
     setSectionsOpen(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  const handleNowPanelQuest = () => {
+    // Click handler for "Missão em foco" - could scroll to HOJE section
+    scrollToSection('today')
+  }
+
+  const handleNowPanelDungeonBreak = () => {
+    // Dynamic portal alert is now shown directly above, no need to scroll
+  }
+
+  const handleNowPanelEvent = () => {
+    // Click handler for event alert
+    scrollToSection('events')
   }
 
   const nowForReset = new Date()
@@ -393,7 +423,7 @@ export default function QuestScreen() {
 
   return (
     <View style={s.safeArea}>
-      <ScrollView contentContainerStyle={s.content}>
+      <ScrollView ref={scrollViewRef} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
 
         {/* ── GLOBAL RAID BOSS ── */}
         {activeRaidBoss && (() => {
@@ -428,178 +458,34 @@ export default function QuestScreen() {
           )
         })()}
 
-        <TouchableOpacity style={[s.collapsibleHeader, { backgroundColor: C.surface.base }]} onPress={() => toggleSection('now')} activeOpacity={0.8}>
-          <Text style={s.collapsibleTitle}>HOJE</Text>
+        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('now')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current['now'] = e.nativeEvent.layout.y }}>
+          <Text style={s.collapsibleTitle}>AGORA</Text>
           <Icon name={sectionsOpen.now ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
         {sectionsOpen.now && (
           <View style={s.nowPanel}>
             <Text style={s.nowHeader}>PAINEL RÁPIDO</Text>
-            <View style={s.nowRow}>
+            <TouchableOpacity style={s.nowRow} onPress={handleNowPanelQuest} activeOpacity={0.7}>
               <Icon name="clipboard-play-outline" size={14} color={C.neonBlue} />
-              <Text style={s.nowTxt}>
-                {activeDailyQuest ? (
-                  <TouchableOpacity onPress={() => setActiveMission(null)}>
-                    <Text style={{ color: C.neonBlue, textDecorationLine: 'underline' }}>Missão em foco: {activeDailyQuest.label} - TAP PARA ACESSAR</Text>
-                  </TouchableOpacity>
-                ) : 'Nenhuma missão ativa agora.'}
-              </Text>
-            </View>
-            <View style={s.nowRow}>
+              <Text style={s.nowTxt}>{activeDailyQuest ? `Missão em foco: ${activeDailyQuest.label}` : 'Nenhuma missão ativa agora.'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={s.nowRow} onPress={handleNowPanelDungeonBreak} activeOpacity={0.7}>
               <Icon name="gate" size={14} color={C.neonRed} />
               <Text style={s.nowTxt}>
-                {system.activeDungeonBreak ? (
-                  <TouchableOpacity onPress={() => setShowDungeon(true)}>
-                    <Text style={{ color: C.neonRed, textDecorationLine: 'underline' }}>Portal dinâmico ativo - {formatCountdown(Math.max(0, system.activeDungeonBreak.expiresAt - Date.now()))} - TAP PARA ACESSAR</Text>
-                  </TouchableOpacity>
-                ) : 'Nenhum portal dinâmico ativo.'}
+                {system.activeDungeonBreak ? `Portal dinâmico ativo - ${formatCountdown(Math.max(0, system.activeDungeonBreak.expiresAt - Date.now()))}` : 'Nenhum portal dinâmico ativo.'}
               </Text>
-            </View>
-            <View style={s.nowRow}>
+            </TouchableOpacity>
+            <TouchableOpacity style={s.nowRow} onPress={handleNowPanelEvent} activeOpacity={0.7}>
               <Icon name="calendar-star" size={14} color={C.gold} />
               <Text style={s.nowTxt}>
-                {activeEventDef ? (
-                  <TouchableOpacity onPress={() => setShowEventDungeon(true)}>
-                    <Text style={{ color: C.neonBlue, textDecorationLine: 'underline' }}>Evento {activeEventDef.event.name} disponível ({eventCompleted.length}/{eventRequired}) - TAP PARA ACESSAR</Text>
-                  </TouchableOpacity>
-                ) : 'Nenhum evento ativo neste momento.'}
+                {activeEventDef ? `Evento ${activeEventDef.event.name} disponível (${eventCompleted.length}/${eventRequired})` : 'Nenhum evento ativo neste momento.'}
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
         )}
 
-        <TouchableOpacity style={[s.collapsibleHeader, { backgroundColor: C.surface.base }]} onPress={() => toggleSection('today')} activeOpacity={0.8}>
-          <Text style={s.collapsibleTitle}>MISSÕES</Text>
-          <Icon name={sectionsOpen.today ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
-        </TouchableOpacity>
-        {sectionsOpen.portals && (
-          <>
-        {/* ── KEY INVENTORY / INSTANT ACCESS ── */}
-        {playerDungeonKeys.length > 0 && (
-          <View style={{ marginBottom: SPACING.lg }}>
-            <View style={s.sectionHeaderRow}>
-               <View style={[s.sectionDivider, { marginBottom: 0, flex: 1 }]}>
-                <View style={s.sectionLine} />
-                <Text style={s.sectionLabel}>CHAVES DE MASMORRA ({playerDungeonKeys.length})</Text>
-                <View style={s.sectionLine} />
-              </View>
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -SPACING.md }} contentContainerStyle={{ paddingHorizontal: SPACING.md, gap: SPACING.sm }}>
-              {playerDungeonKeys.map(keyId => {
-                const key = ALL_DUNGEON_KEYS.find(k => k.id === keyId)
-                if (!key) return null
-                return (
-                  <TouchableOpacity
-                    key={keyId}
-                    style={[sk.keyCard, { borderColor: key.color + '44' }]}
-                    onPress={() => {
-                      const mission: DungeonMission = {
-                        id: `key_mission_${key.id}`,
-                        label: key.name,
-                        detail: key.missionDetail,
-                        type: key.missionType,
-                        shadowHint: key.bossId,
-                        icon: 'gate',
-                        color: key.color,
-                        category: 'key',
-                        focusDuration: key.missionType === 'focus' ? key.missionTarget : undefined,
-                        gpsTarget: key.missionType === 'gps' ? key.missionTarget : undefined,
-                      }
-                      setKeyConfirm({ type: 'normal', mission, key })
-                    }}
-                  >
-                    <View style={[sk.keyIconWrap, { backgroundColor: key.color + '12', borderColor: key.color + '44' }]}>
-                      <Icon name="key-variant" size={20} color={key.color} />
-                    </View>
-                    <View style={sk.keyInfo}>
-                      <Text style={[sk.keyName, { color: key.color }]} numberOfLines={1}>{key.name.toUpperCase()}</Text>
-                      <Text style={sk.keyBoss} numberOfLines={1}>ALVO: {key.bossId.replace(/_/g, ' ')}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              })}
-            </ScrollView>
-          </View>
-        )}
-
-        {/* ── SECTION: PORTÕES NORMAIS (Periodic) ── */}
-        {normalBossIds.length > 0 && (
-          <View style={{ marginBottom: SPACING.lg }}>
-            <View style={s.sectionHeaderRow}>
-               <View style={[s.sectionDivider, { marginBottom: 0, flex: 1 }]}>
-                <View style={[s.sectionLine, { backgroundColor: C.neonBlue + '55' }]} />
-                <Text style={[s.sectionLabel, { color: C.neonBlue }]}>DUNGEONS DISPONÍVEIS ({normalBossIds.length})</Text>
-                <View style={[s.sectionLine, { backgroundColor: C.neonBlue + '55' }]} />
-              </View>
-            </View>
-            <View style={{ gap: SPACING.sm }}>
-              {normalBossIds.filter(id => !system.completedNormalBossIds?.includes(id)).map(id => {
-                const b = questDictionary.find(d => d.id === id)
-                if (!b) return null
-                
-                // Convert definition to simple mission for handler
-                const mission: DungeonMission = {
-                  id: `normal_dungeon_${b.id}`,
-                  label: b.title,
-                  detail: b.description.replace(/{target}/g, String(b.baseTarget)).replace(/{unit}/g, b.unit),
-                  type: b.questType,
-                  shadowHint: b.id,
-                  icon: b.questType === 'focus' ? 'timer-sand' : b.questType === 'gps' ? 'run-fast' : 'arm-flex',
-                  color: b.questType === 'focus' ? C.purple : b.questType === 'gps' ? C.green : C.neonRed,
-                }
-
-                const isRedGate = b.id === 'normal_boss_cerberus' || b.id === 'normal_boss_igris' || b.questType === 'training'
-                const gateColor = isRedGate ? C.neonRed : C.neonBlue
-                const badgeText = isRedGate ? 'RED GATE' : 'PORTAL'
-
-                return (
-                  <TouchableOpacity
-                    key={id}
-                    style={[s.systemCard, {
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      backgroundColor: gateColor + '0d',
-                      borderRadius: 4,
-                      borderLeftWidth: 4,
-                      borderColor: gateColor + '66',
-                      padding: SPACING.md,
-                      gap: SPACING.md,
-                    }]}
-                    onPress={() => handleMissionSelect(mission)}
-                  >
-                    <View style={{ width: 44, height: 56, backgroundColor: gateColor + '15', borderWidth: 1, borderColor: gateColor, alignItems: 'center', justifyContent: 'center', borderRadius: 2, borderStyle: 'dashed' }}>
-                      <Text style={{ fontFamily: FONT.orbitron, color: gateColor, fontSize: 8, marginTop: 4 }}>RANK</Text>
-                      <Text style={{ fontFamily: FONT.orbitron, color: gateColor, fontSize: 16, fontWeight: 'bold' }}>{b.baseXP >= 600 ? 'A' : b.baseXP >= 500 ? 'B' : 'C'}</Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                        <View style={{ backgroundColor: gateColor, paddingHorizontal: 4, paddingVertical: 2, borderRadius: 2, marginRight: 6 }}>
-                          <Text style={{ fontFamily: FONT.orbitron, color: '#000', fontSize: 7, fontWeight: 'bold', letterSpacing: 0.5 }}>{badgeText}</Text>
-                        </View>
-                        <Icon name="timer-sand" size={10} color={C.dimmed} />
-                        <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed, marginLeft: 2 }}>{nextReset}</Text>
-                      </View>
-                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 13, fontWeight: 'bold', color: '#fff', letterSpacing: 0.5 }}>{mission.label}</Text>
-                      <Text style={{ fontSize: 10, color: C.muted, marginTop: 2, lineHeight: 14 }}>{mission.detail}</Text>
-                      {b.rewards && b.rewards.length > 0 && (
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
-                          <Icon name="diamond-stone" size={10} color={C.gold} />
-                          <Text style={{ fontFamily: FONT.orbitron, fontSize: 8, color: C.gold, marginLeft: 4 }}>LOOT: {b.rewards[0].replace(/_/g, ' ').toUpperCase()}</Text>
-                        </View>
-                      )}
-                    </View>
-                    <Icon name="chevron-right" size={24} color={gateColor + 'aa'} />
-                  </TouchableOpacity>
-                )
-              })}
-            </View>
-          </View>
-        )}
-          </>
-        )}
-
-        <TouchableOpacity style={[s.collapsibleHeader, { backgroundColor: C.surface.base }]} onPress={() => toggleSection('today')} activeOpacity={0.8}>
-          <Text style={s.collapsibleTitle}>MISSÕES</Text>
+        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('today')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current['today'] = e.nativeEvent.layout.y }}>
+          <Text style={s.collapsibleTitle}>HOJE</Text>
           <Icon name={sectionsOpen.today ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
         {sectionsOpen.today && (
@@ -800,40 +686,44 @@ export default function QuestScreen() {
           </>
         )}
 
-        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('events')} activeOpacity={0.8}>
+        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('events')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current['events'] = e.nativeEvent.layout.y }}>
           <Text style={s.collapsibleTitle}>EVENTOS E BOSSES</Text>
           <Icon name={sectionsOpen.events ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
-        {/* ── SECTION: MISSÕES DE BOSS ── */}
-        {sectionsOpen.events && isBossDay && (
+        {sectionsOpen.events && (
           <>
-            <View style={[s.sectionDivider, { marginTop: SPACING.sm }]}>
-              <View style={[s.sectionLine, { backgroundColor: C.neonRed + '44' }]} />
-              <Text style={[s.sectionLabel, { color: C.neonRed }]}>MISSÕES DE BOSS</Text>
-              <View style={[s.sectionLine, { backgroundColor: C.neonRed + '44' }]} />
-            </View>
-
-            {!bossDefeatedThisWeek ? (
-              <TouchableOpacity style={[s.systemCard, s.cardWarning, s.bossBanner]} onPress={() => setShowDungeon(true)} activeOpacity={0.8}>
-                <View style={s.bossBannerLeft}>
-                  <Icon name="gate" size={20} color={C.neonRed} />
-                  <View style={{ marginLeft: SPACING.sm }}>
-                    <Text style={s.bossTitle}>Portal vermelho disponivel</Text>
-                    <Text style={s.bossSub}>Boss Raid disponível — Entra na Masmorra</Text>
-                  </View>
+            {/* ── SECTION: MISSÕES DE BOSS ── */}
+            {isBossDay && (
+              <>
+                <View style={[s.sectionDivider, { marginTop: SPACING.sm }]}>
+                  <View style={[s.sectionLine, { backgroundColor: C.neonRed + '44' }]} />
+                  <Text style={[s.sectionLabel, { color: C.neonRed }]}>MISSÕES DE BOSS</Text>
+                  <View style={[s.sectionLine, { backgroundColor: C.neonRed + '44' }]} />
                 </View>
-                <Icon name="chevron-right" size={18} color={C.neonRed} />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity style={[s.systemCard, s.cardSuccess, s.bossDefeatedBanner]} onPress={() => setShowDungeon(true)} activeOpacity={0.8}>
-                <Icon name="sword" size={14} color={C.green} />
-                <Text style={s.bossDefeatedTxt}> MASMORRA LIMPA — Clica para ver detalhes</Text>
-              </TouchableOpacity>
+
+                {!bossDefeatedThisWeek ? (
+                  <TouchableOpacity style={[s.systemCard, s.cardWarning, s.bossBanner]} onPress={() => setShowDungeon(true)} activeOpacity={0.8}>
+                    <View style={s.bossBannerLeft}>
+                      <Icon name="gate" size={20} color={C.neonRed} />
+                      <View style={{ marginLeft: SPACING.sm }}>
+                        <Text style={s.bossTitle}>Portal vermelho disponivel</Text>
+                        <Text style={s.bossSub}>Boss Raid disponível — Entra na Masmorra</Text>
+                      </View>
+                    </View>
+                    <Icon name="chevron-right" size={18} color={C.neonRed} />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity style={[s.systemCard, s.cardSuccess, s.bossDefeatedBanner]} onPress={() => setShowDungeon(true)} activeOpacity={0.8}>
+                    <Icon name="sword" size={14} color={C.green} />
+                    <Text style={s.bossDefeatedTxt}> MASMORRA LIMPA — Clica para ver detalhes</Text>
+                  </TouchableOpacity>
+                )}
+              </>
             )}
 
             {activeEventDef && (
               <TouchableOpacity
-                style={[s.systemCard, s.cardWarning, s.bossBanner, { marginTop: SPACING.md, borderColor: C.gold + '88', backgroundColor: C.gold + '08' }]}
+                style={[s.systemCard, s.cardWarning, s.bossBanner, { marginTop: isBossDay ? SPACING.md : SPACING.sm, borderColor: C.gold + '88', backgroundColor: C.gold + '08' }]}
                 onPress={() => setShowEventDungeon(true)}
                 activeOpacity={0.8}
               >
@@ -990,6 +880,29 @@ export default function QuestScreen() {
         shadowId={extractionBossId ?? ''}
         category={extractionCategory}
         onClose={handleExtractionClose}
+        C={C}
+      />
+
+      <DungeonKeyModal
+        visible={showKeyModal}
+        onClose={() => setShowKeyModal(false)}
+        onRequestClose={() => setShowKeyModal(false)}
+        onStartMission={(key: DungeonKey) => {
+          const mission: DungeonMission = {
+            id: `key_mission_${key.id}`,
+            label: key.name,
+            detail: key.missionDetail,
+            type: key.missionType,
+            shadowHint: key.bossId,
+            icon: 'gate',
+            color: key.color,
+            category: 'key',
+            focusDuration: key.missionType === 'focus' ? key.missionTarget : undefined,
+            gpsTarget: key.missionType === 'gps' ? key.missionTarget : undefined,
+          }
+          handleMissionSelect(mission)
+        }}
+        dungeonKey={selectedKey}
         C={C}
       />
 

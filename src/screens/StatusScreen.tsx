@@ -580,8 +580,7 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
             )}
           </TouchableOpacity>
           <View style={s.rankInfo}>
-            <Text style={s.playerName}>{player.name}</Text>
-            <Text style={[s.rankLabel, { color: rank.color }]}>{jobClass.name}</Text>
+            <Text style={[s.playerName, { maxWidth: '85%' }]} numberOfLines={1} ellipsizeMode='tail'>{jobClass.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
               <Text style={s.lvlText}>NÍVEL {player.level}</Text>
             </View>

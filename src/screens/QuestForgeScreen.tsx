@@ -646,6 +646,11 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
   const [showRegen, setShowRegen] = useState(false)
   const [showReset, setShowReset] = useState(false)
   const [regenResult, setRegenResult] = useState<{ success: boolean; reason?: string } | null>(null)
+  const [expandedSections, setExpandedSections] = useState({ core: true, pool: true, boss: true })
+
+  const toggleSection = (section: 'core' | 'pool' | 'boss') => {
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }))
+  }
 
   const coreDefs = questDictionary.filter(d => d.type === 'core')
   const poolDefs = questDictionary.filter(d => d.type === 'pool')
@@ -695,65 +700,92 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
           </View>
 
           {/* Core section */}
-          <View style={s.sectionHeader}>
+          <TouchableOpacity 
+            style={s.sectionHeader}
+            onPress={() => toggleSection('core')}
+            activeOpacity={0.7}
+          >
             <View style={[s.sectionDot, { backgroundColor: C.neonBlue }]} />
             <Text style={s.sectionTitle}>CORE — DIÁRIAS FIXAS</Text>
             <Text style={s.sectionCount}>{coreDefs.length}</Text>
-          </View>
+            <Icon name={expandedSections.core ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} style={{ marginLeft: 'auto' }} />
+          </TouchableOpacity>
           <Text style={s.sectionSub}>Aparecem todos os dias (ou nos dias configurados).</Text>
-          {coreDefs.length === 0 && (
-            <Text style={s.empty}>Nenhuma missão core. Adiciona pelo menos uma.</Text>
+          {expandedSections.core && (
+            <>
+              {coreDefs.length === 0 && (
+                <Text style={s.empty}>Nenhuma missão core. Adiciona pelo menos uma.</Text>
+              )}
+              {coreDefs.map(def => (
+                <DefRow
+                  key={def.id} def={def}
+                  onEdit={() => setFormTarget(def)}
+                  onDeleteRequest={() => setDeleteTarget(def)}
+                  C={C}
+                />
+              ))}
+            </>
           )}
-          {coreDefs.map(def => (
-            <DefRow
-              key={def.id} def={def}
-              onEdit={() => setFormTarget(def)}
-              onDeleteRequest={() => setDeleteTarget(def)}
-              C={C}
-            />
-          ))}
 
           {/* Pool section */}
-          <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
+          <TouchableOpacity 
+            style={[s.sectionHeader, { marginTop: SPACING.lg }]}
+            onPress={() => toggleSection('pool')}
+            activeOpacity={0.7}
+          >
             <View style={[s.sectionDot, { backgroundColor: C.purple }]} />
             <Text style={s.sectionTitle}>POOL — HÁBITOS ROTATIVOS</Text>
             <Text style={s.sectionCount}>{poolDefs.length}</Text>
-          </View>
+            <Icon name={expandedSections.pool ? 'chevron-up' : 'chevron-down'} size={18} color={C.purple} style={{ marginLeft: 'auto' }} />
+          </TouchableOpacity>
           <Text style={s.sectionSub}>
             Sorteados diariamente: 1 (Nvl 1–4) · 2 (Nvl 5–9) · 3 (Nvl 10+).
           </Text>
-          {poolDefs.length === 0 && (
-            <Text style={s.empty}>Pool vazia. O Sistema não gerará hábitos rotativos.</Text>
+          {expandedSections.pool && (
+            <>
+              {poolDefs.length === 0 && (
+                <Text style={s.empty}>Pool vazia. O Sistema não gerará hábitos rotativos.</Text>
+              )}
+              {poolDefs.map(def => (
+                <DefRow
+                  key={def.id} def={def}
+                  onEdit={() => setFormTarget(def)}
+                  onDeleteRequest={() => setDeleteTarget(def)}
+                  C={C}
+                />
+              ))}
+            </>
           )}
-          {poolDefs.map(def => (
-            <DefRow
-              key={def.id} def={def}
-              onEdit={() => setFormTarget(def)}
-              onDeleteRequest={() => setDeleteTarget(def)}
-              C={C}
-            />
-          ))}
 
           {/* Boss section */}
-          <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
-              <View style={[s.sectionDot, { backgroundColor: C.neonRed }]} />
+          <TouchableOpacity 
+            style={[s.sectionHeader, { marginTop: SPACING.lg }]}
+            onPress={() => toggleSection('boss')}
+            activeOpacity={0.7}
+          >
+            <View style={[s.sectionDot, { backgroundColor: C.neonRed }]} />
             <Text style={s.sectionTitle}>BOSS — DESAFIOS ÉPICOS</Text>
             <Text style={s.sectionCount}>{bossDefs.length}</Text>
-          </View>
+            <Icon name={expandedSections.boss ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonRed} style={{ marginLeft: 'auto' }} />
+          </TouchableOpacity>
           <Text style={s.sectionSub}>
             Missões de alto risco. Ativadas manualmente pela Forja.
           </Text>
-          {bossDefs.length === 0 && (
-            <Text style={s.empty}>Nenhum Boss criado. O Sistema aguarda um Monarca corajoso.</Text>
+          {expandedSections.boss && (
+            <>
+              {bossDefs.length === 0 && (
+                <Text style={s.empty}>Nenhum Boss criado. O Sistema aguarda um Monarca corajoso.</Text>
+              )}
+              {bossDefs.map(def => (
+                <DefRow
+                  key={def.id} def={def}
+                  onEdit={() => setFormTarget(def)}
+                  onDeleteRequest={() => setDeleteTarget(def)}
+                  C={C}
+                />
+              ))}
+            </>
           )}
-          {bossDefs.map(def => (
-            <DefRow
-              key={def.id} def={def}
-              onEdit={() => setFormTarget(def)}
-              onDeleteRequest={() => setDeleteTarget(def)}
-              C={C}
-            />
-          ))}
 
         </ScrollView>
 

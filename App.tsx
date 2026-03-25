@@ -53,6 +53,7 @@ export default function App() {
   const hasPenalty = useGameStore(s => s.system.hasPenalty)
   const penaltyTriggered = useGameStore(s => s.system.penaltyTriggered)
   const dismissPenalty = useGameStore(s => s.dismissPenaltyModal)
+  const setPenaltyTriggered = useGameStore(s => s.setPenaltyTriggered)
   const inventory = useGameStore(s => s.player.inventory)
   const invTotal = inventory.reduce((sum, e) => sum + e.quantity, 0)
   const rewardsQueue = useGameStore(s => s.rewardsQueue)
@@ -78,6 +79,13 @@ export default function App() {
       .then(() => requestNotificationPermission())
       .catch(() => { })
   }, [])
+
+  // Auto-trigger penalty modal when penalty is active
+  useEffect(() => {
+    if (hasPenalty && !penaltyTriggered) {
+      setPenaltyTriggered(true)
+    }
+  }, [hasPenalty, penaltyTriggered, setPenaltyTriggered])
 
 
   return (
