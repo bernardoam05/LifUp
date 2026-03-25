@@ -1,4 +1,5 @@
 import { APP_THEMES } from './data/themes'
+export { APP_THEMES } from './data/themes'
 import useGameStore from './store/useGameStore'
 
 export const C = APP_THEMES[0].colors
@@ -22,3 +23,13 @@ export const SPACING = {
   lg:  24,
   xl:  32,
 } as const
+
+export const RANK_COLORS: Record<string, string> = {
+  'E': '#94a3b8', // Gray
+  'D': '#22c55e', // Green
+  'C': '#0ea5e9', // Blue
+  'B': '#a855f7', // Purple
+  'A': '#f97316', // Orange
+  'S': '#fbbf24', // Yellow/Gold
+  'National': '#ef4444', // Red
+}

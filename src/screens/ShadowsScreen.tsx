@@ -39,9 +39,12 @@ const PASSIVE_LABELS: Record<PassiveEffectType, string> = {
   penalty_reduce:   'Redução de Penalidade',
   streak_protect:   'Proteção de Streak',
   shop_discount:    'Desconto na Loja',
-  focus_bonus:      'Bónus de Focus',
+  focus_mastery:    'Maestria de Focus',
   boss_bonus_xp:    'Bónus XP de Boss',
+  arise_resonance:  'Ressonância de Arise',
+  loot_perception:  'Percepção de Loot',
   daily_bonus:      'XP Diário Grátis',
+  all_stats_boost:  'Bónus Global (XP/Gold)',
 }
 
 function formatPassiveValue(type: PassiveEffectType, value: number): string {
@@ -56,17 +59,23 @@ function formatPassiveValue(type: PassiveEffectType, value: number): string {
     case 'penalty_immunity':
     case 'streak_protect':
       return `${value}× / semana`
-    case 'focus_bonus':
-      return `+${value} min / sessão`
+    case 'focus_mastery':
+      return `-${Math.round(value * 100)}% tempo`
+    case 'arise_resonance':
+      return `+${Math.round(value * 100)}% extração`
+    case 'loot_perception':
+      return `+${Math.round(value * 100)}% loot`
     case 'daily_bonus':
       return `+${value} XP / dia`
+    case 'all_stats_boost':
+      return `+${Math.round(value * 100)}% Global`
     default:
       return String(value)
   }
 }
 
 function scaledValue(base: number, level: number): number {
-  return base * (1 + (level - 1) * 0.1)
+  return base * (1 + (level - 1) * 0.2)
 }
 
 // ── Locked screen ─────────────────────────────────────────────────────────────
@@ -261,7 +270,7 @@ function ShadowDetailModal({
           onPress={onToggleFavorite}
           activeOpacity={0.7}
         >
-          <Icon name={isFavorite ? "star" : "star-outline"} size={22} color={isFavorite ? "#facc15" : "#94a3b8"} />
+          <Icon name={isFavorite ? "star" : "star-outline"} size={22} color={isFavorite ? "#facc15" : C.muted} />
         </TouchableOpacity>
 
         <View style={[dm.iconWrap, { backgroundColor: rankColor + '18', borderColor: rankColor + '44' }]}>
@@ -287,7 +296,7 @@ function ShadowDetailModal({
           <Icon name="lightning-bolt" size={13} color={rankColor} />
           <Text style={[dm.effectTxt, { color: rankColor }]}>
             {' '}{shadow.passiveEffect.description}
-            {level > 1 && ` (×${(1 + (level - 1) * 0.1).toFixed(1)})`}
+            {level > 1 && ` (×${(1 + (level - 1) * 0.2).toFixed(1)})`}
           </Text>
         </View>
 
@@ -346,7 +355,6 @@ function ShadowCard({
   isFavorite,
   onPress,
   C,
-
 }: {
   shadow:   Shadow
   level:    number
@@ -366,33 +374,42 @@ function ShadowCard({
       style={[
         sc.card,
         {
-          borderColor: isActive ? '#facc15' : rankColor + '44',
-          backgroundColor: isActive ? '#facc150d' : rankColor + '08',
+          borderColor: isActive ? C.gold : rankColor + '44',
+          backgroundColor: isActive ? C.gold + '0a' : C.panel,
         },
-        isActive && sc.cardActive,
       ]}
       onPress={onPress}
       activeOpacity={0.75}
     >
-      <View style={[sc.iconWrap, { backgroundColor: rankColor + '12' }]}>
-        <Icon name={shadow.icon} size={22} color={rankColor} />
+      <View style={[sc.iconWrap, { backgroundColor: rankColor + '12', borderColor: rankColor + '44' }]}>
+        <Icon name={shadow.icon} size={28} color={rankColor} />
       </View>
       
       <View style={sc.info}>
         <View style={sc.nameRow}>
-          {isFavorite && <Icon name="star" size={10} color="#facc15" style={{ marginRight: 4 }} />}
-          <Text style={[sc.name, { color: rankColor }]}>{shadow.name}</Text>
+          {isFavorite && <Icon name="star" size={12} color={C.gold} />}
+          <Text style={[sc.name, { color: rankColor }]} numberOfLines={1}>{shadow.name.toUpperCase()}</Text>
         </View>
-        <Text style={sc.effect} numberOfLines={1}>
-          {formatPassiveValue(shadow.passiveEffect.type, scaledVal)} {PASSIVE_LABELS[shadow.passiveEffect.type]}
+        <Text style={sc.effect} numberOfLines={2}>
+          {shadow.passiveEffect.description.replace('{val}', formatPassiveValue(shadow.passiveEffect.type, scaledVal))}
         </Text>
       </View>
  
       <View style={sc.rightSide}>
-        <View style={[sc.rankBadge, { borderColor: rankColor + '44' }]}>
-          <Text style={[sc.rankTxt, { color: rankColor }]}>{isCustom ? 'CST' : RANK_SHORT[shadow.rank as ShadowRank]}</Text>
+        <View style={[sc.rankBadge, { borderColor: rankColor + '66', backgroundColor: rankColor + '12' }]}>
+          <Text style={[sc.rankTxt, { color: rankColor }]}>
+            {isCustom ? 'CUSTOM' : RANK_LABELS[shadow.rank as ShadowRank].toUpperCase()}
+          </Text>
         </View>
-        <Text style={[sc.lvlTxt, { color: rankColor }]}>LV.{level}</Text>
+        
+        {isActive ? (
+          <View style={sc.activeIndicator}>
+            <Icon name="shield-sword" size={10} color={C.gold} />
+            <Text style={{ color: C.gold, fontSize: 8, fontWeight: 'bold', fontFamily: FONT.orbitron }}>VANGUARDA</Text>
+          </View>
+        ) : (
+          <Text style={[sc.lvlTxt, { color: C.dimmed }]}>NÍVEL {level}</Text>
+        )}
       </View>
     </TouchableOpacity>
   )
@@ -626,29 +643,90 @@ const getPSStyles = (C: any) => StyleSheet.create({
   vanguardRow:    { flexDirection: 'row', gap: 10, marginTop: 4, marginBottom: 8, justifyContent: 'center' },
   vanguardIconWrap: { width: 50, height: 50, borderRadius: 8, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', backgroundColor: C.bg },
   vanguardLvl:    { position: 'absolute', bottom: -5, right: -5, backgroundColor: C.bg, borderRadius: 4, paddingHorizontal: 4, borderWidth: 1, borderColor: C.border },
-  vanguardLvlTxt: { color: '#fff', fontSize: 7, fontWeight: '900', fontFamily: FONT.orbitron },
+  vanguardLvlTxt: { color: C.muted, fontSize: 7, fontWeight: '900', fontFamily: FONT.orbitron },
   note:           { color: C.dimmed, fontSize: 10, fontStyle: 'italic' },
 })
 
 const getSCStyles = (C: any) => StyleSheet.create({
-  card:        { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 10, borderWidth: 1, padding: SPACING.sm, marginBottom: 6, gap: SPACING.sm },
-  cardActive:  { backgroundColor: C.gold + '08' },
-  iconWrap:    { width: 40, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  info:        { flex: 1 },
-  nameRow:     { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 2, flexWrap: 'wrap' },
-  name:        { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
-  lvlBadge:    { borderWidth: 1, borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
-  lvlTxt:      { fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '700' },
-  activeBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.gold + '20', borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
-  activeBadgeTxt: { fontFamily: FONT.orbitron, fontSize: 7, color: C.gold, fontWeight: '700' },
-  effect:      { color: C.muted, fontSize: 10 },
-  rightSide:   { alignItems: 'flex-end', gap: 4 },
-  rankBadge:   { borderWidth: 1, borderRadius: 4, paddingHorizontal: 4, paddingVertical: 1 },
-  rankTxt:     { fontFamily: FONT.orbitron, fontSize: 7, fontWeight: '700' },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: C.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    padding: SPACING.md,
+    marginBottom: 10,
+    gap: SPACING.md,
+    height: 90,
+  },
+  iconWrap: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+  },
+  info: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  name: {
+    fontFamily: FONT.orbitron,
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  effect: {
+    color: C.muted,
+    fontSize: 10,
+    lineHeight: 14,
+  },
+  rightSide: {
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    height: '100%',
+    paddingVertical: 2,
+  },
+  rankBadge: {
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  rankTxt: {
+    fontFamily: FONT.orbitron,
+    fontSize: 7,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  lvlTxt: {
+    fontFamily: FONT.orbitron,
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  activeIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: C.gold + '15',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: C.gold + '44',
+  },
 })
 
 const getDMStyles = (C: any) => StyleSheet.create({
-  overlay:      { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  overlay:      { flex: 1, backgroundColor: C.bg + 'ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
   card:         { backgroundColor: C.panel, borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
   activeBadge:  { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3, marginBottom: SPACING.sm },
   activeBadgeTxt: { fontFamily: FONT.orbitron, fontSize: 8, color: C.gold, letterSpacing: 2 },
@@ -672,7 +750,7 @@ const getDMStyles = (C: any) => StyleSheet.create({
 })
 
 const getRELStyles = (C: any) => StyleSheet.create({
-  overlay:    { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  overlay:    { flex: 1, backgroundColor: C.bg + 'ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
   card:       { backgroundColor: C.panel, borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2, borderColor: C.neonRed + '44' },
   title:      { fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 3, color: C.neonRed, marginBottom: SPACING.md },
   shadowRow:  { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, marginBottom: SPACING.md, width: '100%' },

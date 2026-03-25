@@ -164,6 +164,16 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
         unlockedAchievements: state.unlockedAchievements,
         achievementProgress: state.achievementProgress,
         customShadows: state.customShadows,
+        quests: state.quests,
+        extraQuests: state.extraQuests,
+        sideQuests: state.sideQuests,
+        questDictionary: state.questDictionary,
+        questRecords: state.questRecords,
+        questCompletions: state.questCompletions,
+        extraQuestRerolledIds: state.extraQuestRerolledIds,
+        extraQuestUsedPoolIds: state.extraQuestUsedPoolIds,
+        lastResetDate: state.lastResetDate,
+        activeMissionTimers: state.activeMissionTimers,
       }
       const json = JSON.stringify(payload)
       const b64 = btoa(json)
@@ -405,7 +415,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
           <View style={[s.row, { borderBottomWidth: 0, borderRadius: 4, borderWidth: 1, borderColor: settings.restDay ? '#22c55e44' : C.border, backgroundColor: settings.restDay ? '#22c55e0a' : C.panel }]}>
             <Icon name="bed" size={18} color={settings.restDay ? '#22c55e' : C.dimmed} />
             <View style={s.rowInfo}>
-              <Text style={[s.rowLabel, { color: settings.restDay ? '#22c55e' : '#e2e8f0' }]}>Dia de Descanso</Text>
+              <Text style={[s.rowLabel, { color: settings.restDay ? '#22c55e' : C.muted }]}>Dia de Descanso</Text>
               <Text style={s.rowSub}>
                 {settings.restDay ? '[ REPOUSO ATIVO — sem punições hoje ]' : 'Inativo — missões normais'}
               </Text>
@@ -529,7 +539,7 @@ const getStyles = (C: any) => StyleSheet.create({
 
   row:       { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderBottomWidth: 1, borderBottomColor: C.border, paddingVertical: SPACING.md, paddingHorizontal: SPACING.md, gap: SPACING.sm },
   rowInfo:   { flex: 1 },
-  rowLabel:  { color: '#e2e8f0', fontSize: 13, fontWeight: '600' },
+  rowLabel:  { color: C.muted, fontSize: 13, fontWeight: '600' },
   rowSub:    { color: C.dimmed, fontSize: 11, marginTop: 2 },
 
   intensityInfo:    { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.sm, marginBottom: SPACING.md },
@@ -593,7 +603,7 @@ const getStyles = (C: any) => StyleSheet.create({
     borderWidth: 1,
     borderColor: C.border,
     borderRadius: 4,
-    color: '#e2e8f0',
+    color: C.muted,
     padding: SPACING.sm,
     height: 100,
     textAlignVertical: 'top',

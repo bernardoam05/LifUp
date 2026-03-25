@@ -64,6 +64,14 @@ const getPhase1Steps = (C: any): TutorialStep[] => [
     targetTab: 'Missões',
   },
   {
+    splash: true,
+    icon:   'anvil',
+    color:  '#f97316',
+    title:  'FORJA DE MISSÕES',
+    body:   'Podes adaptar as missões à tua vida real! No topo encontras a FORJA para editares as rotinas.\n\n· MISSÕES CORE (Fixas): Ocorrem diariamente sem excepção.\n· MISSÕES POOL (Extra): O Sistema sorteia diariamente, do teu baralho, um número aleatório (surpresas).',
+    targetTab: 'Missões',
+  },
+  {
     icon:  'sword-cross',
     color: '#f59e0b',
     title: 'O TEU PERFIL E CONFIGS',
@@ -229,7 +237,7 @@ export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
   const spotlightW = TAB_W
 
   return (
-    <Modal transparent animationType="none" visible onRequestClose={handleSkip}>
+    <Modal transparent animationType="none" visible statusBarTranslucent onRequestClose={handleSkip}>
       {/* Dark overlay with swipe handler */}
       <View style={st.overlay} {...panResponder.panHandlers}>
         

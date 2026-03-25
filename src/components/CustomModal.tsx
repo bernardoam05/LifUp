@@ -93,7 +93,7 @@ export default function CustomModal({
 const getStyles = (C: any) => StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: '#000000cc',
+    backgroundColor: C.bg + 'cc',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 0,
@@ -119,7 +119,7 @@ const getStyles = (C: any) => StyleSheet.create({
     textAlign: 'center',
   },
   message: {
-    color: '#94a3b8',
+    color: C.muted,
     fontSize: 13,
     textAlign: 'center',
     lineHeight: 20,

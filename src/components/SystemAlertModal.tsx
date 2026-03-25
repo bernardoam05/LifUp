@@ -66,9 +66,9 @@ export default function SystemAlertModal({
 }
 
 const getStyles = (C: any) => StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  overlay: { flex: 1, backgroundColor: C.bg + 'ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
   card: { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.neonBlue + '44', padding: SPACING.lg },
-  title: { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '900', letterSpacing: 1, marginBottom: SPACING.sm, textAlign: 'center' },
+  title: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '900', letterSpacing: 1, marginBottom: SPACING.sm, textAlign: 'center' },
   message: { color: C.muted, fontSize: 13, lineHeight: 20, textAlign: 'center', marginBottom: SPACING.lg },
   btnRow: { flexDirection: 'row', gap: SPACING.sm, marginTop: SPACING.md },
   btnRowSingle: { justifyContent: 'center' },

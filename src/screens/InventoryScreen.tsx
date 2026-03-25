@@ -132,6 +132,14 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
           setFeedback('Juramento quebrado! Podes parar o Focus Mode livremente.')
         }
         break
+      case 'material':
+        useItem(itemId)
+        if (itemId === 'shadow_essence') {
+          setFeedback('O Sistema cedeu! Extração resetada para hoje.')
+        } else {
+          setFeedback('Consumível ativado! Verifica os teus Status.')
+        }
+        break
       default:
         setFeedback('Item utilizado com sucesso!')
     }
@@ -154,31 +162,27 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
 
   return (
     <View style={[ic.card, { borderColor: item.color + '44' }]}>
-      <View style={[ic.iconWrap, { backgroundColor: item.color + '18' }]}>
-        <Icon name={item.icon} size={26} color={item.color} />
-        <View style={ic.badge}>
+      <View style={[ic.iconWrap, { backgroundColor: item.color + '12', borderColor: item.color + '44' }]}>
+        <Icon name={item.icon} size={28} color={item.color} />
+        <View style={[ic.badge, { backgroundColor: item.color }]}>
           <Text style={ic.badgeTxt}>{quantity}</Text>
         </View>
       </View>
 
       <View style={ic.info}>
-        <Text style={[ic.name, { color: item.color }]}>{item.name}</Text>
-        <Text style={ic.desc}>{item.description}</Text>
+        <Text style={[ic.name, { color: item.color }]}>{item.name.toUpperCase()}</Text>
+        <Text style={ic.desc} numberOfLines={2}>{item.description}</Text>
         {feedback && (
           <Text style={[ic.feedback, { color: item.color }]}>{feedback}</Text>
-        )}
-        {breakHardcoreDisabled && !feedback && (
-          <Text style={ic.dimNote}>Nenhum Hardcore Mode ativo</Text>
         )}
       </View>
 
       <TouchableOpacity
-        style={[ic.useBtn, { borderColor: item.color }, breakHardcoreDisabled && ic.useBtnDisabled]}
+        style={[ic.useBtn, { borderColor: item.color + '66', backgroundColor: item.color + '10' }, breakHardcoreDisabled && ic.useBtnDisabled]}
         onPress={handleUse}
         disabled={quantity === 0 || breakHardcoreDisabled}
       >
-        <Icon name="play-circle-outline" size={14} color={breakHardcoreDisabled ? C.dimmed : item.color} />
-        <Text style={[ic.useTxt, { color: breakHardcoreDisabled ? C.dimmed : item.color }]}> USAR</Text>
+        <Text style={[ic.useTxt, { color: breakHardcoreDisabled ? C.dimmed : item.color }]}>USAR</Text>
       </TouchableOpacity>
 
       {/* Confirm use */}
@@ -246,30 +250,30 @@ export default function InventoryScreen() {
           <Icon name="safe" size={14} color={C.neonBlue} />
           <Text style={s.sectionTitle}> COFRE DE CHAVES</Text>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={sk.keyGrid}>
-          {dungeonKeys && dungeonKeys.length > 0 ? (
-            dungeonKeys.map((keyId, idx) => {
+        {dungeonKeys && dungeonKeys.length > 0 ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={sk.keyGrid}>
+            {dungeonKeys.map((keyId, idx) => {
               const key = ALL_DUNGEON_KEYS.find(k => k.id === keyId)
               if (!key) return null
               return (
                 <View key={idx} style={[sk.keyCard, { borderColor: key.color + '44' }]}>
-                  <View style={[sk.keyIconWrap, { backgroundColor: key.color + '15' }]}>
-                    <Icon name="key-variant" size={18} color={key.color} />
+                  <View style={[sk.keyIconWrap, { backgroundColor: key.color + '12', borderColor: key.color + '44' }]}>
+                    <Icon name="key-variant" size={20} color={key.color} />
                   </View>
                   <View style={sk.keyInfo}>
-                    <Text style={[sk.keyName, { color: key.color }]}>{key.name}</Text>
-                    <Text style={sk.keyBoss}>Destino: {key.bossId}</Text>
+                    <Text style={[sk.keyName, { color: key.color }]} numberOfLines={1}>{key.name.toUpperCase()}</Text>
+                    <Text style={sk.keyBoss} numberOfLines={1}>ALVO: {key.bossId.replace(/_/g, ' ')}</Text>
                   </View>
                 </View>
               )
-            })
-          ) : (
-            <View style={sk.emptyKeys}>
-              <Text style={sk.emptyKeysTxt}>Nenhuma Chave obtida</Text>
-              <Text style={sk.emptyKeysSub}>Sobe de nível ou abre Cofres para encontrar chaves de masmorra.</Text>
-            </View>
-          )}
-        </ScrollView>
+            })}
+          </ScrollView>
+        ) : (
+          <View style={sk.emptyKeys}>
+            <Text style={sk.emptyKeysTxt}>Nenhuma Chave obtida</Text>
+            <Text style={sk.emptyKeysSub}>Sobe de nível ou abre Cofres para encontrar chaves de masmorra.</Text>
+          </View>
+        )}
 
         <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
           <Icon name="bag-personal-outline" size={14} color={C.neonBlue} />
@@ -312,31 +316,83 @@ const getStyles = (C: any) => StyleSheet.create({
 })
 
 const getSKStyles = (C: any) => StyleSheet.create({
-  keyGrid: { gap: SPACING.sm, paddingRight: SPACING.md },
-  keyCard: { width: 140, backgroundColor: C.panel, borderWidth: 1, borderRadius: 8, padding: SPACING.md, alignItems: 'center', gap: 6 },
-  keyIconWrap: { width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
-  keyInfo: { alignItems: 'center' },
-  keyName: { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', textAlign: 'center', marginBottom: 2 },
-  keyBoss: { color: C.dimmed, fontSize: 8, textAlign: 'center', textTransform: 'uppercase' },
+  keyGrid: { gap: SPACING.md, paddingRight: SPACING.md },
+  keyCard: { 
+    flexDirection: 'row', 
+    width: 200, 
+    height: 70, 
+    backgroundColor: C.panel, 
+    borderWidth: 1, 
+    borderRadius: 8, 
+    padding: SPACING.sm, 
+    alignItems: 'center', 
+    gap: SPACING.sm 
+  },
+  keyIconWrap: { 
+    width: 44, 
+    height: 44, 
+    borderRadius: 8, 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    borderWidth: 1,
+  },
+  keyInfo: { flex: 1, justifyContent: 'center' },
+  keyName: { fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '900', marginBottom: 2 },
+  keyBoss: { color: C.dimmed, fontSize: 7, textTransform: 'uppercase', fontFamily: FONT.orbitron },
   emptyKeys: { backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 8, padding: SPACING.md, width: '100%', alignItems: 'center' },
   emptyKeysTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 11, marginBottom: 4 },
   emptyKeysSub: { color: C.muted, fontSize: 10, textAlign: 'center' },
 })
 
 const getICStyles = (C: any) => StyleSheet.create({
-  card:         { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'center' },
-
-  iconWrap:     { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', position: 'relative', flexShrink: 0 },
-  badge:        { position: 'absolute', top: -4, right: -4, backgroundColor: C.neonBlue, borderRadius: 10, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 },
-  badgeTxt:     { color: '#000', fontSize: 9, fontWeight: '900' },
-  info:         { flex: 1 },
-  name:         { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 2 },
-  desc:         { color: C.muted, fontSize: 11, lineHeight: 16 },
-  feedback:     { fontSize: 11, marginTop: 4, fontFamily: FONT.orbitron, letterSpacing: 1 },
-  dimNote:      { color: C.dimmed, fontSize: 10, marginTop: 4, fontStyle: 'italic' },
-  useBtn:       { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.sm, paddingVertical: 8, flexShrink: 0 },
-  useBtnDisabled: { opacity: 0.4 },
-  useTxt:       { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  card: {
+    flexDirection: 'row',
+    backgroundColor: C.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    padding: SPACING.md,
+    marginBottom: 10,
+    gap: SPACING.md,
+    alignItems: 'center',
+    height: 90,
+  },
+  iconWrap: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    flexShrink: 0,
+    borderWidth: 1.5,
+  },
+  badge: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+    borderWidth: 1,
+    borderColor: '#000',
+  },
+  badgeTxt: { color: '#000', fontSize: 10, fontWeight: '900' },
+  info: { flex: 1, justifyContent: 'center' },
+  name: { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '900', marginBottom: 4, letterSpacing: 1 },
+  desc: { color: C.muted, fontSize: 10, lineHeight: 14 },
+  feedback: { fontSize: 10, marginTop: 4, fontFamily: FONT.orbitron, letterSpacing: 0.5 },
+  useBtn: {
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexShrink: 0,
+  },
+  useBtnDisabled: { opacity: 0.3 },
+  useTxt: { fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '900' },
 })
 
 const getQPStyles = (C: any) => StyleSheet.create({

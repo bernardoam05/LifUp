@@ -16,10 +16,10 @@ import { useTheme, FONT, SPACING } from '../theme'
 // ── Config ─────────────────────────────────────────────────────────────────────
 
 const getQuestTypeOpts = (C: any) => [
-  { value: 'training', label: 'Treino', icon: 'arm-flex', color: '#ef4444' },
-  { value: 'focus', label: 'Foco', icon: 'timer-sand', color: '#a855f7' },
+  { value: 'training', label: 'Treino', icon: 'arm-flex', color: C.neonRed },
+  { value: 'focus', label: 'Foco', icon: 'timer-sand', color: C.purple },
   { value: 'knowledge', label: 'Conhecimento', icon: 'book-open-variant', color: C.neonBlue },
-  { value: 'gps', label: 'GPS', icon: 'run-fast', color: '#22c55e' },
+  { value: 'gps', label: 'GPS', icon: 'run-fast', color: C.green },
 ]
 
 
@@ -35,20 +35,20 @@ const ICON_GRID = [
   'briefcase', 'school', 'crosshairs-gps', 'ghost', 'dragon', 'flash',
 ]
 
-const RANK_OPTS: { value: RankKey; color: string }[] = [
-  { value: 'E', color: '#94a3b8' },
-  { value: 'D', color: '#22c55e' },
-  { value: 'C', color: '#3b82f6' },
-  { value: 'B', color: '#a855f7' },
-  { value: 'A', color: '#f59e0b' },
-  { value: 'S', color: '#ef4444' },
+const getRankOpts = (C: any): { value: RankKey; color: string }[] => [
+  { value: 'E', color: C.muted },
+  { value: 'D', color: C.green },
+  { value: 'C', color: C.neonBlue },
+  { value: 'B', color: C.purple },
+  { value: 'A', color: C.gold },
+  { value: 'S', color: C.neonRed },
 ]
 
-const BOSS_CLASS_OPTS: { value: QuestDefinition['bossClass']; label: string; color: string }[] = [
-  { value: 'A', label: 'A-Rank', color: '#f59e0b' },
-  { value: 'S', label: 'S-Rank', color: '#ef4444' },
-  { value: 'Event', label: 'Evento', color: '#fb923c' },
-  { value: 'Raid', label: 'Raid', color: '#a855f7' },
+const getBossClassOpts = (C: any): { value: QuestDefinition['bossClass']; label: string; color: string }[] => [
+  { value: 'A', label: 'A-Rank', color: C.gold },
+  { value: 'S', label: 'S-Rank', color: C.neonRed },
+  { value: 'Event', label: 'Evento', color: C.neonBlue },
+  { value: 'Raid', label: 'Raid', color: C.purple },
 ]
 
 const BLANK_DEF: Omit<QuestDefinition, 'id'> = {
@@ -153,6 +153,8 @@ function FormModal({
   const fm = getFMStyles(C)
   const ip = getIPStyles(C)
   const QUEST_TYPE_OPTS = getQuestTypeOpts(C)
+  const RANK_OPTS = getRankOpts(C)
+  const BOSS_CLASS_OPTS = getBossClassOpts(C)
 
   const insets = useSafeAreaInsets()
   const [form, setForm] = useState<FormState>(() => toFormState(initial))
@@ -252,7 +254,7 @@ function FormModal({
               <Chip
                 label="BOSS · Desafio épico"
                 active={form.type === 'boss'}
-                color="#ef4444"
+                color={C.neonRed}
                 onPress={() => !isEditing && field('type', 'boss')}
                 C={C}
               />
@@ -284,7 +286,7 @@ function FormModal({
               <Chip
                 label="AUTO"
                 active={!form.rank}
-                color="#64748b"
+                color={C.dimmed}
                 onPress={() => field('rank', undefined)}
                 C={C}
               />
@@ -524,7 +526,7 @@ function FormModal({
 
             {/* ── SAVE ── */}
             <TouchableOpacity style={fm.saveBtn} onPress={handleSave} activeOpacity={0.85}>
-              <Icon name="check-bold" size={18} color="#FFFFFF" />
+              <Icon name="check-bold" size={18} color={C.text.inverse} />
               <Text style={fm.saveTxt}>{initial ? ' GUARDAR ALTERAÇÕES' : ' CRIAR DIRETIVA'}</Text>
             </TouchableOpacity>
           </ScrollView>
@@ -734,7 +736,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
 
           {/* Boss section */}
           <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
-            <View style={[s.sectionDot, { backgroundColor: '#ef4444' }]} />
+              <View style={[s.sectionDot, { backgroundColor: C.neonRed }]} />
             <Text style={s.sectionTitle}>BOSS — DESAFIOS ÉPICOS</Text>
             <Text style={s.sectionCount}>{bossDefs.length}</Text>
           </View>
@@ -757,7 +759,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
 
         {/* FAB */}
         <TouchableOpacity style={s.fab} onPress={() => setFormTarget('new')} activeOpacity={0.85}>
-          <Icon name="plus" size={20} color="#FFFFFF" />
+          <Icon name="plus" size={20} color={C.bg} />
           <Text style={s.fabTxt}> CRIAR NOVA DIRETIVA</Text>
         </TouchableOpacity>
 
@@ -832,11 +834,11 @@ const getSStyles = (C: any) => StyleSheet.create({
   fab: {
     position: 'absolute', bottom: 24, left: SPACING.md, right: SPACING.md,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#6d28d9',   // rich purple
+    backgroundColor: C.purple,
     borderRadius: 14, paddingVertical: 16,
-    shadowColor: '#6d28d9', shadowOpacity: 0.5, shadowRadius: 12, elevation: 8,
+    shadowColor: C.purple, shadowOpacity: 0.5, shadowRadius: 12, elevation: 8,
   },
-  fabTxt: { color: '#FFFFFF', fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 2 },
+  fabTxt: { color: C.bg, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 2 },
 })
 
 const getDRStyles = (C: any) => StyleSheet.create({
@@ -859,7 +861,7 @@ const getCHStyles = (C: any) => StyleSheet.create({
 })
 
 const getFMStyles = (C: any) => StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: '#000000e8', justifyContent: 'flex-end' },
+  overlay: { flex: 1, backgroundColor: C.bg + 'e8', justifyContent: 'flex-end' },
   sheet: { backgroundColor: C.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '94%', borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderColor: C.border },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: C.border },
   headerTxt: { flex: 1, color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
@@ -874,7 +876,7 @@ const getFMStyles = (C: any) => StyleSheet.create({
     backgroundColor: C.panel,
     borderWidth: 1, borderColor: C.border, borderRadius: 10,
     paddingHorizontal: 14, paddingVertical: 12,
-    color: '#FFFFFF', fontSize: 14, marginBottom: 4,
+    color: C.muted, fontSize: 14, marginBottom: 4,
   },
   inputMulti: { minHeight: 72, textAlignVertical: 'top' },
 
@@ -883,26 +885,26 @@ const getFMStyles = (C: any) => StyleSheet.create({
   col: { flex: 1 },
 
   // Scaling inputs
-  scalingHint: { color: '#64748b', fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginBottom: 6, marginTop: 4 },
+  scalingHint: { color: C.dimmed, fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginBottom: 6, marginTop: 4 },
   scalingRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   scalingInput: { flex: 1, marginBottom: 0 },
-  scalingUnit: { color: '#64748b', fontSize: 11, minWidth: 38 },
-  scalingPreview: { color: '#22c55e', fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginTop: 6, marginBottom: 4 },
+  scalingUnit: { color: C.dimmed, fontSize: 11, minWidth: 38 },
+  scalingPreview: { color: C.green, fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginTop: 6, marginBottom: 4 },
 
   daysRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap', marginBottom: 4 },
-  dayBtn: { width: 38, height: 38, borderRadius: 10, borderWidth: 1, borderColor: '#1e293b', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a' },
+  dayBtn: { width: 38, height: 38, borderRadius: 10, borderWidth: 1, borderColor: C.border, alignItems: 'center', justifyContent: 'center', backgroundColor: C.surface.base },
   dayBtnActive: { borderColor: C.neonBlue, backgroundColor: C.neonBlue + '18' },
-  dayTxt: { color: '#475569', fontFamily: FONT.orbitron, fontSize: 8 },
+  dayTxt: { color: C.text.secondary, fontFamily: FONT.orbitron, fontSize: 10 },
   dayTxtActive: { color: C.neonBlue },
 
   // Save button — solid purple/blue gradient-feel
   saveBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#4f46e5',   // indigo — clean, bold
+    backgroundColor: C.neonBlue,
     borderRadius: 14, paddingVertical: 16, marginTop: SPACING.lg,
-    shadowColor: '#4f46e5', shadowOpacity: 0.4, shadowRadius: 10, elevation: 6,
+    shadowColor: C.neonBlue, shadowOpacity: 0.4, shadowRadius: 10, elevation: 6,
   },
-  saveTxt: { color: '#FFFFFF', fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 1 },
+  saveTxt: { color: C.bg, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 1 },
 
   labelRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm, marginTop: SPACING.md },
   lockBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.border + '44', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
@@ -924,7 +926,7 @@ const getFMStyles = (C: any) => StyleSheet.create({
 })
 
 const getIPStyles = (C: any) => StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: '#000000', justifyContent: 'center', padding: SPACING.md },
+  overlay: { flex: 1, backgroundColor: C.bg + 'f2', justifyContent: 'center', padding: SPACING.md },
   card: { backgroundColor: C.bg, borderRadius: 12, borderWidth: 1, borderColor: C.purple, maxHeight: '80%' },
   header: { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, borderBottomWidth: 1, borderBottomColor: C.border },
   headerTxt: { flex: 1, color: C.purple, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },

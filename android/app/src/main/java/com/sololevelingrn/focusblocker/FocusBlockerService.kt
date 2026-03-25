@@ -58,13 +58,7 @@ class FocusBlockerService : Service() {
                 isPenaltyMode   = intent.getBooleanExtra("extra_is_penalty", false)
                 
                 if (!isPenaltyMode) {
-                    val pool = listOf(
-                        "Os fracos procuram conforto, os guerreiros buscam evolução.",
-                        "Um momento de distração pode custar-te a vitória. Foca-te.",
-                        "Ergue-te! O teu verdadeiro desafio não está nesta app.",
-                        "A grandeza não se alcança a olhar para ecrãs vazios."
-                    )
-                    overlayMessage = pool.random()
+                    // Pool will be randomized in showOverlay()
                 }
                 
                 endTimeMs       = System.currentTimeMillis() + durationMs
@@ -192,7 +186,23 @@ class FocusBlockerService : Service() {
         }
 
         val sub = TextView(this).apply {
-            text      = if (isPenaltyMode) "Este app está bloqueado.\nCompleta as tuas missões primeiro." else overlayMessage
+            if (isPenaltyMode) {
+                text = "Este app está bloqueado.\nCompleta as tuas missões primeiro."
+            } else {
+                val pool = listOf(
+                    "O sucesso exige sacrifício. O teu agora é o foco.",
+                    "Vais desistir agora? O teu futuro eu agradece se continuares.",
+                    "A disciplina é a ponte entre os teus objetivos e as tuas conquistas.",
+                    "O Sistema não aceita desculpas. Aceita resultados.",
+                    "Foca-te no processo. A distração é o inimigo do progresso.",
+                    "Ergue-te! Prova ao Sistema que tens a vontade de um Monarca.",
+                    "Cada segundo de foco é um passo para superar os teus limites.",
+                    "A diferença entre o impossível e o possível é a tua determinação.",
+                    "Não precises de motivação. Precisas de disciplina.",
+                    "Um verdadeiro Hunter nunca abandona o campo de batalha antes do fim."
+                )
+                text = pool.random()
+            }
             textSize  = 14f
             setTextColor(Color.parseColor("#94a3b8"))
             gravity   = Gravity.CENTER

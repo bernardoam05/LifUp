@@ -17,6 +17,23 @@ export type ThemeDef = {
     green: string // Success/Rest accent
     muted: string
     dimmed: string
+    // Semantic tokens for dynamic theming
+    surface: {
+      base: string
+      elevated: string
+      overlay: string
+    }
+    state: {
+      warningBg: string
+      successBg: string
+      errorBg: string
+    }
+    text: {
+      primary: string
+      secondary: string
+      muted: string
+      inverse: string
+    }
   }
 }
 
@@ -37,6 +54,23 @@ export const APP_THEMES: ThemeDef[] = [
       green: '#22c55e',
       muted: '#94a3b8',
       dimmed: '#64748b',
+      // Semantic tokens
+      surface: {
+        base: '#0a0f1e',
+        elevated: '#0f172a',
+        overlay: '#00000099'
+      },
+      state: {
+        warningBg: '#f59e0b20',
+        successBg: '#22c55e20',
+        errorBg: '#ef444420'
+      },
+      text: {
+        primary: '#f1f5f9',
+        secondary: '#cbd5e1',
+        muted: '#94a3b8',
+        inverse: '#050810'
+      }
     }
   },
   {
@@ -53,8 +87,25 @@ export const APP_THEMES: ThemeDef[] = [
       gold: '#f59e0b',
       purple: '#a855f7',
       green: '#10b981',
-      muted: '#6ee7b7',
-      dimmed: '#34d399',
+      muted: '#94a3b8',
+      dimmed: '#64748b',
+      // Semantic tokens
+      surface: {
+        base: '#05160d',
+        elevated: '#064e3b',
+        overlay: '#00000099'
+      },
+      state: {
+        warningBg: '#f59e0b20',
+        successBg: '#22c55e20',
+        errorBg: '#ef444420'
+      },
+      text: {
+        primary: '#f0fdf4',
+        secondary: '#dcfce7',
+        muted: '#94a3b8',
+        inverse: '#020b06'
+      }
     }
   },
   {
@@ -72,7 +123,24 @@ export const APP_THEMES: ThemeDef[] = [
       purple: '#8b5cf6',
       green: '#10b981',
       muted: '#94a3b8',
-      dimmed: '#475569',
+      dimmed: '#64748b',
+      // Semantic tokens
+      surface: {
+        base: '#0f172a',
+        elevated: '#1e293b',
+        overlay: '#00000099'
+      },
+      state: {
+        warningBg: '#f59e0b20',
+        successBg: '#22c55e20',
+        errorBg: '#ef444420'
+      },
+      text: {
+        primary: '#f8fafc',
+        secondary: '#e2e8f0',
+        muted: '#94a3b8',
+        inverse: '#020617'
+      }
     }
   },
   {
@@ -89,8 +157,25 @@ export const APP_THEMES: ThemeDef[] = [
       gold: '#fbbf24',
       purple: '#d946ef',
       green: '#22c55e',
-      muted: '#d8b4e2',
-      dimmed: '#a57cae',
+      muted: '#94a3b8',
+      dimmed: '#64748b',
+      // Semantic tokens
+      surface: {
+        base: '#1e0a29',
+        elevated: '#581c87',
+        overlay: '#00000099'
+      },
+      state: {
+        warningBg: '#f59e0b20',
+        successBg: '#22c55e20',
+        errorBg: '#ef444420'
+      },
+      text: {
+        primary: '#faf5ff',
+        secondary: '#f3e8ff',
+        muted: '#94a3b8',
+        inverse: '#110517'
+      }
     }
   },
   {
@@ -107,8 +192,25 @@ export const APP_THEMES: ThemeDef[] = [
       gold: '#fbbf24',
       purple: '#c084fc',
       green: '#16a34a',
-      muted: '#fcd34d',
-      dimmed: '#d97706',
+      muted: '#94a3b8',
+      dimmed: '#64748b',
+      // Semantic tokens
+      surface: {
+        base: '#291705',
+        elevated: '#78350f',
+        overlay: '#00000099'
+      },
+      state: {
+        warningBg: '#f59e0b20',
+        successBg: '#22c55e20',
+        errorBg: '#ef444420'
+      },
+      text: {
+        primary: '#fef3c7',
+        secondary: '#fde68a',
+        muted: '#94a3b8',
+        inverse: '#170c02'
+      }
     }
   },
   {
@@ -125,8 +227,25 @@ export const APP_THEMES: ThemeDef[] = [
       gold: '#f59e0b',
       purple: '#a855f7',
       green: '#22c55e',
-      muted: '#fca5a5',
-      dimmed: '#b91c1c',
+      muted: '#94a3b8',
+      dimmed: '#64748b',
+      // Semantic tokens
+      surface: {
+        base: '#260808',
+        elevated: '#7f1d1d',
+        overlay: '#00000099'
+      },
+      state: {
+        warningBg: '#f59e0b20',
+        successBg: '#22c55e20',
+        errorBg: '#ef444420'
+      },
+      text: {
+        primary: '#fef2f2',
+        secondary: '#fee2e2',
+        muted: '#94a3b8',
+        inverse: '#140303'
+      }
     }
   },
   {
@@ -143,8 +262,25 @@ export const APP_THEMES: ThemeDef[] = [
       gold: '#fbbf24',
       purple: '#a855f7',
       green: '#22c55e',
-      muted: '#a3a3a3',
-      dimmed: '#525252',
+      muted: '#94a3b8',
+      dimmed: '#64748b',
+      // Semantic tokens
+      surface: {
+        base: '#0a0a0a',
+        elevated: '#1a1a1a',
+        overlay: '#00000099'
+      },
+      state: {
+        warningBg: '#f59e0b20',
+        successBg: '#22c55e20',
+        errorBg: '#ef444420'
+      },
+      text: {
+        primary: '#ffffff',
+        secondary: '#e5e5e5',
+        muted: '#94a3b8',
+        inverse: '#000000'
+      }
     }
   },
   // PREMIUM THEMES
@@ -162,8 +298,25 @@ export const APP_THEMES: ThemeDef[] = [
       gold: '#b45309',
       purple: '#6d28d9',
       green: '#047857',
-      muted: '#a78bfa',
-      dimmed: '#5b21b6',
+      muted: '#94a3b8',
+      dimmed: '#64748b',
+      // Semantic tokens
+      surface: {
+        base: '#0a0214',
+        elevated: '#1e1b4b',
+        overlay: '#00000099'
+      },
+      state: {
+        warningBg: '#f59e0b20',
+        successBg: '#22c55e20',
+        errorBg: '#ef444420'
+      },
+      text: {
+        primary: '#faf5ff',
+        secondary: '#ede9fe',
+        muted: '#94a3b8',
+        inverse: '#05010a'
+      }
     }
   },
   {
@@ -180,8 +333,25 @@ export const APP_THEMES: ThemeDef[] = [
       gold: '#fcd34d',
       purple: '#db2777',
       green: '#16a34a',
-      muted: '#fecaca',
-      dimmed: '#991b1b',
+      muted: '#94a3b8',
+      dimmed: '#64748b',
+      // Semantic tokens
+      surface: {
+        base: '#120000',
+        elevated: '#450a0a',
+        overlay: '#00000099'
+      },
+      state: {
+        warningBg: '#f59e0b20',
+        successBg: '#22c55e20',
+        errorBg: '#ef444420'
+      },
+      text: {
+        primary: '#fef2f2',
+        secondary: '#fee2e2',
+        muted: '#94a3b8',
+        inverse: '#080000'
+      }
     }
   }
 ]

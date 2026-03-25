@@ -37,10 +37,15 @@ export function LootBoxModal({ reward, onClose }: Props) {
     <Modal transparent animationType="none" visible onRequestClose={onClose}>
       <View style={st.overlay}>
         <Animated.View style={[st.card, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
-          <Icon name="treasure-chest" size={56} color={C.gold} style={st.icon} />
+          <Animated.View style={{ transform: [{ rotate: fadeAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '360deg']
+          }) }] }}>
+            <Icon name="treasure-chest" size={56} color={C.gold} style={st.icon} />
+          </Animated.View>
           
           <Text style={st.title}>{reward.title}</Text>
-          <Text style={st.subTitle}>RECOMPENSAS ABERTAS</Text>
+          <Text style={st.subTitle}>RECOMPENSAS OBTIDAS:</Text>
           
           <View style={st.rewardsContainer}>
             {reward.gold > 0 && (
@@ -58,12 +63,17 @@ export function LootBoxModal({ reward, onClose }: Props) {
             
             {reward.items && reward.items.length > 0 && (
               <View style={st.itemsContainer}>
-                <Text style={st.itemsTitle}>ITENS ADQUIRIDOS:</Text>
+                <Text style={st.itemsTitle}>ITENS RECEBIDOS ({reward.items.length}):</Text>
                 {reward.items.map((itemId, i) => {
                   const item = CATALOG_MAP[itemId]
                   return (
                     <View key={`${itemId}-${i}`} style={st.itemRow}>
-                      <Icon name={item?.icon || 'help-box'} size={20} color={C.purple} />
+                      <Animated.View style={{ transform: [{ rotate: fadeAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0deg', '360deg']
+                      }) }] }}>
+                        <Icon name={item?.icon || 'help-box'} size={20} color={C.purple} />
+                      </Animated.View>
                       <Text style={st.itemText}>{item?.name || itemId}</Text>
                     </View>
                   )
@@ -85,14 +95,14 @@ const getStyles = (C: any) => StyleSheet.create({
 
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.85)',
+    backgroundColor: C.surface.overlay,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20
   },
   card: {
     width: '100%',
-    backgroundColor: '#111',
+    backgroundColor: C.surface.elevated,
     borderRadius: 16,
     borderWidth: 2,
     borderColor: C.gold,
@@ -103,25 +113,25 @@ const getStyles = (C: any) => StyleSheet.create({
     marginBottom: 16
   },
   title: {
-    color: C.gold,
+    color: C.text.primary,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4,
     textAlign: 'center'
   },
   subTitle: {
-    color: '#888',
+    color: C.text.secondary,
     fontSize: 14,
     marginBottom: 24,
     letterSpacing: 2
   },
   rewardsContainer: {
     width: '100%',
-    backgroundColor: '#000',
+    backgroundColor: C.surface.base,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: C.border,
     marginBottom: 24
   },
   rewardRow: {
@@ -130,7 +140,7 @@ const getStyles = (C: any) => StyleSheet.create({
     marginBottom: 12
   },
   rewardText: {
-    color: '#fff',
+    color: C.text.primary,
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 12
@@ -138,11 +148,11 @@ const getStyles = (C: any) => StyleSheet.create({
   itemsContainer: {
     marginTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#333',
+    borderTopColor: C.border,
     paddingTop: 12
   },
   itemsTitle: {
-    color: '#888',
+    color: C.text.secondary,
     fontSize: 12,
     marginBottom: 8,
     fontWeight: 'bold'
@@ -151,12 +161,12 @@ const getStyles = (C: any) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: C.surface.elevated,
     padding: 8,
     borderRadius: 6
   },
   itemText: {
-    color: C.purple,
+    color: C.text.primary,
     fontSize: 14,
     fontWeight: 'bold',
     marginLeft: 10
@@ -168,7 +178,7 @@ const getStyles = (C: any) => StyleSheet.create({
     borderRadius: 8
   },
   confirmText: {
-    color: '#000',
+    color: C.text.inverse,
     fontSize: 16,
     fontWeight: 'bold'
   }

@@ -24,6 +24,7 @@ function SafeIcon({ name, size, color, style }: { name: string; size: number; co
   return <Icon name={safeName} size={size} color={color} style={style} />
 }
 import useGameStore, { getRank, xpForLevel, RankKey, LevelUpReward, CLASS_REQUIREMENTS } from '../store/useGameStore'
+import { getJobClass } from '../store/helpers'
 import {
   ACHIEVEMENTS_CATALOG, Achievement, AchievementProg,
   TIER_COLORS, getActiveTier, getCompletedTier, isAchievementMaxed, getTierIndex,
@@ -31,7 +32,7 @@ import {
 import { SHADOW_MAP, SHADOW_RANK_COLOR, type Shadow } from '../data/shadows'
 import SharedStorage from '../native/SharedStorage'
 import SoloLevelingModal from '../components/SoloLevelingModal'
-import { useTheme, FONT, SPACING } from '../theme'
+import { useTheme, FONT, SPACING, RANK_COLORS as THEME_RANK_COLORS } from '../theme'
 import RankModal from '../components/RankModal'
 
 // Format minutes into "Xh Ym" for focus achievements
@@ -48,27 +49,14 @@ function fmtVal(a: Achievement, val: number): string {
 
 // ── Stat bar ───────────────────────────────────────────────────────────────────
 
-function StatBar({ label, level, xp, C }: { label: string; level: number; xp: number; C: any }) {
+function StatBar({ label, level, C }: { label: string; level: number; C: any }) {
   const ATTR_ICONS: Record<string, { icon: string; color: string }> = {
-    STR: { icon: 'arm-flex',    color: '#ef4444' },
-    AGI: { icon: 'run-fast',    color: '#22c55e' },
+    STR: { icon: 'arm-flex',    color: C.neonRed },
+    AGI: { icon: 'run-fast',    color: C.green },
     INT: { icon: 'brain',       color: C.neonBlue },
-    VIT: { icon: 'heart-pulse', color: '#a855f7' },
+    VIT: { icon: 'heart-pulse', color: C.purple },
   }
   const { icon, color } = ATTR_ICONS[label]
-
-  
-  // Calculate progress to next level
-  // level = floor(sqrt(xp/10))
-  // L = level
-  // xp_cur = 10 * L^2
-  // xp_next = 10 * (L+1)^2
-  // Formula: level = 10 + floor(sqrt(xp/5))
-  // => (level - 10)^2 = xp/5 => xp_cur = 5 * (level - 10)^2
-  const xpCur = 5 * Math.pow(Math.max(0, level - 10), 2)
-  const xpNext = 5 * Math.pow(Math.max(0, level + 1 - 10), 2)
-  const progress = xpNext === xpCur ? 0 : Math.min(1, (xp - xpCur) / (xpNext - xpCur))
-  const pct = progress * 100
   const s = getStyles(C)
 
   return (
@@ -78,9 +66,6 @@ function StatBar({ label, level, xp, C }: { label: string; level: number; xp: nu
         <View style={s.statHeader}>
           <Text style={[s.statLabel, { color }]}>{label}</Text>
           <Text style={s.statVal}>{level}</Text>
-        </View>
-        <View style={s.track}>
-          <View style={[s.fill, { width: `${pct}%` as any, backgroundColor: color }]} />
         </View>
       </View>
     </View>
@@ -110,9 +95,7 @@ function StatisticsPanel({ C }: { C: any }) {
   const minutes = stats.totalFocusMinutes % 60
 
   const RANK_ORDER: RankKey[] = ['E', 'D', 'C', 'B', 'A', 'S']
-  const RANK_COLORS: Record<RankKey, string> = {
-    E: C.rankE, D: C.rankD, C: C.rankC, B: C.rankB, A: C.rankA, S: C.rankS,
-  }
+  const RANK_COLORS = THEME_RANK_COLORS
 
   const totalQuestsByRank = RANK_ORDER.reduce((sum, r) => sum + (stats.questsByRank[r] || 0), 0)
   
@@ -125,7 +108,7 @@ function StatisticsPanel({ C }: { C: any }) {
     ...RANK_ORDER.map(r => ({ id: r, label: r, count: stats.questsByRank[r] || 0, color: RANK_COLORS[r] })),
     { id: 'Extra', label: 'EXTRA', count: extraCount, color: C.gold },
     { id: 'Boss',  label: 'BOSS',  count: bossCount,  color: C.neonRed },
-    { id: 'Event', label: 'EVNT',  count: eventCount, color: '#f97316' },
+    { id: 'Event', label: 'EVNT',  count: eventCount, color: C.gold },
   ]
 
   const grandTotal = totalQuestsByRank + extraCount + bossCount + eventCount
@@ -134,7 +117,7 @@ function StatisticsPanel({ C }: { C: any }) {
     <View style={sp.container}>
       <View style={sp.kpiRow}>
         <KPICard icon="trophy" color={C.gold}     label="Missões"       value={String(stats.totalCompleted)} C={C} />
-        <KPICard icon="calendar-star" color="#a855f7" label="Dias Perfeitos" value={String(stats.perfectDays)} C={C} />
+        <KPICard icon="calendar-star" color={C.purple} label="Dias Perfeitos" value={String(stats.perfectDays)} C={C} />
         <KPICard icon="timer-outline" color={C.neonBlue} label="Foco"
           value={hours > 0 ? `${hours}h${minutes}m` : `${minutes}m`} C={C} />
       </View>
@@ -147,7 +130,7 @@ function StatisticsPanel({ C }: { C: any }) {
             return (
               <View key={cat.id} style={sp.rankItem}>
                 <View style={[sp.rankBadge, { borderColor: cat.color + '44', backgroundColor: cat.color + '0a' }]}>
-                  <Text style={[sp.rankLetter, { color: cat.color, fontSize: cat.label.length > 2 ? 7 : 10 }]}>{cat.label}</Text>
+                  <Text style={[sp.rankLetter, { color: cat.color, fontSize: cat.label.length > 2 ? 9 : 11 }]}>{cat.label}</Text>
                 </View>
                 <View style={sp.rankBarTrack}>
                   <View style={[sp.rankBarFill, { width: `${pct}%` as any, backgroundColor: cat.color }]} />
@@ -185,7 +168,7 @@ function AchievementDetailModal({
   const completedTier = getCompletedTier(a, prog)
   const displayTier   = maxed ? a.tiers?.[a.tiers.length - 1] : (completedTier ?? activeTier)
   const tierColor     = displayTier ? TIER_COLORS[displayTier.rank] : a.color
-  const cardColor     = a.tiers ? (maxed ? C.gold : completedTier ? tierColor : '#475569') : (done ? a.color : '#475569')
+  const cardColor     = a.tiers ? (maxed ? C.gold : completedTier ? tierColor : C.dimmed) : (done ? a.color : C.dimmed)
 
   // Progress bar for active tier
   const currentVal  = prog?.currentValue ?? 0
@@ -221,7 +204,7 @@ function AchievementDetailModal({
             {displayTier && (
               <View style={[am.tierBadge, { borderColor: TIER_COLORS[displayTier.rank] }]}>
                 <Text style={[am.tierTxt, { color: TIER_COLORS[displayTier.rank] }]}>
-                  {maxed ? displayTier.rank.toUpperCase() : `→ ${displayTier.rank.toUpperCase()}`}
+                  {maxed ? displayTier.rank : `→ ${displayTier.rank}`}
                 </Text>
               </View>
             )}
@@ -230,11 +213,11 @@ function AchievementDetailModal({
           {/* Badges */}
           <View style={am.badgesRow}>
             <View style={am.categoryBadge}>
-              <Text style={am.categoryTxt}>{a.category.toUpperCase()}</Text>
+              <Text style={am.categoryTxt}>{a.category}</Text>
             </View>
             {a.isSecret && (
-              <View style={[am.categoryBadge, { borderColor: '#a855f744' }]}>
-                <Text style={[am.categoryTxt, { color: '#a855f7' }]}>SECRETO</Text>
+              <View style={[am.categoryBadge, { borderColor: C.purple + '44' }]}>
+                <Text style={[am.categoryTxt, { color: C.purple }]}>SECRETO</Text>
               </View>
             )}
             {maxed && (
@@ -266,10 +249,10 @@ function AchievementDetailModal({
                 return (
                   <View key={tier.rank} style={[am.tierRow, isActive && { backgroundColor: tc + '12' }]}>
                     <View style={[am.tierDot, { borderColor: tc, backgroundColor: isCompleted ? tc : 'transparent' }]}>
-                      {isCompleted && <Icon name="check" size={8} color="#000" />}
+                      {isCompleted && <Icon name="check" size={8} color={C.bg} />}
                     </View>
                     <Text style={[am.tierRowRank, { color: isCompleted ? tc : isActive ? tc : C.dimmed }]}>
-                      {tier.rank.toUpperCase()}
+                      {tier.rank}
                     </Text>
                     <Text style={[am.tierRowTarget, { color: isCompleted || isActive ? C.muted : C.dimmed }]}>
                       {fmtVal(a, tier.targetValue)}
@@ -352,7 +335,7 @@ function ShadowDetailModal({
           ) : (
             <>
               <View style={[sdm.rankBadge, { borderColor: rankColor + '66' }]}>
-                <Text style={[sdm.rankTxt, { color: rankColor }]}>{shadow?.rank.toUpperCase() ?? '???'}</Text>
+                <Text style={[sdm.rankTxt, { color: rankColor }]}>{shadow?.rank ?? '???'}</Text>
               </View>
               <Text style={sdm.subTxt}>{shadow?.lore ?? 'Sem registo disponível.'}</Text>
               <Text style={[sdm.levelTxt, { color: rankColor }]}>NÍVEL {level}</Text>
@@ -407,11 +390,11 @@ function AchievementsPanel({ onSelect, C }: {
           // Card colour: gold if maxed, tier colour if in progress, grey if not started
           const displayTier = maxed ? a.tiers?.[a.tiers.length - 1] : completedTier
           const cardColor   = a.tiers
-            ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : '#334155')
-            : (fullyDone ? a.color : '#334155')
+            ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : C.border)
+            : (fullyDone ? a.color : C.border)
           const iconColor   = a.tiers
-            ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : '#475569')
-            : (fullyDone ? a.color : '#475569')
+            ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : C.dimmed)
+            : (fullyDone ? a.color : C.dimmed)
 
           // Mini progress bar: % within current tier
           const currentVal = prog?.currentValue ?? 0
@@ -441,7 +424,7 @@ function AchievementsPanel({ onSelect, C }: {
               {displayTier && (
                 <View style={[ac.tierChip, { borderColor: TIER_COLORS[displayTier.rank] }]}>
                   <Text style={[ac.tierChipTxt, { color: TIER_COLORS[displayTier.rank] }]}>
-                    {maxed ? '★' : displayTier.rank.slice(0, 2).toUpperCase()}
+                    {maxed ? '★' : displayTier.rank.slice(0, 2)}
                   </Text>
                 </View>
               )}
@@ -470,7 +453,7 @@ function AchievementsPanel({ onSelect, C }: {
 
 // ── Level Up Reward Modal ──────────────────────────────────────────────────────
 
-function LevelUpRewardModal({ visible = true, reward, onClose, C }: { visible?: boolean; reward: LevelUpReward; onClose: () => void; C: any }) {
+export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { visible?: boolean; reward: LevelUpReward; onClose: () => void; C: any }) {
   const lm = getLMStyles(C) // Assuming getLMStyles is defined later
   return (
     <SoloLevelingModal visible={visible} onRequestClose={onClose}>
@@ -513,9 +496,30 @@ function LevelUpRewardModal({ visible = true, reward, onClose, C }: { visible?: 
   )
 }
 
+// ── Job Change Modal ───────────────────────────────────────────────────────────
+export function JobChangeModal({ visible = true, job, onClose, C }: { visible?: boolean; job: any; onClose: () => void; C: any }) {
+  const lm = getLMStyles(C)
+  return (
+    <SoloLevelingModal visible={visible} onRequestClose={onClose}>
+      <View style={[lm.card, { borderColor: job.color + 'aa' }]}>
+        <Text style={[lm.title, { color: job.color }]}>[ CLASSE ALTERADA ]</Text>
+        <Icon name="medal" size={60} color={job.color} style={{ marginVertical: SPACING.md }} />
+        <Text style={lm.rewardLabel}>NOVO TÍTULO CONQUISTADO</Text>
+        <Text style={[lm.levelTxt, { color: job.color, fontSize: 24, marginTop: 4 }]}>{job.name}</Text>
+        <Text style={[lm.itemDesc, { textAlign: 'center', marginTop: SPACING.md }]}>
+          O Sistema reconhece a tua evolução.{"\n"}A tua lenda começa a ganhar forma.
+        </Text>
+        <TouchableOpacity style={[lm.btn, { backgroundColor: job.color + '22', borderColor: job.color }]} onPress={onClose}>
+          <Text style={[lm.btnTxt, { color: job.color }]}>[ ACEITAR PODER ]</Text>
+        </TouchableOpacity>
+      </View>
+    </SoloLevelingModal>
+  )
+}
+
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
-export default function StatusScreen({ onClose }: { onClose: () => void }) {
+export default function StatusScreen({ onClose }: { onClose?: () => void }) {
   const C = useTheme()
   const s = React.useMemo(() => getStyles(C), [C])
   const am = React.useMemo(() => getAMStyles(C), [C])
@@ -531,6 +535,9 @@ export default function StatusScreen({ onClose }: { onClose: () => void }) {
   const customShadows      = useGameStore(st => st.customShadows)
   const levelUpReward      = useGameStore(st => st.levelUpReward)
   const dismissLevelUpReward = useGameStore(st => st.dismissLevelUpReward)
+  const jobChangeReward      = useGameStore(st => st.jobChangeReward)
+  const dismissJobChangeReward = useGameStore(st => st.dismissJobChangeReward)
+  const activeBuffs         = useGameStore(st => st.activeBuffs)
 
   const qualifiedRankInfo = getRank(player.level, statistics.totalCompleted, system.bossesDefeated, statistics.questsByRank)
   const playerRankLetter = player.rank || 'E'
@@ -540,6 +547,7 @@ export default function StatusScreen({ onClose }: { onClose: () => void }) {
   const qualifiedIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === qualifiedRankInfo.rank)
   const canRankUp = qualifiedIdx > currentIdx
   const rank = currentRankInfo
+  const jobClass = getJobClass(player.level)
 
   const xpNeeded = xpForLevel(player.level)
   const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100)
@@ -573,14 +581,29 @@ export default function StatusScreen({ onClose }: { onClose: () => void }) {
           </TouchableOpacity>
           <View style={s.rankInfo}>
             <Text style={s.playerName}>{player.name}</Text>
-            <Text style={[s.rankLabel, { color: rank.color }]}>{rank.label}</Text>
-            <Text style={s.lvlText}>NÍVEL {player.level}</Text>
+            <Text style={[s.rankLabel, { color: rank.color }]}>{jobClass.name}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
+              <Text style={s.lvlText}>NÍVEL {player.level}</Text>
+            </View>
           </View>
           <View style={s.goldBlock}>
             <Icon name="rhombus" size={22} color={C.gold} />
             <Text style={s.goldAmt}>{player.gold.toLocaleString()}</Text>
           </View>
         </View>
+
+        {/* Active Buffs Bar */}
+        {activeBuffs.length > 0 && (
+          <View style={s.buffsBar}>
+            {activeBuffs.filter(b => Date.now() < b.expiresAt).map(buff => (
+              <View key={buff.id} style={s.buffChip}>
+                <Icon name={buff.stat === 'xp' ? 'chevron-double-up' : 'piggy-bank'} size={14} color={C.neonBlue} />
+                <Text style={s.buffLabel}>{buff.label}</Text>
+                <Text style={s.buffValue}>+{Math.round((buff.multiplier - 1) * 100)}% {buff.stat}</Text>
+              </View>
+            ))}
+          </View>
+        )}
 
         {/* XP bar */}
         <View style={s.xpSection}>
@@ -597,10 +620,10 @@ export default function StatusScreen({ onClose }: { onClose: () => void }) {
         {/* Attributes */}
         <SectionHeader icon="trending-up" label="ATRIBUTOS" C={C} />
         <View style={s.statsBlock}>
-          <StatBar label="STR" level={player.str} xp={player.strXp ?? 0} C={C} />
-          <StatBar label="AGI" level={player.agi} xp={player.agiXp ?? 0} C={C} />
-          <StatBar label="INT" level={player.int} xp={player.intXp ?? 0} C={C} />
-          <StatBar label="VIT" level={player.vit} xp={player.vitXp ?? 0} C={C} />
+          <StatBar label="STR" level={player.str} C={C} />
+          <StatBar label="AGI" level={player.agi} C={C} />
+          <StatBar label="INT" level={player.int} C={C} />
+          <StatBar label="VIT" level={player.vit} C={C} />
         </View>
 
         {/* History */}
@@ -625,8 +648,8 @@ export default function StatusScreen({ onClose }: { onClose: () => void }) {
               const name = data?.name ?? entry.id
               return (
                 <TouchableOpacity key={i} style={s.shadowRow} onPress={() => setSelectedShadow({ id: entry.id, level: entry.level })} activeOpacity={0.75}>
-                  <Icon name={data?.icon || "ghost"} size={14} color={data?.color || "#a855f7"} />
-                  <Text style={[s.shadowName, { color: data?.color || '#fff' }]}>{name}</Text>
+                  <Icon name={data?.icon || "ghost"} size={14} color={data?.color || C.purple} />
+                  <Text style={[s.shadowName, { color: data?.color || C.muted }]}>{name}</Text>
                   {entry.level > 1 && <Text style={s.shadowLevel}>Lv.{entry.level}</Text>}
                 </TouchableOpacity>
               )
@@ -672,15 +695,7 @@ export default function StatusScreen({ onClose }: { onClose: () => void }) {
       <MissionHistoryModal visible={showHistory} onClose={() => setShowHistory(false)} C={C} />
 
 
-      {levelUpReward && (
-        <LevelUpRewardModal
-          reward={levelUpReward}
-          onClose={dismissLevelUpReward}
-          C={C}
-        />
-      )}
-
-
+      {/* Modals are now handled globally in App.tsx rewardsQueue */}
 
     </SafeAreaView>
   )
@@ -696,20 +711,24 @@ const getStyles = (C: any) => StyleSheet.create({
   rankCard:   { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderRadius: 4, padding: SPACING.md, gap: 12, marginBottom: 12 },
   rankBadge:  { width: 52, height: 52, borderRadius: 4, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   rankBig:    { fontSize: 28, fontFamily: FONT.orbitron, fontWeight: '900' },
-  rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonRed, borderRadius: 12, minWidth: 20, height: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#fff' },
-  rankUpIndicatorText: { color: '#fff', fontSize: 13, fontFamily: FONT.orbitron, fontWeight: '900' },
+  rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonRed, borderRadius: 12, minWidth: 20, height: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.muted },
+  rankUpIndicatorText: { color: C.muted, fontSize: 13, fontFamily: FONT.orbitron, fontWeight: '900' },
   rankInfo:   { flex: 1 },
-  playerName: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '700' },
-  rankLabel:  { fontSize: 11, marginTop: 2 },
+  playerName: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '700' },
+  rankLabel:  { fontSize: 13, fontFamily: FONT.orbitron, fontWeight: '700', letterSpacing: 1 },
+  buffsBar: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12, paddingHorizontal: 4 },
+  buffChip: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.panel, borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
+  buffLabel: { color: C.muted, fontSize: 10, fontFamily: FONT.orbitron },
+  buffValue: { color: C.neonBlue, fontSize: 10, fontWeight: '700', fontFamily: FONT.orbitron },
   lvlText:    { color: C.muted, fontSize: 11, marginTop: 2 },
   goldBlock:  { alignItems: 'center', gap: 2 },
   goldAmt:    { color: C.gold, fontWeight: '700', fontSize: 14 },
 
   xpSection:  { marginBottom: SPACING.lg },
   xpHeader:   { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
-  xpLabel:    { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  xpLabel:    { color: C.text.primary, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
   xpNumbers:  { color: C.muted, fontSize: 10 },
-  xpTrack:    { height: 8, backgroundColor: '#050f1e', borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: C.neonBlue + '30' },
+  xpTrack:    { height: 8, backgroundColor: C.bg, borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: C.neonBlue + '30' },
   xpFill:     { height: '100%', backgroundColor: C.neonBlue, borderRadius: 0 },
   xpSub:      { color: C.dimmed, fontSize: 10, marginTop: 4 },
 
@@ -721,15 +740,15 @@ const getStyles = (C: any) => StyleSheet.create({
   statIcon:   { width: 20 },
   statInfo:   { flex: 1 },
   statHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 },
-  statLabel:  { fontFamily: FONT.orbitron, fontSize: 10 },
-  track:      { height: 4, backgroundColor: '#050f1e', borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: C.border },
+  statLabel:  { fontFamily: FONT.orbitron, fontSize: 11 },
+  track:      { height: 4, backgroundColor: C.bg, borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: C.border },
   fill:       { height: '100%', borderRadius: 0 },
-  statVal:    { color: '#fff', fontSize: 12, fontFamily: FONT.orbitron, fontWeight: '700' },
+  statVal:    { color: C.muted, fontSize: 12, fontFamily: FONT.orbitron, fontWeight: '700' },
 
-  shadowsBlock: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: '#a855f733', marginBottom: SPACING.lg, gap: SPACING.sm },
+  shadowsBlock: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.purple + '33', marginBottom: SPACING.lg, gap: SPACING.sm },
   shadowRow:    { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
-  shadowName:   { color: '#a855f7', fontFamily: FONT.orbitron, fontSize: 11, flex: 1 },
-  shadowLevel:  { color: '#a855f799', fontFamily: FONT.orbitron, fontSize: 9 },
+  shadowName:   { color: C.purple, fontFamily: FONT.orbitron, fontSize: 11, flex: 1 },
+  shadowLevel:  { color: C.text.secondary, fontFamily: FONT.orbitron, fontSize: 10 },
 
   empty:  { color: C.dimmed, fontSize: 12, fontStyle: 'italic', marginBottom: SPACING.lg },
 
@@ -739,15 +758,15 @@ const getStyles = (C: any) => StyleSheet.create({
 
 const getKPIStyles = (C: any) => StyleSheet.create({
   card:  { flex: 1, backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.sm, alignItems: 'center', gap: 4 },
-  value: { fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900' },
-  label: { color: C.muted, fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 1 },
+  value: { fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900', color: C.text.primary },
+  label: { color: C.text.secondary, fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1 },
 })
 
 
 const getSDMStyles = (C: any) => StyleSheet.create({
-  overlay:   { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  overlay:   { flex: 1, backgroundColor: C.bg + 'ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
   card:      { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 2, padding: SPACING.lg, alignItems: 'center', gap: SPACING.sm },
-  title:     { color: '#fff', fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, textAlign: 'center' },
+  title:     { color: C.muted, fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, textAlign: 'center' },
   mysteryTxt:{ color: C.dimmed, fontSize: 12, textAlign: 'center', lineHeight: 18, marginTop: SPACING.sm },
   rankBadge: { borderWidth: 1, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
   rankTxt:   { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
@@ -781,13 +800,13 @@ const getACStyles = (C: any) => StyleSheet.create({
   badgeTxt:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9 },
   grid:      { gap: SPACING.sm, paddingBottom: 4, paddingRight: 4 },
   card:      {
-    width: 80, backgroundColor: '#0f172a', borderRadius: 4, borderWidth: 1,
+    width: 80, backgroundColor: C.panel, borderRadius: 4, borderWidth: 1,
     padding: SPACING.sm, alignItems: 'center', gap: 6,
   },
   iconWrap:  { width: 44, height: 44, borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
   cardTitle:  { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5, textAlign: 'center', lineHeight: 11 },
   cardGold:   { fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '700' },
-  miniTrack:  { width: '100%', height: 3, backgroundColor: '#0f172a', borderRadius: 0, overflow: 'hidden', marginTop: 2 },
+  miniTrack:  { width: '100%', height: 3, backgroundColor: C.bg, borderRadius: 0, overflow: 'hidden', marginTop: 2 },
   miniFill:   { height: '100%', backgroundColor: C.neonBlue, borderRadius: 0 },
   tierChip:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 4, paddingVertical: 1 },
   tierChipTxt:{ fontFamily: FONT.orbitron, fontSize: 6, letterSpacing: 0.5, fontWeight: '700' },
@@ -813,7 +832,7 @@ const getAMStyles = (C: any) => StyleSheet.create({
   progHeader:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
   progLabel:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 2 },
   progNums:      { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9 },
-  progTrack:     { height: 6, backgroundColor: '#050f1e', borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: C.neonBlue + '30' },
+  progTrack:     { height: 6, backgroundColor: C.bg, borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: C.neonBlue + '30' },
   progFill:      { height: '100%', borderRadius: 0 },
   rewardRow:     { flexDirection: 'row', alignItems: 'center' },
   rewardTxt:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700' },
@@ -829,7 +848,7 @@ const getAMStyles = (C: any) => StyleSheet.create({
 })
 
 const getRMStyles = (C: any) => StyleSheet.create({
-  overlay:      { flex: 1, backgroundColor: '#000000dd', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  overlay:      { flex: 1, backgroundColor: C.bg + 'dd', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
   card:         { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg },
   headerRow:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
   headerTxt:    { flex: 1, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
@@ -848,17 +867,17 @@ const getRMStyles = (C: any) => StyleSheet.create({
   reqRow:       { flexDirection: 'row', alignItems: 'center', marginTop: 3, gap: 4 },
   reqLabel:     { flex: 1, color: C.dimmed, fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 0.5 },
   reqVal:       { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
-  reqMet:       { color: '#22c55e' },
-  reqFail:      { color: '#ef4444' },
+  reqMet:       { color: C.green },
+  reqFail:      { color: C.neonRed },
 })
 
 const getLMStyles = (C: any) => StyleSheet.create({
-  overlay:   { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
+  overlay:   { flex: 1, backgroundColor: C.bg + 'ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
   card:      { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.neonBlue + '55', padding: SPACING.lg, alignItems: 'center', gap: SPACING.sm },
   title:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 4 },
-  levelTxt:  { color: '#fff', fontFamily: FONT.orbitron, fontSize: 28, fontWeight: '900' },
+  levelTxt:  { color: C.muted, fontFamily: FONT.orbitron, fontSize: 28, fontWeight: '900' },
   divider:   { width: '100%', height: 1, backgroundColor: C.border },
-  rewardLabel: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, alignSelf: 'flex-start' },
+  rewardLabel: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center', alignSelf: 'center' },
   itemRow:   { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, padding: SPACING.sm, gap: SPACING.sm, width: '100%' },
   itemIcon:  { width: 40, height: 40, borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
   itemInfo:  { flex: 1 },
@@ -890,7 +909,7 @@ const getSKStyles = (C: any) => StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#ffffff10',
+    borderColor: C.muted + '10',
   },
   keyInfo: {
     flex: 1,

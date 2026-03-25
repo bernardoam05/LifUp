@@ -32,6 +32,7 @@ export type EventTrigger =
   | 'boss_gps_completed'
   | 'boss_focus_completed'
   | 'boss_training_completed'
+  | 'dungeon_break_cleared'
   // ── Streak events
   | 'streak_updated'
   | 'streak_protected'
@@ -42,10 +43,10 @@ export type EventTrigger =
   | 'gold_total_earned'
   | 'gold_spent_total'
   | 'shop_visited'
-  // ── Side quest events
-  | 'side_quest_added'
-  | 'side_quest_c_rank'
-  | 'side_quest_completed'
+  // ── Extra quest events
+  | 'extra_quest_completed'
+  | 'all_extra_quests_completed'
+  | 'side_quest_c_rank' // legacy
   // ── Shadow / Level events
   | 'shadow_collected'
   | 'level_up'
@@ -57,6 +58,8 @@ export type EventTrigger =
   | 'penalty_cleared'
   // ── Daily login events
   | 'daily_login'
+  | 'side_quest_added'
+  | 'side_quest_completed'
   | 'login_streak_achieved'
 
 // A single progression step within a tiered achievement.
@@ -266,6 +269,17 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     category: 'boss', conditionType: 'boss_gps_completed',
     icon: 'star-four-points', color: '#38bdf8', isSecret: true, rewardGold: 480,
   },
+  {
+    id: 'dungeon_break_hunter', title: 'Defensor de Portais',
+    description: 'Impede Dungeon Breaks. O caos não tem lugar onde o Monarca pisa.',
+    category: 'boss', conditionType: 'dungeon_break_cleared',
+    icon: 'gate', color: '#dc2626', isSecret: false, rewardGold: 0,
+    tiers: [
+      { rank: 'Bronze',  targetValue: 1,  rewardGold: 100 },
+      { rank: 'Prata',   targetValue: 5,  rewardGold: 300 },
+      { rank: 'Ouro',    targetValue: 20, rewardGold: 1000, rewardXP: 50 },
+    ],
+  },
 
   // ── EVENT BOSSES ──────────────────────────────────────────────────────────────
   {
@@ -429,15 +443,15 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     icon: 'calendar-star', color: '#fbbf24', isSecret: false, rewardGold: 100,
   },
   {
-    id: 'side_quest_first', title: 'Iniciativa Própria',
-    description: 'Adiciona a tua primeira missão secundária ao Sistema.',
-    category: 'quests', conditionType: 'side_quest_added',
+    id: 'extra_quest_first', title: 'Iniciativa Própria',
+    description: 'Completa a tua primeira Missão Extra.',
+    category: 'quests', conditionType: 'extra_quest_completed',
     icon: 'plus-circle', color: '#a855f7', isSecret: false, rewardGold: 15,
   },
   {
-    id: 'side_quest_chain', title: 'Agente de Campo',
-    description: 'Completa missões secundárias em acumulado. O Monarca não se limita ao Sistema.',
-    category: 'quests', conditionType: 'side_quest_completed',
+    id: 'extra_quest_chain', title: 'Agente de Campo',
+    description: 'Completa Missões Extra em acumulado. O Monarca não se limita ao Sistema.',
+    category: 'quests', conditionType: 'extra_quest_completed',
     icon: 'sword-cross', color: '#a855f7', isSecret: false, rewardGold: 0,
     tiers: [
       { rank: 'Bronze', targetValue: 5,   rewardGold: 65 },
@@ -446,9 +460,9 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     ],
   },
   {
-    id: 'side_quest_daily_five', title: 'A Agenda do Caçador',
-    description: 'Completa 5 ou mais missões secundárias num único dia.',
-    category: 'quests', conditionType: 'side_quest_completed',
+    id: 'extra_quest_daily_all', title: 'A Agenda do Caçador',
+    description: 'Completa TODAS as Missões Extra disponíveis num único dia.',
+    category: 'quests', conditionType: 'all_extra_quests_completed',
     icon: 'calendar-check', color: '#a855f7', isSecret: false, rewardGold: 65,
   },
   {
@@ -595,6 +609,36 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     description: 'Completa um boss de cada tipo: GPS (Kasaka), Foco (Igris) e Treino (Cerberus).',
     category: 'secret', conditionType: 'boss_defeated',
     icon: 'sword', color: '#f59e0b', isSecret: true, rewardGold: 500,
+  },
+  {
+    id: 'shadow_collector_10', title: 'Senhor do Exército',
+    description: 'Adquire 10 Sombras Diferentes.',
+    category: 'shadow', conditionType: 'shadow_collected',
+    icon: 'ghost', color: '#a855f7', isSecret: true, rewardGold: 300,
+  },
+  {
+    id: 'perfect_week_1', title: 'Semana Dourada',
+    description: 'Uma semana inteira de missões concluídas sem falhas.',
+    category: 'quests', conditionType: 'all_quests_completed',
+    icon: 'check-all', color: '#fbbf24', isSecret: true, rewardGold: 200,
+  },
+  {
+    id: 'level_50_milestone', title: 'Meio Caminho Alcançado',
+    description: 'Alcança o Nível 50 como Caçador.',
+    category: 'level', conditionType: 'level_up',
+    icon: 'arrow-up-circle', color: '#22c55e', isSecret: true, rewardGold: 400,
+  },
+  {
+    id: 'boss_slayer_20', title: 'Terror dos Bosses',
+    description: 'Derrota 20 Bosses no total.',
+    category: 'boss', conditionType: 'boss_defeated',
+    icon: 'sword-cross', color: '#ef4444', isSecret: true, rewardGold: 350,
+  },
+  {
+    id: 'dungeon_master_50', title: 'Mestre da Masmorra',
+    description: 'Derrota 50 Bosses no total.',
+    category: 'boss', conditionType: 'boss_defeated',
+    icon: 'castle', color: '#ef4444', isSecret: true, rewardGold: 600,
   },
 ]
 

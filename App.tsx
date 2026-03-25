@@ -23,179 +23,14 @@ import FocusScreen from './src/screens/FocusScreen'
 import ShadowsScreen from './src/screens/ShadowsScreen'
 import SettingsScreen from './src/screens/SettingsScreen'
 import { C, FONT, SPACING } from './src/theme'
+import { useDayWatcher } from './src/hooks/useDayWatcher'
+
+import AchievementModal from './src/components/AchievementModal'
+import { LevelUpRewardModal, JobChangeModal } from './src/screens/StatusScreen'
+import PenaltyModal from './src/components/PenaltyModal'
+import SystemHUD from './src/components/SystemHUD'
 
 const Tab = createMaterialTopTabNavigator()
-
-// ── Achievement Modal (epic) ───────────────────────────────────────────────────
-
-function AchievementModal({ achievementId, onDismiss }: { achievementId: string; onDismiss: () => void }) {
-  const achievement = ACHIEVEMENTS_MAP[achievementId]
-
-  useEffect(() => {
-    Vibration.vibrate([0, 100, 50, 200, 50, 100, 50, 400])
-  }, [achievementId])
-
-  if (!achievement) return null
-
-  return (
-    <Modal transparent animationType="fade" visible onRequestClose={onDismiss}>
-      <View style={am.overlay}>
-        <View style={[am.card, { borderColor: achievement.color + '88' }]}>
-          <Text style={am.system}>⚡ SISTEMA ⚡</Text>
-          <Text style={am.header}>ACHIEVEMENT DESBLOQUEADO</Text>
-          <View style={[am.iconWrap, { backgroundColor: achievement.color + '18', borderColor: achievement.color + '44' }]}>
-            <Icon name={achievement.icon} size={52} color={achievement.color} />
-          </View>
-          <Text style={[am.title, { color: achievement.color }]}>{achievement.title}</Text>
-          <Text style={am.desc}>{achievement.description}</Text>
-          <View style={am.rewardRow}>
-            <Icon name="rhombus" size={16} color={C.gold} />
-            <Text style={am.reward}> +{achievement.rewardGold} Gold</Text>
-          </View>
-          <TouchableOpacity style={[am.btn, { borderColor: achievement.color }]} onPress={onDismiss}>
-            <Text style={[am.btnTxt, { color: achievement.color }]}>GLÓRIA AO CAÇADOR</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  )
-}
-
-// ── Penalty Modal (scary, dynamic) ────────────────────────────────────────────
-
-const INTENSITY_FLAVOR: Record<string, { title: string; icon: string; color: string }> = {
-  light: { title: 'ZONA DE PENALIDADE', icon: 'shield-alert-outline', color: '#22c55e' },
-  medium: { title: 'ZONA DE PENALIDADE', icon: 'alert-octagon', color: C.gold },
-  hardcore: { title: 'PUNIÇÃO DO MONARCA', icon: 'skull-crossbones', color: C.neonRed },
-}
-
-function PenaltyModal({ visible, onDismiss }: { visible: boolean; onDismiss: () => void }) {
-  const lastPenaltyInfo = useGameStore(s => s.system.lastPenaltyInfo)
-
-  useEffect(() => {
-    if (!visible) return
-    const intensity = lastPenaltyInfo?.intensity ?? 'medium'
-    if (intensity === 'hardcore') Vibration.vibrate([0, 300, 100, 300, 100, 600])
-    else if (intensity === 'medium') Vibration.vibrate([0, 200, 80, 200])
-    else Vibration.vibrate([0, 100])
-  }, [visible])
-
-  const info = lastPenaltyInfo
-  const intensity = info?.intensity ?? 'medium'
-  const flavor = INTENSITY_FLAVOR[intensity] ?? INTENSITY_FLAVOR.medium
-
-  const failLine = info
-    ? `${info.failedCount} de ${info.totalCount} missões falhadas.`
-    : 'Missões diárias não concluídas.'
-
-  const xpLine = info
-    ? `${info.xpLost} XP deduzidos.`
-    : 'XP deduzido conforme perfil ativo.'
-
-  const intensityLabels: Record<string, string> = {
-    light: 'LEVE', medium: 'MÉDIO', hardcore: 'HARDCORE',
-  }
-
-  return (
-    <Modal transparent animationType="fade" visible={visible} onRequestClose={onDismiss}>
-      <View style={pm.overlay}>
-        <View style={[pm.card, { borderColor: flavor.color + '88' }]}>
-          <Icon name={flavor.icon} size={48} color={flavor.color} style={{ marginBottom: SPACING.md }} />
-          <Text style={[pm.warning, { color: flavor.color }]}>⚠ AVISO DO SISTEMA ⚠</Text>
-          <Text style={pm.title}>{flavor.title}</Text>
-
-          {/* Intensity badge */}
-          <View style={[pm.badge, { borderColor: flavor.color + '55', backgroundColor: flavor.color + '15' }]}>
-            <Text style={[pm.badgeTxt, { color: flavor.color }]}>
-              INTENSIDADE: {intensityLabels[intensity]}
-            </Text>
-          </View>
-
-          <Text style={pm.message}>
-            {'Falhaste as Missões Diárias de ontem.\n\n'}
-            <Text style={{ color: '#e2e8f0', fontWeight: '700' }}>{failLine}</Text>
-            {'\n\n'}
-            <Text style={{ color: flavor.color, fontWeight: '900' }}>{xpLine}</Text>
-            {'\n\nCompleta as missões de penalização para escapar.'}
-          </Text>
-
-          <TouchableOpacity style={[pm.btn, { borderColor: flavor.color }]} onPress={onDismiss}>
-            <Text style={[pm.btnTxt, { color: flavor.color }]}>ENTENDIDO, HUNTER</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  )
-}
-
-// ── HUD ────────────────────────────────────────────────────────────────────────
-
-function SystemHUD({ onSettings, onRankPress }: { onSettings: () => void; onRankPress: () => void }) {
-  const player = useGameStore(s => s.player)
-  const stats = useGameStore(s => s.statistics)
-  const bosses = useGameStore(s => s.system.bossesDefeated)
-  const qualifiedRankInfo = getRank(player.level, stats.totalCompleted, bosses, stats.questsByRank)
-  
-  const playerRankLetter = player.rank || 'E'
-  const currentRankInfo = CLASS_REQUIREMENTS.find(r => r.rank === playerRankLetter) || CLASS_REQUIREMENTS[0]
-  
-  const currentIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank)
-  const qualifiedIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === qualifiedRankInfo.rank)
-  const canRankUp = qualifiedIdx > currentIdx
-  
-  const xpNeeded = xpForLevel(player.level)
-  const xpPct = Math.min((player.xp / xpNeeded) * 100, 100)
-  const focusOn = useGameStore(s => s.system.focusModeActive)
-
-  return (
-    <View style={hud.container}>
-      <View style={hud.row}>
-        <TouchableOpacity style={[hud.badge, { borderColor: currentRankInfo.color }]} onPress={onRankPress} activeOpacity={0.75}>
-          <Text style={[hud.badgeText, { color: currentRankInfo.color }]}>{currentRankInfo.rank}</Text>
-          {canRankUp && (
-            <View style={hud.rankUpIndicator}>
-              <Text style={hud.rankUpIndicatorText}>!</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-        <View style={hud.info}>
-          <View style={hud.nameRow}>
-            <Text style={hud.name} numberOfLines={1}>{player.name}</Text>
-            <Text style={hud.level}> LVL {player.level}</Text>
-            <View style={{ flex: 1 }} />
-            {/* Streak badge */}
-            {player.currentStreak > 0 && (
-              <View style={hud.streakBadge}>
-                <Text style={hud.streakFire}>🔥</Text>
-                <Text style={hud.streakNum}>{player.currentStreak}</Text>
-              </View>
-            )}
-            <Icon name="rhombus" size={12} color={C.gold} />
-            <Text style={hud.gold}> {player.gold.toLocaleString()}</Text>
-          </View>
-          <View style={hud.xpTrack}>
-            <View style={[hud.xpFill, { width: `${xpPct}%` as any }]} />
-          </View>
-          <View style={hud.xpRow}>
-            <Text style={hud.xpText}>{player.xp} / {xpNeeded} XP</Text>
-            {focusOn && (
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Icon name="lightning-bolt" size={9} color={C.neonBlue} />
-                <Text style={hud.focusTag}> FOCO</Text>
-              </View>
-            )}
-          </View>
-        </View>
-        {/* Settings gear */}
-        <TouchableOpacity onPress={onSettings} style={hud.gearBtn}>
-          <Icon name="cog-outline" size={18} color={C.dimmed} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
-}
-
-// ── Tab icon map ───────────────────────────────────────────────────────────────
 
 const TAB_ICONS: Record<string, string> = {
   'Status': 'sword-cross',
@@ -230,6 +65,9 @@ export default function App() {
   const statistics = useGameStore(s => s.statistics)
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated)
   const playerLevel = useGameStore(s => s.player.level)
+
+  // Register the midnight reset watcher
+  useDayWatcher()
 
   // Decide if tutorial should run
   const activeTutorialPhase = tutorialPhase === 0 ? 1 : (tutorialPhase === 1 && playerLevel >= 10 ? 2 : null)
@@ -340,11 +178,25 @@ export default function App() {
             {rewardsQueue[0].type === 'shadow' && (
               <ExtractionModal
                 result={{
-                  shadow: (SHADOW_MAP[rewardsQueue[0].id] || (useGameStore.getState().customShadows.find(cs => cs.id === rewardsQueue[0].id)))!, // fallback to custom if not in SHADOW_MAP
+                  shadow: (SHADOW_MAP[rewardsQueue[0].id] || (useGameStore.getState().customShadows.find(cs => cs.id === rewardsQueue[0].id)))!,
                   isLevelUp: !!rewardsQueue[0].isLevelUp,
                   newLevel: rewardsQueue[0].newLevel || 1
                 }}
                 onDismiss={popReward}
+              />
+            )}
+            {rewardsQueue[0].type === 'level_up' && (
+              <LevelUpRewardModal
+                reward={rewardsQueue[0].data}
+                onClose={popReward}
+                C={C}
+              />
+            )}
+            {rewardsQueue[0].type === 'job_change' && (
+              <JobChangeModal
+                job={rewardsQueue[0].data}
+                onClose={popReward}
+                C={C}
               />
             )}
           </Fragment>
@@ -358,12 +210,12 @@ export default function App() {
             bossesDefeated={bossesDefeated}
             questsByRank={statistics.questsByRank}
             onClose={() => setShowRankInfo(false)}
+            C={C}
           />
         )}
 
         {/* Settings screen */}
         {showSettings && <SettingsScreen onClose={() => setShowSettings(false)} />}
-        <LevelUpToast reward={levelUpReward} onDismiss={dismissLevelUpReward} />
 
         {/* Tutorial Overlay */}
         {activeTutorialPhase !== null && (
@@ -384,29 +236,6 @@ export default function App() {
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
-
-const hud = StyleSheet.create({
-  container: { backgroundColor: C.panel, borderBottomWidth: 1, borderBottomColor: C.border, paddingHorizontal: SPACING.md, paddingVertical: 10 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  badge: { width: 48, height: 48, borderRadius: 12, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  badgeText: { fontSize: 20, fontFamily: FONT.orbitron, fontWeight: '900' },
-  rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonRed, borderRadius: 10, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#fff' },
-  rankUpIndicatorText: { color: '#fff', fontSize: 11, fontFamily: FONT.orbitron, fontWeight: '900' },
-  info: { flex: 1 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  name: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', maxWidth: 120 },
-  level: { color: C.muted, fontSize: 11 },
-  gold: { color: C.gold, fontSize: 13, fontWeight: '700' },
-  xpTrack: { height: 5, backgroundColor: C.neonBlue + '18', borderRadius: 3, overflow: 'hidden' },
-  xpFill: { height: '100%', backgroundColor: C.neonBlue, borderRadius: 3 },
-  xpRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 },
-  xpText: { color: C.dimmed, fontSize: 9 },
-  focusTag: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  streakBadge: { flexDirection: 'row', alignItems: 'center', marginRight: 8, backgroundColor: '#1a0f0022', borderRadius: 6, paddingHorizontal: 4, paddingVertical: 1 },
-  streakFire: { fontSize: 11 },
-  streakNum: { color: '#f97316', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
-  gearBtn: { padding: 6, marginLeft: 4 },
-})
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -440,54 +269,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.5,
   },
-})
-
-const pm = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
-  card: { backgroundColor: '#0a0005', borderRadius: 4, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
-  warning: { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 3, marginBottom: SPACING.sm },
-  title: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.md },
-  badge: { borderWidth: 1, borderRadius: 2, paddingHorizontal: 10, paddingVertical: 4, marginBottom: SPACING.md },
-  badgeTxt: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, fontWeight: '700' },
-  message: { color: '#94a3b8', fontSize: 13, textAlign: 'center', lineHeight: 22, marginBottom: SPACING.xl },
-  btn: { borderWidth: 1, borderRadius: 4, paddingVertical: 14, paddingHorizontal: SPACING.xl },
-  btnTxt: { fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
-})
-
-const hrm = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: '#000000dd', alignItems: 'center', justifyContent: 'center', padding: 20 },
-  card: { width: '100%', backgroundColor: '#0a0f1a', borderRadius: 4, borderWidth: 1, padding: 16 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  headerTxt: { flex: 1, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
-  closeBtn: { padding: 4 },
-  divider: { height: 1, backgroundColor: '#1e293b', marginBottom: 12 },
-  row: { flexDirection: 'row', alignItems: 'center', borderRadius: 4, paddingVertical: 8, paddingHorizontal: 8, marginBottom: 6, gap: 10 },
-  badge: { width: 30, height: 30, borderRadius: 3, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
-  badgeTxt: { fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900' },
-  rowInfo: { flex: 1 },
-  rowLabel: { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
-  rowSub: { color: '#475569', fontSize: 10, marginTop: 1 },
-  currentTag: { borderWidth: 1, borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
-  currentTagTxt: { fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
-  nextSection: { flexDirection: 'row', alignItems: 'flex-start', marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#1e293b' },
-  nextTxt: { fontSize: 11, fontFamily: FONT.orbitron },
-  reqRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3, gap: 4 },
-  reqLabel: { flex: 1, color: '#475569', fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 0.5 },
-  reqVal: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
-  reqMet: { color: '#22c55e' },
-  reqFail: { color: '#ef4444' },
-})
-
-const am = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: '#000000ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
-  card: { backgroundColor: '#050810', borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
-  system: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3, marginBottom: 4 },
-  header: { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, marginBottom: SPACING.md },
-  iconWrap: { width: 88, height: 88, borderRadius: 22, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.md },
-  title: { fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm, textAlign: 'center' },
-  desc: { color: '#94a3b8', fontSize: 13, textAlign: 'center', lineHeight: 20, marginBottom: SPACING.lg },
-  rewardRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.xl },
-  reward: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900' },
-  btn: { borderWidth: 1, borderRadius: 10, paddingVertical: 14, paddingHorizontal: SPACING.xl },
-  btnTxt: { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 })

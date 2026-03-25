@@ -27,13 +27,15 @@ interface Props {
 export default function ExtractionModal({ result, onDismiss }: Props) {
   const C = useTheme()
   const st = React.useMemo(() => getStyles(C), [C])
-  const { shadow, isLevelUp, newLevel } = result
+  const shadow = result?.shadow
+  const isLevelUp = result?.isLevelUp
+  const newLevel = result?.newLevel
 
 
   const isCustom = (shadow as any).type === 'Custom'
-  const isAchievement = shadow.unlockMethod?.type === 'achievement'
-  const rankColor = isCustom ? '#a855f7' : (SHADOW_RANK_COLOR[shadow.rank as keyof typeof SHADOW_RANK_COLOR] ?? '#94a3b8')
-  const rankLabel = RANK_LABELS[shadow.rank] ?? shadow.rank.toUpperCase()
+  const isAchievement = shadow?.unlockMethod?.type === 'achievement'
+  const rankColor = isCustom ? C.purple : (SHADOW_RANK_COLOR[shadow?.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.text.secondary)
+  const rankLabel = RANK_LABELS[shadow?.rank] ?? shadow?.rank.toUpperCase()
 
   // Determine friendly origin label
   const originLabel = (() => {
@@ -172,7 +174,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
         {/* Level-up vs new soul reveal */}
         {isLevelUp ? (
           <View style={st.awakenBox}>
-            <Icon name="arrow-up-bold-circle" size={20} color='#facc15' style={{ marginBottom: 6 }} />
+            <Icon name="arrow-up-bold-circle" size={20} color={C.gold} style={{ marginBottom: 6 }} />
             <Text style={st.awakenTitle}>FRAGMENTOS ABSORVIDOS</Text>
             <Text style={st.awakenSub}>
               {shadow.name.toUpperCase()} SUBIU PARA O{'\n'}
@@ -213,13 +215,13 @@ const getStyles = (C: any) => StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: '#000000f0',
+    backgroundColor: C.surface.overlay,
     alignItems: 'center',
     justifyContent: 'center',
     padding: SPACING.lg,
   },
   card: {
-    backgroundColor: '#04020e',
+    backgroundColor: C.surface.elevated,
     borderRadius: 4,
     borderWidth: 2,
     width: '100%',
@@ -244,7 +246,7 @@ const getStyles = (C: any) => StyleSheet.create({
   },
 
   intro: {
-    color: '#e2e8f0',
+    color: C.muted,
     fontFamily: FONT.orbitron,
     fontSize: 12,
     letterSpacing: 3,
@@ -371,9 +373,9 @@ const getStyles = (C: any) => StyleSheet.create({
 
   awakenBox: {
     width: '100%',
-    backgroundColor: '#facc1508',
+    backgroundColor: C.state.warningBg,
     borderWidth: 1,
-    borderColor: '#facc1544',
+    borderColor: C.gold + '44',
     borderRadius: 6,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.md,
@@ -381,7 +383,7 @@ const getStyles = (C: any) => StyleSheet.create({
     marginBottom: SPACING.md,
   },
   awakenTitle: {
-    color: '#facc15',
+    color: C.gold,
     fontFamily: FONT.orbitron,
     fontSize: 11,
     letterSpacing: 3,
@@ -395,7 +397,7 @@ const getStyles = (C: any) => StyleSheet.create({
     lineHeight: 20,
   },
   awakenLevel: {
-    color: '#facc15',
+    color: C.gold,
     fontFamily: FONT.orbitron,
     fontSize: 22,
     fontWeight: '900',
@@ -455,7 +457,7 @@ const getStyles = (C: any) => StyleSheet.create({
     fontSize: 52,
     fontWeight: '900',
     letterSpacing: 15,
-    textShadowColor: '#000',
+    textShadowColor: C.bg,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 20,
   },
@@ -465,7 +467,7 @@ const getStyles = (C: any) => StyleSheet.create({
     marginVertical: 10,
   },
   ariseSubTxt: {
-    color: '#fff',
+    color: C.muted,
     fontFamily: FONT.orbitron,
     fontSize: 8,
     letterSpacing: 4,

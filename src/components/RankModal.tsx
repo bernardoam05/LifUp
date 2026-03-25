@@ -68,7 +68,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
           <Text style={[s.headerTxt, { color: displayRank.color }]}> [ CLASSIFICAÇÃO DO CAÇADOR ]</Text>
           {!isRankingUp && (
             <TouchableOpacity onPress={onClose} style={s.closeBtn}>
-              <Icon name="close" size={16} color="#64748b" />
+              <Icon name="close" size={16} color={C.dimmed} />
             </TouchableOpacity>
           )}
         </View>
@@ -98,7 +98,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
                     <Text style={[s.badgeTxt, { color: r.color }]}>{r.rank}</Text>
                   </View>
                   <View style={s.rowInfo}>
-                    <Text style={[s.rowLabel, { color: isCurrent ? r.color : (met ? '#e2e8f0' : '#64748b') }]}>{r.label}</Text>
+                    <Text style={[s.rowLabel, { color: isCurrent ? r.color : (met ? C.muted : C.dimmed) }]}>{r.label}</Text>
                     {r.minMissions > 0 ? (
                       <>
                         <View style={s.reqRow}>
@@ -145,24 +145,25 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
             })}
 
             {canRankUp ? (
-              <Animated.View style={[s.rankUpAction, { 
-                borderColor: qualifiedRankInfo.color,
-                shadowColor: qualifiedRankInfo.color,
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: glowAnim,
-                shadowRadius: glowAnim.interpolate({ inputRange: [0, 1], outputRange: [2, 10] }),
-                elevation: glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 10] }),
-              }]}>
+              <View style={[s.rankUpAction, { borderColor: qualifiedRankInfo.color }]}>
                 <Text style={s.warningText}>⚠ AVISO GERAL: Subir de classe vai aumentar a dificuldade das missões sugeridas.</Text>
-                <TouchableOpacity style={[s.rankUpBtn, { backgroundColor: qualifiedRankInfo.color }]} onPress={handleRankUp}>
-                  <Text style={[s.rankUpBtnTxt, { color: '#000' }]}>SUBIR PARA O RANK {qualifiedRankInfo.rank}</Text>
-                </TouchableOpacity>
-              </Animated.View>
+                <Animated.View style={{
+                  shadowColor: qualifiedRankInfo.color,
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: glowAnim,
+                  shadowRadius: glowAnim.interpolate({ inputRange: [0, 1], outputRange: [2, 10] }),
+                  elevation: glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 10] }),
+                }}>
+                  <TouchableOpacity style={[s.rankUpBtn, { backgroundColor: qualifiedRankInfo.color }]} onPress={handleRankUp}>
+                    <Text style={[s.rankUpBtnTxt, { color: C.bg }]}>SUBIR PARA O RANK {qualifiedRankInfo.rank}</Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              </View>
             ) : (
               <View style={s.nextSection}>
                 <Icon name="arrow-up-bold" size={11} color="#475569" />
                 <View style={{ flex: 1, marginLeft: 4 }}>
-                  <Text style={[s.nextTxt, { color: '#64748b' }]}>Continua a treinar para alcançar a próxima classe.</Text>
+                  <Text style={[s.nextTxt, { color: C.dimmed }]}>Continua a treinar para alcançar a próxima classe.</Text>
                 </View>
               </View>
             )}
@@ -204,6 +205,6 @@ const getStyles = (C: any) => StyleSheet.create({
   
   rankUpContainer: { alignItems: 'center', paddingVertical: 32 },
   rankUpTitle: { fontFamily: FONT.orbitron, fontSize: 24, fontWeight: '900', letterSpacing: 2, marginBottom: 8 },
-  rankUpText: { color: '#e2e8f0', fontSize: 14, fontFamily: FONT.orbitron },
+  rankUpText: { color: C.muted, fontSize: 14, fontFamily: FONT.orbitron },
 })
 

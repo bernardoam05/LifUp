@@ -168,7 +168,7 @@ const getStyles = (C: any) => StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
   iconWrap: { width: 36, height: 36, borderRadius: 4, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   info: { flex: 1 },
-  label: { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 4 },
+  label: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 4 },
   metaRow: { flexDirection: 'row', alignItems: 'center' },
   meta: { color: C.dimmed, fontSize: 11 },
   note: { color: C.dimmed, fontSize: 10, fontStyle: 'italic', marginTop: 3 },
@@ -185,7 +185,7 @@ const getStyles = (C: any) => StyleSheet.create({
   historyItemBorder: { borderBottomWidth: 1, borderBottomColor: C.border + '55' },
   historyHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
   historyDate: { color: C.dimmed, fontSize: 11, fontFamily: FONT.orbitron },
-  historyTime: { color: '#e2e8f0', fontSize: 11, fontFamily: FONT.orbitron },
+  historyTime: { color: C.muted, fontSize: 11, fontFamily: FONT.orbitron },
   historyNote: { color: C.muted, fontSize: 12, fontStyle: 'italic', lineHeight: 18 },
   emptyHistory: { color: C.dimmed, fontSize: 11, textAlign: 'center', padding: SPACING.md, fontStyle: 'italic' },
 })

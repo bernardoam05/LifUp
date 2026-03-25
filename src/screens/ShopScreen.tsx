@@ -4,9 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore from '../store/useGameStore'
 import { SHOP_CATALOG, ShopItem } from '../data/shopItems'
-import { SHADOW_SHOP, SHADOW_RANK_COLOR } from '../data/shadows'
-import type { Shadow } from '../data/shadows'
 import CustomModal from '../components/CustomModal'
+import ShadowShopModal from '../components/ShadowShopModal'
 import { useTheme, FONT, SPACING } from '../theme'
 
 
@@ -86,57 +85,21 @@ function ItemCard({
 
 // ── Shadow card ────────────────────────────────────────────────────────────────
 
-function ShadowCard({
-  shadow,
-  gold,
-  owned,
-  onBuy,
-  C,
-}: {
-  shadow: Shadow
-  gold: number
-  owned: boolean   // already in army?
-  onBuy: () => void
-  C: any
-}) {
+// ── Shadow Section Banner ─────────────────────────────────────────────────────
 
-  const sc = getSCStyles(C)
-
-  const rankColor = SHADOW_RANK_COLOR[shadow.rank as keyof typeof SHADOW_RANK_COLOR] ?? '#94a3b8'
-  const cost = SHADOW_RANK_COST[shadow.rank] ?? 500
-  const canAfford = gold >= cost
-
+function ShadowRecruitmentGate({ onPress, C }: { onPress: () => void; C: any }) {
+  const s = getGateStyles(C)
   return (
-    <View style={[sc.card, { borderColor: rankColor + '44' }]}>
-      <View style={[sc.iconWrap, { backgroundColor: rankColor + '18' }]}>
-        <Icon name={shadow.icon} size={28} color={rankColor} />
+    <TouchableOpacity style={s.gate} onPress={onPress}>
+      <View style={s.iconWrap}>
+        <Icon name="ghost" size={32} color="#a855f7" />
       </View>
-      <View style={sc.info}>
-        <View style={sc.nameRow}>
-          <Text style={[sc.name, { color: rankColor }]}>{shadow.name}</Text>
-          <View style={[sc.rankTag, { borderColor: rankColor + '66' }]}>
-            <Text style={[sc.rankTxt, { color: rankColor }]}>{shadow.rank.toUpperCase()}</Text>
-          </View>
-        </View>
-        <Text style={sc.passive} numberOfLines={2}>{shadow.passiveEffect?.description ?? ''}</Text>
-        {owned && <Text style={sc.ownedTxt}>✔ No teu exército  (nível +1 ao comprar)</Text>}
+      <View style={s.info}>
+        <Text style={s.title}>RECRUTAMENTO DE SOMBRAS</Text>
+        <Text style={s.subtitle}>Liberta o poder das trevas por um preço em Gold.</Text>
       </View>
-      <View style={sc.buyCol}>
-        <View style={sc.costRow}>
-          <Icon name="rhombus" size={12} color={canAfford ? C.gold : C.dimmed} />
-          <Text style={[sc.cost, !canAfford && { color: C.dimmed }]}> {cost}</Text>
-        </View>
-        <TouchableOpacity
-          style={[sc.buyBtn, { borderColor: rankColor }, !canAfford && sc.buyBtnDisabled]}
-          onPress={onBuy}
-          disabled={!canAfford}
-        >
-          <Text style={[sc.buyTxt, { color: canAfford ? rankColor : C.dimmed }]}>
-            {canAfford ? (owned ? 'NÍVEL UP' : 'RECRUTAR') : 'SEM GOLD'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      <Icon name="chevron-right" size={24} color={C.dimmed} />
+    </TouchableOpacity>
   )
 }
 
@@ -152,7 +115,8 @@ export default function ShopScreen() {
   const purchaseShadow = useGameStore(s => s.purchaseShadow)
 
   const [pending, setPending] = useState<ShopItem | null>(null)
-  const [pendingShadow, setPendingShadow] = useState<Shadow | null>(null)
+  const [pendingShadow, setPendingShadow] = useState<any | null>(null)
+  const [showShadowModal, setShowShadowModal] = useState(false)
   const [lastBought, setLastBought] = useState<string | null>(null)
 
   function confirmBuy() {
@@ -164,7 +128,7 @@ export default function ShopScreen() {
 
   function confirmBuyShadow() {
     if (!pendingShadow) return
-    const cost = SHADOW_RANK_COST[pendingShadow.rank] ?? 500
+    const cost = pendingShadow.unlockMethod.price
     const ok = purchaseShadow(pendingShadow.id, cost)
     if (ok) setLastBought(pendingShadow.id)
     setPendingShadow(null)
@@ -214,7 +178,7 @@ export default function ShopScreen() {
         {/* ── Shadow Section ── */}
         <View style={s.sectionHeader}>
           <Icon name="ghost" size={14} color="#a855f7" />
-          <Text style={[s.sectionTitle, { color: '#a855f7' }]}> SOMBRAS ÚNCAS</Text>
+          <Text style={[s.sectionTitle, { color: '#a855f7' }]}> EXÉRCITO DISPONÍVEL</Text>
         </View>
 
         {player.level < 10 ? (
@@ -223,17 +187,10 @@ export default function ShopScreen() {
             <Text style={s.lockedTxt}>  Desbloqueado após atingir Nível 10</Text>
           </View>
         ) : (
-          SHADOW_SHOP.map(shadow => (
-            <ShadowCard
-              key={shadow.id}
-              shadow={shadow}
-              gold={player.gold}
-              owned={player.shadows.some(e => e.id === shadow.id)}
-              onBuy={() => setPendingShadow(shadow)}
-              C={C}
-            />
-
-          ))
+          <ShadowRecruitmentGate
+            C={C}
+            onPress={() => setShowShadowModal(true)}
+          />
         )}
 
       </ScrollView>
@@ -259,17 +216,30 @@ export default function ShopScreen() {
       {/* Shadow purchase modal */}
       <CustomModal
         visible={!!pendingShadow}
-        title="RECRUTAR SOMBRA"
+        title={player.shadows.some(e => e.id === pendingShadow?.id) ? "EVOLUIR SOMBRA" : "RECRUTAR SOMBRA"}
         message={
           pendingShadow
-            ? `Recrutar "${pendingShadow.name}" por ${SHADOW_RANK_COST[pendingShadow.rank] ?? 500} Gold?\n\n${pendingShadow.passiveEffect?.description ?? ''}`
+            ? `Confirmar ${player.shadows.some(e => e.id === pendingShadow?.id) ? 'evolução' : 'recrutamento'} de "${pendingShadow.name}" por ${pendingShadow.unlockMethod.price} Gold?\n\n${pendingShadow.passiveEffect?.description ?? ''}`
             : ''
         }
-        confirmLabel="RECRUTAR"
+        confirmLabel="CONFIRMAR"
         confirmIcon="ghost"
         confirmColor="#a855f7"
         onConfirm={confirmBuyShadow}
         onCancel={() => setPendingShadow(null)}
+        C={C}
+      />
+
+      {/* Shadow Shop Modal */}
+      <ShadowShopModal
+        visible={showShadowModal}
+        onClose={() => setShowShadowModal(false)}
+        playerGold={player.gold}
+        ownedShadowIds={player.shadows.map(sh => sh.id)}
+        onBuy={(sh) => {
+          setPendingShadow(sh)
+          setShowShadowModal(false)
+        }}
         C={C}
       />
 
@@ -297,22 +267,12 @@ const getStyles = (C: any) => StyleSheet.create({
   lockedTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
 })
 
-const getSCStyles = (C: any) => StyleSheet.create({
-  card: { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'flex-start' },
-  iconWrap: { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+const getGateStyles = (C: any) => StyleSheet.create({
+  gate: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: '#a855f744', padding: SPACING.md, gap: SPACING.md },
+  iconWrap: { width: 56, height: 56, borderRadius: 14, backgroundColor: '#a855f718', alignItems: 'center', justifyContent: 'center' },
   info: { flex: 1 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: 3, flexWrap: 'wrap' },
-  name: { fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700' },
-  rankTag: { borderWidth: 1, borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1 },
-  rankTxt: { fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
-  passive: { color: '#94a3b8', fontSize: 11, lineHeight: 16, marginBottom: 3 },
-  ownedTxt: { color: C.green, fontSize: 10, fontFamily: FONT.orbitron, marginTop: 2 },
-  buyCol: { alignItems: 'flex-end', gap: SPACING.sm, flexShrink: 0 },
-  costRow: { flexDirection: 'row', alignItems: 'center' },
-  cost: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900' },
-  buyBtn: { borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.sm, paddingVertical: 6 },
-  buyBtnDisabled: { opacity: 0.4 },
-  buyTxt: { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  title: { color: '#a855f7', fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', marginBottom: 2 },
+  subtitle: { color: C.muted, fontSize: 10, lineHeight: 14 },
 })
 
 const getICStyles = (C: any) => StyleSheet.create({
@@ -324,7 +284,7 @@ const getICStyles = (C: any) => StyleSheet.create({
   name: { fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700' },
   stockBadge: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 2 },
   stockTxt: { fontFamily: FONT.orbitron, fontSize: 8 },
-  desc: { color: '#94a3b8', fontSize: 12, lineHeight: 17, marginBottom: 3 },
+  desc: { color: C.muted, fontSize: 12, lineHeight: 17, marginBottom: 3 },
   lore: { color: C.dimmed, fontSize: 10, fontStyle: 'italic', lineHeight: 15 },
   buyCol: { alignItems: 'flex-end', gap: SPACING.sm, flexShrink: 0 },
   costRow: { flexDirection: 'row', alignItems: 'center' },

@@ -246,7 +246,7 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
 const getStyles = (C: any) => StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: '#000000dd', justifyContent: 'flex-end' },
+  overlay: { flex: 1, backgroundColor: C.bg + 'dd', justifyContent: 'flex-end' },
   scroll: { flexGrow: 1, justifyContent: 'flex-end', width: '100%' },
 
   card: {
@@ -264,7 +264,7 @@ const getStyles = (C: any) => StyleSheet.create({
   headerTxt: { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
   closeBtn: { padding: 4 },
 
-  questLabel: { color: '#e2e8f0', fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900', letterSpacing: 1, marginBottom: 4 },
+  questLabel: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900', letterSpacing: 1, marginBottom: 4 },
   questDetail: { color: C.muted, fontSize: 12, lineHeight: 18, marginBottom: SPACING.md },
 
   recordRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '33', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.md },
@@ -287,7 +287,7 @@ const getStyles = (C: any) => StyleSheet.create({
   notesSection: { marginBottom: SPACING.lg },
   notesHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
   notesLabel: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  notesInput: { backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 4, padding: SPACING.sm, color: '#e2e8f0', fontSize: 13, minHeight: 72, lineHeight: 20 },
+  notesInput: { backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 4, padding: SPACING.sm, color: C.muted, fontSize: 13, minHeight: 72, lineHeight: 20 },
 
   completeBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.neonBlue, borderRadius: 4, paddingVertical: 16, marginBottom: SPACING.sm },
   completeTxt: { color: C.bg, fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '900', letterSpacing: 2 },

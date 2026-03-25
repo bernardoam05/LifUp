@@ -6,6 +6,7 @@ export type ItemEffect =
   | 'xp_boost_next'
   | 'break_hardcore'
   | 'open_loot_box'
+  | 'material'
   | 'cosmetic'
 
 export type ShopItem = {

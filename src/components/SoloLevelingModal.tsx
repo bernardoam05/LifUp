@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useTheme } from '../theme'
 
 export interface SoloLevelingModalProps extends ModalProps {
   children: React.ReactNode
@@ -34,21 +35,14 @@ export interface SoloLevelingModalProps extends ModalProps {
  * NOTE: The overlay is always truly full-width (no left/right inset shrinking).
  * Only top/bottom insets are applied to the content wrapper.
  */
-export default function SoloLevelingModal({
-  children,
-  contentStyle,
-  dimmed = false,
-  slide = false,
-  bottomOffset = 0,
-  noPadding = false,
-  useNativeModal = true,
-  ...props
-}: SoloLevelingModalProps) {
+export default function SoloLevelingModal({ children, contentStyle, dimmed, slide, useNativeModal = true, bottomOffset = 0, noPadding = false, ...modalProps }: SoloLevelingModalProps) {
+  const C = useTheme()
   const insets = useSafeAreaInsets()
+  const s = getStyles(C)
 
   const content = (
     <View style={[s.overlay, dimmed && s.overlayDimmed]} pointerEvents="box-none">
-      <TouchableWithoutFeedback onPress={props.onRequestClose}>
+      <TouchableWithoutFeedback onPress={modalProps.onRequestClose}>
         <View style={StyleSheet.absoluteFill} />
       </TouchableWithoutFeedback>
       {/* Content wrapper gets top/bottom padding for safe area */}
@@ -66,7 +60,7 @@ export default function SoloLevelingModal({
   )
 
   if (!useNativeModal) {
-    if (!props.visible) return null
+    if (!modalProps.visible) return null
     return (
       <View style={[StyleSheet.absoluteFill, { zIndex: 9999 }]} pointerEvents="box-none">
         {content}
@@ -79,17 +73,17 @@ export default function SoloLevelingModal({
       transparent
       animationType={slide ? 'slide' : 'fade'}
       statusBarTranslucent
-      {...props}
+      {...modalProps}
     >
       {content}
     </Modal>
   )
 }
 
-const s = StyleSheet.create({
+const getStyles = (C: any) => StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: '#000000cc',
+    backgroundColor: C.surface.overlay,
     justifyContent: 'center',
     alignItems: 'center',
   },

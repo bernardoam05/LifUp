@@ -138,7 +138,7 @@ function AppSelectorOverlay({
 
       {/* ── Search bar ────────────────────────────────────────────────────── */}
       <View style={ov.searchRow}>
-        <Icon name="magnify" size={16} color="#64748b" />
+        <Icon name="magnify" size={16} color={C.dimmed} />
         <TextInput
           style={ov.searchInput}
           value={search}
@@ -150,14 +150,14 @@ function AppSelectorOverlay({
         />
         {search.length > 0 && (
           <TouchableOpacity onPress={() => setSearch('')}>
-            <Icon name="close-circle" size={16} color="#64748b" />
+            <Icon name="close-circle" size={16} color={C.dimmed} />
           </TouchableOpacity>
         )}
         <TouchableOpacity 
           style={[ov.filterBtn, showOnlySelected && ov.filterBtnActive]} 
           onPress={() => setShowOnlySelected(!showOnlySelected)}
         >
-          <Icon name="filter-variant" size={16} color={showOnlySelected ? C.neonBlue : '#64748b'} />
+          <Icon name="filter-variant" size={16} color={showOnlySelected ? C.neonBlue : C.dimmed} />
         </TouchableOpacity>
         <TouchableOpacity style={ov.reloadBtn} onPress={loadApps} disabled={loading}>
           <Icon name="reload" size={15} color={loading ? '#334155' : C.neonBlue} />
@@ -197,7 +197,7 @@ function AppSelectorOverlay({
               <Icon name="eye-off-outline" size={32} color="#334155" />
               <Text style={ov.emptyTxt}>Nenhuma app encontrada.</Text>
               <TouchableOpacity style={ov.forceScanBtn} onPress={loadApps}>
-                <Icon name="radar" size={18} color="#FFFFFF" />
+                <Icon name="radar" size={18} color={C.muted} />
                 <Text style={ov.forceScanTxt}> FORÇAR VARRAGEM DE TERRITÓRIO</Text>
               </TouchableOpacity>
             </View>
@@ -658,7 +658,7 @@ export default function FocusScreen() {
         <TouchableOpacity style={s.appSelectorBtn} onPress={() => setShowAppOverlay(true)}>
           <Icon name="shield-lock-outline" size={16} color={selectedCount > 0 ? C.neonBlue : C.muted} />
           <View style={{ flex: 1 }}>
-            <Text style={[s.appSelectorTxt, selectedCount > 0 && { color: '#FFFFFF' }]}>
+            <Text style={[s.appSelectorTxt, selectedCount > 0 && { color: C.muted }]}>
               {selectedCount > 0
                 ? `${selectedCount} app${selectedCount !== 1 ? 's' : ''} configurada${selectedCount !== 1 ? 's' : ''}`
                 : 'Nenhuma app configurada'}
@@ -801,7 +801,7 @@ const getStyles = (C: any) => StyleSheet.create({
   durPicker:     { alignItems: 'center', gap: 4 },
   durPickerBtn:  { paddingHorizontal: SPACING.md, paddingVertical: 4 },
   durPickerArrow:{ color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11 },
-  durPickerVal:   { color: '#fff', fontFamily: FONT.orbitron, fontSize: 32, fontWeight: '900', letterSpacing: 2, minWidth: 54, textAlign: 'center' },
+  durPickerVal:   { color: C.muted, fontFamily: FONT.orbitron, fontSize: 32, fontWeight: '900', letterSpacing: 2, minWidth: 54, textAlign: 'center' },
   durPickerInput: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 32, fontWeight: '900', letterSpacing: 2, minWidth: 54, textAlign: 'center', borderBottomWidth: 1, borderBottomColor: C.neonBlue },
   durPickerLabel:{ color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10 },
   durSep:        { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 28, fontWeight: '900', marginBottom: 12 },
@@ -905,7 +905,7 @@ const getOVStyles = (C: any) => StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    color: '#FFFFFF',
+    color: C.muted,
     fontSize: 14,
     paddingVertical: 0,
   },
@@ -986,7 +986,7 @@ const getOVStyles = (C: any) => StyleSheet.create({
     marginTop: 8,
   },
   forceScanTxt: {
-    color: '#FFFFFF',
+    color: C.muted,
     fontFamily: FONT.orbitron,
     fontSize: 11,
     fontWeight: '700',
@@ -1015,7 +1015,7 @@ const getOVStyles = (C: any) => StyleSheet.create({
     fontSize: 14,
   },
   rowLabelActive: {
-    color: '#FFFFFF',
+    color: C.muted,
     fontWeight: '600',
   },
   rowPkg: {
@@ -1043,7 +1043,7 @@ const getOVStyles = (C: any) => StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    color: '#FFFFFF',
+    color: C.muted,
     fontSize: 13,
   },
   addBtn: {

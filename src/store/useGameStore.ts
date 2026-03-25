@@ -1,1934 +1,91 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { NativeModules, Vibration } from 'react-native'
-import { scheduleSystemWarnings, cancelSystemWarnings } from '../utils/notifications'
-import { ACHIEVEMENTS_CATALOG, ACHIEVEMENTS_MAP, type EventTrigger, type AchievementProg, type AchievementTier } from '../data/achievements'
-import type { Shadow, PassiveEffectType, ShadowRank } from '../data/shadows'
-import { SHADOW_MAP, SHADOW_BY_ACHIEVEMENT, rollShadow } from '../data/shadows'
-import { RAID_BOSSES, type RaidBossRank } from '../data/bosses'
-import { LEVEL_GATED_KEYS, BOX_KEYS, ALL_DUNGEON_KEYS } from '../data/dungeonKeys'
-import { APP_THEMES } from '../data/themes'
+import { Vibration } from 'react-native'
+
+// Native Modules / Storage
 import SharedStorage from '../native/SharedStorage'
+import { scheduleSystemWarnings, cancelSystemWarnings } from '../utils/notifications'
 
-const { WidgetStorage } = NativeModules as {
-  WidgetStorage?: { setStreak: (streak: number) => void }
+// Sub-modules (Newly created)
+import type { 
+  GameState, GameActions, Player, Quest, SideQuest, RankKey, SystemState,
+  InventoryEntry, ShadowEntry, LevelUpReward, TriggerPayload, StoreRef 
+} from './types'
+import { INITIAL_PLAYER, INITIAL_STATS, INITIAL_SETTINGS, INITIAL_SHOP_STOCKS } from './types'
+
+import { 
+  xpForLevel, getRank, applyXP, attrLevelFromXP, getAttrXpBoost, 
+  getNewLevelKeys, getMondayDateString, seededPick, computeActivePassives, 
+  pickExtractionRank, getShadowReleaseGold, computePunishment, pickPenaltyQuests,
+  getQuestTier, TIER_MULT, hadJobClassChange
+} from './helpers'
+
+import { 
+  createDailyQuests, defToQuest, INITIAL_QUEST_DICTIONARY, 
+  generateSideQuestReward, getCustomShadowPassive, PENALTY_QUEST_POOL,
+  getDailyMissionTarget, BOX_KEYS,
+  isWeeklyBossDefinition, isPortalBossDefinition,
+} from './questDictionary'
+
+import { 
+  fireEvent, checkAndUnlockAchievements, progressAchievements 
+} from './achievements'
+import { CATALOG_MAP } from '../data/shopItems'
+
+// Data / Types needed locally
+import { SHADOW_MAP, rollShadow, getBossDropShadow } from '../data/shadows'
+import type { Shadow, ShadowRank } from '../data/shadows'
+import { RAID_BOSSES } from '../data/bosses'
+import type { RaidBossRank } from '../data/bosses'
+
+// ── Re-exports for project-wide compatibility ──────────────────────────────────
+export * from './types'
+export * from './helpers'
+export * from './questDictionary'
+export * from './achievements'
+
+// ── Initial States ─────────────────────────────────────────────────────────────
+const INITIAL_SYSTEM: Omit<SystemState, 'weeklyBossIds' | 'normalBossIds' | 'normalBossRotationDate' | 'weeklyResetDate' | 'bossDefeatedThisWeek' | 'weeklyDefeatedBossId' | 'extractionDoneToday' | 'completedNormalBossIds'> = {
+  focusModeActive: false,
+  hardcoreFocusMode: false,
+  hardcorePunished: false,
+  xpBoostNext: false,
+  hasPenalty: false,
+  penaltyReduced: false,
+  penaltyTriggered: false,
+  penaltyQuests: [],
+  blockedApps: [],
+  weeklyTrainingCount: 0,
+  weeklyRegenCount: 0,
+  bossesDefeated: 0,
+  shopStocks: { ...INITIAL_SHOP_STOCKS },
+  blockedAttemptTimestamps: [],
+  penaltyBlockEnd: 0,
+  eventBossKey: '',
+  eventBossCompletedIds: [],
+  eventBossRequired: 0,
+  eventBossTotal: 0,
+  eventBossDefeated: false,
+  tutorialPhase: 0,
+  activeRaidBoss: null,
+  consecutiveFails: 0,
+  penaltyMissionsOwed: 0,
+  activeDungeonBreak: null,
 }
 
-// ── XP / Rank helpers ──────────────────────────────────────────────────────────
-
-export function xpForLevel(level: number): number {
-  return 100 * level
-}
-
-type ClassReq = {
-  rank: RankLetter
-  label: string
-  color: string
-  minLevel: number
-  minMissions: number
-  minBosses: number
-  /** Missions completed while at the *previous* rank (0 = no requirement) */
-  minRankMissions: number
-  /** The rank whose questsByRank counter is checked for minRankMissions */
-  prevRank?: RankLetter
-}
-export type RankLetter = 'E' | 'D' | 'C' | 'B' | 'A' | 'S' | 'National'
-
-export const CLASS_REQUIREMENTS: ClassReq[] = [
-  { rank: 'E', label: 'E-Rank', color: '#94a3b8', minLevel: 1, minMissions: 0, minBosses: 0, minRankMissions: 0 },
-  { rank: 'D', label: 'D-Rank', color: '#22c55e', minLevel: 10, minMissions: 50, minBosses: 3, minRankMissions: 0 },
-  { rank: 'C', label: 'C-Rank', color: '#3b82f6', minLevel: 25, minMissions: 150, minBosses: 15, minRankMissions: 10, prevRank: 'D' },
-  { rank: 'B', label: 'B-Rank', color: '#a855f7', minLevel: 40, minMissions: 300, minBosses: 30, minRankMissions: 20, prevRank: 'C' },
-  { rank: 'A', label: 'A-Rank', color: '#f59e0b', minLevel: 60, minMissions: 500, minBosses: 60, minRankMissions: 30, prevRank: 'B' },
-  { rank: 'S', label: 'S-Rank', color: '#ef4444', minLevel: 80, minMissions: 1000, minBosses: 100, minRankMissions: 50, prevRank: 'A' },
-]
-
-export function getRank(
-  level: number,
-  totalCompleted?: number,
-  bossesDefeated?: number,
-  questsByRank?: Partial<Record<RankLetter, number>>,
-) {
-  if (totalCompleted !== undefined && bossesDefeated !== undefined) {
-    const met = CLASS_REQUIREMENTS.filter(r => {
-      if (level < r.minLevel) return false
-      if (totalCompleted < r.minMissions) return false
-      if (bossesDefeated < r.minBosses) return false
-      if (r.minRankMissions > 0 && r.prevRank && questsByRank) {
-        const rankCount = questsByRank[r.prevRank] ?? 0
-        if (rankCount < r.minRankMissions) return false
-      }
-      return true
-    })
-    return met.length > 0 ? met[met.length - 1] : CLASS_REQUIREMENTS[0]
-  }
-  return [...CLASS_REQUIREMENTS].reverse().find(r => level >= r.minLevel) ?? CLASS_REQUIREMENTS[0]
-}
-
-function getQuestTier(level: number): 'E' | 'D' | 'C' | 'S' {
-  if (level >= 60) return 'S'
-  if (level >= 25) return 'C'
-  if (level >= 10) return 'D'
-  return 'E'
-}
-
-// ── Quest & SideQuest types ────────────────────────────────────────────────────
-
-export type Quest = {
-  id: string
-  label: string
-  detail: string
-  xp: number
-  gold: number
-  type: 'training' | 'knowledge' | 'focus' | 'gps' | 'forbidden' | 'limit'
-  failed?: boolean
-  currentValue?: number
-  targetValue?: number
-  done: boolean
-  focusDuration?: number
-  gpsTarget?: number
-  xpGained?: number
-  goldGained?: number
-  rank?: RankKey  // intrinsic quest difficulty — set at creation time
-}
-
-export type SideQuest = {
-  id: string
-  title: string
-  rank: 'E' | 'D' | 'C'
-  xp: number
-  gold: number
-  done: boolean
-  createdDate: string
-  xpGained?: number
-  goldGained?: number
-  // New: persistence and timer
-  startTime?: number // Epoch ms
-  duration?: number // Seconds
-  note?: string
-}
-
-export type PunishmentIntensity = 'light' | 'medium' | 'hardcore'
-export type MissionDifficulty = 'easy' | 'normal' | 'hard'
-
-export type GameSettings = {
-  notifications: boolean
-  sound: boolean
-  punishmentIntensity: PunishmentIntensity
-  missionDifficulty: MissionDifficulty
-  restDay: boolean   // user-activated rest day for today
-  lastFocusDuration: { hours: number; minutes: number }
-  dynamicTheme: boolean // Rank-based theme colors
-}
-
-const INITIAL_SETTINGS: GameSettings = {
-  notifications: true,
-  sound: true,
-  punishmentIntensity: 'medium',
-  missionDifficulty: 'normal',
-  restDay: false,
-  lastFocusDuration: { hours: 0, minutes: 25 },
-  dynamicTheme: true,
-}
-
-// ── Shadow entry (owned shadow with level) ────────────────────────────────────
-
-export type ShadowEntry = {
-  id: string
-  level: number
-  isFavorite?: boolean
-}
-
-// ── Quest Definition (user-editable) ──────────────────────────────────────────
-// {target} and {unit} are optional placeholders in `description`
-
-export type QuestDefinition = {
-  id: string
-  title: string
-  description: string
-  type: 'core' | 'pool' | 'boss'
-  questType: Quest['type']
-  isDescending?: boolean
-  baseTarget: number
-  /** How much target increases per interval */
-  scalingAmount: number
-  /** Every how many levels the target increases (default 1) */
-  scalingInterval: number
-  /** @deprecated use scalingAmount + scalingInterval */
-  scalingPerLevel?: number
-  unit: string
-  baseXP: number
-  baseGold: number
-  daysOfWeek?: number[]   // 0=Sun … 6=Sat; undefined = all days
-  // Explicit difficulty rank override (auto-derived from XP if absent)
-  rank?: RankKey
-  // Boss-only fields
-  bossClass?: 'A' | 'S' | 'Event' | 'Raid'
-  shadowName?: string
-  shadowIcon?: string
-  dropShadowId?: string
-}
-
-// ── Daily quest generation ─────────────────────────────────────────────────────
-
-const TIER_MULT: Record<string, number> = { E: 1, D: 1.5, C: 2.3, S: 3.5 }
-
-/** Derive a quest's intrinsic difficulty rank from its base XP value. */
-export function rankFromXP(xp: number): RankKey {
-  if (xp >= 500) return 'S'
-  if (xp >= 200) return 'A'
-  if (xp >= 80) return 'B'
-  if (xp >= 50) return 'C'
-  if (xp >= 30) return 'D'
-  return 'E'
-}
-
-// Seeded Fisher-Yates pick — returns `count` unique indices from [0, poolSize)
-function seededPick(count: number, poolSize: number, seed: number): number[] {
-  if (poolSize === 0 || count === 0) return []
-  const arr = Array.from({ length: poolSize }, (_, i) => i)
-  let s = seed
-  for (let i = poolSize - 1; i > 0; i--) {
-    s = (s * 1664525 + 1013904223) & 0x7fffffff
-    const j = s % (i + 1);
-    [arr[i], arr[j]] = [arr[j], arr[i]]
-  }
-  return arr.slice(0, Math.min(count, poolSize))
-}
-
-// ── Default quest dictionary (shipped with the game) ──────────────────────────
-
-export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
-  // ── CORE (always appear when daysOfWeek matches) ───────────────────────────
-  {
-    id: 'core_forca_bruta', title: 'Força Bruta',
-    description: '{target} push-ups + {target} squats',
-    type: 'core', questType: 'training',
-    baseTarget: 20, scalingAmount: 2, scalingInterval: 1, unit: 'reps',
-    baseXP: 40, baseGold: 10,
-    daysOfWeek: [1, 2, 3, 4, 5],
-  },
-  {
-    id: 'core_expansao_mental', title: 'Expansão Mental',
-    description: 'Khan Academy / Wikipedia / Leitura — {target} min',
-    type: 'core', questType: 'focus',
-    baseTarget: 30, scalingAmount: 2, scalingInterval: 1, unit: 'min',
-    baseXP: 35, baseGold: 14,
-  },
-  // ── POOL (randomly rotated each day) ─────────────────────────────────────
-  {
-    id: 'h1', title: 'Resistência Térmica',
-    description: 'Banho frio — aguenta pelo menos {target} min',
-    type: 'pool', questType: 'training',
-    baseTarget: 2, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h2', title: 'O Despertar',
-    description: 'Acorda e levanta imediatamente, sem snooze',
-    type: 'pool', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'vez',
-    baseXP: 15, baseGold: 6,
-  },
-  {
-    id: 'h3', title: 'Vitalidade Base',
-    description: 'Bebe 2.5L de água ao longo do dia',
-    type: 'pool', questType: 'training',
-    baseTarget: 25, scalingAmount: 0, scalingInterval: 1, unit: 'dl',
-    baseXP: 18, baseGold: 7,
-  },
-  {
-    id: 'h4', title: 'Agilidade de Assassino',
-    description: '{target} min de alongamentos / mobilidade',
-    type: 'pool', questType: 'training',
-    baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 22, baseGold: 8,
-  },
-  {
-    id: 'h5', title: 'Recuperação de Mana',
-    description: '{target} min de meditação ou respiração profunda',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 25, baseGold: 9,
-  },
-  {
-    id: 'h6', title: 'Nutrição do Monarca',
-    description: 'Dia sem açúcar adicionado nem junk food',
-    type: 'pool', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'dia',
-    baseXP: 28, baseGold: 10,
-  },
-
-  // ── Forbidden Quests (Avoidance) ──
-  {
-    id: 'forbidden_sugar',
-    title: 'Detox de Açúcar',
-    description: 'Evitar doces hoje. O corpo é o templo do Monarca.',
-    type: 'pool',
-    questType: 'forbidden',
-    baseTarget: 0,
-    unit: 'vezes',
-    scalingAmount: 0,
-    scalingInterval: 1,
-    baseXP: 40,
-    baseGold: 10,
-  },
-  {
-    id: 'forbidden_social',
-    title: 'Silêncio Digital',
-    description: 'Não usar redes sociais. Foco no mundo real.',
-    type: 'pool',
-    questType: 'forbidden',
-    baseTarget: 0,
-    unit: 'minutos',
-    scalingAmount: 0,
-    scalingInterval: 1,
-    baseXP: 50,
-    baseGold: 15,
-  },
-
-  // ── Limit Quests (Ceiling) ──
-  {
-    id: 'limit_snacks',
-    title: 'Limite de Snacks',
-    description: 'Não exceder {target} kcal em snacks/doces.',
-    type: 'pool',
-    questType: 'limit',
-    baseTarget: 300,
-    unit: 'kcal',
-    scalingAmount: 20,
-    scalingInterval: 1,
-    isDescending: true,
-    baseXP: 60,
-    baseGold: 20,
-  },
-  {
-    id: 'limit_spending',
-    title: 'Controlo de Gastos',
-    description: 'Gastar menos de {target}€ em futilidades.',
-    type: 'pool',
-    questType: 'limit',
-    baseTarget: 20,
-    unit: '€',
-    scalingAmount: 1,
-    scalingInterval: 1,
-    isDescending: true,
-    baseXP: 50,
-    baseGold: 15,
-  },
-  {
-    id: 'h7', title: 'Conhecimento Antigo',
-    description: 'Lê {target} páginas de um livro de não-ficção',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'páginas',
-    baseXP: 25, baseGold: 10,
-  },
-  {
-    id: 'h8', title: 'Passos Silenciosos',
-    description: 'Atinge {target} passos ao longo do dia',
-    type: 'pool', questType: 'gps',
-    baseTarget: 8000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h9', title: 'Visão de Lince',
-    description: 'Zero ecrãs nos 30 min antes de dormir (missão de honra)',
-    type: 'pool', questType: 'training',
-    baseTarget: 30, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h10', title: 'Código do Caçador',
-    description: '{target} min de journaling — escreve 3 vitórias do dia',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 18, baseGold: 7,
-  },
-  {
-    id: 'h11', title: 'Punhos de Ferro',
-    description: '{target} flexões de braços — execução lenta e controlada',
-    type: 'pool', questType: 'training',
-    baseTarget: 30, scalingAmount: 2, scalingInterval: 2, unit: 'reps',
-    baseXP: 24, baseGold: 9,
-  },
-  {
-    id: 'h12', title: 'Neblina Mental',
-    description: 'Sem redes sociais durante {target} horas consecutivas',
-    type: 'pool', questType: 'training',
-    baseTarget: 4, scalingAmount: 0, scalingInterval: 1, unit: 'h',
-    baseXP: 30, baseGold: 12,
-  },
-  {
-    id: 'h13', title: 'Domínio da Linguagem',
-    description: 'Pratica um idioma estrangeiro — {target} min (Duolingo, anki, vídeos)',
-    type: 'pool', questType: 'focus',
-    baseTarget: 20, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 26, baseGold: 10,
-  },
-  {
-    id: 'h14', title: 'Resistência do Guerreiro',
-    description: 'Plank por {target} segundos (acumulado ou de uma vez)',
-    type: 'pool', questType: 'training',
-    baseTarget: 60, scalingAmount: 5, scalingInterval: 2, unit: 's',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h15', title: 'Visão Estratégica',
-    description: 'Planeia o dia seguinte — lista de tarefas prioritárias ({target} min)',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 18, baseGold: 7,
-  },
-  {
-    id: 'h16', title: 'Corredor das Sombras',
-    description: 'Corrida ou caminhada rápida de {target} min sem parar',
-    type: 'pool', questType: 'training',
-    baseTarget: 20, scalingAmount: 1, scalingInterval: 2, unit: 'min',
-    baseXP: 28, baseGold: 11,
-  },
-  {
-    id: 'h17', title: 'Protocolo de Sono',
-    description: 'Deita-te antes da meia-noite e dorme pelo menos {target} horas',
-    type: 'pool', questType: 'training',
-    baseTarget: 7, scalingAmount: 0, scalingInterval: 1, unit: 'h',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h18', title: 'Arsenal do Saber',
-    description: 'Resolve {target} exercícios de matemática, lógica ou programação',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 5, scalingAmount: 1, scalingInterval: 3, unit: 'problemas',
-    baseXP: 30, baseGold: 12,
-  },
-  {
-    id: 'h19', title: 'Modo Fantasma',
-    description: 'Faz uma tarefa chata que tens adiado há mais de 3 dias',
-    type: 'pool', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'tarefa',
-    baseXP: 35, baseGold: 14,
-  },
-  {
-    id: 'h20', title: 'Corpo de Aço',
-    description: '{target} agachamentos + {target} lunges (cada perna)',
-    type: 'pool', questType: 'training',
-    baseTarget: 25, scalingAmount: 2, scalingInterval: 2, unit: 'reps',
-    baseXP: 26, baseGold: 10,
-  },
-  {
-    id: 'h21', title: 'Mente Forjada',
-    description: 'Aprende algo novo — resumo de {target} min (podcast, artigo, doc)',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 25, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 28, baseGold: 11,
-  },
-  {
-    id: 'h22', title: 'Sangue Frio',
-    description: 'Exposição ao frio — {target} min (banho frio lento ou ar frio)',
-    type: 'pool', questType: 'training',
-    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 22, baseGold: 8,
-  },
-  // ── NOVAS MISSÕES: BIOHACKING, POSTURA, HIDRATAÇÃO, LEITURA ──
-  {
-    id: 'h23', title: 'Alinhamento Espinhal',
-    description: '{target} min de exercícios de correção postural (Wall angels, chin tucks)',
-    type: 'pool', questType: 'training',
-    baseTarget: 5, scalingAmount: 1, scalingInterval: 3, unit: 'min',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h24', title: 'Oxigenação Celular',
-    description: 'Técnica Wim Hof ou respiração guiada profunda — {target} rondas',
-    type: 'pool', questType: 'training',
-    baseTarget: 3, scalingAmount: 0, scalingInterval: 1, unit: 'rondas',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h25', title: 'Hidratação Mineral',
-    description: 'Bebe copo de água com sal marinho/limão logo ao acordar',
-    type: 'pool', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'dose',
-    baseXP: 15, baseGold: 5,
-  },
-  {
-    id: 'h26', title: 'Glândula Pineal',
-    description: 'Exposição à luz solar natural nos primeiros 30 min acordado',
-    type: 'pool', questType: 'training',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 25, baseGold: 10,
-  },
-  {
-    id: 'h27', title: 'Descompressão Vertebral',
-    description: 'Pendurar em barra passiva (Dead Hang) — {target} segundos totais',
-    type: 'pool', questType: 'training',
-    baseTarget: 60, scalingAmount: 10, scalingInterval: 2, unit: 's',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h28', title: 'Fotossíntese Humana',
-    description: 'Mínimo de {target} min de exposição solar direta (Vit D)',
-    type: 'pool', questType: 'training',
-    baseTarget: 20, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h29', title: 'Ritmo Circadiano',
-    description: 'Nenhum ecrã azul 1h antes de dormir, ou usar filtros vermelhos',
-    type: 'pool', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'noite',
-    baseXP: 30, baseGold: 12,
-  },
-  {
-    id: 'h30', title: 'Jejum do Monarca',
-    description: 'Jejum intermitente de pelo menos {target} horas',
-    type: 'pool', questType: 'training',
-    baseTarget: 14, scalingAmount: 1, scalingInterval: 5, unit: 'horas',
-    baseXP: 35, baseGold: 15,
-  },
-  {
-    id: 'h31', title: 'Biblioteca de Alexandria',
-    description: 'Lê {target} páginas de literatura clássica ou filosofia',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 15, scalingAmount: 2, scalingInterval: 2, unit: 'páginas',
-    baseXP: 28, baseGold: 11,
-  },
-  {
-    id: 'h32', title: 'Mestre do Próprio Corpo',
-    description: '{target} repetições de calistenia profunda (Pistol squats, L-Sits)',
-    type: 'pool', questType: 'training',
-    baseTarget: 10, scalingAmount: 2, scalingInterval: 2, unit: 'reps',
-    baseXP: 30, baseGold: 12,
-  },
-  {
-    id: 'h33', title: 'Earthing',
-    description: 'Andar descalço na relva, terra ou areia — {target} min',
-    type: 'pool', questType: 'training',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 18, baseGold: 7,
-  },
-  {
-    id: 'h34', title: 'Digestão de Ferro',
-    description: 'Andar {target} passos suaves a seguir a uma refeição pesada',
-    type: 'pool', questType: 'gps',
-    baseTarget: 1000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
-    baseXP: 15, baseGold: 6,
-  },
-  {
-    id: 'h35', title: 'Imoto como Montanha',
-    description: '{target} min de isometria (Horse stance / Wall sit)',
-    type: 'pool', questType: 'training',
-    baseTarget: 2, scalingAmount: 1, scalingInterval: 4, unit: 'min',
-    baseXP: 25, baseGold: 10,
-  },
-  {
-    id: 'h36', title: 'Foco de Predador',
-    description: 'Leitura técnica densa (artigos, código, documentação) — {target} min',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 20, scalingAmount: 5, scalingInterval: 3, unit: 'min',
-    baseXP: 30, baseGold: 12,
-  },
-  {
-    id: 'h37', title: 'Alquimia Líquida',
-    description: 'Substitui a segunda dose de café por chá verde/água',
-    type: 'pool', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'vez',
-    baseXP: 18, baseGold: 7,
-  },
-  {
-    id: 'h38', title: 'Sobrecarga Progressiva',
-    description: 'Atinge ou supera um recorde pessoal (peso, repetições ou tempo)',
-    type: 'pool', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'PR',
-    baseXP: 35, baseGold: 15,
-  },
-  {
-    id: 'h39', title: 'Eixo Vertical',
-    description: '{target} min a trabalhar em pé ao invés de sentado',
-    type: 'pool', questType: 'training',
-    baseTarget: 60, scalingAmount: 15, scalingInterval: 2, unit: 'min',
-    baseXP: 25, baseGold: 10,
-  },
-  {
-    id: 'h40', title: 'Banho de Som',
-    description: 'Ouvir frequências Binaurais/Solfeggio enquanto focado — {target} min',
-    type: 'pool', questType: 'focus',
-    baseTarget: 30, scalingAmount: 5, scalingInterval: 2, unit: 'min',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h41', title: 'Afinar a Ferramenta',
-    description: 'Auto-massagem com rolo de espuma (foam rolling) — {target} min',
-    type: 'pool', questType: 'training',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h42', title: 'Expansão de Vocabulário',
-    description: 'Aprende e usa 3 palavras raras novas no teu idioma materno',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 3, scalingAmount: 0, scalingInterval: 1, unit: 'palavras',
-    baseXP: 18, baseGold: 6,
-  },
-  // ── NOVAS MISSÕES: POLIVALÊNCIA ──
-  {
-    id: 'h43', title: 'Esboço Rápido',
-    description: 'Desenha o que tens à tua frente em {target} min — apenas caneta, sem apagar. O objetivo é observar com atenção, não a perfeição.',
-    type: 'pool', questType: 'training',
-    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h44', title: 'Escrita Livre',
-    description: 'Escreve {target} palavras seguidas sem parar nem apagar — começa com a primeira palavra que vier à cabeça. Não edites enquanto escreves.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 200, scalingAmount: 50, scalingInterval: 3, unit: 'palavras',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h45', title: 'Conexão Real',
-    description: 'Conversa {target} min com alguém cara a cara ou por chamada, sem tocar no telemóvel durante toda a conversa.',
-    type: 'pool', questType: 'training',
-    baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 25, baseGold: 10,
-  },
-  {
-    id: 'h46', title: 'Gratidão Específica',
-    description: 'Envia 1 mensagem de agradecimento genuíno — especifica o que a pessoa fez e como te afetou. Nada de genérico.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'mensagem',
-    baseXP: 18, baseGold: 7,
-  },
-  {
-    id: 'h47', title: 'Auditoria Financeira',
-    description: 'Revê as despesas dos últimos 7 dias: categoriza tudo e identifica 1 gasto a cortar ou otimizar. Regista a decisão.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'auditoria',
-    baseXP: 28, baseGold: 11,
-  },
-  {
-    id: 'h48', title: 'Literacia Financeira',
-    description: 'Aprende 1 conceito de finanças ou investimento (juro composto, ETF, inflação, etc.) e explica-o por escrito em 3 frases simples.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'conceito',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h49', title: 'Advogado do Diabo',
-    description: 'Escolhe uma crença forte que tens — escreve o argumento mais sólido possível CONTRA ela, sem descartar à partida. Sê honesto.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'argumento',
-    baseXP: 25, baseGold: 10,
-  },
-  {
-    id: 'h50', title: 'Active Recall',
-    description: 'Após estudares algo hoje, fecha tudo e escreve de memória tudo o que retiveste. Verifica depois o que faltou e anota as lacunas.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'sessão',
-    baseXP: 28, baseGold: 11,
-  },
-  {
-    id: 'h51', title: 'Pitch Cronometrado',
-    description: 'Explica um projeto, ideia ou tema em exatamente {target} min — grava-te ou faz ao vivo. Ouve de volta e aponta 1 coisa a melhorar.',
-    type: 'pool', questType: 'training',
-    baseTarget: 2, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 25, baseGold: 10,
-  },
-  {
-    id: 'h52', title: 'Manutenção do Ambiente',
-    description: 'Repara, arruma ou mantém algo no teu espaço que estavas a ignorar há mais de 3 dias — leva-o até ao fim.',
-    type: 'pool', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'coisa',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h53', title: 'Primeiros Socorros',
-    description: 'Revê 1 procedimento de primeiros socorros (RCP, Heimlich, hemorragia) e pratica os movimentos fisicamente durante {target} min.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 25, baseGold: 10,
-  },
-  {
-    id: 'h54', title: 'Automação',
-    description: 'Automatiza uma tarefa repetitiva, por mais simples que seja (script, atalho de teclado, template, macro ou regra de e-mail).',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'automação',
-    baseXP: 30, baseGold: 12,
-  },
-  {
-    id: 'h55', title: 'Princípio Estoico',
-    description: 'Escolhe 1 princípio (Memento Mori, Amor Fati, Dicotomia do Controlo) e aplica-o conscientemente durante o dia. Escreve à noite o que aconteceu.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'princípio',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h56', title: 'Equilíbrio e Propriocepção',
-    description: '{target} min de treino de equilíbrio: apoio numa perna com olhos fechados, progressões em superfície instável, ou heel-to-toe walk.',
-    type: 'pool', questType: 'training',
-    baseTarget: 5, scalingAmount: 1, scalingInterval: 3, unit: 'min',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h57', title: 'Sentido Rítmico',
-    description: '{target} min de ritmo: usa as mãos ou uma superfície como bateria — segue um padrão básico (1-e-2-e) com metrónomo ou música.',
-    type: 'pool', questType: 'training',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h58', title: 'Ferramenta Nova',
-    description: 'Explora um software, app ou ferramenta que nunca usaste. Faz o tutorial básico e aplica-o a uma tarefa real hoje.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'ferramenta',
-    baseXP: 25, baseGold: 10,
-  },
-  {
-    id: 'h59', title: 'Sistema em Dia',
-    description: 'Fecha os loops abertos: arquiva tarefas concluídas, captura 3 insights da semana e revê os objetivos ativos — tudo em {target} min.',
-    type: 'pool', questType: 'knowledge',
-    baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 22, baseGold: 9,
-  },
-  {
-    id: 'h60', title: 'Observação Natural',
-    description: 'Passa {target} min ao ar livre apenas a observar — sem telemóvel. Identifica 3 plantas, sons ou animais pelo nome (pesquisa depois se não souberes).',
-    type: 'pool', questType: 'training',
-    baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 20, baseGold: 8,
-  },
-  {
-    id: 'h61', title: 'Refeição Desconhecida',
-    description: 'Come ou cozinha algo que nunca provaste antes. Regista o nome, a origem e o que achaste.',
-    type: 'pool', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'refeição',
-    baseXP: 18, baseGold: 7,
-  },
-  {
-    id: 'h62', title: 'Coordenação Neuromotora',
-    description: '{target} min de malabares, movimentos espelhados mão/pé ou padrões rítmicos alternados — treino de novas conexões neurais.',
-    type: 'pool', questType: 'training',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 22, baseGold: 9,
-  },
-
-
-  // ── BOSSES DA EXPANSÃO (Drops Reais) ──
-  {
-    id: 'boss_arachnid', title: 'A Viúva Furtiva (A-Rank)',
-    description: 'Foco absoluto: {target} min numa única tarefa, sem notificações.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 60, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 500, baseGold: 150,
-    dropShadowId: 'spider_queen',
-  },
-  {
-    id: 'boss_iron_golem', title: 'O Golem de Ferro Forjado (A-Rank)',
-    description: 'Boss Físico: Esmaga-o com {target} flexões pesadas (ou equivalentes).',
-    type: 'boss', questType: 'training',
-    baseTarget: 100, scalingAmount: 0, scalingInterval: 1, unit: 'reps',
-    baseXP: 550, baseGold: 160,
-    dropShadowId: 'iron_golem',
-  },
-  {
-    id: 'boss_ancient_priest', title: 'Sumo Sacerdote do Panteão (A-Rank)',
-    description: 'Combate Mental: Supera as charadas divinas lendo {target} páginas sem pausas.',
-    type: 'boss', questType: 'knowledge',
-    baseTarget: 50, scalingAmount: 0, scalingInterval: 1, unit: 'páginas',
-    baseXP: 600, baseGold: 180,
-    dropShadowId: 'ancient_priest',
-  },
-  {
-    id: 'boss_gladiator_champ', title: 'Veterano Invicto da Arena (A-Rank)',
-    description: 'Resistência brutal: {target} min de corrida contínua (sem parar).',
-    type: 'boss', questType: 'gps',
-    baseTarget: 40, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 650, baseGold: 200,
-    dropShadowId: 'arena_champion',
-  },
-  {
-    id: 'boss_astral_nova', title: 'General Supernova (S-Rank)',
-    description: 'Ataque de choque contínuo: completa {target} min de Foco (ativa o modo Foco) e, em seguida, realiza 100 burpees controlados. Se não conseguires burpees, faz flexões explosivas.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1000, baseGold: 400,
-    dropShadowId: 'astral_monarch',
-  },
-  {
-    id: 'boss_crypt_omega', title: 'Arma Ómega (S-Rank)',
-    description: 'Sobrevivência final das Máquinas: percorre {target} passos em marcha contínua, sem pausas superiores a 5 min.',
-    type: 'boss', questType: 'gps',
-    baseTarget: 10000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
-    baseXP: 1200, baseGold: 500,
-    dropShadowId: 'omega_weapon',
-  },
-  {
-    id: 'boss_executioner', title: 'O Carrasco da Arena (A-Rank)',
-    description: 'Suporta a dor: Toma um banho 100% gelado de pelo menos {target} min. Podes começar morno, mas o tempo só conta quando a água estiver no máximo de frio.',
-    type: 'boss', questType: 'training',
-    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 550, baseGold: 150,
-    dropShadowId: 'executioner',
-  },
-  {
-    id: 'boss_seraphim', title: 'Lâmina Serafim Caído (S-Rank)',
-    description: 'Enfrenta o Anjo Caído com {target} min de pura meditação debaixo de tensão.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 45, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1100, baseGold: 450,
-    dropShadowId: 'fallen_seraphim',
-  },
-  {
-    id: 'boss_spartacus', title: 'Líder dos Rejeitados (A-Rank)',
-    description: 'Derruba o líder rebelde com {target} lunges sem cair (peso corporal).',
-    type: 'boss', questType: 'training',
-    baseTarget: 80, scalingAmount: 0, scalingInterval: 1, unit: 'reps',
-    baseXP: 600, baseGold: 170,
-    dropShadowId: 'rebel_leader',
-  },
-  {
-    id: 'boss_astral_eclipse', title: 'Eclipse Cósmico (S-Rank)',
-    description: 'Conteúdo super-denso: estuda {target} min de um tema técnico sem multitarefa.',
-    type: 'boss', questType: 'knowledge',
-    baseTarget: 120, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1500, baseGold: 600,
-    dropShadowId: 'cosmic_eclipse',
-  },
-  {
-    id: 'boss_kargal', title: 'Kargal, o Devorador de Mentes (S-Rank)',
-    description: 'Foco profundo: ativa o modo Foco por {target} min num espaço totalmente silencioso (sem música, sem notificações), com o ecrã em brilho mínimo.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 120, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1300, baseGold: 550,
-    dropShadowId: 'kargal_mind_devourer',
-  },
-  {
-    id: 'boss_ignis', title: 'Titã de Gelo Ignis (S-Rank)',
-    description: 'O contraste térmico quebra limites. Corre {target} min ao frio e banho frio a seguir.',
-    type: 'boss', questType: 'gps',
-    baseTarget: 45, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1100, baseGold: 480,
-    dropShadowId: 'ignis_ice_titan',
-  },
-  {
-    id: 'boss_abyss_mage', title: 'Arquimago do Abismo (A-Rank)',
-    description: 'Desafia a mente: resolve 3 desafios de lógica/matemática em {target} min.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 750, baseGold: 220,
-    dropShadowId: 'abyss_archmage',
-  },
-  {
-    id: 'boss_blood_knight', title: 'Cavaleiro de Sangue Sangreal (S-Rank)',
-    description: 'Luta corpo a corpo pura. {target} repetições de levantamento de peso (Deadlift/Squats).',
-    type: 'boss', questType: 'training',
-    baseTarget: 150, scalingAmount: 0, scalingInterval: 1, unit: 'reps',
-    baseXP: 1400, baseGold: 600,
-    dropShadowId: 'blood_knight_sangreal',
-  },
-  {
-    id: 'boss_hollow_king', title: 'O Rei Vazio (S-Rank)',
-    description: 'Jejum disciplinado: mantém {target}h sem refeições (hidratação permitida).',
-    type: 'boss', questType: 'training',
-    baseTarget: 24, scalingAmount: 0, scalingInterval: 1, unit: 'h',
-    baseXP: 1800, baseGold: 800,
-    dropShadowId: 'hollow_king',
-  },
-  {
-    id: 'boss_cerberus_prime', title: 'Cerberus Primordial (A-Rank)',
-    description: 'Controla a besta de 3 cabeças completando {target} km de corrida matinal.',
-    type: 'boss', questType: 'gps',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'km',
-    baseXP: 900, baseGold: 300,
-    dropShadowId: 'cerberus_prime',
-  },
-  {
-    id: 'boss_wind_walker', title: 'Caminhante do Vento Silencioso (A-Rank)',
-    description: 'Realiza {target} min de alongamentos dinâmicos contínuos (balanços de pernas, rotações de ombros, hip circles) sem pausas superiores a 30s.',
-    type: 'boss', questType: 'training',
-    baseTarget: 45, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 680, baseGold: 210,
-    dropShadowId: 'wind_walker',
-  },
-  {
-    id: 'boss_poison_monarch', title: 'Monarca do Veneno Quimera (S-Rank)',
-    description: 'O veneno está no corpo. Suar toxinas com {target} min de treino HIIT cardíaco.',
-    type: 'boss', questType: 'training',
-    baseTarget: 40, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1250, baseGold: 500,
-    dropShadowId: 'chimera_poison_monarch',
-  },
-  {
-    id: 'boss_goliath', title: 'Golias das Rochas Negras (A-Rank)',
-    description: 'Isometria pesada: {target} min de wall-sit ou prancha (tempo acumulado).',
-    type: 'boss', questType: 'training',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 800, baseGold: 250,
-    dropShadowId: 'blackrock_goliath',
-  },
-  {
-    id: 'boss_shadow_blade', title: 'Lâmina Negra Assustadora (A-Rank)',
-    description: 'Tática sombria: lê {target} páginas de estratégia (sem interrupções).',
-    type: 'boss', questType: 'knowledge',
-    baseTarget: 80, scalingAmount: 0, scalingInterval: 1, unit: 'páginas',
-    baseXP: 700, baseGold: 230,
-    dropShadowId: 'shadow_blade',
-  },
-  { // 21
-    id: 'boss_iron_jaw', title: 'O Quebra-Mandíbulas (A-Rank)',
-    description: 'Shadowboxing: {target} rounds de 2 min cada, com descanso de 30–45s entre rounds.',
-    type: 'boss', questType: 'training',
-    baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'rounds',
-    baseXP: 600, baseGold: 190,
-    dropShadowId: 'iron_jaw',
-  },
-  { // 22
-    id: 'boss_astral_drake', title: 'Dragão Astral (S-Rank)',
-    description: 'Ativa o modo Foco por {target} min: realiza ciclos de respiração Wim Hof (30 respirações profundas + retenção do ar) e finaliza com 5 min de meditação silenciosa.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 60, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1400, baseGold: 500,
-    dropShadowId: 'astral_drake',
-  },
-  { // 23
-    id: 'boss_lich_king', title: 'Rei Lich Esquecido (S-Rank)',
-    description: 'Foco resistente: {target} min sentado e imóvel, sem distrações.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 100, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1500, baseGold: 700,
-    dropShadowId: 'forgotten_lich_king',
-  },
-  { // 24
-    id: 'boss_tarantula', title: 'Tarântula Imperial (A-Rank)',
-    description: 'Marcha controlada: percorre {target} passos num percurso definido à partida (evita desvios), sem música.',
-    type: 'boss', questType: 'gps',
-    baseTarget: 8000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
-    baseXP: 650, baseGold: 200,
-    dropShadowId: 'imperial_tarantula',
-  },
-  { // 25
-    id: 'boss_fallen_monk', title: 'Monge Caído (A-Rank)',
-    description: 'Jejum de estímulos: ativa o modo Foco por {target} min sem aceder a redes sociais, vídeos ou streaming — mantém a atenção numa única tarefa produtiva.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 150, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 800, baseGold: 280,
-    dropShadowId: 'fallen_monk',
-  },
-  { // 26
-    id: 'boss_swamp_wraith', title: 'Espectro do Pântano (A-Rank)',
-    description: 'Autoanálise escrita: ativa o modo Foco por {target} min e escreve livremente sobre um desafio pessoal atual — o que está a acontecer, por que ainda não resolveste, e uma coisa concreta que podes fazer hoje.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 40, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 720, baseGold: 230,
-    dropShadowId: 'swamp_wraith',
-  },
-  { // 27
-    id: 'boss_titan_ape', title: 'Primata Titânico (A-Rank)',
-    description: 'Força bruta total: {target} reps alternadas de push-ups + squats.',
-    type: 'boss', questType: 'training',
-    baseTarget: 130, scalingAmount: 0, scalingInterval: 1, unit: 'reps',
-    baseXP: 850, baseGold: 260,
-    dropShadowId: 'titan_ape',
-  },
-  { // 28
-    id: 'boss_astral_seer', title: 'Oráculo Astral (A-Rank)',
-    description: 'Conhecimento profundo: lê {target} páginas de conteúdo técnico sem pausas longas.',
-    type: 'boss', questType: 'knowledge',
-    baseTarget: 80, scalingAmount: 0, scalingInterval: 1, unit: 'páginas',
-    baseXP: 780, baseGold: 240,
-    dropShadowId: 'astral_seer',
-  },
-  { // 29
-    id: 'boss_astral_hound', title: 'Cão Cósmico Errante (A-Rank)',
-    description: 'Resistência em campo aberto: percorre {target} km em ritmo constante.',
-    type: 'boss', questType: 'gps',
-    baseTarget: 8, scalingAmount: 0, scalingInterval: 1, unit: 'km',
-    baseXP: 820, baseGold: 250,
-    dropShadowId: 'astral_hound',
-  },
-  { // 30
-    id: 'boss_archlich_prime', title: 'Arquilich Primordial (S-Rank)',
-    description: 'Projeto com entregável: define um resultado concreto antes de começar (protótipo, esboço, plano detalhado ou artigo curto). Ativa o modo Foco por {target} min e termina com algo tangível para mostrar.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1600, baseGold: 720,
-    dropShadowId: 'archlich_prime',
-  },
-  { // 31
-    id: 'boss_soul_reaper', title: 'Ceifeiro de Almas (S-Rank)',
-    description: 'Resiliência mental: {target} min de trabalho criativo (escrita leve, desenho ou plano de projeto).',
-    type: 'boss', questType: 'focus',
-    baseTarget: 120, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1700, baseGold: 760,
-    dropShadowId: 'soul_reaper',
-  },
-  { // 32
-    id: 'boss_astral_nebula', title: 'Rei Nebulosa (S-Rank)',
-    description: 'Travessia cósmica: atinge {target} passos em marcha longa e focada.',
-    type: 'boss', questType: 'gps',
-    baseTarget: 12000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
-    baseXP: 1750, baseGold: 780,
-    dropShadowId: 'astral_nebula',
-  },
-  { // 33
-    id: 'boss_goblin_warlord', title: 'Senhor Goblin (A-Rank)',
-    description: 'Tabata: completa {target} rounds de 20s de esforço máximo + 10s de repouso. Define um único exercício antes de começar (burpees, saltos ou sprints) e mantém a intensidade máxima em cada round.',
-    type: 'boss', questType: 'training',
-    baseTarget: 8, scalingAmount: 0, scalingInterval: 1, unit: 'rounds',
-    baseXP: 680, baseGold: 220,
-    dropShadowId: 'goblin_grunt',
-  },
-  { // 34
-    id: 'boss_cave_spider_matriarch', title: 'Matriarca da Caverna (A-Rank)',
-    description: 'Técnica Feynman: ativa o modo Foco por {target} min e explica por escrito (ou em voz alta gravada) um conceito que estás a aprender, como se ensinasses a um iniciante — sem consultar fontes durante a explicação.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 35, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 700, baseGold: 230,
-    dropShadowId: 'cave_spider',
-  },
-  { // 35
-    id: 'boss_ant_worker_prime', title: 'Operária Primordial (A-Rank)',
-    description: 'Rota de exploração: percorre {target} passos num trajeto que nunca fizeste antes, escolhendo o caminho no momento (sem rota pré-definida). Nota 3 coisas novas que descobriste ao longo do percurso.',
-    type: 'boss', questType: 'gps',
-    baseTarget: 6000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
-    baseXP: 690, baseGold: 210,
-    dropShadowId: 'ant_worker',
-  },
-  { // 36
-    id: 'boss_stone_golem_shard', title: 'Fragmento do Golem (A-Rank)',
-    description: 'Experimenta uma prática física nova (yoga, capoeira, calistenia, tai chi ou outra que nunca tentaste): segue um tutorial e pratica {target} min sem interrupção. Repete os movimentos no final sem guia.',
-    type: 'boss', questType: 'training',
-    baseTarget: 30, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 670, baseGold: 200,
-    dropShadowId: 'stone_golem_shard',
-  },
-  { // 37
-    id: 'boss_stringsinger', title: 'O Cantor das Cordas (A-Rank)',
-    description: 'Guitarra: {target} min de prática com metrónomo (3 acordes + 1 ritmo básico).',
-    type: 'boss', questType: 'focus',
-    baseTarget: 35, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 720, baseGold: 230,
-    dropShadowId: 'silent_blade',
-  },
-  { // 38
-    id: 'boss_polyglot_trial', title: 'Provação do Poliglota (A-Rank)',
-    description: 'Idioma: aprende {target} palavras + escreve 5 frases usando-as.',
-    type: 'boss', questType: 'knowledge',
-    baseTarget: 20, scalingAmount: 0, scalingInterval: 1, unit: 'palavras',
-    baseXP: 740, baseGold: 240,
-    dropShadowId: 'blind_seer',
-  },
-  { // 39
-    id: 'boss_culinary_ritual', title: 'Ritual Culinário (A-Rank)',
-    description: 'Cozinha: prepara 1 refeição saudável + 1 acompanhamento (do zero).',
-    type: 'boss', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'refeição',
-    baseXP: 760, baseGold: 250,
-    dropShadowId: 'iron_maid',
-  },
-  { // 40
-    id: 'boss_memory_labyrinth', title: 'Labirinto da Memória (A-Rank)',
-    description: 'Memória: cria um palácio mental com {target} itens e revê-os 2x.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 12, scalingAmount: 0, scalingInterval: 1, unit: 'itens',
-    baseXP: 780, baseGold: 260,
-    dropShadowId: 'library_wisp',
-  },
-  { // 41
-    id: 'boss_new_frontier', title: 'Fronteira Inédita (A-Rank)',
-    description: 'Experimenta algo novo: 1 aula curta (20–30 min) + 3 notas do que aprendeste.',
-    type: 'boss', questType: 'knowledge',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'aula',
-    baseXP: 800, baseGold: 270,
-    dropShadowId: 'cursed_samurai',
-  },
-  { // 42
-    id: 'boss_artisan_trial', title: 'Prova do Artesão (A-Rank)',
-    description: 'Constrói algo pequeno: 1 objeto útil (ex.: suporte, organizador, remendo).',
-    type: 'boss', questType: 'training',
-    baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'objeto',
-    baseXP: 820, baseGold: 280,
-    dropShadowId: 'ember_squire',
-  },
-  { // 43
-    id: 'boss_storm_bringer', title: 'Invocador de Tempestades (S-Rank)',
-    description: 'Skill sprint: define uma micro-skill específica que queres aprender. Estuda-a em modo Foco por {target} min e pratica-a imediatamente durante 15 min adicionais — sem avançar para outro tema antes de terminar.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 45, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 1700, baseGold: 760,
-    dropShadowId: 'storm_bringer',
-  },
-  { // 44
-    id: 'boss_chrono_master', title: 'Senhor do Tempo (S-Rank)',
-    description: 'Timeboxing: planeia 5 blocos de 25 min e executa pelo menos 3.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'blocos',
-    baseXP: 1800, baseGold: 820,
-    dropShadowId: 'chrono_master',
-  },
-  { // 45
-    id: 'boss_star_breaker', title: 'Quebrador de Estrelas (S-Rank)',
-    description: 'Exploração documentada: percorre {target} km a pé num percurso nunca feito antes. Durante a marcha, identifica e regista (por escrito ou foto) pelo menos 3 elementos novos que nunca tinhas reparado.',
-    type: 'boss', questType: 'gps',
-    baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'km',
-    baseXP: 1900, baseGold: 880,
-    dropShadowId: 'star_breaker',
-  },
-  { // 46
-    id: 'boss_cold_philosopher', title: 'O Filósofo da Montanha (A-Rank)',
-    description: 'Análise de problema real: define um problema pessoal concreto que estás a adiar. Pesquisa contexto e opiniões opostas durante {target} min (modo Foco ativo) e termina com uma decisão escrita.',
-    type: 'boss', questType: 'focus',
-    baseTarget: 50, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 760, baseGold: 245,
-    dropShadowId: 'astral_seer',
-  },
-  { // 47
-    id: 'boss_digital_craftsman', title: 'O Artesão Digital (A-Rank)',
-    description: 'Constrói algo digital do zero em {target} min: uma página web simples, um script útil, uma apresentação estruturada ou um protótipo. O resultado tem de ser funcional ou apresentável no final.',
-    type: 'boss', questType: 'knowledge',
-    baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 850, baseGold: 280,
-    dropShadowId: 'library_wisp',
-  },
-  { // 48
-    id: 'boss_stoic_challenge', title: 'A Prova do Estoico (A-Rank)',
-    description: 'Desconforto voluntário: faz {target} min de exercício num ambiente frio real (ao ar livre no frio, ou janelas abertas no inverno) sem roupa extra. Regista como te sentiste antes e depois.',
-    type: 'boss', questType: 'training',
-    baseTarget: 20, scalingAmount: 0, scalingInterval: 1, unit: 'min',
-    baseXP: 700, baseGold: 220,
-    dropShadowId: 'rebel_leader',
-  },
-]
-
-// Convert a QuestDefinition to a runtime Quest for the given level
-function defToQuest(def: QuestDefinition, level: number, tier: string): Quest {
-  const mult = TIER_MULT[tier]
-  const m = (n: number) => Math.round(n * mult)
-  const amount = def.scalingAmount ?? (def as any).scalingPerLevel ?? 0
-  const interval = def.scalingInterval ?? 1
-  const targetRaw = def.baseTarget + Math.floor((level - 1) / interval) * (def.isDescending ? -amount : amount)
-  const target = Math.max(def.questType === 'forbidden' ? 0 : 1, Math.round(targetRaw))
-  const detail = def.description
-    .replace(/{target}/g, String(target))
-    .replace(/{unit}/g, def.unit)
-
-  const quest: Quest = {
-    id: def.id,
-    label: def.title,
-    detail,
-    xp: m(def.baseXP),
-    gold: m(def.baseGold),
-    type: def.questType,
-    done: false,
-    rank: def.rank ?? rankFromXP(def.baseXP),
-    targetValue: target,
-  }
-  if (def.questType === 'focus') quest.focusDuration = target * 60_000
-  if (def.questType === 'gps') quest.gpsTarget = target
-  if (def.questType === 'limit') quest.currentValue = 0
-  return quest
-}
-
-function getDailyMissionTarget(level: number, difficulty: MissionDifficulty): number {
-  // Now represents exclusively the number of POOL missions
-  switch (difficulty) {
-    case 'easy': return 2
-    case 'hard': return Math.min(4 + Math.floor(level / 8), 7)
-    case 'normal':
-    default: return Math.min(3 + Math.floor(level / 12), 5)
-  }
-}
-
-function createDailyQuests(
-  level: number,
-  questDictionary: QuestDefinition[],
-  difficulty: MissionDifficulty = 'normal',
-  overrideSeed?: number,
-): Quest[] {
-  const tier = getQuestTier(level)
-  const dayOfWeek = new Date().getDay()
-  const d = new Date()
-  const seed = overrideSeed ?? (d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate())
-
-  // Core missions are ALWAYS included and don't count towards the random pool limit
-  const coreDefs = questDictionary
-    .filter(def => def.type === 'core')
-    .filter(def => !def.daysOfWeek || def.daysOfWeek.includes(dayOfWeek))
-
-  const poolDefs = questDictionary.filter(def => def.type === 'pool')
-  const poolCount = getDailyMissionTarget(level, difficulty)
-  const picks = seededPick(poolCount, poolDefs.length, seed)
-
-  return [
-    ...coreDefs.map(def => defToQuest(def, level, tier)),
-    ...picks.map(i => defToQuest(poolDefs[i], level, tier)),
-  ]
-}
-
-// ── SideQuest reward ───────────────────────────────────────────────────────────
-
-export function generateSideQuestReward(): { rank: 'E' | 'D' | 'C'; xp: number; gold: number } {
-  const roll = Math.random()
-  if (roll < 0.60) return { rank: 'E', xp: 10 + Math.floor(Math.random() * 21), gold: 3 + Math.floor(Math.random() * 6) }
-  if (roll < 0.90) return { rank: 'D', xp: 30 + Math.floor(Math.random() * 31), gold: 8 + Math.floor(Math.random() * 8) }
-  return { rank: 'C', xp: 60 + Math.floor(Math.random() * 41), gold: 15 + Math.floor(Math.random() * 11) }
-}
-
-// ── Types ──────────────────────────────────────────────────────────────────────
-
-export type RankKey = 'E' | 'D' | 'C' | 'B' | 'A' | 'S'
-
-export type Statistics = {
-  questsByRank: Record<RankKey, number>
-  totalFocusMinutes: number
-  perfectDays: number
-  perfectDaysStreak: number
-  totalCompleted: number
-  totalGoldSpent: number
-  sideQuestsCompletedToday: number
-  /** Bosses completed — counted in questsByRank['A'] or ['S'] */
-  totalBossesCompleted: number
-  /** Side quests completed — counted in questsByRank by side quest rank */
-  totalSideCompleted: number
-}
-
-const INITIAL_STATS: Statistics = {
-  questsByRank: { E: 0, D: 0, C: 0, B: 0, A: 0, S: 0 },
-  totalFocusMinutes: 0,
-  perfectDays: 0,
-  perfectDaysStreak: 0,
-  totalCompleted: 0,
-  totalGoldSpent: 0,
-  sideQuestsCompletedToday: 0,
-  totalBossesCompleted: 0,
-  totalSideCompleted: 0,
-}
-
-export type InventoryEntry = { itemId: string; quantity: number }
-
-export type Player = {
-  rank?: RankLetter
-  name: string
-  level: number
-  xp: number
-  gold: number
-  // Attribute XP (accumulated from quest completions)
-  strXp: number
-  agiXp: number
-  intXp: number
-  vitXp: number
-  // Derived display values — always computed from xp fields via attrLevelFromXP()
-  str: number
-  agi: number
-  int: number
-  vit: number
-  inventory: InventoryEntry[]
-  currentStreak: number
-  highestStreak: number
-  shadows: ShadowEntry[]   // shadow entries with levels
-  activeShadowIds: string[]        // ids of equipped (vanguard) shadows (max 3)
-  dungeonKeys: string[]            // ids of unlocked dungeon master keys
-  maxLevelReached: number          // anti-exploit: highest level ever attained
-  unlockedThemes: string[]
-  activeThemeId: string
-}
-
-export type ExtractionResult = {
-  shadow: Shadow
-  isLevelUp: boolean
-  newLevel: number
-  goldReward?: number
-  success?: boolean
-}
-
-export type SystemState = {
-  focusModeActive: boolean
-  hardcoreFocusMode: boolean
-  hardcorePunished: boolean   // true = hardcore locked for the day (punishment)
-  xpBoostNext: boolean
-  hasPenalty: boolean
-  penaltyReduced: boolean
-  penaltyTriggered: boolean
-  penaltyQuests: Quest[]
-  blockedApps: string[]
-  weeklyTrainingCount: number
-  weeklyRegenCount: number
-  weeklyResetDate: string
-  weeklyBossIds: string[]
-  bossDefeatedThisWeek: boolean
-  weeklyDefeatedBossId?: string
-  bossesDefeated: number
-  shopStocks: Record<string, number>
-  blockedAttemptTimestamps: number[]   // for spam detection
-  extractionDoneToday: boolean
-  penaltyBlockEnd: number     // ms timestamp when block lifts (0 = no timed block)
-  eventBossKey: string
-  eventBossCompletedIds: string[]
-  eventBossRequired: number
-  eventBossTotal: number
-  eventBossDefeated: boolean
-  lastPenaltyInfo?: {
-    intensity: PunishmentIntensity
-    failedCount: number
-    totalCount: number
-    xpLost: number
-  }
-  tutorialPhase: 0 | 1 | 2   // 0=intro pending, 1=tab tour done, 2=level-10 done
-  activeRaidBoss?: {
-    defId: string
-    maxHp: number
-    currentHp: number
-    endDate: number // epoch ms
-  } | null
-}
-
-export type LevelUpReward = {
-  level: number
-  items: string[]   // item IDs granted automatically
-}
-
-type GameState = {
-  player: Player
-  quests: Quest[]
-  extraQuests: Quest[]
-  sideQuests: SideQuest[]
-  questDictionary: QuestDefinition[]
-  customShadows: Shadow[]
-  system: SystemState
-  settings: GameSettings
-  statistics: Statistics
-  lastResetDate: string
-  unlockedAchievements: string[]
-  achievementProgress: Record<string, AchievementProg>
-  questRecords: Record<string, { bestTime: number; lastNote: string; history?: Array<{ date: string; time: number; note: string }> }>
-  questCompletions: Record<string, number>   // total times each quest was completed
-  levelUpReward: LevelUpReward | null     // pending level-up item reward to show
-  lastExtraction: { shadow: Shadow; isLevelUp: boolean; newLevel: number } | null
-  activeMissionTimers: Record<string, { startTime: number; accumulatedMs: number; isPaused: boolean }>
-  rewardsQueue: { type: 'achievement' | 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number }[]
-  extraQuestRerolledIds: string[]    // extra quest IDs (extra_…) that have been rerolled today
-  extraQuestUsedPoolIds: string[]    // pool def IDs used in extra quests today (to avoid picking same def again)
-}
-
-type TriggerPayload = Record<string, unknown>
-
-type GameActions = {
-  rankUp: () => void
-  bootSystem: () => void
-  dismissPenaltyModal: () => void
-  advanceTutorialPhase: () => void
-  spawnRaidBoss: () => void
-  dealRaidBossDamage: (dmg: number) => void
-  checkRaidBoss: () => void
-  clearExtraction: () => void
-  completeQuest: (id: string) => { leveledUp: boolean }
-  failQuest: (id: string) => void
-  updateQuestValue: (id: string, value: number) => void
-  skipQuest: (id: string) => void
-  undoQuest: (id: string) => void
-  addSideQuest: (title: string) => void
-  completeSideQuest: (id: string) => { leveledUp: boolean }
-  startSideQuest: (id: string, durationMinutes: number) => void
-  updateSideQuestNote: (id: string, note: string) => void
-  removeSideQuest: (id: string) => void
-  toggleFavoriteShadow: (id: string) => void
-  recordFocusTime: (minutes: number) => void
-  addXP: (amount: number) => { leveledUp: boolean }
-  purchaseItem: (itemId: string, cost: number) => boolean
-  purchaseShadow: (shadowId: string, cost: number) => boolean
-  useInventoryItem: (itemId: string) => void
-  addToInventory: (itemId: string, qty?: number) => void
-  toggleBlockedApp: (pkg: string) => void
-  setFocusModeActive: (v: boolean) => void
-  setHardcoreFocusMode: (v: boolean) => void
-  setHardcorePunished: (v: boolean) => void
-  setXpBoostNext: (v: boolean) => void
-  setPenaltyReduced: (v: boolean) => void
-  removePenalty: () => void
-  deductGold: (amount: number) => boolean
-  defeatDungeonBoss: (shadowId: string, customDef?: { name: string; icon: string; questType: Quest['type'] }) => { xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean, isNew?: boolean }
-  dismissAchievement: () => void
-  triggerEvent: (event: EventTrigger, payload?: TriggerPayload, value?: number) => void
-  emitEvent: (event: EventTrigger, value?: number) => void
-  recordBlockedAttempt: () => void
-  addQuestDefinition: (def: QuestDefinition) => void
-  updateQuestDefinition: (id: string, def: Partial<QuestDefinition>) => void
-  setActiveTheme: (themeId: string) => void
-  deleteQuestDefinition: (id: string) => void
-  regenerateSingleDailyQuest: (questId: string) => { success: boolean; reason?: string }
-  replaceExtraQuest: (questId: string) => { success: boolean; reason?: string }
-  generateExtraQuests: () => { success: boolean; reason?: string }
-  completeExtraQuest: (id: string) => { leveledUp: boolean }
-  updateSettings: (patch: Partial<GameSettings>) => void
-  saveQuestRecord: (questId: string, time: number, note: string) => void
-  dismissLevelUpReward: () => void
-  startMissionTimer: (id: string) => void
-  pauseMissionTimer: (id: string) => void
-  clearMissionTimer: (id: string) => void
-  toggleActiveShadow: (id: string) => void
-  releaseShadow: (id: string) => { gold: number }
-  dismissExtraction: () => void
-  setEventBossState: (key: string, required: number, total: number) => void
-  completeEventTrial: (id: string, key: string, required: number, total: number) => { completed: number; required: number }
-  markEventBossDefeated: (key: string) => void
-  restoreBackup: (data: Partial<GameState>) => void
-  popReward: () => void
-  openLootBox: () => { reward: string; detail: string; color: string }
-  enterDungeon: (keyId: string) => boolean
-}
-
-// ── Helpers ────────────────────────────────────────────────────────────────────
-
-function applyXP(xp: number, level: number, amount: number) {
-  let newXp = xp + amount
-  let newLevel = level
-  let leveledUp = false
-  let levelGain = 0
-
-  while (newXp >= xpForLevel(newLevel)) {
-    newXp -= xpForLevel(newLevel)
-    newLevel++
-    leveledUp = true
-    levelGain++
-  }
-
-  return { xp: newXp, level: newLevel, leveledUp, levelGain }
-}
-
-/**
- * Converts accumulated attribute XP into a display stat level.
- * Uses a square-root curve so early gains come fast, then slow down.
- * At 0 xp → 10; at 500 xp → 20; at 2000 xp → 30; at 4500 xp → 40.
- */
-export function attrLevelFromXP(xp: number): number {
-  return 10 + Math.floor(Math.sqrt(Math.max(0, xp) / 5))
-}
-
-/** XP granted to each attribute when completing a quest of a given type */
-const ATTR_XP_PER_QUEST: Record<Quest['type'] | 'boss' | 'side', { strXp: number; agiXp: number; intXp: number; vitXp: number }> = {
-  training:   { strXp: 12, agiXp: 0, intXp: 0, vitXp: 6 },
-  gps:        { strXp: 0,  agiXp: 12, intXp: 0, vitXp: 6 },
-  knowledge:  { strXp: 0,  agiXp: 0, intXp: 12, vitXp: 0 },
-  focus:      { strXp: 0,  agiXp: 0, intXp: 12, vitXp: 0 },
-  forbidden:  { strXp: 3,  agiXp: 3, intXp: 3, vitXp: 3 },
-  limit:      { strXp: 3,  agiXp: 3, intXp: 3, vitXp: 3 },
-  boss:       { strXp: 6,  agiXp: 6, intXp: 6, vitXp: 6 },
-  side:       { strXp: 3,  agiXp: 3, intXp: 3, vitXp: 3 },
-}
-
-/**
- * Returns new attribute XP fields + their computed display values after earning
- * attribute XP for completing a quest of a given type.
- */
-function getAttrXpBoost(
-  player: Pick<Player, 'strXp' | 'agiXp' | 'intXp' | 'vitXp'>,
-  questType: Quest['type'] | 'boss' | 'side',
-): Pick<Player, 'strXp' | 'agiXp' | 'intXp' | 'vitXp' | 'str' | 'agi' | 'int' | 'vit'> {
-  const gain = ATTR_XP_PER_QUEST[questType] ?? ATTR_XP_PER_QUEST['side']
-  const strXp = (player.strXp ?? 0) + gain.strXp
-  const agiXp = (player.agiXp ?? 0) + gain.agiXp
-  const intXp = (player.intXp ?? 0) + gain.intXp
-  const vitXp = (player.vitXp ?? 0) + gain.vitXp
-  return {
-    strXp, agiXp, intXp, vitXp,
-    str: attrLevelFromXP(strXp),
-    agi: attrLevelFromXP(agiXp),
-    int: attrLevelFromXP(intXp),
-    vit: attrLevelFromXP(vitXp),
-  }
-}
-
-/**
- * Checks for level-gated dungeon keys and returns new dungeonKeys array.
- */
-function getNewLevelKeys(currentKeys: string[], newLevel: number): string[] {
-  const granted = LEVEL_GATED_KEYS.filter(k => (k.unlockLevel ?? 0) <= newLevel).map(k => k.id)
-  const merged = [...new Set([...currentKeys, ...granted])]
-  return merged
-}
-
-function getMondayDateString(): string {
-  const d = new Date()
-  const day = d.getDay()
-  d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day))
-  return d.toDateString()
-}
-
-const STOCKED_ITEMS = ['system_pass', 'lagrima_purificacao']
-const INITIAL_SHOP_STOCKS: Record<string, number> = { system_pass: 1, lagrima_purificacao: 1 }
-
-// ── Custom shadow passive helper ────────────────────────────────────────────────
-
-function getCustomShadowPassive(questType: Quest['type']): { type: PassiveEffectType; value: number; description: string } {
-  switch (questType) {
-    case 'training': return { type: 'gold_boost', value: 0.02, description: '+2% Gold em missões de treino' }
-    case 'knowledge': return { type: 'xp_boost', value: 0.02, description: '+2% XP em missões de conhecimento' }
-    case 'focus': return { type: 'focus_bonus', value: 5, description: '+5 min de foco por sessão' }
-    case 'gps': return { type: 'boss_bonus_xp', value: 0.05, description: '+5% XP extra em Boss Raids' }
-    default: return { type: 'gold_boost', value: 0, description: '' }
-  }
-}
-
-// ── Active shadow passive multipliers ─────────────────────────────────────────
-
-const SHADOW_RELEASE_BASE: Partial<Record<string, number>> = {
-  Normal: 50,
-  Elite: 150,
-  Knight: 400,
-  Commander: 1000,
-  Marshal: 3000,
-}
-
-export function getShadowReleaseGold(shadow: Shadow, level: number): number {
-  if ((shadow as Shadow).type === 'Custom') return 0
-  const base = SHADOW_RELEASE_BASE[shadow.rank as string] ?? 50
-  return Math.round(base * (1 + (level - 1) * 0.5))
-}
-
-function computeActivePassives(
-  activeShadowIds: string[],
-  shadows: ShadowEntry[],
-  customShadows: Shadow[],
-): { xpBoost: number; goldBoost: number } {
-  const customMap: Record<string, Shadow> = {}
-  for (const sh of customShadows) customMap[sh.id] = sh
-  const lookup = { ...SHADOW_MAP, ...customMap }
-
-  let xpBoost = 0
-  let goldBoost = 0
-  for (const id of activeShadowIds) {
-    const entry = shadows.find(e => e.id === id)
-    const shadow = lookup[id]
-    if (!entry || !shadow) continue
-    const val = shadow.passiveEffect.value * (1 + (entry.level - 1) * 0.1)
-    if (shadow.passiveEffect.type === 'xp_boost') xpBoost += val
-    if (shadow.passiveEffect.type === 'gold_boost') goldBoost += val
-  }
-  return { xpBoost, goldBoost }
-}
-
-// ── Daily extraction rank picker ───────────────────────────────────────────────
-
-function pickExtractionRank(level: number): ShadowRank {
-  const r = Math.random()
-  if (level >= 26) {
-    if (r < 0.02) return 'Marshal'
-    if (r < 0.15) return 'Commander'
-    if (r < 0.45) return 'Knight'
-    if (r < 0.82) return 'Elite'
-    return 'Normal'
-  }
-  if (level >= 21) {
-    if (r < 0.10) return 'Commander'
-    if (r < 0.40) return 'Knight'
-    if (r < 0.78) return 'Elite'
-    return 'Normal'
-  }
-  if (level >= 11) {
-    if (r < 0.15) return 'Knight'
-    if (r < 0.55) return 'Elite'
-    return 'Normal'
-  }
-  if (level >= 6) return Math.random() < 0.30 ? 'Elite' : 'Normal'
-  return 'Normal'
-}
-
-// ── Penalty Quest Pool ─────────────────────────────────────────────────────────
-
-const PENALTY_QUEST_POOL: Quest[] = [
-  { id: 'p_cardio', label: 'Penalização: Cardio', detail: '20 min de corrida contínua', xp: 0, gold: 0, type: 'training', done: false },
-  { id: 'p_squat', label: 'Penalização: Agachamentos', detail: '50 agachamentos consecutivos', xp: 0, gold: 0, type: 'training', done: false },
-  { id: 'p_focus', label: 'Penalização: Foco Forçado', detail: '30 min de foco sem interrupções', xp: 0, gold: 0, type: 'focus', focusDuration: 30 * 60_000, done: false },
-  { id: 'p_reading', label: 'Penalização: Leitura Disciplinar', detail: '15 páginas (livro não-ficção)', xp: 0, gold: 0, type: 'knowledge', done: false },
-  { id: 'p_plank', label: 'Penalização: Prancha do Sistema', detail: '3 min de prancha (acumulados)', xp: 0, gold: 0, type: 'training', done: false },
-  { id: 'p_pushups', label: 'Penalização: Flexões', detail: '30 flexões de execução lenta', xp: 0, gold: 0, type: 'training', done: false },
-]
-
-function pickPenaltyQuests(count: number): Quest[] {
-  const shuffled = [...PENALTY_QUEST_POOL].sort(() => Math.random() - 0.5)
-  return shuffled.slice(0, Math.min(count, PENALTY_QUEST_POOL.length)).map((q, i) => ({ ...q, id: `${q.id}_${i}` }))
-}
-
-function computePunishment(
-  failedCount: number,
-  totalCount: number,
-  playerXP: number,
-  intensity: PunishmentIntensity,
-  penaltyReduced: boolean,
-): { xpLost: number; penaltyQuests: Quest[]; hardcorePunished: boolean; streakReset: boolean; penaltyHours: number } {
-
-  if (intensity === 'light') {
-    const pct = penaltyReduced ? 0.01 : 0.03
-    const xpLost = Math.max(Math.floor(playerXP * pct * failedCount), failedCount * 5)
-    const penaltyHours = Math.min(penaltyReduced ? 2 : 2 + failedCount, 6)
-    return {
-      xpLost,
-      penaltyQuests: pickPenaltyQuests(1),
-      hardcorePunished: false,
-      streakReset: failedCount >= totalCount,
-      penaltyHours,
-    }
-  }
-
-  if (intensity === 'medium') {
-    const basePct = penaltyReduced ? 0.05 : 0.10
-    const extraPct = 0.01 * failedCount
-    const xpLost = Math.max(Math.floor(playerXP * (basePct + extraPct)), failedCount * 10)
-    const penaltyHours = Math.min(penaltyReduced ? 4 : 4 + failedCount * 2, 12)
-    return {
-      xpLost,
-      penaltyQuests: pickPenaltyQuests(Math.min(1 + Math.floor(failedCount / 2), 3)),
-      hardcorePunished: failedCount >= Math.ceil(totalCount * 0.5),
-      streakReset: true,
-      penaltyHours,
-    }
-  }
-
-  // hardcore
-  const pct = penaltyReduced ? 0.10 : 0.20
-  const xpLost = Math.max(Math.floor(playerXP * pct), 10)
-  const penaltyHours = Math.min(penaltyReduced ? 8 : 8 + failedCount * 2, 24)
-  return {
-    xpLost,
-    penaltyQuests: pickPenaltyQuests(Math.min(2 + failedCount, 4)),
-    hardcorePunished: true,
-    streakReset: true,
-    penaltyHours,
-  }
-}
-
-// ── Achievement evaluation per-achievement-id ──────────────────────────────────
-
-function evaluateAchievementCondition(
-  achievementId: string,
-  state: GameState,
-  payload: TriggerPayload,
-  time: { hour: number; minute: number },
-): boolean {
-  const { player, statistics, system } = state
-  const { hour, minute } = time
-
-  switch (achievementId) {
-    // Streak
-    case 'streak_phoenix': {
-      const prev = Number(payload.prevStreak ?? 0)
-      return player.currentStreak >= 3 && prev > 10
-    }
-    case 'streak_scroll_save': return player.currentStreak >= 7
-
-    // Focus
-    case 'focus_night_owl': return hour >= 1 && hour < 6
-    case 'focus_hardcore_surrender': return true
-    case 'focus_igris': return payload.missionId === 'boss_focus'
-    case 'focus_long_session': return Number(payload.minutes ?? 0) >= 120
-
-    // Boss
-    case 'boss_runner': return payload.missionId === 'boss_gps'
-    case 'boss_cerberus': return payload.missionId === 'boss_training'
-    case 'boss_omega_slayer': return payload.missionId === 'boss_crypt_omega'
-    case 'boss_eclipse_survivor': return payload.missionId === 'boss_astral_eclipse'
-    case 'boss_seraph_fall': return payload.missionId === 'boss_seraphim'
-    case 'boss_archlich_prime': return payload.missionId === 'boss_archlich_prime'
-    case 'boss_soul_reaper': return payload.missionId === 'boss_soul_reaper'
-    case 'boss_astral_nebula': return payload.missionId === 'boss_astral_nebula'
-
-    // Event bosses
-    case 'event_halloween_reaper': return payload.missionId === 'event_halloween_reaper'
-    case 'event_winter_lich': return payload.missionId === 'event_winter_lich'
-    case 'event_summer_titan': return payload.missionId === 'event_summer_titan'
-    case 'event_new_year_ashen': return payload.missionId === 'event_new_year_ashen'
-    case 'event_valentine_oath': return payload.missionId === 'event_valentine_oath'
-    case 'event_carnival_mask': return payload.missionId === 'event_carnival_mask'
-    case 'event_equinox_guardian': return payload.missionId === 'event_equinox_guardian'
-    case 'event_easter_hare': return payload.missionId === 'event_easter_hare'
-    case 'event_spring_bloom': return payload.missionId === 'event_spring_bloom'
-    case 'event_harvest_king': return payload.missionId === 'event_harvest_king'
-    case 'event_black_friday_merchant': return payload.missionId === 'event_black_friday_merchant'
-    case 'event_yule_seraph': return payload.missionId === 'event_yule_seraph'
-    case 'event_midnight_wraith': return payload.missionId === 'event_midnight_wraith'
-    case 'event_festival_drake': return payload.missionId === 'event_festival_drake'
-
-    // Quests
-    case 'quests_perfect_week': return (statistics.perfectDaysStreak ?? 0) >= 7 && Boolean(payload.afterPerfectDay)
-    case 'side_quest_first': return true
-    case 'side_quest_daily_five': return (statistics.sideQuestsCompletedToday ?? 0) >= 5
-
-    // Economy — hoarder/spender/all_bosses handled in checkAndUnlock, return false here
-    case 'economy_first_purchase': return true
-    case 'economy_system_pass': return payload.itemId === 'system_pass'
-    case 'economy_lagrima_clutch': return system.hasPenalty
-    case 'economy_reloj': return Boolean(payload.duringBoss)
-    case 'economy_hoarder': return false
-    case 'economy_spender': return false
-
-    // Clutch / time
-    case 'clutch_last_minute': {
-      const minsLeft = (23 * 60 + 59) - (hour * 60 + minute)
-      return minsLeft <= 30 && minsLeft >= 0 && Boolean(payload.isLastQuest)
-    }
-    case 'clutch_late_night': return hour === 23 && minute >= 30 && Boolean(payload.isLastQuest)
-    case 'clutch_undo_redo': return true
-    case 'dawn_warrior': return hour < 7
-
-    // Rebellion
-    case 'rebellion_spam': return true
-    case 'rebellion_resist': return true
-    case 'rebellion_c_rank': return payload.rank === 'C'
-
-    // Penalty
-    case 'penalty_first': return true
-    case 'penalty_cleared': return true
-    case 'penalty_comeback': return Boolean(payload.afterPenalty)
-
-    // Secret
-    case 'secret_first_day': return Boolean(payload.firstDay) && statistics.perfectDays === 0
-    case 'secret_all_bosses': return false  // handled in checkAndUnlockAchievements
-    case 'shadow_elite': return false  // handled in checkAndUnlockAchievements
-    case 'secret_monarch': return false  // handled in checkAndUnlockAchievements
-
-    default: return false
-  }
-}
-
-// ── Achievement helpers ────────────────────────────────────────────────────────
-
-type StoreRef = {
-  get: () => GameState & GameActions
-  set: (fn: (s: GameState & GameActions) => Partial<GameState>) => void
-}
-
-function unlockAchievements(ids: string[], { get, set }: StoreRef) {
-  if (ids.length === 0) return
-  const totalGold = ids.reduce((sum, id) => sum + (ACHIEVEMENTS_MAP[id]?.rewardGold ?? 0), 0)
-  const totalXP = ids.reduce((sum, id) => sum + (ACHIEVEMENTS_MAP[id]?.rewardXP ?? 0), 0)
-
-  // Collect any achievement-unlocked shadows not yet owned
-  const currentShadows = get().player.shadows
-  const shadowRewards = ids
-    .map(id => SHADOW_BY_ACHIEVEMENT[id])
-    .filter((sh): sh is NonNullable<typeof sh> =>
-      Boolean(sh) && !currentShadows.some(e => e.id === sh.id)
-    )
-
-  set((s: GameState & GameActions) => {
-    let { xp, level } = s.player
-    let leveledUp = false
-    let isNewLevel = false
-    if (totalXP > 0) {
-      const res = applyXP(xp, level, totalXP)
-      xp = res.xp; level = res.level
-      leveledUp = res.leveledUp
-      isNewLevel = level > s.player.maxLevelReached
-    }
-    const newShadows = shadowRewards.map(sh => ({ id: sh.id, level: 1 }))
-
-    // Add achievements to rewards queue
-    const achievementRewards = ids.map(id => ({ type: 'achievement' as const, id }))
-    // Add shadow rewards to queue
-    const shadowRewardsQueue = shadowRewards.map(sh => ({ type: 'shadow' as const, id: sh.id, isLevelUp: false, newLevel: 1 }))
-
-    return {
-      rewardsQueue: [...s.rewardsQueue, ...achievementRewards, ...shadowRewardsQueue],
-      unlockedAchievements: [...s.unlockedAchievements, ...ids],
-      ...(leveledUp && isNewLevel ? { levelUpReward: { level, items: [] } } : {}),
-      player: {
-        ...s.player,
-        gold: s.player.gold + totalGold,
-        xp, level,
-        shadows: [...s.player.shadows, ...newShadows],
-        maxLevelReached: isNewLevel ? level : s.player.maxLevelReached,
-      },
-    }
-  })
-}
-
-// State-threshold based checks (run after any state-altering action)
-function checkAndUnlockThemes(ref: StoreRef) {
-  const state = ref.get()
-  const p = state.player
-  const currentRankInfo = getRank(p.level, state.statistics.totalCompleted, state.system.bossesDefeated, state.statistics.questsByRank)
-  
-  const rankIndex = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank)
-  const newlyUnlocked = [...(p.unlockedThemes || ['theme_e_rank'])]
-  let hasNew = false
-
-  APP_THEMES.forEach(theme => {
-    if (theme.unlockRank && !newlyUnlocked.includes(theme.id)) {
-      const themeRankIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === theme.unlockRank)
-      if (themeRankIdx !== -1 && rankIndex >= themeRankIdx) {
-        newlyUnlocked.push(theme.id)
-        hasNew = true
-      }
-    }
-  })
-
-  if (hasNew) {
-    ref.set((s: GameState & GameActions) => ({ player: { ...s.player, unlockedThemes: newlyUnlocked } }))
-  }
-}
-
-function checkAndUnlockAchievements(ref: StoreRef) {
-  checkAndUnlockThemes(ref)
-  const { player, statistics, unlockedAchievements } = ref.get()
-
-  const conditions: Record<string, boolean> = {
-    economy_hoarder: player.gold >= 5000,
-    economy_spender: (statistics.totalGoldSpent ?? 0) >= 3000,
-    secret_monarch: player.level >= 20,
-    shadow_elite: player.activeShadowIds.length >= 3,
-    secret_all_bosses: ['boss_runner', 'boss_cerberus', 'focus_igris', 'boss_omega_slayer', 'boss_eclipse_survivor', 'boss_seraph_fall']
-      .every(id => unlockedAchievements.includes(id)),
-  }
-
-  const newlyUnlocked = Object.entries(conditions)
-    .filter(([id, met]) => met && !unlockedAchievements.includes(id))
-    .map(([id]) => id)
-
-  unlockAchievements(newlyUnlocked, ref)
-
-  // Sync all tiered achievements backed by live state values
-  progressAchievements('streak_updated', 1, ref, true)
-  progressAchievements('level_up', 1, ref, true)
-  progressAchievements('shadow_collected', 1, ref, true)
-  progressAchievements('boss_defeated', 1, ref, true)
-  progressAchievements('focus_total_hours', 1, ref, true)
-  progressAchievements('all_quests_completed', 1, ref, true)
-}
-
-// Returns the live state counter for tier achievements that mirror a state field.
-// Returns null for purely incremental triggers (accumulated in achievementProgress).
-function getStateValueForTrigger(event: EventTrigger, state: GameState): number | null {
-  switch (event) {
-    case 'boss_defeated': return state.system.bossesDefeated
-    case 'focus_total_hours': return state.statistics.totalFocusMinutes
-    case 'all_quests_completed': return state.statistics.perfectDays
-    case 'streak_updated': return state.player.currentStreak
-    case 'level_up': return state.player.level
-    case 'shadow_collected': return state.player.shadows.length
-    default: return null
-  }
-}
-
-// True when a tiered achievement has all tiers completed (or non-tiered is fully unlocked).
-function isFullyDone(a: { id: string; tiers?: AchievementTier[] }, state: GameState): boolean {
-  if (state.unlockedAchievements.includes(a.id)) return true
-  if (!a.tiers) return false
-  const prog = state.achievementProgress[a.id]
-  if (!prog) return false
-  return prog.currentTierIndex >= a.tiers.length
-}
-
-// Tiered achievement tracking — advances tiers and gives per-tier rewards.
-function progressAchievements(event: EventTrigger, value: number, ref: StoreRef, useLiveValue = false) {
-  const { get, set } = ref
-  const state = get()
-  const { unlockedAchievements, achievementProgress, statistics } = state
-
-  set((s: GameState & GameActions) => {
-    const nextProgress = { ...s.achievementProgress }
-    let anyUnlocked = false
-    const unlockedInThisPass: string[] = []
-    let totalGold = 0
-    let totalXP = 0
-    const notifyIds: string[] = []
-
-    const candidates = ACHIEVEMENTS_CATALOG.filter(
-      a => a.tiers != null && a.conditionType === event && !isFullyDone(a, s)
-    )
-
-    if (candidates.length === 0) return {}
-
-    const stateValue = getStateValueForTrigger(event, s)
-
-    for (const a of candidates) {
-      const raw = s.achievementProgress[a.id]
-      const prog: AchievementProg = (raw && typeof raw === 'object' && 'currentTierIndex' in raw)
-        ? raw
-        : { currentValue: 0, currentTierIndex: 0 }
-
-      let { currentValue, currentTierIndex } = prog
-      const newValue = useLiveValue
-        ? (stateValue !== null ? stateValue : currentValue)
-        : currentValue + value
-
-      let idx = currentTierIndex
-      while (idx < a.tiers!.length && newValue >= a.tiers![idx].targetValue) {
-        const tier = a.tiers![idx]
-        totalGold += tier.rewardGold
-        totalXP += tier.rewardXP ?? 0
-        if (!notifyIds.includes(a.id)) notifyIds.push(a.id)
-        idx++
-      }
-
-      nextProgress[a.id] = { currentValue: newValue, currentTierIndex: idx }
-      if (idx >= a.tiers!.length) {
-        unlockedInThisPass.push(a.id)
-        anyUnlocked = true
-      }
-    }
-
-    let { xp, level } = s.player
-    let leveledUp = false
-    let isNewLevel = false
-    if (totalXP > 0) {
-      const res = applyXP(xp, level, totalXP)
-      xp = res.xp; level = res.level
-      leveledUp = res.leveledUp
-      isNewLevel = level > s.player.maxLevelReached
-    }
-
-    // Add tier notifications to queue
-    const tierRewards = notifyIds.map(id => ({ type: 'achievement' as const, id }))
-
-    return {
-      achievementProgress: nextProgress,
-      unlockedAchievements: anyUnlocked ? [...s.unlockedAchievements, ...unlockedInThisPass] : s.unlockedAchievements,
-      rewardsQueue: [...s.rewardsQueue, ...tierRewards],
-      ...(leveledUp && isNewLevel ? { levelUpReward: { level, items: [] } } : {}),
-      player: (totalGold > 0 || totalXP > 0) ? {
-        ...s.player, 
-        gold: s.player.gold + totalGold, 
-        xp, 
-        level,
-        maxLevelReached: isNewLevel ? level : s.player.maxLevelReached,
-      } : s.player,
-    }
-  })
-}
-
-// Event-based checks (triggered by specific behaviors)
-function fireEvent(event: EventTrigger, payload: TriggerPayload = {}, ref: StoreRef, value: number = 1) {
-  const state = ref.get()
-  const now = new Date()
-  const time = { hour: now.getHours(), minute: now.getMinutes() }
-
-  // Instant (non-tiered) achievements
-  const candidates = ACHIEVEMENTS_CATALOG.filter(
-    a => !a.tiers && a.conditionType === event && !state.unlockedAchievements.includes(a.id)
-  )
-  if (candidates.length > 0) {
-    const toUnlock = candidates
-      .filter(a => evaluateAchievementCondition(a.id, state, payload, time))
-      .map(a => a.id)
-    unlockAchievements(toUnlock, ref)
-  }
-
-  // Tiered achievements
-  progressAchievements(event, value, ref)
-}
-
-// ── Initial state ──────────────────────────────────────────────────────────────
-
-const INITIAL_PLAYER: Player = {
-  rank: 'E', name: 'Hunter', level: 1, xp: 0, gold: 0,
-  strXp: 0, agiXp: 0, intXp: 0, vitXp: 0,
-  str: attrLevelFromXP(0), agi: attrLevelFromXP(0), int: attrLevelFromXP(0), vit: attrLevelFromXP(0),
-  inventory: [], currentStreak: 0, highestStreak: 0,
-  shadows: [] as ShadowEntry[], activeShadowIds: [],
-  dungeonKeys: [],
-  maxLevelReached: 1,
-  unlockedThemes: ['theme_e_rank'],
-  activeThemeId: 'theme_e_rank',
+const INITIAL_RESET_SYSTEM = {
+  weeklyBossIds: [],
+  normalBossIds: [],
+  normalBossRotationDate: '',
+  weeklyResetDate: '',
+  bossDefeatedThisWeek: false,
+  weeklyDefeatedBossId: undefined,
+  extractionDoneToday: false,
+  completedNormalBossIds: [],
+  portalDailyCount: 0,
+  portalLastRollHourKey: '',
+  portalCooldownEnd: 0,
 }
 
 // ── Store ──────────────────────────────────────────────────────────────────────
@@ -1952,61 +109,56 @@ const useGameStore = create<GameState & GameActions>()(
         unlockedAchievements: [],
         achievementProgress: {},
         system: {
-          focusModeActive: false,
-          hardcoreFocusMode: false,
-          hardcorePunished: false,
-          xpBoostNext: false,
-          hasPenalty: false,
-          penaltyReduced: false,
-          penaltyTriggered: false,
-          penaltyQuests: [],
-          blockedApps: [],
-          weeklyTrainingCount: 0,
-          weeklyRegenCount: 0,
-          weeklyResetDate: '',
-          weeklyBossIds: [],
-          bossDefeatedThisWeek: false,
-          bossesDefeated: 0,
-          shopStocks: { ...INITIAL_SHOP_STOCKS },
-          blockedAttemptTimestamps: [],
-          extractionDoneToday: false,
-          penaltyBlockEnd: 0,
-          eventBossKey: '',
-          eventBossCompletedIds: [],
-          eventBossRequired: 0,
-          eventBossTotal: 0,
-          eventBossDefeated: false,
-          lastPenaltyInfo: undefined,
-          tutorialPhase: 0,
-          activeRaidBoss: null,
+          ...INITIAL_SYSTEM,
+          ...INITIAL_RESET_SYSTEM,
+          completedNormalBossIds: [],
         },
         lastResetDate: '',
         lastExtraction: null,
         questRecords: {},
         questCompletions: {},
         levelUpReward: null,
+        jobChangeReward: null,
         activeMissionTimers: {},
-        rewardsQueue: [] as { type: 'achievement' | 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number }[],
+        rewardsQueue: [] as { type: 'achievement' | 'shadow' | 'level_up' | 'job_change'; id: string; isLevelUp?: boolean; newLevel?: number; data?: any }[],
+        activeBuffs: [],
+        newAchievementIds: [],
+
+        applyBuff: (buff: { id: string; label: string; multiplier: number; stat: 'xp' | 'gold'; }, duration: number) => {
+          set(s => {
+            const existingBuffIdx = s.activeBuffs.findIndex(b => b.id === buff.id)
+            if (existingBuffIdx > -1) {
+              const existing = s.activeBuffs[existingBuffIdx]
+              const newActive = [...s.activeBuffs]
+              newActive[existingBuffIdx] = {
+                ...existing,
+                expiresAt: existing.expiresAt + duration
+              }
+              return { activeBuffs: newActive }
+            } else {
+              return { activeBuffs: [...s.activeBuffs, { ...buff, expiresAt: Date.now() + duration }] }
+            }
+          })
+        },
+
+        clearPendingRaidExtraction: () => {
+          set((s: GameState) => ({ system: { ...s.system, pendingRaidExtractionId: undefined } }))
+        },
 
         popReward: () => {
-          // Give React Native's Modal time to complete its dismissal cycle
-          // before we put the next reward into the active slot.
           setTimeout(() => {
             set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.slice(1) }))
           }, 350)
         },
 
-        // ── Event trigger (public) ─────────────────────────────────────────
-        triggerEvent(event: EventTrigger, payload: TriggerPayload = {}, value: number = 1) {
+        triggerEvent(event, payload = {}, value = 1) {
           fireEvent(event, payload, ref, value)
         },
 
-        // ── Progressive event emitter (public, no payload needed) ──────────
-        emitEvent(event: EventTrigger, value: number = 1) {
+        emitEvent(event, value = 1) {
           fireEvent(event, {}, ref, value)
         },
 
-        // ── Blocked app attempt tracker ────────────────────────────────────
         recordBlockedAttempt() {
           const now = Date.now()
           set((s: GameState & GameActions) => ({
@@ -2024,36 +176,39 @@ const useGameStore = create<GameState & GameActions>()(
           }
         },
 
-        // ── Boot & daily reset ─────────────────────────────────────────────
         rankUp() {
           set((s: GameState) => {
             const qualifiedRank = getRank(s.player.level, s.statistics.totalCompleted, s.system.bossesDefeated, s.statistics.questsByRank).rank
             return { player: { ...s.player, rank: qualifiedRank } }
           })
         },
+
         bootSystem() {
           const today = new Date().toDateString()
           const { lastResetDate, quests, player, system } = get()
 
-          // Always check if timed penalty block has expired (runs on every app open)
           if (system.hasPenalty && system.penaltyBlockEnd > 0 && Date.now() >= system.penaltyBlockEnd) {
             set((s: GameState & GameActions) => ({ system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }))
           }
 
-          // ── Dictionary sync: merge any new built-in quests (e.g. boss entries added
-          //    after the user first installed) into the persisted questDictionary.
-          //    This keeps weeklyBossIds consistent across app updates.
           {
-            const storedIds = new Set(get().questDictionary.map((d: QuestDefinition) => d.id))
+            const qd = get().questDictionary
+            if (qd.some(d => (d as { type?: string }).type === 'normal_boss')) {
+              set((s: GameState & GameActions) => ({
+                questDictionary: s.questDictionary.map(d =>
+                  (d as { type?: string }).type === 'normal_boss' ? { ...d, type: 'boss' as const } : d
+                ),
+              }))
+            }
+            const storedIds = new Set(get().questDictionary.map((d) => d.id))
             const missing = INITIAL_QUEST_DICTIONARY.filter(d => !storedIds.has(d.id))
             if (missing.length > 0) {
               set((s: GameState & GameActions) => ({ questDictionary: [...s.questDictionary, ...missing] }))
             }
           }
 
-          // Force weeklyBossIds to refresh whenever the dictionary is empty (safety net)
           if (get().system.weeklyBossIds.length === 0) {
-            const bossDefs = get().questDictionary.filter((d: QuestDefinition) => d.type === 'boss')
+            const bossDefs = get().questDictionary.filter(isWeeklyBossDefinition)
             if (bossDefs.length > 0) {
               const picked = seededPick(3, bossDefs.length, Date.now()).map(i => bossDefs[i].id)
               set((s: GameState & GameActions) => ({ system: { ...s.system, weeklyBossIds: picked } }))
@@ -2066,16 +221,10 @@ const useGameStore = create<GameState & GameActions>()(
           const weeklyReset = system.weeklyResetDate !== thisMonday
           const newWeeklyCount = weeklyReset ? 0 : system.weeklyTrainingCount
           const newWeeklyRegenCount = weeklyReset ? 0 : system.weeklyRegenCount
-
-          // wasRestDay is true if the user manually activated rest day for today
-          // (which becomes "yesterday" during the next boot).
-          // The flag is reset to false after each daily reset.
           const wasRestDay = get().settings.restDay
-
           const allDone = quests.length > 0 && quests.every((q: Quest) => q.done)
           const isFirstDay = lastResetDate === ''
           const hadPenalty = !allDone && !isFirstDay && !wasRestDay
-
           const failedCount = quests.filter((q: Quest) => !q.done).length
 
           let newXp = player.xp
@@ -2086,25 +235,88 @@ const useGameStore = create<GameState & GameActions>()(
           let streakReset = false
           let newPenaltyBlockEnd = 0
 
+          // ── New Penalty Logic (Cumulative) ────────────────────────────────────
+          const difficulty = get().settings.missionDifficulty
+          const consecutiveFails = system.consecutiveFails ?? 0
+          const prevOwed = system.penaltyMissionsOwed ?? 0
+
+          const { 
+            penaltyReduction, lootBoost, focusMastery, penaltyImmunity, streakProtect 
+          } = computeActivePassives(player.activeShadowIds, player.shadows, get().customShadows, get().activeBuffs)
+
           if (hadPenalty) {
-            const p = computePunishment(
-              failedCount, quests.length, player.xp,
+            const tier = getQuestTier(player.level)
+            const punishment = computePunishment(
+              failedCount,
+              quests.length,
+              player.xp,
               get().settings.punishmentIntensity,
-              system.penaltyReduced,
+              penaltyReduction,
+              tier,
+              PENALTY_QUEST_POOL
             )
-            newXp = Math.max(player.xp - p.xpLost, 0)
+
+            newXp = Math.max(0, player.xp - punishment.xpLost)
+            newPenaltyQuests = punishment.penaltyQuests
             penaltyTriggered = true
-            newPenaltyQuests = p.penaltyQuests
-            newHardcorePunished = p.hardcorePunished
-            streakReset = p.streakReset
-            newPenaltyBlockEnd = Date.now() + p.penaltyHours * 3_600_000
+            newHardcorePunished = punishment.hardcorePunished
+            streakReset = punishment.streakReset
+            
+            // Difficulty-based blocking logic
+            if (difficulty === 'normal') {
+              const todayEnd = new Date()
+              todayEnd.setHours(22, 0, 0, 0)
+              newPenaltyBlockEnd = todayEnd.getTime()
+            } else if (difficulty === 'hard') {
+              newPenaltyBlockEnd = Date.now() + 24 * 3600_000 
+            } else {
+              newPenaltyBlockEnd = Date.now() + punishment.penaltyHours * 3600_000
+            }
+
+            // ── Defensive Passives (Weekly Cooldown) ───────────────────────────
+            const usedSkills = system.usedShadowSkills ?? {}
+            const oneWeekMs = 7 * 24 * 3600_000
+            const now = Date.now()
+
+            const canUseImmunity = !usedSkills['penalty_immunity'] || (now - usedSkills['penalty_immunity'] > oneWeekMs)
+
+            if (penaltyImmunity && canUseImmunity) {
+              console.log('[System] Penalty Immunity triggered. Skipping penalty.')
+              set((s: GameState & GameActions) => ({
+                system: {
+                  ...s.system,
+                  hasPenalty: false,
+                  penaltyTriggered: false,
+                  usedShadowSkills: { ...usedSkills, ['penalty_immunity']: now }
+                }
+              }))
+              // Bypass penalty logic
+              penaltyTriggered = false
+              newPenaltyQuests = []
+              newXp = player.xp
+              newGold = player.gold
+              streakReset = false
+            } else {
+              set((s: GameState & GameActions) => ({
+                system: {
+                  ...s.system,
+                  consecutiveFails: consecutiveFails + 1,
+                  penaltyMissionsOwed: Math.min(prevOwed + punishment.penaltyQuests.length, 8),
+                }
+              }))
+            }
+          } else if (!hadPenalty && !isFirstDay && !wasRestDay) {
+            set((s: GameState & GameActions) => ({
+              system: { ...s.system, consecutiveFails: 0, penaltyMissionsOwed: prevOwed }
+            }))
           }
+
+          // Dungeon/break portals are now rolled hourly via checkDynamicPortalSpawn().
 
           let newStreak = player.currentStreak
           let newHighest = player.highestStreak
 
           if (!wasRestDay && !isFirstDay) {
-            // New logic: auto-complete successfully avoided or limited quests
             const pendingRewards = quests.filter((q: Quest) => {
               if (q.done) return false
               if (q.type === 'forbidden' && !q.failed) return true
@@ -2113,13 +325,10 @@ const useGameStore = create<GameState & GameActions>()(
             })
 
             if (pendingRewards.length > 0) {
-              const rewardedXp = pendingRewards.reduce((sum: number, q: Quest) => sum + q.xp, 0)
-              const rewardedGold = pendingRewards.reduce((sum: number, q: Quest) => sum + q.gold, 0)
-              newXp += rewardedXp
-              newGold += rewardedGold
+              newXp += pendingRewards.reduce((sum, q) => sum + q.xp, 0)
+              newGold += pendingRewards.reduce((sum, q) => sum + q.gold, 0)
             }
 
-            // Recalculate allDone considering auto-completed quests
             const effectiveDone = quests.filter((q: Quest) => {
               if (q.done && !q.failed) return true
               if (!q.done && q.type === 'forbidden' && !q.failed) return true
@@ -2128,25 +337,49 @@ const useGameStore = create<GameState & GameActions>()(
             }).length
 
             const isPerfect = effectiveDone === quests.length && quests.length > 0
-
             if (isPerfect) {
               newStreak = player.currentStreak + 1
               newHighest = Math.max(player.highestStreak, newStreak)
-            } else if (streakReset && !system.penaltyReduced) {
-              newStreak = 0
+            } else if (streakReset) {
+              const usedSkills = system.usedShadowSkills ?? {}
+              const oneWeekMs = 7 * 24 * 3600_000
+              const now = Date.now()
+
+              const canUseProtect = !usedSkills['streak_protect'] || (now - usedSkills['streak_protect'] > oneWeekMs)
+              
+              if (streakProtect && canUseProtect) {
+                console.log('[System] Streak Protect triggered. Streak maintained.')
+                newStreak = player.currentStreak
+                set((s: GameState & GameActions) => ({
+                  system: {
+                    ...s.system,
+                    usedShadowSkills: { ...(s.system.usedShadowSkills ?? {}), ['streak_protect']: now }
+                  }
+                }))
+              } else {
+                newStreak = 0
+              }
             }
           }
 
           const prevStreak = player.currentStreak
 
+          const rawQuests = createDailyQuests(player.level, get().questDictionary, get().settings.missionDifficulty)
+          const adjustedQuests = rawQuests.map(q => {
+            if (q.type === 'focus' && q.focusDuration) {
+              return { ...q, focusDuration: Math.round(q.focusDuration * (1 - focusMastery)) }
+            }
+            return q
+          })
+
           set((s: GameState & GameActions) => ({
-            quests: createDailyQuests(s.player.level, s.questDictionary, s.settings.missionDifficulty),
+            quests: adjustedQuests,
             extraQuests: [],
             extraQuestRerolledIds: [],
             extraQuestUsedPoolIds: [],
             sideQuests: [],
             lastResetDate: today,
-            settings: { ...s.settings, restDay: false },  // clear rest day after daily reset
+            settings: { ...s.settings, restDay: false },
             statistics: {
               ...s.statistics,
               perfectDays: allDone ? s.statistics.perfectDays + 1 : s.statistics.perfectDays,
@@ -2167,36 +400,49 @@ const useGameStore = create<GameState & GameActions>()(
                 totalCount: quests.length,
                 xpLost: player.xp - newXp,
               } : s.system.lastPenaltyInfo,
-              weeklyTrainingCount: newWeeklyCount,
-              weeklyRegenCount: newWeeklyRegenCount,
+              weeklyTrainingCount: weeklyReset ? 0 : s.system.weeklyTrainingCount,
+              weeklyRegenCount: weeklyReset ? 0 : s.system.weeklyRegenCount,
               weeklyResetDate: weeklyReset ? thisMonday : s.system.weeklyResetDate,
               weeklyBossIds: (weeklyReset || s.system.weeklyBossIds.length === 0)
-                ? seededPick(3, get().questDictionary.filter((q: QuestDefinition) => q.type === 'boss').length, Date.now()).map(i => get().questDictionary.filter((q: QuestDefinition) => q.type === 'boss')[i].id)
+                ? (() => {
+                    const pool = get().questDictionary.filter(isWeeklyBossDefinition)
+                    return pool.length === 0 ? [] : seededPick(3, pool.length, Date.now()).map(i => pool[i].id)
+                  })()
                 : s.system.weeklyBossIds,
               bossDefeatedThisWeek: weeklyReset ? false : s.system.bossDefeatedThisWeek,
               weeklyDefeatedBossId: weeklyReset ? undefined : s.system.weeklyDefeatedBossId,
               shopStocks: weeklyReset ? { ...INITIAL_SHOP_STOCKS } : s.system.shopStocks,
               extractionDoneToday: false,
+              portalDailyCount: 0,
+              portalLastRollHourKey: '',
+              portalCooldownEnd: 0,
               penaltyBlockEnd: newPenaltyBlockEnd,
+              // Portais dinâmicos foram unificados no roll horário (sem lista fixa diária).
+              normalBossRotationDate: new Date().toDateString(),
+              normalBossIds: [],
+              completedNormalBossIds: [],
             },
           }))
 
-          // Keep the Android widget in sync with the updated streak
-          WidgetStorage?.setStreak(newStreak)
-
-          fireEvent('daily_login', {}, ref)
           if (hadPenalty) fireEvent('penalty_triggered', {}, ref)
           if (allDone) fireEvent('all_quests_completed', {
             afterPerfectDay: true,
             firstDay: isFirstDay,
-            afterPenalty: system.hasPenalty,  // was in penalty coming into today
+            afterPenalty: system.hasPenalty,
           }, ref)
           if (!wasRestDay && !isFirstDay && allDone) {
             fireEvent('streak_updated', { prevStreak }, ref)
           }
+          // Job Change detection after player state update
+          const nextPlayer = get().player; // Get the updated player state
+          const jobChange = hadJobClassChange(player.level, nextPlayer.level)
+          if (jobChange) {
+            set((s: GameState & GameActions) => ({ jobChangeReward: jobChange }))
+          }
           checkAndUnlockAchievements(ref)
           scheduleSystemWarnings().catch(() => { })
           get().checkRaidBoss()
+          get().checkDynamicPortalSpawn()
         },
 
         dismissPenaltyModal() {
@@ -2213,55 +459,37 @@ const useGameStore = create<GameState & GameActions>()(
           set((state: GameState & GameActions) => {
             const pR = getRank(state.player.level)
             let allowedRanks: RaidBossRank[] = ['B']
-            
-            // Stricter mapping based on player class for progressive difficulty
-            if (['E', 'D'].includes(pR.rank)) {
-              allowedRanks = ['B']
-            } else if (pR.rank === 'C') {
-              allowedRanks = ['B', 'A']
-            } else if (pR.rank === 'B') {
-              allowedRanks = ['A']
-            } else if (pR.rank === 'A') {
-              allowedRanks = ['A', 'S']
-            } else if (pR.rank === 'S') {
-              allowedRanks = ['S', 'National']
-            } else if (pR.rank === 'National') {
-              allowedRanks = ['National']
-            }
+            if (['E', 'D'].includes(pR.rank)) allowedRanks = ['B']
+            else if (pR.rank === 'C') allowedRanks = ['B', 'A']
+            else if (pR.rank === 'B') allowedRanks = ['A']
+            else if (pR.rank === 'A') allowedRanks = ['A', 'S']
+            else if (pR.rank === 'S') allowedRanks = ['S', 'National']
+            else if (pR.rank === 'National') allowedRanks = ['National']
 
-            const pool = RAID_BOSSES.filter(b => allowedRanks.includes(b.rank))
+            const pool = RAID_BOSSES.filter(b => 
+              allowedRanks.includes(b.rank) && 
+              !b.id.startsWith('break_boss_') && 
+              !b.id.startsWith('key_boss_')
+            )
             const bossDef = pool[Math.floor(Math.random() * pool.length)] || RAID_BOSSES[0]
-
-            // Calculate dynamic HP based on expected daily XP capacity
             const tier = getQuestTier(state.player.level)
             const mult = TIER_MULT[tier] || 1
-
             const poolQuests = state.questDictionary.filter(q => q.type === 'pool')
-            const avgPoolBaseXp = poolQuests.length > 0
-              ? poolQuests.reduce((sum, q) => sum + q.baseXP, 0) / poolQuests.length
-              : 50
-
+            const avgPoolBaseXp = poolQuests.length > 0 ? poolQuests.reduce((sum, q) => sum + q.baseXP, 0) / poolQuests.length : 50
             const coreQuests = state.questDictionary.filter(q => q.type === 'core')
             const totalCoreBaseXp = coreQuests.reduce((sum, q) => sum + q.baseXP, 0)
-
             const poolTarget = getDailyMissionTarget(state.player.level, state.settings.missionDifficulty)
-            // Total expected daily XP combining all Core quests + the randomized Pool limit
-            const expectedDailyBaseXp = totalCoreBaseXp + (avgPoolBaseXp * poolTarget)
-            const expectedDailyXp = expectedDailyBaseXp * mult
+            const expectedDailyXp = (totalCoreBaseXp + (avgPoolBaseXp * poolTarget)) * mult
 
-            // Challenge factor defines what percentage of max daily XP is needed per day
             const rankReq: Record<string, number> = { B: 0.6, A: 0.75, S: 0.9, National: 1.2 }
             const challengeFactor = rankReq[bossDef.rank] || 0.7
-
             const maxHp = Math.max(100, Math.floor(expectedDailyXp * bossDef.durationDays * challengeFactor))
 
             return {
               system: {
                 ...state.system,
                 activeRaidBoss: {
-                  defId: bossDef.id,
-                  maxHp,
-                  currentHp: maxHp,
+                  defId: bossDef.id, maxHp, currentHp: maxHp,
                   endDate: Date.now() + bossDef.durationDays * 24 * 60 * 60 * 1000
                 }
               }
@@ -2273,60 +501,28 @@ const useGameStore = create<GameState & GameActions>()(
           set((state: GameState & GameActions) => {
             const boss = state.system.activeRaidBoss
             if (!boss) return {}
-
             const currentHp = Math.max(0, boss.currentHp - dmg)
-
             if (currentHp <= 0) {
               const bDef = RAID_BOSSES.find(b => b.id === boss.defId)
               if (bDef) {
                 const goldReward = boss.maxHp
                 const xpReward = Math.floor(boss.maxHp / 2)
-                const newGold = state.player.gold + goldReward
                 const res = applyXP(state.player.xp, state.player.level, xpReward)
-
-                // Roll shadow reward
-                const rank = pickExtractionRank(res.level)
-                const shadow = rollShadow(rank, [])
-                let lastExt: { shadow: Shadow; isLevelUp: boolean; newLevel: number } | null = null
-                let updatedShadows = [...state.player.shadows]
-
-                if (shadow) {
-                  const existing = updatedShadows.find(e => e.id === shadow.id)
-                  if (existing) {
-                    const nl = existing.level + 1
-                    updatedShadows = updatedShadows.map(e => e.id === shadow.id ? { ...e, level: nl } : e)
-                    lastExt = { shadow, isLevelUp: true, newLevel: nl }
-                  } else {
-                    updatedShadows.push({ id: shadow.id, level: 1 })
-                    lastExt = { shadow, isLevelUp: false, newLevel: 1 }
-                  }
-                }
-
-                const attrBoost = getAttrXpBoost(
-                  { strXp: state.player.strXp ?? 0, agiXp: state.player.agiXp ?? 0, intXp: state.player.intXp ?? 0, vitXp: state.player.vitXp ?? 0 },
-                  'boss'
-                )
-
+                const attrBoost = getAttrXpBoost(state.player, 'boss')
                 const isNewLevel = res.level > state.player.maxLevelReached
+                const jobChange = hadJobClassChange(state.player.level, res.level)
 
                 return {
                   player: {
-                    ...state.player,
-                    gold: newGold,
-                    xp: res.xp,
-                    level: res.level,
-                    shadows: updatedShadows,
-                    dungeonKeys: getNewLevelKeys(state.player.dungeonKeys ?? [], res.level),
+                    ...state.player, gold: state.player.gold + goldReward, xp: res.xp, level: res.level,
                     ...attrBoost,
+                    dungeonKeys: getNewLevelKeys(state.player.dungeonKeys ?? [], res.level),
                     maxLevelReached: isNewLevel ? res.level : state.player.maxLevelReached,
                   },
                   ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
-                  statistics: {
-                    ...state.statistics,
-                    totalBossesCompleted: (state.statistics.totalBossesCompleted || 0) + 1,
-                  },
-                  lastExtraction: lastExt || state.lastExtraction,
-                  system: { ...state.system, activeRaidBoss: null }
+                  ...(jobChange ? { jobChangeReward: jobChange } : {}),
+                  statistics: { ...state.statistics, totalBossesCompleted: (state.statistics.totalBossesCompleted || 0) + 1 },
+                  system: { ...state.system, activeRaidBoss: null, pendingRaidExtractionId: boss.defId }
                 }
               }
               return { system: { ...state.system, activeRaidBoss: null } }
@@ -2337,64 +533,41 @@ const useGameStore = create<GameState & GameActions>()(
 
         checkRaidBoss() {
           const s = get().system.activeRaidBoss
-          if (s && Date.now() > s.endDate) {
-            set((state: GameState & GameActions) => ({ system: { ...state.system, activeRaidBoss: null } }))
-          }
-          if (!get().system.activeRaidBoss) {
-            get().spawnRaidBoss()
-          }
+          if (s && Date.now() > s.endDate) set((state: GameState & GameActions) => ({ system: { ...state.system, activeRaidBoss: null } }))
+          if (!get().system.activeRaidBoss) get().spawnRaidBoss()
         },
 
-        clearExtraction() {
-          set({ lastExtraction: null })
-        },
+        clearExtraction() { set({ lastExtraction: null }) },
 
-        // ── Complete daily quest ───────────────────────────────────────────
         completeQuest(id: string) {
           let leveledUp = false
           let finalXpGain = 0
           set((s: GameState & GameActions) => {
             const quest = s.quests.find(q => q.id === id)
             if (!quest || quest.done) return {}
-
-            const { xpBoost, goldBoost } = computeActivePassives(
-              s.player.activeShadowIds, s.player.shadows, s.customShadows,
-            )
+            const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
             const baseXP = s.system.xpBoostNext ? quest.xp * 2 : quest.xp
             const xpGain = Math.round(baseXP * (1 + xpBoost))
             finalXpGain = xpGain
             const goldGain = Math.round(quest.gold * (1 + goldBoost))
             const res = applyXP(s.player.xp, s.player.level, xpGain)
             leveledUp = res.leveledUp
-
-            const quests = s.quests.map(q => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: goldGain } : q)
-
-            const isTraining = quest.type === 'training'
-            const newWeeklyCount = isTraining
-              ? Math.min(s.system.weeklyTrainingCount + 1, 7)
-              : s.system.weeklyTrainingCount
-
-            // Anti-exploit: milestone rewards only fire for truly new levels
             const isNewLevel = res.level > s.player.maxLevelReached
-
-            // Level-up item rewards: level %5 → 1 potion, level %10 → 2 potions
-            const REWARD_POOL = ['lagrima_purificacao', 'relogio_ampulheta']
-            let rewardItems: string[] = []
+            
+            const rewardItems: string[] = []
             if (res.leveledUp && isNewLevel) {
-              const newLvl = res.level
-              const count = newLvl % 10 === 0 ? 2 : newLvl % 5 === 0 ? 1 : 0
-              for (let i = 0; i < count; i++) {
-                rewardItems.push(REWARD_POOL[Math.random() < 0.5 ? 0 : 1])
-              }
+              const count = res.level % 10 === 0 ? 2 : res.level % 5 === 0 ? 1 : 0
+              for (let i = 0; i < count; i++) rewardItems.push(Math.random() < 0.5 ? 'lagrima_purificacao' : 'relogio_ampulheta')
             }
+            
+            const { lootBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
+            
+            if (Math.random() < 0.1 * (1 + lootBoost)) rewardItems.push('loot_box')
 
-            // Chance to drop a Loot Box (10%)
-            if (Math.random() < 0.10) {
-              rewardItems.push('loot_box')
-            }
-
-            // Add reward items to inventory within the same set call
             const rewardInv = [...s.player.inventory]
+            if (Math.random() < 0.05 * (1 + lootBoost)) rewardItems.push('shadow_essence')
+            if (Math.random() < 0.03 * (1 + lootBoost)) rewardItems.push('blood_fallen')
+            
             rewardItems.forEach(itemId => {
               const idx = rewardInv.findIndex(e => e.itemId === itemId)
               if (idx >= 0) rewardInv[idx] = { ...rewardInv[idx], quantity: rewardInv[idx].quantity + 1 }
@@ -2402,377 +575,265 @@ const useGameStore = create<GameState & GameActions>()(
             })
 
             const attrBoost = getAttrXpBoost(s.player, quest.type)
-
-            const player: Player = {
-              ...s.player,
-              xp: res.xp, level: res.level, gold: s.player.gold + goldGain,
-              ...attrBoost,
-              inventory: rewardItems.length > 0 ? rewardInv : s.player.inventory,
-              dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
-              maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
-            }
-
-            // Use the quest's own intrinsic rank (not the player's current rank)
-            const completedQuest = s.quests.find((q: Quest) => q.id === id)
-            const questRank: RankKey = completedQuest?.rank ?? (getRank(res.level).rank as RankKey)
+            const questRank: RankKey = quest?.rank ?? (getRank(res.level).rank as RankKey)
+            const jobChange = hadJobClassChange(s.player.level, res.level)
+            
             return {
-              quests, player,
-              system: { ...s.system, xpBoostNext: false, weeklyTrainingCount: newWeeklyCount },
+              quests: s.quests.map(q => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: goldGain } : q),
+              player: {
+                ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + goldGain, ...attrBoost,
+                inventory: rewardInv, dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
+                maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
+              },
+              system: { ...s.system, xpBoostNext: false, weeklyTrainingCount: quest.type === 'training' ? Math.min(s.system.weeklyTrainingCount + 1, 7) : s.system.weeklyTrainingCount },
               statistics: {
-                ...s.statistics,
-                totalCompleted: s.statistics.totalCompleted + 1,
+                ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1,
                 questsByRank: { ...s.statistics.questsByRank, [questRank]: (s.statistics.questsByRank[questRank] ?? 0) + 1 },
               },
               questCompletions: { ...s.questCompletions, [id]: (s.questCompletions[id] ?? 0) + 1 },
-              levelUpReward: (res.leveledUp && isNewLevel)
-                ? { level: res.level, items: rewardItems }
-                : s.levelUpReward,
+              rewardsQueue: [
+                ...s.rewardsQueue,
+                ...(res.leveledUp && isNewLevel ? [{ type: 'level_up' as const, id: String(res.level), data: { level: res.level, items: rewardItems } }] : []),
+                ...(jobChange ? [{ type: 'job_change' as const, id: jobChange.name, data: jobChange }] : []),
+              ],
             }
           })
 
-          const allNowDone = get().quests.every((q: Quest) => q.done)
+          const allNowDone = get().quests.every(q => q.done)
           if (allNowDone) cancelSystemWarnings().catch(() => { })
 
-          // ── Daily shadow extraction ────────────────────────────────────────
           if (allNowDone && !get().system.extractionDoneToday) {
-            const state: GameState & GameActions = get()
-            const rank: ShadowRank = pickExtractionRank(state.player.level) as ShadowRank
-            const shadow: Shadow | null = rollShadow(rank, [])
+            const state = get()
+            const rank = pickExtractionRank(state.player.level)
+            const shadow = rollShadow(rank, [])
             if (shadow) {
-              const existingEntry = state.player.shadows.find((e: ShadowEntry) => e.id === shadow.id)
-              if (existingEntry) {
-                const newLevel = existingEntry.level + 1
-                set((s: GameState & GameActions) => ({
-                  player: {
-                    ...s.player,
-                    shadows: s.player.shadows.map((e: ShadowEntry) =>
-                      e.id === shadow.id ? { ...e, level: newLevel } : e
-                    ),
-                  },
-                  lastExtraction: { shadow, isLevelUp: true, newLevel },
-                  system: { ...s.system, extractionDoneToday: true },
-                }))
-              } else {
-                set((s: GameState & GameActions) => ({
-                  player: {
-                    ...s.player,
-                    shadows: [...s.player.shadows, { id: shadow.id, level: 1 }],
-                  },
-                  lastExtraction: { shadow, isLevelUp: false, newLevel: 1 },
-                  system: { ...s.system, extractionDoneToday: true },
-                }))
-              }
+              const existing = state.player.shadows.find(e => e.id === shadow.id)
+              set((s: GameState & GameActions) => ({
+                player: {
+                  ...s.player,
+                  shadows: existing 
+                    ? s.player.shadows.map(e => e.id === shadow.id ? { ...e, level: e.level + 1 } : e)
+                    : [...s.player.shadows, { id: shadow.id, level: 1 }]
+                },
+                lastExtraction: { shadow, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 },
+                system: { ...s.system, extractionDoneToday: true },
+              }))
             }
           }
 
           fireEvent('quest_completed', { isLastQuest: allNowDone }, ref)
-          if (allNowDone) {
-            fireEvent('all_quests_completed', {
-              afterPerfectDay: true,
-              firstDay: get().statistics.perfectDays === 0,
-              afterPenalty: get().system.hasPenalty,
-            }, ref)
-          }
-
-          if (leveledUp) {
-            Vibration.vibrate([0, 150, 50, 150, 50, 300])
-          } else {
-            Vibration.vibrate(50)
-          }
-
+          if (allNowDone) fireEvent('all_quests_completed', { afterPerfectDay: true, firstDay: get().statistics.perfectDays === 0, afterPenalty: get().system.hasPenalty }, ref)
+          Vibration.vibrate(leveledUp ? [0, 150, 50, 150, 50, 300] : 50)
           checkAndUnlockAchievements(ref)
           if (finalXpGain > 0) get().dealRaidBossDamage(finalXpGain)
           return { leveledUp }
         },
 
-        // This function was added by mistake or was meant to be handled differently.
-        // The modal itself handles the state after dismiss.
+        failQuest(id) { set((s: GameState) => ({ quests: s.quests.map(q => q.id === id ? { ...q, done: true, failed: true } : q) })) },
+        updateQuestValue(id, value) { set((s: GameState) => ({ quests: s.quests.map(q => q.id === id ? { ...q, currentValue: value } : q) })) },
 
-        // ── Skip quest (System Pass) ───────────────────────────────────────
-        failQuest(id: string) {
-          set((s: GameState) => ({
-            quests: s.quests.map((q: Quest) => q.id === id ? { ...q, done: true, failed: true } : q)
-          }))
-        },
-
-        updateQuestValue(id: string, value: number) {
-          set((s: GameState) => ({
-            quests: s.quests.map((q: Quest) => q.id === id ? { ...q, currentValue: value } : q)
-          }))
-        },
-
-        skipQuest(id: string) {
+        skipQuest(id) {
           set((s: GameState & GameActions) => {
-            const quest = s.quests.find((q: Quest) => q.id === id)
+            const quest = s.quests.find(q => q.id === id)
             if (!quest || quest.done) return {}
-            const quests = s.quests.map((q: Quest) => q.id === id ? { ...q, done: true } : q)
             const res = applyXP(s.player.xp, s.player.level, quest.xp)
             const isNewLevel = res.level > s.player.maxLevelReached
+            const jobChange = hadJobClassChange(s.player.level, res.level)
             return {
-              quests,
+              quests: s.quests.map(q => q.id === id ? { ...q, done: true } : q),
               player: {
-                ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + quest.gold,
-                ...getAttrXpBoost(s.player, quest.type),
-                dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
-                maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
+                ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + quest.gold, ...getAttrXpBoost(s.player, quest.type),
+                dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level), maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
               },
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
+              ...(jobChange ? { jobChangeReward: jobChange } : {}),
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
             }
           })
-          if (get().quests.every((q: Quest) => q.done)) cancelSystemWarnings().catch(() => { })
+          if (get().quests.every(q => q.done)) cancelSystemWarnings().catch(() => { })
           fireEvent('quest_skipped_via_pass', { itemId: 'system_pass' }, ref)
           checkAndUnlockAchievements(ref)
         },
 
-        // ── Undo daily quest ───────────────────────────────────────────────
-        undoQuest(id: string) {
+        undoQuest(id) {
           let xpToRevert = 0
           set((s: GameState & GameActions) => {
-            const quest = s.quests.find((q: Quest) => q.id === id)
+            const quest = s.quests.find(q => q.id === id)
             if (!quest?.done) return {}
-            const quests = s.quests.map((q: Quest) => q.id === id ? { ...q, done: false, xpGained: undefined, goldGained: undefined } : q)
-
             xpToRevert = quest.xpGained ?? quest.xp
-            const goldToRevert = quest.goldGained ?? quest.gold
-
-            let { xp, level, gold, str, agi, vit, int } = s.player
-            gold = Math.max(gold - goldToRevert, 0)
-
+            let { xp, level, gold } = s.player
             let newXp = xp - xpToRevert
             let newLevel = level
-            while (newXp < 0 && newLevel > 1) {
-              newLevel--
-              newXp = xpForLevel(newLevel) + newXp
-            }
-
-            const levelsLost = level - newLevel
-            // Reverse the quest's own intrinsic rank (matches how it was originally counted)
+            while (newXp < 0 && newLevel > 1) { newLevel--; newXp = xpForLevel(newLevel) + newXp }
             const questRankToReverse: RankKey = quest.rank ?? (getRank(newLevel).rank as RankKey)
             
-            // Revert record history
-            const prevRecord = s.questRecords[id]
-            let newRecords = s.questRecords
-            if (prevRecord && prevRecord.history) {
-              const todayStr = new Date().toISOString().split('T')[0]
-              const history = prevRecord.history.filter(h => !h.date.startsWith(todayStr))
-              newRecords = {
-                ...s.questRecords,
-                [id]: {
-                  ...prevRecord,
-                  history
-                }
-              }
-            }
-
             return {
-              quests,
-              questRecords: newRecords,
+              quests: s.quests.map(q => q.id === id ? { ...q, done: false, xpGained: undefined, goldGained: undefined } : q),
               system: { ...s.system, weeklyTrainingCount: quest.type === 'training' ? Math.max(s.system.weeklyTrainingCount - 1, 0) : s.system.weeklyTrainingCount },
               statistics: {
-                ...s.statistics,
-                totalCompleted: Math.max(s.statistics.totalCompleted - 1, 0),
+                ...s.statistics, totalCompleted: Math.max(s.statistics.totalCompleted - 1, 0),
                 questsByRank: { ...s.statistics.questsByRank, [questRankToReverse]: Math.max((s.statistics.questsByRank[questRankToReverse] ?? 0) - 1, 0) },
               },
+              player: { ...s.player, xp: Math.max(newXp, 0), level: newLevel, gold: Math.max(gold - (quest.goldGained ?? quest.gold), 0) },
               questCompletions: { ...s.questCompletions, [id]: Math.max((s.questCompletions[id] ?? 1) - 1, 0) },
-              player: {
-                ...s.player,
-                xp: Math.max(newXp, 0),
-                level: newLevel,
-                gold,
-              },
             }
           })
-
           if (xpToRevert > 0) get().dealRaidBossDamage(-xpToRevert)
         },
 
-        // ── Side Quests ────────────────────────────────────────────────────
-        addSideQuest(title: string) {
+        addSideQuest(title) {
           if (!title.trim()) return
           const { rank, xp, gold } = generateSideQuestReward()
-          const sq: SideQuest = {
-            id: `sq_${Date.now()}`, title: title.trim(),
-            rank, xp, gold, done: false, createdDate: new Date().toDateString(),
-          }
+          const sq: SideQuest = { id: `sq_${Date.now()}`, title: title.trim(), rank, xp, gold, done: false, createdDate: new Date().toDateString() }
           set((s: GameState) => ({ sideQuests: [...s.sideQuests, sq] }))
           fireEvent('side_quest_added', {}, ref)
           if (rank === 'C') fireEvent('side_quest_c_rank', { rank }, ref)
         },
 
-        completeSideQuest(id: string) {
+        completeSideQuest(id) {
           let leveledUp = false
           let finalXpGain = 0
           set((s: GameState & GameActions) => {
-            const sq = s.sideQuests.find((q: SideQuest) => q.id === id)
+            const sq = s.sideQuests.find(q => q.id === id)
             if (!sq || sq.done) return {}
-
-            const { xpBoost, goldBoost } = computeActivePassives(
-              s.player.activeShadowIds, s.player.shadows, s.customShadows,
-            )
-            const baseXP = s.system.xpBoostNext ? sq.xp * 2 : sq.xp
-            const xpGain = Math.round(baseXP * (1 + xpBoost))
+            const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows)
+            const xpGain = Math.round((s.system.xpBoostNext ? sq.xp * 2 : sq.xp) * (1 + xpBoost))
             finalXpGain = xpGain
-            const goldGain = Math.round(sq.gold * (1 + goldBoost))
             const res = applyXP(s.player.xp, s.player.level, xpGain)
             leveledUp = res.leveledUp
-
-            const sideQuests = s.sideQuests.map((q: SideQuest) => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: goldGain } : q)
-
             const isNewLevel = res.level > s.player.maxLevelReached
-
+            const jobChange = hadJobClassChange(s.player.level, res.level)
             return {
-              sideQuests,
+              sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: Math.round(sq.gold * (1 + goldBoost)) } : q),
               system: { ...s.system, xpBoostNext: false },
               player: {
-                ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + goldGain,
-                ...getAttrXpBoost(s.player, 'side'),
-                dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
+                ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + Math.round(sq.gold * (1 + goldBoost)), 
+                ...getAttrXpBoost(s.player, 'side'), dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
                 maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
               },
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
+              ...(jobChange ? { jobChangeReward: jobChange } : {}),
               statistics: {
-                ...s.statistics,
-                totalCompleted: s.statistics.totalCompleted + 1,
+                ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1,
                 sideQuestsCompletedToday: (s.statistics.sideQuestsCompletedToday ?? 0) + 1,
                 totalSideCompleted: (s.statistics.totalSideCompleted ?? 0) + 1,
-                questsByRank: { ...s.statistics.questsByRank, [sq.rank]: (s.statistics.questsByRank[sq.rank as RankKey] ?? 0) + 1 },
+                questsByRank: { ...s.statistics.questsByRank, [sq.rank as RankKey]: (s.statistics.questsByRank[sq.rank as RankKey] ?? 0) + 1 },
               },
             }
           })
-          const todayCount = get().statistics.sideQuestsCompletedToday
-          fireEvent('side_quest_completed', { todayCount }, ref)
+          fireEvent('side_quest_completed', { todayCount: get().statistics.sideQuestsCompletedToday }, ref)
           checkAndUnlockAchievements(ref)
           if (finalXpGain > 0) get().dealRaidBossDamage(finalXpGain)
           return { leveledUp }
         },
 
-        startSideQuest(id: string, mins: number) {
-          set((s: GameState) => ({
-            sideQuests: s.sideQuests.map((q: SideQuest) => q.id === id ? { ...q, startTime: Date.now(), duration: mins * 60 } : q)
-          }))
-        },
+        startSideQuest(id, mins) { set((s: GameState) => ({ sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, startTime: Date.now(), duration: mins * 60 } : q) })) },
+        updateSideQuestNote(id, note) { set((s: GameState) => ({ sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, note } : q) })) },
+        removeSideQuest(id) { set((s: GameState) => ({ sideQuests: s.sideQuests.filter(q => q.id !== id) })) },
 
-        updateSideQuestNote(id: string, note: string) {
-          set((s: GameState) => ({
-            sideQuests: s.sideQuests.map((q: SideQuest) => q.id === id ? { ...q, note } : q)
-          }))
-        },
-
-        removeSideQuest(id: string) {
-          set((s: GameState) => ({ sideQuests: s.sideQuests.filter((q: SideQuest) => q.id !== id) }))
-        },
-
-        // ── XP / Focus ─────────────────────────────────────────────────────
-        addXP(amount: number) {
+        addXP(amount) {
           let leveledUp = false
           set((s: GameState & GameActions) => {
             const res = applyXP(s.player.xp, s.player.level, amount)
             leveledUp = res.leveledUp
             const isNewLevel = res.level > s.player.maxLevelReached
+            const jobChange = hadJobClassChange(s.player.level, res.level)
             return {
               player: {
-                ...s.player, xp: res.xp, level: res.level,
-                ...getAttrXpBoost(s.player, 'side'),
-                dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
-                maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
+                ...s.player, xp: res.xp, level: res.level, ...getAttrXpBoost(s.player, 'side'),
+                dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level), maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
               },
-              ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {})
+              ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
+              ...(jobChange ? { jobChangeReward: jobChange } : {}),
             }
           })
           checkAndUnlockAchievements(ref)
           return { leveledUp }
         },
 
-        toggleFavoriteShadow(id: string) {
-          set((s: GameState) => ({
-            player: {
-              ...s.player,
-              shadows: s.player.shadows.map((sh: ShadowEntry) =>
-                sh.id === id ? { ...sh, isFavorite: !sh.isFavorite } : sh
-              ),
-            },
-          }))
+        toggleFavoriteShadow(id) {
+          set((s: GameState) => ({ player: { ...s.player, shadows: s.player.shadows.map(sh => sh.id === id ? { ...sh, isFavorite: !sh.isFavorite } : sh) } }))
         },
 
-        recordFocusTime(minutes: number) {
-          const safeMinutes = Math.max(0, minutes)
-          if (safeMinutes === 0) return
+        recordFocusTime(minutes) {
+          if (minutes <= 0) return
           set((s: GameState) => {
-            const stats = { ...s.statistics, totalFocusMinutes: s.statistics.totalFocusMinutes + safeMinutes }
-            if (!s.system.hasPenalty || s.system.penaltyBlockEnd <= 0) {
-              return { statistics: stats }
+            const stats = { ...s.statistics, totalFocusMinutes: s.statistics.totalFocusMinutes + minutes }
+            if (s.system.hasPenalty && s.system.penaltyBlockEnd > 0) {
+              const newEnd = s.system.penaltyBlockEnd - minutes * 60_000
+              if (newEnd <= Date.now()) return { statistics: stats, system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }
+              return { statistics: stats, system: { ...s.system, penaltyBlockEnd: newEnd } }
             }
-            const newEnd = s.system.penaltyBlockEnd - safeMinutes * 60_000
-            if (newEnd <= Date.now()) {
-              return { statistics: stats, system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }
-            }
-            return { statistics: stats, system: { ...s.system, penaltyBlockEnd: newEnd } }
+            return { statistics: stats }
           })
-          fireEvent('focus_total_hours', {}, ref, safeMinutes)
-          fireEvent('focus_session_completed', { minutes: safeMinutes }, ref, 1)
+          fireEvent('focus_total_hours', {}, ref, minutes)
+          fireEvent('focus_session_completed', { minutes }, ref, 1)
           checkAndUnlockAchievements(ref)
         },
 
-
-        // ── Inventory / Shop ───────────────────────────────────────────────
-        purchaseItem(itemId: string, cost: number): boolean {
+        purchaseItem(itemId, cost) {
           let success = false
           set((s: GameState & GameActions) => {
-            if (s.player.gold < cost) return {}
-            if (STOCKED_ITEMS.includes(itemId) && (s.system.shopStocks[itemId] ?? 0) <= 0) return {}
+            const { shopDiscount } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
+            const finalCost = Math.round(cost * (1 - shopDiscount))
 
+            if (s.player.gold < finalCost || (STOCKED_ITEMS.includes(itemId) && (s.system.shopStocks[itemId] ?? 0) <= 0)) return {}
             success = true
-
-            // Handle Theme Purchase directly (Cosmetic, not inventory)
             if (itemId.startsWith('theme_')) {
               if (s.player.unlockedThemes?.includes(itemId)) return {}
               return {
-                player: {
-                  ...s.player,
-                  gold: s.player.gold - cost,
-                  unlockedThemes: [...(s.player.unlockedThemes ?? []), itemId],
-                  activeThemeId: itemId // Auto-equip upon purchase!
-                },
-                statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + cost },
+                player: { ...s.player, gold: s.player.gold - finalCost, unlockedThemes: [...(s.player.unlockedThemes ?? []), itemId], activeThemeId: itemId },
+                statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + finalCost },
               }
             }
-
             const inv = [...s.player.inventory]
-            const idx = inv.findIndex((e: InventoryEntry) => e.itemId === itemId)
+            const idx = inv.findIndex(e => e.itemId === itemId)
             if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 }
             else inv.push({ itemId, quantity: 1 })
-
-            const newStocks = STOCKED_ITEMS.includes(itemId)
-              ? { ...s.system.shopStocks, [itemId]: (s.system.shopStocks[itemId] ?? 0) - 1 }
-              : s.system.shopStocks
-
             return {
-              player: {
-                ...s.player, gold: s.player.gold - cost, inventory: inv,
-              },
-              system: { ...s.system, shopStocks: newStocks },
-              statistics: {
-                ...s.statistics,
-                totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + cost,
-              },
+              player: { ...s.player, gold: s.player.gold - finalCost, inventory: inv },
+              system: { ...s.system, shopStocks: STOCKED_ITEMS.includes(itemId) ? { ...s.system.shopStocks, [itemId]: s.system.shopStocks[itemId]! - 1 } : s.system.shopStocks },
+              statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + finalCost },
             }
           })
-
-          if (!success) return false
-
-          fireEvent('item_purchased', { itemId }, ref)
-          fireEvent('gold_spent_total', { itemId }, ref, cost)
-          checkAndUnlockAchievements(ref)
-          return true
+          if (success) { fireEvent('item_purchased', { itemId }, ref); fireEvent('gold_spent_total', { itemId }, ref, cost); checkAndUnlockAchievements(ref) }
+          return success
         },
 
-        useInventoryItem(itemId: string) {
-          set((s: GameState) => {
-            const inv = s.player.inventory
-              .map((e: InventoryEntry) => e.itemId === itemId ? { ...e, quantity: e.quantity - 1 } : e)
-              .filter((e: InventoryEntry) => e.quantity > 0)
-            return { player: { ...s.player, inventory: inv } }
+        useInventoryItem(itemId) {
+          set((s: GameState & GameActions) => {
+            const item = CATALOG_MAP[itemId]
+            if (!item) return {}
+            const nextInv = s.player.inventory.map(e => e.itemId === itemId ? { ...e, quantity: e.quantity - 1 } : e).filter(e => e.quantity > 0)
+            
+            // Handle specific buff items
+            const newBuffs = [...s.activeBuffs]
+            const now = Date.now()
+            
+            if (itemId === 'kasaka_venom') {
+              get().applyBuff({ id: 'kasaka_xp', label: 'Veneno de Kasaka', multiplier: 1.15, stat: 'xp' }, 2 * 3600_000)
+            } else if (itemId === 'igris_fragment') {
+              get().applyBuff({ id: 'igris_xp', label: 'Fragmento de Igris', multiplier: 1.20, stat: 'xp' }, 3600_000)
+            } else if (itemId === 'cerberus_fang') {
+              get().applyBuff({ id: 'cerberus_gold', label: 'Presa de Cerberus', multiplier: 1.20, stat: 'gold' }, 2 * 3600_000)
+            } else if (itemId === 'iron_will_crystal') {
+              get().applyBuff({ id: 'iron_will_xp', label: 'Vontade de Ferro', multiplier: 1.50, stat: 'xp' }, 30 * 60_000)
+            } else if (itemId === 'blood_fallen') {
+              get().applyBuff({ id: 'blood_gold', label: 'Sangue dos Caídos', multiplier: 1.25, stat: 'gold' }, 3 * 3600_000)
+            } else if (itemId === 'dragon_scale') {
+              get().applyBuff({ id: 'dragon_xp', label: 'Escama de Dragão', multiplier: 1.30, stat: 'xp' }, 4 * 3600_000)
+            } else if (itemId === 'shadow_essence') {
+              // Special logic: reset extractionDoneToday
+              return { player: { ...s.player, inventory: nextInv }, system: { ...s.system, extractionDoneToday: false } }
+            } else if (itemId === 'lich_eye') {
+              // Special: double next (simplified as 1h 100% boost?)
+              get().applyBuff({ id: 'lich_eye_xp', label: 'Olho do Lich', multiplier: 2.0, stat: 'xp' }, 3600_000)
+            }
+
+            return {
+              player: { ...s.player, inventory: nextInv },
+              activeBuffs: newBuffs,
+            }
           })
         },
 
@@ -2781,643 +842,350 @@ const useGameStore = create<GameState & GameActions>()(
           set((s: GameState & GameActions) => {
             const hasBox = s.player.inventory.find(e => e.itemId === 'loot_box' && e.quantity > 0)
             if (!hasBox) return {}
-
+            const { lootBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
             const roll = Math.random()
-            let goldReward = 0
-            let xpReward = 0
-            let keyReward: string | null = null
+            const lootMult = (1 + lootBoost)
 
-            if (roll < 0.70) {
-              goldReward = 100 + Math.floor(Math.random() * 201)
-              result = { reward: 'GOLD', detail: `Encontraste ${goldReward} Gold!`, color: '#fbbf24' }
-            } else if (roll < 0.90) {
-              xpReward = 50 + Math.floor(Math.random() * 51)
-              result = { reward: 'XP', detail: `Absorveste ${xpReward} XP!`, color: '#3b82f6' }
-            } else {
-              // Rare Key drop
-              const ownedKeys = s.player.dungeonKeys ?? []
-              const availableKeys = BOX_KEYS.filter(k => !ownedKeys.includes(k.id))
-              if (availableKeys.length > 0) {
-                const key = availableKeys[Math.floor(Math.random() * availableKeys.length)]
-                keyReward = key.id
-                result = { reward: 'CHAVE RARA', detail: `Obtiveste a ${key.name}!`, color: key.color }
-              } else {
-                // Fallback to gold if all rare keys owned
-                goldReward = 500
-                result = { reward: 'GOLD', detail: `Já tens todas as chaves raras. Recebeste 500 Gold!`, color: '#fbbf24' }
-              }
+            let g = 0, x = 0, k = null
+            if (roll < (0.7 / lootMult)) { 
+              // More likely to get XP/Keys if lootBoost is high (by reducing gold probability range)
+              // Or better yet, boost the amount
+              g = Math.round((100 + Math.floor(Math.random() * 201)) * lootMult)
+              result = { reward: 'GOLD', detail: `Encontraste ${g} Gold!`, color: '#fbbf24' } 
             }
-
-            // Consume box
-            const inv = s.player.inventory
-              .map((e: InventoryEntry) => e.itemId === 'loot_box' ? { ...e, quantity: e.quantity - 1 } : e)
-              .filter((e: InventoryEntry) => e.quantity > 0)
-
-            const xpRes = applyXP(s.player.xp, s.player.level, xpReward)
-
+            else if (roll < 0.9) { 
+              x = Math.round((50 + Math.floor(Math.random() * 51)) * lootMult)
+              result = { reward: 'XP', detail: `Absorveste ${x} XP!`, color: '#3b82f6' } 
+            }
+            else {
+              const available = BOX_KEYS.filter(k => !(s.player.dungeonKeys ?? []).includes(k.id))
+              if (available.length > 0) { const key = available[Math.floor(Math.random()*available.length)]; k = key.id; result = { reward: 'CHAVE RARA', detail: `Obtiveste a ${key.name}!`, color: key.color } }
+              else { g = Math.round(500 * lootMult); result = { reward: 'GOLD', detail: `Recebeste ${g} Gold!`, color: '#fbbf24' } }
+            }
+            const res = applyXP(s.player.xp, s.player.level, x)
+            const jobChange = hadJobClassChange(s.player.level, res.level)
             return {
-              player: {
-                ...s.player,
-                gold: s.player.gold + goldReward,
-                xp: xpRes.xp,
-                level: xpRes.level,
-                inventory: inv,
-                dungeonKeys: keyReward ? [...new Set([...(s.player.dungeonKeys ?? []), keyReward])] : getNewLevelKeys(s.player.dungeonKeys ?? [], xpRes.level),
-                maxLevelReached: xpRes.level > s.player.maxLevelReached ? xpRes.level : s.player.maxLevelReached,
-              },
-              ...(xpRes.leveledUp && xpRes.level > s.player.maxLevelReached ? { levelUpReward: { level: xpRes.level, items: [] } } : {})
+              player: { ...s.player, gold: s.player.gold + g, xp: res.xp, level: res.level, inventory: s.player.inventory.map(e => e.itemId === 'loot_box' ? { ...e, quantity: e.quantity - 1 } : e).filter(e => e.quantity > 0), dungeonKeys: k ? Array.from(new Set([...(s.player.dungeonKeys ?? []), k])) : getNewLevelKeys(s.player.dungeonKeys ?? [], res.level), maxLevelReached: Math.max(s.player.maxLevelReached, res.level) },
+              ...(res.leveledUp && res.level > s.player.maxLevelReached ? { levelUpReward: { level: res.level, items: [] } } : {}),
+              ...(jobChange ? { jobChangeReward: jobChange } : {}),
             }
           })
           return result
         },
 
-        enterDungeon(keyId: string) {
+        enterDungeon(keyId) {
           let success = false
           set((s: GameState) => {
-            const hasKey = s.player.dungeonKeys?.includes(keyId)
-            if (!hasKey) return {}
+            if (!s.player.dungeonKeys?.includes(keyId)) return {}
             success = true
-            return {
-              player: {
-                ...s.player,
-                dungeonKeys: s.player.dungeonKeys.filter(id => id !== keyId),
-              }
-            }
+            return { player: { ...s.player, dungeonKeys: s.player.dungeonKeys.filter(id => id !== keyId) } }
           })
           return success
         },
 
-        addToInventory(itemId: string, qty: number = 1) {
+        addToInventory(itemId, qty = 1) {
           set((s: GameState) => {
             const inv = [...s.player.inventory]
-            const idx = inv.findIndex((e: InventoryEntry) => e.itemId === itemId)
-            if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + qty }
+            const idx = inv.findIndex(e => e.itemId === itemId)
+            if (idx >= 0) inv[idx].quantity += qty
             else inv.push({ itemId, quantity: qty })
             return { player: { ...s.player, inventory: inv } }
           })
         },
 
-        // ── Purchase a shadow from the shop ───────────────────────────────
-        purchaseShadow(shadowId: string, cost: number) {
+        purchaseShadow(shadowId, cost) {
           const state = get()
-          if (state.player.gold < cost) return false
-          const existing = state.player.shadows.find((e: ShadowEntry) => e.id === shadowId)
-          const shadow = SHADOW_MAP[shadowId]
-          if (!shadow) return false
+          const { shopDiscount } = computeActivePassives(state.player.activeShadowIds, state.player.shadows, state.customShadows, state.activeBuffs)
+          const finalCost = Math.round(cost * (1 - shopDiscount))
 
-          if (existing) {
-            // Already owned: level up instead
-            set((s: GameState) => ({
-              player: {
-                ...s.player,
-                gold: s.player.gold - cost,
-                shadows: s.player.shadows.map((e: ShadowEntry) =>
-                  e.id === shadowId ? { ...e, level: e.level + 1 } : e
-                ),
-              },
-              statistics: {
-                ...s.statistics,
-                totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + cost,
-              },
-              rewardsQueue: [
-                ...s.rewardsQueue,
-                { type: 'shadow', id: shadowId, isLevelUp: true, newLevel: existing.level + 1 },
-              ],
-            }))
-          } else {
-            set((s: GameState) => ({
-              player: {
-                ...s.player,
-                gold: s.player.gold - cost,
-                shadows: [...s.player.shadows, { id: shadowId, level: 1 }],
-              },
-              statistics: {
-                ...s.statistics,
-                totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + cost,
-              },
-              rewardsQueue: [
-                ...s.rewardsQueue,
-                { type: 'shadow', id: shadowId, isLevelUp: false, newLevel: 1 },
-              ],
-            }))
-          }
-          fireEvent('shadow_collected', { shadowId }, ref)
-          checkAndUnlockAchievements(ref)
+          if (state.player.gold < finalCost || !SHADOW_MAP[shadowId]) return false
+          const existing = state.player.shadows.find(e => e.id === shadowId)
+          set((s: GameState) => ({
+            player: { 
+              ...s.player, 
+              gold: s.player.gold - finalCost, 
+              shadows: existing ? s.player.shadows.map(e => e.id === shadowId ? { ...e, level: e.level + 1 } : e) : [...s.player.shadows, { id: shadowId, level: 1 }] 
+            },
+            statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + finalCost },
+            rewardsQueue: [...s.rewardsQueue, { type: 'shadow', id: shadowId, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 }],
+          }))
+          fireEvent('shadow_collected', { shadowId }, ref); checkAndUnlockAchievements(ref)
           return true
         },
 
-        // ── Boss Raid ──────────────────────────────────────────────────────
-        defeatDungeonBoss(shadowId: string, customDef?: { name: string; icon: string; questType: Quest['type'] }) {
+        defeatDungeonBoss(shadowId, customDef) {
           const { player, system, customShadows } = get()
-          const xpBase = 800
-          const goldBase = 2000
-          const { xpBoost, goldBoost } = computeActivePassives(player.activeShadowIds, player.shadows, customShadows)
-          const xpReward = Math.round(xpBase * (1 + xpBoost) * (system.xpBoostNext ? 2 : 1))
-          const goldReward = Math.round(goldBase * (1 + goldBoost))
-
-          let resultShadowName: string | undefined
-          let leveledUpShadow = false
-          let isNew = false
+          const { xpBoost, goldBoost, lootBoost } = computeActivePassives(player.activeShadowIds, player.shadows, customShadows, get().activeBuffs)
+          const xpReward = Math.round(800 * (1 + xpBoost) * (system.xpBoostNext ? 2 : 1))
+          const goldReward = Math.round(2000 * (1 + goldBoost))
+          let shadowName, leveledUpShadow = false, isNew = false
+          let newShadows = [...player.shadows]
+          const newRewards: { type: 'achievement' | 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number }[] = []
 
           if (shadowId) {
-            if (customDef) {
-              const existingCustom = get().customShadows.find((cs: Shadow) => cs.id === shadowId)
-              if (existingCustom) {
-                leveledUpShadow = true
-                set((s: GameState) => ({
-                  player: {
-                    ...s.player,
-                    shadows: s.player.shadows.map((e: ShadowEntry) =>
-                      e.id === shadowId ? { ...e, level: e.level + 1 } : e
-                    ),
-                  },
-                }))
-                resultShadowName = customDef.name
-              } else {
-                isNew = true
-                const passive = getCustomShadowPassive(customDef.questType)
-                const newCustomShadow: Shadow = {
-                  id: shadowId,
-                  name: customDef.name,
-                  rank: 'Normal',
-                  type: 'Custom',
-                  dropRate: 0,
-                  passiveEffect: passive,
-                  lore: `"${customDef.name} — forjada pelo Monarca nas chamas da disciplina. A sua lealdade é absoluta."`,
-                  icon: customDef.icon,
-                  color: '#a855f7',
-                }
-                set((s: GameState) => ({
-                  customShadows: [...s.customShadows, newCustomShadow],
-                  player: { ...s.player, shadows: [...s.player.shadows, { id: shadowId, level: 1 }] },
-                }))
-                resultShadowName = customDef.name
-              }
-            } else {
-              const existing = player.shadows.find((e: ShadowEntry) => e.id === shadowId)
-              if (existing) {
-                leveledUpShadow = true
-                set((s: GameState) => ({
-                  player: {
-                    ...s.player,
-                    shadows: s.player.shadows.map((e: ShadowEntry) =>
-                      e.id === shadowId ? { ...e, level: e.level + 1 } : e
-                    ),
-                  },
-                }))
-                resultShadowName = SHADOW_MAP[shadowId]?.name ?? shadowId
-              } else {
-                isNew = true
-                set((s: GameState) => ({
-                  player: { ...s.player, shadows: [...s.player.shadows, { id: shadowId, level: 1 }] },
-                }))
-                resultShadowName = SHADOW_MAP[shadowId]?.name ?? shadowId
-              }
+            let finalId = shadowId
+            const exclusiveShadow = getBossDropShadow(shadowId)
+            if (exclusiveShadow) {
+                finalId = exclusiveShadow.id
+            } else if (!customDef && !SHADOW_MAP[shadowId]) {
+                const rank = pickExtractionRank(player.level)
+                const rolled = rollShadow(rank, [])
+                if (rolled) finalId = rolled.id
             }
+
+            const existingShadow = player.shadows.find(e => e.id === finalId)
+            leveledUpShadow = !!existingShadow
+            isNew = !existingShadow
+            if (customDef && !existingShadow) {
+              const newCustom: Shadow = { id: finalId, name: customDef.name, rank: 'Normal' as ShadowRank, type: 'Custom', dropRate: 0, passiveEffect: getCustomShadowPassive(customDef.questType), lore: `"${customDef.name} — lealdade absoluta."`, icon: customDef.icon, color: '#a855f7' }
+              set((s: GameState & GameActions) => ({ customShadows: [...s.customShadows, newCustom] }))
+              newShadows.push({ id: finalId, level: 1 })
+              shadowName = customDef.name
+            } else {
+              newShadows = existingShadow ? player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e) : [...player.shadows, { id: finalId, level: 1 }]
+              shadowName = customDef?.name ?? SHADOW_MAP[finalId]?.name ?? finalId
+            }
+
+            newRewards.push({
+              type: 'shadow',
+              id: finalId,
+              isLevelUp: leveledUpShadow,
+              newLevel: existingShadow ? existingShadow.level + 1 : 1
+            })
+            
+            set({ lastExtraction: { shadow: SHADOW_MAP[finalId] ?? customShadows.find(s => s.id === finalId), isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } })
           }
 
-          set((s: GameState) => {
+          set(s => {
+            const isNormalBoss = shadowId && (shadowId.startsWith('normal_boss_') || shadowId.includes('cerberus') || shadowId.includes('igris'))
+            const newCompleted = isNormalBoss ? [...s.system.completedNormalBossIds, shadowId] : s.system.completedNormalBossIds
+            
             const res = applyXP(s.player.xp, s.player.level, xpReward)
-            // Boss missions are classified A-Rank by default (weekly custom bosses)
-            const bossRank: RankKey = 'A'
-            const isNewLevel = res.level > s.player.maxLevelReached
+            const jobChange = hadJobClassChange(s.player.level, res.level)
+
             return {
-              player: {
-                ...s.player, xp: res.xp, level: res.level,
-                gold: s.player.gold + goldReward,
-                ...getAttrXpBoost(s.player, 'boss'),
-                maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
-              },
-              ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
-              system: {
-                ...s.system,
-                bossDefeatedThisWeek: true,
-                weeklyDefeatedBossId: shadowId,
-                bossesDefeated: s.system.bossesDefeated + 1,
-              },
-              statistics: {
-                ...s.statistics,
-                totalCompleted: s.statistics.totalCompleted + 1,
-                totalBossesCompleted: (s.statistics.totalBossesCompleted ?? 0) + 1,
-                questsByRank: {
-                  ...s.statistics.questsByRank,
-                  [bossRank]: (s.statistics.questsByRank[bossRank] ?? 0) + 1,
-                },
-              },
-            }
-          })
-
-          fireEvent('boss_defeated', { missionId: shadowId }, ref, 1)
-          if (resultShadowName) fireEvent('shadow_collected', {}, ref)
-          checkAndUnlockAchievements(ref)
-
-          // Push shadow report to queue IF it was a shadow drop
-          if (shadowId && (customDef || SHADOW_MAP[shadowId])) {
-            set((s: GameState) => ({
+              player: { ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + goldReward, shadows: newShadows, ...getAttrXpBoost(s.player, 'boss'), maxLevelReached: Math.max(s.player.maxLevelReached, res.level) },
+              system: { ...s.system, bossDefeatedThisWeek: true, weeklyDefeatedBossId: shadowId, bossesDefeated: s.system.bossesDefeated + 1, completedNormalBossIds: newCompleted },
               rewardsQueue: [
                 ...s.rewardsQueue,
-                { type: 'shadow', id: shadowId, isLevelUp: leveledUpShadow, newLevel: leveledUpShadow ? (player.shadows.find((e: ShadowEntry) => e.id === shadowId)?.level ?? 1) + 1 : 1 }
-              ]
-            }))
+                ...newRewards,
+                ...(res.leveledUp && res.level > s.player.maxLevelReached ? [{ type: 'level_up' as const, id: String(res.level), data: { level: res.level, items: [] } }] : []),
+                ...(jobChange ? [{ type: 'job_change' as const, id: jobChange.name, data: jobChange }] : []),
+              ],
+              statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1, totalBossesCompleted: (s.statistics.totalBossesCompleted ?? 0) + 1, questsByRank: { ...s.statistics.questsByRank, A: (s.statistics.questsByRank.A ?? 0) + 1 } },
+            }
+          })
+
+          // Item Rewards with Loot Perception
+          const dropItems: string[] = []
+          const roll = Math.random()
+          const lootMult = (1 + lootBoost)
+
+          if (roll < (0.5 * lootMult)) dropItems.push('shadow_essence')
+          if (roll < (0.2 * lootMult)) dropItems.push('blood_fallen')
+          
+          if (shadowId.includes('kasaka') && roll < (0.4 * lootMult)) dropItems.push('kasaka_venom')
+          else if (shadowId.includes('igris') && roll < (0.4 * lootMult)) dropItems.push('igris_fragment')
+          else if (shadowId.includes('cerberus') && roll < (0.4 * lootMult)) dropItems.push('cerberus_fang')
+          else if (shadowId.includes('lich') || shadowId.includes('baran')) {
+            if (roll < 0.3) dropItems.push(Math.random() < 0.5 ? 'iron_will_crystal' : 'lich_eye')
+          } else if (shadowId.includes('antares') || shadowId.includes('kamish')) {
+            if (roll < 0.2) dropItems.push('dragon_scale')
           }
 
-          return { xp: xpReward, gold: goldReward, shadowName: resultShadowName, leveledUpShadow, isNew }
+          if (dropItems.length > 0) {
+            set((s: GameState) => {
+              const inv = [...s.player.inventory]
+              dropItems.forEach(itemId => {
+                const idx = inv.findIndex(e => e.itemId === itemId)
+                if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 }
+                else inv.push({ itemId, quantity: 1 })
+              })
+              return { player: { ...s.player, inventory: inv } }
+            })
+          }
+
+          fireEvent('boss_defeated', { missionId: shadowId }, ref); if (shadowName) fireEvent('shadow_collected', {}, ref); checkAndUnlockAchievements(ref)
+          return { xp: xpReward, gold: goldReward, shadowName, leveledUpShadow, isNew }
         },
 
-        // ── System toggles ─────────────────────────────────────────────────
-        setFocusModeActive(v: boolean) { set((s: GameState) => ({ system: { ...s.system, focusModeActive: v } })) },
-        setHardcoreFocusMode(v: boolean) { set((s: GameState) => ({ system: { ...s.system, hardcoreFocusMode: v } })) },
-        setHardcorePunished(v: boolean) { set((s: GameState) => ({ system: { ...s.system, hardcorePunished: v } })) },
-        setXpBoostNext(v: boolean) { set((s: GameState) => ({ system: { ...s.system, xpBoostNext: v } })) },
-        setPenaltyReduced(v: boolean) { set((s: GameState) => ({ system: { ...s.system, penaltyReduced: v } })) },
+        setFocusModeActive(v) { set((s: GameState) => ({ system: { ...s.system, focusModeActive: v } })) },
+        setHardcoreFocusMode(v) { set((s: GameState) => ({ system: { ...s.system, hardcoreFocusMode: v } })) },
+        setHardcorePunished(v) { set((s: GameState) => ({ system: { ...s.system, hardcorePunished: v } })) },
+        setXpBoostNext(v) { set((s: GameState) => ({ system: { ...s.system, xpBoostNext: v } })) },
+        setPenaltyReduced(v) { set((s: GameState) => ({ system: { ...s.system, penaltyReduced: v } })) },
+        removePenalty() { set((s: GameState) => ({ system: { ...s.system, hasPenalty: false, penaltyTriggered: false, penaltyQuests: [], penaltyBlockEnd: 0 } })); fireEvent('penalty_cleared', {}, ref) },
+        deductGold(amount) { if (get().player.gold < amount) return false; set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold - amount }, statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + amount } })); return true },
+        toggleBlockedApp(pkg) { set((s: GameState) => ({ system: { ...s.system, blockedApps: s.system.blockedApps.includes(pkg) ? s.system.blockedApps.filter(p => p !== pkg) : [...s.system.blockedApps, pkg] } })) },
+        dismissAchievement() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'achievement') })) },
+        addQuestDefinition(def) { set((s: GameState) => ({ questDictionary: [...s.questDictionary, def] })) },
+        updateQuestDefinition(id, patch) { set((s: GameState) => ({ questDictionary: s.questDictionary.map(d => d.id === id ? { ...d, ...patch } : d) })) },
+        setActiveTheme(themeId) { set((s: GameState) => ({ player: { ...s.player, activeThemeId: themeId } })) },
+        deleteQuestDefinition(id) { set((s: GameState) => ({ questDictionary: s.questDictionary.filter(d => d.id !== id) })) },
+        updateSettings(patch) { set((s: GameState) => ({ settings: { ...s.settings, ...patch } })) },
+        saveQuestRecord(questId, time, note) { set((s: GameState & GameActions) => { const prev = s.questRecords[questId]; const bestTime = time > 0 && (!prev || time < prev.bestTime) ? time : prev?.bestTime ?? 0; const history = [...(prev?.history ?? [])]; history.push({ date: new Date().toISOString(), time, note }); return { questRecords: { ...s.questRecords, [questId]: { bestTime, lastNote: note, history } } } }) },
+        dismissLevelUpReward() { set((s: GameState & GameActions) => ({ levelUpReward: null })) },
+        dismissJobChangeReward() { set((s: GameState & GameActions) => ({ jobChangeReward: null })) },
+        startMissionTimer(id) { set((s: GameState & GameActions) => { const t = s.activeMissionTimers[id]; if (t && !t.isPaused) return {}; return { activeMissionTimers: { ...s.activeMissionTimers, [id]: { startTime: Date.now(), accumulatedMs: t?.accumulatedMs ?? 0, isPaused: false } } } }) },
+        pauseMissionTimer(id) { set((s: GameState) => { const t = s.activeMissionTimers[id]; if (!t || t.isPaused) return {}; return { activeMissionTimers: { ...s.activeMissionTimers, [id]: { startTime: 0, accumulatedMs: t.accumulatedMs + (Date.now() - t.startTime), isPaused: true } } } }) },
+        clearMissionTimer(id) { set((s: GameState) => { const { [id]: _, ...rest } = s.activeMissionTimers; return { activeMissionTimers: rest } }) },
+        dismissExtraction() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'shadow') })) },
+        toggleActiveShadow(id) { set((s: GameState & GameActions) => { const active = s.player.activeShadowIds; const isActive = active.includes(id); const newActive = isActive ? active.filter(a => a !== id) : active.length < 3 ? [...active, id] : active; return { player: { ...s.player, activeShadowIds: newActive } } }) },
+        setEventBossState(key, required, total) { set((s: GameState) => ({ system: { ...s.system, eventBossKey: key, eventBossCompletedIds: [], eventBossRequired: required, eventBossTotal: total, eventBossDefeated: false } })) },
+        completeEventTrial(id, key, required, total) { let completed = 0; set((s: GameState & GameActions) => { const reset = s.system.eventBossKey !== key; const nextIds = (reset ? [] : s.system.eventBossCompletedIds).includes(id) ? (reset ? [] : s.system.eventBossCompletedIds) : [...(reset ? [] : s.system.eventBossCompletedIds), id]; completed = nextIds.length; return { system: { ...s.system, eventBossKey: key, eventBossCompletedIds: nextIds, eventBossRequired: required, eventBossTotal: total } } }); return { completed, required } },
+        markEventBossDefeated(key) { set((s: GameState & GameActions) => ({ system: { ...s.system, eventBossKey: key, eventBossDefeated: true } })) },
+        releaseShadow(id) { const { player, customShadows } = get(); const entry = player.shadows.find(e => e.id === id); if (!entry) return { gold: 0 }; const shadow = ({ ...SHADOW_MAP, ...Object.fromEntries(customShadows.map(sh => [sh.id, sh])) })[id]; const goldGained = shadow ? getShadowReleaseGold(shadow, entry.level) : 0; set((s: GameState & GameActions) => ({ player: { ...s.player, gold: s.player.gold + goldGained, shadows: s.player.shadows.filter(e => e.id !== id), activeShadowIds: s.player.activeShadowIds.filter(a => a !== id) }, customShadows: s.customShadows.filter(sh => sh.id !== id) })); return { gold: goldGained } },
 
-        removePenalty() {
-          set((s: GameState) => ({
-            system: { ...s.system, hasPenalty: false, penaltyTriggered: false, penaltyQuests: [], penaltyBlockEnd: 0 },
-          }))
-          fireEvent('penalty_cleared', {}, ref)
-        },
-
-        deductGold(amount: number) {
-          if (get().player.gold < amount) return false
-          set((s: GameState) => ({
-            player: { ...s.player, gold: s.player.gold - amount },
-            statistics: {
-              ...s.statistics,
-              totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + amount,
-            },
-          }))
-          return true
-        },
-
-        toggleBlockedApp(pkg: string) {
-          set((s: GameState) => {
-            const apps = s.system.blockedApps.includes(pkg)
-              ? s.system.blockedApps.filter(p => p !== pkg)
-              : [...s.system.blockedApps, pkg]
-            return { system: { ...s.system, blockedApps: apps } }
-          })
-        },
-
-        dismissAchievement() {
-          set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'achievement') }))
-        },
-
-        // ── Quest Dictionary CRUD ──────────────────────────────────────────
-        addQuestDefinition(def: QuestDefinition) {
-          set((s: GameState) => ({ questDictionary: [...s.questDictionary, def] }))
-        },
-
-        updateQuestDefinition(id: string, patch: Partial<QuestDefinition>) {
-          set((s: GameState) => ({
-            questDictionary: s.questDictionary.map((d: QuestDefinition) =>
-              d.id === id ? { ...d, ...patch } : d
-            ),
-          }))
-        },
-
-        setActiveTheme(themeId: string) {
-          set((s: GameState) => ({ player: { ...s.player, activeThemeId: themeId } }))
-        },
-
-        deleteQuestDefinition(id: string) {
-          set((s: GameState) => ({
-            questDictionary: s.questDictionary.filter((d: QuestDefinition) => d.id !== id),
-          }))
-        },
-
-        updateSettings(patch: Partial<GameSettings>) {
-          set((s: GameState) => ({ settings: { ...s.settings, ...patch } }))
-        },
-
-        saveQuestRecord(questId: string, time: number, note: string) {
-          set((s: GameState & GameActions) => {
-            const prev = s.questRecords[questId]
-            // Only update bestTime if this run is better (shorter) and valid (> 0)
-            const bestTime = time > 0 && (!prev || time < prev.bestTime)
-              ? time
-              : prev?.bestTime ?? 0
-
-            const newHistory = prev?.history ? [...prev.history] : []
-            newHistory.push({ date: new Date().toISOString(), time, note })
-
-            return {
-              questRecords: {
-                ...s.questRecords,
-                [questId]: { bestTime, lastNote: note, history: newHistory },
-              },
-            }
-          })
-        },
-
-        dismissLevelUpReward() {
-          set({ levelUpReward: null })
-        },
-
-        startMissionTimer: (id: string) => {
-          set((s: GameState & GameActions) => {
-            const t = s.activeMissionTimers[id]
-            if (t && !t.isPaused) return {}
-            return {
-              activeMissionTimers: {
-                ...s.activeMissionTimers,
-                [id]: {
-                  startTime: Date.now(),
-                  accumulatedMs: t?.accumulatedMs ?? 0,
-                  isPaused: false
-                }
-              }
-            }
-          })
-        },
-
-        pauseMissionTimer(id: string) {
-          set((s: GameState) => {
-            const t = s.activeMissionTimers[id]
-            if (!t || t.isPaused) return {}
-            const elapsed = Date.now() - t.startTime
-            return {
-              activeMissionTimers: {
-                ...s.activeMissionTimers,
-                [id]: {
-                  startTime: 0,
-                  accumulatedMs: t.accumulatedMs + elapsed,
-                  isPaused: true
-                }
-              }
-            }
-          })
-        },
-
-        clearMissionTimer(id: string) {
-          set((s: GameState) => {
-            const { [id]: _, ...rest } = s.activeMissionTimers
-            return { activeMissionTimers: rest }
-          })
-        },
-
-        dismissExtraction() {
-          set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'shadow') }))
-        },
-
-        // ── Vanguard: equip / unequip shadow ──────────────────────────────
-        toggleActiveShadow(id: string) {
-          const MAX_ACTIVE = 3
-          set((s: GameState & GameActions) => {
-            const active = s.player.activeShadowIds
-            const isActive = active.includes(id)
-            const newActive = isActive
-              ? active.filter(a => a !== id)
-              : active.length < MAX_ACTIVE ? [...active, id] : active
-            return { player: { ...s.player, activeShadowIds: newActive } }
-          })
-        },
-
-        setEventBossState(key: string, required: number, total: number) {
-          set((s: GameState) => ({
-            system: {
-              ...s.system,
-              eventBossKey: key,
-              eventBossCompletedIds: [],
-              eventBossRequired: required,
-              eventBossTotal: total,
-              eventBossDefeated: false,
-            },
-          }))
-        },
-
-        completeEventTrial(id: string, key: string, required: number, total: number) {
-          let completed = 0
-          set((s: GameState & GameActions) => {
-            const reset = s.system.eventBossKey !== key
-            const currentIds = reset ? [] : s.system.eventBossCompletedIds
-            const nextIds = currentIds.includes(id) ? currentIds : [...currentIds, id]
-            completed = nextIds.length
-            return {
-              system: {
-                ...s.system,
-                eventBossKey: key,
-                eventBossCompletedIds: nextIds,
-                eventBossRequired: required,
-                eventBossTotal: total,
-              },
-            }
-          })
-          return { completed, required }
-        },
-
-        markEventBossDefeated(key: string) {
-          set((s: GameState & GameActions) => ({
-            system: {
-              ...s.system,
-              eventBossKey: key,
-              eventBossDefeated: true,
-            },
-          }))
-        },
-
-        // ── Release shadow (sell) ──────────────────────────────────────────
-        releaseShadow(id: string) {
-          const { player, customShadows } = get()
-          const entry = player.shadows.find((e: ShadowEntry) => e.id === id)
-          if (!entry) return { gold: 0 }
-
-          const customMap: Record<string, Shadow> = {}
-          for (const sh of customShadows) customMap[sh.id] = sh
-          const shadow = ({ ...SHADOW_MAP, ...customMap })[id]
-          const goldGained = shadow ? getShadowReleaseGold(shadow, entry.level) : 0
-
-          set((s: GameState & GameActions) => ({
-            player: {
-              ...s.player,
-              gold: s.player.gold + goldGained,
-              shadows: s.player.shadows.filter((e: ShadowEntry) => e.id !== id),
-              activeShadowIds: s.player.activeShadowIds.filter((a: string) => a !== id),
-            },
-            customShadows: s.customShadows.filter((sh: Shadow) => sh.id !== id),
-          }))
-          return { gold: goldGained }
-        },
-
-        regenerateSingleDailyQuest(questId: string) {
+        regenerateSingleDailyQuest(questId) {
           const { system, player, questDictionary, quests } = get()
-          const MAX_REGENS_PER_WEEK = 7
-          if (system.weeklyRegenCount >= MAX_REGENS_PER_WEEK) {
-            return { success: false, reason: 'Limite semanal atingido (7/7).' }
-          }
-
+          if (system.weeklyRegenCount >= 7) return { success: false, reason: 'Limite semanal atingido (7/7).' }
           const targetQuest = quests.find(q => q.id === questId)
-          if (!targetQuest) return { success: false, reason: 'Missão não encontrada.' }
-          if (targetQuest.done) return { success: false, reason: 'Missões concluídas não podem ser trocadas.' }
-
-          const d = new Date()
-          const baseSeed = d.getTime() + system.weeklyRegenCount
-
-          let newQuest: Quest | null = null
+          if (!targetQuest || targetQuest.done) return { success: false, reason: 'Missão inválida.' }
+          const baseSeed = Date.now() + system.weeklyRegenCount
+          let newQuest: Quest | undefined = undefined
           const activeIds = quests.map(q => q.id)
-
-          for (let i = 0; i < 20; i++) {
+          for (let i = 0; i < 40; i++) {
             const candidates = createDailyQuests(player.level, questDictionary, get().settings.missionDifficulty, baseSeed + i)
-            const unique = candidates.find(q => !activeIds.includes(q.id))
-            if (unique) {
-              newQuest = unique
-              break
-            }
+            newQuest = candidates.find(q => !activeIds.includes(q.id))
+            if (newQuest) break
           }
-
-          // Fallback if no unique pool mission found
-          if (!newQuest) {
-            for (let i = 0; i < 20; i++) {
-              const candidates = createDailyQuests(player.level, questDictionary, get().settings.missionDifficulty, baseSeed + i + 100)
-              const unique = candidates.find(q => !activeIds.includes(q.id))
-              if (unique) { newQuest = unique; break; }
-            }
-          }
-
-          if (!newQuest) return { success: false, reason: 'Não há outras missões no sistema hoje.' }
-
-          const newQuests = quests.map(q => q.id === questId ? newQuest! : q)
-
-          set((s: GameState & GameActions) => ({
-            quests: newQuests,
-            system: { ...s.system, weeklyRegenCount: s.system.weeklyRegenCount + 1 },
-          }))
+          if (!newQuest) return { success: false, reason: 'Não há outras missões disponíveis.' }
+          set((s: GameState & GameActions) => ({ quests: quests.map(q => q.id === questId ? newQuest! : q), system: { ...s.system, weeklyRegenCount: s.system.weeklyRegenCount + 1 } }))
           return { success: true }
         },
 
-        replaceExtraQuest(questId: string): { success: boolean; reason?: string } {
+        replaceExtraQuest(questId) {
           const { extraQuests, extraQuestRerolledIds, extraQuestUsedPoolIds, questDictionary, player } = get()
-
-          if (extraQuestRerolledIds.includes(questId)) {
-            return { success: false, reason: 'Esta missão extra já foi substituída hoje.' }
-          }
-
-          const targetQuest = extraQuests.find((q: Quest) => q.id === questId)
-          if (!targetQuest) return { success: false, reason: 'Missão não encontrada.' }
-          if (targetQuest.done) return { success: false, reason: 'Não podes substituir uma missão concluída.' }
-
-          // Pool defs currently in use as extras (by their def ID embedded in extra ID)
-          const poolDefs = questDictionary.filter((def: QuestDefinition) => def.type === 'pool')
-          const usedPoolIds = new Set([
-            ...extraQuestUsedPoolIds,
-            // also exclude IDs still in extraQuests except the one being replaced
-            ...extraQuests
-              .filter((q: Quest) => q.id !== questId)
-              .map((q: Quest) => {
-                // extra IDs are like "extra_<poolDefId>_<timestamp>"
-                const parts = q.id.split('_')
-                return parts.length >= 3 ? parts.slice(1, -1).join('_') : ''
-              })
-              .filter(Boolean),
-          ])
-
-          const available = poolDefs.filter((def: QuestDefinition) => !usedPoolIds.has(def.id))
-          if (available.length === 0) return { success: false, reason: 'Sem mais missões disponíveis na pool.' }
-
-          const tier = getQuestTier(player.level)
+          if (extraQuestRerolledIds.includes(questId)) return { success: false, reason: 'Já substituída hoje.' }
+          const target = extraQuests.find(q => q.id === questId)
+          if (!target || target.done) return { success: false, reason: 'Inválida.' }
+          const usedPoolIds = new Set([...extraQuestUsedPoolIds, ...extraQuests.filter(q => q.id !== questId).map(q => q.id.split('_').slice(1, -1).join('_')).filter(Boolean)])
+          const available = questDictionary.filter(def => def.type === 'pool' && !usedPoolIds.has(def.id))
+          if (available.length === 0) return { success: false, reason: 'Pool vazia.' }
           const chosen = available[Math.floor(Math.random() * available.length)]
-          const baseQuest = defToQuest(chosen, player.level, tier)
-          const newExtraQuest: Quest = {
-            ...baseQuest,
-            id: `extra_${chosen.id}_${Date.now()}`,
-            xp: Math.round(baseQuest.xp * 1.5),
-            gold: Math.round(baseQuest.gold * 1.5),
-          }
-
-          set((s: GameState) => ({
-            extraQuests: s.extraQuests.map((q: Quest) => q.id === questId ? newExtraQuest : q),
-            extraQuestRerolledIds: [...s.extraQuestRerolledIds, questId],
-            extraQuestUsedPoolIds: [...s.extraQuestUsedPoolIds, chosen.id],
-          }))
+          const base = defToQuest(chosen, player.level, getQuestTier(player.level))
+          const newQ = { ...base, id: `extra_${chosen.id}_${Date.now()}`, xp: Math.round(base.xp * 1.5), gold: Math.round(base.gold * 1.5) }
+          set((s: GameState) => ({ extraQuests: s.extraQuests.map(q => q.id === questId ? newQ : q), extraQuestRerolledIds: [...s.extraQuestRerolledIds, questId], extraQuestUsedPoolIds: [...s.extraQuestUsedPoolIds, chosen.id] }))
           return { success: true }
         },
 
         generateExtraQuests() {
-          const { system, player, questDictionary, extraQuests } = get()
-          const MAX_EXTRA_PER_DAY = 2
-          if (extraQuests.length >= MAX_EXTRA_PER_DAY) {
-            return { success: false, reason: 'Limite diário de missões extra atingido.' }
-          }
-
-          const poolDefs = questDictionary.filter((def: QuestDefinition) => def.type === 'pool')
-          if (poolDefs.length === 0) return { success: false, reason: 'Sem missões na pool.' }
-
-          // Pick a random pool mission not already in extraQuests
-          const usedIds = new Set(extraQuests.map((q: Quest) => q.id))
-          const available = poolDefs.filter((def: QuestDefinition) => !usedIds.has(def.id))
-          if (available.length === 0) return { success: false, reason: 'Todas as missões extra já foram geradas.' }
-
-          const tier = getQuestTier(player.level)
-          const idx = Math.floor(Math.random() * available.length)
-          const quest = defToQuest(available[idx], player.level, tier)
-
-          // 1.5× bonus rewards
-          const extraQuest: Quest = {
-            ...quest,
-            id: `extra_${quest.id}_${Date.now()}`,
-            xp: Math.round(quest.xp * 1.5),
-            gold: Math.round(quest.gold * 1.5),
-          }
-
-          set((s: GameState) => ({ extraQuests: [...s.extraQuests, extraQuest] }))
+          const { player, questDictionary, extraQuests, settings } = get()
+          const targetLimit = getDailyMissionTarget(player.level, settings.missionDifficulty)
+          if (extraQuests.length >= Math.min(3, targetLimit)) return { success: false, reason: 'Limite atingido.' }
+          const usedIds = new Set(extraQuests.map(q => q.id))
+          const available = questDictionary.filter(def => def.type === 'pool' && !usedIds.has(def.id))
+          if (available.length === 0) return { success: false, reason: 'Pool vazia.' }
+          const chosen = available[Math.floor(Math.random() * available.length)]
+          const base = defToQuest(chosen, player.level, getQuestTier(player.level))
+          const newQ = { ...base, id: `extra_${base.id}_${Date.now()}`, xp: Math.round(base.xp * 1.5), gold: Math.round(base.gold * 1.5) }
+          set((s: GameState) => ({ extraQuests: [...s.extraQuests, newQ] }))
           return { success: true }
         },
 
-        completeExtraQuest(id: string) {
+        completeExtraQuest(id) {
           let leveledUp = false
           set((s: GameState & GameActions) => {
-            const quest = s.extraQuests.find((q: Quest) => q.id === id)
+            const quest = s.extraQuests.find(q => q.id === id)
             if (!quest || quest.done) return {}
-
-            const extraQuests = s.extraQuests.map((q: Quest) => q.id === id ? { ...q, done: true } : q)
-            const { xpBoost, goldBoost } = computeActivePassives(
-              s.player.activeShadowIds, s.player.shadows, s.customShadows,
-            )
-            const baseXP = s.system.xpBoostNext ? quest.xp * 2 : quest.xp
-            const xpGain = Math.round(baseXP * (1 + xpBoost))
-            const goldGain = Math.round(quest.gold * (1 + goldBoost))
+            const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
+            const xpGain = Math.round((s.system.xpBoostNext ? quest.xp * 2 : quest.xp) * (1 + xpBoost))
             const res = applyXP(s.player.xp, s.player.level, xpGain)
             leveledUp = res.leveledUp
             const isNewLevel = res.level > s.player.maxLevelReached
-
-            const player: Player = {
-              ...s.player,
-              xp: res.xp, level: res.level, gold: s.player.gold + goldGain,
-              ...getAttrXpBoost(s.player, quest.type),
-              maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
-            }
             return {
-              extraQuests, player,
+              extraQuests: s.extraQuests.map(q => q.id === id ? { ...q, done: true } : q), player: { ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + Math.round(quest.gold * (1 + goldBoost)), ...getAttrXpBoost(s.player, quest.type), maxLevelReached: Math.max(s.player.maxLevelReached, res.level) },
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
-              system: { ...s.system, xpBoostNext: false },
-              statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
+              system: { ...s.system, xpBoostNext: false }, statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
             }
           })
-          fireEvent('quest_completed', { isLastQuest: false }, ref)
-
-          if (leveledUp) {
-            Vibration.vibrate([0, 150, 50, 150, 50, 300])
-          } else {
-            Vibration.vibrate(50)
+          fireEvent('quest_completed', { isLastQuest: false }, ref); 
+          fireEvent('extra_quest_completed', {}, ref);
+          const { extraQuests } = get()
+          if (extraQuests.length > 0 && extraQuests.every(q => q.done)) {
+            fireEvent('all_extra_quests_completed', {}, ref);
           }
-
+          Vibration.vibrate(leveledUp ? [0, 150, 50, 150, 50, 300] : 50); 
           checkAndUnlockAchievements(ref)
           return { leveledUp }
         },
-        restoreBackup(data: Partial<GameState>) {
+
+        restoreBackup(data) {
           if (!data || typeof data !== 'object') return
-          // Only merge known top-level keys to prevent injecting arbitrary shape
           const safe: Partial<GameState> = {}
-          const allowed: Array<keyof GameState> = [
-            'player', 'quests', 'extraQuests', 'sideQuests', 'questDictionary',
-            'customShadows', 'settings', 'statistics', 'system', 'lastResetDate',
-            'unlockedAchievements', 'achievementProgress', 'questRecords',
-            'questCompletions', 'activeMissionTimers',
-          ]
-          for (const key of allowed) {
-            if (key in data) (safe as any)[key] = (data as any)[key]
-          }
+          const allowed: Array<keyof GameState> = ['player', 'quests', 'extraQuests', 'sideQuests', 'questDictionary', 'customShadows', 'settings', 'statistics', 'system', 'lastResetDate', 'unlockedAchievements', 'achievementProgress', 'questRecords', 'questCompletions', 'activeMissionTimers']
+          for (const key of allowed) if (key in data) (safe as any)[key] = (data as any)[key]
           set((s: GameState & GameActions) => ({ ...s, ...safe } as Partial<GameState & GameActions>))
+        },
+
+        extractShadow(shadowId: string) {
+          const shadow = get().player.shadows?.find(s => s.id === shadowId)
+          if (!shadow) return
+          set((s: GameState & GameActions) => ({
+            system: { ...s.system, extractionDoneToday: true }
+          }))
+        },
+
+        checkDailyReset() {
+          get().bootSystem()
+        },
+
+        checkDynamicPortalSpawn() {
+          const now = Date.now()
+          const s = get().system
+
+          // Clear expired active portal.
+          if (s.activeDungeonBreak && now >= s.activeDungeonBreak.expiresAt) {
+            set((st: GameState) => ({ system: { ...st.system, activeDungeonBreak: null } }))
+          }
+          // Never roll while a portal is active.
+          if (get().system.activeDungeonBreak && now < (get().system.activeDungeonBreak?.expiresAt ?? 0)) return
+          // Respect cooldown after a finished portal.
+          if ((s.portalCooldownEnd ?? 0) > now) return
+
+          const d = new Date(now)
+          const hourKey = `${d.toDateString()}-${d.getHours()}`
+          if ((s.portalLastRollHourKey ?? '') === hourKey) return
+
+          // Mark this hour as already rolled (success or fail).
+          set((st: GameState) => ({ system: { ...st.system, portalLastRollHourKey: hourKey } }))
+
+          const dailyCap = 3
+          if ((get().system.portalDailyCount ?? 0) >= dailyCap) return
+          if (Math.random() >= 0.30) return
+
+          const questPool = get().questDictionary
+            .filter(isPortalBossDefinition)
+            .map(def => ({ source: 'quest' as const, bossId: def.id }))
+          const breakPool = RAID_BOSSES
+            .filter(b => b.id.startsWith('break_boss_'))
+            .map(b => ({ source: 'break' as const, bossId: b.id }))
+
+          const usedToday = new Set(get().system.completedNormalBossIds ?? [])
+          const combined = [...questPool, ...breakPool]
+          const available = combined.filter(p => !usedToday.has(p.bossId))
+          const pool = available.length > 0 ? available : combined
+          if (pool.length === 0) return
+
+          const pick = pool[Math.floor(Math.random() * pool.length)]
+          const durationMin = 30 * 60_000
+          const durationMax = 3 * 60 * 60_000
+          const duration = durationMin + Math.floor(Math.random() * (durationMax - durationMin + 1))
+          const expiresAt = now + duration
+          const cooldownMs = 45 * 60_000
+
+          set((st: GameState) => ({
+            system: {
+              ...st.system,
+              activeDungeonBreak: { bossId: pick.bossId, startsAt: now, expiresAt, source: pick.source },
+              portalDailyCount: (st.system.portalDailyCount ?? 0) + 1,
+              portalCooldownEnd: expiresAt + cooldownMs,
+            },
+          }))
+        },
+
+        checkAndUnlockAchievements() {
+          checkAndUnlockAchievements(ref)
         },
       }
     },
@@ -3426,122 +1194,49 @@ const useGameStore = create<GameState & GameActions>()(
       storage: createJSONStorage(() => AsyncStorage),
       merge: (persisted: any, current: GameState & GameActions) => {
         const data = (persisted || {}) as any
-        // Migrate legacy shadows: string[] → ShadowEntry[]
         const rawPlayer = data.player ?? {}
         const rawShadows = rawPlayer.shadows ?? []
-        const migratedShadows: ShadowEntry[] = rawShadows.map((s: ShadowEntry | string) =>
-          typeof s === 'string' ? { id: s, level: 1 } : s
-        )
+        const migratedShadows: ShadowEntry[] = rawShadows.map((s: any) => typeof s === 'string' ? { id: s, level: 1 } : s)
+        const sXp = rawPlayer.strXp ?? Math.pow(Math.max(0, (rawPlayer.str ?? 10) - 10), 2) * 5
+        const aXp = rawPlayer.agiXp ?? Math.pow(Math.max(0, (rawPlayer.agi ?? 10) - 10), 2) * 5
+        const iXp = rawPlayer.intXp ?? Math.pow(Math.max(0, (rawPlayer.int ?? 10) - 10), 2) * 5
+        const vXp = rawPlayer.vitXp ?? Math.pow(Math.max(0, (rawPlayer.vit ?? 10) - 10), 2) * 5
         return {
-          ...current,
-          ...data,
-          player: {
-            ...current.player, ...rawPlayer,
-            // Migrate attr XP fields — if absent (old saves), initialise from old flat stat values
-            strXp: rawPlayer.strXp ?? Math.pow(Math.max(0, (rawPlayer.str ?? 10) - 10), 2) * 5,
-            agiXp: rawPlayer.agiXp ?? Math.pow(Math.max(0, (rawPlayer.agi ?? 10) - 10), 2) * 5,
-            intXp: rawPlayer.intXp ?? Math.pow(Math.max(0, (rawPlayer.int ?? 10) - 10), 2) * 5,
-            vitXp: rawPlayer.vitXp ?? Math.pow(Math.max(0, (rawPlayer.vit ?? 10) - 10), 2) * 5,
-            // Always recompute display values from XP
-            str: attrLevelFromXP(rawPlayer.strXp ?? Math.pow(Math.max(0, (rawPlayer.str ?? 10) - 10), 2) * 5),
-            agi: attrLevelFromXP(rawPlayer.agiXp ?? Math.pow(Math.max(0, (rawPlayer.agi ?? 10) - 10), 2) * 5),
-            int: attrLevelFromXP(rawPlayer.intXp ?? Math.pow(Math.max(0, (rawPlayer.int ?? 10) - 10), 2) * 5),
-            vit: attrLevelFromXP(rawPlayer.vitXp ?? Math.pow(Math.max(0, (rawPlayer.vit ?? 10) - 10), 2) * 5),
-            shadows: migratedShadows,
-            activeShadowIds: rawPlayer.activeShadowIds ?? [],
-            dungeonKeys: getNewLevelKeys(rawPlayer.dungeonKeys ?? [], rawPlayer.level ?? 1),
-          },
-          system: { ...current.system, ...(data.system ?? {}) },
-          settings: { ...current.settings, ...(data.settings ?? {}) },
-          statistics: { ...current.statistics, ...(data.statistics ?? {}) },
-          questDictionary: data.questDictionary ?? current.questDictionary,
-          customShadows: data.customShadows ?? current.customShadows,
-          lastExtraction: data.lastExtraction ?? null,
-          achievementProgress: Object.fromEntries(
-            Object.entries(data.achievementProgress ?? {}).map(([id, val]) => {
-              if (typeof val === 'number') return [id, { currentValue: val, currentTierIndex: 0 }]
-              return [id, val]
-            })
-          ) as Record<string, AchievementProg>,
-          questRecords: data.questRecords ?? {},
-          questCompletions: data.questCompletions ?? {},
-          activeMissionTimers: data.activeMissionTimers ?? {},
-          extraQuestRerolledIds: data.extraQuestRerolledIds ?? [],
-          extraQuestUsedPoolIds: data.extraQuestUsedPoolIds ?? [],
-          newAchievementIds: [],
+          ...current, ...data,
+          player: { ...current.player, ...rawPlayer, strXp: sXp, agiXp: aXp, intXp: iXp, vitXp: vXp, str: attrLevelFromXP(sXp), agi: attrLevelFromXP(aXp), int: attrLevelFromXP(iXp), vit: attrLevelFromXP(vXp), shadows: migratedShadows, activeShadowIds: rawPlayer.activeShadowIds ?? [], dungeonKeys: getNewLevelKeys(rawPlayer.dungeonKeys ?? [], rawPlayer.level ?? 1) },
+          system: { ...current.system, ...(data.system ?? {}) }, settings: { ...current.settings, ...(data.settings ?? {}) }, statistics: { ...current.statistics, ...(data.statistics ?? {}) }, questDictionary: data.questDictionary ?? current.questDictionary, customShadows: data.customShadows ?? current.customShadows, lastExtraction: data.lastExtraction ?? null, achievementProgress: Object.fromEntries(Object.entries(data.achievementProgress ?? {}).map(([id, val]) => [id, typeof val === 'number' ? { currentValue: val, currentTierIndex: 0 } : val])), questRecords: data.questRecords ?? {}, questCompletions: data.questCompletions ?? {}, activeMissionTimers: data.activeMissionTimers ?? {}, extraQuestRerolledIds: data.extraQuestRerolledIds ?? [], extraQuestUsedPoolIds: data.extraQuestUsedPoolIds ?? [], newAchievementIds: [],
         }
       },
-      partialize: s => ({
-        player: s.player,
-        quests: s.quests,
-        sideQuests: s.sideQuests,
-        extraQuests: s.extraQuests,
-        questDictionary: s.questDictionary,
-        customShadows: s.customShadows,
-        settings: s.settings,
-        system: { ...s.system, penaltyTriggered: false },
-        statistics: s.statistics,
-        lastResetDate: s.lastResetDate,
-        unlockedAchievements: s.unlockedAchievements,
-        achievementProgress: s.achievementProgress,
-        questRecords: s.questRecords,
-        questCompletions: s.questCompletions,
-        activeMissionTimers: s.activeMissionTimers,
-        extraQuestRerolledIds: s.extraQuestRerolledIds,
-        extraQuestUsedPoolIds: s.extraQuestUsedPoolIds,
-      }),
+      partialize: s => ({ player: s.player, quests: s.quests, sideQuests: s.sideQuests, extraQuests: s.extraQuests, questDictionary: s.questDictionary, customShadows: s.customShadows, settings: s.settings, system: { ...s.system, penaltyTriggered: false }, statistics: s.statistics, lastResetDate: s.lastResetDate, unlockedAchievements: s.unlockedAchievements, achievementProgress: s.achievementProgress, questRecords: s.questRecords, questCompletions: s.questCompletions, activeMissionTimers: s.activeMissionTimers, extraQuestRerolledIds: s.extraQuestRerolledIds, extraQuestUsedPoolIds: s.extraQuestUsedPoolIds }),
     }
   )
 )
 
 // ── Widget Synchronization ───────────────────────────────────────────────────
 let lastWidgetSync = 0
-const WIDGET_SYNC_THROTTLE = 5000 // 5 seconds
+const WIDGET_SYNC_THROTTLE = 5000
 
-useGameStore.subscribe((state: GameState & GameActions) => {
+useGameStore.subscribe((state) => {
   const now = Date.now()
   if (now - lastWidgetSync < WIDGET_SYNC_THROTTLE) return
   lastWidgetSync = now
-
   try {
-    if (!state || !state.player || !state.statistics || !state.system) return;
-
-    const rankObj = getRank(
-      state.player.level,
-      state.statistics.totalCompleted,
-      state.system.bossesDefeated,
-      state.statistics.questsByRank
-    );
-
+    if (!state || !state.player || !state.statistics || !state.system) return
+    const rankObj = getRank(state.player.level, state.statistics.totalCompleted, state.system.bossesDefeated, state.statistics.questsByRank)
     const snapshot = {
       streak: state.player.currentStreak,
-      dailyQuests: Array.isArray(state.quests) ? state.quests.map((q: Quest) => ({
-        id: q.id,
-        label: q.label,
-        type: q.type,
-        done: q.done
-      })) : [],
+      dailyQuests: Array.isArray(state.quests) ? state.quests.map(q => ({ id: q.id, label: q.label, type: q.type, done: q.done })) : [],
       activeShadows: Array.isArray(state.player.activeShadowIds) ? state.player.activeShadowIds.map(id => {
-        const entry = Array.isArray(state.player.shadows) ? state.player.shadows.find((s: ShadowEntry) => s.id === id) : undefined;
-        const customShadow = Array.isArray(state.customShadows) ? state.customShadows.find((s: Shadow) => s.id === id) : undefined;
-        const shadowDef = SHADOW_MAP[id] || customShadow;
-        return { name: shadowDef?.name ?? id, level: entry?.level ?? 1 };
+        const entry = Array.isArray(state.player.shadows) ? state.player.shadows.find(s => s.id === id) : undefined
+        const shDef = SHADOW_MAP[id] || (Array.isArray(state.customShadows) ? state.customShadows.find(s => s.id === id) : undefined)
+        return { name: shDef?.name ?? id, level: entry?.level ?? 1 }
       }) : [],
-      status: {
-        name: state.player.name,
-        level: state.player.level,
-        xp: state.player.xp,
-        rank: rankObj.rank,
-        nextRankXp: xpForLevel(state.player.level),
-        totalCompleted: state.statistics.totalCompleted || 0
-      }
-    };
-    if (SharedStorage?.setWidgetData && typeof SharedStorage.setWidgetData === 'function') {
-      SharedStorage.setWidgetData(JSON.stringify(snapshot));
+      status: { name: state.player.name, level: state.player.level, xp: state.player.xp, rank: rankObj.rank, nextRankXp: xpForLevel(state.player.level), totalCompleted: state.statistics.totalCompleted || 0 }
     }
-  } catch (err) {
-    console.error('Failed to sync widget data:', err);
-  }
-});
+    if (SharedStorage?.setWidgetData) SharedStorage.setWidgetData(JSON.stringify(snapshot))
+  } catch (err) { console.error('Failed to sync widget data:', err) }
+})
 
 export default useGameStore
+
+const STOCKED_ITEMS = ['system_pass', 'lagrima_purificacao']

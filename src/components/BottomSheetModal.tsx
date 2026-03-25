@@ -10,6 +10,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useTheme } from '../theme'
 
 interface Props {
   visible: boolean
@@ -23,9 +24,11 @@ interface Props {
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export default function BottomSheetModal({ visible, onClose, children, contentStyle, dimmed, useNativeModal = true }: Props) {
+  const C = useTheme()
   const [showModal, setShowModal] = useState(visible)
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current
   const fadeAnim = useRef(new Animated.Value(0)).current
+  const s = getStyles(C)
 
   useEffect(() => {
     if (visible) {
@@ -123,7 +126,7 @@ export default function BottomSheetModal({ visible, onClose, children, contentSt
         <TouchableWithoutFeedback>
           <View style={[s.content, contentStyle]}>
             {/* The small handle at the top */}
-            <View style={s.handleWrap}>
+            <View style={s.handleContainer}>
               <View style={s.handle} />
             </View>
             {children}
@@ -148,13 +151,13 @@ export default function BottomSheetModal({ visible, onClose, children, contentSt
   )
 }
 
-const s = StyleSheet.create({
+const getStyles = (C: any) => StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#000000d0',
+    backgroundColor: C.surface.overlay,
   },
   dimmed: {
-    backgroundColor: '#00000099',
+    backgroundColor: C.surface.overlay,
   },
   sheet: {
     flex: 1,
@@ -162,19 +165,18 @@ const s = StyleSheet.create({
   },
   content: {
     width: '100%',
-    backgroundColor: '#0a0005', // Default dark bg, override in contentStyle if needed
+    backgroundColor: C.surface.elevated,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
   },
-  handleWrap: {
-    width: '100%',
+  handleContainer: {
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
   },
   handle: {
     width: 40,
     height: 4,
-    backgroundColor: '#ffffff40',
+    backgroundColor: C.text.secondary + '40',
     borderRadius: 2,
   },
 })

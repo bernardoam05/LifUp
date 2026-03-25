@@ -173,6 +173,142 @@ export const BOX_KEYS: DungeonKey[] = [
     missionType: 'training',
     missionTarget: 300,
     missionDetail: '300 repetições acumuladas de exercícios de força (Flexões, Agachamentos e Abdominais) ou 1h de desporto intenso (Futebol, Basket, Ginásio).'
+  },
+  // ── NEW BOX EXCLUSIVE KEYS (BATCH 2) ──────────────────────────────────────
+  {
+    id: 'key_basilisk',
+    bossId: 'key_boss_basilisk',
+    name: 'Olho do Basilisco Petrificado',
+    description: 'Um ídolo que paralisa os fracos. Dá acesso ao covil do Basilisco.',
+    isBoxExclusive: true, color: '#84cc16',
+    missionType: 'focus', missionTarget: 60 * 60_000,
+    missionDetail: '60 min de foco total em silêncio absoluto para resistir ao olhar do Basilisco.'
+  },
+  {
+    id: 'key_manticore',
+    bossId: 'key_boss_manticore',
+    name: 'Ferrão de Manticora Gélido',
+    description: 'Aura venenosa e instintiva. Atrai a Manticora do Abismo.',
+    isBoxExclusive: true, color: '#ef4444',
+    missionType: 'training', missionTarget: 120,
+    missionDetail: '120 repetições de exercícios explosivos para acompanhar a agilidade da Manticora.'
+  },
+  {
+    id: 'key_phoenix',
+    bossId: 'key_boss_phoenix_rebirth',
+    name: 'Pena Eternamente em Chamas',
+    description: 'Fogo que não se apaga. Convoca a Fénix da Renascença Sombria.',
+    isBoxExclusive: true, color: '#ea580c',
+    missionType: 'focus', missionTarget: 90 * 60_000,
+    missionDetail: '90 min de foco produtivo profundo para renascer das tuas próprias cinzas.'
+  },
+  {
+    id: 'key_beholder',
+    bossId: 'key_boss_beholder_eye',
+    name: 'Lente de Observação do Caos',
+    description: 'Vê através de todas as mentiras. O Observador aguarda.',
+    isBoxExclusive: true, color: '#a855f7',
+    missionType: 'focus', missionTarget: 75 * 60_000,
+    missionDetail: '75 min de estudo intenso ou leitura técnica sob o olhar vigilante.'
+  },
+  {
+    id: 'key_demon_astaroth',
+    bossId: 'key_boss_demon_prince_astaroth',
+    name: 'Sigilo de Astaroth',
+    description: 'O símbolo da realeza demoníaca. Invoca o Príncipe do Medo.',
+    isBoxExclusive: true, color: '#b91c1c',
+    missionType: 'training', missionTarget: 150,
+    missionDetail: '150 flexões de braços para forjar a força necessária para enfrentar um Príncipe Demónio.'
+  },
+  {
+    id: 'key_undead_dragon',
+    bossId: 'key_boss_undead_dragon_king',
+    name: 'Crânio de Serpe espectral',
+    description: 'Restos de um dragão que se recusou a morrer. O Rei Dragão aguarda.',
+    isBoxExclusive: true, color: '#475569',
+    missionType: 'focus', missionTarget: 120 * 60_000,
+    missionDetail: '2 horas de imersão total em trabalho ou criação complexa.'
+  },
+  {
+    id: 'key_titania',
+    bossId: 'key_boss_titania_queen_dark',
+    name: 'Asa de Fada Corrompida',
+    description: 'Beleza distorcida e magia negra. A Rainha Titania desafia-te.',
+    isBoxExclusive: true, color: '#fb7185',
+    missionType: 'gps', missionTarget: 7000,
+    missionDetail: '7km de marcha ritual para atravessar o jardim corrompido.'
+  },
+  {
+    id: 'key_anubis',
+    bossId: 'key_boss_anubis_guardian_soul',
+    name: 'Pesagem do Coração de Ouro',
+    description: 'A prova da verdade. Anúbis aguarda por julgamento.',
+    isBoxExclusive: true, color: '#facc15',
+    missionType: 'focus', missionTarget: 100 * 60_000,
+    missionDetail: '100 min de foco reflexivo ou reflexão profunda sobre os teus objetivos.'
+  },
+  {
+    id: 'key_cerberus',
+    bossId: 'key_boss_cerberus_gate_final',
+    name: 'Coleira do Porteiro',
+    description: 'Três cabeças, uma intenção: Impedir a tua passagem.',
+    isBoxExclusive: true, color: '#dc2626',
+    missionType: 'training', missionTarget: 200,
+    missionDetail: '200 agachamentos livres para fortalecer as pernas contra as três mandíbulas.'
+  },
+  {
+    id: 'key_medusa',
+    bossId: 'key_boss_medusa_queen_gaze',
+    name: 'Escama de Serpente de Pedra',
+    description: 'A pele daquela que transforma Heróis em estátuas.',
+    isBoxExclusive: true, color: '#22c55e',
+    missionType: 'focus', missionTarget: 150 * 60_000,
+    missionDetail: '150 min de foco inamovível. Não pestanejes perante o trabalho árduo.'
+  },
+  {
+    id: 'key_hydra_ancient',
+    bossId: 'key_boss_hydra_ancient_world',
+    name: 'Sangue da Hidra Primordial',
+    description: 'Um veneno que corroi o próprio tempo. A Hidra Proibida desperta.',
+    isBoxExclusive: true, color: '#0ea5e9',
+    missionType: 'training', missionTarget: 250,
+    missionDetail: '250 Burpees ou exercícios de cardio intenso para queimar o veneno no sangue.'
+  },
+  {
+    id: 'key_fenrir',
+    bossId: 'key_boss_fenrir_wolf_star',
+    name: 'Corrente Quebrada de Gleipnir',
+    description: 'Aquilo que prendia o Devorador de Estrelas foi rompido.',
+    isBoxExclusive: true, color: '#f97316',
+    missionType: 'gps', missionTarget: 10000,
+    missionDetail: '10km de corrida para escapar às mandíbulas que devoram o céu.'
+  },
+  {
+    id: 'key_odin',
+    bossId: 'key_boss_odin_simulation_valhalla',
+    name: 'Lança Gungnir Simulada',
+    description: 'Um fragmento de código de um Deus. Odin observa o Sistema.',
+    isBoxExclusive: true, color: '#facc15',
+    missionType: 'focus', missionTarget: 180 * 60_000,
+    missionDetail: '3 horas de Deep Work absoluto (Foco nível National) para provar o teu valor em Valhalla.'
+  },
+  {
+    id: 'key_zeus',
+    bossId: 'key_boss_zeus_simulation_olympus',
+    name: 'Relâmpago do Olimpo Digital',
+    description: 'Pura energia condensada. O Senhor do Olimpo invoca-te.',
+    isBoxExclusive: true, color: '#60a5fa',
+    missionType: 'training', missionTarget: 300,
+    missionDetail: '300 repetições de exercícios de calistenia ou 1h30 de desporto de alta intensidade.'
+  },
+  {
+    id: 'key_cthulhu_spawn',
+    bossId: 'key_boss_cthulhu_spawn_outer',
+    name: 'Medalhão do Infinito Inominável',
+    description: 'Um objeto que não devia existir. A Prole do Vazio aproxima-se.',
+    isBoxExclusive: true, color: '#047857',
+    missionType: 'focus', missionTarget: 240 * 60_000,
+    missionDetail: '4 horas de foco ininterrupto em tarefas que desafiem a tua sanidade mental.'
   }
 ]
 
