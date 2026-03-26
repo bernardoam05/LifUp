@@ -64,6 +64,7 @@ const INITIAL_SYSTEM: Omit<SystemState, 'weeklyBossIds' | 'normalBossIds' | 'nor
   bossesDefeated: 0,
   shopStocks: { ...INITIAL_SHOP_STOCKS },
   blockedAttemptTimestamps: [],
+  penaltyBlockStart: 0,
   penaltyBlockEnd: 0,
   eventBossKey: '',
   eventBossCompletedIds: [],
@@ -238,6 +239,7 @@ const useGameStore = create<GameState & GameActions>()(
           let newPenaltyQuests: Quest[] = []
           let newHardcorePunished = false
           let streakReset = false
+          let newPenaltyBlockStart = 0
           let newPenaltyBlockEnd = 0
 
           // ── New Penalty Logic (Cumulative) ────────────────────────────────────
@@ -262,20 +264,35 @@ const useGameStore = create<GameState & GameActions>()(
             )
 
             newXp = Math.max(0, player.xp - punishment.xpLost)
+            newGold = Math.max(0, player.gold - punishment.goldLost)
             newPenaltyQuests = punishment.penaltyQuests
             penaltyTriggered = true
             newHardcorePunished = punishment.hardcorePunished
             streakReset = punishment.streakReset
             
             // Difficulty-based blocking logic
-            if (difficulty === 'normal') {
+            if (get().settings.autoBlockApps) {
+              const todayStart = new Date()
               const todayEnd = new Date()
-              todayEnd.setHours(22, 0, 0, 0)
+              
+              if (difficulty === 'normal') {
+                // 12 hours centered at 16:00 (10:00 to 22:00)
+                todayStart.setHours(10, 0, 0, 0)
+                todayEnd.setHours(22, 0, 0, 0)
+              } else if (difficulty === 'hard') {
+                // 24 hours (immediate to Date.now() + 24h)
+                todayStart.setTime(Date.now())
+                todayEnd.setTime(Date.now() + 24 * 3600_000)
+              } else {
+                // Easy: 6 hours centered at 16:00 (13:00 to 19:00)
+                todayStart.setHours(13, 0, 0, 0)
+                todayEnd.setHours(19, 0, 0, 0)
+              }
+              newPenaltyBlockStart = todayStart.getTime()
               newPenaltyBlockEnd = todayEnd.getTime()
-            } else if (difficulty === 'hard') {
-              newPenaltyBlockEnd = Date.now() + 24 * 3600_000 
             } else {
-              newPenaltyBlockEnd = Date.now() + punishment.penaltyHours * 3600_000
+              newPenaltyBlockStart = 0
+              newPenaltyBlockEnd = 0
             }
 
             // ── Defensive Passives (Weekly Cooldown) ───────────────────────────
@@ -402,6 +419,7 @@ const useGameStore = create<GameState & GameActions>()(
                 failedCount,
                 totalCount: quests.length,
                 xpLost: player.xp - newXp,
+                goldLost: player.gold - newGold,
               } : s.system.lastPenaltyInfo,
               weeklyTrainingCount: weeklyReset ? 0 : s.system.weeklyTrainingCount,
               weeklyRegenCount: weeklyReset ? 0 : s.system.weeklyRegenCount,
@@ -419,6 +437,7 @@ const useGameStore = create<GameState & GameActions>()(
               portalDailyCount: 0,
               portalLastRollHourKey: '',
               portalCooldownEnd: 0,
+              penaltyBlockStart: newPenaltyBlockStart,
               penaltyBlockEnd: newPenaltyBlockEnd,
               // Portais dinâmicos foram unificados no roll horário (sem lista fixa diária).
               normalBossRotationDate: new Date().toDateString(),
@@ -1053,7 +1072,7 @@ const useGameStore = create<GameState & GameActions>()(
           return { xp: xpReward, gold: goldReward, shadowName, leveledUpShadow, isNew }
         },
 
-        setFocusModeActive(v) { set((s: GameState) => ({ system: { ...s.system, focusModeActive: v } })) },
+        setFocusModeActive(v, endTimeMs) { set((s: GameState) => ({ system: { ...s.system, focusModeActive: v, focusEndTime: endTimeMs } })) },
         setHardcoreFocusMode(v) { set((s: GameState) => ({ system: { ...s.system, hardcoreFocusMode: v } })) },
         setHardcorePunished(v) { set((s: GameState) => ({ system: { ...s.system, hardcorePunished: v } })) },
         setXpBoostNext(v) { set((s: GameState) => ({ system: { ...s.system, xpBoostNext: v } })) },

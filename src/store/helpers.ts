@@ -343,7 +343,7 @@ export function computePunishment(
   penaltyReduction: number, // percentage reduction from shadows
   tier: string,
   pool: Quest[]
-): { xpLost: number; penaltyQuests: Quest[]; hardcorePunished: boolean; streakReset: boolean; penaltyHours: number } {
+): { xpLost: number; goldLost: number; penaltyQuests: Quest[]; hardcorePunished: boolean; streakReset: boolean; penaltyHours: number } {
 
   // Tier-scaled 60% daily XP values (baseXP=50, target=4)
   const TIER_BASE_XP: Record<string, number> = {
@@ -358,10 +358,12 @@ export function computePunishment(
 
   const rawXpLost = Math.floor(baseDayValue * multiplier)
   const xpLost = Math.max(0, Math.floor(rawXpLost * (1 - penaltyReduction)))
+  const goldLost = xpLost // Balanced gold penalty
 
   if (intensity === 'light') {
     return {
       xpLost,
+      goldLost,
       penaltyQuests: pickPenaltyQuests(1, pool),
       hardcorePunished: false,
       streakReset: failedCount >= totalCount,
@@ -372,6 +374,7 @@ export function computePunishment(
   if (intensity === 'medium') {
     return {
       xpLost,
+      goldLost,
       penaltyQuests: pickPenaltyQuests(Math.min(1 + Math.floor(failedCount / 2), 3), pool),
       hardcorePunished: failedCount >= Math.ceil(totalCount * 0.5),
       streakReset: true,
@@ -382,6 +385,7 @@ export function computePunishment(
   // hardcore
   return {
     xpLost,
+    goldLost,
     penaltyQuests: pickPenaltyQuests(Math.min(2 + failedCount, 4), pool),
     hardcorePunished: true,
     streakReset: true,

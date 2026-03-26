@@ -46,8 +46,8 @@ export default function PenaltyModal({ visible, onDismiss }: { visible: boolean;
     : 'Missões diárias não concluídas.'
 
   const xpLine = info
-    ? `${info.xpLost} XP deduzidos.`
-    : 'XP deduzido conforme perfil ativo.'
+    ? `${info.xpLost} XP` + (info.goldLost ? ` e ◈${info.goldLost}` : '') + ` deduzidos.`
+    : 'XP e Ouro deduzidos conforme perfil ativo.'
 
   const intensityLabels: Record<string, string> = {
     light: 'LEVE', medium: 'MÉDIO', hardcore: 'HARDCORE',

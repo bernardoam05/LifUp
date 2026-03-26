@@ -57,6 +57,7 @@ export type GameSettings = {
   restDay: boolean   // user-activated rest day for today
   lastFocusDuration: { hours: number; minutes: number }
   dynamicTheme: boolean // Rank-based theme colors
+  autoBlockApps: boolean // Toggle automatic app blocking during penalties
 }
 
 export const INITIAL_SETTINGS: GameSettings = {
@@ -67,6 +68,7 @@ export const INITIAL_SETTINGS: GameSettings = {
   restDay: false,
   lastFocusDuration: { hours: 0, minutes: 25 },
   dynamicTheme: true,
+  autoBlockApps: false,
 }
 
 export const INITIAL_SHOP_STOCKS: Record<string, number> = {
@@ -212,6 +214,7 @@ export type SystemState = {
   penaltyTriggered: boolean
   penaltyQuests: Quest[]
   blockedApps: string[]
+  focusEndTime?: number
   weeklyTrainingCount: number
   weeklyRegenCount: number
   weeklyResetDate: string
@@ -224,6 +227,7 @@ export type SystemState = {
   shopStocks: Record<string, number>
   blockedAttemptTimestamps: number[]   // for spam detection
   extractionDoneToday: boolean
+  penaltyBlockStart?: number  // ms timestamp when block starts (0/undefined = immediate or no block)
   penaltyBlockEnd: number     // ms timestamp when block lifts (0 = no timed block)
   eventBossKey: string
   eventBossCompletedIds: string[]
@@ -235,6 +239,7 @@ export type SystemState = {
     failedCount: number
     totalCount: number
     xpLost: number
+    goldLost?: number
   }
   tutorialPhase: 0 | 1 | 2   // 0=intro pending, 1=tab tour done, 2=level-10 done
   activeRaidBoss?: {
@@ -333,7 +338,7 @@ export type GameActions = {
   useInventoryItem: (itemId: string) => void
   addToInventory: (itemId: string, qty?: number) => void
   toggleBlockedApp: (pkg: string) => void
-  setFocusModeActive: (v: boolean) => void
+  setFocusModeActive: (v: boolean, endTimeMs?: number) => void
   setHardcoreFocusMode: (v: boolean) => void
   setHardcorePunished: (v: boolean) => void
   setXpBoostNext: (v: boolean) => void

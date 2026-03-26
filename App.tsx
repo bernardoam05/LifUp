@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react'
-import { View, Text, StyleSheet, StatusBar, Modal, TouchableOpacity, Vibration } from 'react-native'
+import { View, Text, StyleSheet, StatusBar, Modal, TouchableOpacity, Vibration, NativeModules } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { NavigationContainer, DarkTheme, createNavigationContainerRef } from '@react-navigation/native'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
@@ -45,6 +45,7 @@ const TAB_ICONS: Record<string, string> = {
 }
 
 const navigationRef = createNavigationContainerRef<any>()
+const { FocusBlocker } = NativeModules
 
 // ── App Root ───────────────────────────────────────────────────────────────────
 
@@ -54,12 +55,18 @@ export default function App() {
   const levelUpToast = useGameStore(s => s.levelUpToast)
   const dismissLevelUpToast = useGameStore(s => s.dismissLevelUpToast)
   const currentLootReward = useGameStore(s => s.currentLootReward)
-  const dismissLootReward = useGameStore(s => {
-    return s.dismissLootReward
-  })
+  const dismissLootReward = useGameStore(s => s.dismissLootReward)
+
+  const focusActive = useGameStore(s => s.system.focusModeActive)
+  const focusEndTime = useGameStore(s => s.system.focusEndTime)
 
   const bootSystem = useGameStore(s => s.bootSystem)
   const hasPenalty = useGameStore(s => s.system.hasPenalty)
+  const penaltyBlockStart = useGameStore(s => s.system.penaltyBlockStart)
+  const penaltyBlockEnd = useGameStore(s => s.system.penaltyBlockEnd)
+  const blockedApps = useGameStore(s => s.system.blockedApps)
+  const hardcorePunished = useGameStore(s => s.system.hardcorePunished)
+  const autoBlockApps = useGameStore(s => s.settings.autoBlockApps)
   const penaltyTriggered = useGameStore(s => s.system.penaltyTriggered)
   const dismissPenalty = useGameStore(s => s.dismissPenaltyModal)
   const setPenaltyTriggered = useGameStore(s => s.setPenaltyTriggered)
@@ -75,6 +82,7 @@ export default function App() {
   const statistics = useGameStore(s => s.statistics)
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated)
   const playerLevel = useGameStore(s => s.player.level)
+  const [prevPenalty, setPrevPenalty] = useState(false)
 
   // Register the midnight reset watcher
   useDayWatcher()
@@ -96,6 +104,33 @@ export default function App() {
       setPenaltyTriggered(true)
     }
   }, [hasPenalty, penaltyTriggered, setPenaltyTriggered])
+
+  // Unified Background Service Sync: Restores Focus Blocker if killed by OS/Force Close
+  useEffect(() => {
+    const isPenaltyBlock = hasPenalty && autoBlockApps && penaltyBlockEnd && penaltyBlockEnd > Date.now()
+    const isNormalBlock = focusActive && focusEndTime && focusEndTime > Date.now()
+
+    if (isNormalBlock) {
+      FocusBlocker?.startFocusMode(
+        blockedApps,
+        Date.now(),
+        focusEndTime,
+        hardcorePunished
+      ).catch(() => {})
+    } else if (isPenaltyBlock) {
+      FocusBlocker?.startFocusMode(
+        blockedApps, 
+        penaltyBlockStart || Date.now(), 
+        penaltyBlockEnd, 
+        hardcorePunished
+      ).catch(() => {})
+    } else if (!isNormalBlock && !isPenaltyBlock && autoBlockApps) {
+      FocusBlocker?.stopFocusMode().catch(() => {})
+    }
+  }, [
+    hasPenalty, autoBlockApps, penaltyBlockStart, penaltyBlockEnd, 
+    blockedApps, hardcorePunished, focusActive, focusEndTime
+  ])
 
 
   return (

@@ -15,6 +15,7 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
 
     <!-- GPS (foreground only) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -57,12 +58,27 @@
         <!-- Focus Blocker Foreground Service (Android 14+ specialUse type) -->
         <service
             android:name=".focusblocker.FocusBlockerService"
+            android:stopWithTask="false"
             android:foregroundServiceType="specialUse"
             android:exported="false">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Focus mode blocker for Solo Leveling productivity app" />
         </service>
+
+        <!-- Focus Blocker Boot Receiver + MIUI keepalive -->
+        <receiver
+            android:name=".focusblocker.FocusBlockerBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- MIUI encrypts storage differently; this fires earlier -->
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <!-- HTC/MIUI quick-boot -->
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+            <!-- Explicit keepalive from AlarmManager (same app, no intent-filter needed) -->
+        </receiver>
 
         <!-- Streak Widget Provider -->
         <receiver

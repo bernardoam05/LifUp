@@ -19,7 +19,7 @@ const { FocusBlocker } = NativeModules as {
     hasOverlayPermission:     () => Promise<boolean>
     requestUsagePermission:   () => Promise<boolean>
     requestOverlayPermission: () => Promise<boolean>
-    startFocusMode:     (pkgs: string[], durationMs: number, isPenalty: boolean) => Promise<boolean>
+    startFocusMode:     (pkgs: string[], startTimeMs: number, endTimeMs: number, isPenalty: boolean) => Promise<boolean>
     stopFocusMode:      () => Promise<boolean>
     isFocusModeActive:  () => Promise<boolean>
     updateBlockedApps:  (pkgs: string[]) => Promise<boolean>
@@ -280,6 +280,15 @@ function AppSelectorOverlay({
   )
 }
 
+function formatTimeRemaining(ms: number) {
+  const totalSecs = Math.ceil(ms / 1000)
+  const h = Math.floor(totalSecs / 3600)
+  const m = Math.floor((totalSecs % 3600) / 60)
+  const s = totalSecs % 60
+  if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function FocusScreen() {
@@ -298,9 +307,15 @@ export default function FocusScreen() {
   const isPenaltyActive = penaltyBlockEnd > Date.now()
   const penaltyMsRemaining = isPenaltyActive ? penaltyBlockEnd - Date.now() : 0
   const triggerEvent       = useGameStore(s => s.triggerEvent)
+  const focusEndTime       = useGameStore(s => s.system.focusEndTime)
 
-  // No longer need interval to track penalty expiration as it's now a manual/focus-based duration.
-  // const [nowMs, setNowMs] = useState(Date.now()) ...
+  const [nowMs, setNowMs] = useState(Date.now())
+  useEffect(() => {
+    if (!focusActive) return
+    setNowMs(Date.now())
+    const id = setInterval(() => setNowMs(Date.now()), 1000)
+    return () => clearInterval(id)
+  }, [focusActive])
 
   const penaltyRemainingH   = Math.ceil(penaltyMsRemaining / 3_600_000)
 
@@ -438,8 +453,10 @@ export default function FocusScreen() {
     if (!hardcoreToggle && !hardcorePunished) {
       updateSettings({ lastFocusDuration: { hours, minutes } })
     }
-    await FocusBlocker.startFocusMode(blockedApps, dur, hardcorePunished)
-    setFocusActive(true)
+    // Fix: Compute the end time AFTER the await, so the delay doesn't drift the UI timer!
+    await FocusBlocker.startFocusMode(blockedApps, Date.now(), Date.now() + dur, hardcorePunished)
+    const end = Date.now() + dur
+    setFocusActive(true, end)
     setHardcoreMode(hardcoreToggle)
     const hour = new Date().getHours()
     if (hour >= 1 && hour < 6) {
@@ -463,7 +480,7 @@ export default function FocusScreen() {
     }
 
     await FocusBlocker.stopFocusMode()
-    setFocusActive(false)
+    setFocusActive(false, 0)
     setHardcoreMode(false)
   }
 
@@ -483,7 +500,156 @@ export default function FocusScreen() {
       {/* ── Main scroll content ─────────────────────────────────────────────── */}
       <ScrollView contentContainerStyle={s.content}>
 
-        {/* Activate / Stop button */}
+        {/* 1. Titulo */}
+        <View style={s.titleRow}>
+          <Icon name="shield-lock" size={16} color={C.neonBlue} />
+          <Text style={s.title}> FOCUS MODE</Text>
+        </View>
+
+        {/* Banners */}
+        {hasPenalty && penaltyMsRemaining > 0 && (
+          <View style={s.penaltyBanner}>
+            <Icon name="skull-crossbones" size={14} color={C.neonRed} />
+            <View style={{ marginLeft: 8 }}>
+              <Text style={s.penaltyBannerTxt}>
+                PENITÊNCIA ATIVA: {penaltyRemainingH} {penaltyRemainingH === 1 ? 'HORA' : 'HORAS'} RESTANTES
+              </Text>
+              <Text style={s.penaltyBannerSub}>Completa sessões Focus para reduzir o bloqueio</Text>
+            </View>
+          </View>
+        )}
+        {focusActive && (
+          <View style={[s.activeBanner, hardcoreFocusMode && s.activeBannerHardcore]}>
+            <Icon
+              name={hardcoreFocusMode ? 'skull' : 'lightning-bolt'}
+              size={14}
+              color={hardcoreFocusMode ? C.neonRed : C.green}
+            />
+            <Text style={[s.activeTxt, hardcoreFocusMode && { color: C.neonRed }]}>
+              {hardcoreFocusMode ? ' HARDCORE MODE ATIVO' : ' FOCUS MODE ATIVO'}
+            </Text>
+          </View>
+        )}
+        {focusActive && hardcoreFocusMode && hardcorePunished && (
+          <View style={s.punishBanner}>
+            <Icon name="skull" size={12} color={C.neonRed} />
+            <Text style={s.punishBannerTxt}> HARDCORE ATIVO POR PUNIÇÃO — NÃO PODE SER DESLIGADO</Text>
+          </View>
+        )}
+        {!FocusBlocker && (
+          <View style={s.warnBox}>
+            <Icon name="alert-circle-outline" size={14} color={C.neonRed} />
+            <Text style={s.warnTxt}> Módulo nativo não encontrado. Re-builda o APK.</Text>
+          </View>
+        )}
+
+        {/* 2. Timer / Duration */}
+        {focusActive && focusEndTime ? (
+          <View style={s.countdownBox}>
+            <Text style={s.countdownTxt}>
+              {formatTimeRemaining(Math.max(0, focusEndTime - nowMs))}
+            </Text>
+          </View>
+        ) : (!hardcoreToggle && !hardcorePunished && (
+          <View style={s.durRow}>
+            {/* Hours */}
+            <View style={s.durPicker}>
+              <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && incrementHours()} disabled={focusActive}>
+                <Text style={s.durPickerArrow}>▲</Text>
+              </TouchableOpacity>
+              {editingField === 'hours' ? (
+                <TextInput
+                  ref={hoursInputRef}
+                  style={s.durPickerInput}
+                  value={inputValue}
+                  onChangeText={v => setInputValue(v.replace(/\D/g, '').slice(0, 2))}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                  selectTextOnFocus
+                  onBlur={() => applyInput('hours')}
+                  onSubmitEditing={() => applyInput('hours')}
+                />
+              ) : (
+                <TouchableOpacity disabled={focusActive} onPress={() => !focusActive && openInput('hours')}>
+                  <Text style={s.durPickerVal}>{String(hours).padStart(2, '0')}</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && decrementHours()} disabled={focusActive}>
+                <Text style={s.durPickerArrow}>▼</Text>
+              </TouchableOpacity>
+              <Text style={s.durPickerLabel}>h</Text>
+            </View>
+
+            <Text style={s.durSep}>:</Text>
+
+            {/* Minutes */}
+            <View style={s.durPicker}>
+              <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && incrementMinutes()} disabled={focusActive}>
+                <Text style={s.durPickerArrow}>▲</Text>
+              </TouchableOpacity>
+              {editingField === 'minutes' ? (
+                <TextInput
+                  ref={minsInputRef}
+                  style={s.durPickerInput}
+                  value={inputValue}
+                  onChangeText={v => setInputValue(v.replace(/\D/g, '').slice(0, 2))}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                  selectTextOnFocus
+                  onBlur={() => applyInput('minutes')}
+                  onSubmitEditing={() => applyInput('minutes')}
+                />
+              ) : (
+                <TouchableOpacity disabled={focusActive || hours === 24} onPress={() => !focusActive && hours !== 24 && openInput('minutes')}>
+                  <Text style={s.durPickerVal}>{String(minutes).padStart(2, '0')}</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && decrementMinutes()} disabled={focusActive}>
+                <Text style={s.durPickerArrow}>▼</Text>
+              </TouchableOpacity>
+              <Text style={s.durPickerLabel}>m</Text>
+            </View>
+
+            <View style={s.durTotal}>
+              <Icon name="timer-outline" size={13} color={C.neonBlue} />
+              <Text style={s.durTotalTxt}>
+                {' '}{hours > 0 ? `${hours}h ` : ''}{minutes}min
+              </Text>
+            </View>
+          </View>
+        ))}
+
+        {/* 3. Switch (Hardcore Mode) */}
+        {!focusActive && (
+          <TouchableOpacity
+            style={[s.hardcoreMiniBtn, (hardcoreToggle || hardcorePunished) && s.hardcoreMiniBtnActive]}
+            onPress={hardcorePunished ? undefined : () => setHardcoreToggle(v => !v)}
+            activeOpacity={hardcorePunished ? 1 : 0.75}
+          >
+            <Icon
+              name={hardcorePunished || hardcoreToggle ? 'skull' : 'skull-outline'}
+              size={12}
+              color={hardcoreToggle || hardcorePunished ? C.neonRed : C.dimmed}
+            />
+            <Text style={[s.hardcoreMiniTxt, (hardcoreToggle || hardcorePunished) && { color: C.neonRed }]}>
+              {hardcorePunished
+                ? ' HARDCORE ATIVO (PUNIÇÃO)'
+                : hardcoreToggle
+                ? ' MODO HARDCORE ATIVO'
+                : ' MODO HARDCORE'}
+            </Text>
+            <View style={{ flex: 1 }} />
+            {!hardcorePunished && (
+              <Icon
+                name={hardcoreToggle ? 'check-circle' : 'circle-outline'}
+                size={16}
+                color={hardcoreToggle ? C.neonRed : C.dimmed}
+              />
+            )}
+          </TouchableOpacity>
+        )}
+
+        {/* 4. Ativar / Parar Focus Mode */}
         {focusActive ? (
           hardcoreFocusMode ? (
             <TouchableOpacity style={[s.mainBtn, s.hardcoreStopBtn]} onPress={handleHardcoreBreak}>
@@ -498,7 +664,7 @@ export default function FocusScreen() {
           )
         ) : (
           <TouchableOpacity
-            style={[s.mainBtn, !permsOk && s.mainBtnDisabled]}
+            style={[s.mainBtn, !permsOk && s.mainBtnDisabled, { marginTop: SPACING.md }]}
             onPress={startFocus}
           >
             <Icon name="play-circle-outline" size={18} color={C.neonBlue} />
@@ -506,188 +672,7 @@ export default function FocusScreen() {
           </TouchableOpacity>
         )}
 
-        {/* Penalty banner */}
-        {hasPenalty && penaltyMsRemaining > 0 && (
-          <View style={s.penaltyBanner}>
-            <Icon name="skull-crossbones" size={14} color={C.neonRed} />
-            <View style={{ marginLeft: 8 }}>
-              <Text style={s.penaltyBannerTxt}>
-                PENITÊNCIA ATIVA: {penaltyRemainingH} {penaltyRemainingH === 1 ? 'HORA' : 'HORAS'} RESTANTES
-              </Text>
-              <Text style={s.penaltyBannerSub}>Completa sessões Focus para reduzir o bloqueio</Text>
-            </View>
-          </View>
-        )}
-
-        {/* Active banner */}
-        {focusActive && (
-          <View style={[s.activeBanner, hardcoreFocusMode && s.activeBannerHardcore]}>
-            <Icon
-              name={hardcoreFocusMode ? 'skull' : 'lightning-bolt'}
-              size={14}
-              color={hardcoreFocusMode ? C.neonRed : C.green}
-            />
-            <Text style={[s.activeTxt, hardcoreFocusMode && { color: C.neonRed }]}>
-              {hardcoreFocusMode ? ' HARDCORE MODE ATIVO' : ' FOCUS MODE ATIVO'}
-            </Text>
-          </View>
-        )}
-
-        {/* Show locked indicator while focus+hardcore active */}
-        {focusActive && hardcoreFocusMode && hardcorePunished && (
-          <View style={s.punishBanner}>
-            <Icon name="skull" size={12} color={C.neonRed} />
-            <Text style={s.punishBannerTxt}> HARDCORE ATIVO POR PUNIÇÃO — NÃO PODE SER DESLIGADO</Text>
-          </View>
-        )}
-
-        {/* Section title */}
-        <View style={s.titleRow}>
-          <Icon name="shield-lock" size={16} color={C.neonBlue} />
-          <Text style={s.title}> FOCUS MODE</Text>
-        </View>
-
-        {/* Explanation card */}
-        <View style={[s.explanationCard]}>
-          <View style={{ gap: SPACING.sm, marginBottom: SPACING.md }}>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
-              <Icon name="lightning-bolt" size={14} color={C.neonBlue} />
-              <View style={{ flex: 1 }}>
-                <Text style={[s.modeLabel, { color: C.neonBlue }]}>MODO STANDARD</Text>
-                <Text style={s.modeDesc}>Bloqueia apps por tempo definido • Podes fazer pausa a qualquer momento • Recomendado para sessões controladas</Text>
-              </View>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
-            <Icon name="skull" size={14} color={C.neonRed} />
-            <View style={{ flex: 1 }}>
-              <Text style={[s.modeLabel, { color: C.neonRed }]}>MODO HARDCORE</Text>
-              <Text style={s.modeDesc}>Dedicação Total • Sem pausas até ao fim • Testa a tua força • Ganha favor do Sistema</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Native module missing warning */}
-        {!FocusBlocker && (
-          <View style={s.warnBox}>
-            <Icon name="alert-circle-outline" size={14} color={C.neonRed} />
-            <Text style={s.warnTxt}> Módulo nativo não encontrado. Re-builda o APK.</Text>
-          </View>
-        )}
-
-        {/* Duration selector — hidden in hardcore mode */}
-        {!hardcoreToggle && !hardcorePunished && (
-          <>
-            <Text style={s.section}>DURAÇÃO</Text>
-            <View style={s.durRow}>
-              {/* Hours */}
-              <View style={s.durPicker}>
-                <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && incrementHours()} disabled={focusActive}>
-                  <Text style={s.durPickerArrow}>▲</Text>
-                </TouchableOpacity>
-                {editingField === 'hours' ? (
-                  <TextInput
-                    ref={hoursInputRef}
-                    style={s.durPickerInput}
-                    value={inputValue}
-                    onChangeText={v => setInputValue(v.replace(/\D/g, '').slice(0, 2))}
-                    keyboardType="number-pad"
-                    maxLength={2}
-                    selectTextOnFocus
-                    onBlur={() => applyInput('hours')}
-                    onSubmitEditing={() => applyInput('hours')}
-                  />
-                ) : (
-                  <TouchableOpacity disabled={focusActive} onPress={() => !focusActive && openInput('hours')}>
-                    <Text style={s.durPickerVal}>{String(hours).padStart(2, '0')}</Text>
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && decrementHours()} disabled={focusActive}>
-                  <Text style={s.durPickerArrow}>▼</Text>
-                </TouchableOpacity>
-                <Text style={s.durPickerLabel}>h</Text>
-              </View>
-
-              <Text style={s.durSep}>:</Text>
-
-              {/* Minutes */}
-              <View style={s.durPicker}>
-                <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && incrementMinutes()} disabled={focusActive}>
-                  <Text style={s.durPickerArrow}>▲</Text>
-                </TouchableOpacity>
-                {editingField === 'minutes' ? (
-                  <TextInput
-                    ref={minsInputRef}
-                    style={s.durPickerInput}
-                    value={inputValue}
-                    onChangeText={v => setInputValue(v.replace(/\D/g, '').slice(0, 2))}
-                    keyboardType="number-pad"
-                    maxLength={2}
-                    selectTextOnFocus
-                    onBlur={() => applyInput('minutes')}
-                    onSubmitEditing={() => applyInput('minutes')}
-                  />
-                ) : (
-                  <TouchableOpacity disabled={focusActive || hours === 24} onPress={() => !focusActive && hours !== 24 && openInput('minutes')}>
-                    <Text style={s.durPickerVal}>{String(minutes).padStart(2, '0')}</Text>
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity style={s.durPickerBtn} onPress={() => !focusActive && decrementMinutes()} disabled={focusActive}>
-                  <Text style={s.durPickerArrow}>▼</Text>
-                </TouchableOpacity>
-                <Text style={s.durPickerLabel}>m</Text>
-              </View>
-
-              <View style={s.durTotal}>
-                <Icon name="timer-outline" size={13} color={C.neonBlue} />
-                <Text style={s.durTotalTxt}>
-                  {' '}{hours > 0 ? `${hours}h ` : ''}{minutes}min
-                </Text>
-              </View>
-            </View>
-          </>
-        )}
-
-        {/* Hardcore Mode toggle — inline, below duration */}
-        {!focusActive && (
-          <TouchableOpacity
-            style={[s.hardcoreInlineBtn, (hardcoreToggle || hardcorePunished) && s.hardcoreInlineBtnActive]}
-            onPress={hardcorePunished ? undefined : () => setHardcoreToggle(v => !v)}
-            activeOpacity={hardcorePunished ? 1 : 0.75}
-          >
-            <Icon
-              name={hardcorePunished || hardcoreToggle ? 'skull' : 'skull-outline'}
-              size={14}
-              color={C.neonRed}
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={s.hardcoreInlineBtnTxt}>
-                {hardcorePunished
-                  ? 'HARDCORE ATIVO — PUNIÇÃO DO SISTEMA'
-                  : hardcoreToggle
-                  ? 'MODO HARDCORE ATIVO — TOQUE PARA DESATIVAR'
-                  : 'MODO HARDCORE'}
-              </Text>
-              {!hardcorePunished && (
-                <Text style={s.hardcoreInlineSub}>
-                  {hardcoreToggle
-                    ? 'Foco permanente ativo — pausa desativada até ao fim'
-                    : 'Liga para tornar o foco permanente (sem pausa)'
-                  }
-                </Text>
-              )}
-            </View>
-            {!hardcorePunished && (
-              <Icon
-                name={hardcoreToggle ? 'toggle-switch' : 'toggle-switch-off'}
-                size={24}
-                color={hardcoreToggle ? C.neonRed : C.dimmed}
-              />
-            )}
-          </TouchableOpacity>
-        )}
-
-        {/* App selector button — always accessible, even during focus */}
+        {/* 5. Apps a bloquear */}
         <Text style={s.section}>APPS A BLOQUEAR</Text>
         <TouchableOpacity style={s.appSelectorBtn} onPress={() => setShowAppOverlay(true)}>
           <Icon name="shield-lock-outline" size={16} color={selectedCount > 0 ? C.neonBlue : C.muted} />
@@ -704,7 +689,28 @@ export default function FocusScreen() {
           <Icon name="chevron-right" size={16} color={C.muted} />
         </TouchableOpacity>
 
-        {/* Permissions */}
+        {/* 6. Card de explicação */}
+        <Text style={s.section}>COMO FUNCIONA</Text>
+        <View style={s.explanationCard}>
+          <View style={{ gap: SPACING.sm, marginBottom: SPACING.md }}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
+              <Icon name="lightning-bolt" size={14} color={C.neonBlue} />
+              <View style={{ flex: 1 }}>
+                <Text style={[s.modeLabel, { color: C.neonBlue }]}>MODO STANDARD</Text>
+                <Text style={s.modeDesc}>Bloqueia apps por tempo definido. Podes fazer pausa a qualquer momento.</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
+            <Icon name="skull" size={14} color={C.neonRed} />
+            <View style={{ flex: 1 }}>
+              <Text style={[s.modeLabel, { color: C.neonRed }]}>MODO HARDCORE</Text>
+              <Text style={s.modeDesc}>Dedicação Total. Sem pausas até ao fim. Testa a tua força.</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* 7. Permissões */}
         <Text style={s.section}>PERMISSÕES</Text>
         <View style={s.permBlock}>
           <PermRow
@@ -720,7 +726,6 @@ export default function FocusScreen() {
             C={C}
           />
         </View>
-
 
       </ScrollView>
 
@@ -846,6 +851,9 @@ const getStyles = (C: any) => StyleSheet.create({
   durTotal:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
   durTotalTxt:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 1 },
 
+  countdownBox: { alignItems: 'center', justifyContent: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: '#38bdf888', borderRadius: 8, padding: 32, marginBottom: 16 },
+  countdownTxt: { fontFamily: FONT.orbitron, fontSize: 48, fontWeight: '900', color: C.neonBlue, letterSpacing: 2 },
+
   appSelectorBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.border, gap: SPACING.sm, marginBottom: 4 },
   appSelectorTxt: { color: C.muted, fontSize: 13 },
   appSelectorSub: { color: C.dimmed, fontSize: 10, marginTop: 2 },
@@ -860,6 +868,10 @@ const getStyles = (C: any) => StyleSheet.create({
   hardcoreInlineBtnActive: { borderColor: C.neonRed, backgroundColor: C.surface?.dangerHover || C.bg },
   hardcoreInlineBtnTxt:    { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
   hardcoreInlineSub:       { color: C.dimmed, fontSize: 10, marginTop: 3 },
+  
+  hardcoreMiniBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 32, paddingVertical: 8, paddingHorizontal: 16, borderWidth: 1, borderColor: C.border, alignSelf: 'center', marginBottom: SPACING.md, marginTop: SPACING.sm },
+  hardcoreMiniBtnActive: { borderColor: C.neonRed, backgroundColor: C.surface?.danger || C.bg },
+  hardcoreMiniTxt: { color: C.dimmed, fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginLeft: 6 },
 })
 
 const getPRStyles = (C: any) => StyleSheet.create({

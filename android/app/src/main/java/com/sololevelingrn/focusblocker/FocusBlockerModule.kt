@@ -76,7 +76,7 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
     // ── Focus mode control ─────────────────────────────────────────────────────
 
     @ReactMethod
-    fun startFocusMode(blockedPackages: ReadableArray, durationMs: Double, isPenalty: Boolean, promise: Promise) {
+    fun startFocusMode(blockedPackages: ReadableArray, startTimeMs: Double, endTimeMs: Double, isPenalty: Boolean, promise: Promise) {
         try {
             val pkgList = ArrayList<String>()
             for (i in 0 until blockedPackages.size()) {
@@ -85,7 +85,8 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
             val intent = Intent(reactApplicationContext, FocusBlockerService::class.java).apply {
                 action = FocusBlockerService.ACTION_START
                 putStringArrayListExtra(FocusBlockerService.EXTRA_BLOCKED_PACKAGES, pkgList)
-                putExtra(FocusBlockerService.EXTRA_DURATION_MS, durationMs.toLong())
+                putExtra(FocusBlockerService.EXTRA_START_TIME_MS, startTimeMs.toLong())
+                putExtra(FocusBlockerService.EXTRA_END_TIME_MS, endTimeMs.toLong())
                 putExtra("extra_is_penalty", isPenalty)
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

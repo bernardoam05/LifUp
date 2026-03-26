@@ -16,6 +16,7 @@ import ThemeSettings from '../components/SettingsSections/ThemeSettings'
 import IntensitySettings from '../components/SettingsSections/IntensitySettings'
 import DifficultySettings from '../components/SettingsSections/DifficultySettings'
 import RestDaySettings from '../components/SettingsSections/RestDaySettings'
+import AutoBlockSettings from '../components/SettingsSections/AutoBlockSettings'
 import BackupSettings from '../components/SettingsSections/BackupSettings'
 import AboutSettings from '../components/SettingsSections/AboutSettings'
 import ImportModal from '../components/SettingsSections/ImportModal'
@@ -157,6 +158,12 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
                 <DifficultySettings
                   currentDifficulty={settings.missionDifficulty}
                   onDifficultyChange={v => updateSettings({ missionDifficulty: v })}
+                />
+              </View>
+              <View style={[s.subsection, { borderTopWidth: 1, borderTopColor: C.border + '22' }]}>
+                <AutoBlockSettings
+                  autoBlockApps={settings.autoBlockApps}
+                  onToggle={v => updateSettings({ autoBlockApps: v })}
                 />
               </View>
               <View style={[s.subsection, { borderTopWidth: 1, borderTopColor: C.border + '22' }]}>
