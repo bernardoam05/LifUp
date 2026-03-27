@@ -4,4 +4,5 @@
     <string name="widget_vanguard_description">Exército de Sombras ativo</string>
     <string name="widget_streak_description">Streak de dias consecutivos</string>
     <string name="widget_status_description">Nível e XP do Caçador</string>
+    <string name="accessibility_service_description">Deteta em tempo real qual app está em primeiro plano para bloquear distrações durante o Modo Foco.</string>
 </resources>

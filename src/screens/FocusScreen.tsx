@@ -15,10 +15,12 @@ import { useTheme, FONT, SPACING } from '../theme'
 
 const { FocusBlocker } = NativeModules as {
   FocusBlocker: {
-    hasUsagePermission:       () => Promise<boolean>
-    hasOverlayPermission:     () => Promise<boolean>
-    requestUsagePermission:   () => Promise<boolean>
-    requestOverlayPermission: () => Promise<boolean>
+    hasUsagePermission:          () => Promise<boolean>
+    hasOverlayPermission:        () => Promise<boolean>
+    hasAccessibilityPermission:  () => Promise<boolean>
+    requestUsagePermission:      () => Promise<boolean>
+    requestOverlayPermission:    () => Promise<boolean>
+    requestAccessibilityPermission: () => Promise<boolean>
     startFocusMode:     (pkgs: string[], startTimeMs: number, endTimeMs: number, isPenalty: boolean) => Promise<boolean>
     stopFocusMode:      () => Promise<boolean>
     isFocusModeActive:  () => Promise<boolean>
@@ -331,8 +333,9 @@ export default function FocusScreen() {
   const lastFocusDuration = useGameStore(s => s.settings.lastFocusDuration)
   const updateSettings    = useGameStore(s => s.updateSettings)
 
-  const [hasUsage,       setHasUsage]       = useState(false)
-  const [hasOverlay,     setHasOverlay]     = useState(false)
+  const [hasUsage,         setHasUsage]         = useState(false)
+  const [hasOverlay,       setHasOverlay]       = useState(false)
+  const [hasAccessibility, setHasAccessibility] = useState(false)
   const [hours,          setHours]          = useState(() => lastFocusDuration?.hours   ?? 0)
   const [minutes,        setMinutes]        = useState(() => lastFocusDuration?.minutes ?? 25)
   const [editingField,   setEditingField]   = useState<'hours' | 'minutes' | null>(null)
@@ -396,6 +399,7 @@ export default function FocusScreen() {
   useEffect(() => {
     const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
       if (appStateRef.current.match(/inactive|background/) && next === 'active') {
+        checkPerms()
         if (focusActive && FocusBlocker) {
           FocusBlocker.isFocusModeActive().then(active => {
             if (!active) {
@@ -417,12 +421,14 @@ export default function FocusScreen() {
 
   async function checkPerms() {
     if (!FocusBlocker) return
-    const [u, o] = await Promise.all([
+    const [u, o, a] = await Promise.all([
       FocusBlocker.hasUsagePermission(),
       FocusBlocker.hasOverlayPermission(),
+      FocusBlocker.hasAccessibilityPermission().catch(() => false),
     ])
     setHasUsage(u)
     setHasOverlay(o)
+    setHasAccessibility(a)
   }
 
   async function startFocus() {
@@ -745,6 +751,13 @@ export default function FocusScreen() {
             onFix={() => FocusBlocker?.requestOverlayPermission().then(checkPerms)}
             C={C}
           />
+          <PermRow
+            label="Serviço de Acessibilidade (bloqueio fiável)"
+            ok={hasAccessibility}
+            onFix={() => FocusBlocker?.requestAccessibilityPermission().then(checkPerms)}
+            C={C}
+            optional
+          />
         </View>
 
       </ScrollView>
@@ -798,20 +811,21 @@ export default function FocusScreen() {
 
 // ── PermRow sub-component ──────────────────────────────────────────────────────
 
-function PermRow({ label, ok, onFix, C }: { label: string; ok: boolean; onFix: () => void; C: any }) {
+function PermRow({ label, ok, onFix, C, optional }: { label: string; ok: boolean; onFix: () => void; C: any; optional?: boolean }) {
   const p = getPRStyles(C)
+  const warnColor = optional ? C.gold : C.neonRed
   return (
     <View style={p.row}>
       <Icon
-        name={ok ? 'check-circle' : 'close-circle'}
+        name={ok ? 'check-circle' : (optional ? 'alert-circle-outline' : 'close-circle')}
         size={14}
-        color={ok ? C.green : C.neonRed}
+        color={ok ? C.green : warnColor}
       />
       <Text style={p.label}>{label}</Text>
       {!ok && (
-        <TouchableOpacity onPress={onFix} style={p.fixBtn}>
-          <Icon name="cog-outline" size={10} color={C.neonRed} />
-          <Text style={p.fixTxt}> FIX</Text>
+        <TouchableOpacity onPress={onFix} style={[p.fixBtn, optional && { borderColor: C.gold }]}>
+          <Icon name="cog-outline" size={10} color={warnColor} />
+          <Text style={[p.fixTxt, optional && { color: C.gold }]}> FIX</Text>
         </TouchableOpacity>
       )}
     </View>

@@ -357,12 +357,59 @@ function ShadowDetailModal({
   )
 }
 
-// ── Achievements panel ─────────────────────────────────────────────────────────
+// ── Achievements panel (compact summary — tap to open full modal) ───────────────
 
-function AchievementsPanel({ onSelect, C }: {
-  onSelect: (a: Achievement, prog: AchievementProg | undefined, done: boolean) => void; C: any
+function AchievementsPanel({ onOpen, C }: { onOpen: () => void; C: any }) {
+  const ac = getACStyles(C)
+  const unlockedIds         = useGameStore(s => s.unlockedAchievements)
+  const achievementProgress = useGameStore(s => s.achievementProgress)
+  const unlockedSet = new Set(unlockedIds)
+  const total    = ACHIEVEMENTS_CATALOG.length
+  const unlocked = ACHIEVEMENTS_CATALOG.filter(a =>
+    unlockedSet.has(a.id) || (a.tiers && isAchievementMaxed(a, achievementProgress[a.id]))
+  ).length
+
+  const preview = ACHIEVEMENTS_CATALOG.filter(a =>
+    unlockedSet.has(a.id) || (a.tiers && isAchievementMaxed(a, achievementProgress[a.id]))
+  ).slice(-5)
+
+  return (
+    <TouchableOpacity style={ac.summaryBtn} onPress={onOpen} activeOpacity={0.75}>
+      <View style={ac.summaryRow}>
+        <Icon name="trophy-outline" size={12} color={C.gold} />
+        <Text style={ac.headerTxt}> CONQUISTAS</Text>
+        <View style={[ac.badge, { marginLeft: SPACING.sm }]}>
+          <Text style={ac.badgeTxt}>{unlocked}/{total}</Text>
+        </View>
+        <Icon name="chevron-right" size={16} color={C.muted} style={{ marginLeft: 'auto' }} />
+      </View>
+      <View style={ac.previewRow}>
+        {preview.length > 0 ? preview.map(a => (
+          <View key={a.id} style={[ac.previewDot, { backgroundColor: (a.color ?? C.gold) + '22', borderColor: (a.color ?? C.gold) + '66' }]}>
+            <SafeIcon name={a.icon} size={14} color={a.color ?? C.gold} />
+          </View>
+        )) : (
+          <Text style={ac.previewEmpty}>Nenhuma conquista desbloqueada ainda</Text>
+        )}
+        {unlocked > 5 && (
+          <View style={[ac.previewDot, { backgroundColor: C.border, borderColor: C.border }]}>
+            <Text style={{ color: C.muted, fontSize: 8, fontFamily: FONT.orbitron }}>+{unlocked - 5}</Text>
+          </View>
+        )}
+      </View>
+    </TouchableOpacity>
+  )
+}
+
+// ── Achievements full modal ─────────────────────────────────────────────────────
+
+function AchievementsModal({ visible, onClose, onSelect, C }: {
+  visible: boolean
+  onClose: () => void
+  onSelect: (a: Achievement, prog: AchievementProg | undefined, done: boolean) => void
+  C: any
 }) {
-  const ac = getACStyles(C) // Assuming getACStyles is defined later
+  const ac = getACStyles(C)
   const unlockedIds         = useGameStore(s => s.unlockedAchievements)
   const achievementProgress = useGameStore(s => s.achievementProgress)
   const unlockedSet = new Set(unlockedIds)
@@ -372,84 +419,78 @@ function AchievementsPanel({ onSelect, C }: {
   ).length
 
   return (
-    <View style={ac.container}>
-      <View style={ac.header}>
-        <Text style={ac.headerTxt}>CONQUISTAS</Text>
-        <View style={ac.badge}>
-          <Text style={ac.badgeTxt}>{unlocked}/{total}</Text>
+    <SoloLevelingModal visible={visible} onRequestClose={onClose}>
+      <View style={ac.modalCard}>
+        <View style={ac.modalHeader}>
+          <Icon name="trophy-outline" size={12} color={C.gold} />
+          <Text style={[ac.headerTxt, { flex: 1 }]}> CONQUISTAS</Text>
+          <View style={[ac.badge, { marginRight: SPACING.sm }]}>
+            <Text style={ac.badgeTxt}>{unlocked}/{total}</Text>
+          </View>
+          <TouchableOpacity onPress={onClose} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Icon name="close" size={16} color={C.dimmed} />
+          </TouchableOpacity>
         </View>
+        <View style={ac.modalDivider} />
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={ac.modalGrid}>
+          {ACHIEVEMENTS_CATALOG.map(a => {
+            const prog          = achievementProgress[a.id]
+            const fullyDone     = unlockedSet.has(a.id) || (a.tiers ? isAchievementMaxed(a, prog) : false)
+            const secret        = a.isSecret && !fullyDone && !a.tiers
+            const completedTier = getCompletedTier(a, prog)
+            const activeTier    = getActiveTier(a, prog)
+            const maxed         = a.tiers ? isAchievementMaxed(a, prog) : fullyDone
+            const displayTier   = maxed ? a.tiers?.[a.tiers.length - 1] : completedTier
+            const cardColor     = a.tiers
+              ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : C.border)
+              : (fullyDone ? a.color : C.border)
+            const iconColor     = a.tiers
+              ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : C.dimmed)
+              : (fullyDone ? a.color : C.dimmed)
+            const currentVal  = prog?.currentValue ?? 0
+            const tierIdx     = getTierIndex(prog)
+            const prevTarget  = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0
+            const thisTarget  = activeTier?.targetValue ?? 1
+            const progressPct = (a.tiers && !maxed && activeTier)
+              ? Math.min(100, ((currentVal - prevTarget) / (thisTarget - prevTarget)) * 100)
+              : (maxed ? 100 : 0)
+
+            return (
+              <TouchableOpacity
+                key={a.id}
+                style={[ac.card, { borderColor: cardColor + (fullyDone || completedTier ? '88' : '33') }]}
+                onPress={() => onSelect(a, prog, fullyDone)}
+                activeOpacity={0.75}
+              >
+                <View style={[ac.iconWrap, { backgroundColor: iconColor + '18' }]}>
+                  <SafeIcon name={secret ? 'help-circle-outline' : a.icon} size={22} color={iconColor} />
+                </View>
+                {displayTier && (
+                  <View style={[ac.tierChip, { borderColor: TIER_COLORS[displayTier.rank] }]}>
+                    <Text style={[ac.tierChipTxt, { color: TIER_COLORS[displayTier.rank] }]}>
+                      {maxed ? '★' : displayTier.rank.slice(0, 2)}
+                    </Text>
+                  </View>
+                )}
+                <Text style={[ac.cardTitle, { color: iconColor }]} numberOfLines={2}>
+                  {secret ? '???' : a.title}
+                </Text>
+                {maxed ? (
+                  <Text style={ac.maxTag}>[ MAX ]</Text>
+                ) : (
+                  <View style={ac.miniTrack}>
+                    <View style={[ac.miniFill, {
+                      width: `${Math.max(progressPct, 0)}%` as any,
+                      backgroundColor: completedTier ? TIER_COLORS[completedTier.rank] : C.neonBlue,
+                    }]} />
+                  </View>
+                )}
+              </TouchableOpacity>
+            )
+          })}
+        </ScrollView>
       </View>
-
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} nestedScrollEnabled={true} contentContainerStyle={ac.grid}>
-        {ACHIEVEMENTS_CATALOG.map(a => {
-          const prog          = achievementProgress[a.id]
-          const fullyDone     = unlockedSet.has(a.id) || (a.tiers ? isAchievementMaxed(a, prog) : false)
-          const secret        = a.isSecret && !fullyDone && !a.tiers
-          const completedTier = getCompletedTier(a, prog)
-          const activeTier    = getActiveTier(a, prog)
-          const maxed         = a.tiers ? isAchievementMaxed(a, prog) : fullyDone
-
-          // Card colour: gold if maxed, tier colour if in progress, grey if not started
-          const displayTier = maxed ? a.tiers?.[a.tiers.length - 1] : completedTier
-          const cardColor   = a.tiers
-            ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : C.border)
-            : (fullyDone ? a.color : C.border)
-          const iconColor   = a.tiers
-            ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : C.dimmed)
-            : (fullyDone ? a.color : C.dimmed)
-
-          // Mini progress bar: % within current tier
-          const currentVal = prog?.currentValue ?? 0
-          const tierIdx    = getTierIndex(prog)
-          const prevTarget = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0
-          const thisTarget = activeTier?.targetValue ?? 1
-          const progressPct = (a.tiers && !maxed && activeTier)
-            ? Math.min(100, ((currentVal - prevTarget) / (thisTarget - prevTarget)) * 100)
-            : (maxed ? 100 : 0)
-
-          return (
-            <TouchableOpacity
-              key={a.id}
-              style={[ac.card, { borderColor: cardColor + (fullyDone || completedTier ? '88' : '33') }]}
-              onPress={() => onSelect(a, prog, fullyDone)}
-              activeOpacity={0.75}
-            >
-              <View style={[ac.iconWrap, { backgroundColor: iconColor + '18' }]}>
-                <SafeIcon
-                  name={secret ? 'help-circle-outline' : a.icon}
-                  size={22}
-                  color={iconColor}
-                />
-              </View>
-
-              {/* Tier badge on card */}
-              {displayTier && (
-                <View style={[ac.tierChip, { borderColor: TIER_COLORS[displayTier.rank] }]}>
-                  <Text style={[ac.tierChipTxt, { color: TIER_COLORS[displayTier.rank] }]}>
-                    {maxed ? '★' : displayTier.rank.slice(0, 2)}
-                  </Text>
-                </View>
-              )}
-
-              <Text style={[ac.cardTitle, { color: iconColor }]} numberOfLines={2}>
-                {secret ? '???' : a.title}
-              </Text>
-
-              {maxed ? (
-                <Text style={ac.maxTag}>[ MAX ]</Text>
-              ) : (
-                <View style={ac.miniTrack}>
-                  <View style={[ac.miniFill, {
-                    width: `${Math.max(progressPct, 0)}%` as any,
-                    backgroundColor: completedTier ? TIER_COLORS[completedTier.rank] : C.neonBlue,
-                  }]} />
-                </View>
-              )}
-            </TouchableOpacity>
-          )
-        })}
-      </ScrollView>
-    </View>
+    </SoloLevelingModal>
   )
 }
 
@@ -558,6 +599,7 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
   const [selectedShadow, setSelectedShadow] = useState<{ id: string; level: number } | null>(null)
   const [showRankInfo, setShowRankInfo] = useState(false)
   const [showHistory,  setShowHistory]  = useState(false)
+  const [showAchievements, setShowAchievements] = useState(false)
 
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
@@ -638,7 +680,7 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
         <StatisticsPanel C={C} />
 
         {/* Achievements Panel */}
-        <AchievementsPanel onSelect={(a, pr, d) => setSelectedAch({ a, prog: pr, done: d })} C={C} />
+        <AchievementsPanel onOpen={() => setShowAchievements(true)} C={C} />
 
         {/* Shadows List */}
         <SectionHeader icon="ghost" label="EXÉRCITO DE SOMBRAS" C={C} />
@@ -661,6 +703,13 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
       </ScrollView>
 
       {/* Modals */}
+      <AchievementsModal
+        visible={showAchievements}
+        onClose={() => setShowAchievements(false)}
+        onSelect={(a, pr, d) => { setShowAchievements(false); setSelectedAch({ a, prog: pr, done: d }) }}
+        C={C}
+      />
+
       {selectedAch && (
         <AchievementDetailModal
           achievement={selectedAch.a}
@@ -812,6 +861,19 @@ const getACStyles = (C: any) => StyleSheet.create({
   tierChip:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 4, paddingVertical: 1 },
   tierChipTxt:{ fontFamily: FONT.orbitron, fontSize: 6, letterSpacing: 0.5, fontWeight: '700' },
   maxTag:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
+
+  // Compact summary panel
+  summaryBtn:   { backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.md, marginBottom: SPACING.lg },
+  summaryRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  previewRow:   { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
+  previewDot:   { width: 28, height: 28, borderRadius: 4, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  previewEmpty: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9 },
+
+  // Full achievements modal
+  modalCard:    { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg },
+  modalHeader:  { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },
+  modalDivider: { height: 1, backgroundColor: C.border, marginBottom: SPACING.md },
+  modalGrid:    { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.sm, paddingBottom: SPACING.md },
 })
 
 const getAMStyles = (C: any) => StyleSheet.create({

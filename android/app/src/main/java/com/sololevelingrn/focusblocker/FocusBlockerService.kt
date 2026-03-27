@@ -39,18 +39,102 @@ class FocusBlockerService : Service() {
         const val OWN_PACKAGE = "com.sololevelingrn"
 
         @Volatile var isRunning = false
+
+        // ── Accessibility Service integration ─────────────────────────────────
+        // Real-time foreground package, updated by FocusAccessibilityService.
+        // Takes priority over UsageStats polling (no delay, works after kill+relaunch).
+        @Volatile var lastKnownForegroundPkg: String? = null
+        // Timestamp (ms) when lastKnownForegroundPkg was last updated.
+        // Used to expire stale values when AccService is disconnected.
+        @Volatile var lastKnownForegroundPkgMs: Long = 0L
+        @Volatile var serviceInstance: FocusBlockerService? = null
+
+        // Mirror of blockedPackages exposed for AccService race-condition guard.
+        @Volatile var runningBlockedPackages: Set<String> = emptySet()
+
+        fun notifyForegroundPackage(pkg: String) {
+            val now = System.currentTimeMillis()
+            val prev = lastKnownForegroundPkg
+
+            // Suppress launcher transition events: launchers (Samsung, MIUI, Pixel) fire
+            // TYPE_WINDOW_STATE_CHANGED a few ms AFTER the blocked app's event.
+            // They have launchable activities so they pass the isLaunchableApp filter.
+            // If we let them through, the ACC path would be called with the launcher pkg
+            // and skip showing the overlay (launcher is not blocked).
+            if (prev != null
+                && runningBlockedPackages.contains(prev)
+                && now - lastKnownForegroundPkgMs < 1_500L
+                && !runningBlockedPackages.contains(pkg)
+                && pkg != OWN_PACKAGE) {
+                return // launcher transition — ignore
+            }
+
+            lastKnownForegroundPkg = pkg
+            lastKnownForegroundPkgMs = now
+            // Direct call — accessibility callbacks already run on the main thread,
+            // so there is no need for handler.post(). On MIUI/HyperOS, handler.post()
+            // from a background service is throttled (delayed seconds) unless the user
+            // interacts with the device. Calling directly bypasses that throttle.
+            // We pass `now` so onAccForeground can detect MIUI batch-delivery staleness.
+            serviceInstance?.onAccForeground(pkg, now)
+        }
     }
 
     private var blockedPackages: List<String> = emptyList()
+    private val launchableCache = HashMap<String, Boolean>()
+
+    private fun isLaunchableApp(pkg: String): Boolean {
+        return launchableCache.getOrPut(pkg) {
+            packageManager.getLaunchIntentForPackage(pkg) != null
+        }
+    }
     private var startTimeMs: Long = 0L
     private var endTimeMs: Long = 0L
     private var isPenaltyMode: Boolean = false
-    private var overlayMessage: String = ""
-    private var lastRedirectTime: Long = 0L
+    private var isHardcoreMode: Boolean = false
+    private var wakeLock: PowerManager.WakeLock? = null
+
+    // Dedicated background thread for UsageStats polling.
+    // MIUI/HyperOS puts background processes in a throttled cgroup; the main looper
+    // can be delayed by 5-10 s, making handler.postDelayed(500ms) fire ~every 5-10 s.
+    // Running detection in a separate HandlerThread with elevated priority ensures the
+    // 500 ms poll cycle fires on time. Only the tiny overlay add/remove ops are posted
+    // back to the main thread via `handler.post()` (non-delayed → processed promptly).
+    private val pollThread = HandlerThread("FocusBlockerPoll", android.os.Process.THREAD_PRIORITY_AUDIO)
+    private lateinit var pollHandler: Handler
+
     private var overlayView: LinearLayout? = null
-    private val handler = Handler(Looper.getMainLooper())
+    private var overlayShownAtMs: Long = 0L
+    // Set when the user taps FECHAR and we call killBackgroundProcesses.
+    // killBackgroundProcesses does NOT emit ACTIVITY_PAUSED in UsageStats for 2-3 s,
+    // so the killed app would appear foreground and re-show the overlay inside our own app.
+    // The guard is ONLY activated here — never refreshed by normal navigation — so the
+    // polling path (UsageStats) runs freely at all other times.
+    private var blockedAppKilledAt: Long = 0L
+    internal val handler = Handler(Looper.getMainLooper())
     private lateinit var windowManager: WindowManager
     private lateinit var usageStatsManager: UsageStatsManager
+
+    // ── WakeLock ───────────────────────────────────────────────────────────────
+    // PARTIAL_WAKE_LOCK keeps the CPU alive and prevents MIUI/HyperOS from
+    // deprioritizing (throttling) our process when the screen is on but the user
+    // is in a different app. Without it, handler.post() calls can be delayed by
+    // several seconds, which is why pulling the notification bar (user interaction)
+    // was the only thing that "woke up" the blocker.
+
+    private fun acquireWakeLock() {
+        if (wakeLock?.isHeld == true) return
+        val pm = getSystemService(POWER_SERVICE) as PowerManager
+        wakeLock = pm.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "SoloLeveling:FocusBlocker"
+        ).also { it.acquire() }
+    }
+
+    private fun releaseWakeLock() {
+        wakeLock?.takeIf { it.isHeld }?.release()
+        wakeLock = null
+    }
 
     // ── Persistence ────────────────────────────────────────────────────────────
     private fun saveState() {
@@ -59,6 +143,7 @@ class FocusBlockerService : Service() {
             .putLong("startTimeMs", startTimeMs)
             .putLong("endTimeMs", endTimeMs)
             .putBoolean("isPenaltyMode", isPenaltyMode)
+            .putBoolean("isHardcoreMode", isHardcoreMode)
             .putString("blockedPackages", JSONArray(blockedPackages).toString())
             .apply()
     }
@@ -68,6 +153,7 @@ class FocusBlockerService : Service() {
         startTimeMs = prefs.getLong("startTimeMs", 0L)
         endTimeMs = prefs.getLong("endTimeMs", 0L)
         isPenaltyMode = prefs.getBoolean("isPenaltyMode", false)
+        isHardcoreMode = prefs.getBoolean("isHardcoreMode", false)
         val pkgsStr = prefs.getString("blockedPackages", "[]") ?: "[]"
         try {
             val arr = JSONArray(pkgsStr)
@@ -83,8 +169,11 @@ class FocusBlockerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        serviceInstance   = this
         windowManager     = getSystemService(WINDOW_SERVICE) as WindowManager
         usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        pollThread.start()
+        pollHandler = Handler(pollThread.looper)
         createNotificationChannel()
     }
 
@@ -92,6 +181,7 @@ class FocusBlockerService : Service() {
         when (intent?.action) {
             ACTION_START -> {
                 blockedPackages = intent.getStringArrayListExtra(EXTRA_BLOCKED_PACKAGES) ?: emptyList()
+                runningBlockedPackages = blockedPackages.toHashSet()
                 startTimeMs     = intent.getLongExtra(EXTRA_START_TIME_MS, 0L)
                 endTimeMs       = intent.getLongExtra(EXTRA_END_TIME_MS, 0L)
                 isPenaltyMode   = intent.getBooleanExtra("extra_is_penalty", false)
@@ -101,8 +191,12 @@ class FocusBlockerService : Service() {
                     startTimeMs = System.currentTimeMillis()
                 }
 
+                // Hardcore: session duration >= 100 days (effectively infinite)
+                isHardcoreMode = (endTimeMs - startTimeMs) >= 100L * 24 * 3_600_000
+
                 saveState()
                 isRunning       = true
+                acquireWakeLock()
                 startForeground(NOTIF_ID, buildNotification())
                 schedulePoll()
                 scheduleNotifUpdates()
@@ -110,6 +204,7 @@ class FocusBlockerService : Service() {
             }
             ACTION_STOP -> {
                 cancelKeepaliveAlarm()
+                releaseWakeLock()
                 getSharedPreferences("FocusBlockerPrefs", Context.MODE_PRIVATE).edit().clear().apply()
                 stopSelf()
             }
@@ -117,6 +212,7 @@ class FocusBlockerService : Service() {
                 val newPkgs = intent.getStringArrayListExtra(EXTRA_BLOCKED_PACKAGES)
                 if (newPkgs != null) {
                     blockedPackages = newPkgs
+                    runningBlockedPackages = blockedPackages.toHashSet()
                     saveState()
                 }
                 checkForegroundApp()
@@ -124,11 +220,13 @@ class FocusBlockerService : Service() {
             null, ACTION_KEEPALIVE -> {
                 // START_STICKY restart or AlarmManager keepalive
                 restoreState()
+                runningBlockedPackages = blockedPackages.toHashSet()
                 if (System.currentTimeMillis() >= endTimeMs) {
                     cancelKeepaliveAlarm()
                     stopSelf()
                 } else {
                     isRunning = true
+                    acquireWakeLock()
                     startForeground(NOTIF_ID, buildNotification())
                     schedulePoll()
                     scheduleNotifUpdates()
@@ -141,25 +239,59 @@ class FocusBlockerService : Service() {
 
     override fun onDestroy() {
         isRunning = false
+        serviceInstance = null
+        runningBlockedPackages = emptySet()
         handler.removeCallbacksAndMessages(null)
+        pollHandler.removeCallbacksAndMessages(null)
+        pollThread.quitSafely()
         removeOverlay()
+        releaseWakeLock()
         super.onDestroy()
     }
 
     override fun onBind(intent: Intent?) = null
 
     // ── Polling ────────────────────────────────────────────────────────────────
+    // Detection (UsageStats query) runs on pollThread (THREAD_PRIORITY_AUDIO) so the
+    // 500 ms cadence is immune to MIUI main-looper throttling.
+    // Overlay show/remove are posted back to the main thread via handler.post()
+    // (non-delayed, so they execute on the next looper spin — much faster than a 500 ms
+    // postDelayed which MIUI would defer to whenever it decides to wake up the main thread).
 
     private val pollRunnable = object : Runnable {
         override fun run() {
-            // Polling continua sempre enquanto o serviço estiver vivo
-            checkForegroundApp()
-            handler.postDelayed(this, 1000) // 1s is enough and saves battery
+            if (!isRunning) return
+            val now = System.currentTimeMillis()
+            val topPkg = try { getForegroundPackage(now) } catch (_: Exception) { null }
+            if (topPkg != null) {
+                val capturedNow = now
+                handler.post { onPollDetect(topPkg, capturedNow) }
+            }
+            pollHandler.postDelayed(this, 500)
         }
     }
 
     private fun schedulePoll() {
-        handler.post(pollRunnable)
+        pollHandler.removeCallbacks(pollRunnable)
+        pollHandler.post(pollRunnable)
+    }
+
+    // Called on the main thread after the poll thread detects a foreground package.
+    private fun onPollDetect(topPkg: String, detectedAtMs: Long) {
+        if (!isRunning) return
+        val now = System.currentTimeMillis()
+        if (overlayView != null && !android.provider.Settings.canDrawOverlays(this)) {
+            overlayView = null
+        }
+        if (overlayView == null && now - blockedAppKilledAt < 3_000L) return
+        if (topPkg == OWN_PACKAGE) { removeOverlay(); return }
+        val isExpired = now >= endTimeMs || now < startTimeMs
+        val isBlocked = !isExpired && blockedPackages.contains(topPkg)
+        if (isBlocked) {
+            showOverlay(topPkg)
+        } else if (overlayView != null && isLaunchableApp(topPkg)) {
+            removeOverlay()
+        }
     }
 
     // ── Notification timer update ──────────────────────────────────────────────
@@ -174,6 +306,7 @@ class FocusBlockerService : Service() {
     }
 
     private fun scheduleNotifUpdates() {
+        handler.removeCallbacks(notifRunnable)
         handler.postDelayed(notifRunnable, 60_000)
     }
 
@@ -213,29 +346,61 @@ class FocusBlockerService : Service() {
         } catch (_: Exception) { null }
     }
 
-    private fun checkForegroundApp() {
+    // ── ACC fast path ─────────────────────────────────────────────────────────
+    // Called directly from notifyForegroundPackage (accessibility callback = main thread).
+    // eventTimeMs = wall-clock time when the ACC event actually fired.
+
+    internal fun onAccForeground(pkg: String, eventTimeMs: Long) {
         val now = System.currentTimeMillis()
+        val eventAge = now - eventTimeMs   // how stale this event is
 
-        // Cooldown: wait 2 seconds after redirect so UsageStats can catch up
-        if (now - lastRedirectTime < 2000) return
+        if (overlayView != null && !android.provider.Settings.canDrawOverlays(this)) {
+            overlayView = null
+        }
 
-        val topPkg = getForegroundPackage(now) ?: return
-
-        // Nunca bloquear a própria app!
-        if (topPkg == OWN_PACKAGE) {
-            removeOverlay()
+        if (pkg == OWN_PACKAGE) {
+            // The overlay's own windowManager.addView() fires TYPE_WINDOW_STATE_CHANGED
+            // with OWN_PACKAGE within a few ms. We must NOT remove the overlay for that
+            // reflexive event, or it would vanish the instant it's shown.
+            // We distinguish it by checking that both the event AND the overlay are fresh
+            // (< 500 ms old). Any genuine "user navigated to our app" event — including
+            // MIUI batch-delivered stale ones — falls outside this window and removes the overlay.
+            val isAddViewReflexive = overlayView != null
+                && eventAge < 500L
+                && (now - overlayShownAtMs) < 500L
+            if (!isAddViewReflexive) {
+                removeOverlay()
+            }
             return
         }
 
         val isExpired = now >= endTimeMs || now < startTimeMs
-        val isBlocked = !isExpired && blockedPackages.contains(topPkg)
-
-        if (!isBlocked) {
-            removeOverlay()
-            return
+        if (!isExpired && blockedPackages.contains(pkg)) {
+            if (eventAge > 2_000L) {
+                // Stale event: MIUI held this in the queue while our process was throttled,
+                // then delivered it in batch when our process woke up (e.g. user returned
+                // to our app). By now the user may have already left the blocked app.
+                // Verify with UsageStats before showing, to avoid a false-positive overlay
+                // appearing inside our own app.
+                val currentFg = getForegroundPackage(now)
+                if (currentFg != pkg) return
+            }
+            showOverlay(pkg)
         }
+        // Do NOT remove overlay here based on ACC events: launcher-transition events
+        // would prematurely remove it. Removal is handled by onPollDetect (UsageStats).
+    }
 
-        showOverlay(topPkg)
+    // ── On-demand check (main thread) ─────────────────────────────────────────
+    // Called from ACC TYPE_WINDOWS_CHANGED handler (and ACTION_UPDATE_APPS) when we need
+    // an immediate UsageStats check outside the normal poll cadence.
+    // Runs on the main thread since the callers are already there.
+
+    internal fun checkForegroundApp() {
+        val now = System.currentTimeMillis()
+        val topPkg = try { getForegroundPackage(now) } catch (_: Exception) { return }
+            ?: return
+        onPollDetect(topPkg, now)
     }
 
     // ── AlarmManager keepalive (survives MIUI process death) ──────────────────
@@ -277,47 +442,8 @@ class FocusBlockerService : Service() {
     // ── Overlay ────────────────────────────────────────────────────────────────
 
     private fun showOverlay(blockedPkg: String) {
+        // Overlay already showing — nothing to do.
         if (overlayView != null) return
-
-        // MAXXED OUT TRUE BLOCKING: Fire Intent to launch Solo Leveling to vigorously kick user out of blocked activity FIRST
-        // Starting our own activity is exempt from Android 10+ background start restrictions on almost all OEM ROMs
-        val redirectIntent = packageManager.getLaunchIntentForPackage(OWN_PACKAGE)?.apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        }
-
-        if (redirectIntent != null) {
-            try {
-                val pendingIntent = PendingIntent.getActivity(
-                    this,
-                    0,
-                    redirectIntent,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-                )
-                val options = android.app.ActivityOptions.makeBasic()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                    options.pendingIntentBackgroundActivityStartMode = android.app.ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
-                }
-                pendingIntent.send(this, 0, null, null, null, null, options.toBundle())
-            } catch (e: Exception) {
-                try {
-                    startActivity(redirectIntent)
-                } catch (ignored: Exception) {}
-            }
-        }
-
-        lastRedirectTime = System.currentTimeMillis()
-
-        // Agendamos a execução fatal para 1.5 segundos depois, garantindo que a app já está totalmente
-        // em background e vulnerável ao killBackgroundProcesses.
-        Handler(Looper.getMainLooper()).postDelayed({
-            try {
-                if (blockedPkg != OWN_PACKAGE) {
-                    val am = getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
-                    am.killBackgroundProcesses(blockedPkg)
-                }
-            } catch (ignored: Exception) {}
-        }, 1500)
-
         if (!android.provider.Settings.canDrawOverlays(this)) return
 
         val params = WindowManager.LayoutParams(
@@ -356,8 +482,9 @@ class FocusBlockerService : Service() {
             )
         }
 
+        // Split emoji and text into separate lines to prevent overlap on all devices
         val title = TextView(this).apply {
-            text      = if (isPenaltyMode) "⚠ PENALIZAÇÃO ATIVA" else "🛡️ O MONARCA DESCANSA"
+            text      = if (isPenaltyMode) "⚠\nPENALIZAÇÃO ATIVA" else "🛡️\nO MONARCA DESCANSA"
             textSize  = 22f
             setTextColor(Color.parseColor(if (isPenaltyMode) "#ef4444" else "#38bdf8"))
             gravity   = Gravity.CENTER
@@ -422,13 +549,26 @@ class FocusBlockerService : Service() {
             )
             setPadding(0, 24, 0, 24)
             setOnClickListener {
-                removeOverlay()
-                // Ao fechar o overlay, força a ida para o Ecrã Principal (Home) caso o redirect falhe
-                val startMain = Intent(Intent.ACTION_MAIN).apply {
-                    addCategory(Intent.CATEGORY_HOME)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                // Activate the killBackgroundProcesses guard immediately.
+                // UsageStats takes 2-3 s to log ACTIVITY_PAUSED after process kill;
+                // without this, the polling would re-show the overlay inside our own app.
+                blockedAppKilledAt = System.currentTimeMillis()
+                // Launch OWN app BEFORE removing the overlay: on Android 10+ a Service can only
+                // start activities while it has a visible window. Removing the overlay first
+                // revokes that permission and startActivity silently fails.
+                val ownIntent = packageManager.getLaunchIntentForPackage(OWN_PACKAGE)?.apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                            Intent.FLAG_ACTIVITY_SINGLE_TOP
                 }
-                startActivity(startMain)
+                if (ownIntent != null) {
+                    try { startActivity(ownIntent) } catch (_: Exception) {}
+                }
+                removeOverlay()
+                try {
+                    val am = getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
+                    am.killBackgroundProcesses(blockedPkg)
+                } catch (_: Exception) {}
             }
         }
 
@@ -444,6 +584,7 @@ class FocusBlockerService : Service() {
         overlayView = layout
         try {
             windowManager.addView(layout, params)
+            overlayShownAtMs = System.currentTimeMillis()
         } catch (_: Exception) {
             overlayView = null
         }
@@ -467,8 +608,12 @@ class FocusBlockerService : Service() {
             val chan = NotificationChannel(
                 CHANNEL_ID,
                 "Focus Blocker",
-                NotificationManager.IMPORTANCE_LOW
-            ).apply { description = "Solo Leveling — Focus Mode ativo" }
+                NotificationManager.IMPORTANCE_DEFAULT  // LOW is killed by Samsung/MIUI battery savers
+            ).apply {
+                description = "Solo Leveling — Focus Mode ativo"
+                setSound(null, null)    // no sound — just visible enough to survive OEM killers
+                enableVibration(false)
+            }
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
                 .createNotificationChannel(chan)
         }
@@ -477,16 +622,26 @@ class FocusBlockerService : Service() {
     private fun buildNotification(): Notification {
         val now = System.currentTimeMillis()
         val text: String
-        
-        if (now < startTimeMs) {
-            val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-            text = "Bloqueio automático agendado para as ${sdf.format(Date(startTimeMs))}"
-        } else {
-            val minLeft = ((endTimeMs - now) / 60_000).coerceAtLeast(0)
-            val h = minLeft / 60
-            val m = minLeft % 60
-            val timeStr = if (h > 0) "${h}h ${m}m" else "${m}m"
-            text = "O Sistema está a vigiar — $timeStr restantes"
+
+        when {
+            isHardcoreMode -> {
+                // Hardcore has no end — show elapsed time as count-up from 0
+                val elapsedMs = (now - startTimeMs).coerceAtLeast(0)
+                val h = elapsedMs / 3_600_000
+                val m = (elapsedMs % 3_600_000) / 60_000
+                text = "HARDCORE — ${h}h ${m}m em foco"
+            }
+            now < startTimeMs -> {
+                val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                text = "Bloqueio automático agendado para as ${sdf.format(Date(startTimeMs))}"
+            }
+            else -> {
+                val minLeft = ((endTimeMs - now) / 60_000).coerceAtLeast(0)
+                val h = minLeft / 60
+                val m = minLeft % 60
+                val timeStr = if (h > 0) "${h}h ${m}m" else "${m}m"
+                text = "O Sistema está a vigiar — $timeStr restantes"
+            }
         }
         
         return NotificationCompat.Builder(this, CHANNEL_ID)

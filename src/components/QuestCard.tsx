@@ -214,8 +214,8 @@ export default function QuestCard({ quest, isExtra, C }: { quest: Quest; isExtra
 
         {quest.done ? (
           <View style={[qc.doneRow, { paddingRight: 50 }]}>
-            <Icon name="check-circle" size={14} color={C.green} />
-            <Text style={qc.doneTag}> Concluida</Text>
+            <Icon name={quest.failed ? "close-circle" : "check-circle"} size={14} color={quest.failed ? C.neonRed : C.green} />
+            <Text style={[qc.doneTag, quest.failed && { color: C.neonRed }]}>{quest.failed ? ' Falhada' : ' Concluída'}</Text>
             <View style={{ flex: 1 }} />
             {!isExtra && (
               <TouchableOpacity style={qc.undoBtn} onPress={() => setConfirmUndo(true)}>

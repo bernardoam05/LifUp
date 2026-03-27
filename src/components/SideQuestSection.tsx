@@ -6,7 +6,7 @@ import { FONT, SPACING } from '../theme';
 import SideQuestCard from './SideQuestCard';
 
 export const getSideStyles = (C: any) => StyleSheet.create({
-  container: { marginTop: SPACING.md, borderWidth: 1, borderColor: C.purple + '44', borderRadius: 4, overflow: 'hidden' },
+  container: { marginTop: SPACING.md, marginBottom: SPACING.md, borderWidth: 1, borderColor: C.purple + '44', borderRadius: 4, overflow: 'hidden' },
   header: { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, backgroundColor: C.purple + '0d' },
   title: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
   badge: { backgroundColor: C.purple + '22', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2, marginLeft: SPACING.sm },

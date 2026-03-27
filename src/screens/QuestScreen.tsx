@@ -82,7 +82,7 @@ const getStyles = (C: any) => StyleSheet.create({
   boostBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.gold + '15', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   boostTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
   penalSection: { marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm },
-  penalHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  penalHeader: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm },
   penalTitle: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 
   sectionDivider: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.md, marginTop: 4 },
@@ -178,12 +178,8 @@ function getEventCountdownMs(endDate: string): number {
   const [month, day] = endDate.split('-').map(n => parseInt(n, 10))
   const year = now.getFullYear()
   const eventEnd = new Date(year, month - 1, day, 23, 59, 59, 999)
-  
-  // If the date has already passed this year, assume it's next year
-  if (eventEnd.getTime() < now.getTime()) {
-    eventEnd.setFullYear(year + 1)
-  }
-  
+  // If already passed this year, event is over — return 0
+  if (eventEnd.getTime() < now.getTime()) return 0
   return Math.max(0, eventEnd.getTime() - now.getTime())
 }
 
@@ -685,7 +681,7 @@ export default function QuestScreen() {
           <View style={s.penalSection}>
             <View style={s.penalHeader}>
               <Icon name="alert-circle" size={12} color={C.neonRed} />
-              <Text style={s.penalTitle}>Penalizacoes ativas</Text>
+              <Text style={[s.penalTitle, { flex: 1 }]}>Penalizações ativas</Text>
             </View>
             {penaltyQ.map(q => <QuestCard key={q.id} quest={q} C={C} />)}
           </View>
@@ -777,7 +773,7 @@ export default function QuestScreen() {
             </TouchableOpacity>
 
             {/* Event Dungeon */}
-            {activeEventDef && (
+            {activeEventDef && eventCountdownMs > 0 && (
               <TouchableOpacity
                 style={[s.systemCard, s.cardWarning, s.bossBanner, { marginTop: SPACING.sm, borderColor: C.gold + '88', backgroundColor: C.gold + '08' }]}
                 onPress={() => setShowEventDungeon(true)}

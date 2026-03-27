@@ -82,7 +82,6 @@ export default function App() {
   const statistics = useGameStore(s => s.statistics)
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated)
   const playerLevel = useGameStore(s => s.player.level)
-  const [prevPenalty, setPrevPenalty] = useState(false)
 
   // Register the midnight reset watcher
   useDayWatcher()
@@ -98,12 +97,6 @@ export default function App() {
       .catch(() => { })
   }, [])
 
-  // Auto-trigger penalty modal when penalty becomes active (only once per activation)
-  useEffect(() => {
-    if (hasPenalty) {
-      setPenaltyTriggered(true)
-    }
-  }, [hasPenalty])
 
   // Unified Background Service Sync: Restores Focus Blocker if killed by OS/Force Close
   useEffect(() => {

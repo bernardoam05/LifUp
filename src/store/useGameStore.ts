@@ -229,13 +229,22 @@ const useGameStore = create<GameState & GameActions>()(
           const newWeeklyRegenCount = weeklyReset ? 0 : system.weeklyRegenCount
           const wasRestDay = get().settings.restDay
           const sideQuestPenalize = get().settings.sideQuestPenalize ?? false
-          const allDone = quests.length > 0 && quests.every((q: Quest) => q.done)
+          const allDone = quests.length > 0 && quests.every((q: Quest) => {
+            if (q.done && !q.failed) return true
+            if (q.type === 'forbidden' && !(q.done && q.failed)) return true
+            if (q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) return true
+            return false
+          })
           const isFirstDay = lastResetDate === ''
           const failedSideCount = sideQuestPenalize && !isFirstDay && !wasRestDay
             ? get().sideQuests.filter(sq => !sq.done).length
             : 0
           const hadPenalty = (!allDone || failedSideCount > 0) && !isFirstDay && !wasRestDay
-          const failedCount = quests.filter((q: Quest) => !q.done).length + failedSideCount
+          const failedCount = quests.filter((q: Quest) => {
+            if (q.type === 'forbidden') return q.done && !!q.failed
+            if (q.type === 'limit') return (q.currentValue ?? 0) > (q.targetValue ?? 0)
+            return !q.done
+          }).length + failedSideCount
 
           let newXp = player.xp
           let newGold = player.gold
@@ -350,7 +359,7 @@ const useGameStore = create<GameState & GameActions>()(
             const pendingRewards = quests.filter((q: Quest) => {
               if (q.done) return false
               if (q.type === 'forbidden' && !q.failed) return true
-              if (q.type === 'limit' && (q.currentValue ?? 0) <= (q.gpsTarget ?? q.focusDuration ?? 1)) return true
+              if (q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) return true
               return false
             })
 
@@ -362,7 +371,7 @@ const useGameStore = create<GameState & GameActions>()(
             const effectiveDone = quests.filter((q: Quest) => {
               if (q.done && !q.failed) return true
               if (!q.done && q.type === 'forbidden' && !q.failed) return true
-              if (!q.done && q.type === 'limit' && (q.currentValue ?? 0) <= (q.gpsTarget ?? q.focusDuration ?? 1)) return true
+              if (!q.done && q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) return true
               return false
             }).length
 
@@ -448,6 +457,9 @@ const useGameStore = create<GameState & GameActions>()(
               portalCooldownEnd: 0,
               penaltyBlockStart: newPenaltyBlockStart,
               penaltyBlockEnd: newPenaltyBlockEnd,
+              focusModeActive: hadPenalty && newPenaltyBlockEnd > 0 ? true : s.system.focusModeActive,
+              focusEndTime: hadPenalty && newPenaltyBlockEnd > 0 ? newPenaltyBlockEnd : s.system.focusEndTime,
+              hardcoreFocusMode: hadPenalty && newHardcorePunished ? true : s.system.hardcoreFocusMode,
               // Portais dinâmicos foram unificados no roll horário (sem lista fixa diária).
               normalBossRotationDate: new Date().toDateString(),
               normalBossIds: [],
@@ -579,7 +591,22 @@ const useGameStore = create<GameState & GameActions>()(
           let finalXpGain = 0
           set((s: GameState & GameActions) => {
             const quest = s.quests.find(q => q.id === id)
-            if (!quest || quest.done) return {}
+            if (!quest || quest.done) {
+              // Check if it's a penalty quest
+              const pq = s.system.penaltyQuests.find(q => q.id === id)
+              if (!pq || pq.done) return {}
+              const updatedPQ = s.system.penaltyQuests.map(q => q.id === id ? { ...q, done: true } : q)
+              const allPenaltyDone = updatedPQ.every(q => q.done)
+              return {
+                system: {
+                  ...s.system,
+                  penaltyQuests: updatedPQ,
+                  hasPenalty: allPenaltyDone ? false : s.system.hasPenalty,
+                  penaltyTriggered: allPenaltyDone ? false : s.system.penaltyTriggered,
+                  penaltyBlockEnd: allPenaltyDone ? 0 : s.system.penaltyBlockEnd,
+                }
+              }
+            }
             // #5 Fix: compute passives once
             const { xpBoost, goldBoost, lootBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
             const baseXP = s.system.xpBoostNext ? quest.xp * 2 : quest.xp
@@ -636,7 +663,7 @@ const useGameStore = create<GameState & GameActions>()(
             }
           })
 
-          const allNowDone = get().quests.every(q => q.done)
+          const allNowDone = get().quests.every(q => q.done || q.type === 'limit' || q.type === 'forbidden')
           if (allNowDone) cancelSystemWarnings().catch(() => { })
 
           fireEvent('quest_completed', { isLastQuest: allNowDone }, ref)
@@ -1066,7 +1093,7 @@ const useGameStore = create<GameState & GameActions>()(
         setHardcorePunished(v) { set((s: GameState) => ({ system: { ...s.system, hardcorePunished: v } })) },
         setXpBoostNext(v) { set((s: GameState) => ({ system: { ...s.system, xpBoostNext: v } })) },
         setPenaltyReduced(v) { set((s: GameState) => ({ system: { ...s.system, penaltyReduced: v } })) },
-        removePenalty() { set((s: GameState) => ({ system: { ...s.system, hasPenalty: false, penaltyTriggered: false, penaltyQuests: [], penaltyBlockEnd: 0 } })); fireEvent('penalty_cleared', {}, ref) },
+        removePenalty() { set((s: GameState) => ({ system: { ...s.system, hasPenalty: false, penaltyTriggered: false, penaltyQuests: [], penaltyBlockEnd: 0, focusModeActive: false, focusEndTime: undefined } })); fireEvent('penalty_cleared', {}, ref) },
         deductGold(amount) { if (get().player.gold < amount) return false; set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold - amount }, statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + amount } })); return true },
         toggleBlockedApp(pkg) { set((s: GameState) => ({ system: { ...s.system, blockedApps: s.system.blockedApps.includes(pkg) ? s.system.blockedApps.filter(p => p !== pkg) : [...s.system.blockedApps, pkg] } })) },
         dismissAchievement() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'achievement') })) },

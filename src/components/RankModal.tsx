@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ScrollView } from 'react-native'
 import SoloLevelingModal from './SoloLevelingModal'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { getRank, CLASS_REQUIREMENTS, RankKey, RankLetter } from '../store/useGameStore'
@@ -74,6 +74,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
         </View>
         <View style={s.divider} />
 
+        <ScrollView style={{ maxHeight: 420 }} showsVerticalScrollIndicator={false}>
         {isRankingUp ? (
           <View style={s.rankUpContainer}>
             <Icon name="chevron-double-up" size={48} color={displayRank.color} style={{ marginBottom: 12 }} />
@@ -95,7 +96,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
               return (
                 <View key={r.rank} style={[s.row, isCurrent && { backgroundColor: r.color + '15' }]}>
                   <View style={[s.badge, { borderColor: r.color + (isCurrent ? 'cc' : '55') }]}>
-                    <Text style={[s.badgeTxt, { color: r.color }]}>{r.rank}</Text>
+                    <Text style={[s.badgeTxt, { color: r.color }]}>{r.rank === 'National' ? 'N' : r.rank}</Text>
                   </View>
                   <View style={s.rowInfo}>
                     <Text style={[s.rowLabel, { color: isCurrent ? r.color : (met ? C.muted : C.dimmed) }]}>{r.label}</Text>
@@ -169,6 +170,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
             )}
           </>
         )}
+        </ScrollView>
       </Animated.View>
     </SoloLevelingModal>
   )

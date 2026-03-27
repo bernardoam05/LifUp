@@ -3,11 +3,19 @@ import { StyleSheet, Text, View, Modal, TouchableOpacity, ScrollView } from 'rea
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTheme } from '../theme'
 import { playSound } from '../utils/audioService'
+import { SHOP_CATALOG } from '../data/shopItems'
 
 interface Props {
   level: number
   items: string[]
   onDismiss: () => void
+}
+
+const ITEM_NAMES: Record<string, string> = Object.fromEntries(SHOP_CATALOG.map(i => [i.id, i.name]))
+const EXTRA_NAMES: Record<string, string> = {
+  shadow_essence: 'Essência das Sombras',
+  blood_fallen: 'Sangue dos Caídos',
+  loot_box: 'Cofre Misterioso',
 }
 
 export default function LevelUpModal({ level, items, onDismiss }: Props) {
@@ -40,7 +48,7 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
                 {items.map((item, idx) => (
                   <View key={idx} style={st.itemRow}>
                     <Icon name="gift" size={20} color={C.gold} />
-                    <Text style={st.itemText}>{item}</Text>
+                    <Text style={st.itemText}>{ITEM_NAMES[item] ?? EXTRA_NAMES[item] ?? item}</Text>
                   </View>
                 ))}
               </ScrollView>

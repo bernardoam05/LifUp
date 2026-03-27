@@ -1,11 +1,13 @@
 package com.sololevelingrn.focusblocker
 
 import android.app.AppOpsManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import com.facebook.react.bridge.*
@@ -42,6 +44,31 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
         promise.resolve(Settings.canDrawOverlays(reactApplicationContext))
     }
 
+    @ReactMethod
+    fun hasAccessibilityPermission(promise: Promise) {
+        val enabledServices = Settings.Secure.getString(
+            reactApplicationContext.contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: ""
+        val pkg = reactApplicationContext.packageName
+        // Android stores the full class name: "pkg/pkg.ClassName"
+        val ownService = "$pkg/$pkg.focusblocker.FocusAccessibilityService"
+        promise.resolve(enabledServices.contains(ownService))
+    }
+
+    @ReactMethod
+    fun requestAccessibilityPermission(promise: Promise) {
+        try {
+            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            reactApplicationContext.startActivity(intent)
+            promise.resolve(true)
+        } catch (e: Exception) {
+            promise.reject("ERR_ACCESSIBILITY", e.message)
+        }
+    }
+
     // ── Permission requests ────────────────────────────────────────────────────
 
     @ReactMethod
@@ -71,6 +98,141 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
         } catch (e: Exception) {
             promise.reject("ERR_OVERLAY", e.message)
         }
+    }
+
+    // ── Battery optimization ───────────────────────────────────────────────────
+
+    @ReactMethod
+    fun hasBatteryOptimizationExemption(promise: Promise) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            promise.resolve(true) // not relevant before Android 6
+            return
+        }
+        val pm = reactApplicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+        promise.resolve(pm.isIgnoringBatteryOptimizations(reactApplicationContext.packageName))
+    }
+
+    @ReactMethod
+    fun requestBatteryOptimizationExemption(promise: Promise) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            promise.resolve(true)
+            return
+        }
+        try {
+            val intent = Intent(
+                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                Uri.parse("package:${reactApplicationContext.packageName}")
+            ).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK }
+            reactApplicationContext.startActivity(intent)
+            promise.resolve(true)
+        } catch (e: Exception) {
+            // Some OEMs (Huawei EMUI) don't support this intent — fall back to battery settings
+            try {
+                val fallback = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                reactApplicationContext.startActivity(fallback)
+                promise.resolve(true)
+            } catch (e2: Exception) {
+                promise.reject("ERR_BATTERY", e2.message)
+            }
+        }
+    }
+
+    // ── OEM autostart settings ─────────────────────────────────────────────────
+    // Many OEMs (Xiaomi, Oppo, Huawei, Vivo) require manual "Autostart" permission
+    // in addition to battery optimization exemption. Returns true if the OEM screen
+    // was opened, false if only the generic App Info screen was available.
+
+    @ReactMethod
+    fun openOEMAutostartSettings(promise: Promise) {
+        val pkg = reactApplicationContext.packageName
+
+        // Ordered by market share. Each entry is (packageName, activityClassName).
+        val oemIntents = listOf(
+            // Xiaomi / Redmi / POCO — MIUI
+            "com.miui.securitycenter" to
+                "com.miui.permcenter.autostart.AutoStartManagementActivity",
+            // Oppo / Realme / OnePlus — ColorOS / OxygenOS
+            "com.coloros.safecenter" to
+                "com.coloros.safecenter.permission.startup.StartupAppListActivity",
+            "com.oppo.safe" to
+                "com.oppo.safe.permission.startup.StartupAppListActivity",
+            // Huawei / Honor — EMUI
+            "com.huawei.systemmanager" to
+                "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity",
+            "com.huawei.systemmanager" to
+                "com.huawei.systemmanager.optimize.process.ProtectActivity",
+            // Vivo — FuntouchOS / OriginOS
+            "com.vivo.permissionmanager" to
+                "com.vivo.permissionmanager.activity.BgStartUpManagerActivity",
+            // Samsung — One UI (Battery settings)
+            "com.samsung.android.lool" to
+                "com.samsung.android.sm.battery.ui.BatteryActivity",
+            // Asus — ZenUI
+            "com.asus.mobilemanager" to
+                "com.asus.mobilemanager.powersaver.PowerSaverSettings",
+            // Letv / LeEco
+            "com.letv.android.letvsafe" to
+                "com.letv.android.letvsafe.AutobootManageActivity",
+        )
+
+        val started = oemIntents.any { (oemPkg, activityClass) ->
+            try {
+                val intent = Intent().apply {
+                    component = ComponentName(oemPkg, activityClass)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                reactApplicationContext.startActivity(intent)
+                true
+            } catch (_: Exception) { false }
+        }
+
+        if (started) {
+            promise.resolve(true) // opened OEM-specific screen
+            return
+        }
+
+        // Generic fallback: App Info page where user can find battery settings
+        try {
+            val fallback = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.parse("package:$pkg")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            reactApplicationContext.startActivity(fallback)
+            promise.resolve(false) // false = only generic settings available
+        } catch (e: Exception) {
+            promise.reject("ERR_AUTOSTART", e.message)
+        }
+    }
+
+    // ── Android 13+ Restricted Settings detection ─────────────────────────────
+    // Apps sideloaded on Android 13+ cannot enable Accessibility Services unless
+    // the user explicitly goes to App Info → ⋮ → "Allow restricted settings".
+    // Returns true if the app appears to be sideloaded on Android 13+.
+
+    @ReactMethod
+    fun isSideloadedOnAndroid13Plus(promise: Promise) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            promise.resolve(false) // restricted settings don't exist before Android 13
+            return
+        }
+        val isSideloaded = try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val info = reactApplicationContext.packageManager
+                    .getInstallSourceInfo(reactApplicationContext.packageName)
+                // installingPackageName is null when installed via ADB/direct APK
+                info.installingPackageName == null
+            } else {
+                @Suppress("DEPRECATION")
+                reactApplicationContext.packageManager
+                    .getInstallerPackageName(reactApplicationContext.packageName) == null
+            }
+        } catch (e: Exception) {
+            Log.w("FocusBlocker", "Could not determine install source", e)
+            false
+        }
+        promise.resolve(isSideloaded)
     }
 
     // ── Focus mode control ─────────────────────────────────────────────────────
@@ -126,8 +288,6 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
             val pm = reactApplicationContext.packageManager
             val ownPkg = reactApplicationContext.packageName
 
-            // queryIntentActivities is the reliable way on Android 11+ to get
-            // all apps that appear in the launcher — doesn't need package visibility tricks
             val launcherIntent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
             val resolveFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PackageManager.MATCH_ALL
@@ -141,7 +301,7 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
             for (ri in activities) {
                 val pkg = ri.activityInfo.applicationInfo.packageName
                 if (pkg == ownPkg) continue
-                if (!seen.add(pkg)) continue          // deduplicate
+                if (!seen.add(pkg)) continue
                 val label = ri.loadLabel(pm).toString()
                 val map = Arguments.createMap()
                 map.putString("pkg", pkg)
