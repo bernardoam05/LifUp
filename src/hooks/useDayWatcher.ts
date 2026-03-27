@@ -7,18 +7,22 @@ import useGameStore from '../store/useGameStore'
  * without requiring the user to close and reopen the app.
  */
 export function useDayWatcher() {
-  const { checkDailyReset, checkDynamicPortalSpawn, lastResetDate } = useGameStore()
+  const checkDailyReset = useGameStore(s => s.checkDailyReset)
+  const checkDynamicPortalSpawn = useGameStore(s => s.checkDynamicPortalSpawn)
   const appState = useRef(AppState.currentState)
 
   useEffect(() => {
-    // 1. Periodic check (every 60 seconds)
-    const interval = setInterval(() => {
+    function maybeReset() {
       const today = new Date().toDateString()
-      if (lastResetDate && lastResetDate !== today) {
+      const lastReset = useGameStore.getState().lastResetDate
+      if (lastReset !== today) {
         checkDailyReset()
       }
       checkDynamicPortalSpawn()
-    }, 60000)
+    }
+
+    // 1. Periodic check (every 60 seconds)
+    const interval = setInterval(maybeReset, 60000)
 
     // 2. Foreground check (when app returns from background)
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -26,11 +30,7 @@ export function useDayWatcher() {
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        const today = new Date().toDateString()
-        if (lastResetDate && lastResetDate !== today) {
-          checkDailyReset()
-        }
-        checkDynamicPortalSpawn()
+        maybeReset()
       }
       appState.current = nextAppState
     }
@@ -41,5 +41,5 @@ export function useDayWatcher() {
       clearInterval(interval)
       subscription.remove()
     }
-  }, [checkDailyReset, checkDynamicPortalSpawn, lastResetDate])
+  }, [checkDailyReset, checkDynamicPortalSpawn])
 }

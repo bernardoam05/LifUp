@@ -27,7 +27,7 @@ const RANK_LABELS: Record<ShadowRank, string> = {
 const RANK_SHORT: Record<ShadowRank, string> = {
   Marshal:   'MAR',
   Commander: 'COM',
-  Knight:    'KNI',
+  Knight:    'CAV',
   Elite:     'ELI',
   Normal:    'NOR',
 }
@@ -481,7 +481,7 @@ export default function ShadowsScreen() {
             <Icon name="ghost-outline" size={52} color="#a855f733" />
             <Text style={s.emptyTitle}>EXÉRCITO VAZIO</Text>
             <Text style={s.emptyDesc}>
-              {"Derrota Bosses nos Dungeon Raids (Sex/Sáb/Dom) para\nconquistar sombras para o teu exército."}
+              {"Derrota Bosses nos Portais Dinâmicos e Raids para\nconquistar sombras para o teu exército."}
             </Text>
           </View>
         ) : (

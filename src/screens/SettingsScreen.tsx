@@ -17,6 +17,7 @@ import IntensitySettings from '../components/SettingsSections/IntensitySettings'
 import DifficultySettings from '../components/SettingsSections/DifficultySettings'
 import RestDaySettings from '../components/SettingsSections/RestDaySettings'
 import AutoBlockSettings from '../components/SettingsSections/AutoBlockSettings'
+import SideQuestPenaltySettings from '../components/SettingsSections/SideQuestPenaltySettings'
 import BackupSettings from '../components/SettingsSections/BackupSettings'
 import AboutSettings from '../components/SettingsSections/AboutSettings'
 import ImportModal from '../components/SettingsSections/ImportModal'
@@ -63,9 +64,9 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
       const json = JSON.stringify(payload)
       const b64 = btoa(json)
       Clipboard.setString(b64)
-      setAlertConfig({ 
-        title: 'BACKUP CONCLUÍDO', 
-        message: 'Código de Backup copiado para a área de transferência! Guarda este código num local seguro.' 
+      setAlertConfig({
+        title: 'BACKUP CONCLUÍDO',
+        message: 'Código de Backup copiado para a área de transferência! Guarda este código num local seguro.',
       })
     } catch (err) {
       console.error('Backup export error:', err)
@@ -78,28 +79,18 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
       if (!importText.trim()) return
       const json = atob(importText.trim())
       const data = JSON.parse(json)
-      
-      // Validação básica de integridade
-      if (!data.player || typeof data.player !== 'object') {
-        throw new Error('Estrutura de backup inválida')
-      }
-      if (typeof data.player.level !== 'number' || data.player.level < 1) {
-        throw new Error('Dados de player corrompidos')
-      }
-      
+      if (!data.player || typeof data.player !== 'object') throw new Error('Estrutura de backup inválida')
+      if (typeof data.player.level !== 'number' || data.player.level < 1) throw new Error('Dados de player corrompidos')
       useGameStore.getState().restoreBackup(data)
       setImportVisible(false)
       setImportText('')
-      setAlertConfig({ 
-        title: 'RESTAURO CONCLUÍDO', 
-        message: 'Alma importada com sucesso! Podes precisar de reiniciar se houver bugs visuais.' 
+      setAlertConfig({
+        title: 'RESTAURO CONCLUÍDO',
+        message: 'Alma importada com sucesso! Podes precisar de reiniciar se houver bugs visuais.',
       })
     } catch (err) {
       console.error('Backup import error:', err)
-      setAlertConfig({ 
-        title: 'ERRO', 
-        message: 'Código inválido ou corrompido. Verifica se copiaste bem.' 
-      })
+      setAlertConfig({ title: 'ERRO', message: 'Código inválido ou corrompido. Verifica se copiaste bem.' })
     }
   }
 
@@ -116,83 +107,129 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
           </TouchableOpacity>
         </View>
 
-        <ScrollView contentContainerStyle={s.content}>
-          {/* ────── Gameplay Settings ────── */}
-          <View style={s.sectionGroup}>
-            <Text style={s.groupTitle}>⚔ GAMEPLAY</Text>
-            <View style={s.groupContent}>
-              <NotificationsSettings
-                notifications={settings.notifications}
-                sound={settings.sound}
-                onNotificationsChange={v => updateSettings({ notifications: v })}
-                onSoundChange={v => updateSettings({ sound: v })}
-              />
-            </View>
-          </View>
+        <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
 
-          {/* ────── Experience & Appearance ────── */}
-          <View style={[s.sectionGroup, { marginTop: SPACING.xl }]}>
-            <Text style={s.groupTitle}>✨ EXPERIÊNCIA & VISUAL</Text>
-            <View style={s.groupContent}>
-              <View style={s.subsection}>
-                <ThemeSettings
-                  activeThemeId={player.activeThemeId}
-                  unlockedThemes={player.unlockedThemes || ['theme_e_rank']}
-                  onThemeChange={setActiveTheme}
-                />
-              </View>
-              <View style={[s.subsection, { borderTopWidth: 1, borderTopColor: C.border + '22' }]}>
+          {/* ── DESAFIOS ─────────────────────────────────────────────────────── */}
+          <View style={s.group}>
+            <View style={s.groupHeader}>
+              <Icon name="sword-cross" size={13} color={C.neonRed} />
+              <Text style={[s.groupTitle, { color: C.neonRed }]}>DESAFIOS</Text>
+            </View>
+
+            <View style={s.groupBody}>
+              <View style={s.section}>
                 <IntensitySettings
                   currentIntensity={settings.punishmentIntensity}
                   onIntensityChange={v => updateSettings({ punishmentIntensity: v })}
                 />
               </View>
-            </View>
-          </View>
 
-          {/* ────── Challenge Settings ────── */}
-          <View style={[s.sectionGroup, { marginTop: SPACING.xl }]}>
-            <Text style={s.groupTitle}>⚡ DESAFIOS</Text>
-            <View style={s.groupContent}>
-              <View style={s.subsection}>
+              <View style={s.divider} />
+
+              <View style={s.section}>
                 <DifficultySettings
                   currentDifficulty={settings.missionDifficulty}
                   onDifficultyChange={v => updateSettings({ missionDifficulty: v })}
                 />
               </View>
-              <View style={[s.subsection, { borderTopWidth: 1, borderTopColor: C.border + '22' }]}>
+
+              <View style={s.divider} />
+
+              <View style={s.section}>
                 <AutoBlockSettings
                   autoBlockApps={settings.autoBlockApps}
                   onToggle={v => updateSettings({ autoBlockApps: v })}
                 />
               </View>
-              <View style={[s.subsection, { borderTopWidth: 1, borderTopColor: C.border + '22' }]}>
+
+              <View style={s.divider} />
+
+              <View style={s.section}>
                 <RestDaySettings
                   restDay={settings.restDay}
                   onRestDayChange={v => updateSettings({ restDay: v })}
                 />
               </View>
+
+              <View style={s.divider} />
+
+              <View style={s.section}>
+                <SideQuestPenaltySettings
+                  sideQuestPenalize={settings.sideQuestPenalize ?? false}
+                  onToggle={v => updateSettings({ sideQuestPenalize: v })}
+                />
+              </View>
             </View>
           </View>
 
-          {/* ────── Data & System ────── */}
-          <View style={[s.sectionGroup, { marginTop: SPACING.xl }]}>
-            <Text style={s.groupTitle}>💾 DADOS & SISTEMA</Text>
-            <View style={s.groupContent}>
-              <BackupSettings
-                onExport={handleExport}
-                onImport={() => setImportVisible(true)}
-              />
+          {/* ── VISUAL ───────────────────────────────────────────────────────── */}
+          <View style={[s.group, s.groupGap]}>
+            <View style={s.groupHeader}>
+              <Icon name="palette-outline" size={13} color={C.purple} />
+              <Text style={[s.groupTitle, { color: C.purple }]}>VISUAL</Text>
+            </View>
+
+            <View style={s.groupBody}>
+              <View style={s.section}>
+                <ThemeSettings
+                  activeThemeId={player.activeThemeId}
+                  unlockedThemes={player.unlockedThemes ?? ['theme_e_rank']}
+                  onThemeChange={setActiveTheme}
+                />
+              </View>
             </View>
           </View>
 
-          {/* ────── About ────── */}
-          <View style={[s.sectionGroup, { marginTop: SPACING.xl, marginBottom: SPACING.xl }]}>
-            <Text style={s.groupTitle}>ℹ SOBRE</Text>
-            <View style={s.groupContent}>
-              <AboutSettings />
+          {/* ── SISTEMA ──────────────────────────────────────────────────────── */}
+          <View style={[s.group, s.groupGap]}>
+            <View style={s.groupHeader}>
+              <Icon name="bell-outline" size={13} color={C.neonBlue} />
+              <Text style={[s.groupTitle, { color: C.neonBlue }]}>SISTEMA</Text>
+            </View>
+
+            <View style={s.groupBody}>
+              <View style={s.section}>
+                <NotificationsSettings
+                  notifications={settings.notifications}
+                  sound={settings.sound}
+                  onNotificationsChange={v => updateSettings({ notifications: v })}
+                  onSoundChange={v => updateSettings({ sound: v })}
+                />
+              </View>
             </View>
           </View>
+
+          {/* ── DADOS ────────────────────────────────────────────────────────── */}
+          <View style={[s.group, s.groupGap]}>
+            <View style={s.groupHeader}>
+              <Icon name="database-outline" size={13} color={C.gold} />
+              <Text style={[s.groupTitle, { color: C.gold }]}>DADOS</Text>
+            </View>
+
+            <View style={s.groupBody}>
+              <View style={s.section}>
+                <BackupSettings
+                  onExport={handleExport}
+                  onImport={() => setImportVisible(true)}
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* ── SOBRE ────────────────────────────────────────────────────────── */}
+          <View style={[s.group, s.groupGap, { marginBottom: SPACING.xl }]}>
+            <View style={s.groupHeader}>
+              <Icon name="information-outline" size={13} color={C.muted} />
+              <Text style={[s.groupTitle, { color: C.muted }]}>SOBRE</Text>
+            </View>
+
+            <View style={s.groupBody}>
+              <View style={s.section}>
+                <AboutSettings />
+              </View>
+            </View>
+          </View>
+
         </ScrollView>
       </SafeAreaView>
 
@@ -222,35 +259,47 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
 
 const getStyles = (C: any) => StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: C.bg },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: C.border },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: C.border,
+  },
   headerTxt: { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 3 },
   closeBtn: { padding: 6 },
+
   content: { padding: SPACING.md, paddingBottom: 40 },
-  
-  sectionGroup: {
-    backgroundColor: C.panel + '44',
+
+  group: {
     borderWidth: 1,
-    borderColor: C.border + '66',
-    borderRadius: 12,
-    padding: SPACING.md,
+    borderColor: C.border + '55',
+    borderRadius: 14,
     overflow: 'hidden',
+    backgroundColor: C.panel + '22',
+  },
+  groupGap: { marginTop: SPACING.md },
+  groupHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: C.border + '33',
+    backgroundColor: C.panel + '44',
   },
   groupTitle: {
-    color: C.neonBlue,
     fontFamily: FONT.orbitron,
     fontSize: 10,
     fontWeight: '700',
-    letterSpacing: 2,
+    letterSpacing: 3,
     textTransform: 'uppercase',
-    marginBottom: SPACING.md,
-    paddingBottom: SPACING.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: C.neonBlue + '33',
   },
-  groupContent: {
-    gap: 0,
-  },
-  subsection: {
-    paddingVertical: SPACING.sm,
-  },
+  groupBody: {},
+
+  section: { padding: SPACING.md },
+  divider: { height: 1, backgroundColor: C.border + '22', marginHorizontal: SPACING.md },
 })

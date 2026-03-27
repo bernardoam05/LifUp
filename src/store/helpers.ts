@@ -4,12 +4,10 @@ import type { Shadow, ShadowRank } from '../data/shadows'
 
 // ── XP & Leveling ─────────────────────────────────────────────────────────────
 
-/** Computes total XP required to *reach* the given level */
+/** Computes total XP required to *reach* the given level (linear: 100 × level) */
 export function xpForLevel(level: number): number {
   if (level < 1) return 0
-  const base = 80
-  const multiplier = 1.12
-  return Math.floor(base * Math.pow(multiplier, level - 1))
+  return 100 * level
 }
 
 export function rankFromXP(xp: number): 'E' | 'D' | 'C' | 'B' | 'A' | 'S' {

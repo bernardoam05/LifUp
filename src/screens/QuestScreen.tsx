@@ -2,14 +2,13 @@ import React, { useRef, useState, useEffect } from 'react'
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, AppState, AppStateStatus,
-  Vibration, TextInput, BackHandler, Alert,
+  Vibration, TextInput, BackHandler, Alert, Linking,
 } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { Quest, SideQuest, getDailyMissionTarget, isWeeklyBossDefinition } from '../store/useGameStore'
+import useGameStore, { Quest, SideQuest, getDailyMissionTarget } from '../store/useGameStore'
 import { SHADOW_MAP } from '../data/shadows'
 import { RAID_BOSSES, DungeonMission, getActiveEventBossMissions, buildEventTrials, EVENT_BOSS_DEFS } from '../data/bosses'
-import { ALL_DUNGEON_KEYS, getKeyByBossId } from '../data/dungeonKeys'
 import QuestForgeScreen from './QuestForgeScreen'
 import MissionActiveScreen from './MissionActiveScreen'
 import CustomModal from '../components/CustomModal'
@@ -19,13 +18,12 @@ import { scheduleSideQuestNotification, cancelSideQuestNotification } from '../u
 import BottomSheetModal from '../components/BottomSheetModal'
 import GPSTrackerModal from '../components/GPSTrackerModal'
 import QuestCard from '../components/QuestCard'
-import WeeklyDungeonModal from '../components/WeeklyDungeonModal'
 import EventDungeonModal from '../components/EventDungeonModal'
 import BossVictoryModal from '../components/BossVictoryModal'
 import ShadowExtractionModal from '../components/ShadowExtractionModal'
-import DungeonKeyModal from '../components/DungeonKeyModal'
+import SideQuestSection from '../components/SideQuestSection'
 import { useTheme, FONT, SPACING, RANK_COLORS } from '../theme'
-import { DungeonKey } from '../data/dungeonKeys'
+import { ALL_DUNGEON_KEYS } from '../data/dungeonKeys'
 
 // Vibration patterns
 const VIB_COMPLETE = [0, 80, 40, 120]
@@ -203,16 +201,12 @@ export default function QuestScreen() {
   const hasPenalty = useGameStore(s => s.system.hasPenalty)
   const penaltyQ = useGameStore(s => s.system.penaltyQuests)
   const xpBoostNext = useGameStore(s => s.system.xpBoostNext)
-  const bossDefeatedThisWeek = useGameStore(s => s.system.bossDefeatedThisWeek)
-  const weeklyDefeatedBossId = useGameStore(s => s.system.weeklyDefeatedBossId)
   const defeatBoss = useGameStore(s => s.defeatDungeonBoss)
   const recordFocus = useGameStore(s => s.recordFocusTime)
   const triggerEvent = useGameStore(s => s.triggerEvent)
   const questDictionary = useGameStore(s => s.questDictionary)
   const updateSettings = useGameStore(s => s.updateSettings)
   const activeRaidBoss = useGameStore(s => s.system.activeRaidBoss)
-  // Custom boss missions filtered by weekly rotation
-  const weeklyBossIds = useGameStore(s => s.system.weeklyBossIds || [])
   const eventBossKey = useGameStore(s => s.system.eventBossKey)
   const eventBossCompletedIds = useGameStore(s => s.system.eventBossCompletedIds)
   const eventBossRequired = useGameStore(s => s.system.eventBossRequired)
@@ -222,6 +216,9 @@ export default function QuestScreen() {
   const markEventBossDefeated = useGameStore(s => s.markEventBossDefeated)
   const pendingRaidId = useGameStore(s => s.system.pendingRaidExtractionId)
   const clearRaid     = useGameStore(s => s.clearPendingRaidExtraction)
+  const pendingKeyId  = useGameStore(s => s.system.pendingKeyId)
+  const clearPendingKeyMission = useGameStore(s => s.clearPendingKeyMission)
+  const dungeonKeys   = useGameStore(s => s.player.dungeonKeys)
 
   // Trigger extraction for Raid bosses (which are defeated globally via store)
   useEffect(() => {
@@ -231,26 +228,30 @@ export default function QuestScreen() {
       clearRaid()
     }
   }, [pendingRaidId])
-  const playerDungeonKeys = useGameStore(s => s.player.dungeonKeys)
+
+  // Pick up key mission triggered from Inventory → Cofre de Chaves
+  useEffect(() => {
+    if (!pendingKeyId) return
+    const key = ALL_DUNGEON_KEYS.find(k => k.id === pendingKeyId)
+    clearPendingKeyMission()
+    if (!key) return
+    const mission: DungeonMission = {
+      id: `key_${key.id}`,
+      label: key.name,
+      detail: key.missionDetail,
+      type: key.missionType,
+      shadowHint: key.bossId,
+      icon: 'key-variant',
+      color: key.color,
+      category: 'key',
+      focusDuration: key.missionType === 'focus' ? key.missionTarget : undefined,
+      gpsTarget: key.missionType === 'gps' ? key.missionTarget : undefined,
+    }
+    setKeyConfirm({ type: 'normal', mission, key })
+  }, [pendingKeyId])
+
   const system = useGameStore(s => s.system)
   const enterDungeon = useGameStore(s => s.enterDungeon)
-  const customBossMissions: DungeonMission[] = questDictionary
-    .filter(def => isWeeklyBossDefinition(def) && weeklyBossIds.includes(def.id))
-    .map(def => ({
-      id: `custom_boss_${def.id}`,
-      label: def.title,
-      detail: def.description
-        .replace(/{target}/g, String(def.baseTarget))
-        .replace(/{unit}/g, def.unit),
-      type: def.questType,
-      shadowHint: def.id,
-      icon: 'sword',
-      color: C.gold,
-      category: def.id.startsWith('key_boss_') ? 'key' : def.id.startsWith('break_boss_') ? 'dungeon_break' : 'dungeon' as any,
-      customShadow: def.shadowName
-        ? { name: def.shadowName, icon: def.shadowIcon ?? 'ghost', questType: def.questType }
-        : undefined,
-    }))
   const eventBossMissions = React.useMemo(() => getActiveEventBossMissions(), [])
   const activeEventDef = React.useMemo(() =>
     EVENT_BOSS_DEFS.find(def => eventBossMissions.some(m => m.id === def.id)),
@@ -283,15 +284,10 @@ export default function QuestScreen() {
   const total = quests.length
   const allDailyDone = quests.every(q => q.done || q.type === 'limit' || q.type === 'forbidden') && total > 0
 
-  const dayOfWeek = new Date().getDay()
   const isRestDay = useGameStore(s => s.settings.restDay)
-  const isBossDay = dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0  // Fri/Sat/Sun
 
-  const [showDungeon, setShowDungeon] = useState(false)
   const [showEventDungeon, setShowEventDungeon] = useState(false)
   const [showForge, setShowForge] = useState(false)
-  const [showKeyModal, setShowKeyModal] = useState(false)
-  const [selectedKey, setSelectedKey] = useState<DungeonKey | null>(null)
   const [activeMission, setActiveMission] = useState<DungeonMission | null>(null)
   const [confirmBossTraining, setConfirmBossTraining] = useState(false)
   const [portalConfirm, setPortalConfirm] = useState<DungeonMission | null>(null)
@@ -303,6 +299,7 @@ export default function QuestScreen() {
   const [pendingMission, setPendingMission] = useState<{ m: DungeonMission, focusMinutes?: number } | null>(null)
   const [keyConfirm, setKeyConfirm] = useState<{ type: 'normal' | 'weekly', mission: DungeonMission, key: any } | null>(null)
   const [eventCountdownMs, setEventCountdownMs] = useState(0)
+  const [portalCountdownMs, setPortalCountdownMs] = useState(0)
   const [sectionsOpen, setSectionsOpen] = useState({
     now: true,
     today: true,
@@ -356,6 +353,19 @@ export default function QuestScreen() {
     }
   }, [activeEventKey, activeEventDef?.required, eventTrials.length, eventBossKey, setEventBossState])
 
+  // Update portal countdown timer every second
+  useEffect(() => {
+    const expiresAt = system.activeDungeonBreak?.expiresAt ?? 0
+    if (!expiresAt) {
+      setPortalCountdownMs(0)
+      return
+    }
+    const update = () => setPortalCountdownMs(Math.max(0, expiresAt - Date.now()))
+    update()
+    const interval = setInterval(update, 1000)
+    return () => clearInterval(interval)
+  }, [system.activeDungeonBreak?.expiresAt])
+
   // Update event countdown timer every second
   useEffect(() => {
     if (!activeEventDef) {
@@ -387,10 +397,6 @@ export default function QuestScreen() {
         setShowEventDungeon(false)
         return true
       }
-      if (showDungeon) {
-        setShowDungeon(false)
-        return true
-      }
       if (showForge) {
         setShowForge(false)
         return true
@@ -399,7 +405,7 @@ export default function QuestScreen() {
     }
     BackHandler.addEventListener('hardwareBackPress', onBackPress)
     return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress)
-  }, [activeMission, showEventDungeon, showDungeon, showForge])
+  }, [activeMission, showEventDungeon, showForge])
 
   function handleMissionSelect(m: DungeonMission) {
     setActiveMission(m)
@@ -511,7 +517,7 @@ export default function QuestScreen() {
             <TouchableOpacity style={s.nowRow} onPress={handleNowPanelDungeonBreak} activeOpacity={0.7}>
               <Icon name="gate" size={14} color={C.neonRed} />
               <Text style={s.nowTxt}>
-                {system.activeDungeonBreak ? `Portal dinâmico ativo - ${formatCountdown(Math.max(0, system.activeDungeonBreak.expiresAt - Date.now()))}` : 'Nenhum portal dinâmico ativo.'}
+                {system.activeDungeonBreak ? `Portal dinâmico ativo - ${formatCountdown(portalCountdownMs)}` : 'Nenhum portal dinâmico ativo.'}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style={s.nowRow} onPress={handleNowPanelEvent} activeOpacity={0.7}>
@@ -587,14 +593,12 @@ export default function QuestScreen() {
               backgroundColor: done === total && total > 0 ? C.green : C.neonBlue,
             }]} />
           </View>
-          {isBossDay && (
-            <View style={s.statusBarBossRow}>
-              <Icon name="gate" size={9} color={bossDefeatedThisWeek ? C.green : C.neonRed} />
-              <Text style={[s.statusBarBossLabel, { color: bossDefeatedThisWeek ? C.green : C.neonRed }]}>
-                {bossDefeatedThisWeek ? ' BOSS DERROTADO' : ' BOSS RAID DISPONÍVEL'}
+          <View style={s.statusBarBossRow}>
+              <Icon name="gate" size={9} color={(system.portalDailyCount ?? 0) > 0 ? C.neonBlue : C.dimmed} />
+              <Text style={[s.statusBarBossLabel, { color: C.dimmed }]}>
+                {' '}PORTAIS HOJE: {system.portalDailyCount ?? 0}/3
               </Text>
             </View>
-          )}
         </View>
 
         {/* Accepted Portal Card - Show after entering a portal */}
@@ -690,6 +694,9 @@ export default function QuestScreen() {
         <View style={isRestDay ? { opacity: 0.45 } : undefined}>
           {quests.map(q => <QuestCard key={q.id} quest={q} C={C} />)}
         </View>
+
+        {/* ── SECTION: MISSÕES SECUNDÁRIAS ── */}
+        <SideQuestSection C={C} />
           </>
         )}
 
@@ -738,50 +745,48 @@ export default function QuestScreen() {
         )}
 
         <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('events')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current['events'] = e.nativeEvent.layout.y }}>
-          <Text style={s.collapsibleTitle}>EVENTOS E BOSSES</Text>
+          <Text style={s.collapsibleTitle}>MASMORRAS</Text>
           <Icon name={sectionsOpen.events ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
         {sectionsOpen.events && (
           <>
-            {/* ── SECTION: MISSÕES DE BOSS ── */}
-            {isBossDay && (
-              <>
-                <View style={[s.sectionDivider, { marginTop: SPACING.sm }]}>
-                  <View style={[s.sectionLine, { backgroundColor: C.neonRed + '44' }]} />
-                  <Text style={[s.sectionLabel, { color: C.neonRed }]}>MISSÕES DE BOSS</Text>
-                  <View style={[s.sectionLine, { backgroundColor: C.neonRed + '44' }]} />
-                </View>
+            {/* Dungeon Keys */}
+            <TouchableOpacity
+              style={[s.systemCard, { marginTop: SPACING.sm, borderColor: dungeonKeys.length > 0 ? C.neonBlue + '66' : C.border, backgroundColor: dungeonKeys.length > 0 ? C.neonBlue + '08' : 'transparent', flexDirection: 'row', alignItems: 'center', padding: SPACING.md }]}
+              onPress={() => {
+                if (dungeonKeys.length > 0) {
+                  Linking.openURL('sololeveling://inventory')
+                }
+              }}
+              activeOpacity={dungeonKeys.length > 0 ? 0.7 : 1}
+            >
+              <Icon name="key-variant" size={18} color={dungeonKeys.length > 0 ? C.neonBlue : C.dimmed} />
+              <View style={{ flex: 1, marginLeft: SPACING.sm }}>
+                <Text style={[s.bossTitle, { color: dungeonKeys.length > 0 ? C.neonBlue : C.dimmed }]}>
+                  {dungeonKeys.length > 0
+                    ? `${dungeonKeys.length} Chave${dungeonKeys.length !== 1 ? 's' : ''} de Masmorra`
+                    : 'Nenhuma chave disponível'}
+                </Text>
+                <Text style={s.bossSub}>
+                  {dungeonKeys.length > 0
+                    ? 'Vai ao Inventário → Cofre de Chaves para usar.'
+                    : 'Sobe de nível ou abre Cofres para obter chaves.'}
+                </Text>
+              </View>
+              {dungeonKeys.length > 0 && <Icon name="chevron-right" size={18} color={C.neonBlue} />}
+            </TouchableOpacity>
 
-                {!bossDefeatedThisWeek ? (
-                  <TouchableOpacity style={[s.systemCard, s.cardWarning, s.bossBanner]} onPress={() => setShowDungeon(true)} activeOpacity={0.8}>
-                    <View style={s.bossBannerLeft}>
-                      <Icon name="gate" size={20} color={C.neonRed} />
-                      <View style={{ marginLeft: SPACING.sm }}>
-                        <Text style={s.bossTitle}>Portal vermelho disponivel</Text>
-                        <Text style={s.bossSub}>Boss Raid disponível — Entra na Masmorra</Text>
-                      </View>
-                    </View>
-                    <Icon name="chevron-right" size={18} color={C.neonRed} />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity style={[s.systemCard, s.cardSuccess, s.bossDefeatedBanner]} onPress={() => setShowDungeon(true)} activeOpacity={0.8}>
-                    <Icon name="sword" size={14} color={C.green} />
-                    <Text style={s.bossDefeatedTxt}> MASMORRA LIMPA — Clica para ver detalhes</Text>
-                  </TouchableOpacity>
-                )}
-              </>
-            )}
-
+            {/* Event Dungeon */}
             {activeEventDef && (
               <TouchableOpacity
-                style={[s.systemCard, s.cardWarning, s.bossBanner, { marginTop: isBossDay ? SPACING.md : SPACING.sm, borderColor: C.gold + '88', backgroundColor: C.gold + '08' }]}
+                style={[s.systemCard, s.cardWarning, s.bossBanner, { marginTop: SPACING.sm, borderColor: C.gold + '88', backgroundColor: C.gold + '08' }]}
                 onPress={() => setShowEventDungeon(true)}
                 activeOpacity={0.8}
               >
                 <View style={s.bossBannerLeft}>
                   <Icon name="calendar-star" size={20} color={C.gold} />
                   <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
-                    <Text style={[s.bossTitle, { color: C.gold }]}>Masmorra de evento disponivel</Text>
+                    <Text style={[s.bossTitle, { color: C.gold }]}>Masmorra de evento disponível</Text>
                     <Text style={s.bossSub}>Evento: {activeEventDef.event.name} · Provas: {eventCompleted.length}/{eventRequired}</Text>
                     <Text style={[s.bossSub, { fontSize: 10, marginTop: 2, color: C.gold }]}>
                       {eventCountdownMs > 0 ? formatCountdown(eventCountdownMs) : 'Evento terminado'}
@@ -796,37 +801,10 @@ export default function QuestScreen() {
 
 
 
-        {/* Forge button — at end of list so combat is the visual priority */}
-        <View style={{ marginTop: SPACING.md }}>
-          <TouchableOpacity style={s.forgeBtn} onPress={() => setShowForge(true)}>
-            <Icon name="hammer-wrench" size={20} color={C.neonBlue} />
-            <Text style={s.forgeBtnTxt}> ABRIR FORJA DE MISSÕES</Text>
-          </TouchableOpacity>
-          <Text style={s.forgeSubtitle}>Cria missões personalizadas para subires de nível.</Text>
-        </View>
 
 
       </ScrollView>
 
-      {/* Weekly Dungeon selection modal */}
-      <WeeklyDungeonModal
-        visible={showDungeon}
-        onClose={() => setShowDungeon(false)}
-        onRequestClose={() => setShowDungeon(false)}
-        onSelectMission={(m) => {
-          const key = getKeyByBossId(m.shadowHint)
-          if (key && weeklyDefeatedBossId !== m.shadowHint) {
-            setKeyConfirm({ type: 'weekly', mission: m, key })
-          } else {
-            setShowDungeon(false)
-            handleMissionSelect(m)
-          }
-        }}
-        customMissions={customBossMissions}
-        defeatedId={weeklyDefeatedBossId ?? undefined}
-        playerKeys={playerDungeonKeys}
-        C={C}
-      />
 
 
       {/* Event Dungeon selection modal */}
@@ -938,7 +916,6 @@ export default function QuestScreen() {
           confirmColor={keyConfirm.key.color || C.neonBlue}
           onConfirm={() => {
             if (enterDungeon(keyConfirm.key.id)) {
-              if (keyConfirm.type === 'weekly') setShowDungeon(false)
               handleMissionSelect(keyConfirm.mission)
             }
             setKeyConfirm(null)
@@ -957,28 +934,6 @@ export default function QuestScreen() {
         C={C}
       />
 
-      <DungeonKeyModal
-        visible={showKeyModal}
-        onClose={() => setShowKeyModal(false)}
-        onRequestClose={() => setShowKeyModal(false)}
-        onStartMission={(key: DungeonKey) => {
-          const mission: DungeonMission = {
-            id: `key_mission_${key.id}`,
-            label: key.name,
-            detail: key.missionDetail,
-            type: key.missionType,
-            shadowHint: key.bossId,
-            icon: 'gate',
-            color: key.color,
-            category: 'key',
-            focusDuration: key.missionType === 'focus' ? key.missionTarget : undefined,
-            gpsTarget: key.missionType === 'gps' ? key.missionTarget : undefined,
-          }
-          handleMissionSelect(mission)
-        }}
-        dungeonKey={selectedKey}
-        C={C}
-      />
 
       {showForge && <QuestForgeScreen onClose={() => setShowForge(false)} />}
     </View>

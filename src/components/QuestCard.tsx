@@ -217,10 +217,12 @@ export default function QuestCard({ quest, isExtra, C }: { quest: Quest; isExtra
             <Icon name="check-circle" size={14} color={C.green} />
             <Text style={qc.doneTag}> Concluida</Text>
             <View style={{ flex: 1 }} />
-            <TouchableOpacity style={qc.undoBtn} onPress={() => setConfirmUndo(true)}>
-              <Icon name="undo-variant" size={13} color={C.muted} />
-              <Text style={qc.undoTxt}> Desfazer</Text>
-            </TouchableOpacity>
+            {!isExtra && (
+              <TouchableOpacity style={qc.undoBtn} onPress={() => setConfirmUndo(true)}>
+                <Icon name="undo-variant" size={13} color={C.muted} />
+                <Text style={qc.undoTxt}> Desfazer</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ) : quest.type === 'forbidden' ? (
           <View style={[qc.forbiddenRow, { paddingRight: 50 }]}>

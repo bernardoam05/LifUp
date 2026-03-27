@@ -98,12 +98,12 @@ export default function App() {
       .catch(() => { })
   }, [])
 
-  // Auto-trigger penalty modal when penalty is active
+  // Auto-trigger penalty modal when penalty becomes active (only once per activation)
   useEffect(() => {
-    if (hasPenalty && !penaltyTriggered) {
+    if (hasPenalty) {
       setPenaltyTriggered(true)
     }
-  }, [hasPenalty, penaltyTriggered, setPenaltyTriggered])
+  }, [hasPenalty])
 
   // Unified Background Service Sync: Restores Focus Blocker if killed by OS/Force Close
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function App() {
           <View style={styles.penalBanner}>
             <Icon name="alert" size={12} color={C.neonRed} />
             <Text style={styles.penalBannerText}>
-              {'  '}PENALTY ZONE ATIVA — Completa as missões de penalização!
+              {'  '}ZONA DE PENALIDADE ATIVA — Completa as missões de penalização!
             </Text>
           </View>
         )}
@@ -160,7 +160,7 @@ export default function App() {
                 "Focus Mode": 'focus',
                 "Loja": 'shop',
                 "Inventário": 'inventory',
-                "Sombras": 'shadows'
+                "Sombras": 'shadows',
               }
             }
           }}
@@ -182,7 +182,17 @@ export default function App() {
             })}
           >
             <Tab.Screen name="Status" component={StatusScreen} />
-            <Tab.Screen name="Missões" component={QuestScreen} />
+            <Tab.Screen
+              name="Missões"
+              component={QuestScreen}
+              options={{
+                tabBarBadge: hasPenalty ? () => (
+                  <View style={{ backgroundColor: C.neonRed, borderRadius: 10, minWidth: 14, height: 14, justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                    <Text style={{ color: '#000', fontSize: 9, fontWeight: 'bold', fontFamily: FONT.orbitron }}>!</Text>
+                  </View>
+                ) : undefined
+              }}
+            />
             <Tab.Screen name="Loja" component={ShopScreen} />
             <Tab.Screen
               name="Inventário"
@@ -195,17 +205,7 @@ export default function App() {
                 ) : undefined
               }}
             />
-            <Tab.Screen
-              name="Focus Mode"
-              component={FocusScreen}
-              options={{
-                tabBarBadge: hasPenalty ? () => (
-                  <View style={{ backgroundColor: C.neonRed, borderRadius: 10, minWidth: 14, height: 14, justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
-                    <Text style={{ color: '#000', fontSize: 9, fontWeight: 'bold', fontFamily: FONT.orbitron }}>!</Text>
-                  </View>
-                ) : undefined
-              }}
-            />
+            <Tab.Screen name="Focus Mode" component={FocusScreen} />
             <Tab.Screen
               name="Sombras"
               component={ShadowsScreen}

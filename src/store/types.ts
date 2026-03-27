@@ -33,16 +33,8 @@ export type Quest = {
 export type SideQuest = {
   id: string
   title: string
-  rank: 'E' | 'D' | 'C'
-  xp: number
-  gold: number
   done: boolean
   createdDate: string
-  xpGained?: number
-  goldGained?: number
-  // New: persistence and timer
-  startTime?: number // Epoch ms
-  duration?: number // Seconds
   note?: string
 }
 
@@ -58,6 +50,7 @@ export type GameSettings = {
   lastFocusDuration: { hours: number; minutes: number }
   dynamicTheme: boolean // Rank-based theme colors
   autoBlockApps: boolean // Toggle automatic app blocking during penalties
+  sideQuestPenalize: boolean // Whether uncompleted side quests trigger penalties
 }
 
 export const INITIAL_SETTINGS: GameSettings = {
@@ -69,6 +62,7 @@ export const INITIAL_SETTINGS: GameSettings = {
   lastFocusDuration: { hours: 0, minutes: 25 },
   dynamicTheme: true,
   autoBlockApps: false,
+  sideQuestPenalize: false,
 }
 
 export const INITIAL_SHOP_STOCKS: Record<string, number> = {
@@ -263,6 +257,7 @@ export type SystemState = {
   usedShadowSkills?: Record<string, number>
   completedNormalBossIds: string[]
   pendingRaidExtractionId?: string
+  pendingKeyId?: string | null  // key the player wants to use (set from Inventory, cleared by QuestScreen)
 }
 
 // ── Level Up Reward ────────────────────────────────────────────────────────────
@@ -384,6 +379,8 @@ export type GameActions = {
   enterDungeon: (keyId: string) => boolean
   applyBuff: (buff: { id: string; label: string; multiplier: number; stat: 'xp' | 'gold' }, duration: number) => void
   clearPendingRaidExtraction: () => void
+  setPendingKeyMission: (keyId: string) => void
+  clearPendingKeyMission: () => void
 }
 
 // ── StoreRef (used by achievement helpers) ─────────────────────────────────────

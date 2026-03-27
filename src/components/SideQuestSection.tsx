@@ -25,6 +25,7 @@ interface SideQuestSectionProps {
 export default function SideQuestSection({ C }: SideQuestSectionProps) {
   const side = getSideStyles(C);
   const list = useGameStore(s => s.sideQuests);
+  const sideQuestPenalize = useGameStore(s => s.settings.sideQuestPenalize ?? false);
   const addSQ = useGameStore(s => s.addSideQuest);
   const [collapsed, setCollapsed] = useState(false);
   const [input, setInput] = useState('');
@@ -36,38 +37,41 @@ export default function SideQuestSection({ C }: SideQuestSectionProps) {
     setInput('');
   }
 
-  function formatTime(totalSeconds: number) {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }
+  const done = list.filter(q => q.done).length;
+  const total = list.length;
 
   return (
     <View style={side.container}>
       <TouchableOpacity style={side.header} onPress={() => setCollapsed(v => !v)} activeOpacity={0.7}>
-        <Icon name="sword-cross" size={14} color={C.purple} />
-        <Text style={side.title}> MISSÕES SECUNDÁRIAS</Text>
+        <Icon name="format-list-checks" size={14} color={C.purple} />
+        <Text style={side.title}> TAREFAS DE HOJE</Text>
         <View style={side.badge}>
-          <Text style={side.badgeTxt}>{list.filter(q => q.done).length}/{list.length}</Text>
+          <Text style={side.badgeTxt}>{done}/{total}</Text>
         </View>
+        {sideQuestPenalize && (
+          <View style={[side.badge, { backgroundColor: C.neonRed + '22', marginLeft: 4 }]}>
+            <Icon name="alert-outline" size={9} color={C.neonRed} />
+          </View>
+        )}
         <Icon name={collapsed ? 'chevron-down' : 'chevron-up'} size={16} color={C.muted} style={{ marginLeft: 'auto' }} />
       </TouchableOpacity>
 
       {!collapsed && (
         <>
           <Text style={side.sub}>
-            Tarefas pessoais. Não contam para streak. O Sistema atribui recompensa aleatória.
+            Bloco de notas diário. As tarefas são apagadas à meia-noite.{sideQuestPenalize ? ' Tarefas por fazer penalizam.' : ''}
           </Text>
 
           <View style={side.inputRow}>
             <TextInput
               style={side.input}
-              placeholder="Nova tarefa..."
+              placeholder="Nova tarefa para hoje..."
               placeholderTextColor={C.dimmed}
               value={input}
-              onChangeText={setInput}
+              onChangeText={t => setInput(t.slice(0, 100))}
               onSubmitEditing={handleAdd}
               returnKeyType="done"
+              maxLength={100}
             />
             <TouchableOpacity style={side.addBtn} onPress={handleAdd}>
               <Icon name="plus" size={20} color={C.purple} />
@@ -76,9 +80,9 @@ export default function SideQuestSection({ C }: SideQuestSectionProps) {
 
           <View>
             {list.length === 0 ? (
-              <Text style={side.empty}>Sem missões secundárias. Adiciona uma acima.</Text>
+              <Text style={side.empty}>Sem tarefas para hoje. Adiciona uma acima.</Text>
             ) : (
-              list.map(sq => <SideQuestCard key={sq.id} sq={sq} C={C} formatTime={formatTime} />)
+              list.map(sq => <SideQuestCard key={sq.id} sq={sq} C={C} />)
             )}
           </View>
         </>

@@ -6,20 +6,21 @@ import MissionHistoryModal from './MissionHistoryModal'
 import { CATALOG_MAP } from '../data/shopItems'
 
 // Renders a MCI icon with 'help-circle' as fallback for unknown icon names
+const KNOWN_SAFE = new Set([
+  'fire','crown','shield-check','feather','script-text-outline','timer-outline','brain',
+  'weather-night','undo-variant','timer-sand','sword','castle','run-fast','dog',
+  'arrow-up-bold','lightning-bolt','skull-crossbones','calendar-star','check-all',
+  'clock-alert','bell-off-outline','refresh','cart-plus','ticket-confirmation-outline',
+  'water-outline','rhombus','piggy-bank-outline','dice-3','plus-circle','sword-cross',
+  'ghost','cellphone-lock','shield-half','alert-octagon','check-circle-outline',
+  'arrow-up-circle','weather-sunset-up','calendar-check','flag','account-group',
+  'trophy','star','lock','flash','arm-flex','help-circle','help-circle-outline',
+  'lock-outline','check-circle','star-circle-outline','trophy-outline','timer-sand',
+  'cash-multiple','check',
+  'snowflake','skull','weather-sunny','star-four-points','heart','mask','rabbit','flower','corn','dragon',
+])
+
 function SafeIcon({ name, size, color, style }: { name: string; size: number; color: string; style?: object }) {
-  const KNOWN_SAFE = new Set([
-    'fire','crown','shield-check','feather','script-text-outline','timer-outline','brain',
-    'weather-night','undo-variant','timer-sand','sword','castle','run-fast','dog',
-    'arrow-up-bold','lightning-bolt','skull-crossbones','calendar-star','check-all',
-    'clock-alert','bell-off-outline','refresh','cart-plus','ticket-confirmation-outline',
-    'water-outline','rhombus','piggy-bank-outline','dice-3','plus-circle','sword-cross',
-    'ghost','cellphone-lock','shield-half','alert-octagon','check-circle-outline',
-    'arrow-up-circle','weather-sunset-up','calendar-check','flag','account-group',
-    'trophy','star','lock','flash','arm-flex','help-circle','help-circle-outline',
-    'lock-outline','check-circle','star-circle-outline','trophy-outline','timer-sand',
-    'cash-multiple','check',
-    'snowflake','skull','weather-sunny','star-four-points','heart','mask','rabbit','flower','corn','dragon',
-  ])
   const safeName = KNOWN_SAFE.has(name) ? name : 'help-circle'
   return <Icon name={safeName} size={size} color={color} style={style} />
 }
@@ -175,8 +176,9 @@ function AchievementDetailModal({
   const tierIdx     = prog?.currentTierIndex ?? 0
   const prevTarget  = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0
   const thisTarget  = activeTier?.targetValue ?? 1
+  const range = thisTarget - prevTarget
   const pct = a.tiers
-    ? (maxed ? 100 : Math.min(100, ((currentVal - prevTarget) / (thisTarget - prevTarget)) * 100))
+    ? (maxed ? 100 : range > 0 ? Math.min(100, ((currentVal - prevTarget) / range) * 100) : 0)
     : (done ? 100 : 0)
 
   return (

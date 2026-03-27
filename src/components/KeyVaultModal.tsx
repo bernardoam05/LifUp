@@ -1,10 +1,11 @@
 import React from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, FlatList } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, Linking } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTheme, FONT, SPACING } from '../theme'
 import { ALL_DUNGEON_KEYS, DungeonKey } from '../data/dungeonKeys'
 import DungeonKeyModal from './DungeonKeyModal'
+import useGameStore from '../store/useGameStore'
 
 interface Props {
   visible: boolean
@@ -18,6 +19,7 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
   const st = React.useMemo(() => getStyles(C), [C])
   const [selectedKey, setSelectedKey] = React.useState<DungeonKey | null>(null)
   const [showKeyDetail, setShowKeyDetail] = React.useState(false)
+  const setPendingKeyMission = useGameStore(s => s.setPendingKeyMission)
 
   const keyObjects = keys
     .map(keyId => ALL_DUNGEON_KEYS.find(k => k.id === keyId))
@@ -90,7 +92,12 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
           visible={showKeyDetail}
           onClose={() => setShowKeyDetail(false)}
           onRequestClose={() => setShowKeyDetail(false)}
-          onStartMission={() => setShowKeyDetail(false)}
+          onStartMission={(key) => {
+            setPendingKeyMission(key.id)
+            setShowKeyDetail(false)
+            onClose()
+            Linking.openURL('sololeveling://missions')
+          }}
           dungeonKey={selectedKey}
           C={C}
         />

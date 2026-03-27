@@ -5,8 +5,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Vibration } from 'react-native'
 import useGameStore from '../store/useGameStore'
 import { CATALOG_MAP } from '../data/shopItems'
-import { ALL_DUNGEON_KEYS, DungeonKey } from '../data/dungeonKeys'
-import DungeonKeyModal from '../components/DungeonKeyModal'
 import KeyVaultModal from '../components/KeyVaultModal'
 import CustomModal from '../components/CustomModal'
 import { useTheme, FONT, SPACING } from '../theme'
@@ -76,7 +74,6 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
   const removePenalty   = useGameStore(s => s.removePenalty)
   const setXpBoostNext  = useGameStore(s => s.setXpBoostNext)
   const setHardcoreMode = useGameStore(s => s.setHardcoreFocusMode)
-  const focusActive     = useGameStore(s => s.system.focusModeActive)
   const hardcoreActive  = useGameStore(s => s.system.hardcoreFocusMode)
   const triggerEvent    = useGameStore(s => s.triggerEvent)
   const openLootBox     = useGameStore(s => s.openLootBox)
@@ -138,10 +135,10 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
         break
       }
       case 'break_hardcore': {
-        useItem(itemId)
         if (!hardcoreActive) {
           setFeedback('Nenhum Modo Hardcore ativo para quebrar.')
         } else {
+          useItem(itemId)
           setHardcoreMode(false)
           setFeedback('Juramento quebrado! Podes parar o Focus Mode livremente.')
         }
@@ -241,9 +238,7 @@ export default function InventoryScreen() {
   const gold      = useGameStore(s => s.player.gold)
   const total = inventory.reduce((sum, e) => sum + e.quantity, 0)
 
-  const [showKeyModal, setShowKeyModal] = useState(false)
   const [showVaultModal, setShowVaultModal] = useState(false)
-  const [selectedKey, setSelectedKey] = useState<DungeonKey | null>(null)
 
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
@@ -313,20 +308,6 @@ export default function InventoryScreen() {
         C={C}
       />
 
-      {showKeyModal && selectedKey && (
-        <DungeonKeyModal
-          visible={showKeyModal}
-          onClose={() => setShowKeyModal(false)}
-          onRequestClose={() => setShowKeyModal(false)}
-          onStartMission={() => {
-            // Após clicar em "ACEITAR DESAFIO", a missão será iniciada
-            // O comportamento específico será tratado pelo QuestScreen
-            setShowKeyModal(false)
-          }}
-          dungeonKey={selectedKey}
-          C={C}
-        />
-      )}
     </SafeAreaView>
   )
 }

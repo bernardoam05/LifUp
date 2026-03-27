@@ -42,7 +42,7 @@ const PRESET_APPS = [
   { pkg: 'com.reddit.frontpage',       label: 'Reddit',      icon: 'reddit'     },
 ]
 
-const HARDCORE_DURATION_MS = 24 * 60 * 60_000  // infinite = 24h ceiling; native stops when user breaks
+const HARDCORE_DURATION_MS = 365 * 24 * 60 * 60_000  // 1 year — effectively infinite; only ends via quebrar juramento
 
 // ── App Selector — absolute full-screen overlay (no Modal) ────────────────────
 // Using StyleSheet.absoluteFill avoids the MIUI Modal rendering pipeline
@@ -289,6 +289,15 @@ function formatTimeRemaining(ms: number) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
+function formatElapsed(ms: number) {
+  const totalSecs = Math.floor(ms / 1000)
+  const h = Math.floor(totalSecs / 3600)
+  const m = Math.floor((totalSecs % 3600) / 60)
+  const s = totalSecs % 60
+  if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function FocusScreen() {
@@ -453,9 +462,9 @@ export default function FocusScreen() {
     if (!hardcoreToggle && !hardcorePunished) {
       updateSettings({ lastFocusDuration: { hours, minutes } })
     }
-    // Fix: Compute the end time AFTER the await, so the delay doesn't drift the UI timer!
-    await FocusBlocker.startFocusMode(blockedApps, Date.now(), Date.now() + dur, hardcorePunished)
-    const end = Date.now() + dur
+    const start = Date.now()
+    const end = start + dur
+    await FocusBlocker.startFocusMode(blockedApps, start, end, hardcorePunished)
     setFocusActive(true, end)
     setHardcoreMode(hardcoreToggle)
     const hour = new Date().getHours()
@@ -545,11 +554,20 @@ export default function FocusScreen() {
 
         {/* 2. Timer / Duration */}
         {focusActive && focusEndTime ? (
-          <View style={s.countdownBox}>
-            <Text style={s.countdownTxt}>
-              {formatTimeRemaining(Math.max(0, focusEndTime - nowMs))}
-            </Text>
-          </View>
+          hardcoreFocusMode ? (
+            <View style={[s.countdownBox, { borderColor: C.neonRed + '88' }]}>
+              <Text style={[s.countdownTxt, { color: C.neonRed }]}>
+                {formatElapsed(nowMs - (focusEndTime - HARDCORE_DURATION_MS))}
+              </Text>
+              <Text style={{ color: C.neonRed + 'aa', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: 6 }}>ATIVO — SEM LIMITE</Text>
+            </View>
+          ) : (
+            <View style={s.countdownBox}>
+              <Text style={s.countdownTxt}>
+                {formatTimeRemaining(Math.max(0, focusEndTime - nowMs))}
+              </Text>
+            </View>
+          )
         ) : (!hardcoreToggle && !hardcorePunished && (
           <View style={s.durRow}>
             {/* Hours */}
@@ -622,27 +640,29 @@ export default function FocusScreen() {
         {/* 3. Switch (Hardcore Mode) */}
         {!focusActive && (
           <TouchableOpacity
-            style={[s.hardcoreMiniBtn, (hardcoreToggle || hardcorePunished) && s.hardcoreMiniBtnActive]}
+            style={[s.hardcoreRow, (hardcoreToggle || hardcorePunished) && s.hardcoreRowPunished]}
             onPress={hardcorePunished ? undefined : () => setHardcoreToggle(v => !v)}
             activeOpacity={hardcorePunished ? 1 : 0.75}
           >
             <Icon
               name={hardcorePunished || hardcoreToggle ? 'skull' : 'skull-outline'}
-              size={12}
+              size={20}
               color={hardcoreToggle || hardcorePunished ? C.neonRed : C.dimmed}
             />
-            <Text style={[s.hardcoreMiniTxt, (hardcoreToggle || hardcorePunished) && { color: C.neonRed }]}>
-              {hardcorePunished
-                ? ' HARDCORE ATIVO (PUNIÇÃO)'
-                : hardcoreToggle
-                ? ' MODO HARDCORE ATIVO'
-                : ' MODO HARDCORE'}
-            </Text>
-            <View style={{ flex: 1 }} />
+            <View style={s.hardcoreInfo}>
+              <Text style={[s.hardcoreLabel, (hardcoreToggle || hardcorePunished) && { color: C.neonRed }]}>
+                {hardcorePunished ? 'MODO HARDCORE (PUNIÇÃO ATIVA)' : 'MODO HARDCORE'}
+              </Text>
+              <Text style={s.hardcoreSub}>
+                {hardcorePunished
+                  ? 'Ativo por punição. Não pode ser desligado manualmente.'
+                  : 'Sem limite de tempo. O contador sobe até quebrares o juramento.'}
+              </Text>
+            </View>
             {!hardcorePunished && (
               <Icon
-                name={hardcoreToggle ? 'check-circle' : 'circle-outline'}
-                size={16}
+                name={hardcoreToggle ? 'toggle-switch' : 'toggle-switch-off-outline'}
+                size={28}
                 color={hardcoreToggle ? C.neonRed : C.dimmed}
               />
             )}
@@ -705,7 +725,7 @@ export default function FocusScreen() {
             <Icon name="skull" size={14} color={C.neonRed} />
             <View style={{ flex: 1 }}>
               <Text style={[s.modeLabel, { color: C.neonRed }]}>MODO HARDCORE</Text>
-              <Text style={s.modeDesc}>Dedicação Total. Sem pausas até ao fim. Testa a tua força.</Text>
+              <Text style={s.modeDesc}>Sem limite de tempo. O contador sobe eternamente. Só termina quando quebrares o juramento — ou conquistares o dia.</Text>
             </View>
           </View>
         </View>

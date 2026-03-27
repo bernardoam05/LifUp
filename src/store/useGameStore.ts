@@ -25,8 +25,8 @@ import {
 } from './helpers'
 
 import { 
-  createDailyQuests, defToQuest, INITIAL_QUEST_DICTIONARY, 
-  generateSideQuestReward, getCustomShadowPassive, PENALTY_QUEST_POOL,
+  createDailyQuests, defToQuest, INITIAL_QUEST_DICTIONARY,
+  getCustomShadowPassive, PENALTY_QUEST_POOL,
   getDailyMissionTarget, BOX_KEYS,
   isWeeklyBossDefinition, isPortalBossDefinition,
 } from './questDictionary'
@@ -228,10 +228,14 @@ const useGameStore = create<GameState & GameActions>()(
           const newWeeklyCount = weeklyReset ? 0 : system.weeklyTrainingCount
           const newWeeklyRegenCount = weeklyReset ? 0 : system.weeklyRegenCount
           const wasRestDay = get().settings.restDay
+          const sideQuestPenalize = get().settings.sideQuestPenalize ?? false
           const allDone = quests.length > 0 && quests.every((q: Quest) => q.done)
           const isFirstDay = lastResetDate === ''
-          const hadPenalty = !allDone && !isFirstDay && !wasRestDay
-          const failedCount = quests.filter((q: Quest) => !q.done).length
+          const failedSideCount = sideQuestPenalize && !isFirstDay && !wasRestDay
+            ? get().sideQuests.filter(sq => !sq.done).length
+            : 0
+          const hadPenalty = (!allDone || failedSideCount > 0) && !isFirstDay && !wasRestDay
+          const failedCount = quests.filter((q: Quest) => !q.done).length + failedSideCount
 
           let newXp = player.xp
           let newGold = player.gold
@@ -287,6 +291,11 @@ const useGameStore = create<GameState & GameActions>()(
                 // Easy: 6 hours centered at 16:00 (13:00 to 19:00)
                 todayStart.setHours(13, 0, 0, 0)
                 todayEnd.setHours(19, 0, 0, 0)
+              }
+              // If end time is already in the past, shift both to tomorrow
+              if (todayEnd.getTime() <= Date.now()) {
+                todayStart.setDate(todayStart.getDate() + 1)
+                todayEnd.setDate(todayEnd.getDate() + 1)
               }
               newPenaltyBlockStart = todayStart.getTime()
               newPenaltyBlockEnd = todayEnd.getTime()
@@ -720,51 +729,29 @@ const useGameStore = create<GameState & GameActions>()(
 
         addSideQuest(title) {
           if (!title.trim()) return
-          const { rank, xp, gold } = generateSideQuestReward()
-          const sq: SideQuest = { id: `sq_${Date.now()}`, title: title.trim(), rank, xp, gold, done: false, createdDate: new Date().toDateString() }
+          const sq: SideQuest = { id: `sq_${Date.now()}`, title: title.trim(), done: false, createdDate: new Date().toDateString() }
           set((s: GameState) => ({ sideQuests: [...s.sideQuests, sq] }))
           fireEvent('side_quest_added', {}, ref)
-          if (rank === 'C') fireEvent('side_quest_c_rank', { rank }, ref)
         },
 
         completeSideQuest(id) {
-          let leveledUp = false
-          let finalXpGain = 0
           set((s: GameState & GameActions) => {
             const sq = s.sideQuests.find(q => q.id === id)
             if (!sq || sq.done) return {}
-            const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows)
-            const xpGain = Math.round((s.system.xpBoostNext ? sq.xp * 2 : sq.xp) * (1 + xpBoost))
-            finalXpGain = xpGain
-            const res = applyXP(s.player.xp, s.player.level, xpGain)
-            leveledUp = res.leveledUp
-            const isNewLevel = res.level > s.player.maxLevelReached
-            const jobChange = hadJobClassChange(s.player.level, res.level)
             return {
-              sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: Math.round(sq.gold * (1 + goldBoost)) } : q),
-              system: { ...s.system, xpBoostNext: false },
-              player: {
-                ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + Math.round(sq.gold * (1 + goldBoost)), 
-                ...getAttrXpBoost(s.player, 'side'), dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level),
-                maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
-              },
-              ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
-              ...(jobChange ? { jobChangeReward: jobChange } : {}),
+              sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, done: true } : q),
               statistics: {
-                ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1,
+                ...s.statistics,
                 sideQuestsCompletedToday: (s.statistics.sideQuestsCompletedToday ?? 0) + 1,
                 totalSideCompleted: (s.statistics.totalSideCompleted ?? 0) + 1,
-                questsByRank: { ...s.statistics.questsByRank, [sq.rank as RankKey]: (s.statistics.questsByRank[sq.rank as RankKey] ?? 0) + 1 },
               },
             }
           })
           fireEvent('side_quest_completed', { todayCount: get().statistics.sideQuestsCompletedToday }, ref)
-          checkAndUnlockAchievements(ref)
-          if (finalXpGain > 0) get().dealRaidBossDamage(finalXpGain)
-          return { leveledUp }
+          return { leveledUp: false }
         },
 
-        startSideQuest(id, mins) { set((s: GameState) => ({ sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, startTime: Date.now(), duration: mins * 60 } : q) })) },
+        startSideQuest(_id, _mins) { /* no-op: timers removed from side quests */ },
         updateSideQuestNote(id, note) { set((s: GameState) => ({ sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, note } : q) })) },
         removeSideQuest(id) { set((s: GameState) => ({ sideQuests: s.sideQuests.filter(q => q.id !== id) })) },
 
@@ -815,14 +802,15 @@ const useGameStore = create<GameState & GameActions>()(
             const finalCost = Math.round(cost * (1 - shopDiscount))
 
             if (s.player.gold < finalCost || (STOCKED_ITEMS.includes(itemId) && (s.system.shopStocks[itemId] ?? 0) <= 0)) return {}
-            success = true
             if (itemId.startsWith('theme_')) {
               if (s.player.unlockedThemes?.includes(itemId)) return {}
+              success = true
               return {
                 player: { ...s.player, gold: s.player.gold - finalCost, unlockedThemes: [...(s.player.unlockedThemes ?? []), itemId], activeThemeId: itemId },
                 statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + finalCost },
               }
             }
+            success = true
             const inv = [...s.player.inventory]
             const idx = inv.findIndex(e => e.itemId === itemId)
             if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 }
@@ -1018,7 +1006,7 @@ const useGameStore = create<GameState & GameActions>()(
 
             return {
               player: { ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + goldReward, shadows: newShadows, ...getAttrXpBoost(s.player, 'boss'), maxLevelReached: Math.max(s.player.maxLevelReached, res.level) },
-              system: { ...s.system, bossDefeatedThisWeek: true, weeklyDefeatedBossId: shadowId, bossesDefeated: s.system.bossesDefeated + 1, completedNormalBossIds: newCompleted },
+              system: { ...s.system, bossDefeatedThisWeek: true, weeklyDefeatedBossId: shadowId || s.system.weeklyDefeatedBossId, bossesDefeated: s.system.bossesDefeated + 1, completedNormalBossIds: newCompleted },
               rewardsQueue: [
                 ...s.rewardsQueue,
                 // Only add to queue if level is multiple of 5 (5, 10, 15, etc) - show modal with rewards
@@ -1034,16 +1022,17 @@ const useGameStore = create<GameState & GameActions>()(
           // #3 Fix: Item Rewards with Loot Perception — each drop is independent
           const dropItems: string[] = []
           const lootMult = (1 + lootBoost)
+          const sid = shadowId ?? ''
 
           if (Math.random() < (0.5 * lootMult)) dropItems.push('shadow_essence')
           if (Math.random() < (0.2 * lootMult)) dropItems.push('blood_fallen')
 
-          if (shadowId.includes('kasaka') && Math.random() < (0.4 * lootMult)) dropItems.push('kasaka_venom')
-          else if (shadowId.includes('igris') && Math.random() < (0.4 * lootMult)) dropItems.push('igris_fragment')
-          else if (shadowId.includes('cerberus') && Math.random() < (0.4 * lootMult)) dropItems.push('cerberus_fang')
-          else if (shadowId.includes('lich') || shadowId.includes('baran')) {
+          if (sid.includes('kasaka') && Math.random() < (0.4 * lootMult)) dropItems.push('kasaka_venom')
+          else if (sid.includes('igris') && Math.random() < (0.4 * lootMult)) dropItems.push('igris_fragment')
+          else if (sid.includes('cerberus') && Math.random() < (0.4 * lootMult)) dropItems.push('cerberus_fang')
+          else if (sid.includes('lich') || sid.includes('baran')) {
             if (Math.random() < 0.3) dropItems.push(Math.random() < 0.5 ? 'iron_will_crystal' : 'lich_eye')
-          } else if (shadowId.includes('antares') || shadowId.includes('kamish')) {
+          } else if (sid.includes('antares') || sid.includes('kamish')) {
             if (Math.random() < 0.2) dropItems.push('dragon_scale')
           }
 
@@ -1099,6 +1088,8 @@ const useGameStore = create<GameState & GameActions>()(
         setEventBossState(key, required, total) { set((s: GameState) => ({ system: { ...s.system, eventBossKey: key, eventBossCompletedIds: [], eventBossRequired: required, eventBossTotal: total, eventBossDefeated: false } })) },
         completeEventTrial(id, key, required, total) { let completed = 0; set((s: GameState & GameActions) => { const reset = s.system.eventBossKey !== key; const nextIds = (reset ? [] : s.system.eventBossCompletedIds).includes(id) ? (reset ? [] : s.system.eventBossCompletedIds) : [...(reset ? [] : s.system.eventBossCompletedIds), id]; completed = nextIds.length; return { system: { ...s.system, eventBossKey: key, eventBossCompletedIds: nextIds, eventBossRequired: required, eventBossTotal: total } } }); return { completed, required } },
         markEventBossDefeated(key) { set((s: GameState & GameActions) => ({ system: { ...s.system, eventBossKey: key, eventBossDefeated: true } })) },
+        setPendingKeyMission(keyId) { set((s: GameState) => ({ system: { ...s.system, pendingKeyId: keyId } })) },
+        clearPendingKeyMission() { set((s: GameState) => ({ system: { ...s.system, pendingKeyId: null } })) },
         releaseShadow(id) { const { player, customShadows } = get(); const entry = player.shadows.find(e => e.id === id); if (!entry) return { gold: 0 }; const shadow = ({ ...SHADOW_MAP, ...Object.fromEntries(customShadows.map(sh => [sh.id, sh])) })[id]; const goldGained = shadow ? getShadowReleaseGold(shadow, entry.level) : 0; set((s: GameState & GameActions) => ({ player: { ...s.player, gold: s.player.gold + goldGained, shadows: s.player.shadows.filter(e => e.id !== id), activeShadowIds: s.player.activeShadowIds.filter(a => a !== id) }, customShadows: s.customShadows.filter(sh => sh.id !== id) })); return { gold: goldGained } },
 
         regenerateSingleDailyQuest(questId) {
@@ -1271,7 +1262,7 @@ const useGameStore = create<GameState & GameActions>()(
           system: { ...current.system, ...(data.system ?? {}) }, settings: { ...current.settings, ...(data.settings ?? {}) }, statistics: { ...current.statistics, ...(data.statistics ?? {}) }, questDictionary: data.questDictionary ?? current.questDictionary, customShadows: data.customShadows ?? current.customShadows, lastExtraction: data.lastExtraction ?? null, achievementProgress: Object.fromEntries(Object.entries(data.achievementProgress ?? {}).map(([id, val]) => [id, typeof val === 'number' ? { currentValue: val, currentTierIndex: 0 } : val])), questRecords: data.questRecords ?? {}, questCompletions: data.questCompletions ?? {}, activeMissionTimers: data.activeMissionTimers ?? {}, extraQuestRerolledIds: data.extraQuestRerolledIds ?? [], extraQuestUsedPoolIds: data.extraQuestUsedPoolIds ?? [], newAchievementIds: [],
         }
       },
-      partialize: s => ({ player: s.player, quests: s.quests, sideQuests: s.sideQuests, extraQuests: s.extraQuests, questDictionary: s.questDictionary, customShadows: s.customShadows, settings: s.settings, system: { ...s.system, penaltyTriggered: false }, statistics: s.statistics, lastResetDate: s.lastResetDate, unlockedAchievements: s.unlockedAchievements, achievementProgress: s.achievementProgress, questRecords: s.questRecords, questCompletions: s.questCompletions, activeMissionTimers: s.activeMissionTimers, extraQuestRerolledIds: s.extraQuestRerolledIds, extraQuestUsedPoolIds: s.extraQuestUsedPoolIds }),
+      partialize: s => ({ player: s.player, quests: s.quests, sideQuests: s.sideQuests, extraQuests: s.extraQuests, questDictionary: s.questDictionary, customShadows: s.customShadows, settings: s.settings, system: { ...s.system, penaltyTriggered: false, pendingKeyId: null }, statistics: s.statistics, lastResetDate: s.lastResetDate, unlockedAchievements: s.unlockedAchievements, achievementProgress: s.achievementProgress, questRecords: s.questRecords, questCompletions: s.questCompletions, activeMissionTimers: s.activeMissionTimers, extraQuestRerolledIds: s.extraQuestRerolledIds, extraQuestUsedPoolIds: s.extraQuestUsedPoolIds }),
     }
   )
 )

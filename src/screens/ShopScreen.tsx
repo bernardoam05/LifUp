@@ -54,7 +54,7 @@ function ItemCard({
             <View style={[ic.stockBadge, { borderColor: soldOut ? '#374151' : item.color + '55' }]}>
               <Icon name="refresh-circle" size={9} color={soldOut ? '#374151' : item.color} />
               <Text style={[ic.stockTxt, { color: soldOut ? '#374151' : item.color }]}>
-                {' '}{soldOut ? 'ESGOTADO' : `${stockRemaining}/sem`}
+                {' '}{soldOut ? 'ESGOTADO' : `${stockRemaining}/semana`}
               </Text>
             </View>
           )}
