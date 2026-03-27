@@ -20,6 +20,7 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
   const [selectedKey, setSelectedKey] = React.useState<DungeonKey | null>(null)
   const [showKeyDetail, setShowKeyDetail] = React.useState(false)
   const setPendingKeyMission = useGameStore(s => s.setPendingKeyMission)
+  const keyLastUsedAt = useGameStore(s => s.system.keyLastUsedAt)
 
   const keyObjects = keys
     .map(keyId => ALL_DUNGEON_KEYS.find(k => k.id === keyId))
@@ -99,6 +100,7 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
             Linking.openURL('sololeveling://missions')
           }}
           dungeonKey={selectedKey}
+          keyLastUsedAt={selectedKey ? (keyLastUsedAt?.[selectedKey.id] ?? 0) : 0}
           C={C}
         />
       )}

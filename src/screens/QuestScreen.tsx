@@ -607,52 +607,88 @@ export default function QuestScreen() {
         {/* Dungeon Break Alert */}
         {!acceptedPortal && system.activeDungeonBreak &&
           Date.now() >= (system.activeDungeonBreak.startsAt ?? 0) &&
-          Date.now() < system.activeDungeonBreak.expiresAt && (
-          <TouchableOpacity
-            style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: C.neonRed }]}
-            onPress={() => {
-              const db = system.activeDungeonBreak;
-              if (!db) return;
-              if (db.source === 'quest') {
-                const def = questDictionary.find(d => d.id === db.bossId)
-                if (!def) return
-                const mission: DungeonMission = {
-                  id: `portal_${def.id}`,
-                  label: `Portal Dinâmico: ${def.title}`,
-                  detail: def.description.replace(/{target}/g, String(def.baseTarget)).replace(/{unit}/g, def.unit),
-                  type: def.questType,
-                  shadowHint: def.id,
-                  icon: def.questType === 'focus' ? 'timer-sand' : def.questType === 'gps' ? 'run-fast' : 'arm-flex',
-                  color: def.questType === 'focus' ? C.purple : def.questType === 'gps' ? C.green : C.neonRed,
-                  category: 'dungeon',
-                }
-                setPortalConfirm(mission)
-                return
-              }
+          Date.now() < system.activeDungeonBreak.expiresAt && (() => {
+            const db = system.activeDungeonBreak!
+            const isQuest = db.source === 'quest'
+            const qDef = isQuest ? questDictionary.find(d => d.id === db.bossId) : undefined
+            const rBoss = !isQuest ? RAID_BOSSES.find(b => b.id === db.bossId) : undefined
+            const displayName = qDef?.title ?? rBoss?.name ?? db.bossId
+            const displayIcon = qDef
+              ? (qDef.questType === 'focus' ? 'timer-sand' : qDef.questType === 'gps' ? 'run-fast' : 'arm-flex')
+              : 'skull-scan'
+            const displayColor = qDef
+              ? (qDef.questType === 'focus' ? C.purple : qDef.questType === 'gps' ? C.green : C.neonRed)
+              : C.neonRed
+            const displayLore = qDef
+              ? qDef.description.replace(/{target}/g, String(qDef.baseTarget)).replace(/{unit}/g, qDef.unit)
+              : rBoss
+                ? `Rank ${rBoss.rank} — Elimina ${rBoss.name} antes que o portal colapse.`
+                : 'Um portal dinâmico abriu-se. Entra antes que a janela feche.'
+            const typeLabel = qDef
+              ? (qDef.questType === 'focus' ? 'FOCO' : qDef.questType === 'gps' ? 'GPS' : 'TREINO')
+              : 'FOCO'
 
-              const boss = RAID_BOSSES.find(b => b.id === db.bossId)
-              if (!boss) return
-              const remainingMs = Math.max(0, db.expiresAt - Date.now())
-              const targetFocus = Math.max(10 * 60_000, Math.min(25 * 60_000, Math.floor(remainingMs * 0.5)))
-              const mission: DungeonMission = {
-                id: `break_${boss.id}`,
-                label: `Dungeon Break: ${boss.name}`,
-                detail: `Um portal abriu-se numa zona civil! Elimina ${boss.name} antes que o tempo se esgote.`,
-                type: 'focus',
-                shadowHint: boss.id,
-                icon: 'skull-scan',
-                color: C.neonRed,
-                focusDuration: targetFocus,
-                category: 'dungeon_break',
-              }
-              setPortalConfirm(mission)
-            }}
-          >
-            <Icon name="skull-scan" size={24} color={C.neonRed} />
-            <Text style={s.dungeonBreakTxt}>Portal Dinamico ativo</Text>
-            <Text style={s.dungeonBreakSub}>Portal aleatório ativo. Entra antes que a janela feche.</Text>
-          </TouchableOpacity>
-        )}
+            return (
+              <TouchableOpacity
+                style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: displayColor }]}
+                onPress={() => {
+                  if (!db) return
+                  if (db.source === 'quest') {
+                    if (!qDef) return
+                    const mission: DungeonMission = {
+                      id: `portal_${qDef.id}`,
+                      label: `Portal Dinâmico: ${qDef.title}`,
+                      detail: qDef.description.replace(/{target}/g, String(qDef.baseTarget)).replace(/{unit}/g, qDef.unit),
+                      type: qDef.questType,
+                      shadowHint: qDef.id,
+                      icon: displayIcon,
+                      color: displayColor,
+                      category: 'dungeon',
+                    }
+                    setPortalConfirm(mission)
+                    return
+                  }
+                  if (!rBoss) return
+                  const remainingMs = Math.max(0, db.expiresAt - Date.now())
+                  const targetFocus = Math.max(10 * 60_000, Math.min(25 * 60_000, Math.floor(remainingMs * 0.5)))
+                  const mission: DungeonMission = {
+                    id: `break_${rBoss.id}`,
+                    label: `Dungeon Break: ${rBoss.name}`,
+                    detail: displayLore,
+                    type: 'focus',
+                    shadowHint: rBoss.id,
+                    icon: 'skull-scan',
+                    color: C.neonRed,
+                    focusDuration: targetFocus,
+                    category: 'dungeon_break',
+                  }
+                  setPortalConfirm(mission)
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Icon name={displayIcon} size={22} color={displayColor} />
+                  <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                      <Text style={[s.dungeonBreakTxt, { color: displayColor }]} numberOfLines={1}>
+                        {displayName.toUpperCase()}
+                      </Text>
+                      <View style={{ backgroundColor: displayColor + '22', borderWidth: 1, borderColor: displayColor + '66', borderRadius: 3, paddingHorizontal: 5, paddingVertical: 1 }}>
+                        <Text style={{ color: displayColor, fontFamily: FONT.orbitron, fontSize: 7, fontWeight: '700' }}>{typeLabel}</Text>
+                      </View>
+                    </View>
+                    <Text style={s.dungeonBreakSub} numberOfLines={2}>{displayLore}</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 4 }}>
+                  <Icon name="timer-alert-outline" size={10} color={C.neonRed + 'cc'} />
+                  <Text style={[s.dungeonBreakSub, { color: C.neonRed }]}>
+                    {formatCountdown(portalCountdownMs)} RESTANTES — TOCA PARA ENTRAR
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )
+          })()
+        }
 
 
         {/* ── SECTION: MISSÕES DIÁRIAS ── */}

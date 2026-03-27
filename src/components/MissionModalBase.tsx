@@ -87,7 +87,10 @@ export const getStyles = (C: any) => StyleSheet.create({
   card: {
     backgroundColor: C.panel,
     borderRadius: 16,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
     padding: SPACING.lg,
+    paddingBottom: 24,
     width: '100%',
     maxWidth: 420,
     alignItems: 'stretch',

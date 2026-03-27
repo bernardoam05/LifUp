@@ -1,8 +1,18 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { DungeonKey } from '../data/dungeonKeys'
 import MissionModalBase from './MissionModalBase'
 import { FONT, SPACING } from '../theme'
+
+const KEY_COOLDOWN_MS = 24 * 60 * 60_000
+
+function formatCooldown(ms: number): string {
+  const totalSecs = Math.ceil(ms / 1000)
+  const h = Math.floor(totalSecs / 3600)
+  const m = Math.floor((totalSecs % 3600) / 60)
+  if (h > 0) return `${h}h ${m}m`
+  return `${m}m`
+}
 
 export const getDKMStyles = (C: any) => StyleSheet.create({
   section: { marginBottom: SPACING.lg, paddingBottom: SPACING.md, borderBottomWidth: 1, borderBottomColor: C.border },
@@ -35,6 +45,8 @@ interface DungeonKeyModalProps {
   onRequestClose?: () => void
   onStartMission: (key: DungeonKey) => void
   dungeonKey: DungeonKey | null
+  /** Epoch ms when this key was last used (from store.system.keyLastUsedAt) */
+  keyLastUsedAt?: number
   C: any
 }
 
@@ -44,11 +56,27 @@ export default function DungeonKeyModal({
   onRequestClose,
   onStartMission,
   dungeonKey: key,
+  keyLastUsedAt = 0,
   C,
 }: DungeonKeyModalProps) {
   const dm = getDKMStyles(C)
+  const [cooldownMs, setCooldownMs] = useState(0)
+
+  useEffect(() => {
+    const remaining = () => Math.max(0, KEY_COOLDOWN_MS - (Date.now() - keyLastUsedAt))
+    setCooldownMs(remaining())
+    if (remaining() <= 0) return
+    const interval = setInterval(() => {
+      const r = remaining()
+      setCooldownMs(r)
+      if (r <= 0) clearInterval(interval)
+    }, 30_000)
+    return () => clearInterval(interval)
+  }, [keyLastUsedAt, visible])
 
   if (!key) return null
+
+  const onCooldown = cooldownMs > 0
 
   const lore = key.lore || `Um poderoso inimigo aguarda-te neste portal. ${key.description}`
   const environment = key.environment || `Um local perigoso e desafiante, repleto de obstáculos mortais.`
@@ -119,19 +147,34 @@ export default function DungeonKeyModal({
           </View>
         </View>
 
-        <View style={dm.alertBox}>
-          <Text style={dm.alertTitle}>⚠️ AVISO CRÍTICO</Text>
-          <Text style={dm.alertText}>
-            Uma missão perigosa e desafiante te aguarda. {'\n\n'}
-            As recompensas são grandes, mas as penalizações também são severas. Tens a certeza de que estás pronto?
-          </Text>
-        </View>
+        {onCooldown ? (
+          <View style={[dm.alertBox, { borderColor: C.gold + '66', backgroundColor: C.gold + '10' }]}>
+            <Text style={[dm.alertTitle, { color: C.gold }]}>⏳ COOLDOWN ATIVO</Text>
+            <Text style={dm.alertText}>
+              Este portal já foi usado recentemente. Podes entrar novamente em:{'\n\n'}
+              <Text style={{ color: C.gold, fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900' }}>
+                {formatCooldown(cooldownMs)}
+              </Text>
+            </Text>
+          </View>
+        ) : (
+          <View style={dm.alertBox}>
+            <Text style={dm.alertTitle}>⚠️ AVISO CRÍTICO</Text>
+            <Text style={dm.alertText}>
+              Uma missão perigosa e desafiante te aguarda. {'\n\n'}
+              As recompensas são grandes, mas as penalizações também são severas. Tens a certeza de que estás pronto?
+            </Text>
+          </View>
+        )}
 
       <TouchableOpacity
-        style={dm.startBtn}
-        onPress={() => { onStartMission(key); onClose() }}
+        style={[dm.startBtn, onCooldown && { opacity: 0.4, borderColor: C.gold + '44' }]}
+        onPress={() => { if (!onCooldown) { onStartMission(key); onClose() } }}
+        disabled={onCooldown}
       >
-        <Text style={dm.startBtnTxt}>ACEITAR DESAFIO</Text>
+        <Text style={[dm.startBtnTxt, onCooldown && { color: C.gold }]}>
+          {onCooldown ? `⏳ COOLDOWN: ${formatCooldown(cooldownMs)}` : 'ACEITAR DESAFIO'}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={dm.cancelBtn} onPress={onClose}>

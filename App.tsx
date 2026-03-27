@@ -284,7 +284,7 @@ export default function App() {
         {showSettings && <SettingsScreen onClose={() => setShowSettings(false)} />}
 
         {/* Simple level-up toast for non-multiples of 5 (levels 1,2,3,4,6,7,8,9...) */}
-        <View style={{ zIndex: 9999 }}>
+        <View style={{ zIndex: 9999 }} pointerEvents="box-none">
           <LevelUpToast
             reward={levelUpToast ? { level: levelUpToast, items: [] } : null}
             onDismiss={dismissLevelUpToast}
