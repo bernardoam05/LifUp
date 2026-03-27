@@ -19,7 +19,6 @@ import BottomSheetModal from '../components/BottomSheetModal'
 import GPSTrackerModal from '../components/GPSTrackerModal'
 import QuestCard from '../components/QuestCard'
 import EventDungeonModal from '../components/EventDungeonModal'
-import BossVictoryModal from '../components/BossVictoryModal'
 import ShadowExtractionModal from '../components/ShadowExtractionModal'
 import SideQuestSection from '../components/SideQuestSection'
 import { useTheme, FONT, SPACING, RANK_COLORS } from '../theme'
@@ -214,6 +213,7 @@ export default function QuestScreen() {
   const clearRaid     = useGameStore(s => s.clearPendingRaidExtraction)
   const pendingKeyId  = useGameStore(s => s.system.pendingKeyId)
   const clearPendingKeyMission = useGameStore(s => s.clearPendingKeyMission)
+  const clearActiveDungeonBreak = useGameStore(s => s.clearActiveDungeonBreak)
   const dungeonKeys   = useGameStore(s => s.player.dungeonKeys)
 
   // Trigger extraction for Raid bosses (which are defeated globally via store)
@@ -285,14 +285,12 @@ export default function QuestScreen() {
   const [showEventDungeon, setShowEventDungeon] = useState(false)
   const [showForge, setShowForge] = useState(false)
   const [activeMission, setActiveMission] = useState<DungeonMission | null>(null)
-  const [confirmBossTraining, setConfirmBossTraining] = useState(false)
+
   const [portalConfirm, setPortalConfirm] = useState<DungeonMission | null>(null)
   const [acceptedPortal, setAcceptedPortal] = useState<DungeonMission | null>(null)
-  const [victoryInfo, setVictoryInfo] = useState<{ xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean } | null>(null)
   const [eventProgressInfo, setEventProgressInfo] = useState<{ name: string; completed: number; required: number } | null>(null)
   const [extractionBossId, setExtractionBossId] = useState<string | null>(null)
   const [extractionCategory, setExtractionCategory] = useState<'dungeon' | 'dungeon_break' | 'event' | 'key' | 'raid'>('dungeon')
-  const [pendingMission, setPendingMission] = useState<{ m: DungeonMission, focusMinutes?: number } | null>(null)
   const [keyConfirm, setKeyConfirm] = useState<{ type: 'normal' | 'weekly', mission: DungeonMission, key: any } | null>(null)
   const [eventCountdownMs, setEventCountdownMs] = useState(0)
   const [portalCountdownMs, setPortalCountdownMs] = useState(0)
@@ -386,7 +384,6 @@ export default function QuestScreen() {
     const onBackPress = () => {
       if (activeMission) {
         setActiveMission(null)
-        setConfirmBossTraining(false)
         return true
       }
       if (showEventDungeon) {
@@ -405,33 +402,20 @@ export default function QuestScreen() {
 
   function handleMissionSelect(m: DungeonMission) {
     setActiveMission(m)
-    if (m.type === 'training') setConfirmBossTraining(true)
   }
 
-  const handleExtractionClose = (success: boolean) => {
+  const handleExtractionClose = (_success: boolean) => {
+    // Raid-only extraction close: boss was already defeated by the store
     setExtractionBossId(null)
-    if (pendingMission) {
-      const { m, focusMinutes } = pendingMission
-      const shadowToGive = success ? m.shadowHint : ''
-      const result = defeatBoss(shadowToGive, m.customShadow)
-      setVictoryInfo(result)
-      const missionId = m.id.startsWith('custom_boss_') ? m.id.slice('custom_boss_'.length) : m.id
-      if (m.id === 'boss_gps' || (m.id.startsWith('custom_boss_') && m.type === 'gps') || (m.isEventBoss && m.type === 'gps') || (m.id.startsWith('normal_dungeon_') && m.type === 'gps'))
-        triggerEvent('boss_gps_completed', { missionId })
-      if (m.id === 'boss_focus' || (m.id.startsWith('custom_boss_') && m.type === 'focus') || (m.isEventBoss && m.type === 'focus') || (m.id.startsWith('normal_dungeon_') && m.type === 'focus'))
-        triggerEvent('boss_focus_completed', { missionId })
-      if (m.id === 'boss_training' || (m.id.startsWith('custom_boss_') && m.type === 'training') || (m.isEventBoss && m.type === 'training') || (m.id.startsWith('normal_dungeon_') && m.type === 'training'))
-        triggerEvent('boss_training_completed', { missionId })
-      if (m.isEventBoss && m.eventKey) {
-        markEventBossDefeated(m.eventKey)
-      }
-      setPendingMission(null)
-    }
   }
   function completeBossMission(m: DungeonMission, focusMinutes?: number) {
     setActiveMission(null)
     // Clear accepted portal when mission is completed successfully
     setAcceptedPortal(null)
+    // If this was a portal/dungeon-break mission, clear it from the store so it doesn't re-appear
+    if (m.category === 'dungeon' || m.category === 'dungeon_break') {
+      clearActiveDungeonBreak()
+    }
 
     // Event trials just progress the event, no extraction, no time recording (they're practice)
     if (m.isEventTrial && m.eventKey) {
@@ -443,10 +427,18 @@ export default function QuestScreen() {
     // Only real boss missions (not trials) record focus time
     if (focusMinutes) recordFocus(focusMinutes)
 
-    // All real boss kills trigger the Shadow Extraction (Arise) modal
-    setExtractionBossId(m.shadowHint)
-    setExtractionCategory(m.category || 'dungeon')
-    setPendingMission({ m, focusMinutes })
+    // Defeat boss — pushes boss_defeated + shadow to global rewardsQueue (no local modal needed)
+    defeatBoss(m.shadowHint, m.customShadow)
+
+    // Fire event triggers
+    const missionId = m.id.startsWith('custom_boss_') ? m.id.slice('custom_boss_'.length) : m.id
+    if (m.id === 'boss_gps' || (m.id.startsWith('custom_boss_') && m.type === 'gps') || (m.isEventBoss && m.type === 'gps') || (m.id.startsWith('normal_dungeon_') && m.type === 'gps'))
+      triggerEvent('boss_gps_completed', { missionId })
+    if (m.id === 'boss_focus' || (m.id.startsWith('custom_boss_') && m.type === 'focus') || (m.isEventBoss && m.type === 'focus') || (m.id.startsWith('normal_dungeon_') && m.type === 'focus'))
+      triggerEvent('boss_focus_completed', { missionId })
+    if (m.id === 'boss_training' || (m.id.startsWith('custom_boss_') && m.type === 'training') || (m.isEventBoss && m.type === 'training') || (m.id.startsWith('normal_dungeon_') && m.type === 'training'))
+      triggerEvent('boss_training_completed', { missionId })
+    if (m.isEventBoss && m.eventKey) markEventBossDefeated(m.eventKey)
   }
 
   // Convert active dungeon mission to Quest shape for existing tracker modals
@@ -597,15 +589,18 @@ export default function QuestScreen() {
             </View>
         </View>
 
-        {/* Accepted Portal Card - Show after entering a portal */}
-        {acceptedPortal && !activeMission && (
+        {/* Accepted Portal Card - Persists as active Boss Card until mission completes */}
+        {acceptedPortal && (
           <TouchableOpacity
-            style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: acceptedPortal.color || C.neonRed }]}
-            onPress={() => handleMissionSelect(acceptedPortal)}
+            style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: acceptedPortal.color || C.neonRed, opacity: activeMission ? 0.85 : 1 }]}
+            onPress={() => { if (!activeMission) handleMissionSelect(acceptedPortal) }}
+            disabled={!!activeMission}
           >
-            <Icon name={acceptedPortal.icon || 'gate'} size={24} color={acceptedPortal.color || C.neonRed} />
+            <Icon name={activeMission ? 'sword-cross' : (acceptedPortal.icon || 'gate')} size={24} color={acceptedPortal.color || C.neonRed} />
             <Text style={s.dungeonBreakTxt}>{acceptedPortal.label?.toUpperCase()}</Text>
-            <Text style={s.dungeonBreakSub}>{acceptedPortal.detail || 'Pressiona para abrir a missão.'}</Text>
+            <Text style={s.dungeonBreakSub}>
+              {activeMission ? '⚔ EM PROGRESSO — Conclui a missão para fechar o portal.' : (acceptedPortal.detail || 'Pressiona para abrir a missão.')}
+            </Text>
           </TouchableOpacity>
         )}
 
@@ -843,17 +838,12 @@ export default function QuestScreen() {
 
       )}
 
-      {/* Boss training confirm */}
-      {activeMission?.type === 'training' && (
-        <CustomModal
-          visible={confirmBossTraining}
-          title={`BOSS RAID — ${activeMission?.label?.toUpperCase() || 'CERBERUS'}`}
-          message={`Confirmas que completaste:\n\n"${activeMission?.detail || ''}"`}
-          confirmLabel="BOSS DERROTADO"
-          confirmIcon="sword"
-          confirmColor={activeMission?.isEventTrial ? C.gold : C.neonRed}
-          onConfirm={() => { setConfirmBossTraining(false); completeBossMission(activeMission) }}
-          onCancel={() => { setConfirmBossTraining(false); setActiveMission(null) }}
+      {/* Boss training — full timer + notes screen (consistent with focus missions) */}
+      {activeBossQuest && activeMission?.type === 'training' && (
+        <MissionActiveScreen
+          quest={activeBossQuest}
+          onClose={() => setActiveMission(null)}
+          onComplete={() => completeBossMission(activeMission)}
           C={C}
         />
       )}
@@ -891,16 +881,6 @@ export default function QuestScreen() {
         />
       )}
 
-      {/* Victory modal */}
-      {victoryInfo && (
-        <BossVictoryModal
-          visible={!!victoryInfo}
-          info={victoryInfo}
-          onClose={() => setVictoryInfo(null)}
-          onRequestClose={() => setVictoryInfo(null)}
-          C={C}
-        />
-      )}
 
       {keyConfirm && (
         <CustomModal

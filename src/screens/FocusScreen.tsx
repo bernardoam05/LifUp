@@ -760,6 +760,25 @@ export default function FocusScreen() {
           />
         </View>
 
+        {/* 8. Aviso bateria MIUI / OEM */}
+        <View style={s.batteryBox}>
+          <View style={s.batteryHeader}>
+            <Icon name="battery-alert" size={14} color={C.gold} />
+            <Text style={s.batteryTitle}> OTIMIZAÇÃO DE BATERIA (XIAOMI / MIUI)</Text>
+          </View>
+          <Text style={s.batteryDesc}>
+            Em dispositivos Xiaomi, Samsung e outros com gestão agressiva de bateria, o bloqueador pode adormecer em segundo plano. Se as apps bloqueadas não estão a ser bloqueadas corretamente, desativa a otimização de bateria para esta app:
+          </Text>
+          <View style={s.batterySteps}>
+            <Text style={s.batteryStep}>1. Definições → Apps → Gerir Apps</Text>
+            <Text style={s.batteryStep}>2. Procura "Arise" (ou Solo Leveling)</Text>
+            <Text style={s.batteryStep}>3. Bateria → Sem restrições</Text>
+          </View>
+          <Text style={s.batteryNote}>
+            Em MIUI: toca em "Bateria" e seleciona "Sem restrições de poupança de energia".
+          </Text>
+        </View>
+
       </ScrollView>
 
       {/* ── App Selector — absolute overlay, renders on top without Modal ──── */}
@@ -906,6 +925,14 @@ const getStyles = (C: any) => StyleSheet.create({
   hardcoreMiniBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 32, paddingVertical: 8, paddingHorizontal: 16, borderWidth: 1, borderColor: C.border, alignSelf: 'center', marginBottom: SPACING.md, marginTop: SPACING.sm },
   hardcoreMiniBtnActive: { borderColor: C.neonRed, backgroundColor: C.surface?.danger || C.bg },
   hardcoreMiniTxt: { color: C.dimmed, fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginLeft: 6 },
+
+  batteryBox:    { backgroundColor: C.panel, borderWidth: 1, borderColor: C.gold + '55', borderRadius: 4, padding: SPACING.md, marginTop: SPACING.md, gap: SPACING.sm },
+  batteryHeader: { flexDirection: 'row', alignItems: 'center' },
+  batteryTitle:  { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1.5 },
+  batteryDesc:   { color: C.dimmed, fontSize: 11, lineHeight: 16 },
+  batterySteps:  { backgroundColor: C.bg, borderRadius: 4, padding: SPACING.sm, gap: 4 },
+  batteryStep:   { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
+  batteryNote:   { color: C.gold + 'aa', fontSize: 10, lineHeight: 15 },
 })
 
 const getPRStyles = (C: any) => StyleSheet.create({

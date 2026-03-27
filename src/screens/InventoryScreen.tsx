@@ -236,7 +236,7 @@ export default function InventoryScreen() {
   const dungeonKeys = useGameStore(s => s.player.dungeonKeys)
 
   const gold      = useGameStore(s => s.player.gold)
-  const total = inventory.reduce((sum, e) => sum + e.quantity, 0)
+  const total = inventory.filter(e => e.quantity > 0).reduce((sum, e) => sum + e.quantity, 0)
 
   const [showVaultModal, setShowVaultModal] = useState(false)
 
@@ -285,14 +285,14 @@ export default function InventoryScreen() {
           <Text style={s.sectionTitle}> ITENS</Text>
         </View>
 
-        {inventory.length === 0 ? (
+        {inventory.filter(e => e.quantity > 0).length === 0 ? (
           <View style={s.emptyWrap}>
             <Icon name="bag-personal-outline" size={48} color={C.dimmed} />
             <Text style={s.emptyTitle}>INVENTÁRIO VAZIO</Text>
             <Text style={s.emptyDesc}>Visita a Loja do Sistema para adquirir itens.</Text>
           </View>
         ) : (
-          inventory.map(entry => (
+          inventory.filter(e => e.quantity > 0).map(entry => (
             <InventoryCard key={entry.itemId} itemId={entry.itemId} quantity={entry.quantity} C={C} />
           ))
         )}

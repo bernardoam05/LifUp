@@ -273,8 +273,8 @@ function ShadowDetailModal({
           <Icon name={isFavorite ? "star" : "star-outline"} size={22} color={isFavorite ? "#facc15" : C.muted} />
         </TouchableOpacity>
 
-        <View style={[dm.iconWrap, { backgroundColor: rankColor + '18', borderColor: rankColor + '44' }]}>
-          <Icon name={shadow.icon} size={48} color={rankColor} />
+        <View style={[dm.iconWrap, { backgroundColor: rankColor + '18', borderColor: rankColor + '55' }]}>
+          <Icon name={shadow.icon} size={60} color={rankColor} />
         </View>
 
         <View style={[dm.rankBadge, { borderColor: rankColor }]}>
@@ -285,9 +285,24 @@ function ShadowDetailModal({
 
         <Text style={[dm.name, { color: rankColor }]}>{shadow.name}</Text>
 
-        <View style={dm.levelRow}>
-          <Icon name="chevron-up-circle" size={12} color={rankColor} />
-          <Text style={[dm.levelTxt, { color: rankColor }]}> NÍV. {level}</Text>
+        {/* 2-column stats grid */}
+        <View style={dm.statsGrid}>
+          <View style={dm.statCell}>
+            <Text style={dm.statLabel}>NÍVEL</Text>
+            <Text style={[dm.statValue, { color: rankColor }]}>{level}</Text>
+          </View>
+          <View style={dm.statCell}>
+            <Text style={dm.statLabel}>RANK</Text>
+            <Text style={[dm.statValue, { color: rankColor }]}>{isCustom ? 'CUSTOM' : RANK_SHORT[shadow.rank as ShadowRank]}</Text>
+          </View>
+          <View style={dm.statCell}>
+            <Text style={dm.statLabel}>TIPO</Text>
+            <Text style={[dm.statValue, { color: rankColor, fontSize: 10 }]}>{shadow.type}</Text>
+          </View>
+          <View style={dm.statCell}>
+            <Text style={dm.statLabel}>PASSIVO</Text>
+            <Text style={[dm.statValue, { color: rankColor }]}>{formatPassiveValue(shadow.passiveEffect.type, scaledVal)}</Text>
+          </View>
         </View>
 
         <Text style={dm.lore}>{shadow.lore}</Text>
@@ -315,8 +330,16 @@ function ShadowDetailModal({
             isActive
               ? { borderColor: '#facc1566', backgroundColor: '#facc1510' }
               : (!canEquipMore && { opacity: 0.45 }),
+            {
+              shadowColor: isActive ? '#facc15' : rankColor,
+              shadowOpacity: 0.4,
+              shadowRadius: 8,
+              shadowOffset: { width: 0, height: 2 },
+              elevation: 5,
+            },
           ]}
-          onPress={isActive || canEquipMore ? onToggleActive : undefined}
+          onPress={onToggleActive}
+          disabled={!isActive && !canEquipMore}
           activeOpacity={0.8}
         >
           <Icon
@@ -730,10 +753,14 @@ const getDMStyles = (C: any) => StyleSheet.create({
   card:         { backgroundColor: C.panel, borderRadius: 16, padding: SPACING.xl, width: '100%', alignItems: 'center', borderWidth: 2 },
   activeBadge:  { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3, marginBottom: SPACING.sm },
   activeBadgeTxt: { fontFamily: FONT.orbitron, fontSize: 8, color: C.gold, letterSpacing: 2 },
-  iconWrap:     { width: 88, height: 88, borderRadius: 22, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.sm },
+  iconWrap:     { width: 100, height: 100, borderRadius: 28, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.sm },
   rankBadge:    { borderWidth: 1, borderRadius: 6, paddingHorizontal: 10, paddingVertical: 3, marginBottom: SPACING.sm },
   rankTxt:      { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3 },
-  name:         { fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '900', letterSpacing: 2, marginBottom: 4, textAlign: 'center' },
+  name:         { fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm, textAlign: 'center' },
+  statsGrid:    { flexDirection: 'row', flexWrap: 'wrap', gap: 8, width: '100%', marginBottom: SPACING.md },
+  statCell:     { flex: 1, minWidth: '45%', backgroundColor: '#2A2A35', borderRadius: 12, padding: SPACING.sm, alignItems: 'center' },
+  statLabel:    { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1, marginBottom: 4 },
+  statValue:    { fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '900' },
   levelRow:     { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },
   levelTxt:     { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   lore:         { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 20, fontStyle: 'italic', marginBottom: SPACING.md },

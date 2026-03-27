@@ -129,4 +129,90 @@ export const SHOP_CATALOG: ShopItem[] = [
   },
 ]
 
-export const CATALOG_MAP = Object.fromEntries(SHOP_CATALOG.map(i => [i.id, i]))
+// ── Boss drop materials (not purchasable, but must be defined for inventory rendering) ──────────
+export const BOSS_DROP_ITEMS: ShopItem[] = [
+  {
+    id:          'shadow_essence',
+    name:        'Essência das Sombras',
+    description: 'Essência concentrada de sombras capturadas. Reseta a extração de sombras do dia.',
+    lore:        '"A escuridão tem um preço. E às vezes, ela paga-te de volta."',
+    cost:        0,
+    icon:        'ghost-outline',
+    color:       '#6366f1',
+    effect:      'material',
+  },
+  {
+    id:          'blood_fallen',
+    name:        'Sangue dos Caídos',
+    description: 'Recolhido dos caçadores que tombaram. Aumenta Gold ganho em +25% por 3 horas.',
+    lore:        '"O sangue dos fracos fertiliza o caminho dos fortes."',
+    cost:        0,
+    icon:        'water',
+    color:       '#dc2626',
+    effect:      'material',
+  },
+  {
+    id:          'kasaka_venom',
+    name:        'Veneno de Kasaka',
+    description: 'Extraído da serpente Kasaka. Aumenta XP ganho em +15% por 2 horas.',
+    lore:        '"A peçonha da serpente não mata — transforma."',
+    cost:        0,
+    icon:        'snake',
+    color:       '#16a34a',
+    effect:      'material',
+  },
+  {
+    id:          'igris_fragment',
+    name:        'Fragmento de Igris',
+    description: 'Um fragmento da armadura do Cavaleiro das Sombras. XP +20% por 1 hora.',
+    lore:        '"Igris serviu em silêncio. O seu fragmento serve ainda."',
+    cost:        0,
+    icon:        'shield-sword',
+    color:       '#7c3aed',
+    effect:      'material',
+  },
+  {
+    id:          'cerberus_fang',
+    name:        'Presa de Cerberus',
+    description: 'Dente do guardião do abismo. Aumenta Gold ganho em +20% por 2 horas.',
+    lore:        '"Três cabeças, um destino: servir o Monarca."',
+    cost:        0,
+    icon:        'tooth-outline',
+    color:       '#b45309',
+    effect:      'material',
+  },
+  {
+    id:          'iron_will_crystal',
+    name:        'Cristal Vontade de Ferro',
+    description: 'Cristalização de determinação pura. XP +50% pelos próximos 30 minutos.',
+    lore:        '"A vontade do guerreiro, tornada pedra."',
+    cost:        0,
+    icon:        'diamond-stone',
+    color:       '#0ea5e9',
+    effect:      'material',
+  },
+  {
+    id:          'lich_eye',
+    name:        'Olho do Lich',
+    description: 'O olho que vê além da morte. XP +100% durante 1 hora.',
+    lore:        '"Aquele que olha para a morte de frente torna-se mais forte."',
+    cost:        0,
+    icon:        'eye-outline',
+    color:       '#a21caf',
+    effect:      'material',
+  },
+  {
+    id:          'dragon_scale',
+    name:        'Escama de Dragão',
+    description: 'Armadura natural do rei dos monstros. XP +30% por 4 horas.',
+    lore:        '"Nem o fogo derrete o que foi forjado no fogo."',
+    cost:        0,
+    icon:        'star-david',
+    color:       '#ca8a04',
+    effect:      'material',
+  },
+]
+
+export const CATALOG_MAP = Object.fromEntries(
+  [...SHOP_CATALOG, ...BOSS_DROP_ITEMS].map(i => [i.id, i])
+)

@@ -219,6 +219,20 @@ export const BOX_KEYS: DungeonKey[] = [
     environment: 'Ruínas de templos antigos, cinzas vulcânicas, deuses derrotados espalhados, raiva materializada no ar.',
     difficulty: '???'
   },
+  {
+    id: 'key_orc',
+    bossId: 'kargalgan_shaman',
+    name: 'Fragmento de Chama Orc',
+    description: 'Uma chave forjada em fogo orc. Dá acesso ao território dos Orcs de Fogo.',
+    isBoxExclusive: true,
+    color: '#f97316',
+    missionType: 'training' as const,
+    missionTarget: 80,
+    missionDetail: '80 agachamentos explosivos para resistir à força bruta dos Orcs de Fogo.',
+    lore: 'Os Orcs de Fogo habitam territórios vulcânicos, forjando armas em lava. A sua chama nunca se apaga.',
+    environment: 'Planície de lava com crateras abertas, Orcs a forjar metal fundido, calor insuportável.',
+    difficulty: 2 as const,
+  },
   // ── NEW BOX EXCLUSIVE KEYS (BATCH 2) ──────────────────────────────────────
   {
     id: 'key_basilisk',

@@ -44,32 +44,32 @@ export const APP_THEMES: ThemeDef[] = [
     description: 'O tema base concedido a todos os Caçadores registados.',
     unlockRank: 'E',
     colors: {
-      bg: '#050810',
-      panel: '#0a0f1e',
-      border: '#1e3a5f',
+      bg: '#12121A',
+      panel: '#1E1E28',
+      border: '#2A2A3A',
       neonBlue: '#00d4ff',
-      neonRed: '#ef4444',
+      neonRed: '#E63946',
       gold: '#f59e0b',
-      purple: '#a855f7',
+      purple: '#7B2CBF',
       green: '#22c55e',
-      muted: '#94a3b8',
-      dimmed: '#64748b',
+      muted: '#8E8E9F',
+      dimmed: '#5A5A6E',
       // Semantic tokens
       surface: {
-        base: '#0a0f1e',
-        elevated: '#0f172a',
+        base: '#1E1E28',
+        elevated: '#252535',
         overlay: '#00000099'
       },
       state: {
         warningBg: '#f59e0b20',
         successBg: '#22c55e20',
-        errorBg: '#ef444420'
+        errorBg: '#E6394620'
       },
       text: {
-        primary: '#f1f5f9',
-        secondary: '#cbd5e1',
-        muted: '#94a3b8',
-        inverse: '#050810'
+        primary: '#E0E0E6',
+        secondary: '#8E8E9F',
+        muted: '#8E8E9F',
+        inverse: '#12121A'
       }
     }
   },
@@ -254,20 +254,20 @@ export const APP_THEMES: ThemeDef[] = [
     description: 'A pura manifestação de energia que rivaliza com os governantes.',
     unlockRank: 'National',
     colors: {
-      bg: '#000000',
-      panel: '#0a0a0a',
+      bg: '#0D0D12',
+      panel: '#181820',
       border: '#d4d4d4',
-      neonBlue: '#ffffff', // Primary becomes White/Silver
+      neonBlue: '#e8e8f0', // Primary becomes Silver-White (softer than pure white)
       neonRed: '#ef4444',
       gold: '#fbbf24',
       purple: '#a855f7',
       green: '#22c55e',
-      muted: '#94a3b8',
-      dimmed: '#64748b',
+      muted: '#8E8E9F',
+      dimmed: '#5A5A6E',
       // Semantic tokens
       surface: {
-        base: '#0a0a0a',
-        elevated: '#1a1a1a',
+        base: '#181820',
+        elevated: '#22222E',
         overlay: '#00000099'
       },
       state: {
@@ -276,10 +276,10 @@ export const APP_THEMES: ThemeDef[] = [
         errorBg: '#ef444420'
       },
       text: {
-        primary: '#ffffff',
-        secondary: '#e5e5e5',
-        muted: '#94a3b8',
-        inverse: '#000000'
+        primary: '#E0E0E6',
+        secondary: '#8E8E9F',
+        muted: '#8E8E9F',
+        inverse: '#0D0D12'
       }
     }
   },

@@ -28,17 +28,17 @@ export default function LevelUpToast({ reward, onDismiss }: Props) {
       // Play level up sound
       playSound('levelUp')
       
-      // Animate in
-      Animated.spring(slideAnim, {
-        toValue: 50, // slide down to visible
+      // Animate in quickly
+      Animated.timing(slideAnim, {
+        toValue: 50,
+        duration: 250,
         useNativeDriver: true,
-        bounciness: 12,
       }).start()
 
-      // Auto dismiss after 4 seconds
+      // Auto dismiss after 6 seconds
       const timer = setTimeout(() => {
         closeToast()
-      }, 4000)
+      }, 6000)
 
       return () => clearTimeout(timer)
     } else {

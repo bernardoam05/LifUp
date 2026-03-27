@@ -12,6 +12,7 @@ import { SHADOW_MAP } from './src/data/shadows'
 import RankModal from './src/components/RankModal'
 import ExtractionModal from './src/components/ExtractionModal'
 import LevelUpModal from './src/components/LevelUpModal'
+import BossVictoryModal from './src/components/BossVictoryModal'
 
 
 import LevelUpToast from "./src/components/LevelUpToast"
@@ -71,7 +72,7 @@ export default function App() {
   const dismissPenalty = useGameStore(s => s.dismissPenaltyModal)
   const setPenaltyTriggered = useGameStore(s => s.setPenaltyTriggered)
   const inventory = useGameStore(s => s.player.inventory)
-  const invTotal = inventory.reduce((sum, e) => sum + e.quantity, 0)
+  const invTotal = inventory.filter(e => e.quantity > 0).reduce((sum, e) => sum + e.quantity, 0)
   const rewardsQueue = useGameStore(s => s.rewardsQueue)
   const popReward = useGameStore(s => s.popReward)
   const tutorialPhase = useGameStore(s => s.system.tutorialPhase)
@@ -214,8 +215,17 @@ export default function App() {
 
         {/* Sequential Reward System */}
         {!penaltyTriggered && rewardsQueue.length > 0 && (
-          <View style={{ zIndex: 10000 }}>
+          <View style={{ zIndex: 10000 }} pointerEvents="box-none">
             <Fragment key={`${rewardsQueue[0].type}-${rewardsQueue[0].id}`}>
+              {rewardsQueue[0].type === 'boss_defeated' && rewardsQueue[0].data && (
+                <BossVictoryModal
+                  visible={true}
+                  info={rewardsQueue[0].data}
+                  onClose={popReward}
+                  onRequestClose={popReward}
+                  C={C}
+                />
+              )}
               {rewardsQueue[0].type === 'achievement' && (
                 <AchievementModal
                   achievementId={rewardsQueue[0].id}

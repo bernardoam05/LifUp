@@ -87,6 +87,7 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
                     <TouchableOpacity
                       disabled={!canAfford}
                       onPress={() => onBuy(sh)}
+                      activeOpacity={canAfford ? 0.6 : 1}
                       style={[s.buyBtn, { borderColor: color }, !canAfford && { opacity: 0.3 }]}
                     >
                       <Text style={[s.buyBtnText, { color }]}>

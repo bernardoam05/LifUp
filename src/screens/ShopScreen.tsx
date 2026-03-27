@@ -25,12 +25,14 @@ function ItemCard({
   gold,
   stockRemaining,
   onBuy,
+  onBuyBulk,
   C,
 }: {
   item: ShopItem
   gold: number
   stockRemaining: number | undefined   // undefined = unlimited
   onBuy: () => void
+  onBuyBulk?: () => void
   C: any
 }) {
 
@@ -78,6 +80,14 @@ function ItemCard({
             {soldOut ? 'ESGOTADO' : canAfford ? 'COMPRAR' : 'SEM GOLD'}
           </Text>
         </TouchableOpacity>
+        {onBuyBulk && !soldOut && gold >= item.cost * 10 && (
+          <TouchableOpacity
+            style={[ic.buyBtn, ic.buyBtnBulk, { borderColor: item.color + '88' }]}
+            onPress={onBuyBulk}
+          >
+            <Text style={[ic.buyTxt, { color: item.color, fontSize: 9 }]}>×10</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   )
@@ -113,16 +123,22 @@ export default function ShopScreen() {
   const shopStocks = useGameStore(s => s.system.shopStocks)
   const purchaseItem = useGameStore(s => s.purchaseItem)
   const purchaseShadow = useGameStore(s => s.purchaseShadow)
+  const unlockedThemes = player.unlockedThemes ?? []
 
-  const [pending, setPending] = useState<ShopItem | null>(null)
+  const [pending, setPending] = useState<(ShopItem & { amount?: number }) | null>(null)
   const [pendingShadow, setPendingShadow] = useState<any | null>(null)
   const [showShadowModal, setShowShadowModal] = useState(false)
   const [lastBought, setLastBought] = useState<string | null>(null)
 
   function confirmBuy() {
     if (!pending) return
-    const ok = purchaseItem(pending.id, pending.cost)
-    if (ok) setLastBought(pending.id)
+    const amount = pending.amount ?? 1
+    let allOk = true
+    for (let i = 0; i < amount; i++) {
+      const ok = purchaseItem(pending.id, pending.cost)
+      if (!ok) { allOk = false; break }
+    }
+    if (allOk) setLastBought(pending.id)
     setPending(null)
   }
 
@@ -163,17 +179,23 @@ export default function ShopScreen() {
         )}
 
         {/* Items */}
-        {SHOP_CATALOG.map(item => (
-          <ItemCard
-            key={item.id}
-            item={item}
-            gold={player.gold}
-            stockRemaining={item.weeklyStock !== undefined ? (shopStocks[item.id] ?? 0) : undefined}
-            onBuy={() => setPending(item)}
-            C={C}
-          />
-
-        ))}
+        {SHOP_CATALOG.map(item => {
+          const isThemeOwned = item.effect === 'cosmetic' && unlockedThemes.includes(item.id)
+          const stockRemaining = isThemeOwned
+            ? 0
+            : item.weeklyStock !== undefined ? (shopStocks[item.id] ?? 0) : undefined
+          return (
+            <ItemCard
+              key={item.id}
+              item={item}
+              gold={player.gold}
+              stockRemaining={stockRemaining}
+              onBuy={() => setPending(item)}
+              onBuyBulk={item.effect !== 'cosmetic' ? () => setPending({ ...item, amount: 10 }) : undefined}
+              C={C}
+            />
+          )
+        })}
 
         {/* ── Shadow Section ── */}
         <View style={s.sectionHeader}>
@@ -201,7 +223,7 @@ export default function ShopScreen() {
         title="CONFIRMAR COMPRA"
         message={
           pending
-            ? `Comprar "${pending.name}" por ${pending.cost} Gold?\n\n${pending.description}`
+            ? `Comprar ${pending.amount && pending.amount > 1 ? `${pending.amount}x ` : ''}"${pending.name}" por ${(pending.cost * (pending.amount ?? 1))} Gold?\n\n${pending.description}`
             : ''
         }
         confirmLabel="COMPRAR"
@@ -291,6 +313,10 @@ const getICStyles = (C: any) => StyleSheet.create({
   cost: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900' },
   buyBtn: { borderWidth: 1, borderRadius: 8, paddingHorizontal: SPACING.sm, paddingVertical: 6 },
   buyBtnDisabled: { opacity: 0.4 },
+  buyBtnBulk: {
+    marginTop: 4,
+    paddingVertical: 5,
+  },
   buyTxt: { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 })
 

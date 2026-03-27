@@ -76,6 +76,7 @@ const INITIAL_SYSTEM: Omit<SystemState, 'weeklyBossIds' | 'normalBossIds' | 'nor
   consecutiveFails: 0,
   penaltyMissionsOwed: 0,
   activeDungeonBreak: null,
+  receivedKeyIds: [],
 }
 
 const INITIAL_RESET_SYSTEM = {
@@ -125,7 +126,7 @@ const useGameStore = create<GameState & GameActions>()(
         levelUpToast: null,
         jobChangeReward: null,
         activeMissionTimers: {},
-        rewardsQueue: [] as { type: 'achievement' | 'shadow' | 'level_up' | 'job_change'; id: string; isLevelUp?: boolean; newLevel?: number; data?: any }[],
+        rewardsQueue: [] as { type: 'achievement' | 'shadow' | 'level_up' | 'job_change' | 'boss_defeated'; id: string; isLevelUp?: boolean; newLevel?: number; data?: any }[],
         activeBuffs: [],
         newAchievementIds: [],
         currentLootReward: null,
@@ -192,6 +193,13 @@ const useGameStore = create<GameState & GameActions>()(
         bootSystem() {
           const today = new Date().toDateString()
           const { lastResetDate, quests, player, system } = get()
+
+          // Purge zero-quantity ghost items from inventory (may appear after AsyncStorage restore)
+          if (player.inventory.some(e => e.quantity <= 0)) {
+            set((s: GameState & GameActions) => ({
+              player: { ...s.player, inventory: s.player.inventory.filter(e => e.quantity > 0) }
+            }))
+          }
 
           if (system.hasPenalty && system.penaltyBlockEnd > 0 && Date.now() >= system.penaltyBlockEnd) {
             set((s: GameState & GameActions) => ({ system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }))
@@ -907,7 +915,8 @@ const useGameStore = create<GameState & GameActions>()(
               reward = { type: 'xp', title: 'ESSÊNCIA ABSORVIDA', gold: 0, xp: x, items: [] } 
             }
             else {
-              const available = BOX_KEYS.filter(k => !(s.player.dungeonKeys ?? []).includes(k.id))
+              const receivedKeyIds = s.system.receivedKeyIds ?? []
+              const available = BOX_KEYS.filter(k => !receivedKeyIds.includes(k.id) && !(s.player.dungeonKeys ?? []).includes(k.id))
               if (available.length > 0) {
                 const key = available[Math.floor(Math.random()*available.length)]
                 k = key.id
@@ -926,6 +935,7 @@ const useGameStore = create<GameState & GameActions>()(
             
             return {
               player: { ...s.player, gold: s.player.gold + g, xp: res.xp, level: res.level, inventory: s.player.inventory.map(e => e.itemId === 'loot_box' ? { ...e, quantity: e.quantity - 1 } : e).filter(e => e.quantity > 0), dungeonKeys: k ? Array.from(new Set([...(s.player.dungeonKeys ?? []), k])) : getNewLevelKeys(s.player.dungeonKeys ?? [], res.level), maxLevelReached: Math.max(s.player.maxLevelReached, res.level) },
+              system: { ...s.system, receivedKeyIds: k ? Array.from(new Set([...(s.system.receivedKeyIds ?? []), k])) : s.system.receivedKeyIds },
               currentLootReward: reward,
               ...(res.leveledUp && res.level > s.player.maxLevelReached ? { levelUpReward: { level: res.level, items: [] } } : {}),
               ...(jobChange ? { jobChangeReward: jobChange } : {}),
@@ -936,10 +946,15 @@ const useGameStore = create<GameState & GameActions>()(
 
         enterDungeon(keyId) {
           let success = false
+          const COOLDOWN_MS = 24 * 60 * 60_000 // 24 hours
           set((s: GameState) => {
             if (!s.player.dungeonKeys?.includes(keyId)) return {}
+            const lastUsed = s.system.keyLastUsedAt?.[keyId] ?? 0
+            if (Date.now() - lastUsed < COOLDOWN_MS) return {} // still on cooldown
             success = true
-            return { player: { ...s.player, dungeonKeys: s.player.dungeonKeys.filter(id => id !== keyId) } }
+            return {
+              system: { ...s.system, keyLastUsedAt: { ...(s.system.keyLastUsedAt ?? {}), [keyId]: Date.now() } },
+            }
           })
           return success
         },
@@ -1055,12 +1070,13 @@ const useGameStore = create<GameState & GameActions>()(
           if (Math.random() < (0.2 * lootMult)) dropItems.push('blood_fallen')
 
           if (sid.includes('kasaka') && Math.random() < (0.4 * lootMult)) dropItems.push('kasaka_venom')
-          else if (sid.includes('igris') && Math.random() < (0.4 * lootMult)) dropItems.push('igris_fragment')
-          else if (sid.includes('cerberus') && Math.random() < (0.4 * lootMult)) dropItems.push('cerberus_fang')
-          else if (sid.includes('lich') || sid.includes('baran')) {
-            if (Math.random() < 0.3) dropItems.push(Math.random() < 0.5 ? 'iron_will_crystal' : 'lich_eye')
-          } else if (sid.includes('antares') || sid.includes('kamish')) {
-            if (Math.random() < 0.2) dropItems.push('dragon_scale')
+          if (sid.includes('igris') && Math.random() < (0.4 * lootMult)) dropItems.push('igris_fragment')
+          if (sid.includes('cerberus') && Math.random() < (0.4 * lootMult)) dropItems.push('cerberus_fang')
+          if ((sid.includes('lich') || sid.includes('baran')) && Math.random() < 0.3) {
+            dropItems.push(Math.random() < 0.5 ? 'iron_will_crystal' : 'lich_eye')
+          }
+          if ((sid.includes('antares') || sid.includes('kamish')) && Math.random() < 0.2) {
+            dropItems.push('dragon_scale')
           }
 
           if (dropItems.length > 0) {
@@ -1075,14 +1091,18 @@ const useGameStore = create<GameState & GameActions>()(
             })
           }
 
-          // Insert shadow extraction at BEGINNING of queue, like daily quests do
-          // This ensures shadow extraction (Arise) appears BEFORE achievements
-          if (shadowReward) {
-            const currQueue = get().rewardsQueue
-            set((s: GameState & GameActions) => ({
-              rewardsQueue: [shadowReward as any, ...currQueue]
-            }))
+          // Push boss_defeated FIRST so victory screen appears before shadow extraction
+          const currQueue = get().rewardsQueue
+          const bossDefeatedItem = {
+            type: 'boss_defeated' as const,
+            id: shadowId || 'boss',
+            data: { xp: xpReward, gold: goldReward, shadowName: shadowName ?? '', leveledUpShadow }
           }
+          set((s: GameState & GameActions) => ({
+            rewardsQueue: shadowReward
+              ? [bossDefeatedItem, shadowReward as any, ...currQueue]
+              : [bossDefeatedItem, ...currQueue]
+          }))
 
           fireEvent('boss_defeated', { missionId: shadowId }, ref); if (shadowName) fireEvent('shadow_collected', {}, ref); checkAndUnlockAchievements(ref)
           return { xp: xpReward, gold: goldReward, shadowName, leveledUpShadow, isNew }
@@ -1117,6 +1137,7 @@ const useGameStore = create<GameState & GameActions>()(
         markEventBossDefeated(key) { set((s: GameState & GameActions) => ({ system: { ...s.system, eventBossKey: key, eventBossDefeated: true } })) },
         setPendingKeyMission(keyId) { set((s: GameState) => ({ system: { ...s.system, pendingKeyId: keyId } })) },
         clearPendingKeyMission() { set((s: GameState) => ({ system: { ...s.system, pendingKeyId: null } })) },
+        clearActiveDungeonBreak() { set((s: GameState) => ({ system: { ...s.system, activeDungeonBreak: null, portalCooldownEnd: Date.now() + 60 * 60_000 } })) },
         releaseShadow(id) { const { player, customShadows } = get(); const entry = player.shadows.find(e => e.id === id); if (!entry) return { gold: 0 }; const shadow = ({ ...SHADOW_MAP, ...Object.fromEntries(customShadows.map(sh => [sh.id, sh])) })[id]; const goldGained = shadow ? getShadowReleaseGold(shadow, entry.level) : 0; set((s: GameState & GameActions) => ({ player: { ...s.player, gold: s.player.gold + goldGained, shadows: s.player.shadows.filter(e => e.id !== id), activeShadowIds: s.player.activeShadowIds.filter(a => a !== id) }, customShadows: s.customShadows.filter(sh => sh.id !== id) })); return { gold: goldGained } },
 
         regenerateSingleDailyQuest(questId) {

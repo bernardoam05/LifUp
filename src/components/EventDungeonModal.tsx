@@ -1,12 +1,10 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { DungeonMission, EventWindow } from '../data/bosses';
 import { SHADOW_MAP } from '../data/shadows';
-import BottomSheetModal from './BottomSheetModal';
+import MissionModalBase from './MissionModalBase';
 import { SPACING, FONT } from '../theme';
-import { getDMStyles } from './WeeklyDungeonModal';
 
 interface EventDungeonModalProps {
   visible: boolean;
@@ -32,125 +30,121 @@ export default function EventDungeonModal({
   C
 }: EventDungeonModalProps) {
   if (!eventProgress) return null;
-  const insets = useSafeAreaInsets();
-  const dm = getDMStyles(C);
   const ed = getEDStyles(C);
 
   return (
-    <BottomSheetModal visible={visible} onClose={onRequestClose ?? onClose} contentStyle={{ backgroundColor: 'transparent' }}>
-      <View style={[ed.card, { paddingBottom: Math.max(40, insets.bottom + SPACING.sm) }]}>
-        <Icon name="calendar-star" size={40} color={C.gold} style={{ marginBottom: SPACING.sm }} />
-        <Text style={[ed.warning, { color: C.gold }]}>⚠ EVENTO LIMITADO ⚠</Text>
-        <Text style={[ed.title, { color: C.gold }]}>[ MASMORRA ESPECIAL DE EVENTO ]</Text>
-        
-        {eventWindow && (
-          <View style={[ed.eventWindowTag, { borderColor: C.gold + '66' }]}>
-            <Text style={ed.eventWindowTxt}>
-              Disponível {eventWindow.start} a {eventWindow.end}
-            </Text>
-          </View>
-        )}
-
-        <View style={ed.eventHeader}>
-          <Text style={ed.eventHeaderTxt}>PROVAS DO EVENTO</Text>
+    <MissionModalBase
+      visible={visible}
+      onClose={onClose}
+      onRequestClose={onRequestClose}
+      iconName="calendar-star"
+      iconColor={C.gold}
+      warningText="⚠ EVENTO LIMITADO ⚠"
+      title="[ MASMORRA ESPECIAL DE EVENTO ]"
+      titleColor={C.gold}
+      borderColor={C.gold + '88'}
+      C={C}
+    >
+      {eventWindow && (
+        <View style={[ed.eventWindowTag, { borderColor: C.gold + '66' }]}>
+          <Text style={ed.eventWindowTxt}>
+            Disponível {eventWindow.start} a {eventWindow.end}
+          </Text>
         </View>
-        <Text style={ed.eventProgressTxt}>
-          Progresso: {eventProgress.completedIds.length}/{eventProgress.required} provas completas
-        </Text>
+      )}
 
-        <ScrollView style={{ width: '100%', maxHeight: 380 }} contentContainerStyle={{ alignItems: 'center' }} showsVerticalScrollIndicator={false}>
-          {eventTrials.map(m => {
-            const completed = eventProgress.completedIds.includes(m.id);
-            return (
-              <TouchableOpacity
-                key={m.id}
-                style={[ed.missionBtn, { borderColor: m.color + '88', opacity: completed ? 0.3 : 1 }]}
-                onPress={() => { if (!completed) { onSelectMission(m); } }}
-                activeOpacity={0.7}
-              >
-                <View style={[ed.missionIcon, { backgroundColor: m.color + '22', borderColor: m.color + '66', borderWidth: 1 }]}>
-                  <Icon name={m.icon} size={20} color={m.color} />
-                </View>
-                <View style={ed.missionInfo}>
-                  <Text style={[ed.missionLabel, { color: m.color }]}>
-                    {completed ? '[ PROVA COMPLETA ]' : m.label}
-                  </Text>
-                  <Text style={ed.missionDetail}>{m.detail}</Text>
-                </View>
-                <Icon name={completed ? "check-circle" : "chevron-right"} size={18} color={completed ? C.green : m.color} />
-              </TouchableOpacity>
-            );
-          })}
+      <View style={ed.eventHeader}>
+        <Text style={ed.eventHeaderTxt}>PROVAS DO EVENTO</Text>
+      </View>
+      <Text style={ed.eventProgressTxt}>
+        Progresso: {eventProgress.completedIds.length}/{eventProgress.required} provas completas
+      </Text>
 
-          <View style={[ed.eventHeader, { marginTop: SPACING.md }]}>
-            <Text style={ed.eventHeaderTxt}>BOSS FINAL DO EVENTO</Text>
-          </View>
-
-          {eventBossMission ? (
+      <View style={{ width: '100%' }}>
+        {eventTrials.map(m => {
+          const completed = eventProgress.completedIds.includes(m.id);
+          return (
             <TouchableOpacity
-              style={[ed.missionBtn, { borderColor: eventBossMission.color + '88', opacity: eventProgress.defeated ? 0.3 : 1 }]}
-              onPress={() => { if (!eventProgress.defeated) { onSelectMission(eventBossMission); } }}
+              key={m.id}
+              style={[ed.missionBtn, { borderColor: m.color + '88', opacity: completed ? 0.3 : 1 }]}
+              onPress={() => { if (!completed) { onSelectMission(m); } }}
               activeOpacity={0.7}
             >
-              <View style={[ed.missionIcon, { backgroundColor: eventBossMission.color + '22', borderColor: eventBossMission.color + '66', borderWidth: 1 }]}>
-                <Icon name={eventBossMission.icon} size={20} color={eventBossMission.color} />
+              <View style={[ed.missionIcon, { backgroundColor: m.color + '22', borderColor: m.color + '66', borderWidth: 1 }]}>
+                <Icon name={m.icon} size={20} color={m.color} />
               </View>
               <View style={ed.missionInfo}>
-                <Text style={[ed.missionLabel, { color: eventBossMission.color }]}>
-                  {eventProgress.defeated ? '[ EVENTO CONCLUÍDO ]' : eventBossMission.label}
+                <Text style={[ed.missionLabel, { color: m.color }]}>
+                  {completed ? '[ PROVA COMPLETA ]' : m.label}
                 </Text>
-                <Text style={ed.missionDetail}>{eventBossMission.detail}</Text>
-                {!eventProgress.defeated && (
-                  <View style={ed.shadowExtractTag}>
-                    <Icon name="ghost" size={9} color={C.purple} />
-                    <Text style={ed.shadowExtractTxt}>
-                      {' '}Sombra: {SHADOW_MAP[eventBossMission.shadowHint as keyof typeof SHADOW_MAP]?.name ?? eventBossMission.shadowHint ?? 'Desconhecida'}
-                    </Text>
-                  </View>
-                )}
+                <Text style={ed.missionDetail}>{m.detail}</Text>
               </View>
-              <Icon name={eventProgress.defeated ? "check-circle" : "chevron-right"} size={18} color={eventProgress.defeated ? C.green : eventBossMission.color} />
+              <Icon name={completed ? "check-circle" : "chevron-right"} size={18} color={completed ? C.green : m.color} />
             </TouchableOpacity>
-          ) : (
-            <Text style={ed.eventLockedTxt}>
-              Completa as provas acima para desbloquear o Boss do evento.
-            </Text>
-          )}
-        </ScrollView>
+          );
+        })}
 
-        <TouchableOpacity style={ed.cancelBtn} onPress={onClose}>
-          <Text style={ed.cancelTxt}>RECUAR</Text>
-        </TouchableOpacity>
+        <View style={[ed.eventHeader, { marginTop: SPACING.md }]}>
+          <Text style={ed.eventHeaderTxt}>BOSS FINAL DO EVENTO</Text>
+        </View>
+
+        {eventBossMission ? (
+          <TouchableOpacity
+            style={[ed.missionBtn, { borderColor: eventBossMission.color + '88', opacity: eventProgress.defeated ? 0.3 : 1 }]}
+            onPress={() => { if (!eventProgress.defeated) { onSelectMission(eventBossMission); } }}
+            activeOpacity={0.7}
+          >
+            <View style={[ed.missionIcon, { backgroundColor: eventBossMission.color + '22', borderColor: eventBossMission.color + '66', borderWidth: 1 }]}>
+              <Icon name={eventBossMission.icon} size={20} color={eventBossMission.color} />
+            </View>
+            <View style={ed.missionInfo}>
+              <Text style={[ed.missionLabel, { color: eventBossMission.color }]}>
+                {eventProgress.defeated ? '[ EVENTO CONCLUÍDO ]' : eventBossMission.label}
+              </Text>
+              <Text style={ed.missionDetail}>{eventBossMission.detail}</Text>
+              {!eventProgress.defeated && (
+                <View style={ed.shadowExtractTag}>
+                  <Icon name="ghost" size={9} color={C.purple} />
+                  <Text style={ed.shadowExtractTxt}>
+                    {' '}Sombra: {SHADOW_MAP[eventBossMission.shadowHint as keyof typeof SHADOW_MAP]?.name ?? eventBossMission.shadowHint ?? 'Desconhecida'}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <Icon name={eventProgress.defeated ? "check-circle" : "chevron-right"} size={18} color={eventProgress.defeated ? C.green : eventBossMission.color} />
+          </TouchableOpacity>
+        ) : (
+          <Text style={ed.eventLockedTxt}>
+            Completa as provas acima para desbloquear o Boss do evento.
+          </Text>
+        )}
       </View>
-    </BottomSheetModal>
+
+      <TouchableOpacity style={ed.cancelBtn} onPress={onClose}>
+        <Text style={ed.cancelTxt}>RECUAR</Text>
+      </TouchableOpacity>
+    </MissionModalBase>
   );
 }
 
 const getEDStyles = (C: any) => StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: C.bg + 'cc', justifyContent: 'flex-end' },
-  card: { backgroundColor: C.panel, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.lg, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.gold + '88' },
-  warning: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3, marginBottom: 4 },
-  iconBox: { width: 64, height: 64, borderRadius: 12, backgroundColor: C.gold + '15', alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.md, borderWidth: 1, borderColor: C.gold + '33' },
-  title: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm, textAlign: 'center' },
-  sub: { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 18, marginBottom: SPACING.lg },
-  
   missionBtn: { flexDirection: 'row', alignItems: 'center', width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
   missionIcon: { width: 40, height: 40, borderRadius: 4, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   missionInfo: { flex: 1 },
   missionLabel: { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 2 },
   missionDetail: { color: C.muted, fontSize: 11, lineHeight: 15 },
-  
+
   eventHeader: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', marginBottom: SPACING.sm, paddingHorizontal: 4 },
   eventHeaderTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   eventProgressTxt: { color: C.dimmed, fontSize: 11, marginBottom: SPACING.sm, alignSelf: 'flex-start' },
   eventLockedTxt: { color: C.dimmed, fontSize: 11, marginTop: SPACING.xs, marginBottom: SPACING.sm, textAlign: 'center' },
-  
-  eventWindowTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.gold + '08', borderWidth: 1, borderColor: C.gold + '66', borderRadius: 6, paddingHorizontal: SPACING.sm, paddingVertical: 6, marginBottom: SPACING.md, alignSelf: 'flex-start' },
+
+  eventWindowTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.gold + '08', borderWidth: 1, borderRadius: 6, paddingHorizontal: SPACING.sm, paddingVertical: 6, marginBottom: SPACING.md, alignSelf: 'flex-start' },
   eventWindowTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
-  
+
   shadowExtractTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '12', borderWidth: 1, borderColor: C.purple + '33', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2, marginTop: 4, alignSelf: 'flex-start' },
   shadowExtractTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8 },
-  
+
   cancelBtn: { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl },
-  cancelTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
+  cancelTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, textAlign: 'center' },
 });

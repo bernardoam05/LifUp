@@ -258,6 +258,8 @@ export type SystemState = {
   completedNormalBossIds: string[]
   pendingRaidExtractionId?: string
   pendingKeyId?: string | null  // key the player wants to use (set from Inventory, cleared by QuestScreen)
+  keyLastUsedAt?: Record<string, number>  // keyId → epoch ms of last dungeon entry (for 24h cooldown)
+  receivedKeyIds?: string[]  // box-exclusive key ids already received (prevents duplicate drops)
 }
 
 // ── Level Up Reward ────────────────────────────────────────────────────────────
@@ -289,7 +291,7 @@ export type GameState = {
   jobChangeReward: JobClass | null        // pending job change reward to show
   lastExtraction: { shadow: Shadow; isLevelUp: boolean; newLevel: number } | null
   activeMissionTimers: Record<string, { startTime: number; accumulatedMs: number; isPaused: boolean }>
-  rewardsQueue: { type: 'achievement' | 'shadow' | 'level_up' | 'job_change'; id: string; isLevelUp?: boolean; newLevel?: number; data?: Record<string, unknown> }[]
+  rewardsQueue: { type: 'achievement' | 'shadow' | 'level_up' | 'job_change' | 'boss_defeated'; id: string; isLevelUp?: boolean; newLevel?: number; data?: any }[]
   extraQuestRerolledIds: string[]    // extra quest IDs (extra_…) that have been rerolled today
   extraQuestUsedPoolIds: string[]    // pool def IDs used in extra quests today (to avoid picking same def again)
   activeBuffs: {             // consumable-activated buffs with expiry
@@ -381,6 +383,7 @@ export type GameActions = {
   clearPendingRaidExtraction: () => void
   setPendingKeyMission: (keyId: string) => void
   clearPendingKeyMission: () => void
+  clearActiveDungeonBreak: () => void
 }
 
 // ── StoreRef (used by achievement helpers) ─────────────────────────────────────
