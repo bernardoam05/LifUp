@@ -19,6 +19,21 @@ export function useDayWatcher() {
         checkDailyReset()
       }
       checkDynamicPortalSpawn()
+
+      // Activate the penalty lockout once its scheduled start time arrives.
+      // bootSystem sets focusModeActive=false for future-scheduled blocks so
+      // that native blocking doesn't trigger before the intended window.
+      const sys = useGameStore.getState().system
+      const now = Date.now()
+      if (
+        sys.hasPenalty &&
+        !sys.focusModeActive &&
+        (sys.penaltyBlockStart ?? 0) > 0 &&
+        (sys.penaltyBlockStart ?? 0) <= now &&
+        (sys.penaltyBlockEnd ?? 0) > now
+      ) {
+        useGameStore.getState().setFocusModeActive(true, sys.penaltyBlockEnd)
+      }
     }
 
     // 1. Periodic check (every 60 seconds)

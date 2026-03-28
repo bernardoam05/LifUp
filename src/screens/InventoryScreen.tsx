@@ -77,6 +77,8 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
   const hardcoreActive  = useGameStore(s => s.system.hardcoreFocusMode)
   const triggerEvent    = useGameStore(s => s.triggerEvent)
   const openLootBox     = useGameStore(s => s.openLootBox)
+  const applyBuff       = useGameStore(s => s.applyBuff)
+  const resetExtraction = useGameStore(s => s.resetExtraction)
 
   const [confirmUse, setConfirmUse] = useState(false)
   const [showPicker, setShowPicker] = useState(false)
@@ -99,9 +101,18 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
       case 'add_xp': {
         useItem(itemId)
         const { leveledUp } = addXP(item.effectValue ?? 50)
+        // health_potion also grants gold
+        if (item.effectGold && item.effectGold > 0) {
+          // grant gold by adding negative deduction (use store set directly via addXP side-effect workaround)
+          // We call deductGold with a negative amount isn't valid, so we reach into the store
+          useGameStore.setState((s: any) => ({
+            player: { ...s.player, gold: s.player.gold + (item.effectGold ?? 0) }
+          }))
+        }
+        const goldText = item.effectGold ? ` e +${item.effectGold} Gold` : ''
         setFeedback(leveledUp
-          ? `+${item.effectValue} XP — LEVEL UP!`
-          : `+${item.effectValue} XP absorvido!`
+          ? `+${item.effectValue} XP${goldText} — LEVEL UP!`
+          : `+${item.effectValue} XP${goldText} absorvido!`
         )
         break
       }
@@ -125,7 +136,6 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
         break
       }
       case 'open_loot_box': {
-        // openLootBox handles useItem internally
         const success = openLootBox()
         if (success) {
           setFeedback('Cofre aberto! Verifica a recompensa...')
@@ -147,9 +157,20 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
       case 'material': {
         useItem(itemId)
         if (itemId === 'shadow_essence') {
-          setFeedback('O Sistema cedeu! Extração resetada para hoje.')
+          resetExtraction()
+          setFeedback('O Sistema cedeu! Extração de sombras resetada para hoje.')
+        } else if (item.buffStat && item.buffMult && item.buffDuration) {
+          const pct = Math.round(item.buffMult * 100)
+          const stat = item.buffStat === 'xp' ? 'XP' : 'Gold'
+          const mins = item.buffDuration / 60_000
+          const timeLabel = mins >= 60 ? `${mins / 60}h` : `${mins}min`
+          applyBuff(
+            { id: itemId, label: item.name, multiplier: item.buffMult, stat: item.buffStat },
+            item.buffDuration
+          )
+          setFeedback(`Buff ativo: +${pct}% ${stat} por ${timeLabel}!`)
         } else {
-          setFeedback('Consumível ativado! Verifica os teus Status.')
+          setFeedback('Consumível ativado!')
         }
         break
       }

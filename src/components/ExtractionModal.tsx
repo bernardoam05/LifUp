@@ -104,7 +104,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
       <View style={st.centeredContent}>
         {/* Stage 1: ARISE Text overlay — only for new shadows (not level-up/achievement) */}
       {!isLevelUp && !isAchievement && (
-        <Animated.View style={[st.ariseLayer, { opacity: ariseAnim, transform: [{ scale: ariseScale }] }]}>
+        <Animated.View pointerEvents="none" style={[st.ariseLayer, { opacity: ariseAnim, transform: [{ scale: ariseScale }] }]}>
           <Text style={[st.ariseTxt, { color: rankColor }]}>ARISE</Text>
           <View style={[st.ariseSubLine, { backgroundColor: rankColor }]} />
           <Text style={st.ariseSubTxt}>PROTOCOLO DE EXTRAÇÃO ATIVADO</Text>

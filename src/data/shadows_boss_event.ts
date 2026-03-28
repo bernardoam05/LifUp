@@ -2,12 +2,12 @@ import { Shadow } from './shadows_types'
 
 export const SHADOWS_BOSS_EVENT: Shadow[] = [
   {
-        id: 'wolf_pup',
-        name: 'Lobo das Sombras',
+        id: 'easter_hare_shadow',
+        name: 'Coelho das Sombras',
         rank: 'Normal', type: 'Beast', dropRate: 0.10,
         passiveEffect: { type: 'xp_boost', value: 0.01, description: '+1% XP em todas as missões' },
-        lore: '"Caçava em matilha no dungeon do norte. Agora caça sozinho — mas ao lado do Monarca, nunca está realmente só."',
-        icon: 'dog', color: '#94a3b8',
+        lore: '"Saltava entre os portais com agilidade sobrenatural. O Monarca venceu-o na sua própria corrida — e reclamou-o como sombra."',
+        icon: 'rabbit', color: '#94a3b8',
         unlockMethod: { type: 'boss_drop', bossId: 'event_easter_hare', category: 'event' },
       },
   {

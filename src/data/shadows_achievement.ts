@@ -114,7 +114,7 @@ export const SHADOWS_ACHIEVEMENT: Shadow[] = [
     id: 'shadow_streak_guardian',
     name: 'Guardião da Constância',
     rank: 'Knight', type: 'Support', dropRate: 0,
-    passiveEffect: { type: 'streak_protect', value: 1, description: 'Protege a tua Streak adicionalmente' },
+    passiveEffect: { type: 'streak_protect', value: 1, description: 'Protege a Streak uma vez por semana' },
     lore: '"Ele vigia o teu sono e a tua vontade. 30 dias de foco ininterrupto evocaram esta sombra persistente."',
     icon: 'timer', color: '#3b82f6',
     unlockMethod: { type: 'achievement', id: 'streak_chain' },

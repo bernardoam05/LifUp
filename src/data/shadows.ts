@@ -50,11 +50,15 @@ export const SHADOW_GACHA_BY_RANK: Record<ShadowRank, Shadow[]> = {
 export const SHADOW_SHOP: Shadow[] =
   SHADOW_DATABASE.filter(s => s.unlockMethod?.type === 'shop')
 
-// Boss-exclusive shadow lookup
+// Boss-exclusive shadow lookup.
+// Prefers thematic exclusive shadows (dropRate === 0) over generic pool shadows
+// to ensure strict 1:1 boss→shadow thematic mapping.
 export function getBossDropShadow(bossId: string): Shadow | undefined {
   const drops = SHADOW_DATABASE.filter(s => s.unlockMethod?.type === 'boss_drop' && s.unlockMethod.bossId === bossId)
   if (drops.length === 0) return undefined
-  return drops[Math.floor(Math.random() * drops.length)]
+  const exclusive = drops.filter(s => s.dropRate === 0)
+  const pool = exclusive.length > 0 ? exclusive : drops
+  return pool[Math.floor(Math.random() * pool.length)]
 }
 
 /** Preview da primeira sombra de drop por bossId para UI/extracao. */

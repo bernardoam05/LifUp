@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, AppState, AppStateStatus,
-  Vibration, TextInput, BackHandler, Alert, Linking,
+  Vibration, TextInput, BackHandler, Alert,
 } from 'react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -214,8 +214,6 @@ export default function QuestScreen() {
   const pendingKeyId  = useGameStore(s => s.system.pendingKeyId)
   const clearPendingKeyMission = useGameStore(s => s.clearPendingKeyMission)
   const clearActiveDungeonBreak = useGameStore(s => s.clearActiveDungeonBreak)
-  const dungeonKeys   = useGameStore(s => s.player.dungeonKeys)
-
   // Trigger extraction for Raid bosses (which are defeated globally via store)
   useEffect(() => {
     if (pendingRaidId) {
@@ -612,7 +610,6 @@ export default function QuestScreen() {
             const isQuest = db.source === 'quest'
             const qDef = isQuest ? questDictionary.find(d => d.id === db.bossId) : undefined
             const rBoss = !isQuest ? RAID_BOSSES.find(b => b.id === db.bossId) : undefined
-            const displayName = qDef?.title ?? rBoss?.name ?? db.bossId
             const displayIcon = qDef
               ? (qDef.questType === 'focus' ? 'timer-sand' : qDef.questType === 'gps' ? 'run-fast' : 'arm-flex')
               : 'skull-scan'
@@ -624,13 +621,9 @@ export default function QuestScreen() {
               : rBoss
                 ? `Rank ${rBoss.rank} — Elimina ${rBoss.name} antes que o portal colapse.`
                 : 'Um portal dinâmico abriu-se. Entra antes que a janela feche.'
-            const typeLabel = qDef
-              ? (qDef.questType === 'focus' ? 'FOCO' : qDef.questType === 'gps' ? 'GPS' : 'TREINO')
-              : 'FOCO'
-
             return (
               <TouchableOpacity
-                style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: displayColor }]}
+                style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: C.neonRed }]}
                 onPress={() => {
                   if (!db) return
                   if (db.source === 'quest') {
@@ -666,17 +659,12 @@ export default function QuestScreen() {
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Icon name={displayIcon} size={22} color={displayColor} />
+                  <Icon name="alert-octagram" size={22} color={C.neonRed} />
                   <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                      <Text style={[s.dungeonBreakTxt, { color: displayColor }]} numberOfLines={1}>
-                        {displayName.toUpperCase()}
-                      </Text>
-                      <View style={{ backgroundColor: displayColor + '22', borderWidth: 1, borderColor: displayColor + '66', borderRadius: 3, paddingHorizontal: 5, paddingVertical: 1 }}>
-                        <Text style={{ color: displayColor, fontFamily: FONT.orbitron, fontSize: 7, fontWeight: '700' }}>{typeLabel}</Text>
-                      </View>
-                    </View>
-                    <Text style={s.dungeonBreakSub} numberOfLines={2}>{displayLore}</Text>
+                    <Text style={[s.dungeonBreakTxt, { color: C.neonRed }]} numberOfLines={1}>
+                      PORTAL DINÂMICO DETECTADO
+                    </Text>
+                    <Text style={s.dungeonBreakSub} numberOfLines={2}>Anomalia dimensional activa. Toca para investigar.</Text>
                   </View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 4 }}>
@@ -714,7 +702,7 @@ export default function QuestScreen() {
               <Icon name="alert-circle" size={12} color={C.neonRed} />
               <Text style={[s.penalTitle, { flex: 1 }]}>Penalizações ativas</Text>
             </View>
-            {penaltyQ.map(q => <QuestCard key={q.id} quest={q} C={C} />)}
+            {penaltyQ.map(q => <QuestCard key={q.id} quest={q} isPenalty C={C} />)}
           </View>
         )}
 
@@ -777,32 +765,6 @@ export default function QuestScreen() {
         </TouchableOpacity>
         {sectionsOpen.events && (
           <>
-            {/* Dungeon Keys */}
-            <TouchableOpacity
-              style={[s.systemCard, { marginTop: SPACING.sm, borderColor: dungeonKeys.length > 0 ? C.neonBlue + '66' : C.border, backgroundColor: dungeonKeys.length > 0 ? C.neonBlue + '08' : 'transparent', flexDirection: 'row', alignItems: 'center', padding: SPACING.md }]}
-              onPress={() => {
-                if (dungeonKeys.length > 0) {
-                  Linking.openURL('sololeveling://inventory')
-                }
-              }}
-              activeOpacity={dungeonKeys.length > 0 ? 0.7 : 1}
-            >
-              <Icon name="key-variant" size={18} color={dungeonKeys.length > 0 ? C.neonBlue : C.dimmed} />
-              <View style={{ flex: 1, marginLeft: SPACING.sm }}>
-                <Text style={[s.bossTitle, { color: dungeonKeys.length > 0 ? C.neonBlue : C.dimmed }]}>
-                  {dungeonKeys.length > 0
-                    ? `${dungeonKeys.length} Chave${dungeonKeys.length !== 1 ? 's' : ''} de Masmorra`
-                    : 'Nenhuma chave disponível'}
-                </Text>
-                <Text style={s.bossSub}>
-                  {dungeonKeys.length > 0
-                    ? 'Vai ao Inventário → Cofre de Chaves para usar.'
-                    : 'Sobe de nível ou abre Cofres para obter chaves.'}
-                </Text>
-              </View>
-              {dungeonKeys.length > 0 && <Icon name="chevron-right" size={18} color={C.neonBlue} />}
-            </TouchableOpacity>
-
             {/* Event Dungeon */}
             {activeEventDef && eventCountdownMs > 0 && (
               <TouchableOpacity

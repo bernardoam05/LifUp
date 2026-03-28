@@ -99,7 +99,7 @@ const getExtraStyles = (C: any) => StyleSheet.create({
 })
 
 
-export default function QuestCard({ quest, isExtra, C }: { quest: Quest; isExtra?: boolean; C: any }) {
+export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Quest; isExtra?: boolean; isPenalty?: boolean; C: any }) {
   const qc = getQCStyles(C)
   const ex = getExtraStyles(C)
   const cfgInfo = getQuestConfig(quest.type)
@@ -178,7 +178,7 @@ export default function QuestCard({ quest, isExtra, C }: { quest: Quest; isExtra
                 <Icon name="refresh" size={14} color={C.gold} />
               </TouchableOpacity>
             )}
-            {!isExtra && !quest.done && regenerateSingleDailyQuest && (
+            {!isExtra && !isPenalty && !quest.done && regenerateSingleDailyQuest && (
               <TouchableOpacity
                 style={{ padding: 2, marginRight: SPACING.sm }}
                 onPress={() => {
@@ -217,7 +217,7 @@ export default function QuestCard({ quest, isExtra, C }: { quest: Quest; isExtra
             <Icon name={quest.failed ? "close-circle" : "check-circle"} size={14} color={quest.failed ? C.neonRed : C.green} />
             <Text style={[qc.doneTag, quest.failed && { color: C.neonRed }]}>{quest.failed ? ' Falhada' : ' Concluída'}</Text>
             <View style={{ flex: 1 }} />
-            {!isExtra && (
+            {!isExtra && !isPenalty && (
               <TouchableOpacity style={qc.undoBtn} onPress={() => setConfirmUndo(true)}>
                 <Icon name="undo-variant" size={13} color={C.muted} />
                 <Text style={qc.undoTxt}> Desfazer</Text>

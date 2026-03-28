@@ -34,7 +34,7 @@ import {
 import { 
   fireEvent, checkAndUnlockAchievements, progressAchievements 
 } from './achievements'
-import { CATALOG_MAP } from '../data/shopItems'
+import { CATALOG_MAP, BOSS_LOOT_TABLE, GENERIC_BOSS_DROPS } from '../data/shopItems'
 
 // Data / Types needed locally
 import { SHADOW_MAP, rollShadow, getBossDropShadow } from '../data/shadows'
@@ -268,8 +268,8 @@ const useGameStore = create<GameState & GameActions>()(
           const consecutiveFails = system.consecutiveFails ?? 0
           const prevOwed = system.penaltyMissionsOwed ?? 0
 
-          const { 
-            penaltyReduction, lootBoost, focusMastery, penaltyImmunity, streakProtect 
+          const {
+            penaltyReduction, lootBoost, focusMastery, penaltyImmunity, streakProtect, dailyBonus
           } = computeActivePassives(player.activeShadowIds, player.shadows, get().customShadows, get().activeBuffs)
 
           if (hadPenalty) {
@@ -375,6 +375,7 @@ const useGameStore = create<GameState & GameActions>()(
               newXp += pendingRewards.reduce((sum, q) => sum + q.xp, 0)
               newGold += pendingRewards.reduce((sum, q) => sum + q.gold, 0)
             }
+            if (dailyBonus > 0) newXp += Math.floor(dailyBonus)
 
             const effectiveDone = quests.filter((q: Quest) => {
               if (q.done && !q.failed) return true
@@ -465,8 +466,16 @@ const useGameStore = create<GameState & GameActions>()(
               portalCooldownEnd: 0,
               penaltyBlockStart: newPenaltyBlockStart,
               penaltyBlockEnd: newPenaltyBlockEnd,
-              focusModeActive: hadPenalty && newPenaltyBlockEnd > 0 ? true : s.system.focusModeActive,
-              focusEndTime: hadPenalty && newPenaltyBlockEnd > 0 ? newPenaltyBlockEnd : s.system.focusEndTime,
+              // Only mark focus active if the penalty window has already opened.
+              // Scheduled blocks (normal/easy difficulty, future start) activate
+              // via the 60-second useDayWatcher tick so native blocking isn't
+              // triggered before the intended time.
+              focusModeActive: hadPenalty && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
+                ? true
+                : s.system.focusModeActive,
+              focusEndTime: hadPenalty && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
+                ? newPenaltyBlockEnd
+                : s.system.focusEndTime,
               hardcoreFocusMode: hadPenalty && newHardcorePunished ? true : s.system.hardcoreFocusMode,
               // Portais dinâmicos foram unificados no roll horário (sem lista fixa diária).
               normalBossRotationDate: new Date().toDateString(),
@@ -593,6 +602,7 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         clearExtraction() { set({ lastExtraction: null }) },
+        resetExtraction() { set((s: GameState) => ({ system: { ...s.system, extractionDoneToday: false } })) },
 
         completeQuest(id: string) {
           let leveledUp = false
@@ -605,14 +615,25 @@ const useGameStore = create<GameState & GameActions>()(
               if (!pq || pq.done) return {}
               const updatedPQ = s.system.penaltyQuests.map(q => q.id === id ? { ...q, done: true } : q)
               const allPenaltyDone = updatedPQ.every(q => q.done)
+              if (!allPenaltyDone) {
+                return { system: { ...s.system, penaltyQuests: updatedPQ } }
+              }
+              // All penalty quests done — clear every piece of penalty state so
+              // the Focus/Timer UI resets immediately and App.tsx's useEffect
+              // calls FocusBlocker.stopFocusMode() on the next render.
               return {
                 system: {
                   ...s.system,
                   penaltyQuests: updatedPQ,
-                  hasPenalty: allPenaltyDone ? false : s.system.hasPenalty,
-                  penaltyTriggered: allPenaltyDone ? false : s.system.penaltyTriggered,
-                  penaltyBlockEnd: allPenaltyDone ? 0 : s.system.penaltyBlockEnd,
-                }
+                  hasPenalty: false,
+                  penaltyTriggered: false,
+                  hardcorePunished: false,
+                  hardcoreFocusMode: false,
+                  focusModeActive: false,
+                  focusEndTime: undefined,
+                  penaltyBlockStart: 0,
+                  penaltyBlockEnd: 0,
+                },
               }
             }
             // #5 Fix: compute passives once
@@ -1061,23 +1082,18 @@ const useGameStore = create<GameState & GameActions>()(
             }
           })
 
-          // #3 Fix: Item Rewards with Loot Perception — each drop is independent
+          // Thematic loot table — specific drops per boss + generic pool
           const dropItems: string[] = []
           const lootMult = (1 + lootBoost)
           const sid = shadowId ?? ''
 
-          if (Math.random() < (0.5 * lootMult)) dropItems.push('shadow_essence')
-          if (Math.random() < (0.2 * lootMult)) dropItems.push('blood_fallen')
-
-          if (sid.includes('kasaka') && Math.random() < (0.4 * lootMult)) dropItems.push('kasaka_venom')
-          if (sid.includes('igris') && Math.random() < (0.4 * lootMult)) dropItems.push('igris_fragment')
-          if (sid.includes('cerberus') && Math.random() < (0.4 * lootMult)) dropItems.push('cerberus_fang')
-          if ((sid.includes('lich') || sid.includes('baran')) && Math.random() < 0.3) {
-            dropItems.push(Math.random() < 0.5 ? 'iron_will_crystal' : 'lich_eye')
-          }
-          if ((sid.includes('antares') || sid.includes('kamish')) && Math.random() < 0.2) {
-            dropItems.push('dragon_scale')
-          }
+          const specificEntries = BOSS_LOOT_TABLE[sid] ?? []
+          specificEntries.forEach(({ itemId, chance }) => {
+            if (Math.random() < chance * lootMult) dropItems.push(itemId)
+          })
+          GENERIC_BOSS_DROPS.forEach(({ itemId, chance }) => {
+            if (Math.random() < chance * lootMult) dropItems.push(itemId)
+          })
 
           if (dropItems.length > 0) {
             set((s: GameState) => {
@@ -1096,7 +1112,7 @@ const useGameStore = create<GameState & GameActions>()(
           const bossDefeatedItem = {
             type: 'boss_defeated' as const,
             id: shadowId || 'boss',
-            data: { xp: xpReward, gold: goldReward, shadowName: shadowName ?? '', leveledUpShadow }
+            data: { xp: xpReward, gold: goldReward, shadowName: shadowName ?? '', leveledUpShadow, droppedItems: dropItems }
           }
           set((s: GameState & GameActions) => ({
             rewardsQueue: shadowReward
@@ -1170,7 +1186,7 @@ const useGameStore = create<GameState & GameActions>()(
           const chosen = available[Math.floor(Math.random() * available.length)]
           const base = defToQuest(chosen, player.level, getQuestTier(player.level))
           const newQ = { ...base, id: `extra_${chosen.id}_${Date.now()}`, xp: Math.round(base.xp * 1.5), gold: Math.round(base.gold * 1.5) }
-          set((s: GameState) => ({ extraQuests: s.extraQuests.map(q => q.id === questId ? newQ : q), extraQuestRerolledIds: [...s.extraQuestRerolledIds, questId], extraQuestUsedPoolIds: [...s.extraQuestUsedPoolIds, chosen.id] }))
+          set((s: GameState) => ({ extraQuests: s.extraQuests.map(q => q.id === questId ? newQ : q), extraQuestRerolledIds: [...s.extraQuestRerolledIds, questId, newQ.id], extraQuestUsedPoolIds: [...s.extraQuestUsedPoolIds, chosen.id] }))
           return { success: true }
         },
 

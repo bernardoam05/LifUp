@@ -236,6 +236,7 @@ export function computeActivePassives(
   focusMastery: number;
   shopDiscount: number;
   bossXpBoost: number;
+  dailyBonus: number;
   streakProtect: boolean;
   penaltyImmunity: boolean;
 } {
@@ -251,6 +252,7 @@ export function computeActivePassives(
   let focusMastery = 0
   let shopDiscount = 0
   let bossXpBoost = 0
+  let dailyBonus = 0
   let allStatsMult = 0
   let streakProtect = false
   let penaltyImmunity = false
@@ -260,7 +262,7 @@ export function computeActivePassives(
     const shadow = lookup[id]
     if (!entry || !shadow) continue
     const val = shadow.passiveEffect.value * (1 + (entry.level - 1) * 0.2)
-    
+
     switch (shadow.passiveEffect.type) {
       case 'xp_boost': xpBoost += val; break
       case 'gold_boost': goldBoost += val; break
@@ -270,6 +272,7 @@ export function computeActivePassives(
       case 'focus_mastery': focusMastery += val; break
       case 'shop_discount': shopDiscount += val; break
       case 'boss_bonus_xp': bossXpBoost += val; break
+      case 'daily_bonus': dailyBonus += val; break
       case 'all_stats_boost': allStatsMult += val; break
       case 'streak_protect': streakProtect = true; break
       case 'penalty_immunity': penaltyImmunity = true; break
@@ -287,6 +290,7 @@ export function computeActivePassives(
     focusMastery *= m
     shopDiscount *= m
     bossXpBoost *= m
+    dailyBonus *= m
   }
 
   // Active Buffs
@@ -295,10 +299,10 @@ export function computeActivePassives(
     if (buff.stat === 'gold') goldBoost += (buff.multiplier - 1)
   }
 
-  return { 
-    xpBoost, goldBoost, penaltyReduction, ariseBoost, 
+  return {
+    xpBoost, goldBoost, penaltyReduction, ariseBoost,
     lootBoost, focusMastery, shopDiscount, bossXpBoost,
-    streakProtect, penaltyImmunity
+    dailyBonus, streakProtect, penaltyImmunity
   }
 }
 

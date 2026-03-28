@@ -1,19 +1,24 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Vibration } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Vibration, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SoloLevelingModal from './SoloLevelingModal';
 import { FONT, SPACING } from '../theme';
 import { playSound } from '../utils/audioService';
+import { CATALOG_MAP } from '../data/shopItems';
 
 export const getBVStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.bg + 'cc', justifyContent: 'flex-end' },
-  card: { backgroundColor: C.panel, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.xl, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.gold + '66' },
+  card: { backgroundColor: C.panel, borderRadius: 24, padding: SPACING.xl, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderColor: C.gold + '66' },
   header: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 22, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm },
   sub: { color: C.muted, fontSize: 12, textAlign: 'center', marginBottom: SPACING.lg },
   rewardsBox: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, width: '100%', gap: SPACING.sm, marginBottom: SPACING.md },
   rewardRow: { flexDirection: 'row', alignItems: 'center' },
   rewardTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '700' },
   shadowHint: { color: C.dimmed, fontSize: 10, fontStyle: 'italic', textAlign: 'center', marginBottom: SPACING.md },
+  lootHeader: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 3, textAlign: 'center', marginBottom: SPACING.sm },
+  lootBox: { backgroundColor: C.bg, borderRadius: 6, borderWidth: 1, borderColor: C.border, padding: SPACING.sm, width: '100%', gap: 6, marginBottom: SPACING.md },
+  lootRow: { flexDirection: 'row', alignItems: 'center' },
+  lootTxt: { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
   btn: { backgroundColor: C.gold + '22', borderWidth: 1, borderColor: C.gold, borderRadius: 4, paddingVertical: 14, paddingHorizontal: SPACING.xl },
   btnTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
 });
@@ -27,6 +32,7 @@ interface BossVictoryModalProps {
     gold: number;
     shadowName?: string;
     leveledUpShadow?: boolean;
+    droppedItems?: string[];
   };
   C: any;
 }
@@ -74,6 +80,24 @@ export default function BossVictoryModal({
             </View>
           )}
         </View>
+
+        {info.droppedItems && info.droppedItems.length > 0 && (
+          <>
+            <Text style={bv.lootHeader}>— LOOT —</Text>
+            <View style={bv.lootBox}>
+              {info.droppedItems.map((itemId, idx) => {
+                const itm = CATALOG_MAP[itemId]
+                if (!itm) return null
+                return (
+                  <View key={`${itemId}-${idx}`} style={bv.lootRow}>
+                    <Icon name={itm.icon} size={14} color={itm.color} />
+                    <Text style={[bv.lootTxt, { color: itm.color }]}> {itm.name}</Text>
+                  </View>
+                )
+              })}
+            </View>
+          </>
+        )}
 
         {!info.shadowName && (
           <Text style={bv.shadowHint}>Atinge o nível 10 para receber Sombras de boss raids.</Text>

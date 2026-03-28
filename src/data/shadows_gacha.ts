@@ -323,7 +323,7 @@ export const SHADOWS_GACHA: Shadow[] = [
           id: 'high_shadow',
           name: 'Alta Sombra',
           rank: 'Marshal', type: 'Ancient', dropRate: 0.002,
-          passiveEffect: { type: 'penalty_immunity', value: 2, description: 'Imunidade completa a 2 penalidades por semana' },
+          passiveEffect: { type: 'penalty_immunity', value: 1, description: 'Imunidade completa a 1 penalidade por semana' },
           lore: '"Não tem nome. Não tem história. Não tem origem conhecida. Apenas existe, nas margens de tudo que é escuro. Quem a obtém, obteve algo que o próprio Sistema não esperava revelar."',
           icon: 'weather-night', color: '#ef4444',
           unlockMethod: { type: 'gacha' },

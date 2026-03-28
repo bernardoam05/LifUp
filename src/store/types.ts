@@ -384,6 +384,7 @@ export type GameActions = {
   setPendingKeyMission: (keyId: string) => void
   clearPendingKeyMission: () => void
   clearActiveDungeonBreak: () => void
+  resetExtraction: () => void
 }
 
 // ── StoreRef (used by achievement helpers) ─────────────────────────────────────

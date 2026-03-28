@@ -101,7 +101,8 @@ export default function App() {
 
   // Unified Background Service Sync: Restores Focus Blocker if killed by OS/Force Close
   useEffect(() => {
-    const isPenaltyBlock = hasPenalty && autoBlockApps && penaltyBlockEnd && penaltyBlockEnd > Date.now()
+    const lockWindowOpen = !penaltyBlockStart || penaltyBlockStart <= Date.now()
+    const isPenaltyBlock = hasPenalty && autoBlockApps && penaltyBlockEnd > Date.now() && lockWindowOpen
     const isNormalBlock = focusActive && focusEndTime && focusEndTime > Date.now()
 
     if (isNormalBlock) {

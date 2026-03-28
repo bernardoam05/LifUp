@@ -458,9 +458,16 @@ export default function FocusScreen() {
       setAlertCfg({ title: 'Nenhuma app selecionada', message: 'Seleciona pelo menos uma app para bloquear.' })
       return
     }
-    const dur = hardcoreToggle || hardcorePunished
-      ? HARDCORE_DURATION_MS
-      : (hours * 60 + minutes) * 60_000
+    // When punished, the block must end at the actual penalty deadline — NOT at +1 year.
+    // HARDCORE_DURATION_MS (1 year) is only for the voluntary Hardcore Mode.
+    let dur: number
+    if (hardcorePunished) {
+      dur = Math.max(penaltyBlockEnd - Date.now(), 60_000)
+    } else if (hardcoreToggle) {
+      dur = HARDCORE_DURATION_MS
+    } else {
+      dur = (hours * 60 + minutes) * 60_000
+    }
     if (!hardcoreToggle && !hardcorePunished && dur < 60_000) {
       setAlertCfg({ title: 'Duração inválida', message: 'Define pelo menos 1 minuto de duração.' })
       return
@@ -469,7 +476,7 @@ export default function FocusScreen() {
       updateSettings({ lastFocusDuration: { hours, minutes } })
     }
     const start = Date.now()
-    const end = start + dur
+    const end = hardcorePunished ? penaltyBlockEnd : start + dur
     await FocusBlocker.startFocusMode(blockedApps, start, end, hardcorePunished)
     setFocusActive(true, end)
     setHardcoreMode(hardcoreToggle)
