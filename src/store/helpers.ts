@@ -60,6 +60,7 @@ export const ATTR_XP_PER_QUEST: Record<Quest['type'] | 'boss' | 'side', { strXp:
   gps: { strXp: 0, agiXp: 12, intXp: 0, vitXp: 6 },
   knowledge: { strXp: 0, agiXp: 0, intXp: 12, vitXp: 0 },
   focus: { strXp: 0, agiXp: 0, intXp: 12, vitXp: 0 },
+  pomodoro: { strXp: 0, agiXp: 0, intXp: 8, vitXp: 4 },
   forbidden: { strXp: 3, agiXp: 3, intXp: 3, vitXp: 3 },
   limit: { strXp: 3, agiXp: 3, intXp: 3, vitXp: 3 },
   boss: { strXp: 6, agiXp: 6, intXp: 6, vitXp: 6 },

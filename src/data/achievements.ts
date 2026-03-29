@@ -56,6 +56,7 @@ export type EventTrigger =
   // ── Penalty events
   | 'penalty_triggered'
   | 'penalty_cleared'
+  | 'penalty_veteran'
   // ── Daily login events
   | 'daily_login'
   | 'side_quest_added'
@@ -588,6 +589,12 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     description: 'Completa todas as missões no dia seguinte a uma penalidade ativa.',
     category: 'clutch', conditionType: 'all_quests_completed',
     icon: 'arrow-up-circle', color: '#f97316', isSecret: true, rewardGold: 80,
+  },
+  {
+    id: 'penalty_veteran', title: 'Veterano do Vazio',
+    description: 'Sobreviveste a 5 penalidades e voltaste mais forte. O vazio não te consome.',
+    category: 'clutch', conditionType: 'penalty_veteran',
+    icon: 'skull-scan', color: '#f59e0b', isSecret: true, rewardGold: 200,
   },
 
   // ── TIME / SECRET ─────────────────────────────────────────────────────────────

@@ -17,6 +17,7 @@ export async function setupNotifications(): Promise<void> {
     id:          CHANNEL_ID,
     name:        'Solo Leveling',
     importance:  AndroidImportance.HIGH,
+    sound:       'default',
     vibration:   true,
     vibrationPattern: [300, 500],
   })

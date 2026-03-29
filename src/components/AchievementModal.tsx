@@ -1,6 +1,6 @@
 // src/components/AchievementModal.tsx
 import React, { useEffect } from 'react'
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Vibration } from 'react-native'
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { ACHIEVEMENTS_MAP } from '../data/achievements'
 import { useTheme, FONT, SPACING } from '../theme'
@@ -26,7 +26,6 @@ export default function AchievementModal({ achievementId, onDismiss }: { achieve
   const achievement = ACHIEVEMENTS_MAP[achievementId]
 
   useEffect(() => {
-    Vibration.vibrate([0, 100, 50, 200, 50, 100, 50, 400])
     playSound('achievement')
   }, [achievementId])
 

@@ -35,8 +35,8 @@ export const getDKMStyles = (C: any) => StyleSheet.create({
 
   startBtn: { marginTop: SPACING.sm, paddingVertical: 12, paddingHorizontal: SPACING.xl, backgroundColor: C.neonRed + '22', borderWidth: 1, borderColor: C.neonRed + '66', borderRadius: 4 },
   startBtnTxt: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2, fontWeight: '700', textAlign: 'center' },
-  cancelBtn: { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl },
-  cancelTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center' },
+  cancelBtn: { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl, borderWidth: 1, borderColor: C.border, borderRadius: 4 },
+  cancelTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center' },
 })
 
 interface DungeonKeyModalProps {

@@ -162,6 +162,7 @@ export default function App() {
           theme={{ ...DarkTheme, colors: { ...DarkTheme.colors, background: C.bg, card: C.panel, border: C.border } }}
         >
           <Tab.Navigator
+            id="main-tabs"
             tabBarPosition="bottom"
             screenOptions={({ route }) => ({
               tabBarShowIcon: true,

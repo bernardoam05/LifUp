@@ -48,11 +48,11 @@ export const SHADOWS_BOSS_DUNGEON: Shadow[] = [
     },
   {
       id: 'fallen_seraphim',
-      name: 'Lâmina Serafim Caído',
+      name: 'Asa da Condenação',
       rank: 'Commander', type: 'Assassin', dropRate: 0.02,
-      passiveEffect: { type: 'xp_boost', value: 0.15, description: '+15% XP em todas as missões' },
-      lore: '"Seis asas decepadas transmutadas em tendão escuro. Onde passava trazia luz cega. Onde vai, só cai sombra espessa e letal."',
-      icon: 'sword', color: '#f59e0b',
+      passiveEffect: { type: 'penalty_immunity', value: 1, description: 'Imunidade completa a 1 penalidade por semana' },
+      lore: '"Desafiou o Sistema na sua forma pura e pagou o preço. As suas asas não caíram — foram arrancadas. O que sobreviveu ao julgamento serve agora com uma fúria que a redenção nunca apagará."',
+      icon: 'feather', color: '#a855f7',
       unlockMethod: { type: 'boss_drop', bossId: 'boss_seraphim', category: 'dungeon' }
     }
 ]

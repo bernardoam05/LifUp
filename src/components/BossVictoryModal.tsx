@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Vibration, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SoloLevelingModal from './SoloLevelingModal';
 import { FONT, SPACING } from '../theme';
@@ -48,7 +48,6 @@ export default function BossVictoryModal({
 
   useEffect(() => {
     if (visible) {
-      Vibration.vibrate([0, 100, 50, 300, 50, 500]);
       playSound('victory');
     }
   }, [visible]);

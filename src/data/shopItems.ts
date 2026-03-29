@@ -237,6 +237,32 @@ export const BOSS_DROP_ITEMS: ShopItem[] = [
     buffMult:     0.30,
     buffDuration: 4 * 60 * 60_000,
   },
+  {
+    id:           'igris_soul_shard',
+    name:         'Fragmento de Alma de Igris',
+    description:  'Resquício da essência do Cavaleiro das Sombras. Ativa buff: +25% XP durante 2 horas.',
+    lore:         '"Igris morreu de joelhos. O seu fragmento de alma serve de pé."',
+    cost:         0,
+    icon:         'sword',
+    color:        '#7c3aed',
+    effect:       'material',
+    buffStat:     'xp',
+    buffMult:     0.25,
+    buffDuration: 2 * 60 * 60_000,
+  },
+  {
+    id:           'cerberus_tooth',
+    name:         'Dente de Cerberus',
+    description:  'Arrancado do guardião do abismo de três cabeças. Ativa buff: +25% Gold durante 2 horas.',
+    lore:         '"Três cabeças, um fim. Os seus dentes guardam o segredo do Averno."',
+    cost:         0,
+    icon:         'tooth',
+    color:        '#b45309',
+    effect:       'material',
+    buffStat:     'gold',
+    buffMult:     0.25,
+    buffDuration: 2 * 60 * 60_000,
+  },
 ]
 
 export const CATALOG_MAP = Object.fromEntries(
@@ -329,6 +355,14 @@ export const BOSS_LOOT_TABLE: Record<string, LootEntry[]> = {
   abyssal_void_walker:       [{ itemId: 'shadow_essence',   chance: 0.35 }],
   seraphim_fallen_angel:     [{ itemId: 'iron_will_crystal',chance: 0.35 }],
   monarch_of_beginnings:     [{ itemId: 'dragon_scale',     chance: 0.45 }, { itemId: 'lich_eye', chance: 0.40 }, { itemId: 'iron_will_crystal', chance: 0.35 }],
+
+  // ── Discovered dungeon bosses ─────────────────────────────────────────────
+  alpha_wolf:        [{ itemId: 'blood_fallen',      chance: 0.35 }],
+  sea_king:          [{ itemId: 'kasaka_venom',      chance: 0.40 }],
+  dungeon_queen:     [{ itemId: 'shadow_essence',    chance: 0.40 }],
+  king_of_the_dead:  [{ itemId: 'lich_eye',          chance: 0.40 }, { itemId: 'shadow_essence',    chance: 0.30 }],
+  boss_crypt_omega:  [{ itemId: 'shadow_essence',    chance: 0.35 }, { itemId: 'lich_eye',          chance: 0.25 }],
+  boss_seraphim:     [{ itemId: 'iron_will_crystal', chance: 0.40 }, { itemId: 'lich_eye',          chance: 0.25 }],
 
   // ── Dungeon Break bosses ──────────────────────────────────────────────────
   break_boss_lich_servant_vanguard:     [{ itemId: 'shadow_essence',   chance: 0.25 }],

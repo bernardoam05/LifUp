@@ -145,6 +145,6 @@ const getEDStyles = (C: any) => StyleSheet.create({
   shadowExtractTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '12', borderWidth: 1, borderColor: C.purple + '33', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2, marginTop: 4, alignSelf: 'flex-start' },
   shadowExtractTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8 },
 
-  cancelBtn: { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl },
-  cancelTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, textAlign: 'center' },
+  cancelBtn: { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl, borderWidth: 1, borderColor: C.border, borderRadius: 4 },
+  cancelTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center' },
 });

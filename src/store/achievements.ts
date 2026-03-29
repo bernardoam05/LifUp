@@ -88,6 +88,7 @@ export function evaluateAchievementCondition(
     case 'penalty_first': return true
     case 'penalty_cleared': return true
     case 'penalty_comeback': return Boolean(payload.afterPenalty)
+    case 'penalty_veteran': return (state.system.consecutiveFails ?? 0) >= 5
 
     // Secret
     case 'secret_first_day': return Boolean(payload.firstDay) && statistics.perfectDays === 0

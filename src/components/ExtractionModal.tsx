@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  Animated, Vibration, Easing,
+  Animated, Easing,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { SHADOW_RANK_COLOR } from '../data/shadows'
@@ -33,10 +33,12 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
   const newLevel = result?.newLevel
 
 
+  if (!shadow) return null
+
   const isCustom = (shadow as any).type === 'Custom'
   const isAchievement = shadow?.unlockMethod?.type === 'achievement'
   const rankColor = isCustom ? C.purple : (SHADOW_RANK_COLOR[shadow?.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.text.secondary)
-  const rankLabel = RANK_LABELS[shadow?.rank] ?? shadow?.rank.toUpperCase()
+  const rankLabel = RANK_LABELS[shadow?.rank] ?? shadow?.rank?.toUpperCase() ?? ''
 
   // Determine friendly origin label
   const originLabel = (() => {
@@ -70,7 +72,6 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
       Animated.timing(ariseAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
     ]).start(() => {
       // Stage 2: Reveal Card
-      Vibration.vibrate([0, 80, 40, 80, 40, 200, 80, 400])
       playSound('shadow')
 
       Animated.parallel([

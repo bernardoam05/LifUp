@@ -10,7 +10,7 @@ export const LEVEL_GATED_KEYS = [
   { id: 'key_seraphim', name: 'Chave do Serafim', color: '#fbbf24', icon: 'key', unlockLevel: 30 },
 ]
 
-export const BOX_KEYS = [
+export const BOX_KEY_META = [
   { id: 'key_goblin', name: 'Chave Goblin', color: '#10b981', icon: 'key' },
   { id: 'key_orc', name: 'Chave Orc de Fogo', color: '#f97316', icon: 'key' },
   { id: 'key_dragon', name: 'Chave do Dragão', color: '#8b5cf6', icon: 'key' },
@@ -61,6 +61,7 @@ export function defToQuest(def: QuestDefinition, level: number, tier: string): Q
   if (def.questType === 'focus') quest.focusDuration = target * 60_000
   if (def.questType === 'gps') quest.gpsTarget = target
   if (def.questType === 'limit') quest.currentValue = 0
+  if (def.questType === 'pomodoro') { quest.pomodoroTarget = target; quest.currentValue = 0 }
   return quest
 }
 
@@ -161,7 +162,32 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
     id: 'pool_journal', title: 'Mente Clara', description: 'Escreve um diário/reflexão por 10 min.',
     type: 'pool', questType: 'focus', baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min', baseXP: 40, baseGold: 10,
   },
+  // --- Pomodoro ---
+  {
+    id: 'pool_pomodoro_basic',
+    title: 'Técnica de Caçador: Foco Cíclico',
+    description: 'Completa {target} ciclos Pomodoro hoje.',
+    type: 'pool', questType: 'pomodoro',
+    baseTarget: 2, scalingAmount: 0, scalingInterval: 1, unit: 'ciclos',
+    baseXP: 80, baseGold: 25,
+  },
+  {
+    id: 'pool_pomodoro_adv',
+    title: 'Técnica de Caçador: Maestria Temporal',
+    description: 'Completa {target} ciclos Pomodoro hoje. A concentração é uma arma.',
+    type: 'pool', questType: 'pomodoro',
+    baseTarget: 4, scalingAmount: 0, scalingInterval: 1, unit: 'ciclos',
+    baseXP: 160, baseGold: 50,
+  },
   // --- Bosses ---
+  {
+    id: 'boss_pomodoro_marathon',
+    title: 'Maratona Pomodoro: O Fluxo Eterno (A-Rank)',
+    description: 'Completa {target} ciclos Pomodoro num único dia. O tempo curva-se para os que dominam o foco.',
+    type: 'boss', questType: 'pomodoro',
+    baseTarget: 6, scalingAmount: 0, scalingInterval: 1, unit: 'ciclos',
+    baseXP: 700, baseGold: 250,
+  },
   {
     id: 'boss_focus', title: 'O Rei do Tempo (S-Rank)',
     description: 'Modo Foco estrito durante {target} horas, sem falhas.',

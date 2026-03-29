@@ -12,6 +12,7 @@ const QUEST_TYPE_ICON: Record<string, string> = {
   knowledge: 'book-open-variant',
   focus: 'timer-sand',
   gps: 'run-fast',
+  pomodoro: 'timer-sand-complete',
 }
 
 const getQuestTypeColor = (C: any): Record<string, string> => ({
@@ -19,6 +20,7 @@ const getQuestTypeColor = (C: any): Record<string, string> => ({
   knowledge: C.neonBlue,
   focus: '#a855f7',
   gps: '#22c55e',
+  pomodoro: C.gold,
 })
 
 

@@ -11,6 +11,7 @@ import CustomModal from '../components/CustomModal'
 import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal'
 
 import { useTheme, FONT, SPACING } from '../theme'
+import { playSound, playAmbient, stopAmbient, AMBIENT_META, type AmbientSoundId } from '../utils/audioService'
 
 
 const { FocusBlocker } = NativeModules as {
@@ -320,13 +321,84 @@ export default function FocusScreen() {
   const triggerEvent       = useGameStore(s => s.triggerEvent)
   const focusEndTime       = useGameStore(s => s.system.focusEndTime)
 
+  const recordPomodoroSession = useGameStore(s => s.recordPomodoroSession)
+
+  const [pomodoroMode,      setPomodoroMode]      = useState(false)
+  const [pomodoroWorkMins,  setPomodoroWorkMins]  = useState(25)
+  const [pomodoroBreakMins, setPomodoroBreakMins] = useState(5)
+  const [pomodoroPhase,     setPomodoroPhase]     = useState<'idle' | 'work' | 'break'>('idle')
+  const [pomodoroCycle,     setPomodoroCycle]     = useState(0)
+  const [pomodoroBreakEnd,  setPomodoroBreakEnd]  = useState<number | null>(null)
+  const [editingPomodoro,   setEditingPomodoro]   = useState<'work' | 'break' | null>(null)
+  const [pomodoroInputVal,  setPomodoroInputVal]  = useState('')
+  const pomodoroBreakFiredRef = useRef(false)
+  const pomodoroWorkRef = useRef<TextInput>(null)
+  const pomodoroBreakRef = useRef<TextInput>(null)
+
+  const [activeAmbient, setActiveAmbient] = useState<AmbientSoundId | null>(null)
+
   const [nowMs, setNowMs] = useState(Date.now())
   useEffect(() => {
-    if (!focusActive) return
+    if (!focusActive && pomodoroPhase !== 'break') return
     setNowMs(Date.now())
     const id = setInterval(() => setNowMs(Date.now()), 1000)
     return () => clearInterval(id)
-  }, [focusActive])
+  }, [focusActive, pomodoroPhase])
+
+  // Alert when focus timer reaches zero (non-hardcore mode only)
+  const focusEndAlertFiredRef = useRef(false)
+  useEffect(() => {
+    if (!focusActive || !focusEndTime || hardcoreFocusMode) {
+      focusEndAlertFiredRef.current = false
+      return
+    }
+    if (nowMs >= focusEndTime && !focusEndAlertFiredRef.current) {
+      focusEndAlertFiredRef.current = true
+      playSound('focusEnd')
+      if (pomodoroMode) {
+        // Transition work → break: stop native blocker, start pure-JS break timer
+        FocusBlocker?.stopFocusMode().catch(() => {})
+        setFocusActive(false, 0)
+        setHardcoreMode(false)
+        recordPomodoroSession()
+        const cycle = pomodoroCycle
+        setPomodoroPhase('break')
+        setPomodoroBreakEnd(Date.now() + pomodoroBreakMins * 60_000)
+        setAlertCfg({
+          title: `⚡ CICLO ${cycle} CONCLUÍDO!`,
+          message: `Bom trabalho! Pausa de ${pomodoroBreakMins} min iniciada. Descansa antes do próximo ciclo.`,
+          buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
+        })
+      } else {
+        setAlertCfg({
+          title: '⚡ FOCO CONCLUÍDO',
+          message: 'O tempo de foco terminou. Regressa ao campo de batalha e reclama as tuas recompensas.',
+          buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
+        })
+      }
+    }
+  }, [nowMs, focusActive, focusEndTime, hardcoreFocusMode, pomodoroMode, pomodoroBreakMins, pomodoroCycle])
+
+  // Pomodoro break end detection
+  useEffect(() => {
+    if (pomodoroPhase !== 'break' || !pomodoroBreakEnd) {
+      pomodoroBreakFiredRef.current = false
+      return
+    }
+    if (nowMs >= pomodoroBreakEnd && !pomodoroBreakFiredRef.current) {
+      pomodoroBreakFiredRef.current = true
+      playSound('focusEnd')
+      const nextCycle = pomodoroCycle + 1
+      setAlertCfg({
+        title: '☕ PAUSA TERMINADA',
+        message: `Ciclo ${pomodoroCycle} completo. Pronto para o ciclo ${nextCycle}?`,
+        buttons: [
+          { text: `CICLO ${nextCycle}`, onPress: () => startNextPomodoroCycle(nextCycle) },
+          { text: 'TERMINAR', style: 'cancel', onPress: finishPomodoro },
+        ],
+      })
+    }
+  }, [nowMs, pomodoroPhase, pomodoroBreakEnd, pomodoroCycle])
 
   const penaltyRemainingH   = Math.ceil(penaltyMsRemaining / 3_600_000)
 
@@ -367,6 +439,25 @@ export default function FocusScreen() {
     } else {
       const m = Math.min(Math.max(raw, 0), hours === 24 ? 0 : 59)
       setMinutes(m)
+    }
+  }
+
+  function openPomodoroInput(field: 'work' | 'break') {
+    setEditingPomodoro(field)
+    setPomodoroInputVal(field === 'work' ? String(pomodoroWorkMins) : String(pomodoroBreakMins))
+    setTimeout(() => {
+      (field === 'work' ? pomodoroWorkRef : pomodoroBreakRef).current?.focus()
+    }, 50)
+  }
+
+  function applyPomodoroInput(field: 'work' | 'break') {
+    setEditingPomodoro(null)
+    const raw = parseInt(pomodoroInputVal, 10)
+    if (isNaN(raw)) return
+    if (field === 'work') {
+      setPomodoroWorkMins(Math.min(Math.max(raw, 1), 120))
+    } else {
+      setPomodoroBreakMins(Math.min(Math.max(raw, 1), 60))
     }
   }
 
@@ -465,6 +556,10 @@ export default function FocusScreen() {
       dur = Math.max(penaltyBlockEnd - Date.now(), 60_000)
     } else if (hardcoreToggle) {
       dur = HARDCORE_DURATION_MS
+    } else if (pomodoroMode) {
+      dur = pomodoroWorkMins * 60_000
+      setPomodoroPhase('work')
+      if (pomodoroCycle === 0) setPomodoroCycle(1)
     } else {
       dur = (hours * 60 + minutes) * 60_000
     }
@@ -472,7 +567,7 @@ export default function FocusScreen() {
       setAlertCfg({ title: 'Duração inválida', message: 'Define pelo menos 1 minuto de duração.' })
       return
     }
-    if (!hardcoreToggle && !hardcorePunished) {
+    if (!hardcoreToggle && !hardcorePunished && !pomodoroMode) {
       updateSettings({ lastFocusDuration: { hours, minutes } })
     }
     const start = Date.now()
@@ -484,6 +579,20 @@ export default function FocusScreen() {
     if (hour >= 1 && hour < 6) {
       triggerEvent('focus_started_after_1am')
     }
+  }
+
+  async function startNextPomodoroCycle(cycle: number) {
+    setPomodoroPhase('idle')
+    setPomodoroBreakEnd(null)
+    setPomodoroCycle(cycle)
+    // Start next work cycle (same as startFocus but with updated cycle count already set)
+    await startFocus()
+  }
+
+  function finishPomodoro() {
+    setPomodoroPhase('idle')
+    setPomodoroBreakEnd(null)
+    setPomodoroCycle(0)
   }
 
   async function stopFocus() {
@@ -504,6 +613,13 @@ export default function FocusScreen() {
     await FocusBlocker.stopFocusMode()
     setFocusActive(false, 0)
     setHardcoreMode(false)
+    stopAmbient()
+    setActiveAmbient(null)
+    if (pomodoroMode) {
+      setPomodoroPhase('idle')
+      setPomodoroBreakEnd(null)
+      setPomodoroCycle(0)
+    }
   }
 
   function handleHardcoreBreak() { setShowBreakModal(true) }
@@ -564,9 +680,78 @@ export default function FocusScreen() {
             <Text style={s.warnTxt}> Módulo nativo não encontrado. Re-builda o APK.</Text>
           </View>
         )}
+        {pomodoroPhase === 'break' && (
+          <View style={s.pomodoroBreakBanner}>
+            <Icon name="coffee" size={14} color={C.gold} />
+            <Text style={s.pomodoroBreakTxt}> CICLO {pomodoroCycle} — EM PAUSA</Text>
+          </View>
+        )}
+
+        {/* 1b. Mode toggle — only when not in any active phase */}
+        {!focusActive && pomodoroPhase === 'idle' && !hardcorePunished && (
+          <View style={s.modeToggleRow}>
+            <TouchableOpacity
+              style={[s.modeToggleBtn, !pomodoroMode && s.modeToggleBtnActive]}
+              onPress={() => setPomodoroMode(false)}
+            >
+              <Icon name="lightning-bolt" size={12} color={!pomodoroMode ? C.neonBlue : C.dimmed} />
+              <Text style={[s.modeToggleTxt, !pomodoroMode && { color: C.neonBlue }]}> LIVRE</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[s.modeToggleBtn, pomodoroMode && s.modeToggleBtnPomodoro]}
+              onPress={() => { setPomodoroMode(true); setHardcoreToggle(false) }}
+            >
+              <Icon name="timer-sand" size={12} color={pomodoroMode ? C.gold : C.dimmed} />
+              <Text style={[s.modeToggleTxt, pomodoroMode && { color: C.gold }]}> POMODORO</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* 1c. Ambient sound row */}
+        {!hardcorePunished && (
+          <View style={s.ambientRow}>
+            <Icon name="music-note-outline" size={12} color={C.dimmed} style={{ marginRight: 4 }} />
+            {([null, 'lofi', 'rain', 'fire'] as (AmbientSoundId | null)[]).map(id => {
+              const isActive = activeAmbient === id
+              const meta = id ? AMBIENT_META[id] : null
+              return (
+                <TouchableOpacity
+                  key={id ?? 'off'}
+                  style={[s.ambientBtn, isActive && s.ambientBtnActive]}
+                  onPress={() => {
+                    if (id === null) {
+                      stopAmbient()
+                      setActiveAmbient(null)
+                    } else {
+                      playAmbient(id)
+                      setActiveAmbient(id)
+                    }
+                  }}
+                >
+                  <Icon
+                    name={id === null ? 'volume-off' : meta!.icon}
+                    size={14}
+                    color={isActive ? C.neonBlue : C.dimmed}
+                  />
+                  {meta && <Text style={[s.ambientBtnTxt, isActive && { color: C.neonBlue }]}> {meta.label}</Text>}
+                </TouchableOpacity>
+              )
+            })}
+          </View>
+        )}
 
         {/* 2. Timer / Duration */}
-        {focusActive && focusEndTime ? (
+        {pomodoroPhase === 'break' && pomodoroBreakEnd ? (
+          <View style={[s.countdownBox, { borderColor: C.gold + '88' }]}>
+            <Text style={[s.countdownTxt, { color: C.gold, fontSize: 14, marginBottom: 4 }]}>CICLO {pomodoroCycle} — PAUSA</Text>
+            <Text style={[s.countdownTxt, { color: C.gold }]}>
+              {formatTimeRemaining(Math.max(0, pomodoroBreakEnd - nowMs))}
+            </Text>
+            <TouchableOpacity style={s.pomodoroSkipBtn} onPress={finishPomodoro}>
+              <Text style={s.pomodoroSkipTxt}>SALTAR PAUSA</Text>
+            </TouchableOpacity>
+          </View>
+        ) : focusActive && focusEndTime ? (
           hardcoreFocusMode ? (
             <View style={[s.countdownBox, { borderColor: C.neonRed + '88' }]}>
               <Text style={[s.countdownTxt, { color: C.neonRed }]}>
@@ -581,7 +766,7 @@ export default function FocusScreen() {
               </Text>
             </View>
           )
-        ) : (!hardcoreToggle && !hardcorePunished && (
+        ) : (!pomodoroMode && !hardcoreToggle && !hardcorePunished && (
           <View style={s.durRow}>
             {/* Hours */}
             <View style={s.durPicker}>
@@ -650,8 +835,80 @@ export default function FocusScreen() {
           </View>
         ))}
 
+        {/* 2b. Pomodoro config */}
+        {pomodoroMode && !focusActive && pomodoroPhase === 'idle' && (
+          <View style={s.pomodoroConfigCard}>
+            <View style={s.pomodoroConfigRow}>
+              <Icon name="timer-sand" size={14} color={C.gold} />
+              <Text style={s.pomodoroConfigTitle}> POMODORO</Text>
+            </View>
+            <View style={s.pomodoroPickersRow}>
+              {/* Work duration */}
+              <View style={s.pomodoroPicker}>
+                <Text style={s.pomodoroPickerLabel}>TRABALHO</Text>
+                <View style={s.pomodoroPickerCtrl}>
+                  <TouchableOpacity onPress={() => setPomodoroWorkMins(m => Math.max(1, m - 5))} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▼</Text>
+                  </TouchableOpacity>
+                  {editingPomodoro === 'work' ? (
+                    <TextInput
+                      ref={pomodoroWorkRef}
+                      style={s.pomodoroPickerInput}
+                      value={pomodoroInputVal}
+                      onChangeText={v => setPomodoroInputVal(v.replace(/\D/g, '').slice(0, 3))}
+                      keyboardType="number-pad"
+                      maxLength={3}
+                      selectTextOnFocus
+                      onBlur={() => applyPomodoroInput('work')}
+                      onSubmitEditing={() => applyPomodoroInput('work')}
+                    />
+                  ) : (
+                    <TouchableOpacity onPress={() => openPomodoroInput('work')}>
+                      <Text style={s.pomodoroPickerVal}>{pomodoroWorkMins}<Text style={s.pomodoroPickerUnit}>m</Text></Text>
+                    </TouchableOpacity>
+                  )}
+                  <TouchableOpacity onPress={() => setPomodoroWorkMins(m => Math.min(120, m + 5))} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▲</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={s.pomodoroPickerDivider} />
+              {/* Break duration */}
+              <View style={s.pomodoroPicker}>
+                <Text style={s.pomodoroPickerLabel}>PAUSA</Text>
+                <View style={s.pomodoroPickerCtrl}>
+                  <TouchableOpacity onPress={() => setPomodoroBreakMins(m => Math.max(1, m - 1))} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▼</Text>
+                  </TouchableOpacity>
+                  {editingPomodoro === 'break' ? (
+                    <TextInput
+                      ref={pomodoroBreakRef}
+                      style={s.pomodoroPickerInput}
+                      value={pomodoroInputVal}
+                      onChangeText={v => setPomodoroInputVal(v.replace(/\D/g, '').slice(0, 2))}
+                      keyboardType="number-pad"
+                      maxLength={2}
+                      selectTextOnFocus
+                      onBlur={() => applyPomodoroInput('break')}
+                      onSubmitEditing={() => applyPomodoroInput('break')}
+                    />
+                  ) : (
+                    <TouchableOpacity onPress={() => openPomodoroInput('break')}>
+                      <Text style={s.pomodoroPickerVal}>{pomodoroBreakMins}<Text style={s.pomodoroPickerUnit}>m</Text></Text>
+                    </TouchableOpacity>
+                  )}
+                  <TouchableOpacity onPress={() => setPomodoroBreakMins(m => Math.min(60, m + 1))} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▲</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <Text style={s.pomodoroDesc}>Trabalha {pomodoroWorkMins} min · Descansa {pomodoroBreakMins} min · Repete</Text>
+          </View>
+        )}
+
         {/* 3. Switch (Hardcore Mode) */}
-        {!focusActive && (
+        {!focusActive && !pomodoroMode && (
           <TouchableOpacity
             style={[s.hardcoreRow, (hardcoreToggle || hardcorePunished) && s.hardcoreRowPunished]}
             onPress={hardcorePunished ? undefined : () => setHardcoreToggle(v => !v)}
@@ -695,13 +952,15 @@ export default function FocusScreen() {
               <Text style={[s.mainBtnTxt, { color: C.neonRed }]}> PARAR FOCUS MODE</Text>
             </TouchableOpacity>
           )
-        ) : (
+        ) : pomodoroPhase === 'break' ? null : (
           <TouchableOpacity
-            style={[s.mainBtn, !permsOk && s.mainBtnDisabled, { marginTop: SPACING.md }]}
+            style={[s.mainBtn, !permsOk && s.mainBtnDisabled, pomodoroMode && s.mainBtnPomodoro, { marginTop: SPACING.md }]}
             onPress={startFocus}
           >
-            <Icon name="play-circle-outline" size={18} color={C.neonBlue} />
-            <Text style={s.mainBtnTxt}> ATIVAR FOCUS MODE</Text>
+            <Icon name={pomodoroMode ? 'timer-sand' : 'play-circle-outline'} size={18} color={pomodoroMode ? C.gold : C.neonBlue} />
+            <Text style={[s.mainBtnTxt, pomodoroMode && { color: C.gold }]}>
+              {pomodoroMode ? ` INICIAR POMODORO (${pomodoroWorkMins}m)` : ' ATIVAR FOCUS MODE'}
+            </Text>
           </TouchableOpacity>
         )}
 
@@ -729,8 +988,17 @@ export default function FocusScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
               <Icon name="lightning-bolt" size={14} color={C.neonBlue} />
               <View style={{ flex: 1 }}>
-                <Text style={[s.modeLabel, { color: C.neonBlue }]}>MODO STANDARD</Text>
-                <Text style={s.modeDesc}>Bloqueia apps por tempo definido. Podes fazer pausa a qualquer momento.</Text>
+                <Text style={[s.modeLabel, { color: C.neonBlue }]}>MODO LIVRE</Text>
+                <Text style={s.modeDesc}>Bloqueia apps por tempo definido. Podes parar a qualquer momento.</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{ gap: SPACING.sm, marginBottom: SPACING.md }}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
+              <Icon name="timer-sand" size={14} color={C.gold} />
+              <View style={{ flex: 1 }}>
+                <Text style={[s.modeLabel, { color: C.gold }]}>MODO POMODORO</Text>
+                <Text style={s.modeDesc}>Ciclos de trabalho + pausa. Define a duração de cada fase. Apps bloqueadas durante o trabalho, desbloqueadas na pausa.</Text>
               </View>
             </View>
           </View>
@@ -738,7 +1006,7 @@ export default function FocusScreen() {
             <Icon name="skull" size={14} color={C.neonRed} />
             <View style={{ flex: 1 }}>
               <Text style={[s.modeLabel, { color: C.neonRed }]}>MODO HARDCORE</Text>
-              <Text style={s.modeDesc}>Sem limite de tempo. O contador sobe eternamente. Só termina quando quebrares o juramento — ou conquistares o dia.</Text>
+              <Text style={s.modeDesc}>Sem limite de tempo. O contador sobe eternamente. Só termina quando quebrares o juramento.</Text>
             </View>
           </View>
         </View>
@@ -877,10 +1145,45 @@ const getStyles = (C: any) => StyleSheet.create({
   section:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2, marginBottom: SPACING.sm, marginTop: SPACING.md },
 
   mainBtn:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.neonBlue + '15', borderWidth: 1, borderColor: C.neonBlue, borderRadius: 4, paddingVertical: SPACING.md, marginBottom: SPACING.sm },
+  mainBtnPomodoro: { borderColor: C.gold, backgroundColor: C.gold + '15' },
   stopBtn:         { borderColor: C.neonRed, backgroundColor: C.neonRed + '15' },
   hardcoreStopBtn: { borderColor: C.neonRed, backgroundColor: C.surface?.danger || C.bg, borderWidth: 2 },
   mainBtnDisabled: { opacity: 0.4 },
   mainBtnTxt:      { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, letterSpacing: 2 },
+
+  // ── Pomodoro styles ───────────────────────────────────────────────────────
+  modeToggleRow:      { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.sm },
+  modeToggleBtn:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingVertical: SPACING.sm },
+  modeToggleBtnActive:{ borderColor: C.neonBlue + '88', backgroundColor: C.neonBlue + '10' },
+  modeToggleBtnPomodoro: { borderColor: C.gold + '88', backgroundColor: C.gold + '10' },
+  modeToggleTxt:      { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
+
+  pomodoroBreakBanner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  pomodoroBreakTxt:    { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+
+  pomodoroConfigCard:  { backgroundColor: C.panel, borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.sm },
+  pomodoroConfigRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  pomodoroConfigTitle: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
+  pomodoroPickersRow:  { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  pomodoroPicker:      { flex: 1, alignItems: 'center', gap: 6 },
+  pomodoroPickerLabel: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1.5 },
+  pomodoroPickerCtrl:  { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
+  pomodoroPickerBtn:   { paddingHorizontal: SPACING.md, paddingVertical: 6 },
+  pomodoroPickerArrow: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11 },
+  pomodoroPickerVal:   { color: C.gold, fontFamily: FONT.orbitron, fontSize: 28, fontWeight: '900', minWidth: 52, textAlign: 'center' },
+  pomodoroPickerUnit:  { color: C.gold + 'aa', fontFamily: FONT.orbitron, fontSize: 14 },
+  pomodoroPickerDivider: { width: 1, height: 48, backgroundColor: C.border, marginHorizontal: SPACING.sm },
+  pomodoroDesc:        { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5, textAlign: 'center' },
+
+  pomodoroPickerInput: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 28, fontWeight: '900', minWidth: 52, textAlign: 'center', borderBottomWidth: 1, borderBottomColor: C.gold },
+
+  pomodoroSkipBtn:     { marginTop: SPACING.md, paddingVertical: 6, paddingHorizontal: SPACING.lg, borderWidth: 1, borderColor: C.gold + '55', borderRadius: 2 },
+  pomodoroSkipTxt:     { color: C.gold + 'aa', fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 2 },
+
+  ambientRow:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm, gap: 4 },
+  ambientBtn:    { flexDirection: 'row', alignItems: 'center', paddingVertical: 5, paddingHorizontal: SPACING.sm, borderRadius: 4, borderWidth: 1, borderColor: C.border, backgroundColor: C.panel },
+  ambientBtnActive: { borderColor: C.neonBlue + '88', backgroundColor: C.neonBlue + '12' },
+  ambientBtnTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
 
   activeBanner:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.surface?.success || C.bg, borderWidth: 1, borderColor: C.green + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   activeBannerHardcore: { backgroundColor: C.surface?.danger || C.bg, borderColor: C.neonRed + '44' },

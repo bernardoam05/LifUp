@@ -89,7 +89,7 @@ export const SHADOWS_ACHIEVEMENT: Shadow[] = [
           passiveEffect: { type: 'penalty_reduce', value: 0.02, description: '-2% na perda de XP por penalidade' },
           lore: '"Cresceu nas paredes pútridas dos dungeons de pântano. O seu toque corroía armaduras. A sua presença corroe o azar."',
           icon: 'flask', color: '#94a3b8',
-          unlockMethod: { type: 'achievement', id: 'dungeon_master_50' },
+          unlockMethod: { type: 'achievement', id: 'penalty_comeback' },
         },
   // ── NEW ACHIEVEMENT SHADOWS (BATCH 4) ─────────────────────────────────────
   {
@@ -162,7 +162,7 @@ export const SHADOWS_ACHIEVEMENT: Shadow[] = [
     passiveEffect: { type: 'penalty_reduce', value: 0.30, description: '-30% na perda de XP por penalidade' },
     lore: '"Caiu no vazio repetidamente e sempre voltou. As falhas agora são o seu alimento."',
     icon: 'skull-scan', color: '#f59e0b',
-    unlockMethod: { type: 'achievement', id: 'penalty_comeback' },
+    unlockMethod: { type: 'achievement', id: 'penalty_veteran' },
   },
   {
     id: 'shadow_collection_completionist',

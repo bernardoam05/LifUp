@@ -99,5 +99,12 @@ export const SHADOWS_BOSS_EVENT: Shadow[] = [
         lore: '"Rivalizava os Guias do Submundo. O Monarca usurpou a sua posição numa única batalha."',
         icon: 'sickle', color: '#f59e0b',
         unlockMethod: { type: 'boss_drop', bossId: 'event_halloween_reaper', category: 'event' },
-      }
+      },
+  {
+        id: 'midnight_specter', name: 'Espectro da Meia-Noite', rank: 'Knight', type: 'Undead', dropRate: 0.04,
+        passiveEffect: { type: 'focus_mastery', value: 0.10, description: '-10% tempo de foco necessário' },
+        lore: '"Só emerge depois da meia-noite, quando o véu entre os mundos se afina ao máximo. O Monarca que caça à luz da lua é o único digno de a comandar."',
+        icon: 'weather-night', color: '#64748b',
+        unlockMethod: { type: 'boss_drop', bossId: 'event_midnight_wraith', category: 'event' },
+      },
 ]

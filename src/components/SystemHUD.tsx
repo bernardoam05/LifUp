@@ -4,127 +4,10 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { getRank, xpForLevel, CLASS_REQUIREMENTS } from '../store/useGameStore'
 import { getJobClass } from '../store/helpers'
-import { C, FONT, SPACING } from '../theme'
-
-const hud = StyleSheet.create({
-  container: {
-    paddingHorizontal: SPACING.md,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.md,
-    backgroundColor: C.bg,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.md,
-  },
-  badge: {
-    width: 44,
-    height: 44,
-    borderRadius: 4,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  badgeText: {
-    fontFamily: FONT.orbitron,
-    fontSize: 20,
-    fontWeight: '900',
-  },
-  info: {
-    flex: 1,
-    gap: 4,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  name: {
-    color: '#fff',
-    fontFamily: FONT.orbitron,
-    fontSize: 11,
-    fontWeight: '700',
-    maxWidth: 120,
-  },
-  level: {
-    color: C.neonBlue,
-    fontFamily: FONT.orbitron,
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  gold: {
-    color: C.gold,
-    fontFamily: FONT.orbitron,
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  xpTrack: {
-    height: 4,
-    backgroundColor: '#1e293b',
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  xpFill: {
-    height: '100%',
-    backgroundColor: C.neonBlue,
-  },
-  xpRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  xpText: {
-    color: C.dimmed,
-    fontFamily: FONT.orbitron,
-    fontSize: 8,
-  },
-  focusTag: {
-    color: C.neonBlue,
-    fontFamily: FONT.orbitron,
-    fontSize: 7,
-    letterSpacing: 1,
-    fontWeight: '700',
-  },
-  gearBtn: {
-    padding: 8,
-    borderRadius: 4,
-    backgroundColor: '#ffffff08',
-  },
-  streakBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fbbf2415',
-    borderWidth: 1,
-    borderColor: '#fbbf2444',
-    borderRadius: 10,
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    marginRight: 4,
-  },
-  streakFire: { fontSize: 9 },
-  streakNum: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '900', marginLeft: 2 },
-  rankUpIndicator: {
-    position: 'absolute',
-    top: -6,
-    right: -6,
-    backgroundColor: C.neonBlue,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: C.bg,
-  },
-  rankUpIndicatorText: {
-    color: '#fff',
-    fontSize: 9,
-    fontWeight: '900',
-  },
-})
+import { useTheme, FONT, SPACING } from '../theme'
 
 export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () => void; onRankPress: () => void }) {
+  const C = useTheme()
   const player = useGameStore(s => s.player)
   const stats = useGameStore(s => s.statistics)
   const bosses = useGameStore(s => s.system.bossesDefeated)
@@ -145,6 +28,34 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
   const xpPct = Math.min((player.xp / xpNeeded) * 100, 100)
   const focusOn = useGameStore(s => s.system.focusModeActive)
 
+  const hud = StyleSheet.create({
+    container: {
+      paddingHorizontal: SPACING.md,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+      backgroundColor: C.bg,
+    },
+    row: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
+    badge: { width: 44, height: 44, borderRadius: 4, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+    badgeText: { fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900' },
+    info: { flex: 1, gap: 4 },
+    nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+    name: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', maxWidth: 120 },
+    level: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+    gold: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+    xpTrack: { height: 4, backgroundColor: '#1e293b', borderRadius: 2, overflow: 'hidden' },
+    xpFill: { height: '100%', backgroundColor: C.neonBlue },
+    xpRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    xpText: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8 },
+    focusTag: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1, fontWeight: '700' },
+    gearBtn: { padding: 8, borderRadius: 4, backgroundColor: '#ffffff08' },
+    streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fbbf2415', borderWidth: 1, borderColor: '#fbbf2444', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 1, marginRight: 4 },
+    streakFire: { fontSize: 9 },
+    streakNum: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '900', marginLeft: 2 },
+    rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonBlue, width: 14, height: 14, borderRadius: 7, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.bg },
+    rankUpIndicatorText: { color: '#fff', fontSize: 9, fontWeight: '900' },
+  })
+
   return (
     <View style={hud.container}>
       <View style={hud.row}>
@@ -161,7 +72,6 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
             <Text style={hud.name} numberOfLines={1} ellipsizeMode='tail'>{jobClass.name}</Text>
             <Text style={hud.level}> LVL {player.level}</Text>
             <View style={{ flex: 1 }} />
-            {/* Streak badge */}
             {player.currentStreak > 0 && (
               <View style={hud.streakBadge}>
                 <Text style={hud.streakFire}>🔥</Text>
@@ -184,7 +94,6 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
             )}
           </View>
         </View>
-        {/* Settings gear */}
         <TouchableOpacity onPress={onSettings} style={hud.gearBtn}>
           <Icon name="cog-outline" size={18} color={C.dimmed} />
         </TouchableOpacity>

@@ -58,7 +58,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
   }
 
   // Visual rank being shown, changes right when animation finishes roughly
-  const displayRank = isRankingUp ? qualifiedRankInfo : currentRankInfo
+  const displayRank = (isRankingUp ? qualifiedRankInfo : currentRankInfo) as { rank: string; label: string; color: string; bgColor: string }
 
   return (
     <SoloLevelingModal visible={visible} onRequestClose={onClose}>

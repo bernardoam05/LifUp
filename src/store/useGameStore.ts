@@ -27,7 +27,7 @@ import {
 import { 
   createDailyQuests, defToQuest, INITIAL_QUEST_DICTIONARY,
   getCustomShadowPassive, PENALTY_QUEST_POOL,
-  getDailyMissionTarget, BOX_KEYS,
+  getDailyMissionTarget, BOX_KEY_META as BOX_KEYS,
   isWeeklyBossDefinition, isPortalBossDefinition,
 } from './questDictionary'
 
@@ -95,6 +95,8 @@ const INITIAL_RESET_SYSTEM = {
 
 // ── Store ──────────────────────────────────────────────────────────────────────
 
+let _popRewardTimer: ReturnType<typeof setTimeout> | null = null
+
 const useGameStore = create<GameState & GameActions>()(
   persist(
     (set, get) => {
@@ -153,7 +155,9 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         popReward: () => {
-          setTimeout(() => {
+          if (_popRewardTimer !== null) clearTimeout(_popRewardTimer)
+          _popRewardTimer = setTimeout(() => {
+            _popRewardTimer = null
             set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.slice(1) }))
           }, 600)
         },
@@ -354,7 +358,7 @@ const useGameStore = create<GameState & GameActions>()(
             }
           } else if (!hadPenalty && !isFirstDay && !wasRestDay) {
             set((s: GameState & GameActions) => ({
-              system: { ...s.system, consecutiveFails: 0, penaltyMissionsOwed: prevOwed }
+              system: { ...s.system, consecutiveFails: 0, penaltyMissionsOwed: 0 }
             }))
           }
 
@@ -432,6 +436,7 @@ const useGameStore = create<GameState & GameActions>()(
               perfectDays: allDone ? s.statistics.perfectDays + 1 : s.statistics.perfectDays,
               perfectDaysStreak: allDone ? (s.statistics.perfectDaysStreak ?? 0) + 1 : 0,
               sideQuestsCompletedToday: 0,
+              pomodoroSessionsToday: 0,
             },
             player: { ...s.player, xp: newXp, gold: newGold, currentStreak: newStreak, highestStreak: newHighest },
             system: {
@@ -484,7 +489,10 @@ const useGameStore = create<GameState & GameActions>()(
             },
           }))
 
-          if (hadPenalty) fireEvent('penalty_triggered', {}, ref)
+          if (hadPenalty) {
+            fireEvent('penalty_triggered', {}, ref)
+            fireEvent('penalty_veteran', {}, ref)
+          }
           if (allDone) fireEvent('all_quests_completed', {
             afterPerfectDay: true,
             firstDay: isFirstDay,
@@ -565,7 +573,7 @@ const useGameStore = create<GameState & GameActions>()(
           set((state: GameState & GameActions) => {
             const boss = state.system.activeRaidBoss
             if (!boss) return {}
-            const currentHp = Math.max(0, boss.currentHp - dmg)
+            const currentHp = Math.max(0, Math.min(boss.maxHp, boss.currentHp - dmg))
             if (currentHp <= 0) {
               const bDef = RAID_BOSSES.find(b => b.id === boss.defId)
               if (bDef) {
@@ -762,6 +770,8 @@ const useGameStore = create<GameState & GameActions>()(
           set((s: GameState & GameActions) => {
             const quest = s.quests.find(q => q.id === id)
             if (!quest?.done) return {}
+            // Cannot undo after shadow extraction has already been triggered
+            if (s.system.extractionDoneToday) return {}
             xpToRevert = quest.xpGained ?? quest.xp
             let { xp, level, gold } = s.player
             let newXp = xp - xpToRevert
@@ -849,6 +859,48 @@ const useGameStore = create<GameState & GameActions>()(
           fireEvent('focus_total_hours', {}, ref, minutes)
           fireEvent('focus_session_completed', { minutes }, ref, 1)
           checkAndUnlockAchievements(ref)
+        },
+
+        recordPomodoroSession() {
+          set((s: GameState & GameActions) => {
+            const newToday = (s.statistics.pomodoroSessionsToday ?? 0) + 1
+            const newTotal = (s.statistics.totalPomodoroSessions ?? 0) + 1
+            const stats = {
+              ...s.statistics,
+              pomodoroSessionsToday: newToday,
+              totalPomodoroSessions: newTotal,
+            }
+            // Auto-advance and complete pending pomodoro quests
+            const updatedQuests = s.quests.map(q => {
+              if (q.type !== 'pomodoro' || q.done || !q.pomodoroTarget) return q
+              const newVal = newToday
+              if (newVal >= q.pomodoroTarget) {
+                const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
+                const xpGain = Math.round(q.xp * (1 + xpBoost))
+                const goldGain = Math.round(q.gold * (1 + goldBoost))
+                return { ...q, done: true, currentValue: newVal, xpGained: xpGain, goldGained: goldGain }
+              }
+              return { ...q, currentValue: newVal }
+            })
+            // Award XP/gold for newly completed pomodoro quests
+            let xpDelta = 0, goldDelta = 0
+            updatedQuests.forEach((q, i) => {
+              if (q.done && !s.quests[i].done && q.type === 'pomodoro') {
+                xpDelta += q.xpGained ?? 0
+                goldDelta += q.goldGained ?? 0
+              }
+            })
+            if (xpDelta > 0 || goldDelta > 0) {
+              const res = applyXP(s.player.xp, s.player.level, xpDelta)
+              const attrBoost = getAttrXpBoost(s.player, 'pomodoro')
+              return {
+                statistics: stats,
+                quests: updatedQuests,
+                player: { ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + goldDelta, ...attrBoost },
+              }
+            }
+            return { statistics: stats, quests: updatedQuests }
+          })
         },
 
         purchaseItem(itemId, cost) {
@@ -1051,7 +1103,7 @@ const useGameStore = create<GameState & GameActions>()(
               newLevel: existingShadow ? existingShadow.level + 1 : 1
             }
             
-            set({ lastExtraction: { shadow: SHADOW_MAP[finalId] ?? customShadows.find(s => s.id === finalId), isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } })
+            set({ lastExtraction: { shadow: SHADOW_MAP[finalId] ?? get().customShadows.find(s => s.id === finalId), isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } })
           }
 
           set(s => {

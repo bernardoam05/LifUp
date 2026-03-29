@@ -17,13 +17,14 @@ export type Quest = {
   detail: string
   xp: number
   gold: number
-  type: 'training' | 'knowledge' | 'focus' | 'gps' | 'forbidden' | 'limit'
+  type: 'training' | 'knowledge' | 'focus' | 'gps' | 'forbidden' | 'limit' | 'pomodoro'
   failed?: boolean
   currentValue?: number
   targetValue?: number
   done: boolean
   focusDuration?: number
   gpsTarget?: number
+  pomodoroTarget?: number
   xpGained?: number
   goldGained?: number
   rank?: RankKey  // intrinsic quest difficulty — set at creation time
@@ -143,6 +144,10 @@ export type Statistics = {
   totalBossesCompleted: number
   /** Side quests completed — counted in questsByRank by side quest rank */
   totalSideCompleted: number
+  /** Pomodoro cycles completed today (resets at midnight) */
+  pomodoroSessionsToday: number
+  /** Total Pomodoro cycles ever completed */
+  totalPomodoroSessions: number
 }
 
 export const INITIAL_STATS: Statistics = {
@@ -155,6 +160,8 @@ export const INITIAL_STATS: Statistics = {
   sideQuestsCompletedToday: 0,
   totalBossesCompleted: 0,
   totalSideCompleted: 0,
+  pomodoroSessionsToday: 0,
+  totalPomodoroSessions: 0,
 }
 
 // ── Player ─────────────────────────────────────────────────────────────────────
@@ -329,6 +336,7 @@ export type GameActions = {
   removeSideQuest: (id: string) => void
   toggleFavoriteShadow: (id: string) => void
   recordFocusTime: (minutes: number) => void
+  recordPomodoroSession: () => void
   addXP: (amount: number) => { leveledUp: boolean }
   purchaseItem: (itemId: string, cost: number) => boolean
   purchaseShadow: (shadowId: string, cost: number) => boolean
@@ -385,6 +393,7 @@ export type GameActions = {
   clearPendingKeyMission: () => void
   clearActiveDungeonBreak: () => void
   resetExtraction: () => void
+  dismissAchievement: () => void
 }
 
 // ── StoreRef (used by achievement helpers) ─────────────────────────────────────

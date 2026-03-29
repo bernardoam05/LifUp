@@ -30,7 +30,7 @@ import {
   ACHIEVEMENTS_CATALOG, Achievement, AchievementProg,
   TIER_COLORS, getActiveTier, getCompletedTier, isAchievementMaxed, getTierIndex,
 } from '../data/achievements'
-import { SHADOW_MAP, SHADOW_RANK_COLOR, type Shadow } from '../data/shadows'
+import { SHADOW_MAP, SHADOW_RANK_COLOR } from '../data/shadows'
 import SharedStorage from '../native/SharedStorage'
 import SoloLevelingModal from '../components/SoloLevelingModal'
 import { useTheme, FONT, SPACING, RANK_COLORS as THEME_RANK_COLORS } from '../theme'
@@ -307,55 +307,6 @@ function AchievementDetailModal({
   )
 }
 
-// ── Shadow Detail Modal (Status screen) ─────────────────────────────────────────
-
-function ShadowDetailModal({
-  shadow,
-  level,
-  playerLevel,
-  onClose,
-  C,
-}: {
-  shadow:      Shadow | undefined
-  level:       number
-  playerLevel: number
-  onClose:     () => void
-  C: any
-}) {
-  const sdm = getSDMStyles(C) // Assuming getSDMStyles is defined later
-  const isHidden = playerLevel < 10
-  const rankColor = shadow ? (SHADOW_RANK_COLOR[shadow.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.purple) : C.purple
-
-  return (
-    <SoloLevelingModal visible onRequestClose={onClose}>
-      <View style={[sdm.card, { borderColor: rankColor + '66' }]}>
-          <Text style={sdm.title}>{isHidden ? 'SOMBRA MISTERIOSA' : (shadow?.name ?? 'SOMBRA DESCONHECIDA')}</Text>
-          {isHidden ? (
-            <Text style={sdm.mysteryTxt}>
-              {`Um sussurro antigo observa-te das sombras.\nAlcança o nível 10 para revelar a verdadeira forma.`}
-            </Text>
-          ) : (
-            <>
-              <View style={[sdm.rankBadge, { borderColor: rankColor + '66' }]}>
-                <Text style={[sdm.rankTxt, { color: rankColor }]}>{shadow?.rank ?? '???'}</Text>
-              </View>
-              <Text style={sdm.subTxt}>{shadow?.lore ?? 'Sem registo disponível.'}</Text>
-              <Text style={[sdm.levelTxt, { color: rankColor }]}>NÍVEL {level}</Text>
-              <View style={[sdm.effectRow, { borderColor: rankColor + '44', backgroundColor: rankColor + '10' }]}>
-                <Icon name="lightning-bolt" size={12} color={rankColor} />
-                <Text style={[sdm.effectTxt, { color: rankColor }]}>
-                  {' '} {shadow?.passiveEffect?.description ?? 'Efeito desconhecido'}
-                </Text>
-              </View>
-            </>
-          )}
-          <TouchableOpacity style={sdm.closeBtn} onPress={onClose}>
-            <Text style={sdm.closeTxt}>FECHAR</Text>
-          </TouchableOpacity>
-        </View>
-    </SoloLevelingModal>
-  )
-}
 
 // ── Achievements panel (compact summary — tap to open full modal) ───────────────
 
@@ -569,13 +520,13 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
   const lm = React.useMemo(() => getLMStyles(C), [C])
   const sp = React.useMemo(() => getSPStyles(C), [C])
   const kpi = React.useMemo(() => getKPIStyles(C), [C])
-  const sdm = React.useMemo(() => getSDMStyles(C), [C])
   const ac = React.useMemo(() => getACStyles(C), [C])
 
   const player = useGameStore(st => st.player)
   const statistics         = useGameStore(st => st.statistics)
   const system             = useGameStore(st => st.system)
   const customShadows      = useGameStore(st => st.customShadows)
+  const activeShadowIds    = useGameStore(st => st.player.activeShadowIds)
   const levelUpReward      = useGameStore(st => st.levelUpReward)
   const dismissLevelUpReward = useGameStore(st => st.dismissLevelUpReward)
   const jobChangeReward      = useGameStore(st => st.jobChangeReward)
@@ -596,7 +547,6 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
   const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100)
 
   const [selectedAch, setSelectedAch] = useState<{ a: Achievement; prog: AchievementProg | undefined; done: boolean } | null>(null)
-  const [selectedShadow, setSelectedShadow] = useState<{ id: string; level: number } | null>(null)
   const [showRankInfo, setShowRankInfo] = useState(false)
   const [showHistory,  setShowHistory]  = useState(false)
   const [showAchievements, setShowAchievements] = useState(false)
@@ -682,23 +632,43 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
         {/* Achievements Panel */}
         <AchievementsPanel onOpen={() => setShowAchievements(true)} C={C} />
 
-        {/* Shadows List */}
+        {/* Shadows Panel — compact vanguard summary */}
         <SectionHeader icon="ghost" label="EXÉRCITO DE SOMBRAS" C={C} />
-        {player.shadows.length > 0 && (
-          <View style={s.shadowsBlock}>
-            {player.shadows.map((entry, i) => {
-              const data = SHADOW_MAP[entry.id] ?? customShadows.find(cs => cs.id === entry.id)
-              const name = data?.name ?? entry.id
-              return (
-                <TouchableOpacity key={i} style={s.shadowRow} onPress={() => setSelectedShadow({ id: entry.id, level: entry.level })} activeOpacity={0.75}>
-                  <Icon name={data?.icon || "ghost"} size={14} color={data?.color || C.purple} />
-                  <Text style={[s.shadowName, { color: data?.color || C.muted }]}>{name}</Text>
-                  {entry.level > 1 && <Text style={s.shadowLevel}>Lv.{entry.level}</Text>}
-                </TouchableOpacity>
-              )
-            })}
-          </View>
-        )}
+        <View style={s.shadowsBlock}>
+          {player.shadows.length === 0 ? (
+            <Text style={s.empty}>Nenhuma sombra recrutada ainda.</Text>
+          ) : (
+            <>
+              {/* Active vanguard icons */}
+              {activeShadowIds.length > 0 ? (
+                <View style={s.shadowVanguardRow}>
+                  {activeShadowIds.map(id => {
+                    const data = SHADOW_MAP[id as keyof typeof SHADOW_MAP] ?? customShadows.find(cs => cs.id === id)
+                    if (!data) return null
+                    const rankColor = SHADOW_RANK_COLOR[data.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.purple
+                    return (
+                      <View key={id} style={[s.shadowVanguardCard, { borderColor: rankColor + '55' }]}>
+                        <Icon name={data.icon || 'ghost'} size={20} color={rankColor} />
+                        <Text style={[s.shadowVanguardName, { color: rankColor }]} numberOfLines={2}>{data.name}</Text>
+                        <View style={[s.shadowVanguardEffect, { borderColor: rankColor + '33', backgroundColor: rankColor + '10' }]}>
+                          <Text style={[s.shadowVanguardEffectTxt, { color: rankColor }]} numberOfLines={2}>
+                            {data.passiveEffect?.description ?? ''}
+                          </Text>
+                        </View>
+                      </View>
+                    )
+                  })}
+                </View>
+              ) : (
+                <Text style={s.shadowHint}>Sem sombras ativas na vanguarda</Text>
+              )}
+              {/* Army count + hint */}
+              <Text style={s.shadowCount}>
+                {player.shadows.length} sombra{player.shadows.length !== 1 ? 's' : ''} recrutada{player.shadows.length !== 1 ? 's' : ''}  ·  {activeShadowIds.length}/3 na vanguarda  ·  Gerir em SOMBRAS
+              </Text>
+            </>
+          )}
+        </View>
 
       </ScrollView>
 
@@ -716,16 +686,6 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
           prog={selectedAch.prog}
           done={selectedAch.done}
           onClose={() => setSelectedAch(null)}
-          C={C}
-        />
-      )}
-
-      {selectedShadow && (
-        <ShadowDetailModal
-          shadow={SHADOW_MAP[selectedShadow.id as keyof typeof SHADOW_MAP] ?? customShadows.find(cs => cs.id === selectedShadow.id)}
-          level={selectedShadow.level}
-          playerLevel={player.level}
-          onClose={() => setSelectedShadow(null)}
           C={C}
         />
       )}
@@ -795,10 +755,14 @@ const getStyles = (C: any) => StyleSheet.create({
   fill:       { height: '100%', borderRadius: 0 },
   statVal:    { color: C.muted, fontSize: 12, fontFamily: FONT.orbitron, fontWeight: '700' },
 
-  shadowsBlock: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.purple + '33', marginBottom: SPACING.lg, gap: SPACING.sm },
-  shadowRow:    { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
-  shadowName:   { color: C.purple, fontFamily: FONT.orbitron, fontSize: 11, flex: 1 },
-  shadowLevel:  { color: C.text.secondary, fontFamily: FONT.orbitron, fontSize: 10 },
+  shadowsBlock:           { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.purple + '33', marginBottom: SPACING.lg, gap: SPACING.sm },
+  shadowVanguardRow:      { flexDirection: 'row', gap: SPACING.sm },
+  shadowVanguardCard:     { flex: 1, backgroundColor: C.bg, borderWidth: 1, borderRadius: 4, padding: SPACING.sm, alignItems: 'center', gap: 6 },
+  shadowVanguardName:     { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5, textAlign: 'center', lineHeight: 13 },
+  shadowVanguardEffect:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 4, paddingVertical: 3, width: '100%' },
+  shadowVanguardEffectTxt:{ fontFamily: FONT.orbitron, fontSize: 7, textAlign: 'center', lineHeight: 11 },
+  shadowHint:             { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9 },
+  shadowCount:            { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5, marginTop: 4 },
 
   empty:  { color: C.dimmed, fontSize: 12, fontStyle: 'italic', marginBottom: SPACING.lg },
 
@@ -812,21 +776,6 @@ const getKPIStyles = (C: any) => StyleSheet.create({
   label: { color: C.text.secondary, fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1 },
 })
 
-
-const getSDMStyles = (C: any) => StyleSheet.create({
-  overlay:   { flex: 1, backgroundColor: C.bg + 'ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
-  card:      { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 2, padding: SPACING.lg, alignItems: 'center', gap: SPACING.sm },
-  title:     { color: C.muted, fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2, textAlign: 'center' },
-  mysteryTxt:{ color: C.dimmed, fontSize: 12, textAlign: 'center', lineHeight: 18, marginTop: SPACING.sm },
-  rankBadge: { borderWidth: 1, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
-  rankTxt:   { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
-  subTxt:    { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 18 },
-  levelTxt:  { fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 1 },
-  effectRow: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 6, gap: 6 },
-  effectTxt: { fontSize: 11 },
-  closeBtn:  { marginTop: SPACING.sm, paddingVertical: 8, paddingHorizontal: SPACING.xl, borderWidth: 1, borderColor: C.border },
-  closeTxt:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
-})
 
 const getSPStyles = (C: any) => StyleSheet.create({
   container:    { marginBottom: SPACING.lg },
