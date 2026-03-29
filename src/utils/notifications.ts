@@ -116,6 +116,52 @@ export async function cancelFocusNotification(): Promise<void> {
   }
 }
 
+// ── Pomodoro notifications ─────────────────────────────────────────────────────
+
+const POMODORO_BREAK_END_ID = 'pomodoro_break_end'
+
+/** Immediate notification when a work cycle ends and break starts. */
+export async function notifyPomodoroBreakStarted(cycle: number, breakMins: number): Promise<void> {
+  await notifee.displayNotification({
+    title: `☕ CICLO ${cycle} CONCLUÍDO — PAUSA`,
+    body: `Pausa de ${breakMins} min iniciada. Descansa e volta ao trabalho.`,
+    android: {
+      channelId: CHANNEL_ID,
+      smallIcon: 'ic_launcher',
+      pressAction: { id: 'default' },
+    },
+  })
+}
+
+/** Scheduled notification that fires when the break ends, even in background. */
+export async function schedulePomodoroBreakEndNotification(
+  breakEndMs: number,
+  nextCycle: number,
+): Promise<void> {
+  await notifee.cancelNotification(POMODORO_BREAK_END_ID)
+  const trigger: TimestampTrigger = {
+    type: TriggerType.TIMESTAMP,
+    timestamp: breakEndMs,
+  }
+  await notifee.createTriggerNotification(
+    {
+      id: POMODORO_BREAK_END_ID,
+      title: `⚡ CICLO ${nextCycle} — HORA DE TRABALHAR`,
+      body: 'A pausa terminou. O próximo ciclo Pomodoro está pronto.',
+      android: {
+        channelId: CHANNEL_ID,
+        smallIcon: 'ic_launcher',
+        pressAction: { id: 'default' },
+      },
+    },
+    trigger,
+  )
+}
+
+export async function cancelPomodoroNotifications(): Promise<void> {
+  await notifee.cancelNotification(POMODORO_BREAK_END_ID)
+}
+
 export async function scheduleSideQuestNotification(
   id: string,
   delayMs: number,

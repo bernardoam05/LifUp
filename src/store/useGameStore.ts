@@ -77,6 +77,9 @@ const INITIAL_SYSTEM: Omit<SystemState, 'weeklyBossIds' | 'normalBossIds' | 'nor
   penaltyMissionsOwed: 0,
   activeDungeonBreak: null,
   receivedKeyIds: [],
+  pomodoroPhase: 'idle',
+  pomodoroCycle: 0,
+  pomodoroBreakEnd: 0,
 }
 
 const INITIAL_RESET_SYSTEM = {
@@ -95,7 +98,6 @@ const INITIAL_RESET_SYSTEM = {
 
 // ── Store ──────────────────────────────────────────────────────────────────────
 
-let _popRewardTimer: ReturnType<typeof setTimeout> | null = null
 
 const useGameStore = create<GameState & GameActions>()(
   persist(
@@ -155,11 +157,7 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         popReward: () => {
-          if (_popRewardTimer !== null) clearTimeout(_popRewardTimer)
-          _popRewardTimer = setTimeout(() => {
-            _popRewardTimer = null
-            set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.slice(1) }))
-          }, 600)
+          set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.slice(1) }))
         },
 
         triggerEvent(event, payload = {}, value = 1) {
@@ -604,6 +602,7 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         checkRaidBoss() {
+          if (get().player.level < 10) return
           const s = get().system.activeRaidBoss
           if (s && Date.now() > s.endDate) set((state: GameState & GameActions) => ({ system: { ...state.system, activeRaidBoss: null } }))
           if (!get().system.activeRaidBoss) get().spawnRaidBoss()
@@ -847,14 +846,47 @@ const useGameStore = create<GameState & GameActions>()(
 
         recordFocusTime(minutes) {
           if (minutes <= 0) return
-          set((s: GameState) => {
+          set((s: GameState & GameActions) => {
             const stats = { ...s.statistics, totalFocusMinutes: s.statistics.totalFocusMinutes + minutes }
+            // Auto-complete active focus quests (first undone focus quest)
+            const updatedQuests = s.quests.map(q => {
+              if (q.type !== 'focus' || q.done) return q
+              const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
+              const xpGain = Math.round(q.xp * (1 + xpBoost))
+              const goldGain = Math.round(q.gold * (1 + goldBoost))
+              return { ...q, done: true, currentValue: 1, xpGained: xpGain, goldGained: goldGain }
+            })
+            let xpDelta = 0, goldDelta = 0
+            updatedQuests.forEach((q, i) => {
+              if (q.done && !s.quests[i].done && q.type === 'focus') {
+                xpDelta += q.xpGained ?? 0
+                goldDelta += q.goldGained ?? 0
+              }
+            })
+            const playerUpdate = xpDelta > 0 || goldDelta > 0
+              ? (() => {
+                  const res = applyXP(s.player.xp, s.player.level, xpDelta)
+                  const attrBoost = getAttrXpBoost(s.player, 'focus')
+                  return { xp: res.xp, level: res.level, gold: s.player.gold + goldDelta, ...attrBoost }
+                })()
+              : null
             if (s.system.hasPenalty && s.system.penaltyBlockEnd > 0) {
               const newEnd = s.system.penaltyBlockEnd - minutes * 60_000
-              if (newEnd <= Date.now()) return { statistics: stats, system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }
-              return { statistics: stats, system: { ...s.system, penaltyBlockEnd: newEnd } }
+              const sysUpdate = newEnd <= Date.now()
+                ? { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 }
+                : { ...s.system, penaltyBlockEnd: newEnd }
+              return {
+                statistics: stats,
+                system: sysUpdate,
+                quests: updatedQuests,
+                ...(playerUpdate ? { player: { ...s.player, ...playerUpdate } } : {}),
+              }
             }
-            return { statistics: stats }
+            return {
+              statistics: stats,
+              quests: updatedQuests,
+              ...(playerUpdate ? { player: { ...s.player, ...playerUpdate } } : {}),
+            }
           })
           fireEvent('focus_total_hours', {}, ref, minutes)
           fireEvent('focus_session_completed', { minutes }, ref, 1)
@@ -1063,7 +1095,7 @@ const useGameStore = create<GameState & GameActions>()(
           return true
         },
 
-        defeatDungeonBoss(shadowId, customDef) {
+        defeatDungeonBoss(shadowId, customDef, bossLabel) {
           const { player, system, customShadows } = get()
           const { xpBoost, goldBoost, lootBoost } = computeActivePassives(player.activeShadowIds, player.shadows, customShadows, get().activeBuffs)
           const xpReward = Math.round(800 * (1 + xpBoost) * (system.xpBoostNext ? 2 : 1))
@@ -1164,7 +1196,7 @@ const useGameStore = create<GameState & GameActions>()(
           const bossDefeatedItem = {
             type: 'boss_defeated' as const,
             id: shadowId || 'boss',
-            data: { xp: xpReward, gold: goldReward, shadowName: shadowName ?? '', leveledUpShadow, droppedItems: dropItems }
+            data: { xp: xpReward, gold: goldReward, shadowName: shadowName ?? '', leveledUpShadow, droppedItems: dropItems, bossLabel }
           }
           set((s: GameState & GameActions) => ({
             rewardsQueue: shadowReward
@@ -1185,6 +1217,12 @@ const useGameStore = create<GameState & GameActions>()(
         deductGold(amount) { if (get().player.gold < amount) return false; set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold - amount }, statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + amount } })); return true },
         toggleBlockedApp(pkg) { set((s: GameState) => ({ system: { ...s.system, blockedApps: s.system.blockedApps.includes(pkg) ? s.system.blockedApps.filter(p => p !== pkg) : [...s.system.blockedApps, pkg] } })) },
         dismissAchievement() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'achievement') })) },
+
+        setPomodoroState(phase, cycle, breakEnd) {
+          set((_s: GameState & GameActions) => ({
+            system: { ..._s.system, pomodoroPhase: phase, pomodoroCycle: cycle, pomodoroBreakEnd: breakEnd },
+          }))
+        },
         addQuestDefinition(def) { set((s: GameState) => ({ questDictionary: [...s.questDictionary, def] })) },
         updateQuestDefinition(id, patch) { set((s: GameState) => ({ questDictionary: s.questDictionary.map(d => d.id === id ? { ...d, ...patch } : d) })) },
         setActiveTheme(themeId) { set((s: GameState) => ({ player: { ...s.player, activeThemeId: themeId } })) },

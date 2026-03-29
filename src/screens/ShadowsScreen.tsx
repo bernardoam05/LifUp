@@ -134,7 +134,7 @@ function PassiveSummaryCard({
   const totals: Partial<Record<PassiveEffectType, number>> = {}
   for (const { id, level } of activeEntries) {
     const shadow = shadowLookup[id]
-    if (!shadow) continue
+    if (!shadow?.passiveEffect) continue
     const { type, value } = shadow.passiveEffect
     totals[type] = (totals[type] ?? 0) + scaledValue(value, level)
   }

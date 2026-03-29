@@ -26,6 +26,7 @@ export default function AchievementModal({ achievementId, onDismiss }: { achieve
   const achievement = ACHIEVEMENTS_MAP[achievementId]
 
   useEffect(() => {
+    if (!achievement) return
     playSound('achievement')
   }, [achievementId])
 

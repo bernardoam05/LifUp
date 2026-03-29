@@ -1,6 +1,6 @@
 // src/components/QuestCard.tsx
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import useGameStore, { Quest } from '../store/useGameStore'
 import { getQuestConfig } from '../store/questDictionary'
@@ -155,6 +155,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
         onPress={!quest.done ? () => {
           if (quest.type === 'gps') setShowGPS(true)
           else if (quest.type === 'forbidden' || quest.type === 'limit') { /* handled via inline buttons or state */ }
+          else if (quest.type === 'focus' || quest.type === 'pomodoro') Linking.openURL('sololeveling://focus')
           else setShowMission(true)
         } : undefined}
       >
@@ -201,6 +202,36 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
         </View>
 
         <Text style={[qc.detail, quest.done && qc.dimmedTxt]}>{quest.detail}</Text>
+
+        {/* Pomodoro progress bar */}
+        {quest.type === 'pomodoro' && quest.pomodoroTarget != null && quest.pomodoroTarget > 0 && (
+          <View style={{ marginBottom: SPACING.sm }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+              <Icon name="timer-outline" size={11} color={quest.done ? C.dimmed : C.neonBlue} />
+              <Text style={{ color: quest.done ? C.dimmed : C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, marginLeft: 4 }}>
+                {quest.currentValue ?? 0}/{quest.pomodoroTarget} ciclos
+              </Text>
+            </View>
+            <View style={{ height: 3, backgroundColor: C.neonBlue + '22', borderRadius: 2 }}>
+              <View style={{ height: 3, backgroundColor: quest.done ? C.dimmed : C.neonBlue, borderRadius: 2, width: `${Math.min(100, ((quest.currentValue ?? 0) / quest.pomodoroTarget) * 100)}%` }} />
+            </View>
+          </View>
+        )}
+
+        {/* Focus session progress */}
+        {quest.type === 'focus' && quest.targetValue != null && quest.targetValue > 0 && (
+          <View style={{ marginBottom: SPACING.sm }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+              <Icon name="lightning-bolt" size={11} color={quest.done ? C.dimmed : C.neonBlue} />
+              <Text style={{ color: quest.done ? C.dimmed : C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, marginLeft: 4 }}>
+                {quest.currentValue ?? 0}/{quest.targetValue} sessões
+              </Text>
+            </View>
+            <View style={{ height: 3, backgroundColor: C.neonBlue + '22', borderRadius: 2 }}>
+              <View style={{ height: 3, backgroundColor: quest.done ? C.dimmed : C.neonBlue, borderRadius: 2, width: `${Math.min(100, ((quest.currentValue ?? 0) / quest.targetValue) * 100)}%` }} />
+            </View>
+          </View>
+        )}
 
         {/* Personal record chip */}
         {record && record.bestTime > 0 && !quest.done && (
@@ -258,9 +289,9 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
           </View>
         ) : (
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, opacity: 1, paddingRight: 50 }}>
-            <Icon name="gesture-tap" size={14} color={C.neonBlue} style={{ opacity: 0.5 }} />
+            <Icon name={quest.type === 'focus' || quest.type === 'pomodoro' ? 'lightning-bolt' : 'gesture-tap'} size={14} color={C.neonBlue} style={{ opacity: 0.5 }} />
             <Text style={{ color: C.neonBlue, fontSize: 10, fontFamily: FONT.orbitron, marginLeft: 4, opacity: 0.5 }}>
-              Toca para iniciar
+              {quest.type === 'focus' || quest.type === 'pomodoro' ? 'Abrir Focus Mode' : 'Toca para iniciar'}
             </Text>
             <View style={{ flex: 1 }} />
           </View>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, Linking } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTheme, FONT, SPACING } from '../theme'
@@ -28,7 +28,7 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
 
   return (
     <>
-      <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <Modal visible={visible && !showKeyDetail} transparent animationType="fade" onRequestClose={onClose}>
         <View style={st.overlay}>
           <View style={[st.container, { paddingTop: insets.top }]}>
             {/* Header */}
@@ -97,7 +97,6 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
             setPendingKeyMission(key.id)
             setShowKeyDetail(false)
             onClose()
-            Linking.openURL('sololeveling://missions')
           }}
           dungeonKey={selectedKey}
           keyLastUsedAt={selectedKey ? (keyLastUsedAt?.[selectedKey.id] ?? 0) : 0}

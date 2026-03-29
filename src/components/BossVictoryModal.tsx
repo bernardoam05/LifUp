@@ -33,6 +33,7 @@ interface BossVictoryModalProps {
     shadowName?: string;
     leveledUpShadow?: boolean;
     droppedItems?: string[];
+    bossLabel?: string;
   };
   C: any;
 }
@@ -57,6 +58,11 @@ export default function BossVictoryModal({
       <View style={bv.card}>
         <Icon name="sword" size={48} color={C.gold} style={{ marginBottom: SPACING.sm }} />
         <Text style={bv.header}>BOSS DERROTADO!</Text>
+        {info.bossLabel && (
+          <Text style={[bv.sub, { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 1, marginBottom: 4 }]}>
+            {info.bossLabel.toUpperCase()}
+          </Text>
+        )}
         <Text style={bv.sub}>O dungeon foi limpo. O Sistema reconhece a tua força.</Text>
 
         <View style={bv.rewardsBox}>

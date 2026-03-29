@@ -12,6 +12,11 @@ import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal'
 
 import { useTheme, FONT, SPACING } from '../theme'
 import { playSound, playAmbient, stopAmbient, AMBIENT_META, type AmbientSoundId } from '../utils/audioService'
+import {
+  notifyPomodoroBreakStarted,
+  schedulePomodoroBreakEndNotification,
+  cancelPomodoroNotifications,
+} from '../utils/notifications'
 
 
 const { FocusBlocker } = NativeModules as {
@@ -320,20 +325,37 @@ export default function FocusScreen() {
   const penaltyMsRemaining = isPenaltyActive ? penaltyBlockEnd - Date.now() : 0
   const triggerEvent       = useGameStore(s => s.triggerEvent)
   const focusEndTime       = useGameStore(s => s.system.focusEndTime)
+  const penaltyBlockStart  = useGameStore(s => s.system.penaltyBlockStart)
 
   const recordPomodoroSession = useGameStore(s => s.recordPomodoroSession)
+  const recordFocusTime       = useGameStore(s => s.recordFocusTime)
+  const setPomodoroState      = useGameStore(s => s.setPomodoroState)
+  const updateSettings        = useGameStore(s => s.updateSettings)
+  const lastFocusDuration     = useGameStore(s => s.settings.lastFocusDuration)
 
-  const [pomodoroMode,      setPomodoroMode]      = useState(false)
-  const [pomodoroWorkMins,  setPomodoroWorkMins]  = useState(25)
-  const [pomodoroBreakMins, setPomodoroBreakMins] = useState(5)
-  const [pomodoroPhase,     setPomodoroPhase]     = useState<'idle' | 'work' | 'break'>('idle')
-  const [pomodoroCycle,     setPomodoroCycle]     = useState(0)
-  const [pomodoroBreakEnd,  setPomodoroBreakEnd]  = useState<number | null>(null)
-  const [editingPomodoro,   setEditingPomodoro]   = useState<'work' | 'break' | null>(null)
-  const [pomodoroInputVal,  setPomodoroInputVal]  = useState('')
+  // Pomodoro config — persisted in settings
+  const pomodoroWorkMins  = useGameStore(s => s.settings.pomodoroWorkMins  ?? 25)
+  const pomodoroBreakMins = useGameStore(s => s.settings.pomodoroBreakMins ?? 5)
+  const pomodoroRounds    = useGameStore(s => s.settings.pomodoroRounds    ?? 4)
+
+  // Pomodoro execution state — persisted in system (survives app restart)
+  const pomodoroPhase    = useGameStore(s => s.system.pomodoroPhase    ?? 'idle')
+  const pomodoroCycle    = useGameStore(s => s.system.pomodoroCycle    ?? 0)
+  const pomodoroBreakEnd = useGameStore(s => s.system.pomodoroBreakEnd ?? 0)
+
+  // Local UI state
+  const [pomodoroMode,     setPomodoroMode]     = useState(pomodoroPhase !== 'idle')
+  const [editingPomodoro,  setEditingPomodoro]  = useState<'work' | 'break' | 'rounds' | null>(null)
+  const [pomodoroInputVal, setPomodoroInputVal] = useState('')
   const pomodoroBreakFiredRef = useRef(false)
-  const pomodoroWorkRef = useRef<TextInput>(null)
-  const pomodoroBreakRef = useRef<TextInput>(null)
+  const pomodoroWorkRef   = useRef<TextInput>(null)
+  const pomodoroBreakRef  = useRef<TextInput>(null)
+  const pomodoroRoundsRef = useRef<TextInput>(null)
+
+  // Sync local pomodoroMode toggle when store phase changes (e.g. restored from background)
+  useEffect(() => {
+    if (pomodoroPhase !== 'idle') setPomodoroMode(true)
+  }, [pomodoroPhase])
 
   const [activeAmbient, setActiveAmbient] = useState<AmbientSoundId | null>(null)
 
@@ -355,21 +377,24 @@ export default function FocusScreen() {
     if (nowMs >= focusEndTime && !focusEndAlertFiredRef.current) {
       focusEndAlertFiredRef.current = true
       playSound('focusEnd')
-      if (pomodoroMode) {
-        // Transition work → break: stop native blocker, start pure-JS break timer
+      if (pomodoroMode || pomodoroPhase === 'work') {
+        // Work → break: stop native blocker, schedule break timer in store
         FocusBlocker?.stopFocusMode().catch(() => {})
         setFocusActive(false, 0)
         setHardcoreMode(false)
         recordPomodoroSession()
         const cycle = pomodoroCycle
-        setPomodoroPhase('break')
-        setPomodoroBreakEnd(Date.now() + pomodoroBreakMins * 60_000)
+        const breakEndMs = Date.now() + pomodoroBreakMins * 60_000
+        setPomodoroState('break', cycle, breakEndMs)
+        notifyPomodoroBreakStarted(cycle, pomodoroBreakMins).catch(() => {})
+        schedulePomodoroBreakEndNotification(breakEndMs, cycle + 1).catch(() => {})
         setAlertCfg({
           title: `⚡ CICLO ${cycle} CONCLUÍDO!`,
-          message: `Bom trabalho! Pausa de ${pomodoroBreakMins} min iniciada. Descansa antes do próximo ciclo.`,
+          message: `Pausa de ${pomodoroBreakMins} min iniciada. O próximo ciclo começa automaticamente.`,
           buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
         })
       } else {
+        recordFocusTime(hours * 60 + minutes)
         setAlertCfg({
           title: '⚡ FOCO CONCLUÍDO',
           message: 'O tempo de foco terminou. Regressa ao campo de batalha e reclama as tuas recompensas.',
@@ -377,9 +402,9 @@ export default function FocusScreen() {
         })
       }
     }
-  }, [nowMs, focusActive, focusEndTime, hardcoreFocusMode, pomodoroMode, pomodoroBreakMins, pomodoroCycle])
+  }, [nowMs, focusActive, focusEndTime, hardcoreFocusMode, pomodoroMode, pomodoroPhase, pomodoroBreakMins, pomodoroCycle])
 
-  // Pomodoro break end detection
+  // Pomodoro break end detection — auto-cycle
   useEffect(() => {
     if (pomodoroPhase !== 'break' || !pomodoroBreakEnd) {
       pomodoroBreakFiredRef.current = false
@@ -388,22 +413,26 @@ export default function FocusScreen() {
     if (nowMs >= pomodoroBreakEnd && !pomodoroBreakFiredRef.current) {
       pomodoroBreakFiredRef.current = true
       playSound('focusEnd')
+      cancelPomodoroNotifications().catch(() => {})
       const nextCycle = pomodoroCycle + 1
-      setAlertCfg({
-        title: '☕ PAUSA TERMINADA',
-        message: `Ciclo ${pomodoroCycle} completo. Pronto para o ciclo ${nextCycle}?`,
-        buttons: [
-          { text: `CICLO ${nextCycle}`, onPress: () => startNextPomodoroCycle(nextCycle) },
-          { text: 'TERMINAR', style: 'cancel', onPress: finishPomodoro },
-        ],
-      })
+      const maxRounds = pomodoroRounds  // 0 = infinite
+      if (maxRounds === 0 || pomodoroCycle < maxRounds) {
+        // Auto-start next work cycle
+        setPomodoroState('idle', nextCycle, 0)
+        startNextPomodoroCycle(nextCycle)
+      } else {
+        // Session complete
+        setPomodoroState('idle', 0, 0)
+        setAlertCfg({
+          title: '🏆 SESSÃO POMODORO COMPLETA',
+          message: `Completaste ${pomodoroCycle} ciclos. Excelente trabalho!`,
+          buttons: [{ text: 'FECHAR', style: 'destructive' }],
+        })
+      }
     }
-  }, [nowMs, pomodoroPhase, pomodoroBreakEnd, pomodoroCycle])
+  }, [nowMs, pomodoroPhase, pomodoroBreakEnd, pomodoroCycle, pomodoroRounds])
 
-  const penaltyRemainingH   = Math.ceil(penaltyMsRemaining / 3_600_000)
-
-  const lastFocusDuration = useGameStore(s => s.settings.lastFocusDuration)
-  const updateSettings    = useGameStore(s => s.updateSettings)
+  const penaltyRemainingH = Math.ceil(penaltyMsRemaining / 3_600_000)
 
   const [hasUsage,         setHasUsage]         = useState(false)
   const [hasOverlay,       setHasOverlay]       = useState(false)
@@ -442,22 +471,26 @@ export default function FocusScreen() {
     }
   }
 
-  function openPomodoroInput(field: 'work' | 'break') {
+  function openPomodoroInput(field: 'work' | 'break' | 'rounds') {
     setEditingPomodoro(field)
-    setPomodoroInputVal(field === 'work' ? String(pomodoroWorkMins) : String(pomodoroBreakMins))
+    const val = field === 'work' ? pomodoroWorkMins : field === 'break' ? pomodoroBreakMins : pomodoroRounds
+    setPomodoroInputVal(String(val))
     setTimeout(() => {
-      (field === 'work' ? pomodoroWorkRef : pomodoroBreakRef).current?.focus()
+      const ref = field === 'work' ? pomodoroWorkRef : field === 'break' ? pomodoroBreakRef : pomodoroRoundsRef
+      ref.current?.focus()
     }, 50)
   }
 
-  function applyPomodoroInput(field: 'work' | 'break') {
+  function applyPomodoroInput(field: 'work' | 'break' | 'rounds') {
     setEditingPomodoro(null)
     const raw = parseInt(pomodoroInputVal, 10)
     if (isNaN(raw)) return
     if (field === 'work') {
-      setPomodoroWorkMins(Math.min(Math.max(raw, 1), 120))
+      updateSettings({ pomodoroWorkMins: Math.min(Math.max(raw, 1), 120) })
+    } else if (field === 'break') {
+      updateSettings({ pomodoroBreakMins: Math.min(Math.max(raw, 1), 60) })
     } else {
-      setPomodoroBreakMins(Math.min(Math.max(raw, 1), 60))
+      updateSettings({ pomodoroRounds: Math.min(Math.max(raw, 0), 20) })
     }
   }
 
@@ -491,13 +524,43 @@ export default function FocusScreen() {
     const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
       if (appStateRef.current.match(/inactive|background/) && next === 'active') {
         checkPerms()
+        const state = useGameStore.getState()
+        const phase = state.system.pomodoroPhase ?? 'idle'
+        const bEnd  = state.system.pomodoroBreakEnd ?? 0
+        const cycle = state.system.pomodoroCycle ?? 0
+        const bMins = state.settings.pomodoroBreakMins ?? 5
+        const maxR  = state.settings.pomodoroRounds ?? 4
+        const now   = Date.now()
+
         if (focusActive && FocusBlocker) {
           FocusBlocker.isFocusModeActive().then(active => {
             if (!active) {
               setFocusActive(false)
               setHardcoreMode(false)
+              // Work phase ended while in background → transition to break
+              if (phase === 'work' && state.system.focusEndTime && now >= (state.system.focusEndTime - 5000)) {
+                focusEndAlertFiredRef.current = true
+                state.recordPomodoroSession()
+                const breakEndMs = now + bMins * 60_000
+                state.setPomodoroState('break', cycle, breakEndMs)
+                notifyPomodoroBreakStarted(cycle, bMins).catch(() => {})
+                schedulePomodoroBreakEndNotification(breakEndMs, cycle + 1).catch(() => {})
+              }
             }
           }).catch(() => {})
+        }
+
+        // Break ended while in background → auto-cycle or finish
+        if (phase === 'break' && bEnd > 0 && now >= bEnd) {
+          pomodoroBreakFiredRef.current = true
+          cancelPomodoroNotifications().catch(() => {})
+          const nextCycle = cycle + 1
+          if (maxR === 0 || cycle < maxR) {
+            state.setPomodoroState('idle', nextCycle, 0)
+            startNextPomodoroCycle(nextCycle)
+          } else {
+            state.setPomodoroState('idle', 0, 0)
+          }
         }
       }
       appStateRef.current = next
@@ -556,10 +619,12 @@ export default function FocusScreen() {
       dur = Math.max(penaltyBlockEnd - Date.now(), 60_000)
     } else if (hardcoreToggle) {
       dur = HARDCORE_DURATION_MS
-    } else if (pomodoroMode) {
+    } else if (pomodoroMode || pomodoroPhase === 'work') {
       dur = pomodoroWorkMins * 60_000
-      setPomodoroPhase('work')
-      if (pomodoroCycle === 0) setPomodoroCycle(1)
+      // Read live store cycle (not stale closure) to handle auto-cycling correctly
+      const liveCycle = useGameStore.getState().system.pomodoroCycle ?? 0
+      const nextCycle = liveCycle === 0 ? 1 : liveCycle
+      setPomodoroState('work', nextCycle, 0)
     } else {
       dur = (hours * 60 + minutes) * 60_000
     }
@@ -581,18 +646,14 @@ export default function FocusScreen() {
     }
   }
 
-  async function startNextPomodoroCycle(cycle: number) {
-    setPomodoroPhase('idle')
-    setPomodoroBreakEnd(null)
-    setPomodoroCycle(cycle)
-    // Start next work cycle (same as startFocus but with updated cycle count already set)
+  async function startNextPomodoroCycle(_cycle: number) {
+    // phase/cycle already updated by caller via setPomodoroState; just start focus
     await startFocus()
   }
 
   function finishPomodoro() {
-    setPomodoroPhase('idle')
-    setPomodoroBreakEnd(null)
-    setPomodoroCycle(0)
+    setPomodoroState('idle', 0, 0)
+    cancelPomodoroNotifications().catch(() => {})
   }
 
   async function stopFocus() {
@@ -610,15 +671,16 @@ export default function FocusScreen() {
       return
     }
 
-    await FocusBlocker.stopFocusMode()
+    if (FocusBlocker) {
+      await FocusBlocker.stopFocusMode().catch(() => {})
+    }
     setFocusActive(false, 0)
     setHardcoreMode(false)
     stopAmbient()
     setActiveAmbient(null)
-    if (pomodoroMode) {
-      setPomodoroPhase('idle')
-      setPomodoroBreakEnd(null)
-      setPomodoroCycle(0)
+    if (pomodoroMode || pomodoroPhase !== 'idle') {
+      setPomodoroState('idle', 0, 0)
+      cancelPomodoroNotifications().catch(() => {})
     }
   }
 
@@ -707,60 +769,59 @@ export default function FocusScreen() {
           </View>
         )}
 
-        {/* 1c. Ambient sound row */}
-        {!hardcorePunished && (
-          <View style={s.ambientRow}>
-            <Icon name="music-note-outline" size={12} color={C.dimmed} style={{ marginRight: 4 }} />
-            {([null, 'lofi', 'rain', 'fire'] as (AmbientSoundId | null)[]).map(id => {
-              const isActive = activeAmbient === id
-              const meta = id ? AMBIENT_META[id] : null
-              return (
-                <TouchableOpacity
-                  key={id ?? 'off'}
-                  style={[s.ambientBtn, isActive && s.ambientBtnActive]}
-                  onPress={() => {
-                    if (id === null) {
-                      stopAmbient()
-                      setActiveAmbient(null)
-                    } else {
-                      playAmbient(id)
-                      setActiveAmbient(id)
-                    }
-                  }}
-                >
-                  <Icon
-                    name={id === null ? 'volume-off' : meta!.icon}
-                    size={14}
-                    color={isActive ? C.neonBlue : C.dimmed}
-                  />
-                  {meta && <Text style={[s.ambientBtnTxt, isActive && { color: C.neonBlue }]}> {meta.label}</Text>}
-                </TouchableOpacity>
-              )
-            })}
-          </View>
-        )}
 
         {/* 2. Timer / Duration */}
         {pomodoroPhase === 'break' && pomodoroBreakEnd ? (
           <View style={[s.countdownBox, { borderColor: C.gold + '88' }]}>
-            <Text style={[s.countdownTxt, { color: C.gold, fontSize: 14, marginBottom: 4 }]}>CICLO {pomodoroCycle} — PAUSA</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+              <Icon name="coffee" size={14} color={C.gold} />
+              <Text style={[s.countdownTxt, { color: C.gold, fontSize: 13 }]}>
+                CICLO {pomodoroCycle}{pomodoroRounds > 0 ? `/${pomodoroRounds}` : ''} — PAUSA
+              </Text>
+            </View>
             <Text style={[s.countdownTxt, { color: C.gold }]}>
               {formatTimeRemaining(Math.max(0, pomodoroBreakEnd - nowMs))}
             </Text>
-            <TouchableOpacity style={s.pomodoroSkipBtn} onPress={finishPomodoro}>
-              <Text style={s.pomodoroSkipTxt}>SALTAR PAUSA</Text>
-            </TouchableOpacity>
+            <Text style={{ color: C.gold + '88', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginTop: 6 }}>
+              {pomodoroRounds === 0 || pomodoroCycle < pomodoroRounds
+                ? `CICLO ${pomodoroCycle + 1} INICIA AUTOMATICAMENTE`
+                : 'ÚLTIMO CICLO — SESSÃO TERMINA'}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
+              <TouchableOpacity style={s.pomodoroSkipBtn} onPress={() => {
+                const nextCycle = pomodoroCycle + 1
+                const maxR = pomodoroRounds
+                cancelPomodoroNotifications().catch(() => {})
+                if (maxR === 0 || pomodoroCycle < maxR) {
+                  pomodoroBreakFiredRef.current = true
+                  setPomodoroState('idle', nextCycle, 0)
+                  startNextPomodoroCycle(nextCycle)
+                } else {
+                  finishPomodoro()
+                }
+              }}>
+                <Text style={s.pomodoroSkipTxt}>SALTAR PAUSA</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[s.pomodoroSkipBtn, { borderColor: C.neonRed + '55' }]} onPress={finishPomodoro}>
+                <Text style={[s.pomodoroSkipTxt, { color: C.neonRed + 'aa' }]}>TERMINAR</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : focusActive && focusEndTime ? (
           hardcoreFocusMode ? (
             <View style={[s.countdownBox, { borderColor: C.neonRed + '88' }]}>
               <Text style={[s.countdownTxt, { color: C.neonRed }]}>
-                {formatElapsed(nowMs - (focusEndTime - HARDCORE_DURATION_MS))}
+                {formatElapsed(nowMs - (hardcorePunished ? (penaltyBlockStart ?? nowMs) : (focusEndTime! - HARDCORE_DURATION_MS)))}
               </Text>
               <Text style={{ color: C.neonRed + 'aa', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: 6 }}>ATIVO — SEM LIMITE</Text>
             </View>
           ) : (
             <View style={s.countdownBox}>
+              {(pomodoroMode || pomodoroPhase === 'work') && (
+                <Text style={{ color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>
+                  CICLO {pomodoroCycle}{pomodoroRounds > 0 ? `/${pomodoroRounds}` : ''} — TRABALHO
+                </Text>
+              )}
               <Text style={s.countdownTxt}>
                 {formatTimeRemaining(Math.max(0, focusEndTime - nowMs))}
               </Text>
@@ -842,12 +903,13 @@ export default function FocusScreen() {
               <Icon name="timer-sand" size={14} color={C.gold} />
               <Text style={s.pomodoroConfigTitle}> POMODORO</Text>
             </View>
+            {/* Row 1: Work + Break */}
             <View style={s.pomodoroPickersRow}>
               {/* Work duration */}
               <View style={s.pomodoroPicker}>
                 <Text style={s.pomodoroPickerLabel}>TRABALHO</Text>
                 <View style={s.pomodoroPickerCtrl}>
-                  <TouchableOpacity onPress={() => setPomodoroWorkMins(m => Math.max(1, m - 5))} style={s.pomodoroPickerBtn}>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroWorkMins: Math.max(1, pomodoroWorkMins - 5) })} style={s.pomodoroPickerBtn}>
                     <Text style={s.pomodoroPickerArrow}>▼</Text>
                   </TouchableOpacity>
                   {editingPomodoro === 'work' ? (
@@ -867,7 +929,7 @@ export default function FocusScreen() {
                       <Text style={s.pomodoroPickerVal}>{pomodoroWorkMins}<Text style={s.pomodoroPickerUnit}>m</Text></Text>
                     </TouchableOpacity>
                   )}
-                  <TouchableOpacity onPress={() => setPomodoroWorkMins(m => Math.min(120, m + 5))} style={s.pomodoroPickerBtn}>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroWorkMins: Math.min(120, pomodoroWorkMins + 5) })} style={s.pomodoroPickerBtn}>
                     <Text style={s.pomodoroPickerArrow}>▲</Text>
                   </TouchableOpacity>
                 </View>
@@ -877,7 +939,7 @@ export default function FocusScreen() {
               <View style={s.pomodoroPicker}>
                 <Text style={s.pomodoroPickerLabel}>PAUSA</Text>
                 <View style={s.pomodoroPickerCtrl}>
-                  <TouchableOpacity onPress={() => setPomodoroBreakMins(m => Math.max(1, m - 1))} style={s.pomodoroPickerBtn}>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroBreakMins: Math.max(1, pomodoroBreakMins - 1) })} style={s.pomodoroPickerBtn}>
                     <Text style={s.pomodoroPickerArrow}>▼</Text>
                   </TouchableOpacity>
                   {editingPomodoro === 'break' ? (
@@ -897,13 +959,48 @@ export default function FocusScreen() {
                       <Text style={s.pomodoroPickerVal}>{pomodoroBreakMins}<Text style={s.pomodoroPickerUnit}>m</Text></Text>
                     </TouchableOpacity>
                   )}
-                  <TouchableOpacity onPress={() => setPomodoroBreakMins(m => Math.min(60, m + 1))} style={s.pomodoroPickerBtn}>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroBreakMins: Math.min(60, pomodoroBreakMins + 1) })} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▲</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={s.pomodoroPickerDivider} />
+              {/* Rounds */}
+              <View style={s.pomodoroPicker}>
+                <Text style={s.pomodoroPickerLabel}>RONDAS</Text>
+                <View style={s.pomodoroPickerCtrl}>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroRounds: Math.max(0, pomodoroRounds - 1) })} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▼</Text>
+                  </TouchableOpacity>
+                  {editingPomodoro === 'rounds' ? (
+                    <TextInput
+                      ref={pomodoroRoundsRef}
+                      style={s.pomodoroPickerInput}
+                      value={pomodoroInputVal}
+                      onChangeText={v => setPomodoroInputVal(v.replace(/\D/g, '').slice(0, 2))}
+                      keyboardType="number-pad"
+                      maxLength={2}
+                      selectTextOnFocus
+                      onBlur={() => applyPomodoroInput('rounds')}
+                      onSubmitEditing={() => applyPomodoroInput('rounds')}
+                    />
+                  ) : (
+                    <TouchableOpacity onPress={() => openPomodoroInput('rounds')}>
+                      <Text style={s.pomodoroPickerVal}>
+                        {pomodoroRounds === 0 ? '∞' : String(pomodoroRounds)}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroRounds: Math.min(20, pomodoroRounds + 1) })} style={s.pomodoroPickerBtn}>
                     <Text style={s.pomodoroPickerArrow}>▲</Text>
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
-            <Text style={s.pomodoroDesc}>Trabalha {pomodoroWorkMins} min · Descansa {pomodoroBreakMins} min · Repete</Text>
+            <Text style={s.pomodoroDesc}>
+              {pomodoroWorkMins}m trabalho · {pomodoroBreakMins}m pausa · {pomodoroRounds === 0 ? '∞ rondas' : `${pomodoroRounds} ronda${pomodoroRounds !== 1 ? 's' : ''}`}
+              {pomodoroRounds > 0 ? ` · ${pomodoroRounds * pomodoroWorkMins}min total` : ''}
+            </Text>
           </View>
         )}
 
@@ -964,7 +1061,45 @@ export default function FocusScreen() {
           </TouchableOpacity>
         )}
 
-        {/* 5. Apps a bloquear */}
+        {/* 5. Som ambiente */}
+        {!hardcorePunished && (
+          <>
+            <Text style={s.section}>SOM AMBIENTE</Text>
+            <View style={s.ambientRow}>
+              {([null, 'lofi', 'rain', 'fire'] as (AmbientSoundId | null)[]).map(id => {
+                const isActive = activeAmbient === id
+                const meta = id ? AMBIENT_META[id] : null
+                return (
+                  <TouchableOpacity
+                    key={id ?? 'off'}
+                    style={[s.ambientBtn, isActive && s.ambientBtnActive]}
+                    onPress={() => {
+                      if (id === null) {
+                        stopAmbient()
+                        setActiveAmbient(null)
+                      } else {
+                        playAmbient(id)
+                        setActiveAmbient(id)
+                      }
+                    }}
+                  >
+                    <Icon
+                      name={id === null ? 'volume-off' : meta!.icon}
+                      size={14}
+                      color={isActive ? C.neonBlue : C.dimmed}
+                    />
+                    {meta
+                      ? <Text style={[s.ambientBtnTxt, isActive && { color: C.neonBlue }]}> {meta.label}</Text>
+                      : <Text style={[s.ambientBtnTxt, isActive && { color: C.neonBlue }]}> Off</Text>
+                    }
+                  </TouchableOpacity>
+                )
+              })}
+            </View>
+          </>
+        )}
+
+        {/* 6. Apps a bloquear */}
         <Text style={s.section}>APPS A BLOQUEAR</Text>
         <TouchableOpacity style={s.appSelectorBtn} onPress={() => setShowAppOverlay(true)}>
           <Icon name="shield-lock-outline" size={16} color={selectedCount > 0 ? C.neonBlue : C.muted} />

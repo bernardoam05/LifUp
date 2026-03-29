@@ -34,6 +34,8 @@ export const AMBIENT_META: Record<AmbientSoundId, { icon: string; label: string 
 let activeAmbientSound: any = null
 let activeAmbientId: AmbientSoundId | null = null
 
+let _ambientRequestId = 0
+
 export function playAmbient(id: AmbientSoundId | null): void {
   // Stop and release any existing ambient sound
   if (activeAmbientSound) {
@@ -41,12 +43,19 @@ export function playAmbient(id: AmbientSoundId | null): void {
     activeAmbientSound = null
     activeAmbientId = null
   }
+  // Increment request token so any in-flight callback knows it's stale
+  const token = ++_ambientRequestId
   if (!id) return
 
   const files = AMBIENT_FILES[id]
   const randomFile = files[Math.floor(Math.random() * files.length)]
 
   const sound = new Sound(randomFile, Sound.MAIN_BUNDLE, (err: any) => {
+    if (token !== _ambientRequestId) {
+      // A newer playAmbient/stopAmbient call arrived while this was loading
+      try { sound.release() } catch (_) {}
+      return
+    }
     if (err) {
       console.warn('[AudioService] Ambient sound not found:', randomFile, '— add the .mp3 to android/app/src/main/res/raw/')
       return
@@ -73,25 +82,55 @@ export type SoundType = 'victory' | 'levelUp' | 'achievement' | 'shadow' | 'dail
  * Vibration patterns: [wait, vibrate, wait, vibrate, ...]
  */
 const VIB_PATTERNS: Record<SoundType, number[]> = {
-  victory:    [0, 100, 50, 300, 50, 500],       // Escalating boss kill triple pulse
-  levelUp:    [0, 200, 100, 200],               // Double strong pulse
-  achievement:[0, 100, 50, 200, 50, 100, 50, 400], // Achievement fanfare
-  shadow:     [0, 80, 40, 80, 40, 200, 80, 400], // Shadow extraction reveal
-  daily:      [0, 100],                         // Simple single tick
-  penalty:    [0, 500],                         // Long warning buzz
-  focusEnd:   [0, 200, 100, 200, 100, 400],     // Focus complete — alert triple
+  victory:    [0, 100, 50, 300, 50, 500],
+  levelUp:    [0, 200, 100, 200],
+  achievement:[0, 100, 50, 200, 50, 100, 50, 400],
+  shadow:     [0, 80, 40, 80, 40, 200, 80, 400],
+  daily:      [0, 100],
+  penalty:    [0, 500],
+  focusEnd:   [0, 200, 100, 200, 100, 400],
+}
+
+// SFX files in android/app/src/main/res/raw/
+const SFX_FILES: Partial<Record<SoundType, string>> = {
+  levelUp:     'level_up_ding',
+  victory:     'victory_chime',
+  shadow:      'shadow_captured',
+  penalty:     'penalty_alarm',
+}
+
+// Cached Sound instances — loaded once, reused
+const _sfxCache: Partial<Record<SoundType, any>> = {}
+
+function _getSfx(type: SoundType): Promise<any | null> {
+  return new Promise(resolve => {
+    const file = SFX_FILES[type]
+    if (!file) { resolve(null); return }
+    if (_sfxCache[type]) { resolve(_sfxCache[type]); return }
+    const sound = new Sound(file, Sound.MAIN_BUNDLE, (err: any) => {
+      if (err) {
+        console.warn('[AudioService] SFX not found:', file)
+        resolve(null)
+      } else {
+        _sfxCache[type] = sound
+        resolve(sound)
+      }
+    })
+  })
 }
 
 /**
- * Initialize audio (no-op for vibration)
+ * Preload SFX sounds at startup
  */
 export async function initializeAudio(): Promise<void> {
-  // No-op for vibration-based system
+  for (const type of Object.keys(SFX_FILES) as SoundType[]) {
+    _getSfx(type).catch(() => {})
+  }
 }
 
 /**
- * Play haptic feedback using vibration patterns
- * Each sound type has a unique vibration pattern
+ * Play SFX (audio file + vibration pattern).
+ * Falls back to vibration-only for types without a dedicated file.
  */
 export async function playSound(
   type: SoundType,
@@ -99,15 +138,19 @@ export async function playSound(
   onComplete?: () => void
 ): Promise<void> {
   try {
-    const pattern = VIB_PATTERNS[type] || [0, 100]
-    Vibration.vibrate(pattern)
-    
-    // Small delay to let vibration play
-    setTimeout(() => {
-      onComplete?.()
-    }, 100)
+    Vibration.vibrate(VIB_PATTERNS[type] || [0, 100])
+
+    const sound = await _getSfx(type)
+    if (sound) {
+      sound.stop()
+      sound.setCurrentTime(0)
+      sound.setVolume(0.8)
+      sound.play(() => onComplete?.())
+    } else {
+      setTimeout(() => onComplete?.(), 100)
+    }
   } catch (err) {
-    console.warn(`[AudioService] Error playing haptic feedback ${type}:`, err)
+    console.warn(`[AudioService] Error playing sound ${type}:`, err)
     onComplete?.()
   }
 }

@@ -148,7 +148,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   { id: 'pool_stretching', title: 'Flexibilidade', description: 'Sessão de alongamentos por {target} min.', type: 'pool', questType: 'training', baseTarget: 15, scalingAmount: 1, scalingInterval: 10, unit: 'min', baseXP: 40, baseGold: 10 },
   { id: 'pool_deepwork', title: 'Trabalho Profundo', description: 'Trabalha focado por {target} min sem pausas.', type: 'pool', questType: 'focus', baseTarget: 60, scalingAmount: 5, scalingInterval: 10, unit: 'min', baseXP: 100, baseGold: 30 },
   { id: 'pool_coldshower', title: 'Banho Gelado', description: 'Toma um banho de água fria.', type: 'pool', questType: 'training', baseTarget: 1, scalingAmount: 0, scalingInterval: 1, unit: 'shower', baseXP: 80, baseGold: 20 },
-  { id: 'pool_walking', title: 'Patrulha Ligeira', description: 'Caminha {target} passos hoje.', type: 'pool', questType: 'gps', baseTarget: 8000, scalingAmount: 500, scalingInterval: 5, unit: 'steps', baseXP: 70, baseGold: 20 },
+  { id: 'pool_walking', title: 'Patrulha Ligeira', description: 'Caminha {target} km hoje.', type: 'pool', questType: 'gps', baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'km', baseXP: 70, baseGold: 20 },
   { id: 'pool_language', title: 'Conhecimento Arcano', description: 'Estuda um idioma 15 min.', type: 'pool', questType: 'knowledge', baseTarget: 15, scalingAmount: 0, scalingInterval: 1, unit: 'min', baseXP: 50, baseGold: 15 },
   {
     id: 'pool_burpees', title: 'Condicionamento Extremo', description: 'Realiza {target} burpees.',
@@ -300,9 +300,9 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_ignis', title: 'Titã de Gelo Ignis (S-Rank)',
-    description: 'O contraste térmico quebra limites. Corre {target} min ao frio e banho frio a seguir.',
+    description: 'O contraste térmico quebra limites. Corre {target} km ao ar livre e termina com um banho frio de 1 min.',
     type: 'boss', questType: 'gps',
-    baseTarget: 45, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'km',
     baseXP: 1100, baseGold: 480,
   },
   {
@@ -321,9 +321,9 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_hollow_king', title: 'O Rei Vazio (S-Rank)',
-    description: 'Jejum disciplinado: mantém {target}h sem refeições (hidratação permitida).',
-    type: 'boss', questType: 'training',
-    baseTarget: 24, scalingAmount: 0, scalingInterval: 1, unit: 'h',
+    description: 'Jejum intermitente: {target} min de foco total em trabalho ou estudo com o modo Foco ativo, sem beliscar. Hidratação apenas.',
+    type: 'boss', questType: 'focus',
+    baseTarget: 120, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 1800, baseGold: 800,
   },
   {
@@ -335,22 +335,22 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_wind_walker', title: 'Caminhante do Vento Silencioso (A-Rank)',
-    description: 'Realiza {target} min de alongamentos dinâmicos contínuos (balanços de pernas, rotações de ombros, hip circles) sem pausas superiores a 30s.',
-    type: 'boss', questType: 'training',
+    description: 'Realiza {target} min de alongamentos dinâmicos contínuos (balanços de pernas, rotações de ombros, hip circles) sem pausas superiores a 30s. Modo Foco ativo.',
+    type: 'boss', questType: 'focus',
     baseTarget: 45, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 680, baseGold: 210,
   },
   {
     id: 'boss_poison_monarch', title: 'Monarca do Veneno Quimera (S-Rank)',
-    description: 'O veneno está no corpo. Suar toxinas com {target} min de treino HIIT cardíaco.',
+    description: 'O veneno está no corpo. {target} burpees para suar e queimar o veneno de uma vez.',
     type: 'boss', questType: 'training',
-    baseTarget: 40, scalingAmount: 0, scalingInterval: 1, unit: 'min',
+    baseTarget: 60, scalingAmount: 0, scalingInterval: 1, unit: 'reps',
     baseXP: 1250, baseGold: 500,
   },
   {
     id: 'boss_goliath', title: 'Golias das Rochas Negras (A-Rank)',
-    description: 'Isometria pesada: {target} min de wall-sit ou prancha (tempo acumulado).',
-    type: 'boss', questType: 'training',
+    description: 'Isometria pesada: {target} min de wall-sit ou prancha (tempo acumulado). Modo Foco ativo durante o esforço.',
+    type: 'boss', questType: 'focus',
     baseTarget: 10, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 800, baseGold: 250,
   },
@@ -384,9 +384,9 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_tarantula', title: 'Tarântula Imperial (A-Rank)',
-    description: 'Marcha controlada: percorre {target} passos num percurso definido à partida (evita desvios), sem música.',
+    description: 'Marcha controlada: percorre {target} km num percurso definido à partida (evita desvios), sem música nem telemóvel.',
     type: 'boss', questType: 'gps',
-    baseTarget: 8000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
+    baseTarget: 6, scalingAmount: 0, scalingInterval: 1, unit: 'km',
     baseXP: 650, baseGold: 200,
   },
   {
@@ -440,9 +440,9 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_astral_nebula', title: 'Rei Nebulosa (S-Rank)',
-    description: 'Travessia cósmica: atinge {target} passos em marcha longa e focada.',
+    description: 'Travessia cósmica: percorre {target} km em marcha longa e focada.',
     type: 'boss', questType: 'gps',
-    baseTarget: 12000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
+    baseTarget: 8, scalingAmount: 0, scalingInterval: 1, unit: 'km',
     baseXP: 1750, baseGold: 780,
   },
   {
@@ -461,15 +461,15 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_ant_worker_prime', title: 'Operária Primordial (A-Rank)',
-    description: 'Rota de exploração: percorre {target} passos num trajeto que nunca fizeste antes, escolhendo o caminho no momento (sem rota pré-definida). Nota 3 coisas novas que descobriste ao longo do percurso.',
+    description: 'Rota de exploração: percorre {target} km num trajeto que nunca fizeste antes, escolhendo o caminho no momento (sem rota pré-definida). Nota 3 coisas novas que descobriste ao longo do percurso.',
     type: 'boss', questType: 'gps',
-    baseTarget: 6000, scalingAmount: 0, scalingInterval: 1, unit: 'passos',
+    baseTarget: 4, scalingAmount: 0, scalingInterval: 1, unit: 'km',
     baseXP: 690, baseGold: 210,
   },
   {
     id: 'boss_stone_golem_shard', title: 'Fragmento do Golem (A-Rank)',
-    description: 'Experimenta uma prática física nova (yoga, capoeira, calistenia, tai chi ou outra que nunca tentaste): segue um tutorial e pratica {target} min sem interrupção. Repete os movimentos no final sem guia.',
-    type: 'boss', questType: 'training',
+    description: 'Experimenta uma prática física nova (yoga, capoeira, calistenia, tai chi ou outra que nunca tentaste): segue um tutorial e pratica {target} min sem interrupção com modo Foco ativo. Repete os movimentos no final sem guia.',
+    type: 'boss', questType: 'focus',
     baseTarget: 30, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 670, baseGold: 200,
   },
@@ -496,9 +496,9 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_memory_labyrinth', title: 'Labirinto da Memória (A-Rank)',
-    description: 'Memória: cria um palácio mental com {target} itens e revê-os 2x.',
+    description: 'Memória: {target} min de foco para criar um palácio mental com 12 locais e rever as associações 2 vezes em silêncio.',
     type: 'boss', questType: 'focus',
-    baseTarget: 12, scalingAmount: 0, scalingInterval: 1, unit: 'itens',
+    baseTarget: 30, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 780, baseGold: 260,
   },
   {
@@ -524,9 +524,9 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_chrono_master', title: 'Senhor do Tempo (S-Rank)',
-    description: 'Timeboxing: planeia 5 blocos de 25 min e executa pelo menos 3.',
+    description: 'Timeboxing: {target} min de foco (equivale a 3 blocos Pomodoro de 25 min). Executa com pausas de 5 min entre blocos.',
     type: 'boss', questType: 'focus',
-    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'blocos',
+    baseTarget: 75, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 1800, baseGold: 820,
   },
   {
@@ -552,8 +552,8 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   {
     id: 'boss_stoic_challenge', title: 'A Prova do Estoico (A-Rank)',
-    description: 'Desconforto voluntário: faz {target} min de exercício num ambiente frio real (ao ar livre no frio, ou janelas abertas no inverno) sem roupa extra. Regista como te sentiste antes e depois.',
-    type: 'boss', questType: 'training',
+    description: 'Desconforto voluntário: {target} min de treino físico num ambiente frio real (ao ar livre no frio, ou janelas abertas). Modo Foco ativo. Regista como te sentiste antes e depois.',
+    type: 'boss', questType: 'focus',
     baseTarget: 20, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 700, baseGold: 220,
   },

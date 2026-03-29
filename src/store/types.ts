@@ -52,6 +52,9 @@ export type GameSettings = {
   dynamicTheme: boolean // Rank-based theme colors
   autoBlockApps: boolean // Toggle automatic app blocking during penalties
   sideQuestPenalize: boolean // Whether uncompleted side quests trigger penalties
+  pomodoroWorkMins: number   // work phase duration in minutes
+  pomodoroBreakMins: number  // break phase duration in minutes
+  pomodoroRounds: number     // number of work cycles before session ends (0 = infinite)
 }
 
 export const INITIAL_SETTINGS: GameSettings = {
@@ -64,6 +67,9 @@ export const INITIAL_SETTINGS: GameSettings = {
   dynamicTheme: true,
   autoBlockApps: false,
   sideQuestPenalize: false,
+  pomodoroWorkMins: 25,
+  pomodoroBreakMins: 5,
+  pomodoroRounds: 4,
 }
 
 export const INITIAL_SHOP_STOCKS: Record<string, number> = {
@@ -267,6 +273,9 @@ export type SystemState = {
   pendingKeyId?: string | null  // key the player wants to use (set from Inventory, cleared by QuestScreen)
   keyLastUsedAt?: Record<string, number>  // keyId → epoch ms of last dungeon entry (for 24h cooldown)
   receivedKeyIds?: string[]  // box-exclusive key ids already received (prevents duplicate drops)
+  pomodoroPhase: 'idle' | 'work' | 'break'
+  pomodoroCycle: number       // current cycle number (1-based during session)
+  pomodoroBreakEnd: number    // epoch ms when break ends (0 = not in break)
 }
 
 // ── Level Up Reward ────────────────────────────────────────────────────────────
@@ -350,7 +359,7 @@ export type GameActions = {
   setPenaltyReduced: (v: boolean) => void
   removePenalty: () => void
   deductGold: (amount: number) => boolean
-  defeatDungeonBoss: (shadowId: string, customDef?: { name: string; icon: string; questType: Quest['type'] }) => { xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean, isNew?: boolean }
+  defeatDungeonBoss: (shadowId: string, customDef?: { name: string; icon: string; questType: Quest['type'] }, bossLabel?: string) => { xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean, isNew?: boolean }
   checkAndUnlockAchievements: () => void
   /** Triggered by useDayWatcher to handle midnight reset without reload */
   checkDailyReset: () => void
@@ -394,6 +403,7 @@ export type GameActions = {
   clearActiveDungeonBreak: () => void
   resetExtraction: () => void
   dismissAchievement: () => void
+  setPomodoroState: (phase: 'idle' | 'work' | 'break', cycle: number, breakEnd: number) => void
 }
 
 // ── StoreRef (used by achievement helpers) ─────────────────────────────────────

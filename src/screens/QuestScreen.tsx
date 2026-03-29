@@ -176,9 +176,11 @@ function getEventCountdownMs(endDate: string): number {
   const now = new Date()
   const [month, day] = endDate.split('-').map(n => parseInt(n, 10))
   const year = now.getFullYear()
-  const eventEnd = new Date(year, month - 1, day, 23, 59, 59, 999)
-  // If already passed this year, event is over — return 0
-  if (eventEnd.getTime() < now.getTime()) return 0
+  let eventEnd = new Date(year, month - 1, day, 23, 59, 59, 999)
+  // If already passed this year, the event wraps into next year (e.g. Jan event visible in Dec)
+  if (eventEnd.getTime() < now.getTime()) {
+    eventEnd = new Date(year + 1, month - 1, day, 23, 59, 59, 999)
+  }
   return Math.max(0, eventEnd.getTime() - now.getTime())
 }
 
@@ -224,6 +226,7 @@ export default function QuestScreen() {
   }, [pendingRaidId])
 
   // Pick up key mission triggered from Inventory → Cofre de Chaves
+  // User already confirmed in DungeonKeyModal — skip the redundant CustomModal
   useEffect(() => {
     if (!pendingKeyId) return
     const key = ALL_DUNGEON_KEYS.find(k => k.id === pendingKeyId)
@@ -241,7 +244,9 @@ export default function QuestScreen() {
       focusDuration: key.missionType === 'focus' ? key.missionTarget : undefined,
       gpsTarget: key.missionType === 'gps' ? key.missionTarget : undefined,
     }
-    setKeyConfirm({ type: 'normal', mission, key })
+    if (enterDungeon(key.id)) {
+      handleMissionSelect(mission)
+    }
   }, [pendingKeyId])
 
   const system = useGameStore(s => s.system)
@@ -426,7 +431,7 @@ export default function QuestScreen() {
     if (focusMinutes) recordFocus(focusMinutes)
 
     // Defeat boss — pushes boss_defeated + shadow to global rewardsQueue (no local modal needed)
-    defeatBoss(m.shadowHint, m.customShadow)
+    defeatBoss(m.shadowHint, m.customShadow, m.label)
 
     // Fire event triggers
     const missionId = m.id.startsWith('custom_boss_') ? m.id.slice('custom_boss_'.length) : m.id
@@ -739,7 +744,7 @@ export default function QuestScreen() {
 
             {extraQuests.map(q => <QuestCard key={q.id} quest={q} isExtra C={C} />)}
 
-            {extraQuests.length < getDailyMissionTarget(playerLevel, missionDifficulty) && (
+            {extraQuests.length < Math.min(3, getDailyMissionTarget(playerLevel, missionDifficulty)) && (
               <TouchableOpacity
                 style={s.generateExtraBtn}
                 onPress={() => generateExtraQuests()}

@@ -57,7 +57,7 @@ function StatBar({ label, level, C }: { label: string; level: number; C: any }) 
     INT: { icon: 'brain',       color: C.neonBlue },
     VIT: { icon: 'heart-pulse', color: C.purple },
   }
-  const { icon, color } = ATTR_ICONS[label]
+  const { icon, color } = ATTR_ICONS[label as keyof typeof ATTR_ICONS] ?? { icon: 'help-circle', color: C.muted }
   const s = getStyles(C)
 
   return (
@@ -402,8 +402,9 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
             const tierIdx     = getTierIndex(prog)
             const prevTarget  = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0
             const thisTarget  = activeTier?.targetValue ?? 1
+            const _range = Math.max(1, thisTarget - prevTarget)
             const progressPct = (a.tiers && !maxed && activeTier)
-              ? Math.min(100, ((currentVal - prevTarget) / (thisTarget - prevTarget)) * 100)
+              ? Math.min(100, ((currentVal - prevTarget) / _range) * 100)
               : (maxed ? 100 : 0)
 
             return (
