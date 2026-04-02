@@ -169,6 +169,7 @@ export default function QuestScreen() {
   const setEventBossState = useGameStore(st => st.setEventBossState);
   const completeEventTrial = useGameStore(st => st.completeEventTrial);
   const markEventBossDefeated = useGameStore(st => st.markEventBossDefeated);
+  const setMissionModalOpen = useGameStore(st => st.setMissionModalOpen);
   const pendingRaidId = useGameStore(st => st.system.pendingRaidExtractionId);
   const clearRaid     = useGameStore(st => st.clearPendingRaidExtraction);
   const pendingKeyId  = useGameStore(st => st.system.pendingKeyId);
@@ -356,6 +357,9 @@ export default function QuestScreen() {
   }, [activeMission, showEventDungeon, showForge]);
 
   function handleMissionSelect(m: DungeonMission) {
+    if (m.type === 'focus' || m.type === 'gps' || m.type === 'training') {
+      setMissionModalOpen(true);
+    }
     setActiveMission(m);
   }
 
@@ -771,8 +775,9 @@ export default function QuestScreen() {
       {activeBossQuest && activeMission?.type === 'focus' && (
         <MissionActiveScreen
           quest={activeBossQuest}
-          onClose={() => setActiveMission(null)}
+          onClose={() => { setMissionModalOpen(false); setActiveMission(null); }}
           onComplete={() => {
+            setMissionModalOpen(false);
             const mins = Math.max(1, Math.round((activeMission.focusDuration ?? 90 * 60_000) / 60_000));
             completeBossMission(activeMission, mins);
           }}
@@ -786,8 +791,8 @@ export default function QuestScreen() {
       {activeBossQuest && activeMission?.type === 'gps' && (
         <GPSTrackerModal
           quest={activeBossQuest}
-          onClose={() => setActiveMission(null)}
-          onComplete={() => completeBossMission(activeMission)}
+          onClose={() => { setMissionModalOpen(false); setActiveMission(null); }}
+          onComplete={() => { setMissionModalOpen(false); completeBossMission(activeMission); }}
           C={C}
         />
 
@@ -797,8 +802,8 @@ export default function QuestScreen() {
       {activeBossQuest && activeMission?.type === 'training' && (
         <MissionActiveScreen
           quest={activeBossQuest}
-          onClose={() => setActiveMission(null)}
-          onComplete={() => completeBossMission(activeMission)}
+          onClose={() => { setMissionModalOpen(false); setActiveMission(null); }}
+          onComplete={() => { setMissionModalOpen(false); completeBossMission(activeMission); }}
           C={C}
         />
       )}

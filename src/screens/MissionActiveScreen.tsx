@@ -44,6 +44,7 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
   const questRecords = useGameStore(st => st.questRecords);
   const startMissionTimer = useGameStore(st => st.startMissionTimer);
   const clearMissionTimer = useGameStore(st => st.clearMissionTimer);
+  const setMissionModalOpen = useGameStore(st => st.setMissionModalOpen);
 
   const record = questRecords[quest.id];
   const targetMs = targetSeconds ? targetSeconds * 1000 : 0;
@@ -58,6 +59,11 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
   const accRef = useRef(initialElapsed);  // pre-fill accumulated ms when resuming
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const doneRef = useRef(false);
+
+  useEffect(() => {
+    setMissionModalOpen(true);
+    return () => setMissionModalOpen(false);
+  }, [setMissionModalOpen]);
 
   const finalize = React.useCallback((timeMs: number) => {
     if (intervalRef.current) {clearInterval(intervalRef.current);}

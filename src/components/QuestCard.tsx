@@ -113,6 +113,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
   const activeMissionTimers = useGameStore(s => s.activeMissionTimers);
   const failQuest = useGameStore(s => s.failQuest);
   const updateQuestValue = useGameStore(s => s.updateQuestValue);
+  const setMissionModalOpen = useGameStore(s => s.setMissionModalOpen);
   const regenerateSingleDailyQuest = useGameStore(s => isExtra ? undefined : s.regenerateSingleDailyQuest);
   const weeklyRegenCount = useGameStore(s => s.system.weeklyRegenCount);
   const replaceExtraQuest = useGameStore(s => isExtra ? s.replaceExtraQuest : undefined);
@@ -153,10 +154,16 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
         style={[qc.card, isWarningQuest && qc.cardWarning, quest.done && qc.cardSuccess, quest.done && qc.cardDone, isTimerActive && qc.cardActive]}
         activeOpacity={0.8}
         onPress={!quest.done ? () => {
-          if (quest.type === 'gps') {setShowGPS(true);}
+          if (quest.type === 'gps') {
+            setMissionModalOpen(true);
+            setShowGPS(true);
+          }
           else if (quest.type === 'forbidden' || quest.type === 'limit') { /* handled via inline buttons or state */ }
           else if (quest.type === 'focus' || quest.type === 'pomodoro') {Linking.openURL('sololeveling://focus');}
-          else {setShowMission(true);}
+          else {
+            setMissionModalOpen(true);
+            setShowMission(true);
+          }
         } : undefined}
       >
         <View style={qc.header}>
@@ -310,8 +317,8 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
         {showGPS && (
           <GPSTrackerModal
             quest={quest}
-            onClose={() => setShowGPS(false)}
-            onComplete={() => { setShowGPS(false); handleComplete(); }}
+            onClose={() => { setMissionModalOpen(false); setShowGPS(false); }}
+            onComplete={() => { setMissionModalOpen(false); setShowGPS(false); handleComplete(); }}
             C={C}
           />
         )}
@@ -320,8 +327,8 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
         {showMission && (
           <MissionActiveScreen
             quest={quest}
-            onClose={() => setShowMission(false)}
-            onComplete={handleMissionComplete}
+            onClose={() => { setMissionModalOpen(false); setShowMission(false); }}
+            onComplete={() => { setMissionModalOpen(false); handleMissionComplete(); }}
             initialElapsed={timer ? (timer.accumulatedMs + (timer.isPaused ? 0 : Date.now() - timer.startTime)) : 0}
             initialPaused={timer?.isPaused}
             targetSeconds={quest.type === 'focus' ? (quest.focusDuration ? quest.focusDuration / 1000 : 30 * 60) : undefined}

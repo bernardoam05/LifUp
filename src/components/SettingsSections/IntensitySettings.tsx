@@ -8,20 +8,25 @@ import { PunishmentIntensity } from '../../store/useGameStore';
 interface IntensitySettingsProps {
   currentIntensity: PunishmentIntensity
   onIntensityChange: (intensity: PunishmentIntensity) => void
-  customPenaltyHours: number
-  onCustomPenaltyHoursChange: (value: number) => void
+  customPenaltyStartHour: number
+  onCustomPenaltyStartHourChange: (value: number) => void
+  customPenaltyEndHour: number
+  onCustomPenaltyEndHourChange: (value: number) => void
 }
 
 const IntensitySettings = ({
   currentIntensity,
   onIntensityChange,
-  customPenaltyHours,
-  onCustomPenaltyHoursChange,
+  customPenaltyStartHour,
+  onCustomPenaltyStartHourChange,
+  customPenaltyEndHour,
+  onCustomPenaltyEndHourChange,
 }: IntensitySettingsProps) => {
   const C = useTheme();
   const s = React.useMemo(() => getStyles(C), [C]);
   const INTENSITY_OPTIONS = React.useMemo(() => getIntensityOptions(C), [C]);
-  const clampCustom = (v: number) => Math.min(Math.max(v, 1), 24);
+  const clampStart = (v: number) => Math.min(Math.max(v, 0), customPenaltyEndHour - 1);
+  const clampEnd = (v: number) => Math.min(Math.max(v, customPenaltyStartHour + 1), 24);
 
   const current = INTENSITY_OPTIONS.find(o => o.value === currentIntensity) ?? INTENSITY_OPTIONS[1];
 
@@ -74,24 +79,30 @@ const IntensitySettings = ({
               ))}
             </View>
             {opt.value === 'custom' && active && (
-              <View style={s.customRow}>
-                <Text style={s.customLabel}>Horas de bloqueio</Text>
-                <View style={s.customStepper}>
-                  <TouchableOpacity
-                    style={s.stepBtn}
-                    onPress={() => onCustomPenaltyHoursChange(clampCustom(customPenaltyHours - 1))}
-                  >
-                    <Icon name="minus" size={16} color={C.neonBlue} />
-                  </TouchableOpacity>
-                  <View style={s.stepValue}>
-                    <Text style={s.stepValueTxt}>{clampCustom(customPenaltyHours)}h</Text>
+              <View style={[s.customRow, { flexDirection: 'column', alignItems: 'stretch' }]}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8}}>
+                  <Text style={s.customLabel}>Hora Início Bloqueio</Text>
+                  <View style={s.customStepper}>
+                    <TouchableOpacity style={s.stepBtn} onPress={() => onCustomPenaltyStartHourChange(clampStart(customPenaltyStartHour - 1))}>
+                      <Icon name="minus" size={16} color={C.neonBlue} />
+                    </TouchableOpacity>
+                    <View style={s.stepValue}><Text style={s.stepValueTxt}>{String(clampStart(customPenaltyStartHour)).padStart(2, '0')}:00</Text></View>
+                    <TouchableOpacity style={s.stepBtn} onPress={() => onCustomPenaltyStartHourChange(clampStart(customPenaltyStartHour + 1))}>
+                      <Icon name="plus" size={16} color={C.neonBlue} />
+                    </TouchableOpacity>
                   </View>
-                  <TouchableOpacity
-                    style={s.stepBtn}
-                    onPress={() => onCustomPenaltyHoursChange(clampCustom(customPenaltyHours + 1))}
-                  >
-                    <Icon name="plus" size={16} color={C.neonBlue} />
-                  </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <Text style={s.customLabel}>Hora Fim Bloqueio</Text>
+                  <View style={s.customStepper}>
+                    <TouchableOpacity style={s.stepBtn} onPress={() => onCustomPenaltyEndHourChange(clampEnd(customPenaltyEndHour - 1))}>
+                      <Icon name="minus" size={16} color={C.neonBlue} />
+                    </TouchableOpacity>
+                    <View style={s.stepValue}><Text style={s.stepValueTxt}>{String(clampEnd(customPenaltyEndHour)).padStart(2, '0')}:00</Text></View>
+                    <TouchableOpacity style={s.stepBtn} onPress={() => onCustomPenaltyEndHourChange(clampEnd(customPenaltyEndHour + 1))}>
+                      <Icon name="plus" size={16} color={C.neonBlue} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             )}

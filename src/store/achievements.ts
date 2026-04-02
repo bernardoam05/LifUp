@@ -139,7 +139,12 @@ export function unlockAchievements(ids: string[], { get, set }: StoreRef) {
     const shadowRewardsQueue = shadowRewards.map(sh => ({ type: 'shadow' as const, id: sh.id, isLevelUp: false, newLevel: 1 }));
 
     return {
-      rewardsQueue: [...s.rewardsQueue, ...achievementRewards, ...shadowRewardsQueue],
+      rewardsQueue: [
+        ...s.rewardsQueue,
+        ...achievementRewards,
+        ...shadowRewardsQueue,
+        ...(leveledUp && level % 5 === 0 ? [{ type: 'level_up' as const, id: String(level), data: { level, items: [] } }] : []),
+      ],
       unlockedAchievements: [...s.unlockedAchievements, ...ids],
       ...(leveledUp && isNewLevel ? { levelUpReward: { level, items: [] } } : {}),
       player: {

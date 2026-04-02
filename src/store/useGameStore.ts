@@ -126,8 +126,9 @@ const useGameStore = create<GameState & GameActions>()(
         lastExtraction: null,
         questRecords: {},
         questCompletions: {},
+        missionModalOpen: false,
         levelUpReward: null,
-        levelUpToast: null,
+        levelUpToastQueue: [],
         jobChangeReward: null,
         activeMissionTimers: {},
         rewardsQueue: [] as { type: 'achievement' | 'shadow' | 'level_up' | 'job_change' | 'boss_defeated'; id: string; isLevelUp?: boolean; newLevel?: number; data?: any }[],
@@ -292,21 +293,31 @@ const useGameStore = create<GameState & GameActions>()(
             newHardcorePunished = punishment.hardcorePunished;
             streakReset = punishment.streakReset;
 
-            // Difficulty-based blocking logic
+            // Intensity-based blocking logic
             if (get().settings.autoBlockApps) {
               const todayStart = new Date();
               const todayEnd = new Date();
+              const intensity = get().settings.punishmentIntensity;
 
-              if (difficulty === 'normal') {
+              if (intensity === 'medium') {
                 // 12 hours centered at 16:00 (10:00 to 22:00)
                 todayStart.setHours(10, 0, 0, 0);
                 todayEnd.setHours(22, 0, 0, 0);
-              } else if (difficulty === 'hard') {
+              } else if (intensity === 'hardcore') {
                 // 24 hours (immediate to Date.now() + 24h)
                 todayStart.setTime(Date.now());
                 todayEnd.setTime(Date.now() + 24 * 3600_000);
+              } else if (intensity === 'custom') {
+                const sH = get().settings.customPenaltyStartHour ?? 10;
+                const eH = get().settings.customPenaltyEndHour ?? 22;
+                todayStart.setHours(sH, 0, 0, 0);
+                todayEnd.setHours(eH, 0, 0, 0);
+                if (eH <= sH) {
+                  // e.g. 23:00 to 07:00 next day
+                  todayEnd.setDate(todayEnd.getDate() + 1);
+                }
               } else {
-                // Easy: 6 hours centered at 16:00 (13:00 to 19:00)
+                // Easy/light: 6 hours centered at 16:00 (13:00 to 19:00)
                 todayStart.setHours(13, 0, 0, 0);
                 todayEnd.setHours(19, 0, 0, 0);
               }
@@ -597,6 +608,9 @@ const useGameStore = create<GameState & GameActions>()(
                     dungeonKeys: getNewLevelKeys(state.player.dungeonKeys ?? [], res.level),
                     maxLevelReached: isNewLevel ? res.level : state.player.maxLevelReached,
                   },
+                  rewardsQueue: (res.leveledUp && res.level % 5 === 0)
+                    ? [...state.rewardsQueue, { type: 'level_up' as const, id: String(res.level), data: { level: res.level, items: [] } }]
+                    : state.rewardsQueue,
                   ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
                   ...(jobChange ? { jobChangeReward: jobChange } : {}),
                   statistics: { ...state.statistics, totalBossesCompleted: (state.statistics.totalBossesCompleted || 0) + 1 },
@@ -702,8 +716,10 @@ const useGameStore = create<GameState & GameActions>()(
                 ...(res.leveledUp && res.level % 5 === 0 ? [{ type: 'level_up' as const, id: String(res.level), data: { level: res.level, items: rewardItems } }] : []),
                 ...(jobChange ? [{ type: 'job_change' as const, id: jobChange.name, data: jobChange }] : []),
               ],
-              // Show simple toast ONLY for non-multiple of 5 level-ups
-              levelUpToast: res.leveledUp && res.level % 5 !== 0 ? res.level : null,
+              // Queue toast ONLY for non-multiple of 5 level-ups
+              levelUpToastQueue: (res.leveledUp && res.level % 5 !== 0)
+                ? [...s.levelUpToastQueue, res.level]
+                : s.levelUpToastQueue,
             };
           });
 
@@ -762,6 +778,9 @@ const useGameStore = create<GameState & GameActions>()(
                 ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + quest.gold, ...getAttrXpBoost(s.player, quest.type),
                 dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level), maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
               },
+              rewardsQueue: (res.leveledUp && res.level % 5 === 0)
+                ? [...s.rewardsQueue, { type: 'level_up' as const, id: String(res.level), data: { level: res.level, items: [] } }]
+                : s.rewardsQueue,
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               ...(jobChange ? { jobChangeReward: jobChange } : {}),
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
@@ -840,6 +859,9 @@ const useGameStore = create<GameState & GameActions>()(
                 ...s.player, xp: res.xp, level: res.level, ...getAttrXpBoost(s.player, 'side'),
                 dungeonKeys: getNewLevelKeys(s.player.dungeonKeys ?? [], res.level), maxLevelReached: isNewLevel ? res.level : s.player.maxLevelReached,
               },
+              rewardsQueue: (res.leveledUp && res.level % 5 === 0)
+                ? [...s.rewardsQueue, { type: 'level_up' as const, id: String(res.level), data: { level: res.level, items: [] } }]
+                : s.rewardsQueue,
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               ...(jobChange ? { jobChangeReward: jobChange } : {}),
             };
@@ -1036,12 +1058,34 @@ const useGameStore = create<GameState & GameActions>()(
               .filter(e => e.quantity > 0);
 
             if (itemId === 'shadow_essence') {
-              // Special: reset extraction flag — handle fully inside this set()
-              return { player: { ...s.player, inventory: nextInv }, system: { ...s.system, extractionDoneToday: false } };
+              return { player: { ...s.player, inventory: nextInv } };
             }
 
             return { player: { ...s.player, inventory: nextInv } };
           });
+
+          if (itemId === 'shadow_essence') {
+            const state = get();
+            const rank = pickExtractionRank(state.player.level);
+            const shadow = rollShadow(rank, []);
+            if (shadow) {
+              const existing = state.player.shadows.find(e => e.id === shadow.id);
+              const currQueue = state.rewardsQueue;
+              set((s: GameState & GameActions) => ({
+                player: {
+                  ...s.player,
+                  shadows: existing
+                    ? s.player.shadows.map(e => e.id === shadow.id ? { ...e, level: e.level + 1 } : e)
+                    : [...s.player.shadows, { id: shadow.id, level: 1 }],
+                },
+                lastExtraction: { shadow, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 },
+                rewardsQueue: [
+                  ...currQueue,
+                  { type: 'shadow' as const, id: shadow.id, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 },
+                ],
+              }));
+            }
+          }
 
           // Apply timed buffs AFTER inventory deduction so applyBuff's own set() is not overwritten
           if (itemId === 'kasaka_venom') {
@@ -1102,6 +1146,9 @@ const useGameStore = create<GameState & GameActions>()(
               player: { ...s.player, gold: s.player.gold + g, xp: res.xp, level: res.level, inventory: s.player.inventory.map(e => e.itemId === 'loot_box' ? { ...e, quantity: e.quantity - 1 } : e).filter(e => e.quantity > 0), dungeonKeys: k ? Array.from(new Set([...(s.player.dungeonKeys ?? []), k])) : getNewLevelKeys(s.player.dungeonKeys ?? [], res.level), maxLevelReached: Math.max(s.player.maxLevelReached, res.level) },
               system: { ...s.system, receivedKeyIds: k ? Array.from(new Set([...(s.system.receivedKeyIds ?? []), k])) : s.system.receivedKeyIds },
               currentLootReward: reward,
+              rewardsQueue: (res.leveledUp && res.level % 5 === 0)
+                ? [...s.rewardsQueue, { type: 'level_up' as const, id: String(res.level), data: { level: res.level, items: [] } }]
+                : s.rewardsQueue,
               ...(res.leveledUp && res.level > s.player.maxLevelReached ? { levelUpReward: { level: res.level, items: [] } } : {}),
               ...(jobChange ? { jobChangeReward: jobChange } : {}),
             };
@@ -1221,8 +1268,10 @@ const useGameStore = create<GameState & GameActions>()(
                 ...(jobChange ? [{ type: 'job_change' as const, id: jobChange.name, data: jobChange }] : []),
               ],
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1, totalBossesCompleted: (s.statistics.totalBossesCompleted ?? 0) + 1, questsByRank: { ...s.statistics.questsByRank, A: (s.statistics.questsByRank.A ?? 0) + 1 } },
-              // Show simple toast ONLY for non-multiple of 5 level-ups
-              levelUpToast: res.leveledUp && res.level % 5 !== 0 ? res.level : null,
+              // Queue toast ONLY for non-multiple of 5 level-ups
+              levelUpToastQueue: (res.leveledUp && res.level % 5 !== 0)
+                ? [...s.levelUpToastQueue, res.level]
+                : s.levelUpToastQueue,
             };
           });
 
@@ -1275,6 +1324,7 @@ const useGameStore = create<GameState & GameActions>()(
         setPenaltyReduced(v) { set((s: GameState) => ({ system: { ...s.system, penaltyReduced: v } })); },
         removePenalty() { set((s: GameState) => ({ system: { ...s.system, hasPenalty: false, penaltyTriggered: false, penaltyQuests: [], penaltyBlockEnd: 0, focusModeActive: false, focusEndTime: undefined } })); fireEvent('penalty_cleared', {}, ref); },
         deductGold(amount) { if (get().player.gold < amount) {return false;} set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold - amount }, statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + amount } })); return true; },
+        setMissionModalOpen(v) { set((s: GameState) => ({ missionModalOpen: v })); },
         toggleBlockedApp(pkg) { set((s: GameState) => ({ system: { ...s.system, blockedApps: s.system.blockedApps.includes(pkg) ? s.system.blockedApps.filter(p => p !== pkg) : [...s.system.blockedApps, pkg] } })); },
         dismissAchievement() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'achievement') })); },
 
@@ -1290,7 +1340,9 @@ const useGameStore = create<GameState & GameActions>()(
         updateSettings(patch) { set((s: GameState) => ({ settings: { ...s.settings, ...patch } })); },
         saveQuestRecord(questId, time, note) { set((s: GameState & GameActions) => { const prev = s.questRecords[questId]; const bestTime = time > 0 && (!prev || time < prev.bestTime) ? time : prev?.bestTime ?? 0; const history = [...(prev?.history ?? [])]; history.push({ date: new Date().toISOString(), time, note }); return { questRecords: { ...s.questRecords, [questId]: { bestTime, lastNote: note, history } } }; }); },
         dismissLevelUpReward() { set({ levelUpReward: null }); },
-        dismissLevelUpToast() { set({ levelUpToast: null }); },
+        dismissLevelUpToast() {
+          set(s => ({ levelUpToastQueue: s.levelUpToastQueue.slice(1) }));
+        },
         dismissLootReward() { set({ currentLootReward: null }); },
         dismissJobChangeReward() { set({ jobChangeReward: null }); },
         startMissionTimer(id) { set((s: GameState & GameActions) => { const t = s.activeMissionTimers[id]; if (t && !t.isPaused) {return {};} return { activeMissionTimers: { ...s.activeMissionTimers, [id]: { startTime: Date.now(), accumulatedMs: t?.accumulatedMs ?? 0, isPaused: false } } }; }); },
@@ -1382,6 +1434,9 @@ const useGameStore = create<GameState & GameActions>()(
             const isNewLevel = res.level > s.player.maxLevelReached;
             return {
               extraQuests: s.extraQuests.map(q => q.id === id ? { ...q, done: true } : q), player: { ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + Math.round(quest.gold * (1 + goldBoost)), ...getAttrXpBoost(s.player, quest.type), maxLevelReached: Math.max(s.player.maxLevelReached, res.level) },
+              rewardsQueue: (res.leveledUp && res.level % 5 === 0)
+                ? [...s.rewardsQueue, { type: 'level_up' as const, id: String(res.level), data: { level: res.level, items: [] } }]
+                : s.rewardsQueue,
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               system: { ...s.system, xpBoostNext: false }, statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
             };

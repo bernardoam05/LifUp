@@ -157,8 +157,7 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
       case 'material': {
         consumeItem(itemId);
         if (itemId === 'shadow_essence') {
-          resetExtraction();
-          setFeedback('O Sistema cedeu! Extração de sombras resetada para hoje.');
+          setFeedback('O Sistema cedeu! Uma nova sombra foi invocada.');
         } else if (item.buffStat && item.buffMult && item.buffDuration) {
           const pct = Math.round(item.buffMult * 100);
           const stat = item.buffStat === 'xp' ? 'XP' : 'Gold';

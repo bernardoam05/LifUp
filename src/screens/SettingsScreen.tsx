@@ -149,8 +149,10 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
                 <IntensitySettings
                   currentIntensity={settings.punishmentIntensity}
                   onIntensityChange={v => updateSettings({ punishmentIntensity: v })}
-                  customPenaltyHours={settings.customPenaltyHours}
-                  onCustomPenaltyHoursChange={v => updateSettings({ customPenaltyHours: v })}
+                  customPenaltyStartHour={settings.customPenaltyStartHour ?? 10}
+                  onCustomPenaltyStartHourChange={v => updateSettings({ customPenaltyStartHour: v })}
+                  customPenaltyEndHour={settings.customPenaltyEndHour ?? 22}
+                  onCustomPenaltyEndHourChange={v => updateSettings({ customPenaltyEndHour: v })}
                 />
               </View>
 

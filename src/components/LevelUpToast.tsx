@@ -15,9 +15,10 @@ interface LevelUpReward {
 interface Props {
   reward: LevelUpReward | null
   onDismiss: () => void
+  blocked?: boolean
 }
 
-export default function LevelUpToast({ reward, onDismiss }: Props) {
+export default function LevelUpToast({ reward, onDismiss, blocked = false }: Props) {
   const C = useTheme();
   const st = React.useMemo(() => getStyles(C), [C]);
   const slideAnim = useRef(new Animated.Value(-150)).current;
@@ -34,28 +35,28 @@ export default function LevelUpToast({ reward, onDismiss }: Props) {
   }, [onDismiss, slideAnim]);
 
   useEffect(() => {
-    if (reward) {
-      // Play level up sound
-      playSound('levelUp');
-
-      // Animate in quickly
-      Animated.timing(slideAnim, {
-        toValue: 50,
-        duration: 250,
-        useNativeDriver: true,
-      }).start();
-
-      // Auto dismiss after 6 seconds
-      const timer = setTimeout(() => {
-        closeToast();
-      }, 6000);
-
-      return () => clearTimeout(timer);
-    } else {
-      // Ensure it's hidden
+    if (!reward || blocked) {
       slideAnim.setValue(-150);
+      return;
     }
-  }, [reward, closeToast, slideAnim]);
+
+    // Play level up sound
+    playSound('levelUp');
+
+    // Animate in quickly
+    Animated.timing(slideAnim, {
+      toValue: 50,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+
+    // Auto dismiss after 6 seconds
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 6000);
+
+    return () => clearTimeout(timer);
+  }, [reward, blocked, closeToast, slideAnim]);
 
   if (!reward) {return null;}
 

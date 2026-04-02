@@ -50,6 +50,8 @@ export type GameSettings = {
   missionDifficulty: MissionDifficulty
   customDailyMissions: number
   customPenaltyHours: number
+  customPenaltyStartHour: number
+  customPenaltyEndHour: number
   restDay: boolean   // user-activated rest day for today
   lastFocusDuration: { hours: number; minutes: number }
   dynamicTheme: boolean // Rank-based theme colors
@@ -67,6 +69,8 @@ export const INITIAL_SETTINGS: GameSettings = {
   missionDifficulty: 'normal',
   customDailyMissions: 3,
   customPenaltyHours: 6,
+  customPenaltyStartHour: 10,
+  customPenaltyEndHour: 22,
   restDay: false,
   lastFocusDuration: { hours: 0, minutes: 25 },
   dynamicTheme: true,
@@ -307,8 +311,9 @@ export type GameState = {
   achievementProgress: Record<string, AchievementProg>
   questRecords: Record<string, { bestTime: number; lastNote: string; history?: Array<{ date: string; time: number; note: string }> }>
   questCompletions: Record<string, number>   // total times each quest was completed
+  missionModalOpen: boolean                  // mission modal (timer/GPS) is visible
   levelUpReward: LevelUpReward | null     // pending level-up item reward to show
-  levelUpToast: number | null             // simple toast for every level-up (just the level number)
+  levelUpToastQueue: number[]             // queued toast levels for non-5x level-ups
   jobChangeReward: JobClass | null        // pending job change reward to show
   lastExtraction: { shadow: Shadow; isLevelUp: boolean; newLevel: number } | null
   activeMissionTimers: Record<string, { startTime: number; accumulatedMs: number; isPaused: boolean }>
@@ -364,6 +369,7 @@ export type GameActions = {
   setPenaltyReduced: (v: boolean) => void
   removePenalty: () => void
   deductGold: (amount: number) => boolean
+  setMissionModalOpen: (v: boolean) => void
   defeatDungeonBoss: (shadowId: string, customDef?: { name: string; icon: string; questType: Quest['type'] }, bossLabel?: string) => { xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean, isNew?: boolean }
   checkAndUnlockAchievements: () => void
   /** Triggered by useDayWatcher to handle midnight reset without reload */

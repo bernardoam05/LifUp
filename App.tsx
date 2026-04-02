@@ -68,10 +68,11 @@ function InventoryBadge({ count }: { count: number }) {
 // ── App Root ───────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const levelUpToast = useGameStore(s => s.levelUpToast);
+  const levelUpToastQueue = useGameStore(s => s.levelUpToastQueue);
   const dismissLevelUpToast = useGameStore(s => s.dismissLevelUpToast);
   const currentLootReward = useGameStore(s => s.currentLootReward);
   const dismissLootReward = useGameStore(s => s.dismissLootReward);
+  const missionModalOpen = useGameStore(s => s.missionModalOpen);
 
   const focusActive = useGameStore(s => s.system.focusModeActive);
   const focusEndTime = useGameStore(s => s.system.focusEndTime);
@@ -97,7 +98,7 @@ export default function App() {
   const statistics = useGameStore(s => s.statistics);
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated);
   const playerLevel = useGameStore(s => s.player.level);
-  const toastBlocked = penaltyTriggered || rewardsQueue.length > 0 || showSettings || showRankInfo || !!currentLootReward;
+  const toastBlocked = penaltyTriggered || rewardsQueue.length > 0 || showSettings || showRankInfo || !!currentLootReward || missionModalOpen;
 
   // Register the midnight reset watcher
   useDayWatcher();
@@ -318,11 +319,12 @@ export default function App() {
         {/* Settings screen */}
         {showSettings && <SettingsScreen onClose={() => setShowSettings(false)} />}
 
-        {/* Simple level-up toast for non-multiples of 5 (levels 1,2,3,4,6,7,8,9...) */}
+          {/* Simple level-up toast for non-multiples of 5 (levels 1,2,3,4,6,7,8,9...) */}
         {/* Toast is suppressed while a modal/reward is on screen to avoid late/short display */}
         <View style={styles.toastLayer} pointerEvents="box-none">
           <LevelUpToast
-            reward={!toastBlocked && levelUpToast ? { level: levelUpToast, items: [] } : null}
+            reward={levelUpToastQueue.length ? { level: levelUpToastQueue[0], items: [] } : null}
+            blocked={toastBlocked}
             onDismiss={dismissLevelUpToast}
           />
         </View>

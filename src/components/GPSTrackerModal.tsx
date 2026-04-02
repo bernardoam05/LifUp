@@ -38,6 +38,7 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
   const startT = useGameStore(s => s.startMissionTimer);
   const pauseT = useGameStore(s => s.pauseMissionTimer);
   const clearT = useGameStore(s => s.clearMissionTimer);
+  const setMissionModalOpen = useGameStore(s => s.setMissionModalOpen);
 
   const [elapsed, setElapsed] = useState(
     timerStore ? (timerStore.accumulatedMs + (timerStore.isPaused ? 0 : Date.now() - timerStore.startTime)) : 0
@@ -48,6 +49,11 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
   const tracker = useLocationTracker(target, () => {
     handleFinalize();
   });
+
+  useEffect(() => {
+    setMissionModalOpen(true);
+    return () => setMissionModalOpen(false);
+  }, [setMissionModalOpen]);
 
   // Control distance accumulation based on timer
   useEffect(() => {
