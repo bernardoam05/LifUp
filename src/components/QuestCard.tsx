@@ -1,6 +1,6 @@
 // src/components/QuestCard.tsx
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, Pressable, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useGameStore, { Quest } from '../store/useGameStore';
 import { getQuestConfig } from '../store/questDictionary';
@@ -10,12 +10,12 @@ import MissionActiveScreen from '../screens/MissionActiveScreen';
 import { SPACING, FONT, RANK_COLORS } from '../theme';
 
 const getQCStyles = (C: any) => StyleSheet.create({
-  card: { opacity: 1, backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, marginBottom: 16, borderWidth: 1, borderColor: C.neonBlue + '33' },
+  card: { opacity: 1, backgroundColor: C.panel, borderRadius: 8, padding: SPACING.md, marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonBlue + '33' },
   cardWarning: { backgroundColor: C.neonRed + '08', borderColor: C.neonRed + '44' },
   cardSuccess: { backgroundColor: C.green + '10', borderColor: C.green + '44' },
   cardDone: { opacity: 0.55 },
   header: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm, gap: SPACING.sm },
-  typeTag: { width: 28, height: 28, borderRadius: 2, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  typeTag: { width: 32, height: 32, borderRadius: 6, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   label: { flex: 1, color: C.muted, fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
   labelDone: { color: C.muted },
   rewards: { flexDirection: 'row', alignItems: 'center' },
@@ -24,16 +24,16 @@ const getQCStyles = (C: any) => StyleSheet.create({
   dimmedTxt: { color: C.dimmed },
   detail: { color: C.muted, fontSize: 12, marginBottom: SPACING.md, lineHeight: 18 },
   actions: { flexDirection: 'row', gap: SPACING.sm },
-  actionBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 8 },
+  actionBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 6, paddingHorizontal: SPACING.sm, paddingVertical: 8 },
   actionTxt: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
   doneRow: { flexDirection: 'row', alignItems: 'center' },
   doneTag: { color: C.green, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 0.5 },
-  undoBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.dimmed, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 5 },
+  undoBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.dimmed, borderRadius: 6, paddingHorizontal: SPACING.sm, paddingVertical: 6, minHeight: 32 },
   undoTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
-  recordChip: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '33', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2, marginBottom: SPACING.sm },
+  recordChip: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '33', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3, marginBottom: SPACING.sm },
   recordChipTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9 },
-  cardActive: { borderColor: C.neonBlue + '99', shadowColor: C.neonBlue, shadowOpacity: 0.4, shadowRadius: 6, elevation: 4 },
-  activeTimerRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.neonBlue + '12', borderWidth: 1, borderColor: C.neonBlue + '55', borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 10 },
+  cardActive: { borderColor: C.neonBlue + '99', shadowColor: C.neonBlue, shadowOpacity: 0.45, shadowRadius: 8, elevation: 6 },
+  activeTimerRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.neonBlue + '12', borderWidth: 1, borderColor: C.neonBlue + '55', borderRadius: 6, paddingHorizontal: SPACING.sm, paddingVertical: 10 },
   activeTimerTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
   forbiddenRow: {
     flexDirection: 'row',
@@ -132,6 +132,30 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
 
   const record = questRecords[quest.id];
 
+  // ── Press feedback: spring scale ──────────────────────────────────────────
+  const pressScale = useRef(new Animated.Value(1)).current;
+  const handlePressIn = () => {
+    if (quest.done) { return; }
+    Animated.spring(pressScale, { toValue: 0.975, tension: 200, friction: 8, useNativeDriver: true }).start();
+  };
+  const handlePressOut = () => {
+    Animated.spring(pressScale, { toValue: 1, tension: 200, friction: 8, useNativeDriver: true }).start();
+  };
+
+  function handleCardPress() {
+    if (quest.type === 'gps') {
+      setMissionModalOpen(true);
+      setShowGPS(true);
+    } else if (quest.type === 'forbidden' || quest.type === 'limit') {
+      // handled inline
+    } else if (quest.type === 'focus' || quest.type === 'pomodoro') {
+      Linking.openURL('sololeveling://focus');
+    } else {
+      setMissionModalOpen(true);
+      setShowMission(true);
+    }
+  }
+
 
   function handleComplete() {
     completeQuest(quest.id);
@@ -146,25 +170,22 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
     handleComplete();
   }
 
-  const Container = (quest.done ? View : TouchableOpacity) as React.ElementType;
-
   return (
     <>
-      <Container
-        style={[qc.card, isWarningQuest && qc.cardWarning, quest.done && qc.cardSuccess, quest.done && qc.cardDone, isTimerActive && qc.cardActive]}
-        activeOpacity={0.8}
-        onPress={!quest.done ? () => {
-          if (quest.type === 'gps') {
-            setMissionModalOpen(true);
-            setShowGPS(true);
-          }
-          else if (quest.type === 'forbidden' || quest.type === 'limit') { /* handled via inline buttons or state */ }
-          else if (quest.type === 'focus' || quest.type === 'pomodoro') {Linking.openURL('sololeveling://focus');}
-          else {
-            setMissionModalOpen(true);
-            setShowMission(true);
-          }
-        } : undefined}
+      <Pressable
+        onPress={!quest.done ? handleCardPress : undefined}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+      >
+      <Animated.View
+        style={[
+          qc.card,
+          isWarningQuest && qc.cardWarning,
+          quest.done && qc.cardSuccess,
+          quest.done && qc.cardDone,
+          isTimerActive && qc.cardActive,
+          { transform: [{ scale: pressScale }] },
+        ]}
       >
         <View style={qc.header}>
           <View style={[qc.typeTag, { borderColor: cfg.color + '55' }]}>
@@ -213,14 +234,14 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
         {/* Pomodoro progress bar */}
         {quest.type === 'pomodoro' && quest.pomodoroTarget != null && quest.pomodoroTarget > 0 && (
           <View style={{ marginBottom: SPACING.sm }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
               <Icon name="timer-outline" size={11} color={quest.done ? C.dimmed : C.neonBlue} />
               <Text style={{ color: quest.done ? C.dimmed : C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, marginLeft: 4 }}>
                 {quest.currentValue ?? 0}/{quest.pomodoroTarget} ciclos
               </Text>
             </View>
-            <View style={{ height: 3, backgroundColor: C.neonBlue + '22', borderRadius: 2 }}>
-              <View style={{ height: 3, backgroundColor: quest.done ? C.dimmed : C.neonBlue, borderRadius: 2, width: `${Math.min(100, ((quest.currentValue ?? 0) / quest.pomodoroTarget) * 100)}%` }} />
+            <View style={{ height: 6, backgroundColor: C.neonBlue + '22', borderRadius: 3, overflow: 'hidden' }}>
+              <View style={{ height: 6, backgroundColor: quest.done ? C.dimmed : C.neonBlue, borderRadius: 3, width: `${Math.min(100, ((quest.currentValue ?? 0) / quest.pomodoroTarget) * 100)}%` }} />
             </View>
           </View>
         )}
@@ -243,8 +264,8 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
                   {fmt(current)}/{fmt(target)} {label}
                 </Text>
               </View>
-              <View style={{ height: 3, backgroundColor: C.neonBlue + '22', borderRadius: 2 }}>
-                <View style={{ height: 3, backgroundColor: quest.done ? C.dimmed : C.neonBlue, borderRadius: 2, width: `${progress}%` }} />
+              <View style={{ height: 6, backgroundColor: C.neonBlue + '22', borderRadius: 3, overflow: 'hidden' }}>
+                <View style={{ height: 6, backgroundColor: quest.done ? C.dimmed : C.neonBlue, borderRadius: 3, width: `${progress}%` }} />
               </View>
             </View>
           );
@@ -355,7 +376,8 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
             {quest.rank || 'E'}-RANK
           </Text>
         </View>
-      </Container>
+      </Animated.View>
+      </Pressable>
 
 
       {/* Reroll extra quest Modal */}

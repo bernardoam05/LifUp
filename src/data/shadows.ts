@@ -50,21 +50,35 @@ export const SHADOW_GACHA_BY_RANK: Record<ShadowRank, Shadow[]> = {
 export const SHADOW_SHOP: Shadow[] =
   SHADOW_DATABASE.filter(s => s.unlockMethod?.type === 'shop');
 
-// Boss-exclusive shadow lookup.
-// Prefers thematic exclusive shadows (dropRate === 0) over generic pool shadows
-// to ensure strict 1:1 boss→shadow thematic mapping.
-export function getBossDropShadow(bossId: string): Shadow | undefined {
+// Boss-exclusive shadow lookup with probabilistic drop support.
+// - dropRate === 0 marks exclusive boss shadows (vs gacha-pool shadows).
+// - dropChance (0–1) controls the probability of the drop occurring.
+//   undefined / 1.0 = 100% guaranteed (raids, events have no dropChance set).
+// Returns:
+//   Shadow   → drop succeeded
+//   null     → boss HAS a shadow but roll failed (signal a miss to caller)
+//   undefined → boss has no shadow drops registered at all
+export function getBossDropShadow(bossId: string): Shadow | null | undefined {
   const drops = SHADOW_DATABASE.filter(s => s.unlockMethod?.type === 'boss_drop' && s.unlockMethod.bossId === bossId);
   if (drops.length === 0) {return undefined;}
   const exclusive = drops.filter(s => s.dropRate === 0);
   const pool = exclusive.length > 0 ? exclusive : drops;
-  return pool[Math.floor(Math.random() * pool.length)];
+
+  // Apply dropChance for each eligible shadow — collect those that pass the roll
+  const eligible = pool.filter(s => Math.random() <= (s.dropChance ?? 1.0));
+  if (eligible.length === 0) {return null;} // Miss — shadow registered but roll failed
+  return eligible[Math.floor(Math.random() * eligible.length)];
 }
 
 /** Preview da primeira sombra de drop por bossId para UI/extracao. */
 export function getBossDropPreview(bossId: string): Shadow | undefined {
   const drops = SHADOW_DATABASE.filter(s => s.unlockMethod?.type === 'boss_drop' && s.unlockMethod.bossId === bossId);
   return drops[0];
+}
+
+/** Returns true when a boss has any shadow drop registered. Used to detect miss vs no-shadow. */
+export function bossHasShadowDrop(bossId: string): boolean {
+  return SHADOW_DATABASE.some(s => s.unlockMethod?.type === 'boss_drop' && s.unlockMethod.bossId === bossId);
 }
 
 // Achievement-unlocked shadows: achievementId -> Shadow

@@ -668,7 +668,23 @@ export default function QuestScreen() {
         )}
 
         <View style={isRestDay ? { opacity: 0.45 } : undefined}>
-          {quests.map(q => <QuestCard key={q.id} quest={q} C={C} />)}
+          {quests.length === 0 && !isRestDay ? (
+            <View style={{
+              alignItems: 'center', paddingVertical: 40,
+              borderWidth: 1, borderColor: C.border, borderRadius: 8,
+              backgroundColor: C.panel, marginBottom: SPACING.md,
+            }}>
+              <Icon name="clock-outline" size={40} color={C.dimmed} style={{ marginBottom: SPACING.md }} />
+              <Text style={{ color: C.muted, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, marginBottom: SPACING.sm }}>
+                MISSÕES NÃO GERADAS
+              </Text>
+              <Text style={{ color: C.dimmed, fontSize: 12, textAlign: 'center', paddingHorizontal: SPACING.lg }}>
+                O Sistema irá gerar as tuas missões ao iniciar o próximo dia.
+              </Text>
+            </View>
+          ) : (
+            quests.map(q => <QuestCard key={q.id} quest={q} C={C} />)
+          )}
         </View>
 
         {/* ── SECTION: MISSÕES SECUNDÁRIAS ── */}

@@ -519,174 +519,145 @@ export type EventBossDef = {
   color: string
   event: EventWindow
   required: number
+  /**
+   * Scales trial template difficulty for this event.
+   * 1.0 = default (light events), 1.2 = medium, 1.4 = hard, 1.6 = extreme.
+   * Applied to minutes, km, and reps in EVENT_TRIAL_TEMPLATES.
+   */
+  trialScale?: number
 }
 
 export const EVENT_BOSS_DEFS: EventBossDef[] = [
+  // EXTREME (trialScale 1.6): Halloween, Winter Lich, Equinox, Yule, Festival
+  // HARD    (trialScale 1.4): New Year, Harvest, Summer Titan
+  // MEDIUM  (trialScale 1.2): Spring, Carnival, Black Friday, Long Nights
+  // LIGHT   (trialScale 1.0): Valentine, Easter
   {
+
     id: 'event_halloween_reaper',
     label: 'Ceifador de Outono',
     detail: 'Evento Halloween — 90 min de foco absoluto em silêncio total.',
-    type: 'focus',
-    focusDuration: 90 * 60_000,
-    shadowHint: 'soul_reaper',
-    icon: 'ghost',
-    color: '#f97316',
+    type: 'focus', focusDuration: 90 * 60_000, shadowHint: 'soul_reaper',
+    icon: 'ghost', color: '#f97316',
     event: { name: 'HALLOWEEN', start: '10-24', end: '10-31' },
-    required: 6,
+    required: 6, trialScale: 1.6,
   },
   {
     id: 'event_winter_lich',
     label: 'Arquilich do Solstício',
     detail: 'Evento Inverno — 100 min de foco profundo em estudo denso.',
-    type: 'focus',
-    focusDuration: 100 * 60_000,
-    shadowHint: 'archlich_prime',
-    icon: 'snowflake',
-    color: '#60a5fa',
+    type: 'focus', focusDuration: 100 * 60_000, shadowHint: 'archlich_prime',
+    icon: 'snowflake', color: '#60a5fa',
     event: { name: 'SOLSTÍCIO DE INVERNO', start: '12-20', end: '12-27' },
-    required: 6,
+    required: 6, trialScale: 1.6,
   },
   {
     id: 'event_summer_titan',
     label: 'Titã Solar',
-    detail: 'Evento Verão — 140 repetições (Flexões/Agachamentos/Abdominais) em treino contínuo.',
-    type: 'training',
-    shadowHint: 'auto_titan',
-    icon: 'weather-sunny',
-    color: '#f59e0b',
+    detail: 'Evento Verão — 160 repetições (Flexões/Agachamentos/Abdominais) em treino contínuo.',
+    type: 'training', shadowHint: 'auto_titan',
+    icon: 'weather-sunny', color: '#f59e0b',
     event: { name: 'SOLSTÍCIO DE VERÃO', start: '07-01', end: '07-07' },
-    required: 5,
+    required: 5, trialScale: 1.4,
   },
   {
     id: 'event_new_year_ashen',
     label: 'Fénix das Cinzas',
     detail: 'Evento Ano Novo — 80 min de foco para reescrever o teu destino.',
-    type: 'focus',
-    focusDuration: 80 * 60_000,
-    shadowHint: 'ash_specter',
-    icon: 'fire',
-    color: '#f97316',
+    type: 'focus', focusDuration: 80 * 60_000, shadowHint: 'ash_specter',
+    icon: 'fire', color: '#f97316',
     event: { name: 'ANO NOVO', start: '01-01', end: '01-07' },
-    required: 5,
+    required: 5, trialScale: 1.4,
   },
   {
     id: 'event_valentine_oath',
     label: 'Voto Rubro',
     detail: 'Evento Valentim — 60 min de foco absoluto NO que mais amas fazer.',
-    type: 'focus',
-    focusDuration: 60 * 60_000,
-    shadowHint: 'astral_wisp',
-    icon: 'star',
-    color: '#fb7185',
+    type: 'focus', focusDuration: 60 * 60_000, shadowHint: 'astral_wisp',
+    icon: 'star', color: '#fb7185',
     event: { name: 'VALENTIM', start: '02-10', end: '02-16' },
-    required: 4,
+    required: 4, trialScale: 1.0,
   },
   {
     id: 'event_carnival_mask',
     label: 'Máscara do Caos',
-    detail: 'Evento Carnaval — 6 km de marcha rápida entre distrações.',
-    type: 'gps',
-    gpsTarget: 6,
-    shadowHint: 'astral_echo',
-    icon: 'star',
-    color: '#a855f7',
+    detail: 'Evento Carnaval — 7 km de marcha rápida entre distrações.',
+    type: 'gps', gpsTarget: 7, shadowHint: 'astral_echo',
+    icon: 'star', color: '#a855f7',
     event: { name: 'CARNAVAL', start: '02-28', end: '03-06' },
-    required: 5,
+    required: 5, trialScale: 1.2,
   },
   {
     id: 'event_equinox_guardian',
     label: 'Guardião do Equinócio',
     detail: 'Evento Equinócio — 90 min de foco equilibrado sem quebras.',
-    type: 'focus',
-    focusDuration: 90 * 60_000,
-    shadowHint: 'astral_guardian',
-    icon: 'shield-check',
-    color: '#22c55e',
+    type: 'focus', focusDuration: 90 * 60_000, shadowHint: 'astral_guardian',
+    icon: 'shield-check', color: '#22c55e',
     event: { name: 'EQUINÓCIO', start: '03-19', end: '03-25' },
-    required: 6,
+    required: 6, trialScale: 1.6,
   },
   {
     id: 'event_easter_hare',
     label: 'Lebre do Sistema',
     detail: 'Evento Páscoa — 7 km em ritmo estável e 70 reps rápidas.',
-    type: 'gps',
-    gpsTarget: 7,
-    shadowHint: 'easter_hare_shadow',
-    icon: 'star-circle-outline',
-    color: '#facc15',
+    type: 'gps', gpsTarget: 7, shadowHint: 'easter_hare_shadow',
+    icon: 'star-circle-outline', color: '#facc15',
     event: { name: 'PÁSCOA', start: '03-27', end: '04-02' },
-    required: 4,
+    required: 4, trialScale: 1.0,
   },
   {
     id: 'event_spring_bloom',
     label: 'Flor da Renascença',
     detail: 'Evento Primavera — 75 min de foco com estudo leve e contínuo.',
-    type: 'focus',
-    focusDuration: 75 * 60_000,
-    shadowHint: 'mud_elemental',
-    icon: 'feather',
-    color: '#34d399',
+    type: 'focus', focusDuration: 75 * 60_000, shadowHint: 'mud_elemental',
+    icon: 'feather', color: '#34d399',
     event: { name: 'PRIMAVERA', start: '04-15', end: '04-21' },
-    required: 4,
+    required: 4, trialScale: 1.2,
   },
   {
     id: 'event_harvest_king',
     label: 'Rei da Colheita',
     detail: 'Evento Colheita — 150 reps de treino com cadência perfeita.',
-    type: 'training',
-    shadowHint: 'hollow_peasant',
-    icon: 'trophy',
-    color: '#f59e0b',
+    type: 'training', shadowHint: 'hollow_peasant',
+    icon: 'trophy', color: '#f59e0b',
     event: { name: 'COLHEITA', start: '09-15', end: '09-21' },
-    required: 6,
+    required: 6, trialScale: 1.4,
   },
   {
     id: 'event_black_friday_merchant',
     label: 'Mercador da Sombra',
     detail: 'Evento Black Friday — 90 min de foco em tarefas económicas/planeamento.',
-    type: 'focus',
-    focusDuration: 90 * 60_000,
-    shadowHint: 'auto_omega',
-    icon: 'cash-multiple',
-    color: '#0ea5e9',
+    type: 'focus', focusDuration: 90 * 60_000, shadowHint: 'auto_omega',
+    icon: 'cash-multiple', color: '#0ea5e9',
     event: { name: 'BLACK FRIDAY', start: '11-22', end: '11-28' },
-    required: 4,
+    required: 4, trialScale: 1.2,
   },
   {
     id: 'event_yule_seraph',
     label: 'Serafim do Yule',
     detail: 'Evento Yule — 100 min de foco em silêncio com luz baixa.',
-    type: 'focus',
-    focusDuration: 100 * 60_000,
-    shadowHint: 'god_seraphim',
-    icon: 'star',
-    color: '#93c5fd',
+    type: 'focus', focusDuration: 100 * 60_000, shadowHint: 'god_seraphim',
+    icon: 'star', color: '#93c5fd',
     event: { name: 'YULE', start: '12-24', end: '12-31' },
-    required: 6,
+    required: 6, trialScale: 1.6,
   },
   {
     id: 'event_midnight_wraith',
     label: 'Wraith da Meia-Noite',
     detail: 'Evento Noites Longas — 80 min de foco após as 00:00.',
-    type: 'focus',
-    focusDuration: 80 * 60_000,
-    shadowHint: 'midnight_specter',
-    icon: 'skull',
-    color: '#64748b',
+    type: 'focus', focusDuration: 80 * 60_000, shadowHint: 'midnight_specter',
+    icon: 'skull', color: '#64748b',
     event: { name: 'NOITES LONGAS', start: '11-01', end: '11-07' },
-    required: 4,
+    required: 4, trialScale: 1.2,
   },
   {
     id: 'event_festival_drake',
     label: 'Drake do Festival',
-    detail: 'Evento Festival — 10 km de marcha e 120 reps no total.',
-    type: 'gps',
-    gpsTarget: 10,
-    shadowHint: 'shadow_dragon',
-    icon: 'flag',
-    color: '#f97316',
+    detail: 'Evento Festival — 10 km de marcha e 140 reps no total.',
+    type: 'gps', gpsTarget: 10, shadowHint: 'shadow_dragon',
+    icon: 'flag', color: '#f97316',
     event: { name: 'FESTIVAL', start: '08-10', end: '08-16' },
-    required: 5,
+    required: 5, trialScale: 1.6,
   },
 ];
 
@@ -731,23 +702,30 @@ export function getActiveEventBossMissions(now = new Date()): DungeonMission[] {
 
 export function buildEventTrials(def: EventBossDef, C: any, now = new Date()): DungeonMission[] {
   const eventKey = `${def.id}-${now.getFullYear()}`;
-  return EVENT_TRIAL_TEMPLATES.map((t, idx) => ({
-    id: `trial_${def.id}_${t.key}`,
-    label: `${t.label} ${idx + 1}`,
-    detail: `${def.event.name} — ${t.type === 'focus'
-      ? `${t.minutes} min de foco absoluto`
-      : t.type === 'gps'
-        ? `${t.km} km em marcha contínua`
-        : `${t.reps} reps sem pausas longas`}`,
-    type: t.type,
-    gpsTarget: t.km,
-    focusDuration: t.minutes ? t.minutes * 60_000 : undefined,
-    shadowHint: def.shadowHint,
-    icon: t.type === 'focus' ? 'timer-outline' : t.type === 'gps' ? 'run-fast' : 'arm-flex',
-    color: t.type === 'focus' ? C.neonBlue : t.type === 'gps' ? C.green : C.neonRed,
-    eventName: def.event.name,
-    eventKey,
-    isEventTrial: true,
-    category: 'event',
-  }));
+  const scale = def.trialScale ?? 1.0;
+  return EVENT_TRIAL_TEMPLATES.map((t, idx) => {
+    // Scale trial values based on event difficulty tier
+    const scaledMinutes = t.minutes ? Math.round(t.minutes * scale) : undefined;
+    const scaledKm = t.km ? Math.round(t.km * scale * 10) / 10 : undefined;
+    const scaledReps = t.reps ? Math.round(t.reps * scale) : undefined;
+    return {
+      id: `trial_${def.id}_${t.key}`,
+      label: `${t.label} ${idx + 1}`,
+      detail: `${def.event.name} — ${t.type === 'focus'
+        ? `${scaledMinutes} min de foco absoluto`
+        : t.type === 'gps'
+          ? `${scaledKm} km em marcha contínua`
+          : `${scaledReps} reps sem pausas longas`}`,
+      type: t.type,
+      gpsTarget: scaledKm,
+      focusDuration: scaledMinutes ? scaledMinutes * 60_000 : undefined,
+      shadowHint: def.shadowHint,
+      icon: t.type === 'focus' ? 'timer-outline' : t.type === 'gps' ? 'run-fast' : 'arm-flex',
+      color: t.type === 'focus' ? C.neonBlue : t.type === 'gps' ? C.green : C.neonRed,
+      eventName: def.event.name,
+      eventKey,
+      isEventTrial: true,
+      category: 'event',
+    };
+  });
 }

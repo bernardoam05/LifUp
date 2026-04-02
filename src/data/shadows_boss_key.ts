@@ -5,7 +5,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_basilisk_eye',
     name: 'Olhar do Basilisco',
-    rank: 'Elite', type: 'Beast', dropRate: 0,
+    rank: 'Elite', type: 'Beast', dropRate: 0, dropChance: 0.35,
     passiveEffect: { type: 'penalty_reduce', value: 0.05, description: '-5% na perda de XP por penalidade' },
     lore: '"Diziam que um olhar do Basilisco transformava em pedra. Na morte, o seu olhar apenas petrifica os teus falhanços."',
     icon: 'eye-outline', color: '#22c55e',
@@ -14,7 +14,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_manticore_abyss',
     name: 'Manticora Sombria',
-    rank: 'Elite', type: 'Beast', dropRate: 0,
+    rank: 'Elite', type: 'Beast', dropRate: 0, dropChance: 0.35,
     passiveEffect: { type: 'gold_boost', value: 0.04, description: '+4% Gold em todas as missões' },
     lore: '"Uma fera híbrida que caçava caçadores. Agora caça recompensas para o seu novo dono."',
     icon: 'cat', color: '#22c55e',
@@ -23,7 +23,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_phoenix_rebirth',
     name: 'Fénix da Renascença',
-    rank: 'Knight', type: 'Elemental', dropRate: 0,
+    rank: 'Knight', type: 'Elemental', dropRate: 0, dropChance: 0.28,
     passiveEffect: { type: 'streak_protect', value: 1, description: 'Protege a tua Streak uma vez por semana' },
     lore: '"O fogo que nunca morre. Proporciona a resiliência necessária para manter a tua disciplina."',
     icon: 'fire', color: '#3b82f6',
@@ -32,7 +32,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_beholder_chaos',
     name: 'Observador Sombrio',
-    rank: 'Knight', type: 'Magic', dropRate: 0,
+    rank: 'Knight', type: 'Magic', dropRate: 0, dropChance: 0.28,
     passiveEffect: { type: 'xp_boost', value: 0.12, description: '+12% XP em todas as missões' },
     lore: '"Vê através das névoas da dúvida. O seu olho central foca toda a tua energia."',
     icon: 'eye', color: '#3b82f6',
@@ -41,7 +41,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_demon_astaroth',
     name: 'Astaroth, o General',
-    rank: 'Knight', type: 'Demon', dropRate: 0,
+    rank: 'Knight', type: 'Demon', dropRate: 0, dropChance: 0.28,
     passiveEffect: { type: 'gold_boost', value: 0.14, description: '+14% Gold em todas as missões' },
     lore: '"Um demónio de alta linhagem. A sua presença impõe ordem e riqueza."',
     icon: 'emoticon-devil', color: '#3b82f6',
@@ -50,7 +50,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_undead_dragon_king',
     name: 'Rei Dragão Morto-Vivo',
-    rank: 'Commander', type: 'Undead', dropRate: 0,
+    rank: 'Commander', type: 'Undead', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'xp_boost', value: 0.15, description: '+15% XP em todas as missões' },
     lore: '"O soberano dos ossos e do fogo frio. O seu rugido faz o Sistema tremer."',
     icon: 'dinosaur', color: '#f59e0b',
@@ -59,7 +59,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_titania_dark',
     name: 'Rainha Titania Sombria',
-    rank: 'Commander', type: 'Magic', dropRate: 0,
+    rank: 'Commander', type: 'Magic', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'xp_boost', value: 0.18, description: '+18% XP em todas as missões' },
     lore: '"Beleza e escuridão num abraço eterno. A sua magia nutre o teu crescimento diário."',
     icon: 'butterfly', color: '#f59e0b',
@@ -68,7 +68,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_anubis_guardian',
     name: 'Anúbis, Juiz das Almas',
-    rank: 'Commander', type: 'Ancient', dropRate: 0,
+    rank: 'Commander', type: 'Ancient', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'penalty_reduce', value: 0.25, description: '-25% na perda de XP por penalidade' },
     lore: '"Aquele que pesa os corações. Com ele ao teu lado, as falhas pesam menos na tua jornada."',
     icon: 'head-snowflake-outline', color: '#f59e0b',
@@ -77,7 +77,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_cerberus_gate',
     name: 'Cérbero Sombrio',
-    rank: 'Commander', type: 'Beast', dropRate: 0,
+    rank: 'Commander', type: 'Beast', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'xp_boost', value: 0.18, description: '+18% XP em todas as missões' },
     lore: '"Três cabeças, três vezes mais vigilância. O guardião definitivo dos teus ganhos."',
     icon: 'dog-side', color: '#f59e0b',
@@ -86,7 +86,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_medusa_queen',
     name: 'Medusa, a Inamovível',
-    rank: 'Commander', type: 'Undead', dropRate: 0,
+    rank: 'Commander', type: 'Undead', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'focus_mastery', value: 0.10, description: '-10% tempo de foco necessário' },
     lore: '"Foca-te tanto quanto ela foca os seus alvos. O tempo parece parar perante o seu olhar."',
     icon: 'snake', color: '#f59e0b',
@@ -95,7 +95,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_hydra_ancient',
     name: 'Hidra Ancestral Sombria',
-    rank: 'Marshal', type: 'Beast', dropRate: 0,
+    rank: 'Marshal', type: 'Beast', dropRate: 0, dropChance: 0.15,
     passiveEffect: { type: 'gold_boost', value: 0.35, description: '+35% Gold em todas as missões' },
     lore: '"Onde uma cabeça cai, duas sombras surgem. Uma fonte inesgotável de fortuna."',
     icon: 'waves', color: '#ef4444',
@@ -104,7 +104,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_fenrir_wolf',
     name: 'Fenrir, o Devorador',
-    rank: 'Marshal', type: 'Beast', dropRate: 0,
+    rank: 'Marshal', type: 'Beast', dropRate: 0, dropChance: 0.15,
     passiveEffect: { type: 'xp_boost', value: 0.35, description: '+35% XP em todas as missões' },
     lore: '"A besta que devora o destino. Torna-te imparável como o lobo do apocalipse."',
     icon: 'dog-side', color: '#ef4444',
@@ -113,7 +113,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_odin_simulation',
     name: 'Odin, o Pai das Sombras',
-    rank: 'Marshal', type: 'Ancient', dropRate: 0,
+    rank: 'Marshal', type: 'Ancient', dropRate: 0, dropChance: 0.15,
     passiveEffect: { type: 'penalty_immunity', value: 1, description: 'Imunidade total a UMA penalidade por semana' },
     lore: '"Tudo vê e tudo sabe. A sua sabedoria protege-te das falhas temporais."',
     icon: 'eye-circle-outline', color: '#ef4444',
@@ -122,7 +122,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_zeus_simulation',
     name: 'Zeus, o Trovão Sombrio',
-    rank: 'Marshal', type: 'Elemental', dropRate: 0,
+    rank: 'Marshal', type: 'Elemental', dropRate: 0, dropChance: 0.15,
     passiveEffect: { type: 'gold_boost', value: 0.40, description: '+40% Gold em todas as missões' },
     lore: '"A energia primordial do Olimpo, convertida em riqueza para o Monarca."',
     icon: 'lightning-bolt-circle', color: '#ef4444',
@@ -131,7 +131,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_cthulhu_spawn',
     name: 'Spawn do Vazio Inominável',
-    rank: 'Marshal', type: 'Ancient', dropRate: 0,
+    rank: 'Marshal', type: 'Ancient', dropRate: 0, dropChance: 0.15,
     passiveEffect: { type: 'xp_boost', value: 0.40, description: '+40% XP em todas as missões' },
     lore: '"Vindo de dimensões que o Sistema mal consegue compreender. O poder do vazio é teu."',
     icon: 'octagram-outline', color: '#ef4444',
@@ -140,7 +140,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_wukong_celestial',
     name: 'Wukong Celestial',
-    rank: 'Commander', type: 'Warrior', dropRate: 0,
+    rank: 'Commander', type: 'Warrior', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'boss_bonus_xp', value: 0.18, description: '+18% XP extra em Boss Raids' },
     lore: '"O Rei Macaco quebra limites e forja caminho. A sua fúria agora protege o teu avanço."',
     icon: 'staff', color: '#f59e0b',
@@ -149,7 +149,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'shadow_kratos_sparta',
     name: 'Fantasma de Esparta',
-    rank: 'Commander', type: 'Warrior', dropRate: 0,
+    rank: 'Commander', type: 'Warrior', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'xp_boost', value: 0.20, description: '+20% XP em todas as missões' },
     lore: '"Nenhuma corrente o deteve. O seu instinto de guerra corta distrações e acelera a tua evolução."',
     icon: 'sword',
@@ -161,7 +161,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'kasaka_viper',
     name: 'Víbora de Kasaka',
-    rank: 'Normal', type: 'Beast', dropRate: 0,
+    rank: 'Normal', type: 'Beast', dropRate: 0, dropChance: 0.4,
     passiveEffect: { type: 'xp_boost', value: 0.02, description: '+2% XP em todas as missões' },
     lore: '"A serpente guardou o pântano durante séculos. Na morte, o seu veneno transmutou-se em disciplina silenciosa."',
     icon: 'snake', color: '#94a3b8',
@@ -170,7 +170,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'baruka_ice_archer',
     name: 'Arqueira de Gelo de Baruka',
-    rank: 'Normal', type: 'Magic', dropRate: 0,
+    rank: 'Normal', type: 'Magic', dropRate: 0, dropChance: 0.4,
     passiveEffect: { type: 'focus_mastery', value: 0.03, description: '-3% tempo de foco necessário' },
     lore: '"Do reino gelado de Baruka, uma arqueira cujas flechas nunca erram. Na sombra, a sua precisão fria guia o Monarca."',
     icon: 'bow-arrow', color: '#94a3b8',
@@ -179,7 +179,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'kargalgan_ritual_guard',
     name: 'Guarda Ritual de Kargalgan',
-    rank: 'Elite', type: 'Warrior', dropRate: 0,
+    rank: 'Elite', type: 'Warrior', dropRate: 0, dropChance: 0.35,
     passiveEffect: { type: 'gold_boost', value: 0.04, description: '+4% Gold em todas as missões' },
     lore: '"Guardava os rituais do Xamã com fúria inabalável. Agora guarda a riqueza do Monarca com idêntica devoção."',
     icon: 'axe', color: '#22c55e',
@@ -188,7 +188,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'vulcan_magma_imp',
     name: 'Imp de Magma de Vulcan',
-    rank: 'Elite', type: 'Demon', dropRate: 0,
+    rank: 'Elite', type: 'Demon', dropRate: 0, dropChance: 0.35,
     passiveEffect: { type: 'xp_boost', value: 0.05, description: '+5% XP em todas as missões' },
     lore: '"Criado nas entranhas do vulcão de Vulcan. O fogo que o consome alimenta agora o crescimento imparável do Monarca."',
     icon: 'fire', color: '#22c55e',
@@ -197,7 +197,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'metus_specter',
     name: 'Espectro de Metus',
-    rank: 'Knight', type: 'Ghost', dropRate: 0,
+    rank: 'Knight', type: 'Ghost', dropRate: 0, dropChance: 0.28,
     passiveEffect: { type: 'penalty_reduce', value: 0.08, description: '-8% na perda de XP por penalidade' },
     lore: '"Uma das almas que Metus conduz pelos planos sombrios. Ligada ao Monarca, atenua o peso das falhas temporais."',
     icon: 'ghost', color: '#3b82f6',
@@ -206,7 +206,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'beru_soldier_ant',
     name: 'Soldado da Colónia de Beru',
-    rank: 'Knight', type: 'Insect', dropRate: 0,
+    rank: 'Knight', type: 'Insect', dropRate: 0, dropChance: 0.28,
     passiveEffect: { type: 'xp_boost', value: 0.10, description: '+10% XP em todas as missões' },
     lore: '"Da colónia do Rei das Formigas, um soldado de élite que nunca recua. Essa perseverança agora serve um Monarca ainda mais poderoso."',
     icon: 'bug', color: '#3b82f6',
@@ -215,7 +215,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'kamish_wyrmling',
     name: 'Filhote da Calamidade',
-    rank: 'Commander', type: 'Beast', dropRate: 0,
+    rank: 'Commander', type: 'Beast', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'boss_bonus_xp', value: 0.20, description: '+20% XP extra em Boss Raids' },
     lore: '"Sangue de Kamish, o Pior Flagelo. Mesmo uma fração do seu poder aterra qualquer adversário no campo de batalha."',
     icon: 'dinosaur', color: '#f59e0b',
@@ -224,7 +224,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'statue_oracle',
     name: 'Oráculo da Estátua Divina',
-    rank: 'Commander', type: 'Ancient', dropRate: 0,
+    rank: 'Commander', type: 'Ancient', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'all_stats_boost', value: 0.10, description: '+10% a todos os bónus de outras sombras' },
     lore: '"A consciência que habita a Estátua Divina desde os primórdios. O seu julgamento silencioso amplifica tudo ao redor do Monarca."',
     icon: 'chess-rook', color: '#f59e0b',
@@ -233,7 +233,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'ashborn_shade',
     name: 'Fragmento de Ashborn',
-    rank: 'Marshal', type: 'General', dropRate: 0,
+    rank: 'Marshal', type: 'General', dropRate: 0, dropChance: 0.15,
     passiveEffect: { type: 'all_stats_boost', value: 0.20, description: '+20% a todos os bónus de outras sombras' },
     lore: '"Um eco do Verdadeiro Monarca das Sombras. Basta um fragmento para elevar todo o Exército das Sombras a um patamar diferente."',
     icon: 'crown', color: '#ef4444',
@@ -244,7 +244,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'dracula_thrall',
     name: 'Servo de Drácula',
-    rank: 'Knight', type: 'Demon', dropRate: 0,
+    rank: 'Knight', type: 'Demon', dropRate: 0, dropChance: 0.28,
     passiveEffect: { type: 'gold_boost', value: 0.12, description: '+12% Gold em todas as missões' },
     lore: '"Serviu o Vampiro Eterno durante séculos, sugando a riqueza dos caçadores caídos. Agora drena fortuna para o Monarca."',
     icon: 'coffin', color: '#3b82f6',
@@ -253,7 +253,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'cthulhu_acolyte',
     name: 'Acólito de Cthulhu',
-    rank: 'Commander', type: 'Ancient', dropRate: 0,
+    rank: 'Commander', type: 'Ancient', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'focus_mastery', value: 0.15, description: '-15% tempo de foco necessário' },
     lore: '"Perdeu a sanidade a servir o Deus Adormecido. Ganhou poder insondável em troca. O Monarca aceita essa barganha sem hesitar."',
     icon: 'octagram-outline', color: '#f59e0b',
@@ -262,7 +262,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'sauron_dark_herald',
     name: 'Arauto Sombrio de Sauron',
-    rank: 'Commander', type: 'Demon', dropRate: 0,
+    rank: 'Commander', type: 'Demon', dropRate: 0, dropChance: 0.2,
     passiveEffect: { type: 'xp_boost', value: 0.18, description: '+18% XP em todas as missões' },
     lore: '"Porta-voz da vontade do Senhor Sombrio. Com o Senhor caído, a sua voz ecoa agora com o poder absoluto do Monarca."',
     icon: 'eye-circle-outline', color: '#f59e0b',
@@ -271,7 +271,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'goblin_king_shadow',
     name: 'Rei Goblin',
-    rank: 'Elite', type: 'Thief', dropRate: 0,
+    rank: 'Elite', type: 'Thief', dropRate: 0, dropChance: 0.35,
     passiveEffect: { type: 'gold_boost', value: 0.05, description: '+5% Gold em todas as missões' },
     lore: '"No caos das cavernas, ele colecionava tesouros. Na sombra, continua a aumentar as tuas recompensas."',
     icon: 'crown', color: '#22c55e',
@@ -280,7 +280,7 @@ export const SHADOWS_BOSS_KEY: Shadow[] = [
   {
     id: 'wyvern_black_scale',
     name: 'Wyvern Negro',
-    rank: 'Knight', type: 'Beast', dropRate: 0,
+    rank: 'Knight', type: 'Beast', dropRate: 0, dropChance: 0.28,
     passiveEffect: { type: 'boss_bonus_xp', value: 0.12, description: '+12% XP extra em Boss Raids' },
     lore: '"As escamas absorvem luz e calor. A sua ferocidade torna cada boss mais lucrativo."',
     icon: 'dragon', color: '#3b82f6',

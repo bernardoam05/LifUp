@@ -423,11 +423,19 @@ export default function FocusScreen() {
             focusEndTime === penaltyBlockEnd &&
             (penaltyStart === 0 || penaltyStart <= focusEndTime);
 
-          if (!isPenaltySession) {
-            recordFocusTime(hours * 60 + minutes);
-          }
+          const state = useGameStore.getState();
+          const started = state.system.focusStartTime;
+          const expectedMins = started && focusEndTime ? Math.round((focusEndTime - started) / 60_000) : (hours * 60 + minutes);
+          
+          recordFocusTime(expectedMins, isPenaltySession);
 
-          if (!isPenaltySession) {
+          if (isPenaltySession) {
+            setAlertCfg({
+              title: '⛓️ PENITÊNCIA CONCLUÍDA',
+              message: 'O tempo de foco obrigatório terminou. Podes voltar às batalhas e redimir as tuas falhas.',
+              buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
+            });
+          } else {
             setAlertCfg({
               title: '⚡ FOCO CONCLUÍDO',
               message: 'O tempo de foco terminou. Regressa ao campo de batalha e reclama as tuas recompensas.',
@@ -763,6 +771,17 @@ export default function FocusScreen() {
       return;
     }
 
+    const state = useGameStore.getState();
+    const startTime = state.system.focusStartTime;
+    const isHardcore = state.system.hardcoreFocusMode;
+    const isPenaltySession = state.system.hasPenalty && state.system.penaltyBlockEnd > 0 && state.system.focusEndTime === state.system.penaltyBlockEnd;
+    
+    let elapsedMins = 0;
+    if (startTime) {
+       const endToUse = state.system.focusEndTime && Date.now() > state.system.focusEndTime ? state.system.focusEndTime : Date.now();
+       elapsedMins = Math.floor((endToUse - startTime) / 60_000);
+    }
+
     if (FocusBlocker) {
       await FocusBlocker.stopFocusMode().catch(() => {});
     }
@@ -770,6 +789,11 @@ export default function FocusScreen() {
     setHardcoreMode(false);
     stopAmbient();
     setActiveAmbient(null);
+
+    if (elapsedMins > 0) {
+      state.recordFocusTime(elapsedMins, isPenaltySession);
+    }
+
     if (pomodoroMode || pomodoroPhase !== 'idle') {
       setPomodoroState('idle', 0, 0);
       cancelPomodoroNotifications().catch(() => {});

@@ -37,7 +37,7 @@ import {
 import { BOSS_LOOT_TABLE, GENERIC_BOSS_DROPS } from '../data/shopItems';
 
 // Data / Types needed locally
-import { SHADOW_MAP, rollShadow, getBossDropShadow } from '../data/shadows';
+import { SHADOW_MAP, rollShadow, getBossDropShadow, getBossDropPreview } from '../data/shadows';
 import type { Shadow, ShadowRank } from '../data/shadows';
 import { RAID_BOSSES } from '../data/bosses';
 import type { RaidBossRank } from '../data/bosses';
@@ -263,6 +263,7 @@ const useGameStore = create<GameState & GameActions>()(
           let streakReset = false;
           let newPenaltyBlockStart = 0;
           let newPenaltyBlockEnd = 0;
+          let penaltyImmunityUsed = false; // tracks whether immunity passive absorbed the penalty
 
           // ── New Penalty Logic (Cumulative) ────────────────────────────────────
           const difficulty = get().settings.missionDifficulty;
@@ -293,31 +294,21 @@ const useGameStore = create<GameState & GameActions>()(
             newHardcorePunished = punishment.hardcorePunished;
             streakReset = punishment.streakReset;
 
-            // Intensity-based blocking logic
+            // Difficulty-based blocking logic
             if (get().settings.autoBlockApps) {
               const todayStart = new Date();
               const todayEnd = new Date();
-              const intensity = get().settings.punishmentIntensity;
 
-              if (intensity === 'medium') {
+              if (difficulty === 'normal') {
                 // 12 hours centered at 16:00 (10:00 to 22:00)
                 todayStart.setHours(10, 0, 0, 0);
                 todayEnd.setHours(22, 0, 0, 0);
-              } else if (intensity === 'hardcore') {
+              } else if (difficulty === 'hard') {
                 // 24 hours (immediate to Date.now() + 24h)
                 todayStart.setTime(Date.now());
                 todayEnd.setTime(Date.now() + 24 * 3600_000);
-              } else if (intensity === 'custom') {
-                const sH = get().settings.customPenaltyStartHour ?? 10;
-                const eH = get().settings.customPenaltyEndHour ?? 22;
-                todayStart.setHours(sH, 0, 0, 0);
-                todayEnd.setHours(eH, 0, 0, 0);
-                if (eH <= sH) {
-                  // e.g. 23:00 to 07:00 next day
-                  todayEnd.setDate(todayEnd.getDate() + 1);
-                }
               } else {
-                // Easy/light: 6 hours centered at 16:00 (13:00 to 19:00)
+                // Easy: 6 hours centered at 16:00 (13:00 to 19:00)
                 todayStart.setHours(13, 0, 0, 0);
                 todayEnd.setHours(19, 0, 0, 0);
               }
@@ -344,14 +335,15 @@ const useGameStore = create<GameState & GameActions>()(
               set((s: GameState & GameActions) => ({
                 system: {
                   ...s.system,
-                  hasPenalty: false,
-                  penaltyTriggered: false,
                   usedShadowSkills: { ...usedSkills, ['penalty_immunity']: now },
                 },
               }));
-              // Bypass penalty logic
+              // Bypass penalty logic — mark immunity so main set() doesn't re-apply hasPenalty
+              penaltyImmunityUsed = true;
               penaltyTriggered = false;
               newPenaltyQuests = [];
+              newPenaltyBlockStart = 0;
+              newPenaltyBlockEnd = 0;
               newXp = player.xp;
               newGold = player.gold;
               streakReset = false;
@@ -454,10 +446,10 @@ const useGameStore = create<GameState & GameActions>()(
             player: { ...s.player, xp: newXp, gold: newGold, currentStreak: newStreak, highestStreak: newHighest },
             system: {
               ...s.system,
-              hasPenalty: hadPenalty,
+              hasPenalty: hadPenalty && !penaltyImmunityUsed,
               penaltyTriggered,
               penaltyReduced: false,
-              hardcorePunished: hadPenalty ? newHardcorePunished : false,
+              hardcorePunished: (hadPenalty && !penaltyImmunityUsed) ? newHardcorePunished : false,
               penaltyQuests: newPenaltyQuests,
               lastPenaltyInfo: hadPenalty ? {
                 intensity: get().settings.punishmentIntensity,
@@ -488,13 +480,13 @@ const useGameStore = create<GameState & GameActions>()(
               // Scheduled blocks (normal/easy difficulty, future start) activate
               // via the 60-second useDayWatcher tick so native blocking isn't
               // triggered before the intended time.
-              focusModeActive: hadPenalty && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
+              focusModeActive: (hadPenalty && !penaltyImmunityUsed) && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
                 ? true
                 : s.system.focusModeActive,
-              focusEndTime: hadPenalty && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
+              focusEndTime: (hadPenalty && !penaltyImmunityUsed) && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
                 ? newPenaltyBlockEnd
                 : s.system.focusEndTime,
-              hardcoreFocusMode: hadPenalty && newHardcorePunished ? true : s.system.hardcoreFocusMode,
+              hardcoreFocusMode: (hadPenalty && !penaltyImmunityUsed) && newHardcorePunished ? true : s.system.hardcoreFocusMode,
               // Portais dinâmicos foram unificados no roll horário (sem lista fixa diária).
               normalBossRotationDate: new Date().toDateString(),
               normalBossIds: [],
@@ -636,6 +628,7 @@ const useGameStore = create<GameState & GameActions>()(
         completeQuest(id: string) {
           let leveledUp = false;
           let finalXpGain = 0;
+          let hadRandomLootDrop = false;
           set((s: GameState & GameActions) => {
             const quest = s.quests.find(q => q.id === id);
             if (!quest || quest.done) {
@@ -681,11 +674,11 @@ const useGameStore = create<GameState & GameActions>()(
               for (let i = 0; i < count; i++) {rewardItems.push(Math.random() < 0.5 ? 'lagrima_purificacao' : 'relogio_ampulheta');}
             }
 
-            if (Math.random() < 0.1 * (1 + lootBoost)) {rewardItems.push('loot_box');}
+            if (Math.random() < 0.1 * (1 + lootBoost)) {rewardItems.push('loot_box'); hadRandomLootDrop = true;}
 
             const rewardInv = [...s.player.inventory];
-            if (Math.random() < 0.05 * (1 + lootBoost)) {rewardItems.push('shadow_essence');}
-            if (Math.random() < 0.03 * (1 + lootBoost)) {rewardItems.push('blood_fallen');}
+            if (Math.random() < 0.05 * (1 + lootBoost)) {rewardItems.push('shadow_essence'); hadRandomLootDrop = true;}
+            if (Math.random() < 0.03 * (1 + lootBoost)) {rewardItems.push('blood_fallen'); hadRandomLootDrop = true;}
 
             rewardItems.forEach(itemId => {
               const idx = rewardInv.findIndex(e => e.itemId === itemId);
@@ -728,7 +721,11 @@ const useGameStore = create<GameState & GameActions>()(
 
           fireEvent('quest_completed', { isLastQuest: allNowDone }, ref);
           if (allNowDone) {fireEvent('all_quests_completed', { afterPerfectDay: true, firstDay: get().statistics.perfectDays === 0, afterPenalty: get().system.hasPenalty }, ref);}
-          Vibration.vibrate(leveledUp ? [0, 150, 50, 150, 50, 300] : 50);
+          Vibration.vibrate(
+            leveledUp ? [0, 150, 50, 150, 50, 300] :
+            hadRandomLootDrop ? [0, 50, 40, 100] :
+            50
+          );
 
           // Check for extraction FIRST before achievements
           if (allNowDone && !get().system.extractionDoneToday) {
@@ -753,6 +750,8 @@ const useGameStore = create<GameState & GameActions>()(
                   ...currQueue,
                 ],
               }));
+              // Distinct vibration for shadow extraction — pulse pattern to feel "summoning"
+              Vibration.vibrate([0, 80, 60, 80, 60, 200, 100, 300]);
             }
           }
 
@@ -781,6 +780,9 @@ const useGameStore = create<GameState & GameActions>()(
               rewardsQueue: (res.leveledUp && res.level % 5 === 0)
                 ? [...s.rewardsQueue, { type: 'level_up' as const, id: String(res.level), data: { level: res.level, items: [] } }]
                 : s.rewardsQueue,
+              levelUpToastQueue: (res.leveledUp && res.level % 5 !== 0)
+                ? [...s.levelUpToastQueue, res.level]
+                : s.levelUpToastQueue,
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               ...(jobChange ? { jobChangeReward: jobChange } : {}),
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
@@ -840,6 +842,7 @@ const useGameStore = create<GameState & GameActions>()(
             };
           });
           fireEvent('side_quest_completed', { todayCount: get().statistics.sideQuestsCompletedToday }, ref);
+          Vibration.vibrate([0, 40, 30, 80]);
           return { leveledUp: false };
         },
 
@@ -874,7 +877,7 @@ const useGameStore = create<GameState & GameActions>()(
           set((s: GameState) => ({ player: { ...s.player, shadows: s.player.shadows.map(sh => sh.id === id ? { ...sh, isFavorite: !sh.isFavorite } : sh) } }));
         },
 
-        recordFocusTime(minutes) {
+        recordFocusTime(minutes, _isPenaltySession?: boolean) {
           if (minutes <= 0) {return;}
           set((s: GameState & GameActions) => {
             const stats = { ...s.statistics, totalFocusMinutes: s.statistics.totalFocusMinutes + minutes };
@@ -956,10 +959,11 @@ const useGameStore = create<GameState & GameActions>()(
                 penaltyBlockEnd: 0,
               };
             } else if (s.system.hasPenalty && s.system.penaltyBlockEnd > 0) {
-              const newEnd = s.system.penaltyBlockEnd - minutes * 60_000;
-              nextSystem = newEnd <= Date.now()
+              // Only lift the block if its real-time window has passed; focus sessions
+              // do NOT reduce the penalty clock (that was a hidden shortcut to bypass penalty).
+              nextSystem = s.system.penaltyBlockEnd <= Date.now()
                 ? { ...s.system, hasPenalty: false, penaltyBlockEnd: 0, penaltyQuests: updatedPenaltyQuests }
-                : { ...s.system, penaltyBlockEnd: newEnd, penaltyQuests: updatedPenaltyQuests };
+                : { ...s.system, penaltyQuests: updatedPenaltyQuests };
             } else if (s.system.penaltyQuests.length > 0) {
               nextSystem = { ...s.system, penaltyQuests: updatedPenaltyQuests };
             }
@@ -1058,34 +1062,12 @@ const useGameStore = create<GameState & GameActions>()(
               .filter(e => e.quantity > 0);
 
             if (itemId === 'shadow_essence') {
-              return { player: { ...s.player, inventory: nextInv } };
+              // Special: reset extraction flag — handle fully inside this set()
+              return { player: { ...s.player, inventory: nextInv }, system: { ...s.system, extractionDoneToday: false } };
             }
 
             return { player: { ...s.player, inventory: nextInv } };
           });
-
-          if (itemId === 'shadow_essence') {
-            const state = get();
-            const rank = pickExtractionRank(state.player.level);
-            const shadow = rollShadow(rank, []);
-            if (shadow) {
-              const existing = state.player.shadows.find(e => e.id === shadow.id);
-              const currQueue = state.rewardsQueue;
-              set((s: GameState & GameActions) => ({
-                player: {
-                  ...s.player,
-                  shadows: existing
-                    ? s.player.shadows.map(e => e.id === shadow.id ? { ...e, level: e.level + 1 } : e)
-                    : [...s.player.shadows, { id: shadow.id, level: 1 }],
-                },
-                lastExtraction: { shadow, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 },
-                rewardsQueue: [
-                  ...currQueue,
-                  { type: 'shadow' as const, id: shadow.id, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 },
-                ],
-              }));
-            }
-          }
 
           // Apply timed buffs AFTER inventory deduction so applyBuff's own set() is not overwritten
           if (itemId === 'kasaka_venom') {
@@ -1209,40 +1191,79 @@ const useGameStore = create<GameState & GameActions>()(
           const goldReward = Math.round(2000 * (1 + goldBoost));
           let shadowName, leveledUpShadow = false, isNew = false;
           let newShadows = [...player.shadows];
-          let shadowReward: { type: 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number } | null = null;
+          let shadowReward: { type: 'shadow' | 'shadow_miss'; id: string; isLevelUp?: boolean; newLevel?: number; data?: any } | null = null;
 
           if (shadowId) {
             let finalId = shadowId;
             const exclusiveShadow = getBossDropShadow(shadowId);
-            if (exclusiveShadow) {
-                finalId = exclusiveShadow.id;
+
+            if (exclusiveShadow === null) {
+              // Boss has a shadow but the probabilistic roll failed — signal a miss.
+              // Do NOT award a random shadow; just queue the miss notification.
+              const missedShadow = getBossDropPreview(shadowId);
+              shadowReward = {
+                type: 'shadow_miss',
+                id: shadowId,
+                data: { shadowName: missedShadow?.name ?? shadowId, dropChance: missedShadow?.dropChance ?? 0 },
+              };
+            } else if (exclusiveShadow) {
+              finalId = exclusiveShadow.id;
+
+              const existingShadow = player.shadows.find(e => e.id === finalId);
+              leveledUpShadow = !!existingShadow;
+              isNew = !existingShadow;
+              newShadows = existingShadow
+                ? player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e)
+                : [...player.shadows, { id: finalId, level: 1 }];
+              shadowName = SHADOW_MAP[finalId]?.name ?? finalId;
+              shadowReward = {
+                type: 'shadow',
+                id: finalId,
+                isLevelUp: leveledUpShadow,
+                newLevel: existingShadow ? existingShadow.level + 1 : 1,
+              };
+              set({ lastExtraction: { shadow: SHADOW_MAP[finalId], isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } });
             } else if (!customDef && !SHADOW_MAP[shadowId]) {
-                const rank = pickExtractionRank(player.level);
-                const rolled = rollShadow(rank, []);
-                if (rolled) {finalId = rolled.id;}
-            }
-
-            const existingShadow = player.shadows.find(e => e.id === finalId);
-            leveledUpShadow = !!existingShadow;
-            isNew = !existingShadow;
-            if (customDef && !existingShadow) {
-              const newCustom: Shadow = { id: finalId, name: customDef.name, rank: 'Normal' as ShadowRank, type: 'Custom', dropRate: 0, passiveEffect: getCustomShadowPassive(customDef.questType), lore: `"${customDef.name} — lealdade absoluta."`, icon: customDef.icon, color: '#a855f7' };
-              set((s: GameState & GameActions) => ({ customShadows: [...s.customShadows, newCustom] }));
-              newShadows.push({ id: finalId, level: 1 });
+              // Boss has no registered shadow drop — fall back to a random gacha roll.
+              const rank = pickExtractionRank(player.level);
+              const rolled = rollShadow(rank, player.shadows.map(e => e.id));
+              if (rolled) {
+                finalId = rolled.id;
+                const existingShadow = player.shadows.find(e => e.id === finalId);
+                leveledUpShadow = !!existingShadow;
+                isNew = !existingShadow;
+                newShadows = existingShadow
+                  ? player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e)
+                  : [...player.shadows, { id: finalId, level: 1 }];
+                shadowName = SHADOW_MAP[finalId]?.name ?? finalId;
+                shadowReward = {
+                  type: 'shadow',
+                  id: finalId,
+                  isLevelUp: leveledUpShadow,
+                  newLevel: existingShadow ? existingShadow.level + 1 : 1,
+                };
+                set({ lastExtraction: { shadow: SHADOW_MAP[finalId], isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } });
+              }
+            } else if (customDef) {
+              const existingShadow = player.shadows.find(e => e.id === finalId);
+              if (!existingShadow) {
+                const newCustom: Shadow = { id: finalId, name: customDef.name, rank: 'Normal' as ShadowRank, type: 'Custom', dropRate: 0, passiveEffect: getCustomShadowPassive(customDef.questType), lore: `"${customDef.name} — lealdade absoluta."`, icon: customDef.icon, color: '#a855f7' };
+                set((s: GameState & GameActions) => ({ customShadows: [...s.customShadows, newCustom] }));
+                newShadows.push({ id: finalId, level: 1 });
+              } else {
+                newShadows = player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e);
+              }
               shadowName = customDef.name;
-            } else {
-              newShadows = existingShadow ? player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e) : [...player.shadows, { id: finalId, level: 1 }];
-              shadowName = customDef?.name ?? SHADOW_MAP[finalId]?.name ?? finalId;
+              leveledUpShadow = !!existingShadow;
+              isNew = !existingShadow;
+              shadowReward = {
+                type: 'shadow',
+                id: finalId,
+                isLevelUp: leveledUpShadow,
+                newLevel: existingShadow ? existingShadow.level + 1 : 1,
+              };
+              set({ lastExtraction: { shadow: SHADOW_MAP[finalId] ?? get().customShadows.find(s => s.id === finalId), isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } });
             }
-
-            shadowReward = {
-              type: 'shadow',
-              id: finalId,
-              isLevelUp: leveledUpShadow,
-              newLevel: existingShadow ? existingShadow.level + 1 : 1,
-            };
-
-            set({ lastExtraction: { shadow: SHADOW_MAP[finalId] ?? get().customShadows.find(s => s.id === finalId), isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } });
           }
 
           set(s => {
@@ -1309,7 +1330,7 @@ const useGameStore = create<GameState & GameActions>()(
           };
           set({
             rewardsQueue: shadowReward
-              ? [bossDefeatedItem, shadowReward as any, ...currQueue]
+              ? [bossDefeatedItem, shadowReward, ...currQueue]
               : [bossDefeatedItem, ...currQueue],
           });
 
@@ -1317,7 +1338,7 @@ const useGameStore = create<GameState & GameActions>()(
           return { xp: xpReward, gold: goldReward, shadowName, leveledUpShadow, isNew };
         },
 
-        setFocusModeActive(v, endTimeMs) { set((s: GameState) => ({ system: { ...s.system, focusModeActive: v, focusEndTime: endTimeMs } })); },
+        setFocusModeActive(v, endTimeMs) { set((s: GameState) => ({ system: { ...s.system, focusModeActive: v, focusEndTime: endTimeMs, focusStartTime: v ? Date.now() : undefined } })); },
         setHardcoreFocusMode(v) { set((s: GameState) => ({ system: { ...s.system, hardcoreFocusMode: v } })); },
         setHardcorePunished(v) { set((s: GameState) => ({ system: { ...s.system, hardcorePunished: v } })); },
         setXpBoostNext(v) { set((s: GameState) => ({ system: { ...s.system, xpBoostNext: v } })); },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useGameStore, { SideQuest } from '../store/useGameStore';
@@ -13,7 +13,7 @@ export const getSQSStyles = (C: any) => StyleSheet.create({
     alignItems: 'center',
     backgroundColor: C.bg,
     paddingHorizontal: SPACING.md,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderTopWidth: 1,
     borderTopColor: C.border + '44',
     gap: SPACING.sm,
@@ -23,14 +23,18 @@ export const getSQSStyles = (C: any) => StyleSheet.create({
   title: { color: '#e2e8f0', fontSize: 13, lineHeight: 18 },
   titleDone: { color: C.muted, textDecorationLine: 'line-through' },
   noteLine: { color: C.purple + 'cc', fontSize: 10, marginTop: 3, fontStyle: 'italic' },
-  actionBtn: { width: 30, height: 30, alignItems: 'center', justifyContent: 'center', opacity: 0.7 },
+  actionBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', opacity: 0.7 },
   doneBtn: {
-    width: 30, height: 30, borderWidth: 1.5, borderRadius: 6,
+    width: 44, height: 44, borderWidth: 1.5, borderRadius: 8,
     alignItems: 'center', justifyContent: 'center',
     borderColor: C.purple + '88', backgroundColor: C.purple + '0d',
   },
-  doneWrap: { width: 30, height: 30, alignItems: 'center', justifyContent: 'center' },
-  delBtn: { width: 26, height: 26, alignItems: 'center', justifyContent: 'center' },
+  doneBtnPressed: {
+    backgroundColor: C.purple + '33',
+    borderColor: C.purple,
+  },
+  doneWrap: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  delBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
 });
 
 interface SideQuestCardProps {
@@ -67,17 +71,23 @@ export default function SideQuestCard({ sq, C }: SideQuestCardProps) {
 
       {sq.done ? (
         <View style={sq_s.doneWrap}>
-          <Icon name="check-circle" size={18} color={C.green} />
+          <Icon name="check-circle" size={22} color={C.green} />
         </View>
       ) : (
-        <TouchableOpacity style={sq_s.doneBtn} onPress={() => setConfirm(true)}>
-          <Icon name="check-bold" size={14} color={C.purple} />
-        </TouchableOpacity>
+        <Pressable
+          style={({ pressed }) => [sq_s.doneBtn, pressed && sq_s.doneBtnPressed]}
+          onPress={() => setConfirm(true)}
+        >
+          <Icon name="check-bold" size={16} color={C.purple} />
+        </Pressable>
       )}
 
-      <TouchableOpacity style={sq_s.delBtn} onPress={() => setConfirmDelete(true)}>
-        <Icon name="close" size={13} color={C.dimmed} />
-      </TouchableOpacity>
+      <Pressable
+        style={({ pressed }) => [sq_s.delBtn, { opacity: pressed ? 0.5 : 1 }]}
+        onPress={() => setConfirmDelete(true)}
+      >
+        <Icon name="close" size={14} color={C.dimmed} />
+      </Pressable>
 
       {/* Note Input */}
       <BottomSheetModal visible={showNoteInput} onClose={() => setShowNoteInput(false)} contentStyle={{ backgroundColor: 'transparent' }}>

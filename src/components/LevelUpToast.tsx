@@ -79,7 +79,6 @@ export default function LevelUpToast({ reward, onDismiss, blocked = false }: Pro
 }
 
 const getStyles = (C: any) => StyleSheet.create({
-
   container: {
     position: 'absolute',
     top: 0,
@@ -91,19 +90,25 @@ const getStyles = (C: any) => StyleSheet.create({
   card: {
     width: '100%',
     backgroundColor: C.panel,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: C.gold,
-    borderRadius: 8,
+    borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    padding: 14,
     shadowColor: C.gold,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.55,
+    shadowRadius: 14,
+    elevation: 8,
   },
   iconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: C.gold + '18',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 12,
   },
   textCol: {
@@ -111,16 +116,21 @@ const getStyles = (C: any) => StyleSheet.create({
   },
   title: {
     color: C.gold,
-    fontSize: 18,
-    fontWeight: 'bold',
-    fontFamily: 'System',
+    fontSize: 16,
+    fontWeight: '900',
+    fontFamily: 'monospace',
+    letterSpacing: 3,
     marginBottom: 2,
   },
   desc: {
     color: C.muted,
-    fontSize: 14,
+    fontSize: 13,
   },
   closeWrap: {
-    padding: 4,
+    padding: 8,
+    minWidth: 36,
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

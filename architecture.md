@@ -21,7 +21,7 @@ Solo Leveling RN is a gamified productivity app inspired by RPG systems. Users c
 
 ## Runtime Flow (happy path)
 1. **Boot**: App mounts, initializes store, audio, and notifications. See [App.tsx](App.tsx#L46).
-2. **Daily system check**: A watcher detects day change and triggers resets and portal spawns. See [src/hooks/useDayWatcher.ts](src/hooks/useDayWatcher.ts#L1).
+2. **Daily system check**: A watcher detects day change and triggers resets and portal spawns. See [src/hooks/useDayWatcher.ts](src/hooks/useDayWatcher.ts#L1). `checkDailyReset()` is an alias for `bootSystem()` — both perform the same daily reset logic guarded by `lastResetDate`.
 3. **User completes missions**:
    - Missions/quests update store (XP, gold, stats, streaks).
    - Rewards are queued and shown via sequential modals.
@@ -76,7 +76,7 @@ Defined in [src/store/types.ts](src/store/types.ts#L1).
 Defined in [src/store/types.ts](src/store/types.ts#L1).
 - Penalty: `hasPenalty`, `penaltyReduced`, `penaltyTriggered`, `penaltyQuests`.
 - Focus blocking: `focusModeActive`, `hardcoreFocusMode`, `hardcorePunished`, `blockedApps`.
-- Time windows: `focusEndTime`, `penaltyBlockStart`, `penaltyBlockEnd`.
+- Time windows: `focusStartTime`, `focusEndTime`, `penaltyBlockStart`, `penaltyBlockEnd`.
 - Boss tracking: weekly/normal rotation ids, `bossesDefeated`, event boss state.
 - Rewards and tutorial: `tutorialPhase`, `rewardsQueue` (store-level queue).
 - Pomodoro: `pomodoroPhase`, `pomodoroCycle`, `pomodoroBreakEnd`.
@@ -120,7 +120,9 @@ Defined in [src/data/achievements.ts](src/data/achievements.ts#L1).
 ### Active Buffs
 - Buffs are applied via items and boss drops and stored in `activeBuffs`.
 - Buffs affect XP/gold multipliers, loot rates, focus duration, and penalties.
-- Some shadow passives (weekly cooldown) can nullify penalty or protect streaks.
+- Some shadow passives (weekly cooldown) can nullify penalty or protect streaks:
+  - `penalty_immunity`: if active and cooldown available, the entire penalty is absorbed — XP/gold loss, block window, and penalty quests are all cancelled. The `penaltyImmunityUsed` flag ensures the main daily-reset `set()` does not re-apply `hasPenalty: true` after the immunity fires.
+  - `streak_protect`: if streak would reset on a failed day, the streak is preserved (once per week).
 
 ## Quest Generation & Daily Cycle
 
@@ -149,12 +151,13 @@ Defined in [src/store/questDictionary.ts](src/store/questDictionary.ts#L1).
 
 ### Penalty Block Windows (autoBlockApps)
 Implemented in [src/store/useGameStore.ts](src/store/useGameStore.ts#L260).
-- Intensity affects penalty block duration (or `customPenaltyHours` when intensity is `custom`):
-  - easy: 6h (13:00-19:00)
-  - normal: 12h (10:00-22:00)
-  - hard: 24h (immediate + 24h)
-- If time window already passed, it shifts to the next day.
+- **`missionDifficulty`** (not `punishmentIntensity`) controls block duration windows:
+  - easy: 6h (13:00–19:00)
+  - normal: 12h (10:00–22:00)
+  - hard: 24h (immediate start + 24h)
+- If time window already passed when penalty is applied, it shifts both start and end to the next day.
 - When penalty window opens, `focusModeActive` is set so native blocker can activate.
+- The block end time (`penaltyBlockEnd`) is **not** reduced by focus sessions; it expires at its real-time wall-clock value. The penalty is only lifted when all penalty quests are completed (`completeQuest`) or when the real-time window expires.
 
 ## Missions, Bosses, and Keys
 
@@ -188,6 +191,8 @@ Implemented in [src/store/useGameStore.ts](src/store/useGameStore.ts#L1400).
 ### Focus Sessions
 - Focus sessions can be standard or hardcore (restricted exit).
 - On start, optional app blocking uses `FocusBlocker` native module.
+- `setFocusModeActive(true, endTimeMs)` writes both `focusEndTime` and `focusStartTime = Date.now()` to the store. `focusStartTime` is essential: the "manual stop" path in FocusScreen computes elapsed minutes from `(now - focusStartTime)` to call `recordFocusTime`. Without it, elapsed = 0 and no focus time is credited.
+- On end (timer fires or manual stop), `recordFocusTime(minutes)` is called, which advances focus quests and records statistics.
 - On end, rewards are applied and notifications may be sent.
 
 ### Hardcore Focus
@@ -214,10 +219,9 @@ Defined in [src/data/shopItems.ts](src/data/shopItems.ts#L1) and UI in [src/scre
 
 ### Loot Box Odds
 Implemented in [src/store/useGameStore.ts](src/store/useGameStore.ts#L780).
-- 70%: gold reward
-- 20%: XP reward
-- 10%: key (if any remain), else fallback to gold
-- Loot boost passives increase effective odds and payout.
+- Base odds: 70% gold / 20% XP / 10% key (fallback to gold if no keys remain).
+- `lootBoost` passive: reduces the gold threshold from 0.70 by dividing it by `(1 + lootBoost)`, shifting weight toward XP and keys. Gold and XP payout amounts are also multiplied by `(1 + lootBoost)`.
+- The `LootBoxModal` is mutually exclusive with `rewardsQueue` modals: it will not render while the rewards queue has items. It shows after the queue drains.
 
 ### Inventory
 Implemented in [src/screens/InventoryScreen.tsx](src/screens/InventoryScreen.tsx#L1).
@@ -239,15 +243,49 @@ Defined in [src/data/shadows.ts](src/data/shadows.ts#L1).
 - Aggregates multiple sources (gacha, boss drops, achievements, shop, custom).
 - Provides mapping by id and by rank for retrieval.
 
+### Drop System — Rarity Philosophy
+
+Shadow rarity (rank) reflects **boss difficulty + access rarity**:
+
+| Category | Drop Mode | Drop Chance | Notes |
+|---|---|---|---|
+| **Raid Boss** | Guaranteed | 100% | Effort-based |
+| **Event Boss** | Guaranteed | 100% | Once/year — always rewarding |
+| **Discovered Dungeon** | Probabilistic | Elite: 45% / Knight: 38% / Commander: 28% | Free access, RNG tension |
+| **Dungeon Break** | Probabilistic | Normal: 40% → Marshal: 12% | Random spawn, tiered by rank |
+| **Key Boss (Lv-gated easy)** | Probabilistic | Knight: 28% / Commander: 20% | Key cost + mission |
+| **Key Boss (Lv-gated hard)** | Probabilistic | Commander: 20% / Marshal: 15% | High investment |
+| **Key Boss (Box-exclusive)** | Probabilistic | Variable 20–35% | Box loot required |
+
+The `dropChance?: number` field on `Shadow` controls this. `undefined` = 1.0 = 100%.
+
+#### Shadow Miss (UI)
+When `getBossDropShadow()` returns `null` (boss has a shadow but roll failed), a `shadow_miss` item is pushed to `rewardsQueue` with `data: { shadowName, dropChance }`. The UI renders an inline overlay card ("A Sombra Fugiu!") showing the shadow name and drop chance percentage. No random fallback shadow is awarded on a miss. The `shadow_miss` type is part of the `rewardsQueue` union type in `GameState`.
+
 ### Gacha and Drops
 - `rollShadow(rank, alreadyOwned)` draws from rank-specific pools using weighted `dropRate`.
-- Boss drops can be exclusive (dropRate 0) or pooled.
+- `getBossDropShadow(bossId)` returns `Shadow | null | undefined`:
+  - `Shadow` = drop succeeded
+  - `null` = boss has shadow but probabilistic roll failed (shadow_miss)
+  - `undefined` = boss has no shadow drop registered
+- `getBossDropPreview(bossId)` returns the first registered shadow for a boss (used in UI previews).
 
 ### Extraction Rules
 Implemented in [src/store/useGameStore.ts](src/store/useGameStore.ts#L780).
 - After all daily quests are complete, a shadow extraction is attempted once per day.
+- `rollShadow` is called with an empty `alreadyOwned` list, so the full gacha pool for the rank is eligible — including shadows the player already has. Only when the player owns every shadow in that rank tier does `rollShadow` return `null` (no extraction).
 - Extraction is inserted at the front of the reward queue so it appears first.
-- If the shadow is already owned, its level increases instead of new unlock.
+- If the rolled shadow is already owned, its level increases instead of a new unlock.
+
+### Event Boss Trial Scaling
+`buildEventTrials(def, C)` in [src/data/bosses.ts](src/data/bosses.ts) scales trial template values via `def.trialScale`:
+
+| Scale | Events | Minutes × | km × | reps × |
+|---|---|---|---|---|
+| 1.0 (Light) | Valentine, Easter | ×1.0 | ×1.0 | ×1.0 |
+| 1.2 (Medium) | Spring, Carnival, Black Friday, Long Nights | ×1.2 | ×1.2 | ×1.2 |
+| 1.4 (Hard) | New Year, Harvest, Summer Titan | ×1.4 | ×1.4 | ×1.4 |
+| 1.6 (Extreme) | Halloween, Winter Lich, Equinox, Yule, Festival | ×1.6 | ×1.6 | ×1.6 |
 
 ### Vanguard Passives
 Implemented in [src/screens/ShadowsScreen.tsx](src/screens/ShadowsScreen.tsx#L1).
@@ -307,13 +345,15 @@ Implemented in [src/screens/SettingsScreen.tsx](src/screens/SettingsScreen.tsx#L
 ## Reward Queue System
 The store maintains `rewardsQueue` and App.tsx renders one reward at a time.
 - Ensures sequential UX and avoids modal overlap.
-- Reward types include boss defeat, achievement, shadow extraction, level up, job change.
+- Reward types in the queue: boss defeat, achievement, shadow extraction, level up, job change.
+- `LootBoxModal` (triggered by `currentLootReward`) is a separate channel outside the queue. It is suppressed while `rewardsQueue.length > 0` or `penaltyTriggered` is true — it shows only after the queue drains. This prevents simultaneous Modals.
 
 ### Reward Queue Ordering Rules
 Implemented in [src/store/useGameStore.ts](src/store/useGameStore.ts#L780).
-- Boss defeat inserts a boss modal first, then (optionally) shadow extraction.
+- Boss defeat inserts a boss modal first, then (optionally) shadow extraction (`shadow`) or a miss notification (`shadow_miss`).
 - Daily completion inserts shadow extraction at the front of the queue.
 - Level-up modal appears only on levels divisible by 5; otherwise a toast is shown.
+- `skipQuest` correctly enqueues the level-up toast for non-multiple-of-5 levels (same behaviour as `completeQuest`, `addXP`, and `completeExtraQuest`).
 
 ## Persistence Strategy
 - State is persisted via `zustand/middleware` to AsyncStorage.
@@ -586,7 +626,7 @@ Defined in [src/store/types.ts](src/store/types.ts#L1) and used in [src/store/us
 - `penaltyTriggered`: true when penalty modal should be shown.
 - `penaltyQuests`: list of active penalty quests.
 - `blockedApps`: list of package ids for FocusBlocker to block.
-- `focusEndTime`: epoch ms when focus session ends.
+- `focusStartTime` / `focusEndTime`: epoch ms when focus session begins and ends.
 - `weeklyTrainingCount`: completed training quests this week.
 - `weeklyRegenCount`: how many daily quest regenerations used this week (cap 7).
 - `weeklyResetDate`: date string for weekly reset alignment.

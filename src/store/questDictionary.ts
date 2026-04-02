@@ -209,7 +209,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
     id: 'boss_gps', title: 'Lobo de Gelo Lycaon (A-Rank)',
     description: 'Corre uma meia-maratona ou distância longa: {target} km.',
     type: 'boss', questType: 'gps',
-    baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'km',
+    baseTarget: 7, scalingAmount: 0, scalingInterval: 1, unit: 'km',
     baseXP: 800, baseGold: 300,
   },
   // --- Normal Dungeons (Classic Bosses) ---
@@ -354,7 +354,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
     id: 'boss_poison_monarch', title: 'Monarca do Veneno Quimera (S-Rank)',
     description: 'O veneno está no corpo. {target} burpees para suar e queimar o veneno de uma vez.',
     type: 'boss', questType: 'training',
-    baseTarget: 60, scalingAmount: 0, scalingInterval: 1, unit: 'reps',
+    baseTarget: 80, scalingAmount: 0, scalingInterval: 1, unit: 'reps',
     baseXP: 1250, baseGold: 500,
   },
   {

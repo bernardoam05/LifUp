@@ -36,15 +36,15 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
       backgroundColor: C.bg,
     },
     row: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
-    badge: { width: 44, height: 44, borderRadius: 4, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+    badge: { width: 48, height: 48, borderRadius: 8, borderWidth: 2, alignItems: 'center', justifyContent: 'center', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.6, shadowRadius: 10, elevation: 6 },
     badgeText: { fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900' },
     info: { flex: 1, gap: 4 },
     nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
     name: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', maxWidth: 120 },
     level: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
     gold: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
-    xpTrack: { height: 4, backgroundColor: '#1e293b', borderRadius: 2, overflow: 'hidden' },
-    xpFill: { height: '100%', backgroundColor: C.neonBlue },
+    xpTrack: { height: 6, backgroundColor: '#1e293b', borderRadius: 3, overflow: 'hidden' },
+    xpFill: { height: '100%', backgroundColor: C.neonBlue, borderRadius: 3 },
     xpRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     xpText: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8 },
     focusTag: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1, fontWeight: '700' },
@@ -59,7 +59,7 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
   return (
     <View style={hud.container}>
       <View style={hud.row}>
-        <TouchableOpacity style={[hud.badge, { borderColor: currentRankInfo.color }]} onPress={onRankPress} activeOpacity={0.75}>
+        <TouchableOpacity style={[hud.badge, { borderColor: currentRankInfo.color, shadowColor: currentRankInfo.color }]} onPress={onRankPress} activeOpacity={0.75}>
           <Text style={[hud.badgeText, { color: currentRankInfo.color }]}>{currentRankInfo.rank}</Text>
           {canRankUp && (
             <View style={hud.rankUpIndicator}>

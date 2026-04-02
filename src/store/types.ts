@@ -50,8 +50,6 @@ export type GameSettings = {
   missionDifficulty: MissionDifficulty
   customDailyMissions: number
   customPenaltyHours: number
-  customPenaltyStartHour: number
-  customPenaltyEndHour: number
   restDay: boolean   // user-activated rest day for today
   lastFocusDuration: { hours: number; minutes: number }
   dynamicTheme: boolean // Rank-based theme colors
@@ -69,8 +67,6 @@ export const INITIAL_SETTINGS: GameSettings = {
   missionDifficulty: 'normal',
   customDailyMissions: 3,
   customPenaltyHours: 6,
-  customPenaltyStartHour: 10,
-  customPenaltyEndHour: 22,
   restDay: false,
   lastFocusDuration: { hours: 0, minutes: 25 },
   dynamicTheme: true,
@@ -317,7 +313,7 @@ export type GameState = {
   jobChangeReward: JobClass | null        // pending job change reward to show
   lastExtraction: { shadow: Shadow; isLevelUp: boolean; newLevel: number } | null
   activeMissionTimers: Record<string, { startTime: number; accumulatedMs: number; isPaused: boolean }>
-  rewardsQueue: { type: 'achievement' | 'shadow' | 'level_up' | 'job_change' | 'boss_defeated'; id: string; isLevelUp?: boolean; newLevel?: number; data?: any }[]
+  rewardsQueue: { type: 'achievement' | 'shadow' | 'shadow_miss' | 'level_up' | 'job_change' | 'boss_defeated'; id: string; isLevelUp?: boolean; newLevel?: number; data?: any }[]
   extraQuestRerolledIds: string[]    // extra quest IDs (extra_…) that have been rerolled today
   extraQuestUsedPoolIds: string[]    // pool def IDs used in extra quests today (to avoid picking same def again)
   activeBuffs: {             // consumable-activated buffs with expiry
@@ -354,7 +350,7 @@ export type GameActions = {
   updateSideQuestNote: (id: string, note: string) => void
   removeSideQuest: (id: string) => void
   toggleFavoriteShadow: (id: string) => void
-  recordFocusTime: (minutes: number) => void
+  recordFocusTime: (minutes: number, isPenaltySession?: boolean) => void
   recordPomodoroSession: () => void
   addXP: (amount: number) => { leveledUp: boolean }
   purchaseItem: (itemId: string, cost: number) => boolean

@@ -55,6 +55,12 @@ export type Shadow = {
   rank:           ShadowRank
   type:           ShadowType
   dropRate:       number          // weight in gacha pool (ignored for non-gacha)
+  /**
+   * Probability of dropping when the boss is defeated (0.0–1.0).
+   * undefined / 1.0 = 100% guaranteed (raids, events).
+   * Only used for dungeon and key boss drops to add tension and replayability.
+   */
+  dropChance?:    number
   passiveEffect:  PassiveEffect
   lore:           string
   icon:           string          // MaterialCommunityIcons name

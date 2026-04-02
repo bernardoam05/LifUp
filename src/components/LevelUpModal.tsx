@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Modal, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import {
+  StyleSheet, Text, View, Modal, ScrollView,
+  Animated, Pressable,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useTheme } from '../theme';
+import { useTheme, FONT, SPACING } from '../theme';
 import { playSound } from '../utils/audioService';
 import { SHOP_CATALOG } from '../data/shopItems';
 
@@ -22,44 +25,140 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
   const C = useTheme();
   const st = React.useMemo(() => getStyles(C), [C]);
 
+  // ── Entrada do card ────────────────────────────────────────────────────────
+  const cardScale   = useRef(new Animated.Value(0.72)).current;
+  const cardOpacity = useRef(new Animated.Value(0)).current;
+
+  // ── Pulsação do ícone ──────────────────────────────────────────────────────
+  const iconScale = useRef(new Animated.Value(1)).current;
+
+  // ── Brilho da borda (non-native — cor não suporta nativeDriver) ────────────
+  const glowOpacity = useRef(new Animated.Value(0.5)).current;
+
   useEffect(() => {
     playSound('levelUp');
+
+    // Entrada: spring no card
+    Animated.parallel([
+      Animated.spring(cardScale, {
+        toValue: 1,
+        tension: 90,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardOpacity, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Ícone: pulsa em loop
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(iconScale, { toValue: 1.18, duration: 550, useNativeDriver: true }),
+        Animated.timing(iconScale, { toValue: 1.0,  duration: 550, useNativeDriver: true }),
+      ])
+    ).start();
+
+    // Borda: pulsa opacidade em loop
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowOpacity, { toValue: 1.0,  duration: 1000, useNativeDriver: false }),
+        Animated.timing(glowOpacity, { toValue: 0.35, duration: 1000, useNativeDriver: false }),
+      ])
+    ).start();
   }, []);
+
+  const animatedBorderColor = glowOpacity.interpolate({
+    inputRange:  [0, 1],
+    outputRange: [C.gold + '55', C.gold + 'FF'],
+  });
 
   return (
     <Modal
-      visible={true}
-      transparent={true}
-      animationType="fade"
+      visible
+      transparent
+      animationType="none"
       onRequestClose={onDismiss}
     >
-      <View style={st.overlay}>
-        <View style={st.modalContent}>
-          <View style={st.header}>
-            <Icon name="chevron-double-up" size={48} color={C.gold} />
-            <Text style={st.title}>LEVEL UP!</Text>
-            <Text style={st.levelText}>Nível {level}</Text>
+      {/* Overlay com fade próprio */}
+      <Animated.View style={[st.overlay, { opacity: cardOpacity }]}>
+        {/* Card com spring de entrada */}
+        <Animated.View
+          style={[
+            st.card,
+            {
+              transform:   [{ scale: cardScale }],
+              borderColor: animatedBorderColor,
+              shadowColor: C.gold,
+            },
+          ]}
+        >
+          {/* ── Cabeçalho RPG ─────────────────────────────────────────────── */}
+          <View style={st.topBar}>
+            <View style={st.topLine} />
+            <Text style={st.topLabel}>◈ SISTEMA ◈</Text>
+            <View style={st.topLine} />
           </View>
 
+          {/* ── Ícone + Título ─────────────────────────────────────────────── */}
+          <View style={st.heroSection}>
+            <Animated.View style={{ transform: [{ scale: iconScale }] }}>
+              <View style={st.iconRing}>
+                <Icon name="chevron-double-up" size={52} color={C.gold} />
+              </View>
+            </Animated.View>
+
+            <Text style={st.title}>LEVEL UP!</Text>
+
+            <View style={st.levelBadge}>
+              <Text style={st.levelSmall}>NÍVEL</Text>
+              <Text style={st.levelNum}>{level}</Text>
+            </View>
+          </View>
+
+          {/* ── Recompensas ────────────────────────────────────────────────── */}
           {items.length > 0 && (
-            <View style={st.rewardsSection}>
-              <Text style={st.rewardsLabel}>Recompensas</Text>
-              <ScrollView style={st.itemsList} nestedScrollEnabled>
+            <View style={st.rewardsBox}>
+              <View style={st.sectionDivider}>
+                <View style={st.dividerLine} />
+                <Text style={st.dividerLabel}>RECOMPENSAS</Text>
+                <View style={st.dividerLine} />
+              </View>
+
+              <ScrollView
+                style={st.itemList}
+                nestedScrollEnabled
+                showsVerticalScrollIndicator={false}
+              >
                 {items.map((item, idx) => (
                   <View key={idx} style={st.itemRow}>
-                    <Icon name="gift" size={20} color={C.gold} />
-                    <Text style={st.itemText}>{ITEM_NAMES[item] ?? EXTRA_NAMES[item] ?? item}</Text>
+                    <View style={st.itemIcon}>
+                      <Icon name="gift-outline" size={16} color={C.gold} />
+                    </View>
+                    <Text style={st.itemText}>
+                      {ITEM_NAMES[item] ?? EXTRA_NAMES[item] ?? item}
+                    </Text>
                   </View>
                 ))}
               </ScrollView>
             </View>
           )}
 
-          <TouchableOpacity style={st.closeBtn} onPress={onDismiss}>
-            <Text style={st.closeBtnText}>CONTINUAR</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+          {/* ── Botão Continuar ────────────────────────────────────────────── */}
+          <Pressable
+            onPress={onDismiss}
+            style={({ pressed }) => [
+              st.continueBtn,
+              pressed && st.continueBtnPressed,
+            ]}
+          >
+            <Icon name="arrow-right-circle-outline" size={18} color={C.bg} />
+            <Text style={st.continueTxt}>CONTINUAR</Text>
+          </Pressable>
+        </Animated.View>
+      </Animated.View>
     </Modal>
   );
 }
@@ -67,78 +166,154 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
 const getStyles = (C: any) => StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(0,0,0,0.88)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 10000,
   },
-  modalContent: {
-    width: '85%',
+  card: {
+    width: '88%',
     backgroundColor: C.panel,
-    borderWidth: 2,
-    borderColor: C.gold,
+    borderWidth: 1.5,
     borderRadius: 12,
-    padding: 20,
+    padding: SPACING.lg,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 10,
+    // iOS glow
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.65,
+    shadowRadius: 24,
+    // Android
+    elevation: 16,
   },
-  header: {
+
+  // ── Top bar ──────────────────────────────────────────────────────────────
+  topBar: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    width: '100%',
+    gap: SPACING.sm,
+    marginBottom: SPACING.lg,
+  },
+  topLine: { flex: 1, height: 1, backgroundColor: C.gold + '44' },
+  topLabel: {
+    color: C.gold,
+    fontFamily: FONT.orbitron,
+    fontSize: 9,
+    letterSpacing: 3,
+    opacity: 0.8,
+  },
+
+  // ── Hero ─────────────────────────────────────────────────────────────────
+  heroSection: {
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+    gap: SPACING.sm,
+  },
+  iconRing: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: C.gold + '14',
+    borderWidth: 1,
+    borderColor: C.gold + '44',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.sm,
   },
   title: {
     color: C.gold,
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginTop: 8,
-    marginBottom: 4,
+    fontFamily: FONT.orbitron,
+    fontSize: 30,
+    fontWeight: '900',
+    letterSpacing: 6,
   },
-  levelText: {
-    color: C.text.secondary,
-    fontSize: 16,
+  levelBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: C.gold + '15',
+    borderWidth: 1,
+    borderColor: C.gold + '44',
+    borderRadius: 8,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xs,
   },
-  rewardsSection: {
+  levelSmall: {
+    color: C.gold,
+    fontFamily: FONT.orbitron,
+    fontSize: 9,
+    letterSpacing: 2,
+    opacity: 0.7,
+  },
+  levelNum: {
+    color: C.gold,
+    fontFamily: FONT.orbitron,
+    fontSize: 22,
+    fontWeight: '900',
+  },
+
+  // ── Rewards ──────────────────────────────────────────────────────────────
+  rewardsBox: {
     width: '100%',
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
     maxHeight: 200,
   },
-  rewardsLabel: {
-    color: C.text.primary,
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    textAlign: 'center',
+  sectionDivider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    marginBottom: SPACING.sm,
   },
-  itemsList: {
-    width: '100%',
+  dividerLine: { flex: 1, height: 1, backgroundColor: C.border },
+  dividerLabel: {
+    color: C.muted,
+    fontFamily: FONT.orbitron,
+    fontSize: 9,
+    letterSpacing: 2,
   },
+  itemList: { width: '100%' },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: C.border,
+    gap: SPACING.sm,
+  },
+  itemIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    backgroundColor: C.gold + '14',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   itemText: {
     color: C.text.secondary,
-    fontSize: 14,
-    marginLeft: 12,
+    fontSize: 13,
     flex: 1,
   },
-  closeBtn: {
+
+  // ── Continue button ───────────────────────────────────────────────────────
+  continueBtn: {
     width: '100%',
     backgroundColor: C.gold,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderRadius: 8,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: SPACING.sm,
+    minHeight: 48,
   },
-  closeBtnText: {
+  continueBtnPressed: {
+    opacity: 0.82,
+    transform: [{ scale: 0.97 }],
+  },
+  continueTxt: {
     color: C.bg,
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: FONT.orbitron,
+    fontSize: 13,
+    fontWeight: '900',
+    letterSpacing: 3,
   },
 });

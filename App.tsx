@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { View, Text, StyleSheet, StatusBar, NativeModules } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, NativeModules, TouchableOpacity, Vibration } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer, DarkTheme, createNavigationContainerRef } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -90,6 +90,7 @@ export default function App() {
   const invTotal = inventory.filter(e => e.quantity > 0).reduce((sum, e) => sum + e.quantity, 0);
   const rewardsQueue = useGameStore(s => s.rewardsQueue);
   const popReward = useGameStore(s => s.popReward);
+  const customShadows = useGameStore(s => s.customShadows);
   const tutorialPhase = useGameStore(s => s.system.tutorialPhase);
   const advanceTutorial = useGameStore(s => s.advanceTutorialPhase);
 
@@ -271,7 +272,7 @@ export default function App() {
               {rewardsQueue[0].type === 'shadow' && (
                 <ExtractionModal
                   result={{
-                    shadow: (SHADOW_MAP[rewardsQueue[0].id] || (useGameStore.getState().customShadows.find(cs => cs.id === rewardsQueue[0].id)))!,
+                    shadow: (SHADOW_MAP[rewardsQueue[0].id] || customShadows.find(cs => cs.id === rewardsQueue[0].id))!,
                     isLevelUp: !!rewardsQueue[0].isLevelUp,
                     newLevel: rewardsQueue[0].newLevel || 1,
                   }}
@@ -284,6 +285,27 @@ export default function App() {
                   items={(rewardsQueue[0].data as any).items || []}
                   onDismiss={popReward}
                 />
+              )}
+              {rewardsQueue[0].type === 'shadow_miss' && rewardsQueue[0].data && (
+                <View style={styles.shadowMissOverlay} pointerEvents="box-none">
+                  <View style={styles.shadowMissCard}>
+                    <Text style={styles.shadowMissTitle}>A SOMBRA FUGIU!</Text>
+                    <Text style={styles.shadowMissName}>{(rewardsQueue[0].data as any).shadowName}</Text>
+                    <Text style={styles.shadowMissChance}>
+                      Chance de drop: {Math.round(((rewardsQueue[0].data as any).dropChance ?? 0) * 100)}%
+                    </Text>
+                    <Text style={styles.shadowMissLore}>
+                      "A escuridão recua... mas a sombra aguarda uma próxima oportunidade."
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.shadowMissBtn}
+                      onPress={() => { Vibration.vibrate(30); popReward(); }}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.shadowMissBtnTxt}>ENTENDIDO</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               )}
               {rewardsQueue[0].type === 'job_change' && (
                 <JobChangeModal
@@ -308,8 +330,8 @@ export default function App() {
           />
         )}
 
-        {/* Loot Box Modal */}
-        {currentLootReward && (
+        {/* Loot Box Modal — suppressed while another reward modal is on screen */}
+        {currentLootReward && !penaltyTriggered && rewardsQueue.length === 0 && (
           <LootBoxModal
             reward={currentLootReward}
             onClose={dismissLootReward}
@@ -420,5 +442,64 @@ const styles = StyleSheet.create({
   },
   toastLayer: {
     zIndex: 10001,
+  },
+  shadowMissOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.82)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10000,
+  },
+  shadowMissCard: {
+    backgroundColor: '#0d0d1a',
+    borderWidth: 1,
+    borderColor: '#7c3aed55',
+    borderRadius: 12,
+    paddingVertical: SPACING.xl,
+    paddingHorizontal: SPACING.xl,
+    marginHorizontal: SPACING.xl,
+    alignItems: 'center',
+  },
+  shadowMissTitle: {
+    fontFamily: FONT.orbitron,
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#7c3aed',
+    letterSpacing: 2,
+    marginBottom: SPACING.sm,
+  },
+  shadowMissName: {
+    fontFamily: FONT.orbitron,
+    fontSize: 14,
+    color: '#c4b5fd',
+    marginBottom: SPACING.xs,
+    textAlign: 'center',
+  },
+  shadowMissChance: {
+    fontFamily: FONT.orbitron,
+    fontSize: 11,
+    color: '#6b7280',
+    marginBottom: SPACING.md,
+  },
+  shadowMissLore: {
+    fontSize: 12,
+    color: '#4b5563',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginBottom: SPACING.xl,
+    lineHeight: 18,
+  },
+  shadowMissBtn: {
+    borderWidth: 1,
+    borderColor: '#7c3aed',
+    borderRadius: 6,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.xl,
+  },
+  shadowMissBtnTxt: {
+    fontFamily: FONT.orbitron,
+    fontSize: 11,
+    color: '#7c3aed',
+    letterSpacing: 1,
   },
 });
