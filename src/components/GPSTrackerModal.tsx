@@ -56,24 +56,16 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
     } else if (!running && tracker.isTracking) {
       tracker.stopTracking();
     }
-  }, [running, tracker]);
+  }, [running, tracker.isTracking, tracker.startTracking, tracker.stopTracking]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (running) {
-      const startTime = Date.now() - elapsed;
-      interval = setInterval(() => {
-        setElapsed(Date.now() - startTime);
-      }, 500);
-      tracker.startTracking();
-    } else {
-      tracker.stopTracking();
-    }
-    return () => {
-      if (interval) {clearInterval(interval);}
-      tracker.stopTracking();
-    };
-  }, [running, elapsed, tracker]);
+    if (!running) {return;}
+    const startTime = Date.now() - elapsed;
+    const interval = setInterval(() => {
+      setElapsed(Date.now() - startTime);
+    }, 500);
+    return () => { clearInterval(interval); };
+  }, [running]);
 
   // NO AUTO-START: Timer will only start when user clicks the play button
   // Persistent store sync happens via tracker state changes

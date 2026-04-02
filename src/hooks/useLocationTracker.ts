@@ -63,6 +63,7 @@ export function useLocationTracker(targetKm: number, onComplete: () => void) {
   // ── Track ──────────────────────────────────────────────────────────────────
 
   const startTracking = useCallback(async () => {
+    if (watchId.current !== null) {return;}
     const ok = await requestPermission();
     if (!ok) {
       setState(p => ({ ...p, error: 'Permissão GPS negada.' }));
