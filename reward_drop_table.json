@@ -1,0 +1,324 @@
+{
+  "source": {
+    "bossLootTable": "src/data/shopItems.ts",
+    "genericBossDrops": "src/data/shopItems.ts",
+    "itemEffects": "src/data/shopItems.ts"
+  },
+  "genericBossDrops": [
+    { "itemId": "shadow_essence", "chance": 0.45 },
+    { "itemId": "blood_fallen", "chance": 0.18 }
+  ],
+  "itemEffects": {
+    "kasaka_venom": { "buffStat": "xp", "buffMult": 0.15, "buffDurationMs": 7200000 },
+    "iron_will_crystal": { "buffStat": "xp", "buffMult": 0.5, "buffDurationMs": 1800000 },
+    "blood_fallen": { "buffStat": "gold", "buffMult": 0.25, "buffDurationMs": 10800000 },
+    "igris_fragment": { "buffStat": "xp", "buffMult": 0.2, "buffDurationMs": 3600000 },
+    "cerberus_fang": { "buffStat": "gold", "buffMult": 0.2, "buffDurationMs": 7200000 },
+    "dragon_scale": { "buffStat": "xp", "buffMult": 0.3, "buffDurationMs": 14400000 },
+    "lich_eye": { "buffStat": "xp", "buffMult": 1.0, "buffDurationMs": 3600000 }
+  },
+  "bossDrops": {
+    "kasaka_venom_fang": [
+      { "itemId": "kasaka_venom", "chance": 0.4 }
+    ],
+    "baruka_ice_elf": [
+      { "itemId": "iron_will_crystal", "chance": 0.3 }
+    ],
+    "kargalgan_shaman": [
+      { "itemId": "blood_fallen", "chance": 0.35 }
+    ],
+    "vulcan_greed_demon": [
+      { "itemId": "blood_fallen", "chance": 0.3 },
+      { "itemId": "igris_fragment", "chance": 0.2 }
+    ],
+    "metus_soul_guide": [
+      { "itemId": "shadow_essence", "chance": 0.4 }
+    ],
+    "beru_ant_king": [
+      { "itemId": "igris_fragment", "chance": 0.35 }
+    ],
+    "kamish_calamity": [
+      { "itemId": "dragon_scale", "chance": 0.35 }
+    ],
+    "statue_of_god": [
+      { "itemId": "iron_will_crystal", "chance": 0.3 },
+      { "itemId": "lich_eye", "chance": 0.2 }
+    ],
+    "ashborn_shadow_monarch": [
+      { "itemId": "dragon_scale", "chance": 0.4 },
+      { "itemId": "lich_eye", "chance": 0.3 }
+    ],
+    "dracula_vampire_lord": [
+      { "itemId": "blood_fallen", "chance": 0.45 }
+    ],
+    "cthulhu_mad_god": [
+      { "itemId": "lich_eye", "chance": 0.4 },
+      { "itemId": "shadow_essence", "chance": 0.35 }
+    ],
+    "sauron_dark_lord": [
+      { "itemId": "iron_will_crystal", "chance": 0.35 }
+    ],
+    "sun_wukong_celestial": [
+      { "itemId": "iron_will_crystal", "chance": 0.35 }
+    ],
+    "kratos_ghost_sparta": [
+      { "itemId": "blood_fallen", "chance": 0.4 },
+      { "itemId": "igris_fragment", "chance": 0.25 }
+    ],
+    "key_boss_basilisk": [
+      { "itemId": "kasaka_venom", "chance": 0.4 }
+    ],
+    "key_boss_manticore": [
+      { "itemId": "cerberus_fang", "chance": 0.35 }
+    ],
+    "key_boss_phoenix_rebirth": [
+      { "itemId": "iron_will_crystal", "chance": 0.4 }
+    ],
+    "key_boss_beholder_eye": [
+      { "itemId": "lich_eye", "chance": 0.4 }
+    ],
+    "key_boss_demon_prince_astaroth": [
+      { "itemId": "blood_fallen", "chance": 0.35 }
+    ],
+    "key_boss_undead_dragon_king": [
+      { "itemId": "dragon_scale", "chance": 0.4 }
+    ],
+    "key_boss_titania_queen_dark": [
+      { "itemId": "shadow_essence", "chance": 0.4 }
+    ],
+    "key_boss_goblin_king": [
+      { "itemId": "shadow_essence", "chance": 0.3 }
+    ],
+    "key_boss_anubis_guardian_soul": [
+      { "itemId": "iron_will_crystal", "chance": 0.35 }
+    ],
+    "key_boss_cerberus_gate_final": [
+      { "itemId": "cerberus_fang", "chance": 0.55 }
+    ],
+    "key_boss_medusa_queen_gaze": [
+      { "itemId": "kasaka_venom", "chance": 0.45 }
+    ],
+    "key_boss_hydra_ancient_world": [
+      { "itemId": "kasaka_venom", "chance": 0.35 },
+      { "itemId": "blood_fallen", "chance": 0.3 }
+    ],
+    "key_boss_fenrir_wolf_star": [
+      { "itemId": "iron_will_crystal", "chance": 0.35 }
+    ],
+    "key_boss_dragon_wyvern": [
+      { "itemId": "dragon_scale", "chance": 0.3 }
+    ],
+    "key_boss_odin_simulation_valhalla": [
+      { "itemId": "iron_will_crystal", "chance": 0.4 },
+      { "itemId": "lich_eye", "chance": 0.25 }
+    ],
+    "key_boss_zeus_simulation_olympus": [
+      { "itemId": "iron_will_crystal", "chance": 0.4 }
+    ],
+    "key_boss_cthulhu_spawn_outer": [
+      { "itemId": "lich_eye", "chance": 0.4 },
+      { "itemId": "shadow_essence", "chance": 0.35 }
+    ],
+    "steel_fanged_lycan": [
+      { "itemId": "blood_fallen", "chance": 0.25 }
+    ],
+    "hobgoblin_chieftain": [
+      { "itemId": "blood_fallen", "chance": 0.25 }
+    ],
+    "twin_headed_ogre": [
+      { "itemId": "blood_fallen", "chance": 0.3 }
+    ],
+    "undead_legionnaire": [
+      { "itemId": "shadow_essence", "chance": 0.25 }
+    ],
+    "mountain_troll_brute": [
+      { "itemId": "blood_fallen", "chance": 0.25 }
+    ],
+    "inferno_hound_alpha": [
+      { "itemId": "blood_fallen", "chance": 0.25 }
+    ],
+    "cave_horror_spider": [
+      { "itemId": "blood_fallen", "chance": 0.2 }
+    ],
+    "giant_ice_bear": [
+      { "itemId": "iron_will_crystal", "chance": 0.25 }
+    ],
+    "high_orc_guard": [
+      { "itemId": "blood_fallen", "chance": 0.25 }
+    ],
+    "naga_general": [
+      { "itemId": "kasaka_venom", "chance": 0.3 }
+    ],
+    "high_orc_raider": [
+      { "itemId": "blood_fallen", "chance": 0.25 }
+    ],
+    "dark_elf_assassin_leader": [
+      { "itemId": "shadow_essence", "chance": 0.25 }
+    ],
+    "harpy_matriarch": [
+      { "itemId": "shadow_essence", "chance": 0.25 }
+    ],
+    "chimera_of_waste": [
+      { "itemId": "kasaka_venom", "chance": 0.3 }
+    ],
+    "demon_king_baran": [
+      { "itemId": "iron_will_crystal", "chance": 0.35 },
+      { "itemId": "lich_eye", "chance": 0.2 }
+    ],
+    "monarch_querehsha": [
+      { "itemId": "shadow_essence", "chance": 0.35 },
+      { "itemId": "blood_fallen", "chance": 0.25 }
+    ],
+    "monarch_silad": [
+      { "itemId": "iron_will_crystal", "chance": 0.3 }
+    ],
+    "architect_system": [
+      { "itemId": "iron_will_crystal", "chance": 0.35 },
+      { "itemId": "lich_eye", "chance": 0.25 }
+    ],
+    "rathalos_sky": [
+      { "itemId": "dragon_scale", "chance": 0.3 }
+    ],
+    "kurama_spirit": [
+      { "itemId": "blood_fallen", "chance": 0.3 }
+    ],
+    "vampire_noble_valerius": [
+      { "itemId": "blood_fallen", "chance": 0.35 }
+    ],
+    "archdemon_malphas": [
+      { "itemId": "blood_fallen", "chance": 0.3 },
+      { "itemId": "shadow_essence", "chance": 0.2 }
+    ],
+    "abyssal_kraken_tentacle": [
+      { "itemId": "kasaka_venom", "chance": 0.3 }
+    ],
+    "ancient_guardian_statue": [
+      { "itemId": "iron_will_crystal", "chance": 0.3 }
+    ],
+    "spectral_lich_king_shadow": [
+      { "itemId": "lich_eye", "chance": 0.35 }
+    ],
+    "monarch_rakan": [
+      { "itemId": "dragon_scale", "chance": 0.3 }
+    ],
+    "monarch_legia": [
+      { "itemId": "iron_will_crystal", "chance": 0.35 }
+    ],
+    "monarch_antares": [
+      { "itemId": "dragon_scale", "chance": 0.4 }
+    ],
+    "malenia_blade": [
+      { "itemId": "blood_fallen", "chance": 0.35 },
+      { "itemId": "iron_will_crystal", "chance": 0.25 }
+    ],
+    "lich_king_arthas": [
+      { "itemId": "lich_eye", "chance": 0.4 },
+      { "itemId": "iron_will_crystal", "chance": 0.25 }
+    ],
+    "sephiroth_angel": [
+      { "itemId": "shadow_essence", "chance": 0.35 },
+      { "itemId": "iron_will_crystal", "chance": 0.25 }
+    ],
+    "acnologia_chaos": [
+      { "itemId": "dragon_scale", "chance": 0.4 },
+      { "itemId": "iron_will_crystal", "chance": 0.2 }
+    ],
+    "morgoth_abyss": [
+      { "itemId": "dragon_scale", "chance": 0.4 },
+      { "itemId": "lich_eye", "chance": 0.3 }
+    ],
+    "monarch_yogumun_giant": [
+      { "itemId": "iron_will_crystal", "chance": 0.3 }
+    ],
+    "monarch_silad_true": [
+      { "itemId": "iron_will_crystal", "chance": 0.35 }
+    ],
+    "national_hunter_thomas": [
+      { "itemId": "iron_will_crystal", "chance": 0.4 }
+    ],
+    "dragon_monarch_general_1": [
+      { "itemId": "dragon_scale", "chance": 0.35 }
+    ],
+    "abyssal_void_walker": [
+      { "itemId": "shadow_essence", "chance": 0.35 }
+    ],
+    "seraphim_fallen_angel": [
+      { "itemId": "iron_will_crystal", "chance": 0.35 }
+    ],
+    "monarch_of_beginnings": [
+      { "itemId": "dragon_scale", "chance": 0.45 },
+      { "itemId": "lich_eye", "chance": 0.4 },
+      { "itemId": "iron_will_crystal", "chance": 0.35 }
+    ],
+    "alpha_wolf": [
+      { "itemId": "blood_fallen", "chance": 0.35 }
+    ],
+    "sea_king": [
+      { "itemId": "kasaka_venom", "chance": 0.4 }
+    ],
+    "dungeon_queen": [
+      { "itemId": "shadow_essence", "chance": 0.4 }
+    ],
+    "king_of_the_dead": [
+      { "itemId": "lich_eye", "chance": 0.4 },
+      { "itemId": "shadow_essence", "chance": 0.3 }
+    ],
+    "boss_crypt_omega": [
+      { "itemId": "shadow_essence", "chance": 0.35 },
+      { "itemId": "lich_eye", "chance": 0.25 }
+    ],
+    "boss_seraphim": [
+      { "itemId": "iron_will_crystal", "chance": 0.4 },
+      { "itemId": "lich_eye", "chance": 0.25 }
+    ],
+    "break_boss_lich_servant_vanguard": [
+      { "itemId": "shadow_essence", "chance": 0.25 }
+    ],
+    "break_boss_giant_worm_abyss": [
+      { "itemId": "blood_fallen", "chance": 0.2 }
+    ],
+    "break_boss_dark_knight_traitor": [
+      { "itemId": "blood_fallen", "chance": 0.25 }
+    ],
+    "break_boss_succubus_scout_night": [
+      { "itemId": "blood_fallen", "chance": 0.3 }
+    ],
+    "break_boss_gargoyle_watcher_stone": [
+      { "itemId": "iron_will_crystal", "chance": 0.2 }
+    ],
+    "break_boss_orc_shaman_ritual_corrupt": [
+      { "itemId": "blood_fallen", "chance": 0.25 }
+    ],
+    "break_boss_ice_troll_frost_bite": [
+      { "itemId": "iron_will_crystal", "chance": 0.25 }
+    ],
+    "break_boss_fire_spirit_ember": [
+      { "itemId": "iron_will_crystal", "chance": 0.25 }
+    ],
+    "break_boss_void_wraith_silent": [
+      { "itemId": "shadow_essence", "chance": 0.3 }
+    ],
+    "break_boss_corrupted_monk_temple": [
+      { "itemId": "iron_will_crystal", "chance": 0.25 },
+      { "itemId": "shadow_essence", "chance": 0.2 }
+    ],
+    "break_boss_abyssal_beast_chimera": [
+      { "itemId": "blood_fallen", "chance": 0.3 }
+    ],
+    "break_boss_chaos_reaper_final": [
+      { "itemId": "lich_eye", "chance": 0.3 },
+      { "itemId": "iron_will_crystal", "chance": 0.2 }
+    ],
+    "break_boss_ancient_machine_core": [
+      { "itemId": "iron_will_crystal", "chance": 0.3 }
+    ],
+    "break_boss_star_spawn_void": [
+      { "itemId": "lich_eye", "chance": 0.35 },
+      { "itemId": "shadow_essence", "chance": 0.3 }
+    ],
+    "break_boss_monarch_shadow_clone_sim": [
+      { "itemId": "dragon_scale", "chance": 0.35 },
+      { "itemId": "lich_eye", "chance": 0.3 }
+    ]
+  }
+}

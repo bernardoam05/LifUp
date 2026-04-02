@@ -1,5 +1,5 @@
-import { Shadow } from './shadows_types'
+import { Shadow } from './shadows_types';
 
 export const SHADOWS_CUSTOM: Shadow[] = [
 
-]
+];

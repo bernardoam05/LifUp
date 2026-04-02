@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { DungeonKey } from '../data/dungeonKeys'
-import MissionModalBase from './MissionModalBase'
-import { FONT, SPACING } from '../theme'
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { DungeonKey } from '../data/dungeonKeys';
+import MissionModalBase from './MissionModalBase';
+import { FONT, SPACING } from '../theme';
 
-const KEY_COOLDOWN_MS = 24 * 60 * 60_000
+const KEY_COOLDOWN_MS = 24 * 60 * 60_000;
 
 function formatCooldown(ms: number): string {
-  const totalSecs = Math.ceil(ms / 1000)
-  const h = Math.floor(totalSecs / 3600)
-  const m = Math.floor((totalSecs % 3600) / 60)
-  if (h > 0) return `${h}h ${m}m`
-  return `${m}m`
+  const totalSecs = Math.ceil(ms / 1000);
+  const h = Math.floor(totalSecs / 3600);
+  const m = Math.floor((totalSecs % 3600) / 60);
+  if (h > 0) {return `${h}h ${m}m`;}
+  return `${m}m`;
 }
 
 export const getDKMStyles = (C: any) => StyleSheet.create({
@@ -37,7 +37,7 @@ export const getDKMStyles = (C: any) => StyleSheet.create({
   startBtnTxt: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2, fontWeight: '700', textAlign: 'center' },
   cancelBtn: { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl, borderWidth: 1, borderColor: C.border, borderRadius: 4 },
   cancelTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center' },
-})
+});
 
 interface DungeonKeyModalProps {
   visible: boolean
@@ -59,28 +59,28 @@ export default function DungeonKeyModal({
   keyLastUsedAt = 0,
   C,
 }: DungeonKeyModalProps) {
-  const dm = getDKMStyles(C)
-  const [cooldownMs, setCooldownMs] = useState(0)
+  const dm = getDKMStyles(C);
+  const [cooldownMs, setCooldownMs] = useState(0);
 
   useEffect(() => {
-    const remaining = () => Math.max(0, KEY_COOLDOWN_MS - (Date.now() - keyLastUsedAt))
-    setCooldownMs(remaining())
-    if (remaining() <= 0) return
+    const remaining = () => Math.max(0, KEY_COOLDOWN_MS - (Date.now() - keyLastUsedAt));
+    setCooldownMs(remaining());
+    if (remaining() <= 0) {return;}
     const interval = setInterval(() => {
-      const r = remaining()
-      setCooldownMs(r)
-      if (r <= 0) clearInterval(interval)
-    }, 30_000)
-    return () => clearInterval(interval)
-  }, [keyLastUsedAt, visible])
+      const r = remaining();
+      setCooldownMs(r);
+      if (r <= 0) {clearInterval(interval);}
+    }, 30_000);
+    return () => clearInterval(interval);
+  }, [keyLastUsedAt, visible]);
 
-  if (!key) return null
+  if (!key) {return null;}
 
-  const onCooldown = cooldownMs > 0
+  const onCooldown = cooldownMs > 0;
 
-  const lore = key.lore || `Um poderoso inimigo aguarda-te neste portal. ${key.description}`
-  const environment = key.environment || `Um local perigoso e desafiante, repleto de obstáculos mortais.`
-  const difficulty = key.difficulty || 3
+  const lore = key.lore || `Um poderoso inimigo aguarda-te neste portal. ${key.description}`;
+  const environment = key.environment || 'Um local perigoso e desafiante, repleto de obstáculos mortais.';
+  const difficulty = key.difficulty || 3;
 
   const renderDifficulty = () => {
     if (difficulty === '???') {
@@ -89,30 +89,30 @@ export default function DungeonKeyModal({
           <Text style={dm.difficultyLabel}>DIFICULDADE:</Text>
           <Text style={[dm.difficultyLabel, { fontSize: 12, fontWeight: '900' }]}>???</Text>
         </View>
-      )
+      );
     }
     const stars = Array.from({ length: 5 }).map((_, i) => (
       <Text key={i} style={dm.star}>{i < difficulty ? '⭐' : '☆'}</Text>
-    ))
+    ));
     return (
       <View style={dm.difficultyRow}>
         <Text style={dm.difficultyLabel}>DIFICULDADE:</Text>
         <View style={dm.difficultyStars}>{stars}</View>
       </View>
-    )
-  }
+    );
+  };
 
   const getMissionTypeColor = () => {
     switch (key.missionType) {
-      case 'focus': return { bg: C.neonBlue, text: C.neonBlue }
-      case 'training': return { bg: '#84cc16', text: '#84cc16' }
-      case 'gps': return { bg: C.gold, text: C.gold }
-      default: return { bg: C.muted, text: C.muted }
+      case 'focus': return { bg: C.neonBlue, text: C.neonBlue };
+      case 'training': return { bg: '#84cc16', text: '#84cc16' };
+      case 'gps': return { bg: C.gold, text: C.gold };
+      default: return { bg: C.muted, text: C.muted };
     }
-  }
+  };
 
-  const missionColor = getMissionTypeColor()
-  const missionTypeLabel = key.missionType === 'focus' ? 'FOCO' : key.missionType === 'training' ? 'TREINO' : 'GPS'
+  const missionColor = getMissionTypeColor();
+  const missionTypeLabel = key.missionType === 'focus' ? 'FOCO' : key.missionType === 'training' ? 'TREINO' : 'GPS';
 
   return (
     <MissionModalBase
@@ -169,7 +169,7 @@ export default function DungeonKeyModal({
 
       <TouchableOpacity
         style={[dm.startBtn, onCooldown && { opacity: 0.4, borderColor: C.gold + '44' }]}
-        onPress={() => { if (!onCooldown) { onStartMission(key); onClose() } }}
+        onPress={() => { if (!onCooldown) { onStartMission(key); onClose(); } }}
         disabled={onCooldown}
       >
         <Text style={[dm.startBtnTxt, onCooldown && { color: C.gold }]}>
@@ -181,5 +181,5 @@ export default function DungeonKeyModal({
         <Text style={dm.cancelTxt}>RECUAR</Text>
       </TouchableOpacity>
     </MissionModalBase>
-  )
+  );
 }

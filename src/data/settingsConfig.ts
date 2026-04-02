@@ -1,4 +1,4 @@
-import { MissionDifficulty, PunishmentIntensity } from '../store/useGameStore'
+import { MissionDifficulty, PunishmentIntensity } from '../store/useGameStore';
 
 export type DifficultyOption = {
   value:       MissionDifficulty
@@ -55,7 +55,19 @@ export const getDifficultyOptions = (C: any): DifficultyOption[] => [
       '· Recompensas e penalizações amplificadas',
     ],
   },
-]
+  {
+    value:    'custom',
+    label:    'PERSONALIZADO',
+    sublabel: 'Define o teu próprio ritmo',
+    icon:     'tune-variant',
+    color:    C.gold,
+    description: [
+      '· Escolhe quantas missões diárias queres',
+      '· Ideal para ajustar o volume ao teu horário',
+      '· Mantém a progressão normal',
+    ],
+  },
+];
 
 export const getIntensityOptions = (C: any): IntensityOption[] => [
   {
@@ -97,4 +109,16 @@ export const getIntensityOptions = (C: any): IntensityOption[] => [
       '· Bloqueio de apps sempre ativo',
     ],
   },
-]
+  {
+    value:    'custom',
+    label:    'PERSONALIZADO',
+    sublabel: 'Escolhe o tempo de bloqueio',
+    icon:     'timer-sand',
+    color:    C.gold,
+    description: [
+      '· Define quantas horas de bloqueio queres',
+      '· Restante lógica mantém-se equilibrada',
+      '· Útil para horários irregulares',
+    ],
+  },
+];

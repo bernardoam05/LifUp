@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Shadow, ShadowRank, SHADOW_RANK_COLOR } from '../data/shadows_types'
-import { SHADOWS_SHOP } from '../data/shadows_shop'
-import { FONT, SPACING } from '../theme'
-import SoloLevelingModal from './SoloLevelingModal'
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Shadow, ShadowRank, SHADOW_RANK_COLOR } from '../data/shadows_types';
+import { SHADOWS_SHOP } from '../data/shadows_shop';
+import { FONT, SPACING } from '../theme';
+import SoloLevelingModal from './SoloLevelingModal';
 
 interface ShadowShopModalProps {
   visible: boolean
@@ -15,13 +15,13 @@ interface ShadowShopModalProps {
   C: any
 }
 
-const RANKS: ShadowRank[] = ['Normal', 'Elite', 'Knight', 'Commander', 'Marshal']
+const RANKS: ShadowRank[] = ['Normal', 'Elite', 'Knight', 'Commander', 'Marshal'];
 
 export default function ShadowShopModal({ visible, onClose, playerGold, ownedShadowIds, onBuy, C }: ShadowShopModalProps) {
-  const [selectedRank, setSelectedRank] = useState<ShadowRank>('Normal')
-  const s = getStyles(C)
+  const [selectedRank, setSelectedRank] = useState<ShadowRank>('Normal');
+  const s = getStyles(C);
 
-  const filteredShadows = SHADOWS_SHOP.filter(sh => sh.rank === selectedRank)
+  const filteredShadows = SHADOWS_SHOP.filter(sh => sh.rank === selectedRank);
 
   return (
     <SoloLevelingModal
@@ -38,8 +38,8 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
         {/* Tabs */}
         <View style={s.tabBar}>
           {RANKS.map(rank => {
-            const active = selectedRank === rank
-            const color = SHADOW_RANK_COLOR[rank]
+            const active = selectedRank === rank;
+            const color = SHADOW_RANK_COLOR[rank];
             return (
               <TouchableOpacity
                 key={rank}
@@ -50,7 +50,7 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
                   {rank.toUpperCase()}
                 </Text>
               </TouchableOpacity>
-            )
+            );
           })}
         </View>
 
@@ -62,17 +62,17 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
             </View>
           ) : (
             filteredShadows.map(sh => {
-              const owned = ownedShadowIds.includes(sh.id)
-              const color = SHADOW_RANK_COLOR[sh.rank]
-              const price = (sh.unlockMethod as any).price || 0
-              const canAfford = playerGold >= price
+              const owned = ownedShadowIds.includes(sh.id);
+              const color = SHADOW_RANK_COLOR[sh.rank];
+              const price = (sh.unlockMethod as any).price || 0;
+              const canAfford = playerGold >= price;
 
               return (
                 <View key={sh.id} style={[s.card, { borderColor: color + '44' }]}>
                   <View style={[s.iconWrap, { backgroundColor: color + '18' }]}>
                     <Icon name={sh.icon} size={24} color={color} />
                   </View>
-                  
+
                   <View style={s.info}>
                     <Text style={[s.name, { color }]}>{sh.name}</Text>
                     <Text style={s.type}>{sh.type} • {sh.passiveEffect.description}</Text>
@@ -96,13 +96,13 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
                     </TouchableOpacity>
                   </View>
                 </View>
-              )
+              );
             })
           )}
         </ScrollView>
       </View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 const getStyles = (C: any) => StyleSheet.create({
@@ -127,4 +127,4 @@ const getStyles = (C: any) => StyleSheet.create({
   priceText: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700' },
   buyBtn: { borderWidth: 1, borderRadius: 6, paddingHorizontal: 10, paddingVertical: 4 },
   buyBtnText: { fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '700' },
-})
+});

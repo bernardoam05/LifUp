@@ -1,7 +1,7 @@
-import React from 'react'
-import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme, SPACING, FONT } from '../../theme'
+import React from 'react';
+import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme, SPACING, FONT } from '../../theme';
 
 interface ImportModalProps {
   visible: boolean
@@ -18,8 +18,8 @@ const ImportModal = ({
   onImport,
   onCancel,
 }: ImportModalProps) => {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onCancel}>
@@ -49,8 +49,8 @@ const ImportModal = ({
         </View>
       </View>
     </Modal>
-  )
-}
+  );
+};
 
 const getStyles = (C: any) => StyleSheet.create({
   importOverlay: {
@@ -99,6 +99,6 @@ const getStyles = (C: any) => StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 1.5,
   },
-})
+});
 
-export default ImportModal
+export default ImportModal;

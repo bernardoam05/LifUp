@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Animated, Easing } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { FONT, SPACING } from '../theme'
-import { SHADOW_DATABASE, Shadow, getBossDropPreview } from '../data/shadows'
-import useGameStore from '../store/useGameStore'
-import { computeActivePassives } from '../store/helpers'
+import React, { useState, useEffect } from 'react';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { FONT, SPACING } from '../theme';
+import { SHADOW_DATABASE, getBossDropPreview } from '../data/shadows';
+import useGameStore from '../store/useGameStore';
+import { computeActivePassives } from '../store/helpers';
 
 type Props = {
   visible: boolean
@@ -15,34 +15,34 @@ type Props = {
 }
 
 export default function ShadowExtractionModal({ visible, shadowId, category, onClose, C }: Props) {
-  const s = React.useMemo(() => getStyles(C), [C])
-  const { player, customShadows, activeBuffs } = useGameStore()
-  const playerLevel = player?.level || 1
-  const playerRank = player?.rank || 'E'
+  const s = React.useMemo(() => getStyles(C), [C]);
+  const { player, customShadows, activeBuffs } = useGameStore();
+  const playerLevel = player?.level || 1;
+  const playerRank = player?.rank || 'E';
 
-  const [attempts, setAttempts] = useState(0)
-  const [status, setStatus] = useState<'idle' | 'extracting' | 'success' | 'failed'>('idle')
-  const [shakeAnim] = useState(new Animated.Value(0))
-  const [fadeAnim] = useState(new Animated.Value(0))
-  const [pulseAnim] = useState(new Animated.Value(1))
+  const [attempts, setAttempts] = useState(0);
+  const [status, setStatus] = useState<'idle' | 'extracting' | 'success' | 'failed'>('idle');
+  const [shakeAnim] = useState(new Animated.Value(0));
+  const [fadeAnim] = useState(new Animated.Value(0));
+  const [pulseAnim] = useState(new Animated.Value(1));
 
-  const maxAttempts = category === 'event' ? 1 : 3
+  const maxAttempts = category === 'event' ? 1 : 3;
   const shadow = (() => {
-    const byId = SHADOW_DATABASE.find(s => s.id === shadowId)
-    if (byId) return byId
-    const byBoss = getBossDropPreview(shadowId)
-    if (byBoss) return byBoss
-    return SHADOW_DATABASE.find(s => s.id === 'igris')!
-  })()
+    const byId = SHADOW_DATABASE.find(sh => sh.id === shadowId);
+    if (byId) {return byId;}
+    const byBoss = getBossDropPreview(shadowId);
+    if (byBoss) {return byBoss;}
+    return SHADOW_DATABASE.find(sh => sh.id === 'igris')!;
+  })();
 
   useEffect(() => {
     if (visible) {
-      setAttempts(0)
-      setStatus('idle')
-      fadeAnim.setValue(0)
-      Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start()
+      setAttempts(0);
+      setStatus('idle');
+      fadeAnim.setValue(0);
+      Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start();
     }
-  }, [visible])
+  }, [visible, fadeAnim]);
 
   useEffect(() => {
     if (status === 'extracting') {
@@ -51,50 +51,50 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
           Animated.timing(pulseAnim, { toValue: 1.2, duration: 400, useNativeDriver: true }),
           Animated.timing(pulseAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
         ])
-      ).start()
+      ).start();
     } else {
-      pulseAnim.setValue(1)
+      pulseAnim.setValue(1);
     }
-  }, [status])
+  }, [status, pulseAnim]);
 
   const handleArise = () => {
-    if (status !== 'idle' && status !== 'failed') return
-    if (attempts >= maxAttempts) return
+    if (status !== 'idle' && status !== 'failed') {return;}
+    if (attempts >= maxAttempts) {return;}
 
-    setStatus('extracting')
-    
+    setStatus('extracting');
+
     setTimeout(() => {
-      const nextAttempt = attempts + 1
-      setAttempts(nextAttempt)
-      
-      const RANK_CHANCES: Record<string, number> = {
-        Normal: 0.70, Elite: 0.50, Knight: 0.30, Commander: 0.15, Marshal: 0.05
-      }
-      const BaseRankChance = RANK_CHANCES[shadow.rank] || 0.10
-      const levelBonus = playerLevel * 0.0025
-      const RANK_VALUES: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5, National: 6 }
-      const jobBonus = (RANK_VALUES[playerRank] || 0) * 0.02
-      const categoryBonus = (category === 'key' || category === 'raid') ? 0.20 : 0
-      
-      const { ariseBoost } = computeActivePassives(player.activeShadowIds, player.shadows, customShadows, activeBuffs)
-      
-      let successChance = BaseRankChance + levelBonus + jobBonus + categoryBonus + ariseBoost
-      if (category === 'event') successChance = 1.0
+      const nextAttempt = attempts + 1;
+      setAttempts(nextAttempt);
 
-      const isSuccess = Math.random() < successChance
+      const RANK_CHANCES: Record<string, number> = {
+        Normal: 0.70, Elite: 0.50, Knight: 0.30, Commander: 0.15, Marshal: 0.05,
+      };
+      const BaseRankChance = RANK_CHANCES[shadow.rank] || 0.10;
+      const levelBonus = playerLevel * 0.0025;
+      const RANK_VALUES: Record<string, number> = { E: 0, D: 1, C: 2, B: 3, A: 4, S: 5, National: 6 };
+      const jobBonus = (RANK_VALUES[playerRank] || 0) * 0.02;
+      const categoryBonus = (category === 'key' || category === 'raid') ? 0.20 : 0;
+
+      const { ariseBoost } = computeActivePassives(player.activeShadowIds, player.shadows, customShadows, activeBuffs);
+
+      let successChance = BaseRankChance + levelBonus + jobBonus + categoryBonus + ariseBoost;
+      if (category === 'event') {successChance = 1.0;}
+
+      const isSuccess = Math.random() < successChance;
 
       if (isSuccess) {
-        setStatus('success')
+        setStatus('success');
       } else {
         if (nextAttempt >= maxAttempts) {
-          setStatus('failed')
+          setStatus('failed');
         } else {
-          setStatus('idle')
-          triggerShake()
+          setStatus('idle');
+          triggerShake();
         }
       }
-    }, 1500)
-  }
+    }, 1500);
+  };
 
   const triggerShake = () => {
     Animated.sequence([
@@ -102,25 +102,25 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
       Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
       Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
       Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
-    ]).start()
-  }
+    ]).start();
+  };
 
-  if (!visible) return null
+  if (!visible) {return null;}
 
   return (
     <Modal transparent animationType="fade" visible={visible}>
       <View style={s.overlay}>
         <Animated.View style={[s.card, { opacity: fadeAnim, transform: [{ translateX: shakeAnim }] }]}>
-          
+
           <Text style={s.header}>EXTRAÇÃO DE SOMBRA</Text>
-          
+
           <View style={[s.shadowPreview, { borderColor: shadow.color + '44' }]}>
             <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
               <Icon name={shadow.icon} size={80} color={status === 'success' ? shadow.color : C.dimmed} />
             </Animated.View>
           </View>
-          
-          <Text 
+
+          <Text
             style={[s.shadowName, { color: status === 'success' ? shadow.color : C.muted }]}
             numberOfLines={1}
             adjustsFontSizeToFit
@@ -131,28 +131,28 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
 
           <View style={s.attemptsRow}>
             {[...Array(maxAttempts)].map((_, i) => (
-              <View 
-                key={i} 
+              <View
+                key={i}
                 style={[
-                  s.attemptDot, 
-                  { backgroundColor: (i + 1) <= attempts ? (status === 'success' && (i + 1) === attempts ? C.neonBlue : C.neonRed) : C.border }
-                ]} 
+                  s.attemptDot,
+                  { backgroundColor: (i + 1) <= attempts ? (status === 'success' && (i + 1) === attempts ? C.neonBlue : C.neonRed) : C.border },
+                ]}
               />
             ))}
             <Text style={s.attemptsTxt}>{attempts}/{maxAttempts} TENTATIVAS</Text>
           </View>
 
           <Text style={s.message}>
-            {status === 'idle' && "A alma do boss resiste. Deseja tentar a extração?"}
-            {status === 'extracting' && "A extrair... O Sistema está a processar a tua vontade."}
-            {status === 'success' && "SUCESSO! A sombra foi adicionada ao teu exército."}
-            {status === 'failed' && "FALHA. A alma dissipou-se no vazio."}
+            {status === 'idle' && 'A alma do boss resiste. Deseja tentar a extração?'}
+            {status === 'extracting' && 'A extrair... O Sistema está a processar a tua vontade.'}
+            {status === 'success' && 'SUCESSO! A sombra foi adicionada ao teu exército.'}
+            {status === 'failed' && 'FALHA. A alma dissipou-se no vazio.'}
           </Text>
 
           <View style={s.btnContainer}>
             {(status === 'idle' || status === 'extracting') && (
-              <TouchableOpacity 
-                style={[s.ariseBtn, status === 'extracting' && { opacity: 0.6 }]} 
+              <TouchableOpacity
+                style={[s.ariseBtn, status === 'extracting' && { opacity: 0.6 }]}
                 onPress={handleArise}
                 disabled={status === 'extracting'}
               >
@@ -161,8 +161,8 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
             )}
 
             {(status === 'success' || status === 'failed') && (
-              <TouchableOpacity 
-                style={[s.closeBtn, { borderColor: status === 'success' ? C.neonBlue : C.border }]} 
+              <TouchableOpacity
+                style={[s.closeBtn, { borderColor: status === 'success' ? C.neonBlue : C.border }]}
                 onPress={() => onClose(status === 'success')}
               >
                 <Text style={[s.closeBtnTxt, { color: status === 'success' ? C.text.primary : C.text.secondary }]}>
@@ -175,7 +175,7 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
         </Animated.View>
       </View>
     </Modal>
-  )
+  );
 }
 
 const getStyles = (C: any) => StyleSheet.create({
@@ -278,4 +278,4 @@ const getStyles = (C: any) => StyleSheet.create({
     fontSize: 12,
     letterSpacing: 1,
   },
-})
+});

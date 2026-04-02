@@ -1,10 +1,10 @@
 // src/components/AchievementModal.tsx
-import React, { useEffect } from 'react'
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { ACHIEVEMENTS_MAP } from '../data/achievements'
-import { useTheme, FONT, SPACING } from '../theme'
-import { playSound } from '../utils/audioService'
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ACHIEVEMENTS_MAP } from '../data/achievements';
+import { useTheme, FONT, SPACING } from '../theme';
+import { playSound } from '../utils/audioService';
 
 const getStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.surface.overlay, justifyContent: 'center', alignItems: 'center' },
@@ -18,19 +18,19 @@ const getStyles = (C: any) => StyleSheet.create({
   reward: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '700' },
   btn: { width: '100%', borderWidth: 1, borderRadius: 4, paddingVertical: 14, alignItems: 'center', backgroundColor: C.surface.base },
   btnTxt: { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '900', letterSpacing: 1, color: C.text.primary },
-})
+});
 
 export default function AchievementModal({ achievementId, onDismiss }: { achievementId: string; onDismiss: () => void }) {
-  const C = useTheme()
-  const s = getStyles(C)
-  const achievement = ACHIEVEMENTS_MAP[achievementId]
+  const C = useTheme();
+  const s = getStyles(C);
+  const achievement = ACHIEVEMENTS_MAP[achievementId];
 
   useEffect(() => {
-    if (!achievement) return
-    playSound('achievement')
-  }, [achievementId])
+    if (!achievement) {return;}
+    playSound('achievement');
+  }, [achievement]);
 
-  if (!achievement) return null
+  if (!achievement) {return null;}
 
   return (
     <Modal transparent animationType="fade" visible onRequestClose={onDismiss}>
@@ -53,5 +53,5 @@ export default function AchievementModal({ achievementId, onDismiss }: { achieve
         </View>
       </View>
     </Modal>
-  )
+  );
 }

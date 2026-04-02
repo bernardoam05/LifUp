@@ -19,7 +19,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 1800,
     durationDays: 3,
     icon: 'dog',
-    color: '#94a3b8'
+    color: '#94a3b8',
   },
   {
     id: 'hobgoblin_chieftain',
@@ -28,7 +28,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 2200,
     durationDays: 3,
     icon: 'skull',
-    color: '#84cc16'
+    color: '#84cc16',
   },
   {
     id: 'twin_headed_ogre',
@@ -37,7 +37,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 2800,
     durationDays: 4,
     icon: 'account-multiple',
-    color: '#b91c1c'
+    color: '#b91c1c',
   },
 
   // ── RANK A ────────────────────────────────────────────────────────────────
@@ -48,7 +48,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 5000,
     durationDays: 4,
     icon: 'dog',
-    color: '#38bdf8'
+    color: '#38bdf8',
   },
   {
     id: 'high_orc_guard',
@@ -57,7 +57,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 6000,
     durationDays: 4,
     icon: 'sword',
-    color: '#ef4444'
+    color: '#ef4444',
   },
   {
     id: 'naga_general',
@@ -66,7 +66,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 7500,
     durationDays: 5,
     icon: 'water',
-    color: '#0ea5e9'
+    color: '#0ea5e9',
   },
 
   // ── RANK S ────────────────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 18000,
     durationDays: 5,
     icon: 'fire',
-    color: '#ea580c'
+    color: '#ea580c',
   },
   {
     id: 'monarch_querehsha',
@@ -86,7 +86,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 22000,
     durationDays: 6,
     icon: 'bug',
-    color: '#a855f7'
+    color: '#a855f7',
   },
   {
     id: 'monarch_silad',
@@ -95,7 +95,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 30000,
     durationDays: 7,
     icon: 'snowflake',
-    color: '#60a5fa'
+    color: '#60a5fa',
   },
   {
     id: 'architect_system',
@@ -104,7 +104,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 40000,
     durationDays: 7,
     icon: 'chess-king',
-    color: '#fbbf24'
+    color: '#fbbf24',
   },
 
   // ── NATIONAL / MONARCHS ───────────────────────────────────────────────────
@@ -115,7 +115,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 70000,
     durationDays: 8,
     icon: 'paw',
-    color: '#f97316'
+    color: '#f97316',
   },
   {
     id: 'monarch_legia',
@@ -124,7 +124,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 90000,
     durationDays: 10,
     icon: 'weight-lifter',
-    color: '#dc2626'
+    color: '#dc2626',
   },
   {
     id: 'monarch_antares',
@@ -133,7 +133,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 150000,
     durationDays: 14,
     icon: 'fire-circle',
-    color: '#991b1b'
+    color: '#991b1b',
   },
 
   // ── LEGION OF LEGENDS (Crossover Easter Eggs) ──────────────────────────────
@@ -144,7 +144,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 35000,
     durationDays: 6,
     icon: 'dinosaur',
-    color: '#b91c1c'
+    color: '#b91c1c',
   },
   {
     id: 'kurama_spirit',
@@ -153,7 +153,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 45000,
     durationDays: 7,
     icon: 'dog-side',
-    color: '#ea580c'
+    color: '#ea580c',
   },
   {
     id: 'malenia_blade',
@@ -162,7 +162,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 100000,
     durationDays: 9,
     icon: 'sword-cross',
-    color: '#7c2d12'
+    color: '#7c2d12',
   },
   {
     id: 'lich_king_arthas',
@@ -171,7 +171,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 140000,
     durationDays: 12,
     icon: 'crown',
-    color: '#0ea5e9'
+    color: '#0ea5e9',
   },
   {
     id: 'sephiroth_angel',
@@ -180,7 +180,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 180000,
     durationDays: 14,
     icon: 'feather',
-    color: '#475569'
+    color: '#475569',
   },
   {
     id: 'acnologia_chaos',
@@ -189,7 +189,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 250000,
     durationDays: 18,
     icon: 'fire-alert',
-    color: '#1e293b'
+    color: '#1e293b',
   },
   {
     id: 'morgoth_abyss',
@@ -198,266 +198,266 @@ export const RAID_BOSSES: RaidBossDef[] = [
     baseHp: 400000,
     durationDays: 25,
     icon: 'skull-crossbones',
-    color: '#000000'
+    color: '#000000',
   },
   // ── NEW RAID BOSSES (BATCH 1) ──────────────────────────────────────────────
   {
     id: 'undead_legionnaire',
     name: 'Legionário Morto-Vivo',
-    rank: 'B', baseHp: 2400, durationDays: 3, icon: 'skull-outline', color: '#94a3b8'
+    rank: 'B', baseHp: 2400, durationDays: 3, icon: 'skull-outline', color: '#94a3b8',
   },
   {
     id: 'mountain_troll_brute',
     name: 'Troll da Montanha Enfurecido',
-    rank: 'B', baseHp: 3000, durationDays: 3, icon: 'mace', color: '#94a3b8'
+    rank: 'B', baseHp: 3000, durationDays: 3, icon: 'mace', color: '#94a3b8',
   },
   {
     id: 'inferno_hound_alpha',
     name: 'Cão Infernal Alfa',
-    rank: 'B', baseHp: 2100, durationDays: 3, icon: 'dog-side', color: '#94a3b8'
+    rank: 'B', baseHp: 2100, durationDays: 3, icon: 'dog-side', color: '#94a3b8',
   },
   {
     id: 'cave_horror_spider',
     name: 'Horror das Cavernas',
-    rank: 'B', baseHp: 2600, durationDays: 4, icon: 'spider', color: '#94a3b8'
+    rank: 'B', baseHp: 2600, durationDays: 4, icon: 'spider', color: '#94a3b8',
   },
   {
     id: 'high_orc_raider',
     name: 'Saqueador High Orc',
-    rank: 'A', baseHp: 5500, durationDays: 4, icon: 'axe', color: '#ef4444'
+    rank: 'A', baseHp: 5500, durationDays: 4, icon: 'axe', color: '#ef4444',
   },
   {
     id: 'dark_elf_assassin_leader',
     name: 'Líder Assassino Elfo Negro',
-    rank: 'A', baseHp: 6500, durationDays: 4, icon: 'knife-military', color: '#38bdf8'
+    rank: 'A', baseHp: 6500, durationDays: 4, icon: 'knife-military', color: '#38bdf8',
   },
   {
     id: 'harpy_matriarch',
     name: 'Matriarca Harpia',
-    rank: 'A', baseHp: 5800, durationDays: 4, icon: 'feather', color: '#a855f7'
+    rank: 'A', baseHp: 5800, durationDays: 4, icon: 'feather', color: '#a855f7',
   },
   {
     id: 'chimera_of_waste',
     name: 'Quimera do Ermo',
-    rank: 'A', baseHp: 7800, durationDays: 5, icon: 'snake', color: '#f59e0b'
+    rank: 'A', baseHp: 7800, durationDays: 5, icon: 'snake', color: '#f59e0b',
   },
   {
     id: 'vampire_noble_valerius',
     name: 'Nobre Vampiro Valerius',
-    rank: 'S', baseHp: 19000, durationDays: 5, icon: 'bat', color: '#ef4444'
+    rank: 'S', baseHp: 19000, durationDays: 5, icon: 'bat', color: '#ef4444',
   },
   {
     id: 'archdemon_malphas',
     name: 'Malphas, o Arquidemónio',
-    rank: 'S', baseHp: 25000, durationDays: 6, icon: 'emoticon-devil', color: '#b91c1c'
+    rank: 'S', baseHp: 25000, durationDays: 6, icon: 'emoticon-devil', color: '#b91c1c',
   },
   {
     id: 'abyssal_kraken_tentacle',
     name: 'Tentáculo do Kraken Abissal',
-    rank: 'S', baseHp: 21000, durationDays: 5, icon: 'water-percent', color: '#0ea5e9'
+    rank: 'S', baseHp: 21000, durationDays: 5, icon: 'water-percent', color: '#0ea5e9',
   },
   {
     id: 'ancient_guardian_statue',
     name: 'Estátua do Guardião Ancestral',
-    rank: 'S', baseHp: 35000, durationDays: 7, icon: 'controller-classic-outline', color: '#fbbf24'
+    rank: 'S', baseHp: 35000, durationDays: 7, icon: 'controller-classic-outline', color: '#fbbf24',
   },
   {
     id: 'spectral_lich_king_shadow',
     name: 'Rei Lich Espectral',
-    rank: 'S', baseHp: 32000, durationDays: 6, icon: 'ghost-outline', color: '#a855f7'
+    rank: 'S', baseHp: 32000, durationDays: 6, icon: 'ghost-outline', color: '#a855f7',
   },
   {
     id: 'monarch_yogumun_giant',
     name: 'Yogumun, Monarca dos Gigantes',
-    rank: 'National', baseHp: 85000, durationDays: 9, icon: 'weight-lifter', color: '#dc2626'
+    rank: 'National', baseHp: 85000, durationDays: 9, icon: 'weight-lifter', color: '#dc2626',
   },
   {
     id: 'monarch_silad_true',
     name: 'Silad (Forma Verdadeira)',
-    rank: 'National', baseHp: 110000, durationDays: 10, icon: 'snowflake-alert', color: '#60a5fa'
+    rank: 'National', baseHp: 110000, durationDays: 10, icon: 'snowflake-alert', color: '#60a5fa',
   },
   {
     id: 'national_hunter_thomas',
     name: 'Thomas Andre (Simulação)',
-    rank: 'National', baseHp: 160000, durationDays: 12, icon: 'arm-flex', color: '#facc15'
+    rank: 'National', baseHp: 160000, durationDays: 12, icon: 'arm-flex', color: '#facc15',
   },
   {
     id: 'dragon_monarch_general_1',
     name: 'General de Antares',
-    rank: 'National', baseHp: 130000, durationDays: 11, icon: 'dinosaur-variant', color: '#991b1b'
+    rank: 'National', baseHp: 130000, durationDays: 11, icon: 'dinosaur-variant', color: '#991b1b',
   },
   {
     id: 'abyssal_void_walker',
     name: 'Caminhante do Vazio Primordial',
-    rank: 'National', baseHp: 200000, durationDays: 15, icon: 'eye-off-outline', color: '#1e293b'
+    rank: 'National', baseHp: 200000, durationDays: 15, icon: 'eye-off-outline', color: '#1e293b',
   },
   {
     id: 'seraphim_fallen_angel',
     name: 'Serafim, o Anjo Caído',
-    rank: 'National', baseHp: 220000, durationDays: 16, icon: 'alpha-s-circle', color: '#fbbf24'
+    rank: 'National', baseHp: 220000, durationDays: 16, icon: 'alpha-s-circle', color: '#fbbf24',
   },
   {
     id: 'monarch_of_beginnings',
     name: 'Monarca dos Primórdios',
-    rank: 'National', baseHp: 500000, durationDays: 30, icon: 'infinity', color: '#000000'
+    rank: 'National', baseHp: 500000, durationDays: 30, icon: 'infinity', color: '#000000',
   },
   // ── NEW KEY-GATED BOSSES (BATCH 2) ─────────────────────────────────────────
   {
     id: 'key_boss_basilisk',
     name: 'Basilisco das Sombras',
-    rank: 'A', baseHp: 7000, durationDays: 4, icon: 'snake', color: '#84cc16'
+    rank: 'A', baseHp: 7000, durationDays: 4, icon: 'snake', color: '#84cc16',
   },
   {
     id: 'key_boss_manticore',
     name: 'Manticora do Abismo',
-    rank: 'A', baseHp: 8000, durationDays: 5, icon: 'cat', color: '#ef4444'
+    rank: 'A', baseHp: 8000, durationDays: 5, icon: 'cat', color: '#ef4444',
   },
   {
     id: 'key_boss_phoenix_rebirth',
     name: 'Fénix da Renascença Sombria',
-    rank: 'S', baseHp: 22000, durationDays: 6, icon: 'fire', color: '#ea580c'
+    rank: 'S', baseHp: 22000, durationDays: 6, icon: 'fire', color: '#ea580c',
   },
   {
     id: 'key_boss_beholder_eye',
     name: 'Observador do Caos',
-    rank: 'S', baseHp: 26000, durationDays: 6, icon: 'eye', color: '#a855f7'
+    rank: 'S', baseHp: 26000, durationDays: 6, icon: 'eye', color: '#a855f7',
   },
   {
     id: 'key_boss_demon_prince_astaroth',
     name: 'Príncipe Demónio Astaroth',
-    rank: 'S', baseHp: 30000, durationDays: 7, icon: 'emoticon-devil', color: '#b91c1c'
+    rank: 'S', baseHp: 30000, durationDays: 7, icon: 'emoticon-devil', color: '#b91c1c',
   },
   {
     id: 'key_boss_undead_dragon_king',
     name: 'Rei Dragão Morto-Vivo',
-    rank: 'S', baseHp: 45000, durationDays: 8, icon: 'dinosaur', color: '#475569'
+    rank: 'S', baseHp: 45000, durationDays: 8, icon: 'dinosaur', color: '#475569',
   },
   {
     id: 'key_boss_titania_queen_dark',
     name: 'Rainha das Fadas Corrompida',
-    rank: 'S', baseHp: 28000, durationDays: 7, icon: 'butterfly', color: '#fb7185'
+    rank: 'S', baseHp: 28000, durationDays: 7, icon: 'butterfly', color: '#fb7185',
   },
   {
     id: 'key_boss_anubis_guardian_soul',
     name: 'Anúbis, Guardião das Almas',
-    rank: 'S', baseHp: 35000, durationDays: 7, icon: 'head-snowflake-outline', color: '#fbbf24'
+    rank: 'S', baseHp: 35000, durationDays: 7, icon: 'head-snowflake-outline', color: '#fbbf24',
   },
   {
     id: 'key_boss_cerberus_gate_final',
     name: 'Cérbero, o Porteiro do Inferno',
-    rank: 'S', baseHp: 38000, durationDays: 8, icon: 'dog-side', color: '#dc2626'
+    rank: 'S', baseHp: 38000, durationDays: 8, icon: 'dog-side', color: '#dc2626',
   },
   {
     id: 'key_boss_medusa_queen_gaze',
     name: 'Medusa, a Rainha das Serpentes',
-    rank: 'S', baseHp: 32000, durationDays: 7, icon: 'snake', color: '#22c55e'
+    rank: 'S', baseHp: 32000, durationDays: 7, icon: 'snake', color: '#22c55e',
   },
   {
     id: 'key_boss_hydra_ancient_world',
     name: 'Hidra Ancestral Proibida',
-    rank: 'National', baseHp: 120000, durationDays: 12, icon: 'waves', color: '#0ea5e9'
+    rank: 'National', baseHp: 120000, durationDays: 12, icon: 'waves', color: '#0ea5e9',
   },
   {
     id: 'key_boss_fenrir_wolf_star',
     name: 'Fenrir, o Devorador de Estrelas',
-    rank: 'National', baseHp: 180000, durationDays: 14, icon: 'dog-side', color: '#f97316'
+    rank: 'National', baseHp: 180000, durationDays: 14, icon: 'dog-side', color: '#f97316',
   },
   {
     id: 'key_boss_odin_simulation_valhalla',
     name: 'Odin (Simulação do Sistema)',
-    rank: 'National', baseHp: 250000, durationDays: 18, icon: 'eye-circle-outline', color: '#fbbf24'
+    rank: 'National', baseHp: 250000, durationDays: 18, icon: 'eye-circle-outline', color: '#fbbf24',
   },
   {
     id: 'key_boss_zeus_simulation_olympus',
     name: 'Zeus (Simulação do Sistema)',
-    rank: 'National', baseHp: 280000, durationDays: 20, icon: 'lightning-bolt-circle', color: '#60a5fa'
+    rank: 'National', baseHp: 280000, durationDays: 20, icon: 'lightning-bolt-circle', color: '#60a5fa',
   },
   {
     id: 'key_boss_cthulhu_spawn_outer',
     name: 'Prole do Infinito (Spawn de Cthulhu)',
-    rank: 'National', baseHp: 400000, durationDays: 25, icon: 'octagram-outline', color: '#047857'
+    rank: 'National', baseHp: 400000, durationDays: 25, icon: 'octagram-outline', color: '#047857',
   },
   // ── NEW DUNGEON BREAK BOSSES (BATCH 3) ─────────────────────────────────────
   {
     id: 'break_boss_lich_servant_vanguard',
     name: 'Vanguarda do Rei Lich',
-    rank: 'B', baseHp: 2800, durationDays: 3, icon: 'skull-scan', color: '#94a3b8'
+    rank: 'B', baseHp: 2800, durationDays: 3, icon: 'skull-scan', color: '#94a3b8',
   },
   {
     id: 'break_boss_giant_worm_abyss',
     name: 'Verme Gigante do Abismo',
-    rank: 'B', baseHp: 3200, durationDays: 3, icon: 'caterpillar', color: '#94a3b8'
+    rank: 'B', baseHp: 3200, durationDays: 3, icon: 'caterpillar', color: '#94a3b8',
   },
   {
     id: 'break_boss_dark_knight_traitor',
     name: 'Cavaleiro Negro Traidor',
-    rank: 'B', baseHp: 3500, durationDays: 4, icon: 'sword-cross', color: '#94a3b8'
+    rank: 'B', baseHp: 3500, durationDays: 4, icon: 'sword-cross', color: '#94a3b8',
   },
   {
     id: 'break_boss_succubus_scout_night',
     name: 'Batedora Succubus da Noite',
-    rank: 'A', baseHp: 6000, durationDays: 4, icon: 'heart-broken', color: '#fb7185'
+    rank: 'A', baseHp: 6000, durationDays: 4, icon: 'heart-broken', color: '#fb7185',
   },
   {
     id: 'break_boss_gargoyle_watcher_stone',
     name: 'Gárgula Vigia de Pedra',
-    rank: 'A', baseHp: 7000, durationDays: 4, icon: 'mace', color: '#94a3b8'
+    rank: 'A', baseHp: 7000, durationDays: 4, icon: 'mace', color: '#94a3b8',
   },
   {
     id: 'break_boss_orc_shaman_ritual_corrupt',
     name: 'Xamã Orc Corrompido',
-    rank: 'A', baseHp: 6500, durationDays: 4, icon: 'flash', color: '#b91c1c'
+    rank: 'A', baseHp: 6500, durationDays: 4, icon: 'flash', color: '#b91c1c',
   },
   {
     id: 'break_boss_ice_troll_frost_bite',
     name: 'Troll de Gelo (Mordida Gélida)',
-    rank: 'A', baseHp: 7500, durationDays: 5, icon: 'snowflake', color: '#38bdf8'
+    rank: 'A', baseHp: 7500, durationDays: 5, icon: 'snowflake', color: '#38bdf8',
   },
   {
     id: 'break_boss_fire_spirit_ember',
     name: 'Espírito de Brasas Infernais',
-    rank: 'A', baseHp: 8000, durationDays: 5, icon: 'fire', color: '#ea580c'
+    rank: 'A', baseHp: 8000, durationDays: 5, icon: 'fire', color: '#ea580c',
   },
   {
     id: 'break_boss_void_wraith_silent',
     name: 'Wraith do Vazio Silencioso',
-    rank: 'S', baseHp: 24000, durationDays: 6, icon: 'ghost', color: '#64748b'
+    rank: 'S', baseHp: 24000, durationDays: 6, icon: 'ghost', color: '#64748b',
   },
   {
     id: 'break_boss_corrupted_monk_temple',
     name: 'Monge Corrompido do Templo',
-    rank: 'S', baseHp: 28000, durationDays: 7, icon: 'hands-pray', color: '#fbbf24'
+    rank: 'S', baseHp: 28000, durationDays: 7, icon: 'hands-pray', color: '#fbbf24',
   },
   {
     id: 'break_boss_abyssal_beast_chimera',
     name: 'Besta Abissal (Quimera Negra)',
-    rank: 'S', baseHp: 35000, durationDays: 7, icon: 'dog-side', color: '#ef4444'
+    rank: 'S', baseHp: 35000, durationDays: 7, icon: 'dog-side', color: '#ef4444',
   },
   {
     id: 'break_boss_chaos_reaper_final',
     name: 'Ceifador do Caos Final',
-    rank: 'S', baseHp: 40000, durationDays: 8, icon: 'skull', color: '#b91c1c'
+    rank: 'S', baseHp: 40000, durationDays: 8, icon: 'skull', color: '#b91c1c',
   },
   {
     id: 'break_boss_ancient_machine_core',
     name: 'Núcleo da Máquina Ancestral',
-    rank: 'S', baseHp: 42000, durationDays: 8, icon: 'engine', color: '#94a3b8'
+    rank: 'S', baseHp: 42000, durationDays: 8, icon: 'engine', color: '#94a3b8',
   },
   {
     id: 'break_boss_star_spawn_void',
     name: 'Prole das Estrelas (Vazio)',
-    rank: 'National', baseHp: 150000, durationDays: 12, icon: 'star-four-points', color: '#a855f7'
+    rank: 'National', baseHp: 150000, durationDays: 12, icon: 'star-four-points', color: '#a855f7',
   },
   {
     id: 'break_boss_monarch_shadow_clone_sim',
     name: 'Clone Sombrio do Monarca (Simulação)',
-    rank: 'National', baseHp: 300000, durationDays: 20, icon: 'account-question', color: '#000000'
-  }
-]
+    rank: 'National', baseHp: 300000, durationDays: 20, icon: 'account-question', color: '#000000',
+  },
+];
 
 // ── Quest & Event Types ───────────────────────────────────────────────────────
 
-import { Quest } from '../store/useGameStore'
+import { Quest } from '../store/useGameStore';
 
 export type DungeonMission = {
   id: string
@@ -479,13 +479,13 @@ export type DungeonMission = {
 }
 
 export const getDungeonMissions = (C: any, now: Date = new Date()): DungeonMission[] => {
-  const [m, d, y] = [now.getMonth() + 1, now.getDate(), now.getFullYear()]
-  const base = new Date(y, m - 1, d)
-  const dayIndex = Math.floor(base.getTime() / 86400000)
-  
-  const boss = RAID_BOSSES[dayIndex % RAID_BOSSES.length]
-  const focusMap: Record<string, number> = { B: 45, A: 60, S: 90, National: 120 }
-  const duration = focusMap[boss.rank] || 30
+  const [m, d, y] = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
+  const base = new Date(y, m - 1, d);
+  const dayIndex = Math.floor(base.getTime() / 86400000);
+
+  const boss = RAID_BOSSES[dayIndex % RAID_BOSSES.length];
+  const focusMap: Record<string, number> = { B: 45, A: 60, S: 90, National: 120 };
+  const duration = focusMap[boss.rank] || 30;
 
   return [{
     id: `daily_boss_${boss.id}`,
@@ -497,9 +497,9 @@ export const getDungeonMissions = (C: any, now: Date = new Date()): DungeonMissi
     icon: boss.icon || 'skull',
     color: boss.color || C.neonRed,
     category: 'raid',
-    customShadow: { name: `Sombra de ${boss.name}`, icon: boss.icon || 'ghost', questType: 'focus' }
-  }]
-}
+    customShadow: { name: `Sombra de ${boss.name}`, icon: boss.icon || 'ghost', questType: 'focus' },
+  }];
+};
 
 export type EventWindow = {
   name: string
@@ -688,7 +688,7 @@ export const EVENT_BOSS_DEFS: EventBossDef[] = [
     event: { name: 'FESTIVAL', start: '08-10', end: '08-16' },
     required: 5,
   },
-]
+];
 
 export const EVENT_TRIAL_TEMPLATES: Array<{
   key: string
@@ -705,9 +705,9 @@ export const EVENT_TRIAL_TEMPLATES: Array<{
   { key: 'gps_march', label: 'Marcha Ritual', type: 'gps', km: 7 },
   { key: 'focus_sigil', label: 'Selo Mental', type: 'focus', minutes: 75 },
   { key: 'training_endurance', label: 'Resistência', type: 'training', reps: 150 },
-]
+];
 
-import { isDateInWindow } from '../utils/time'
+import { isDateInWindow } from '../utils/time';
 
 export function getActiveEventBossMissions(now = new Date()): DungeonMission[] {
   return EVENT_BOSS_DEFS
@@ -726,11 +726,11 @@ export function getActiveEventBossMissions(now = new Date()): DungeonMission[] {
       eventKey: `${def.id}-${now.getFullYear()}`,
       isEventBoss: true,
       category: 'event',
-    }))
+    }));
 }
 
 export function buildEventTrials(def: EventBossDef, C: any, now = new Date()): DungeonMission[] {
-  const eventKey = `${def.id}-${now.getFullYear()}`
+  const eventKey = `${def.id}-${now.getFullYear()}`;
   return EVENT_TRIAL_TEMPLATES.map((t, idx) => ({
     id: `trial_${def.id}_${t.key}`,
     label: `${t.label} ${idx + 1}`,
@@ -749,5 +749,5 @@ export function buildEventTrials(def: EventBossDef, C: any, now = new Date()): D
     eventKey,
     isEventTrial: true,
     category: 'event',
-  }))
+  }));
 }

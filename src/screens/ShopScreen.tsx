@@ -1,22 +1,12 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore from '../store/useGameStore'
-import { SHOP_CATALOG, ShopItem } from '../data/shopItems'
-import CustomModal from '../components/CustomModal'
-import ShadowShopModal from '../components/ShadowShopModal'
-import { useTheme, FONT, SPACING } from '../theme'
-
-
-// Price table by shadow rank
-const SHADOW_RANK_COST: Record<string, number> = {
-  Normal: 1000,
-  Elite: 2000,
-  Knight: 4000,
-  Commander: 8000,
-  Marshal: 16000,
-}
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useGameStore from '../store/useGameStore';
+import { SHOP_CATALOG, ShopItem } from '../data/shopItems';
+import CustomModal from '../components/CustomModal';
+import ShadowShopModal from '../components/ShadowShopModal';
+import { useTheme, FONT, SPACING } from '../theme';
 
 // ── Item card ──────────────────────────────────────────────────────────────────
 
@@ -36,10 +26,10 @@ function ItemCard({
   C: any
 }) {
 
-  const ic = getICStyles(C)
+  const ic = getICStyles(C);
 
-  const soldOut = stockRemaining !== undefined && stockRemaining <= 0
-  const canAfford = gold >= item.cost && !soldOut
+  const soldOut = stockRemaining !== undefined && stockRemaining <= 0;
+  const canAfford = gold >= item.cost && !soldOut;
 
   return (
     <View style={[ic.card, { borderColor: item.color + '44' }, soldOut && ic.cardSoldOut]}>
@@ -90,7 +80,7 @@ function ItemCard({
         )}
       </View>
     </View>
-  )
+  );
 }
 
 // ── Shadow card ────────────────────────────────────────────────────────────────
@@ -98,7 +88,7 @@ function ItemCard({
 // ── Shadow Section Banner ─────────────────────────────────────────────────────
 
 function ShadowRecruitmentGate({ onPress, C }: { onPress: () => void; C: any }) {
-  const s = getGateStyles(C)
+  const s = getGateStyles(C);
   return (
     <TouchableOpacity style={s.gate} onPress={onPress}>
       <View style={s.iconWrap}>
@@ -110,44 +100,44 @@ function ShadowRecruitmentGate({ onPress, C }: { onPress: () => void; C: any }) 
       </View>
       <Icon name="chevron-right" size={24} color={C.dimmed} />
     </TouchableOpacity>
-  )
+  );
 }
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function ShopScreen() {
-  const C = useTheme()
-  const s = getStyles(C)
+  const C = useTheme();
+  const s = getStyles(C);
 
-  const player = useGameStore(s => s.player)
-  const shopStocks = useGameStore(s => s.system.shopStocks)
-  const purchaseItem = useGameStore(s => s.purchaseItem)
-  const purchaseShadow = useGameStore(s => s.purchaseShadow)
-  const unlockedThemes = player.unlockedThemes ?? []
+  const player = useGameStore(st => st.player);
+  const shopStocks = useGameStore(st => st.system.shopStocks);
+  const purchaseItem = useGameStore(st => st.purchaseItem);
+  const purchaseShadow = useGameStore(st => st.purchaseShadow);
+  const unlockedThemes = player.unlockedThemes ?? [];
 
-  const [pending, setPending] = useState<(ShopItem & { amount?: number }) | null>(null)
-  const [pendingShadow, setPendingShadow] = useState<any | null>(null)
-  const [showShadowModal, setShowShadowModal] = useState(false)
-  const [lastBought, setLastBought] = useState<string | null>(null)
+  const [pending, setPending] = useState<(ShopItem & { amount?: number }) | null>(null);
+  const [pendingShadow, setPendingShadow] = useState<any | null>(null);
+  const [showShadowModal, setShowShadowModal] = useState(false);
+  const [lastBought, setLastBought] = useState<string | null>(null);
 
   function confirmBuy() {
-    if (!pending) return
-    const amount = pending.amount ?? 1
-    let allOk = true
+    if (!pending) {return;}
+    const amount = pending.amount ?? 1;
+    let allOk = true;
     for (let i = 0; i < amount; i++) {
-      const ok = purchaseItem(pending.id, pending.cost)
-      if (!ok) { allOk = false; break }
+      const ok = purchaseItem(pending.id, pending.cost);
+      if (!ok) { allOk = false; break; }
     }
-    if (allOk) setLastBought(pending.id)
-    setPending(null)
+    if (allOk) {setLastBought(pending.id);}
+    setPending(null);
   }
 
   function confirmBuyShadow() {
-    if (!pendingShadow) return
-    const cost = pendingShadow.unlockMethod.price
-    const ok = purchaseShadow(pendingShadow.id, cost)
-    if (ok) setLastBought(pendingShadow.id)
-    setPendingShadow(null)
+    if (!pendingShadow) {return;}
+    const cost = pendingShadow.unlockMethod.price;
+    const ok = purchaseShadow(pendingShadow.id, cost);
+    if (ok) {setLastBought(pendingShadow.id);}
+    setPendingShadow(null);
   }
 
   return (
@@ -180,10 +170,10 @@ export default function ShopScreen() {
 
         {/* Items */}
         {SHOP_CATALOG.map(item => {
-          const isThemeOwned = item.effect === 'cosmetic' && unlockedThemes.includes(item.id)
+          const isThemeOwned = item.effect === 'cosmetic' && unlockedThemes.includes(item.id);
           const stockRemaining = isThemeOwned
             ? 0
-            : item.weeklyStock !== undefined ? (shopStocks[item.id] ?? 0) : undefined
+            : item.weeklyStock !== undefined ? (shopStocks[item.id] ?? 0) : undefined;
           return (
             <ItemCard
               key={item.id}
@@ -194,7 +184,7 @@ export default function ShopScreen() {
               onBuyBulk={item.effect !== 'cosmetic' ? () => setPending({ ...item, amount: 10 }) : undefined}
               C={C}
             />
-          )
+          );
         })}
 
         {/* ── Shadow Section ── */}
@@ -238,7 +228,7 @@ export default function ShopScreen() {
       {/* Shadow purchase modal */}
       <CustomModal
         visible={!!pendingShadow}
-        title={player.shadows.some(e => e.id === pendingShadow?.id) ? "EVOLUIR SOMBRA" : "RECRUTAR SOMBRA"}
+        title={player.shadows.some(e => e.id === pendingShadow?.id) ? 'EVOLUIR SOMBRA' : 'RECRUTAR SOMBRA'}
         message={
           pendingShadow
             ? `Confirmar ${player.shadows.some(e => e.id === pendingShadow?.id) ? 'evolução' : 'recrutamento'} de "${pendingShadow.name}" por ${pendingShadow.unlockMethod.price} Gold?\n\n${pendingShadow.passiveEffect?.description ?? ''}`
@@ -259,14 +249,14 @@ export default function ShopScreen() {
         playerGold={player.gold}
         ownedShadowIds={player.shadows.map(sh => sh.id)}
         onBuy={(sh) => {
-          setPendingShadow(sh)
-          setShowShadowModal(false)
+          setPendingShadow(sh);
+          setShowShadowModal(false);
         }}
         C={C}
       />
 
     </SafeAreaView>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -287,7 +277,7 @@ const getStyles = (C: any) => StyleSheet.create({
   sectionTitle: { fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 3 },
   lockedBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 8, borderWidth: 1, borderColor: '#334155', padding: SPACING.md, marginBottom: SPACING.sm },
   lockedTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
-})
+});
 
 const getGateStyles = (C: any) => StyleSheet.create({
   gate: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: '#a855f744', padding: SPACING.md, gap: SPACING.md },
@@ -295,7 +285,7 @@ const getGateStyles = (C: any) => StyleSheet.create({
   info: { flex: 1 },
   title: { color: '#a855f7', fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', marginBottom: 2 },
   subtitle: { color: C.muted, fontSize: 10, lineHeight: 14 },
-})
+});
 
 const getICStyles = (C: any) => StyleSheet.create({
   card: { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'flex-start' },
@@ -318,5 +308,4 @@ const getICStyles = (C: any) => StyleSheet.create({
     paddingVertical: 5,
   },
   buyTxt: { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
-})
-
+});

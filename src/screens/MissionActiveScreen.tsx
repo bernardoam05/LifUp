@@ -1,15 +1,15 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet,
   TouchableOpacity, TextInput, ScrollView,
-} from 'react-native'
-import BottomSheetModal from '../components/BottomSheetModal'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { Quest } from '../store/useGameStore'
-import CustomModal from '../components/CustomModal'
-import { showOngoingMissionNotification, clearOngoingMissionNotification } from '../utils/notifications'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { FONT, SPACING } from '../theme'
+} from 'react-native';
+import BottomSheetModal from '../components/BottomSheetModal';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useGameStore, { Quest } from '../store/useGameStore';
+import CustomModal from '../components/CustomModal';
+import { showOngoingMissionNotification, clearOngoingMissionNotification } from '../utils/notifications';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FONT, SPACING } from '../theme';
 
 
 // ── MissionActiveScreen ────────────────────────────────────────────────────────
@@ -28,111 +28,111 @@ type Props = {
 
 
 function formatTime(ms: number): string {
-  const totalSecs = Math.floor(ms / 1000)
-  const h = Math.floor(totalSecs / 3600)
-  const m = Math.floor((totalSecs % 3600) / 60)
-  const s = totalSecs % 60
-  if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  const totalSecs = Math.floor(ms / 1000);
+  const h = Math.floor(totalSecs / 3600);
+  const m = Math.floor((totalSecs % 3600) / 60);
+  const s = totalSecs % 60;
+  if (h > 0) {return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;}
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
 export default function MissionActiveScreen({ quest, onClose, onComplete, initialElapsed = 0, initialPaused, targetSeconds, C }: Props) {
-  const s = getStyles(C)
-  const insets = useSafeAreaInsets()
+  const s = getStyles(C);
+  const insets = useSafeAreaInsets();
 
-  const saveQuestRecord = useGameStore(s => s.saveQuestRecord)
-  const questRecords = useGameStore(s => s.questRecords)
-  const startMissionTimer = useGameStore(s => s.startMissionTimer)
-  const clearMissionTimer = useGameStore(s => s.clearMissionTimer)
+  const saveQuestRecord = useGameStore(st => st.saveQuestRecord);
+  const questRecords = useGameStore(st => st.questRecords);
+  const startMissionTimer = useGameStore(st => st.startMissionTimer);
+  const clearMissionTimer = useGameStore(st => st.clearMissionTimer);
 
-  const record = questRecords[quest.id]
-  const targetMs = targetSeconds ? targetSeconds * 1000 : 0
+  const record = questRecords[quest.id];
+  const targetMs = targetSeconds ? targetSeconds * 1000 : 0;
 
-  const initialRunning = initialPaused === false
-  const [elapsed, setElapsed] = useState(initialElapsed)
-  const [running, setRunning] = useState(initialRunning)
-  const [note, setNote] = useState(record?.lastNote ?? '')
-  const [showNoTime, setShowNoTime] = useState(false)  // confirm when timer < 10s
+  const initialRunning = initialPaused === false;
+  const [elapsed, setElapsed] = useState(initialElapsed);
+  const [running, setRunning] = useState(initialRunning);
+  const [note, setNote] = useState(record?.lastNote ?? '');
+  const [showNoTime, setShowNoTime] = useState(false);  // confirm when timer < 10s
 
-  const startRef = useRef<number | null>(initialRunning ? Date.now() : null)
-  const accRef = useRef(initialElapsed)  // pre-fill accumulated ms when resuming
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const doneRef = useRef(false)
+  const startRef = useRef<number | null>(initialRunning ? Date.now() : null);
+  const accRef = useRef(initialElapsed);  // pre-fill accumulated ms when resuming
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const doneRef = useRef(false);
+
+  const finalize = React.useCallback((timeMs: number) => {
+    if (intervalRef.current) {clearInterval(intervalRef.current);}
+    clearMissionTimer(quest.id);
+    clearOngoingMissionNotification().catch(() => { });
+    const trimmedNote = note.trim();
+    saveQuestRecord(quest.id, Math.floor(timeMs / 1000), trimmedNote);
+    onComplete();
+  }, [clearMissionTimer, note, onComplete, quest.id, saveQuestRecord]);
 
   useEffect(() => {
     if (targetMs > 0 && elapsed >= targetMs && !doneRef.current) {
-      doneRef.current = true
-      if (intervalRef.current) clearInterval(intervalRef.current)
-      setRunning(false)
-      finalize(targetMs)
+      doneRef.current = true;
+      if (intervalRef.current) {clearInterval(intervalRef.current);}
+      setRunning(false);
+      finalize(targetMs);
     }
-  }, [elapsed, targetMs])
+  }, [elapsed, targetMs, finalize]);
 
   useEffect(() => {
     if (running) {
       intervalRef.current = setInterval(() => {
-        const currentElapsed = accRef.current + Date.now() - (startRef.current ?? Date.now())
-        setElapsed(currentElapsed)
-      }, 500)
+        const currentElapsed = accRef.current + Date.now() - (startRef.current ?? Date.now());
+        setElapsed(currentElapsed);
+      }, 500);
     } else {
-      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (intervalRef.current) {clearInterval(intervalRef.current);}
     }
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
-  }, [running])
+    return () => { if (intervalRef.current) {clearInterval(intervalRef.current);} };
+  }, [running]);
 
   function startTimer() {
-    accRef.current = elapsed
-    startRef.current = Date.now()
-    setRunning(true)
-    startMissionTimer(quest.id)
-    showOngoingMissionNotification(quest.label, Date.now() - accRef.current).catch(() => { })
+    accRef.current = elapsed;
+    startRef.current = Date.now();
+    setRunning(true);
+    startMissionTimer(quest.id);
+    showOngoingMissionNotification(quest.label, Date.now() - accRef.current).catch(() => { });
   }
 
   function pauseTimer() {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    accRef.current = elapsed
-    startRef.current = null
-    setRunning(false)
-    const pauseMissionTimer = useGameStore.getState().pauseMissionTimer
-    pauseMissionTimer(quest.id)
-    clearOngoingMissionNotification().catch(() => { })
+    if (intervalRef.current) {clearInterval(intervalRef.current);}
+    accRef.current = elapsed;
+    startRef.current = null;
+    setRunning(false);
+    const pauseMissionTimer = useGameStore.getState().pauseMissionTimer;
+    pauseMissionTimer(quest.id);
+    clearOngoingMissionNotification().catch(() => { });
   }
 
   function resetTimer() {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    accRef.current = 0
-    startRef.current = null
-    setElapsed(0)
-    setRunning(false)
-    doneRef.current = false
-    clearMissionTimer(quest.id)
-    clearOngoingMissionNotification().catch(() => { })
+    if (intervalRef.current) {clearInterval(intervalRef.current);}
+    accRef.current = 0;
+    startRef.current = null;
+    setElapsed(0);
+    setRunning(false);
+    doneRef.current = false;
+    clearMissionTimer(quest.id);
+    clearOngoingMissionNotification().catch(() => { });
   }
 
   function handleComplete() {
-    const timeMs = elapsed
+    const timeMs = elapsed;
     if (timeMs < 10_000 && timeMs > 0) {
       // Timer ran but less than 10s — ask for confirmation
-      setShowNoTime(true)
-      return
+      setShowNoTime(true);
+      return;
     }
-    finalize(timeMs)
+    finalize(timeMs);
   }
 
-  function finalize(timeMs: number) {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    clearMissionTimer(quest.id)
-    clearOngoingMissionNotification().catch(() => { })
-    const trimmedNote = note.trim()
-    saveQuestRecord(quest.id, Math.floor(timeMs / 1000), trimmedNote)
-    onComplete()
-  }
+  const bestSecs = record?.bestTime ?? 0;
+  const elapsedSecs = Math.floor(elapsed / 1000);
+  const isNewRecord = running && bestSecs > 0 && elapsedSecs > bestSecs && targetMs === 0;
 
-  const bestSecs = record?.bestTime ?? 0
-  const elapsedSecs = Math.floor(elapsed / 1000)
-  const isNewRecord = running && bestSecs > 0 && elapsedSecs > bestSecs && targetMs === 0
-
-  const displayMs = targetMs > 0 ? Math.max(targetMs - elapsed, 0) : elapsed
+  const displayMs = targetMs > 0 ? Math.max(targetMs - elapsed, 0) : elapsed;
 
   return (
     <BottomSheetModal visible onClose={onClose} contentStyle={{ backgroundColor: 'transparent' }}>
@@ -233,12 +233,12 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
         confirmLabel="GUARDAR NOTAS"
         confirmIcon="notebook-outline"
         confirmColor={C.neonBlue}
-        onConfirm={() => { setShowNoTime(false); finalize(0) }}
+        onConfirm={() => { setShowNoTime(false); finalize(0); }}
         onCancel={() => setShowNoTime(false)}
         C={C}
       />
     </BottomSheetModal>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -294,5 +294,4 @@ const getStyles = (C: any) => StyleSheet.create({
 
   skipTimerBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingVertical: 12 },
   skipTimerTxt: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-})
-
+});

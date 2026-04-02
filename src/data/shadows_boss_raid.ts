@@ -1,4 +1,4 @@
-import { Shadow } from './shadows_types'
+import { Shadow } from './shadows_types';
 
 export const SHADOWS_BOSS_RAID: Shadow[] = [
   {
@@ -382,4 +382,4 @@ export const SHADOWS_BOSS_RAID: Shadow[] = [
       icon: 'skull-crossbones', color: '#334155',
       unlockMethod: { type: 'boss_drop', bossId: 'morgoth_abyss', category: 'raid' },
     },
-]
+];

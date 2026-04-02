@@ -1,7 +1,7 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { FONT, SPACING } from '../theme'
-import SoloLevelingModal from './SoloLevelingModal'
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { FONT, SPACING } from '../theme';
+import SoloLevelingModal from './SoloLevelingModal';
 
 export type AlertButton = {
   text: string
@@ -28,10 +28,10 @@ export default function SystemAlertModal({
   useNativeModal = true,
   C,
 }: Props) {
-  const s = getStyles(C)
+  const s = getStyles(C);
   const btns: AlertButton[] = buttons?.length
     ? buttons
-    : [{ text: 'OK', style: 'default' }]
+    : [{ text: 'OK', style: 'default' }];
 
   return (
     <SoloLevelingModal visible={visible} onRequestClose={onClose} useNativeModal={useNativeModal}>
@@ -41,28 +41,28 @@ export default function SystemAlertModal({
           {!!message && <Text style={s.message}>{message}</Text>}
           <View style={[s.btnRow, btns.length === 1 && s.btnRowSingle]}>
             {btns.map((btn, i) => {
-              const isDestructive = btn.style === 'destructive'
-              const isCancel = btn.style === 'cancel'
-              const color = isDestructive ? C.neonRed : isCancel ? C.dimmed : C.neonBlue
+              const isDestructive = btn.style === 'destructive';
+              const isCancel = btn.style === 'cancel';
+              const color = isDestructive ? C.neonRed : isCancel ? C.dimmed : C.neonBlue;
               return (
                 <TouchableOpacity
                   key={i}
                   style={[s.btn, { borderColor: color + '66' }, btns.length === 1 && s.btnFull]}
                   activeOpacity={0.75}
                   onPress={() => {
-                    onClose()
-                    btn.onPress?.()
+                    onClose();
+                    btn.onPress?.();
                   }}
                 >
                   <Text style={[s.btnTxt, { color }]}>{btn.text}</Text>
                 </TouchableOpacity>
-              )
+              );
             })}
           </View>
         </View>
       </View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 const getStyles = (C: any) => StyleSheet.create({
@@ -75,5 +75,5 @@ const getStyles = (C: any) => StyleSheet.create({
   btn: { flex: 1, borderWidth: 1, borderRadius: 4, paddingVertical: 12, alignItems: 'center' },
   btnFull: { flex: 0, paddingHorizontal: SPACING.xl },
   btnTxt: { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1, fontWeight: '700' },
-})
+});
 

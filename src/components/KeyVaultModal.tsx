@@ -1,11 +1,11 @@
-import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme, FONT, SPACING } from '../theme'
-import { ALL_DUNGEON_KEYS, DungeonKey } from '../data/dungeonKeys'
-import DungeonKeyModal from './DungeonKeyModal'
-import useGameStore from '../store/useGameStore'
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { FONT, SPACING } from '../theme';
+import { ALL_DUNGEON_KEYS, DungeonKey } from '../data/dungeonKeys';
+import DungeonKeyModal from './DungeonKeyModal';
+import useGameStore from '../store/useGameStore';
 
 interface Props {
   visible: boolean
@@ -15,16 +15,16 @@ interface Props {
 }
 
 export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
-  const insets = useSafeAreaInsets()
-  const st = React.useMemo(() => getStyles(C), [C])
-  const [selectedKey, setSelectedKey] = React.useState<DungeonKey | null>(null)
-  const [showKeyDetail, setShowKeyDetail] = React.useState(false)
-  const setPendingKeyMission = useGameStore(s => s.setPendingKeyMission)
-  const keyLastUsedAt = useGameStore(s => s.system.keyLastUsedAt)
+  const insets = useSafeAreaInsets();
+  const st = React.useMemo(() => getStyles(C), [C]);
+  const [selectedKey, setSelectedKey] = React.useState<DungeonKey | null>(null);
+  const [showKeyDetail, setShowKeyDetail] = React.useState(false);
+  const setPendingKeyMission = useGameStore(s => s.setPendingKeyMission);
+  const keyLastUsedAt = useGameStore(s => s.system.keyLastUsedAt);
 
   const keyObjects = keys
     .map(keyId => ALL_DUNGEON_KEYS.find(k => k.id === keyId))
-    .filter((k): k is DungeonKey => !!k)
+    .filter((k): k is DungeonKey => !!k);
 
   return (
     <>
@@ -51,8 +51,8 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
                   <TouchableOpacity
                     style={[st.keyCard, { borderColor: key.color + '44' }]}
                     onPress={() => {
-                      setSelectedKey(key)
-                      setShowKeyDetail(true)
+                      setSelectedKey(key);
+                      setShowKeyDetail(true);
                     }}
                     activeOpacity={0.7}
                   >
@@ -94,9 +94,9 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
           onClose={() => setShowKeyDetail(false)}
           onRequestClose={() => setShowKeyDetail(false)}
           onStartMission={(key) => {
-            setPendingKeyMission(key.id)
-            setShowKeyDetail(false)
-            onClose()
+            setPendingKeyMission(key.id);
+            setShowKeyDetail(false);
+            onClose();
           }}
           dungeonKey={selectedKey}
           keyLastUsedAt={selectedKey ? (keyLastUsedAt?.[selectedKey.id] ?? 0) : 0}
@@ -104,7 +104,7 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
         />
       )}
     </>
-  )
+  );
 }
 
 const getStyles = (C: any) => StyleSheet.create({
@@ -204,4 +204,4 @@ const getStyles = (C: any) => StyleSheet.create({
     textAlign: 'center',
     marginTop: SPACING.sm,
   },
-})
+});

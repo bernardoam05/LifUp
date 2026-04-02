@@ -1,52 +1,52 @@
-import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Vibration } from 'react-native'
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Vibration } from 'react-native';
 
 // ── Constants (declared early to avoid TDZ issues) ─────────────────────────────
-const STOCKED_ITEMS = ['system_pass', 'lagrima_purificacao']
+const STOCKED_ITEMS = ['system_pass', 'lagrima_purificacao'];
 
 // Native Modules / Storage
-import SharedStorage from '../native/SharedStorage'
-import { scheduleSystemWarnings, cancelSystemWarnings } from '../utils/notifications'
+import SharedStorage from '../native/SharedStorage';
+import { scheduleSystemWarnings, cancelSystemWarnings } from '../utils/notifications';
 
 // Sub-modules (Newly created)
-import type { 
-  GameState, GameActions, Player, Quest, SideQuest, RankKey, SystemState,
-  InventoryEntry, ShadowEntry, LevelUpReward, TriggerPayload, StoreRef 
-} from './types'
-import { INITIAL_PLAYER, INITIAL_STATS, INITIAL_SETTINGS, INITIAL_SHOP_STOCKS } from './types'
+import type {
+  GameState, GameActions, Quest, SideQuest, RankKey, SystemState,
+  ShadowEntry, StoreRef,
+} from './types';
+import { INITIAL_PLAYER, INITIAL_STATS, INITIAL_SETTINGS, INITIAL_SHOP_STOCKS } from './types';
 
-import { 
-  xpForLevel, getRank, applyXP, attrLevelFromXP, getAttrXpBoost, 
-  getNewLevelKeys, getMondayDateString, seededPick, computeActivePassives, 
-  pickExtractionRank, getShadowReleaseGold, computePunishment, pickPenaltyQuests,
-  getQuestTier, TIER_MULT, hadJobClassChange, CLASS_REQUIREMENTS
-} from './helpers'
+import {
+  xpForLevel, getRank, applyXP, attrLevelFromXP, getAttrXpBoost,
+  getNewLevelKeys, getMondayDateString, seededPick, computeActivePassives,
+  pickExtractionRank, getShadowReleaseGold, computePunishment,
+  getQuestTier, TIER_MULT, hadJobClassChange,
+} from './helpers';
 
-import { 
+import {
   createDailyQuests, defToQuest, INITIAL_QUEST_DICTIONARY,
   getCustomShadowPassive, PENALTY_QUEST_POOL,
   getDailyMissionTarget, BOX_KEY_META as BOX_KEYS,
   isWeeklyBossDefinition, isPortalBossDefinition,
-} from './questDictionary'
+} from './questDictionary';
 
-import { 
-  fireEvent, checkAndUnlockAchievements, progressAchievements 
-} from './achievements'
-import { CATALOG_MAP, BOSS_LOOT_TABLE, GENERIC_BOSS_DROPS } from '../data/shopItems'
+import {
+  fireEvent, checkAndUnlockAchievements,
+} from './achievements';
+import { BOSS_LOOT_TABLE, GENERIC_BOSS_DROPS } from '../data/shopItems';
 
 // Data / Types needed locally
-import { SHADOW_MAP, rollShadow, getBossDropShadow } from '../data/shadows'
-import type { Shadow, ShadowRank } from '../data/shadows'
-import { RAID_BOSSES } from '../data/bosses'
-import type { RaidBossRank } from '../data/bosses'
+import { SHADOW_MAP, rollShadow, getBossDropShadow } from '../data/shadows';
+import type { Shadow, ShadowRank } from '../data/shadows';
+import { RAID_BOSSES } from '../data/bosses';
+import type { RaidBossRank } from '../data/bosses';
 
 // ── Re-exports for project-wide compatibility ──────────────────────────────────
-export * from './types'
-export * from './helpers'
-export * from './questDictionary'
-export * from './achievements'
+export * from './types';
+export * from './helpers';
+export * from './questDictionary';
+export * from './achievements';
 
 // ── Initial States ─────────────────────────────────────────────────────────────
 const INITIAL_SYSTEM: Omit<SystemState, 'weeklyBossIds' | 'normalBossIds' | 'normalBossRotationDate' | 'weeklyResetDate' | 'bossDefeatedThisWeek' | 'weeklyDefeatedBossId' | 'extractionDoneToday' | 'completedNormalBossIds'> = {
@@ -80,7 +80,7 @@ const INITIAL_SYSTEM: Omit<SystemState, 'weeklyBossIds' | 'normalBossIds' | 'nor
   pomodoroPhase: 'idle',
   pomodoroCycle: 0,
   pomodoroBreakEnd: 0,
-}
+};
 
 const INITIAL_RESET_SYSTEM = {
   weeklyBossIds: [],
@@ -94,7 +94,7 @@ const INITIAL_RESET_SYSTEM = {
   portalDailyCount: 0,
   portalLastRollHourKey: '',
   portalCooldownEnd: 0,
-}
+};
 
 // ── Store ──────────────────────────────────────────────────────────────────────
 
@@ -102,11 +102,11 @@ const INITIAL_RESET_SYSTEM = {
 const useGameStore = create<GameState & GameActions>()(
   persist(
     (set, get) => {
-      const ref: StoreRef = { get, set }
+      const ref: StoreRef = { get, set };
 
       return {
         player: INITIAL_PLAYER,
-        quests: createDailyQuests(1, INITIAL_QUEST_DICTIONARY, 'normal'),
+        quests: createDailyQuests(1, INITIAL_QUEST_DICTIONARY, 'normal', INITIAL_SETTINGS.customDailyMissions),
         extraQuests: [],
         extraQuestRerolledIds: [],
         extraQuestUsedPoolIds: [],
@@ -137,39 +137,39 @@ const useGameStore = create<GameState & GameActions>()(
 
         applyBuff: (buff: { id: string; label: string; multiplier: number; stat: 'xp' | 'gold'; }, duration: number) => {
           set(s => {
-            const existingBuffIdx = s.activeBuffs.findIndex(b => b.id === buff.id)
+            const existingBuffIdx = s.activeBuffs.findIndex(b => b.id === buff.id);
             if (existingBuffIdx > -1) {
-              const existing = s.activeBuffs[existingBuffIdx]
-              const newActive = [...s.activeBuffs]
+              const existing = s.activeBuffs[existingBuffIdx];
+              const newActive = [...s.activeBuffs];
               newActive[existingBuffIdx] = {
                 ...existing,
-                expiresAt: existing.expiresAt + duration
-              }
-              return { activeBuffs: newActive }
+                expiresAt: existing.expiresAt + duration,
+              };
+              return { activeBuffs: newActive };
             } else {
-              return { activeBuffs: [...s.activeBuffs, { ...buff, expiresAt: Date.now() + duration }] }
+              return { activeBuffs: [...s.activeBuffs, { ...buff, expiresAt: Date.now() + duration }] };
             }
-          })
+          });
         },
 
         clearPendingRaidExtraction: () => {
-          set((s: GameState) => ({ system: { ...s.system, pendingRaidExtractionId: undefined } }))
+          set((s: GameState) => ({ system: { ...s.system, pendingRaidExtractionId: undefined } }));
         },
 
         popReward: () => {
-          set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.slice(1) }))
+          set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.slice(1) }));
         },
 
         triggerEvent(event, payload = {}, value = 1) {
-          fireEvent(event, payload, ref, value)
+          fireEvent(event, payload, ref, value);
         },
 
         emitEvent(event, value = 1) {
-          fireEvent(event, {}, ref, value)
+          fireEvent(event, {}, ref, value);
         },
 
         recordBlockedAttempt() {
-          const now = Date.now()
+          const now = Date.now();
           set((s: GameState & GameActions) => ({
             system: {
               ...s.system,
@@ -178,104 +178,102 @@ const useGameStore = create<GameState & GameActions>()(
                 now,
               ],
             },
-          }))
-          fireEvent('blocked_app_attempt', {}, ref)
+          }));
+          fireEvent('blocked_app_attempt', {}, ref);
           if (get().system.blockedAttemptTimestamps.length >= 5) {
-            fireEvent('blocked_app_spam', {}, ref)
+            fireEvent('blocked_app_spam', {}, ref);
           }
         },
 
         rankUp() {
           set((s: GameState) => {
-            const qualifiedRank = getRank(s.player.level, s.statistics.totalCompleted, s.system.bossesDefeated, s.statistics.questsByRank).rank
-            return { player: { ...s.player, rank: qualifiedRank } }
-          })
+            const qualifiedRank = getRank(s.player.level, s.statistics.totalCompleted, s.system.bossesDefeated, s.statistics.questsByRank).rank;
+            return { player: { ...s.player, rank: qualifiedRank } };
+          });
         },
 
         bootSystem() {
-          const today = new Date().toDateString()
-          const { lastResetDate, quests, player, system } = get()
+          const today = new Date().toDateString();
+          const { lastResetDate, quests, player, system } = get();
 
           // Purge zero-quantity ghost items from inventory (may appear after AsyncStorage restore)
           if (player.inventory.some(e => e.quantity <= 0)) {
             set((s: GameState & GameActions) => ({
-              player: { ...s.player, inventory: s.player.inventory.filter(e => e.quantity > 0) }
-            }))
+              player: { ...s.player, inventory: s.player.inventory.filter(e => e.quantity > 0) },
+            }));
           }
 
           if (system.hasPenalty && system.penaltyBlockEnd > 0 && Date.now() >= system.penaltyBlockEnd) {
-            set((s: GameState & GameActions) => ({ system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }))
+            set((s: GameState & GameActions) => ({ system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }));
           }
 
           {
-            const qd = get().questDictionary
+            const qd = get().questDictionary;
             if (qd.some(d => (d as { type?: string }).type === 'normal_boss')) {
               set((s: GameState & GameActions) => ({
                 questDictionary: s.questDictionary.map(d =>
                   (d as { type?: string }).type === 'normal_boss' ? { ...d, type: 'boss' as const } : d
                 ),
-              }))
+              }));
             }
-            const storedIds = new Set(get().questDictionary.map((d) => d.id))
-            const missing = INITIAL_QUEST_DICTIONARY.filter(d => !storedIds.has(d.id))
+            const storedIds = new Set(get().questDictionary.map((d) => d.id));
+            const missing = INITIAL_QUEST_DICTIONARY.filter(d => !storedIds.has(d.id));
             if (missing.length > 0) {
-              set((s: GameState & GameActions) => ({ questDictionary: [...s.questDictionary, ...missing] }))
+              set((s: GameState & GameActions) => ({ questDictionary: [...s.questDictionary, ...missing] }));
             }
           }
 
           if (get().system.weeklyBossIds.length === 0) {
-            const bossDefs = get().questDictionary.filter(isWeeklyBossDefinition)
+            const bossDefs = get().questDictionary.filter(isWeeklyBossDefinition);
             if (bossDefs.length > 0) {
-              const picked = seededPick(3, bossDefs.length, Date.now()).map(i => bossDefs[i].id)
-              set((s: GameState & GameActions) => ({ system: { ...s.system, weeklyBossIds: picked } }))
+              const picked = seededPick(3, bossDefs.length, Date.now()).map(i => bossDefs[i].id);
+              set((s: GameState & GameActions) => ({ system: { ...s.system, weeklyBossIds: picked } }));
             }
           }
 
-          if (lastResetDate === today) return
+          if (lastResetDate === today) {return;}
 
-          const thisMonday = getMondayDateString()
-          const weeklyReset = system.weeklyResetDate !== thisMonday
-          const newWeeklyCount = weeklyReset ? 0 : system.weeklyTrainingCount
-          const newWeeklyRegenCount = weeklyReset ? 0 : system.weeklyRegenCount
-          const wasRestDay = get().settings.restDay
-          const sideQuestPenalize = get().settings.sideQuestPenalize ?? false
+          const thisMonday = getMondayDateString();
+          const weeklyReset = system.weeklyResetDate !== thisMonday;
+          const wasRestDay = get().settings.restDay;
+          const sideQuestPenalize = get().settings.sideQuestPenalize ?? false;
           const allDone = quests.length > 0 && quests.every((q: Quest) => {
-            if (q.done && !q.failed) return true
-            if (q.type === 'forbidden' && !(q.done && q.failed)) return true
-            if (q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) return true
-            return false
-          })
-          const isFirstDay = lastResetDate === ''
+            if (q.done && !q.failed) {return true;}
+            if (q.type === 'forbidden' && !(q.done && q.failed)) {return true;}
+            if (q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) {return true;}
+            return false;
+          });
+          const isFirstDay = lastResetDate === '';
           const failedSideCount = sideQuestPenalize && !isFirstDay && !wasRestDay
             ? get().sideQuests.filter(sq => !sq.done).length
-            : 0
-          const hadPenalty = (!allDone || failedSideCount > 0) && !isFirstDay && !wasRestDay
+            : 0;
+          const hadPenalty = (!allDone || failedSideCount > 0) && !isFirstDay && !wasRestDay;
           const failedCount = quests.filter((q: Quest) => {
-            if (q.type === 'forbidden') return q.done && !!q.failed
-            if (q.type === 'limit') return (q.currentValue ?? 0) > (q.targetValue ?? 0)
-            return !q.done
-          }).length + failedSideCount
+            if (q.type === 'forbidden') {return q.done && !!q.failed;}
+            if (q.type === 'limit') {return (q.currentValue ?? 0) > (q.targetValue ?? 0);}
+            return !q.done;
+          }).length + failedSideCount;
 
-          let newXp = player.xp
-          let newGold = player.gold
-          let penaltyTriggered = false
-          let newPenaltyQuests: Quest[] = []
-          let newHardcorePunished = false
-          let streakReset = false
-          let newPenaltyBlockStart = 0
-          let newPenaltyBlockEnd = 0
+          let newXp = player.xp;
+          let newGold = player.gold;
+          let penaltyTriggered = false;
+          let newPenaltyQuests: Quest[] = [];
+          let newHardcorePunished = false;
+          let streakReset = false;
+          let newPenaltyBlockStart = 0;
+          let newPenaltyBlockEnd = 0;
 
           // ── New Penalty Logic (Cumulative) ────────────────────────────────────
-          const difficulty = get().settings.missionDifficulty
-          const consecutiveFails = system.consecutiveFails ?? 0
-          const prevOwed = system.penaltyMissionsOwed ?? 0
+          const difficulty = get().settings.missionDifficulty;
+          const consecutiveFails = system.consecutiveFails ?? 0;
+          const prevOwed = system.penaltyMissionsOwed ?? 0;
 
           const {
-            penaltyReduction, lootBoost, focusMastery, penaltyImmunity, streakProtect, dailyBonus
-          } = computeActivePassives(player.activeShadowIds, player.shadows, get().customShadows, get().activeBuffs)
+            penaltyReduction, focusMastery, penaltyImmunity, streakProtect, dailyBonus,
+          } = computeActivePassives(player.activeShadowIds, player.shadows, get().customShadows, get().activeBuffs);
 
           if (hadPenalty) {
-            const tier = getQuestTier(player.level)
+            const tier = getQuestTier(player.level);
             const punishment = computePunishment(
               failedCount,
               quests.length,
@@ -283,52 +281,53 @@ const useGameStore = create<GameState & GameActions>()(
               get().settings.punishmentIntensity,
               penaltyReduction,
               tier,
-              PENALTY_QUEST_POOL
-            )
+              PENALTY_QUEST_POOL,
+              get().settings.customPenaltyHours
+            );
 
-            newXp = Math.max(0, player.xp - punishment.xpLost)
-            newGold = Math.max(0, player.gold - punishment.goldLost)
-            newPenaltyQuests = punishment.penaltyQuests
-            penaltyTriggered = true
-            newHardcorePunished = punishment.hardcorePunished
-            streakReset = punishment.streakReset
-            
+            newXp = Math.max(0, player.xp - punishment.xpLost);
+            newGold = Math.max(0, player.gold - punishment.goldLost);
+            newPenaltyQuests = punishment.penaltyQuests;
+            penaltyTriggered = true;
+            newHardcorePunished = punishment.hardcorePunished;
+            streakReset = punishment.streakReset;
+
             // Difficulty-based blocking logic
             if (get().settings.autoBlockApps) {
-              const todayStart = new Date()
-              const todayEnd = new Date()
-              
+              const todayStart = new Date();
+              const todayEnd = new Date();
+
               if (difficulty === 'normal') {
                 // 12 hours centered at 16:00 (10:00 to 22:00)
-                todayStart.setHours(10, 0, 0, 0)
-                todayEnd.setHours(22, 0, 0, 0)
+                todayStart.setHours(10, 0, 0, 0);
+                todayEnd.setHours(22, 0, 0, 0);
               } else if (difficulty === 'hard') {
                 // 24 hours (immediate to Date.now() + 24h)
-                todayStart.setTime(Date.now())
-                todayEnd.setTime(Date.now() + 24 * 3600_000)
+                todayStart.setTime(Date.now());
+                todayEnd.setTime(Date.now() + 24 * 3600_000);
               } else {
                 // Easy: 6 hours centered at 16:00 (13:00 to 19:00)
-                todayStart.setHours(13, 0, 0, 0)
-                todayEnd.setHours(19, 0, 0, 0)
+                todayStart.setHours(13, 0, 0, 0);
+                todayEnd.setHours(19, 0, 0, 0);
               }
               // If end time is already in the past, shift both to tomorrow
               if (todayEnd.getTime() <= Date.now()) {
-                todayStart.setDate(todayStart.getDate() + 1)
-                todayEnd.setDate(todayEnd.getDate() + 1)
+                todayStart.setDate(todayStart.getDate() + 1);
+                todayEnd.setDate(todayEnd.getDate() + 1);
               }
-              newPenaltyBlockStart = todayStart.getTime()
-              newPenaltyBlockEnd = todayEnd.getTime()
+              newPenaltyBlockStart = todayStart.getTime();
+              newPenaltyBlockEnd = todayEnd.getTime();
             } else {
-              newPenaltyBlockStart = 0
-              newPenaltyBlockEnd = 0
+              newPenaltyBlockStart = 0;
+              newPenaltyBlockEnd = 0;
             }
 
             // ── Defensive Passives (Weekly Cooldown) ───────────────────────────
-            const usedSkills = system.usedShadowSkills ?? {}
-            const oneWeekMs = 7 * 24 * 3600_000
-            const now = Date.now()
+            const usedSkills = system.usedShadowSkills ?? {};
+            const oneWeekMs = 7 * 24 * 3600_000;
+            const now = Date.now();
 
-            const canUseImmunity = !usedSkills['penalty_immunity'] || (now - usedSkills['penalty_immunity'] > oneWeekMs)
+            const canUseImmunity = !usedSkills.penalty_immunity || (now - usedSkills.penalty_immunity > oneWeekMs);
 
             if (penaltyImmunity && canUseImmunity) {
               set((s: GameState & GameActions) => ({
@@ -336,90 +335,95 @@ const useGameStore = create<GameState & GameActions>()(
                   ...s.system,
                   hasPenalty: false,
                   penaltyTriggered: false,
-                  usedShadowSkills: { ...usedSkills, ['penalty_immunity']: now }
-                }
-              }))
+                  usedShadowSkills: { ...usedSkills, ['penalty_immunity']: now },
+                },
+              }));
               // Bypass penalty logic
-              penaltyTriggered = false
-              newPenaltyQuests = []
-              newXp = player.xp
-              newGold = player.gold
-              streakReset = false
+              penaltyTriggered = false;
+              newPenaltyQuests = [];
+              newXp = player.xp;
+              newGold = player.gold;
+              streakReset = false;
             } else {
               set((s: GameState & GameActions) => ({
                 system: {
                   ...s.system,
                   consecutiveFails: consecutiveFails + 1,
                   penaltyMissionsOwed: Math.min(prevOwed + punishment.penaltyQuests.length, 8),
-                }
-              }))
+                },
+              }));
             }
           } else if (!hadPenalty && !isFirstDay && !wasRestDay) {
             set((s: GameState & GameActions) => ({
-              system: { ...s.system, consecutiveFails: 0, penaltyMissionsOwed: 0 }
-            }))
+              system: { ...s.system, consecutiveFails: 0, penaltyMissionsOwed: 0 },
+            }));
           }
 
           // Dungeon/break portals are now rolled hourly via checkDynamicPortalSpawn().
 
-          let newStreak = player.currentStreak
-          let newHighest = player.highestStreak
+          let newStreak = player.currentStreak;
+          let newHighest = player.highestStreak;
 
           if (!wasRestDay && !isFirstDay) {
             const pendingRewards = quests.filter((q: Quest) => {
-              if (q.done) return false
-              if (q.type === 'forbidden' && !q.failed) return true
-              if (q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) return true
-              return false
-            })
+              if (q.done) {return false;}
+              if (q.type === 'forbidden' && !q.failed) {return true;}
+              if (q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) {return true;}
+              return false;
+            });
 
             if (pendingRewards.length > 0) {
-              newXp += pendingRewards.reduce((sum, q) => sum + q.xp, 0)
-              newGold += pendingRewards.reduce((sum, q) => sum + q.gold, 0)
+              newXp += pendingRewards.reduce((sum, q) => sum + q.xp, 0);
+              newGold += pendingRewards.reduce((sum, q) => sum + q.gold, 0);
             }
-            if (dailyBonus > 0) newXp += Math.floor(dailyBonus)
+            if (dailyBonus > 0) {newXp += Math.floor(dailyBonus);}
 
             const effectiveDone = quests.filter((q: Quest) => {
-              if (q.done && !q.failed) return true
-              if (!q.done && q.type === 'forbidden' && !q.failed) return true
-              if (!q.done && q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) return true
-              return false
-            }).length
+              if (q.done && !q.failed) {return true;}
+              if (!q.done && q.type === 'forbidden' && !q.failed) {return true;}
+              if (!q.done && q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) {return true;}
+              return false;
+            }).length;
 
-            const isPerfect = effectiveDone === quests.length && quests.length > 0
+            const isPerfect = effectiveDone === quests.length && quests.length > 0;
             if (isPerfect) {
-              newStreak = player.currentStreak + 1
-              newHighest = Math.max(player.highestStreak, newStreak)
+              newStreak = player.currentStreak + 1;
+              newHighest = Math.max(player.highestStreak, newStreak);
             } else if (streakReset) {
-              const usedSkills = system.usedShadowSkills ?? {}
-              const oneWeekMs = 7 * 24 * 3600_000
-              const now = Date.now()
+              const usedSkills = system.usedShadowSkills ?? {};
+              const oneWeekMs = 7 * 24 * 3600_000;
+              const now = Date.now();
 
-              const canUseProtect = !usedSkills['streak_protect'] || (now - usedSkills['streak_protect'] > oneWeekMs)
-              
+              const canUseProtect = !usedSkills.streak_protect || (now - usedSkills.streak_protect > oneWeekMs);
+
               if (streakProtect && canUseProtect) {
-                newStreak = player.currentStreak
+                newStreak = player.currentStreak;
                 set((s: GameState & GameActions) => ({
                   system: {
                     ...s.system,
-                    usedShadowSkills: { ...(s.system.usedShadowSkills ?? {}), ['streak_protect']: now }
-                  }
-                }))
+                    usedShadowSkills: { ...(s.system.usedShadowSkills ?? {}), ['streak_protect']: now },
+                  },
+                }));
               } else {
-                newStreak = 0
+                newStreak = 0;
               }
             }
           }
 
-          const prevStreak = player.currentStreak
+          const prevStreak = player.currentStreak;
 
-          const rawQuests = createDailyQuests(player.level, get().questDictionary, get().settings.missionDifficulty)
+          const rawQuests = createDailyQuests(
+            player.level,
+            get().questDictionary,
+            get().settings.missionDifficulty,
+            get().settings.customDailyMissions
+          );
           const adjustedQuests = rawQuests.map(q => {
             if (q.type === 'focus' && q.focusDuration) {
-              return { ...q, focusDuration: Math.round(q.focusDuration * (1 - focusMastery)) }
+              return { ...q, focusDuration: Math.round(q.focusDuration * (1 - focusMastery)) };
             }
-            return q
-          })
+            return q;
+          });
 
           set((s: GameState & GameActions) => ({
             quests: adjustedQuests,
@@ -456,8 +460,8 @@ const useGameStore = create<GameState & GameActions>()(
               weeklyResetDate: weeklyReset ? thisMonday : s.system.weeklyResetDate,
               weeklyBossIds: (weeklyReset || s.system.weeklyBossIds.length === 0)
                 ? (() => {
-                    const pool = get().questDictionary.filter(isWeeklyBossDefinition)
-                    return pool.length === 0 ? [] : seededPick(3, pool.length, Date.now()).map(i => pool[i].id)
+                    const pool = get().questDictionary.filter(isWeeklyBossDefinition);
+                    return pool.length === 0 ? [] : seededPick(3, pool.length, Date.now()).map(i => pool[i].id);
                   })()
                 : s.system.weeklyBossIds,
               bossDefeatedThisWeek: weeklyReset ? false : s.system.bossDefeatedThisWeek,
@@ -485,102 +489,106 @@ const useGameStore = create<GameState & GameActions>()(
               normalBossIds: [],
               completedNormalBossIds: [],
             },
-          }))
+          }));
 
           if (hadPenalty) {
-            fireEvent('penalty_triggered', {}, ref)
-            fireEvent('penalty_veteran', {}, ref)
+            fireEvent('penalty_triggered', {}, ref);
+            fireEvent('penalty_veteran', {}, ref);
           }
-          if (allDone) fireEvent('all_quests_completed', {
+          if (allDone) {fireEvent('all_quests_completed', {
             afterPerfectDay: true,
             firstDay: isFirstDay,
             afterPenalty: system.hasPenalty,
-          }, ref)
+          }, ref);}
           if (!wasRestDay && !isFirstDay && allDone) {
-            fireEvent('streak_updated', { prevStreak }, ref)
+            fireEvent('streak_updated', { prevStreak }, ref);
           }
           // Job Change detection after player state update
           const nextPlayer = get().player; // Get the updated player state
-          const jobChange = hadJobClassChange(player.level, nextPlayer.level)
+          const jobChange = hadJobClassChange(player.level, nextPlayer.level);
           if (jobChange) {
-            set((s: GameState & GameActions) => ({ jobChangeReward: jobChange }))
+            set({ jobChangeReward: jobChange });
           }
-          checkAndUnlockAchievements(ref)
-          scheduleSystemWarnings().catch(() => { })
-          get().checkRaidBoss()
-          get().checkDynamicPortalSpawn()
+          checkAndUnlockAchievements(ref);
+          scheduleSystemWarnings().catch(() => { });
+          get().checkRaidBoss();
+          get().checkDynamicPortalSpawn();
         },
 
         dismissPenaltyModal() {
-          set((s: GameState & GameActions) => ({ system: { ...s.system, penaltyTriggered: false } }))
+          set((s: GameState & GameActions) => ({ system: { ...s.system, penaltyTriggered: false } }));
         },
 
         setPenaltyTriggered(value: boolean) {
-          set((s: GameState & GameActions) => ({ system: { ...s.system, penaltyTriggered: value } }))
+          set((s: GameState & GameActions) => ({ system: { ...s.system, penaltyTriggered: value } }));
         },
 
         advanceTutorialPhase() {
           set((s: GameState & GameActions) => ({
             system: { ...s.system, tutorialPhase: Math.min((s.system.tutorialPhase ?? 0) + 1, 2) as 0 | 1 | 2 },
-          }))
+          }));
         },
 
         spawnRaidBoss() {
           set((state: GameState & GameActions) => {
-            const pR = getRank(state.player.level)
-            let allowedRanks: RaidBossRank[] = ['B']
-            if (['E', 'D'].includes(pR.rank)) allowedRanks = ['B']
-            else if (pR.rank === 'C') allowedRanks = ['B', 'A']
-            else if (pR.rank === 'B') allowedRanks = ['A']
-            else if (pR.rank === 'A') allowedRanks = ['A', 'S']
-            else if (pR.rank === 'S') allowedRanks = ['S', 'National']
-            else if (pR.rank === 'National') allowedRanks = ['National']
+            const pR = getRank(state.player.level);
+            let allowedRanks: RaidBossRank[] = ['B'];
+            if (['E', 'D'].includes(pR.rank)) {allowedRanks = ['B'];}
+            else if (pR.rank === 'C') {allowedRanks = ['B', 'A'];}
+            else if (pR.rank === 'B') {allowedRanks = ['A'];}
+            else if (pR.rank === 'A') {allowedRanks = ['A', 'S'];}
+            else if (pR.rank === 'S') {allowedRanks = ['S', 'National'];}
+            else if (pR.rank === 'National') {allowedRanks = ['National'];}
 
-            const pool = RAID_BOSSES.filter(b => 
-              allowedRanks.includes(b.rank) && 
-              !b.id.startsWith('break_boss_') && 
+            const pool = RAID_BOSSES.filter(b =>
+              allowedRanks.includes(b.rank) &&
+              !b.id.startsWith('break_boss_') &&
               !b.id.startsWith('key_boss_')
-            )
-            const bossDef = pool[Math.floor(Math.random() * pool.length)] || RAID_BOSSES[0]
-            const tier = getQuestTier(state.player.level)
-            const mult = TIER_MULT[tier] || 1
-            const poolQuests = state.questDictionary.filter(q => q.type === 'pool')
-            const avgPoolBaseXp = poolQuests.length > 0 ? poolQuests.reduce((sum, q) => sum + q.baseXP, 0) / poolQuests.length : 50
-            const coreQuests = state.questDictionary.filter(q => q.type === 'core')
-            const totalCoreBaseXp = coreQuests.reduce((sum, q) => sum + q.baseXP, 0)
-            const poolTarget = getDailyMissionTarget(state.player.level, state.settings.missionDifficulty)
-            const expectedDailyXp = (totalCoreBaseXp + (avgPoolBaseXp * poolTarget)) * mult
+            );
+            const bossDef = pool[Math.floor(Math.random() * pool.length)] || RAID_BOSSES[0];
+            const tier = getQuestTier(state.player.level);
+            const mult = TIER_MULT[tier] || 1;
+            const poolQuests = state.questDictionary.filter(q => q.type === 'pool');
+            const avgPoolBaseXp = poolQuests.length > 0 ? poolQuests.reduce((sum, q) => sum + q.baseXP, 0) / poolQuests.length : 50;
+            const coreQuests = state.questDictionary.filter(q => q.type === 'core');
+            const totalCoreBaseXp = coreQuests.reduce((sum, q) => sum + q.baseXP, 0);
+            const poolTarget = getDailyMissionTarget(
+              state.player.level,
+              state.settings.missionDifficulty,
+              state.settings.customDailyMissions
+            );
+            const expectedDailyXp = (totalCoreBaseXp + (avgPoolBaseXp * poolTarget)) * mult;
 
-            const rankReq: Record<string, number> = { B: 0.6, A: 0.75, S: 0.9, National: 1.2 }
-            const challengeFactor = rankReq[bossDef.rank] || 0.7
-            const maxHp = Math.max(100, Math.floor(expectedDailyXp * bossDef.durationDays * challengeFactor))
+            const rankReq: Record<string, number> = { B: 0.6, A: 0.75, S: 0.9, National: 1.2 };
+            const challengeFactor = rankReq[bossDef.rank] || 0.7;
+            const maxHp = Math.max(100, Math.floor(expectedDailyXp * bossDef.durationDays * challengeFactor));
 
             return {
               system: {
                 ...state.system,
                 activeRaidBoss: {
                   defId: bossDef.id, maxHp, currentHp: maxHp,
-                  endDate: Date.now() + bossDef.durationDays * 24 * 60 * 60 * 1000
-                }
-              }
-            }
-          })
+                  endDate: Date.now() + bossDef.durationDays * 24 * 60 * 60 * 1000,
+                },
+              },
+            };
+          });
         },
 
         dealRaidBossDamage(dmg: number) {
           set((state: GameState & GameActions) => {
-            const boss = state.system.activeRaidBoss
-            if (!boss) return {}
-            const currentHp = Math.max(0, Math.min(boss.maxHp, boss.currentHp - dmg))
+            const boss = state.system.activeRaidBoss;
+            if (!boss) {return {};}
+            const currentHp = Math.max(0, Math.min(boss.maxHp, boss.currentHp - dmg));
             if (currentHp <= 0) {
-              const bDef = RAID_BOSSES.find(b => b.id === boss.defId)
+              const bDef = RAID_BOSSES.find(b => b.id === boss.defId);
               if (bDef) {
-                const goldReward = boss.maxHp
-                const xpReward = Math.floor(boss.maxHp / 2)
-                const res = applyXP(state.player.xp, state.player.level, xpReward)
-                const attrBoost = getAttrXpBoost(state.player, 'boss')
-                const isNewLevel = res.level > state.player.maxLevelReached
-                const jobChange = hadJobClassChange(state.player.level, res.level)
+                const goldReward = boss.maxHp;
+                const xpReward = Math.floor(boss.maxHp / 2);
+                const res = applyXP(state.player.xp, state.player.level, xpReward);
+                const attrBoost = getAttrXpBoost(state.player, 'boss');
+                const isNewLevel = res.level > state.player.maxLevelReached;
+                const jobChange = hadJobClassChange(state.player.level, res.level);
 
                 return {
                   player: {
@@ -592,38 +600,38 @@ const useGameStore = create<GameState & GameActions>()(
                   ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
                   ...(jobChange ? { jobChangeReward: jobChange } : {}),
                   statistics: { ...state.statistics, totalBossesCompleted: (state.statistics.totalBossesCompleted || 0) + 1 },
-                  system: { ...state.system, activeRaidBoss: null, pendingRaidExtractionId: boss.defId }
-                }
+                  system: { ...state.system, activeRaidBoss: null, pendingRaidExtractionId: boss.defId },
+                };
               }
-              return { system: { ...state.system, activeRaidBoss: null } }
+              return { system: { ...state.system, activeRaidBoss: null } };
             }
-            return { system: { ...state.system, activeRaidBoss: { ...boss, currentHp } } }
-          })
+            return { system: { ...state.system, activeRaidBoss: { ...boss, currentHp } } };
+          });
         },
 
         checkRaidBoss() {
-          if (get().player.level < 10) return
-          const s = get().system.activeRaidBoss
-          if (s && Date.now() > s.endDate) set((state: GameState & GameActions) => ({ system: { ...state.system, activeRaidBoss: null } }))
-          if (!get().system.activeRaidBoss) get().spawnRaidBoss()
+          if (get().player.level < 10) {return;}
+          const s = get().system.activeRaidBoss;
+          if (s && Date.now() > s.endDate) {set((state: GameState & GameActions) => ({ system: { ...state.system, activeRaidBoss: null } }));}
+          if (!get().system.activeRaidBoss) {get().spawnRaidBoss();}
         },
 
-        clearExtraction() { set({ lastExtraction: null }) },
-        resetExtraction() { set((s: GameState) => ({ system: { ...s.system, extractionDoneToday: false } })) },
+        clearExtraction() { set({ lastExtraction: null }); },
+        resetExtraction() { set((s: GameState) => ({ system: { ...s.system, extractionDoneToday: false } })); },
 
         completeQuest(id: string) {
-          let leveledUp = false
-          let finalXpGain = 0
+          let leveledUp = false;
+          let finalXpGain = 0;
           set((s: GameState & GameActions) => {
-            const quest = s.quests.find(q => q.id === id)
+            const quest = s.quests.find(q => q.id === id);
             if (!quest || quest.done) {
               // Check if it's a penalty quest
-              const pq = s.system.penaltyQuests.find(q => q.id === id)
-              if (!pq || pq.done) return {}
-              const updatedPQ = s.system.penaltyQuests.map(q => q.id === id ? { ...q, done: true } : q)
-              const allPenaltyDone = updatedPQ.every(q => q.done)
+              const pq = s.system.penaltyQuests.find(q => q.id === id);
+              if (!pq || pq.done) {return {};}
+              const updatedPQ = s.system.penaltyQuests.map(q => q.id === id ? { ...q, done: true } : q);
+              const allPenaltyDone = updatedPQ.every(q => q.done);
               if (!allPenaltyDone) {
-                return { system: { ...s.system, penaltyQuests: updatedPQ } }
+                return { system: { ...s.system, penaltyQuests: updatedPQ } };
               }
               // All penalty quests done — clear every piece of penalty state so
               // the Focus/Timer UI resets immediately and App.tsx's useEffect
@@ -641,40 +649,40 @@ const useGameStore = create<GameState & GameActions>()(
                   penaltyBlockStart: 0,
                   penaltyBlockEnd: 0,
                 },
-              }
+              };
             }
             // #5 Fix: compute passives once
-            const { xpBoost, goldBoost, lootBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
-            const baseXP = s.system.xpBoostNext ? quest.xp * 2 : quest.xp
-            const xpGain = Math.round(baseXP * (1 + xpBoost))
-            finalXpGain = xpGain
-            const goldGain = Math.round(quest.gold * (1 + goldBoost))
-            const res = applyXP(s.player.xp, s.player.level, xpGain)
-            leveledUp = res.leveledUp
-            const isNewLevel = res.level > s.player.maxLevelReached
-            
-            const rewardItems: string[] = []
+            const { xpBoost, goldBoost, lootBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs);
+            const baseXP = s.system.xpBoostNext ? quest.xp * 2 : quest.xp;
+            const xpGain = Math.round(baseXP * (1 + xpBoost));
+            finalXpGain = xpGain;
+            const goldGain = Math.round(quest.gold * (1 + goldBoost));
+            const res = applyXP(s.player.xp, s.player.level, xpGain);
+            leveledUp = res.leveledUp;
+            const isNewLevel = res.level > s.player.maxLevelReached;
+
+            const rewardItems: string[] = [];
             if (res.leveledUp) {
-              const count = res.level % 10 === 0 ? 2 : res.level % 5 === 0 ? 1 : 0
-              for (let i = 0; i < count; i++) rewardItems.push(Math.random() < 0.5 ? 'lagrima_purificacao' : 'relogio_ampulheta')
+              const count = res.level % 10 === 0 ? 2 : res.level % 5 === 0 ? 1 : 0;
+              for (let i = 0; i < count; i++) {rewardItems.push(Math.random() < 0.5 ? 'lagrima_purificacao' : 'relogio_ampulheta');}
             }
-            
-            if (Math.random() < 0.1 * (1 + lootBoost)) rewardItems.push('loot_box')
 
-            const rewardInv = [...s.player.inventory]
-            if (Math.random() < 0.05 * (1 + lootBoost)) rewardItems.push('shadow_essence')
-            if (Math.random() < 0.03 * (1 + lootBoost)) rewardItems.push('blood_fallen')
-            
+            if (Math.random() < 0.1 * (1 + lootBoost)) {rewardItems.push('loot_box');}
+
+            const rewardInv = [...s.player.inventory];
+            if (Math.random() < 0.05 * (1 + lootBoost)) {rewardItems.push('shadow_essence');}
+            if (Math.random() < 0.03 * (1 + lootBoost)) {rewardItems.push('blood_fallen');}
+
             rewardItems.forEach(itemId => {
-              const idx = rewardInv.findIndex(e => e.itemId === itemId)
-              if (idx >= 0) rewardInv[idx] = { ...rewardInv[idx], quantity: rewardInv[idx].quantity + 1 }
-              else rewardInv.push({ itemId, quantity: 1 })
-            })
+              const idx = rewardInv.findIndex(e => e.itemId === itemId);
+              if (idx >= 0) {rewardInv[idx] = { ...rewardInv[idx], quantity: rewardInv[idx].quantity + 1 };}
+              else {rewardInv.push({ itemId, quantity: 1 });}
+            });
 
-            const attrBoost = getAttrXpBoost(s.player, quest.type)
-            const questRank: RankKey = quest?.rank ?? (getRank(res.level).rank as RankKey)
-            const jobChange = hadJobClassChange(s.player.level, res.level)
-            
+            const attrBoost = getAttrXpBoost(s.player, quest.type);
+            const questRank: RankKey = quest?.rank ?? (getRank(res.level).rank as RankKey);
+            const jobChange = hadJobClassChange(s.player.level, res.level);
+
             return {
               quests: s.quests.map(q => q.id === id ? { ...q, done: true, xpGained: xpGain, goldGained: goldGain } : q),
               player: {
@@ -696,58 +704,58 @@ const useGameStore = create<GameState & GameActions>()(
               ],
               // Show simple toast ONLY for non-multiple of 5 level-ups
               levelUpToast: res.leveledUp && res.level % 5 !== 0 ? res.level : null,
-            }
-          })
+            };
+          });
 
-          const allNowDone = get().quests.every(q => q.done || q.type === 'limit' || q.type === 'forbidden')
-          if (allNowDone) cancelSystemWarnings().catch(() => { })
+          const allNowDone = get().quests.every(q => q.done || q.type === 'limit' || q.type === 'forbidden');
+          if (allNowDone) {cancelSystemWarnings().catch(() => { });}
 
-          fireEvent('quest_completed', { isLastQuest: allNowDone }, ref)
-          if (allNowDone) fireEvent('all_quests_completed', { afterPerfectDay: true, firstDay: get().statistics.perfectDays === 0, afterPenalty: get().system.hasPenalty }, ref)
-          Vibration.vibrate(leveledUp ? [0, 150, 50, 150, 50, 300] : 50)
-          
+          fireEvent('quest_completed', { isLastQuest: allNowDone }, ref);
+          if (allNowDone) {fireEvent('all_quests_completed', { afterPerfectDay: true, firstDay: get().statistics.perfectDays === 0, afterPenalty: get().system.hasPenalty }, ref);}
+          Vibration.vibrate(leveledUp ? [0, 150, 50, 150, 50, 300] : 50);
+
           // Check for extraction FIRST before achievements
           if (allNowDone && !get().system.extractionDoneToday) {
-            const state = get()
-            const rank = pickExtractionRank(state.player.level)
-            const shadow = rollShadow(rank, [])
+            const state = get();
+            const rank = pickExtractionRank(state.player.level);
+            const shadow = rollShadow(rank, []);
             if (shadow) {
-              const existing = state.player.shadows.find(e => e.id === shadow.id)
-              const currQueue = get().rewardsQueue
+              const existing = state.player.shadows.find(e => e.id === shadow.id);
+              const currQueue = get().rewardsQueue;
               set((s: GameState & GameActions) => ({
                 player: {
                   ...s.player,
-                  shadows: existing 
+                  shadows: existing
                     ? s.player.shadows.map(e => e.id === shadow.id ? { ...e, level: e.level + 1 } : e)
-                    : [...s.player.shadows, { id: shadow.id, level: 1 }]
+                    : [...s.player.shadows, { id: shadow.id, level: 1 }],
                 },
                 lastExtraction: { shadow, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 },
                 system: { ...s.system, extractionDoneToday: true },
                 // Insert extraction at BEGINNING of queue so it displays FIRST
                 rewardsQueue: [
                   { type: 'shadow' as const, id: shadow.id, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 },
-                  ...currQueue
+                  ...currQueue,
                 ],
-              }))
+              }));
             }
           }
-          
+
           // THEN check achievements
-          checkAndUnlockAchievements(ref)
-          if (finalXpGain > 0) get().dealRaidBossDamage(finalXpGain)
-          return { leveledUp }
+          checkAndUnlockAchievements(ref);
+          if (finalXpGain > 0) {get().dealRaidBossDamage(finalXpGain);}
+          return { leveledUp };
         },
 
-        failQuest(id) { set((s: GameState) => ({ quests: s.quests.map(q => q.id === id ? { ...q, done: true, failed: true } : q) })) },
-        updateQuestValue(id, value) { set((s: GameState) => ({ quests: s.quests.map(q => q.id === id ? { ...q, currentValue: value } : q) })) },
+        failQuest(id) { set((s: GameState) => ({ quests: s.quests.map(q => q.id === id ? { ...q, done: true, failed: true } : q) })); },
+        updateQuestValue(id, value) { set((s: GameState) => ({ quests: s.quests.map(q => q.id === id ? { ...q, currentValue: value } : q) })); },
 
         skipQuest(id) {
           set((s: GameState & GameActions) => {
-            const quest = s.quests.find(q => q.id === id)
-            if (!quest || quest.done) return {}
-            const res = applyXP(s.player.xp, s.player.level, quest.xp)
-            const isNewLevel = res.level > s.player.maxLevelReached
-            const jobChange = hadJobClassChange(s.player.level, res.level)
+            const quest = s.quests.find(q => q.id === id);
+            if (!quest || quest.done) {return {};}
+            const res = applyXP(s.player.xp, s.player.level, quest.xp);
+            const isNewLevel = res.level > s.player.maxLevelReached;
+            const jobChange = hadJobClassChange(s.player.level, res.level);
             return {
               quests: s.quests.map(q => q.id === id ? { ...q, done: true } : q),
               player: {
@@ -757,27 +765,27 @@ const useGameStore = create<GameState & GameActions>()(
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               ...(jobChange ? { jobChangeReward: jobChange } : {}),
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
-            }
-          })
-          if (get().quests.every(q => q.done)) cancelSystemWarnings().catch(() => { })
-          fireEvent('quest_skipped_via_pass', { itemId: 'system_pass' }, ref)
-          checkAndUnlockAchievements(ref)
+            };
+          });
+          if (get().quests.every(q => q.done)) {cancelSystemWarnings().catch(() => { });}
+          fireEvent('quest_skipped_via_pass', { itemId: 'system_pass' }, ref);
+          checkAndUnlockAchievements(ref);
         },
 
         undoQuest(id) {
-          let xpToRevert = 0
+          let xpToRevert = 0;
           set((s: GameState & GameActions) => {
-            const quest = s.quests.find(q => q.id === id)
-            if (!quest?.done) return {}
+            const quest = s.quests.find(q => q.id === id);
+            if (!quest?.done) {return {};}
             // Cannot undo after shadow extraction has already been triggered
-            if (s.system.extractionDoneToday) return {}
-            xpToRevert = quest.xpGained ?? quest.xp
-            let { xp, level, gold } = s.player
-            let newXp = xp - xpToRevert
-            let newLevel = level
-            while (newXp < 0 && newLevel > 1) { newLevel--; newXp = xpForLevel(newLevel) + newXp }
-            const questRankToReverse: RankKey = quest.rank ?? (getRank(newLevel).rank as RankKey)
-            
+            if (s.system.extractionDoneToday) {return {};}
+            xpToRevert = quest.xpGained ?? quest.xp;
+            let { xp, level, gold } = s.player;
+            let newXp = xp - xpToRevert;
+            let newLevel = level;
+            while (newXp < 0 && newLevel > 1) { newLevel--; newXp = xpForLevel(newLevel) + newXp; }
+            const questRankToReverse: RankKey = quest.rank ?? (getRank(newLevel).rank as RankKey);
+
             return {
               quests: s.quests.map(q => q.id === id ? { ...q, done: false, xpGained: undefined, goldGained: undefined } : q),
               system: { ...s.system, weeklyTrainingCount: quest.type === 'training' ? Math.max(s.system.weeklyTrainingCount - 1, 0) : s.system.weeklyTrainingCount },
@@ -787,22 +795,22 @@ const useGameStore = create<GameState & GameActions>()(
               },
               player: { ...s.player, xp: Math.max(newXp, 0), level: newLevel, gold: Math.max(gold - (quest.goldGained ?? quest.gold), 0) },
               questCompletions: { ...s.questCompletions, [id]: Math.max((s.questCompletions[id] ?? 1) - 1, 0) },
-            }
-          })
-          if (xpToRevert > 0) get().dealRaidBossDamage(-xpToRevert)
+            };
+          });
+          if (xpToRevert > 0) {get().dealRaidBossDamage(-xpToRevert);}
         },
 
         addSideQuest(title) {
-          if (!title.trim()) return
-          const sq: SideQuest = { id: `sq_${Date.now()}`, title: title.trim(), done: false, createdDate: new Date().toDateString() }
-          set((s: GameState) => ({ sideQuests: [...s.sideQuests, sq] }))
-          fireEvent('side_quest_added', {}, ref)
+          if (!title.trim()) {return;}
+          const sq: SideQuest = { id: `sq_${Date.now()}`, title: title.trim(), done: false, createdDate: new Date().toDateString() };
+          set((s: GameState) => ({ sideQuests: [...s.sideQuests, sq] }));
+          fireEvent('side_quest_added', {}, ref);
         },
 
         completeSideQuest(id) {
           set((s: GameState & GameActions) => {
-            const sq = s.sideQuests.find(q => q.id === id)
-            if (!sq || sq.done) return {}
+            const sq = s.sideQuests.find(q => q.id === id);
+            if (!sq || sq.done) {return {};}
             return {
               sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, done: true } : q),
               statistics: {
@@ -810,23 +818,23 @@ const useGameStore = create<GameState & GameActions>()(
                 sideQuestsCompletedToday: (s.statistics.sideQuestsCompletedToday ?? 0) + 1,
                 totalSideCompleted: (s.statistics.totalSideCompleted ?? 0) + 1,
               },
-            }
-          })
-          fireEvent('side_quest_completed', { todayCount: get().statistics.sideQuestsCompletedToday }, ref)
-          return { leveledUp: false }
+            };
+          });
+          fireEvent('side_quest_completed', { todayCount: get().statistics.sideQuestsCompletedToday }, ref);
+          return { leveledUp: false };
         },
 
         startSideQuest(_id, _mins) { /* no-op: timers removed from side quests */ },
-        updateSideQuestNote(id, note) { set((s: GameState) => ({ sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, note } : q) })) },
-        removeSideQuest(id) { set((s: GameState) => ({ sideQuests: s.sideQuests.filter(q => q.id !== id) })) },
+        updateSideQuestNote(id, note) { set((s: GameState) => ({ sideQuests: s.sideQuests.map(q => q.id === id ? { ...q, note } : q) })); },
+        removeSideQuest(id) { set((s: GameState) => ({ sideQuests: s.sideQuests.filter(q => q.id !== id) })); },
 
         addXP(amount) {
-          let leveledUp = false
+          let leveledUp = false;
           set((s: GameState & GameActions) => {
-            const res = applyXP(s.player.xp, s.player.level, amount)
-            leveledUp = res.leveledUp
-            const isNewLevel = res.level > s.player.maxLevelReached
-            const jobChange = hadJobClassChange(s.player.level, res.level)
+            const res = applyXP(s.player.xp, s.player.level, amount);
+            leveledUp = res.leveledUp;
+            const isNewLevel = res.level > s.player.maxLevelReached;
+            const jobChange = hadJobClassChange(s.player.level, res.level);
             return {
               player: {
                 ...s.player, xp: res.xp, level: res.level, ...getAttrXpBoost(s.player, 'side'),
@@ -834,135 +842,188 @@ const useGameStore = create<GameState & GameActions>()(
               },
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               ...(jobChange ? { jobChangeReward: jobChange } : {}),
-            }
-          })
-          checkAndUnlockAchievements(ref)
-          return { leveledUp }
+            };
+          });
+          checkAndUnlockAchievements(ref);
+          return { leveledUp };
         },
 
         toggleFavoriteShadow(id) {
-          set((s: GameState) => ({ player: { ...s.player, shadows: s.player.shadows.map(sh => sh.id === id ? { ...sh, isFavorite: !sh.isFavorite } : sh) } }))
+          set((s: GameState) => ({ player: { ...s.player, shadows: s.player.shadows.map(sh => sh.id === id ? { ...sh, isFavorite: !sh.isFavorite } : sh) } }));
         },
 
         recordFocusTime(minutes) {
-          if (minutes <= 0) return
+          if (minutes <= 0) {return;}
           set((s: GameState & GameActions) => {
-            const stats = { ...s.statistics, totalFocusMinutes: s.statistics.totalFocusMinutes + minutes }
-            // Auto-complete active focus quests (first undone focus quest)
+            const stats = { ...s.statistics, totalFocusMinutes: s.statistics.totalFocusMinutes + minutes };
+            const getUnit = (q: Quest) => {
+              if (q.unit) {return q.unit.toLowerCase();}
+              const detail = (q.detail ?? '').toLowerCase();
+              return detail.includes('hora') ? 'h' : 'min';
+            };
+            const isHourUnit = (unit: string) => unit.startsWith('h');
+            const minutesToUnit = (unit: string) => isHourUnit(unit) ? minutes / 60 : minutes;
+            const getTarget = (q: Quest, unit: string) => {
+              if (q.targetValue != null) {return q.targetValue;}
+              if (q.focusDuration) {return isHourUnit(unit) ? q.focusDuration / 3_600_000 : q.focusDuration / 60_000;}
+              return 0;
+            };
+            const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs);
+
+            // Progress focus quests by actual minutes (converted to quest unit)
             const updatedQuests = s.quests.map(q => {
-              if (q.type !== 'focus' || q.done) return q
-              const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
-              const xpGain = Math.round(q.xp * (1 + xpBoost))
-              const goldGain = Math.round(q.gold * (1 + goldBoost))
-              return { ...q, done: true, currentValue: 1, xpGained: xpGain, goldGained: goldGain }
-            })
-            let xpDelta = 0, goldDelta = 0
+              if (q.type !== 'focus' || q.done) {return q;}
+              const unit = getUnit(q);
+              const addVal = minutesToUnit(unit);
+              const target = getTarget(q, unit);
+              const nextVal = (q.currentValue ?? 0) + addVal;
+              if (target > 0 && nextVal >= target) {
+                const xpGain = Math.round(q.xp * (1 + xpBoost));
+                const goldGain = Math.round(q.gold * (1 + goldBoost));
+                return {
+                  ...q,
+                  done: true,
+                  currentValue: target,
+                  xpGained: xpGain,
+                  goldGained: goldGain,
+                };
+              }
+              return { ...q, currentValue: nextVal };
+            });
+            let xpDelta = 0, goldDelta = 0;
             updatedQuests.forEach((q, i) => {
               if (q.done && !s.quests[i].done && q.type === 'focus') {
-                xpDelta += q.xpGained ?? 0
-                goldDelta += q.goldGained ?? 0
+                xpDelta += q.xpGained ?? 0;
+                goldDelta += q.goldGained ?? 0;
               }
-            })
+            });
             const playerUpdate = xpDelta > 0 || goldDelta > 0
               ? (() => {
-                  const res = applyXP(s.player.xp, s.player.level, xpDelta)
-                  const attrBoost = getAttrXpBoost(s.player, 'focus')
-                  return { xp: res.xp, level: res.level, gold: s.player.gold + goldDelta, ...attrBoost }
+                  const res = applyXP(s.player.xp, s.player.level, xpDelta);
+                  const attrBoost = getAttrXpBoost(s.player, 'focus');
+                  return { xp: res.xp, level: res.level, gold: s.player.gold + goldDelta, ...attrBoost };
                 })()
-              : null
-            if (s.system.hasPenalty && s.system.penaltyBlockEnd > 0) {
-              const newEnd = s.system.penaltyBlockEnd - minutes * 60_000
-              const sysUpdate = newEnd <= Date.now()
-                ? { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 }
-                : { ...s.system, penaltyBlockEnd: newEnd }
-              return {
-                statistics: stats,
-                system: sysUpdate,
-                quests: updatedQuests,
-                ...(playerUpdate ? { player: { ...s.player, ...playerUpdate } } : {}),
+              : null;
+
+            // Progress penalty focus quests too
+            const updatedPenaltyQuests = s.system.penaltyQuests.map(q => {
+              if (q.type !== 'focus' || q.done) {return q;}
+              const unit = getUnit(q);
+              const addVal = minutesToUnit(unit);
+              const target = getTarget(q, unit);
+              const nextVal = (q.currentValue ?? 0) + addVal;
+              if (target > 0 && nextVal >= target) {
+                return { ...q, done: true, currentValue: target };
               }
+              return { ...q, currentValue: nextVal };
+            });
+            const allPenaltyDone = updatedPenaltyQuests.length > 0 && updatedPenaltyQuests.every(q => q.done);
+
+            let nextSystem = s.system;
+            if (allPenaltyDone) {
+              nextSystem = {
+                ...s.system,
+                penaltyQuests: updatedPenaltyQuests,
+                hasPenalty: false,
+                penaltyTriggered: false,
+                hardcorePunished: false,
+                hardcoreFocusMode: false,
+                focusModeActive: false,
+                focusEndTime: undefined,
+                penaltyBlockStart: 0,
+                penaltyBlockEnd: 0,
+              };
+            } else if (s.system.hasPenalty && s.system.penaltyBlockEnd > 0) {
+              const newEnd = s.system.penaltyBlockEnd - minutes * 60_000;
+              nextSystem = newEnd <= Date.now()
+                ? { ...s.system, hasPenalty: false, penaltyBlockEnd: 0, penaltyQuests: updatedPenaltyQuests }
+                : { ...s.system, penaltyBlockEnd: newEnd, penaltyQuests: updatedPenaltyQuests };
+            } else if (s.system.penaltyQuests.length > 0) {
+              nextSystem = { ...s.system, penaltyQuests: updatedPenaltyQuests };
             }
+
             return {
               statistics: stats,
+              system: nextSystem,
               quests: updatedQuests,
               ...(playerUpdate ? { player: { ...s.player, ...playerUpdate } } : {}),
-            }
-          })
-          fireEvent('focus_total_hours', {}, ref, minutes)
-          fireEvent('focus_session_completed', { minutes }, ref, 1)
-          checkAndUnlockAchievements(ref)
+            };
+          });
+          fireEvent('focus_total_hours', {}, ref, minutes);
+          fireEvent('focus_session_completed', { minutes }, ref, 1);
+          checkAndUnlockAchievements(ref);
         },
 
         recordPomodoroSession() {
           set((s: GameState & GameActions) => {
-            const newToday = (s.statistics.pomodoroSessionsToday ?? 0) + 1
-            const newTotal = (s.statistics.totalPomodoroSessions ?? 0) + 1
+            const newToday = (s.statistics.pomodoroSessionsToday ?? 0) + 1;
+            const newTotal = (s.statistics.totalPomodoroSessions ?? 0) + 1;
             const stats = {
               ...s.statistics,
               pomodoroSessionsToday: newToday,
               totalPomodoroSessions: newTotal,
-            }
+            };
             // Auto-advance and complete pending pomodoro quests
             const updatedQuests = s.quests.map(q => {
-              if (q.type !== 'pomodoro' || q.done || !q.pomodoroTarget) return q
-              const newVal = newToday
+              if (q.type !== 'pomodoro' || q.done || !q.pomodoroTarget) {return q;}
+              const newVal = newToday;
               if (newVal >= q.pomodoroTarget) {
-                const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
-                const xpGain = Math.round(q.xp * (1 + xpBoost))
-                const goldGain = Math.round(q.gold * (1 + goldBoost))
-                return { ...q, done: true, currentValue: newVal, xpGained: xpGain, goldGained: goldGain }
+                const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs);
+                const xpGain = Math.round(q.xp * (1 + xpBoost));
+                const goldGain = Math.round(q.gold * (1 + goldBoost));
+                return { ...q, done: true, currentValue: newVal, xpGained: xpGain, goldGained: goldGain };
               }
-              return { ...q, currentValue: newVal }
-            })
+              return { ...q, currentValue: newVal };
+            });
             // Award XP/gold for newly completed pomodoro quests
-            let xpDelta = 0, goldDelta = 0
+            let xpDelta = 0, goldDelta = 0;
             updatedQuests.forEach((q, i) => {
               if (q.done && !s.quests[i].done && q.type === 'pomodoro') {
-                xpDelta += q.xpGained ?? 0
-                goldDelta += q.goldGained ?? 0
+                xpDelta += q.xpGained ?? 0;
+                goldDelta += q.goldGained ?? 0;
               }
-            })
+            });
             if (xpDelta > 0 || goldDelta > 0) {
-              const res = applyXP(s.player.xp, s.player.level, xpDelta)
-              const attrBoost = getAttrXpBoost(s.player, 'pomodoro')
+              const res = applyXP(s.player.xp, s.player.level, xpDelta);
+              const attrBoost = getAttrXpBoost(s.player, 'pomodoro');
               return {
                 statistics: stats,
                 quests: updatedQuests,
                 player: { ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + goldDelta, ...attrBoost },
-              }
+              };
             }
-            return { statistics: stats, quests: updatedQuests }
-          })
+            return { statistics: stats, quests: updatedQuests };
+          });
         },
 
         purchaseItem(itemId, cost) {
-          let success = false
+          let success = false;
           set((s: GameState & GameActions) => {
-            const { shopDiscount } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
-            const finalCost = Math.round(cost * (1 - shopDiscount))
+            const { shopDiscount } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs);
+            const finalCost = Math.round(cost * (1 - shopDiscount));
 
-            if (s.player.gold < finalCost || (STOCKED_ITEMS.includes(itemId) && (s.system.shopStocks[itemId] ?? 0) <= 0)) return {}
+            if (s.player.gold < finalCost || (STOCKED_ITEMS.includes(itemId) && (s.system.shopStocks[itemId] ?? 0) <= 0)) {return {};}
             if (itemId.startsWith('theme_')) {
-              if (s.player.unlockedThemes?.includes(itemId)) return {}
-              success = true
+              if (s.player.unlockedThemes?.includes(itemId)) {return {};}
+              success = true;
               return {
                 player: { ...s.player, gold: s.player.gold - finalCost, unlockedThemes: [...(s.player.unlockedThemes ?? []), itemId], activeThemeId: itemId },
                 statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + finalCost },
-              }
+              };
             }
-            success = true
-            const inv = [...s.player.inventory]
-            const idx = inv.findIndex(e => e.itemId === itemId)
-            if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 }
-            else inv.push({ itemId, quantity: 1 })
+            success = true;
+            const inv = [...s.player.inventory];
+            const idx = inv.findIndex(e => e.itemId === itemId);
+            if (idx >= 0) {inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 };}
+            else {inv.push({ itemId, quantity: 1 });}
             return {
               player: { ...s.player, gold: s.player.gold - finalCost, inventory: inv },
               system: { ...s.system, shopStocks: STOCKED_ITEMS.includes(itemId) ? { ...s.system.shopStocks, [itemId]: s.system.shopStocks[itemId]! - 1 } : s.system.shopStocks },
               statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + finalCost },
-            }
-          })
-          if (success) { fireEvent('item_purchased', { itemId }, ref); fireEvent('gold_spent_total', { itemId }, ref, cost); checkAndUnlockAchievements(ref) }
-          return success
+            };
+          });
+          if (success) { fireEvent('item_purchased', { itemId }, ref); fireEvent('gold_spent_total', { itemId }, ref, cost); checkAndUnlockAchievements(ref); }
+          return success;
         },
 
         useInventoryItem(itemId) {
@@ -972,183 +1033,182 @@ const useGameStore = create<GameState & GameActions>()(
           set((s: GameState & GameActions) => {
             const nextInv = s.player.inventory
               .map(e => e.itemId === itemId ? { ...e, quantity: e.quantity - 1 } : e)
-              .filter(e => e.quantity > 0)
+              .filter(e => e.quantity > 0);
 
             if (itemId === 'shadow_essence') {
               // Special: reset extraction flag — handle fully inside this set()
-              return { player: { ...s.player, inventory: nextInv }, system: { ...s.system, extractionDoneToday: false } }
+              return { player: { ...s.player, inventory: nextInv }, system: { ...s.system, extractionDoneToday: false } };
             }
 
-            return { player: { ...s.player, inventory: nextInv } }
-          })
+            return { player: { ...s.player, inventory: nextInv } };
+          });
 
           // Apply timed buffs AFTER inventory deduction so applyBuff's own set() is not overwritten
           if (itemId === 'kasaka_venom') {
-            get().applyBuff({ id: 'kasaka_xp', label: 'Veneno de Kasaka', multiplier: 1.15, stat: 'xp' }, 2 * 3600_000)
+            get().applyBuff({ id: 'kasaka_xp', label: 'Veneno de Kasaka', multiplier: 1.15, stat: 'xp' }, 2 * 3600_000);
           } else if (itemId === 'igris_fragment') {
-            get().applyBuff({ id: 'igris_xp', label: 'Fragmento de Igris', multiplier: 1.20, stat: 'xp' }, 3600_000)
+            get().applyBuff({ id: 'igris_xp', label: 'Fragmento de Igris', multiplier: 1.20, stat: 'xp' }, 3600_000);
           } else if (itemId === 'cerberus_fang') {
-            get().applyBuff({ id: 'cerberus_gold', label: 'Presa de Cerberus', multiplier: 1.20, stat: 'gold' }, 2 * 3600_000)
+            get().applyBuff({ id: 'cerberus_gold', label: 'Presa de Cerberus', multiplier: 1.20, stat: 'gold' }, 2 * 3600_000);
           } else if (itemId === 'iron_will_crystal') {
-            get().applyBuff({ id: 'iron_will_xp', label: 'Vontade de Ferro', multiplier: 1.50, stat: 'xp' }, 30 * 60_000)
+            get().applyBuff({ id: 'iron_will_xp', label: 'Vontade de Ferro', multiplier: 1.50, stat: 'xp' }, 30 * 60_000);
           } else if (itemId === 'blood_fallen') {
-            get().applyBuff({ id: 'blood_gold', label: 'Sangue dos Caídos', multiplier: 1.25, stat: 'gold' }, 3 * 3600_000)
+            get().applyBuff({ id: 'blood_gold', label: 'Sangue dos Caídos', multiplier: 1.25, stat: 'gold' }, 3 * 3600_000);
           } else if (itemId === 'dragon_scale') {
-            get().applyBuff({ id: 'dragon_xp', label: 'Escama de Dragão', multiplier: 1.30, stat: 'xp' }, 4 * 3600_000)
+            get().applyBuff({ id: 'dragon_xp', label: 'Escama de Dragão', multiplier: 1.30, stat: 'xp' }, 4 * 3600_000);
           } else if (itemId === 'lich_eye') {
-            get().applyBuff({ id: 'lich_eye_xp', label: 'Olho do Lich', multiplier: 2.0, stat: 'xp' }, 3600_000)
+            get().applyBuff({ id: 'lich_eye_xp', label: 'Olho do Lich', multiplier: 2.0, stat: 'xp' }, 3600_000);
           }
         },
 
         openLootBox() {
-          let reward: { type: string; title: string; gold: number; xp: number; items: string[] } | null = null
-          let success = false
+          let reward: { type: string; title: string; gold: number; xp: number; items: string[] } | null = null;
+          let success = false;
           set((s: GameState & GameActions) => {
-            const hasBox = s.player.inventory.find(e => e.itemId === 'loot_box' && e.quantity > 0)
-            if (!hasBox) return {}
-            const { lootBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
-            const roll = Math.random()
-            const lootMult = (1 + lootBoost)
+            const hasBox = s.player.inventory.find(e => e.itemId === 'loot_box' && e.quantity > 0);
+            if (!hasBox) {return {};}
+            const { lootBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs);
+            const roll = Math.random();
+            const lootMult = (1 + lootBoost);
 
-            let g = 0, x = 0, k = null, items: string[] = []
-            if (roll < (0.7 / lootMult)) { 
-              g = Math.round((100 + Math.floor(Math.random() * 201)) * lootMult)
-              reward = { type: 'gold', title: 'TESOURO DE OURO', gold: g, xp: 0, items: [] } 
+            let g = 0, x = 0, k: string | null = null;
+            if (roll < (0.7 / lootMult)) {
+              g = Math.round((100 + Math.floor(Math.random() * 201)) * lootMult);
+              reward = { type: 'gold', title: 'TESOURO DE OURO', gold: g, xp: 0, items: [] };
             }
-            else if (roll < 0.9) { 
-              x = Math.round((50 + Math.floor(Math.random() * 51)) * lootMult)
-              reward = { type: 'xp', title: 'ESSÊNCIA ABSORVIDA', gold: 0, xp: x, items: [] } 
+            else if (roll < 0.9) {
+              x = Math.round((50 + Math.floor(Math.random() * 51)) * lootMult);
+              reward = { type: 'xp', title: 'ESSÊNCIA ABSORVIDA', gold: 0, xp: x, items: [] };
             }
             else {
-              const receivedKeyIds = s.system.receivedKeyIds ?? []
-              const available = BOX_KEYS.filter(k => !receivedKeyIds.includes(k.id) && !(s.player.dungeonKeys ?? []).includes(k.id))
+              const receivedKeyIds = s.system.receivedKeyIds ?? [];
+              const available = BOX_KEYS.filter(keyEntry => !receivedKeyIds.includes(keyEntry.id) && !(s.player.dungeonKeys ?? []).includes(keyEntry.id));
               if (available.length > 0) {
-                const key = available[Math.floor(Math.random()*available.length)]
-                k = key.id
-                items = [k]
-                reward = { type: 'key', title: 'CHAVE RARA DESCOBERTA', gold: 0, xp: 0, items: [k] }
+                const keyEntry = available[Math.floor(Math.random() * available.length)];
+                k = keyEntry.id;
+                reward = { type: 'key', title: 'CHAVE RARA DESCOBERTA', gold: 0, xp: 0, items: [k] };
               }
               else {
-                g = Math.round(500 * lootMult)
-                reward = { type: 'gold', title: 'OURO ABUNDANTE', gold: g, xp: 0, items: [] }
+                g = Math.round(500 * lootMult);
+                reward = { type: 'gold', title: 'OURO ABUNDANTE', gold: g, xp: 0, items: [] };
               }
             }
-            
-            const res = applyXP(s.player.xp, s.player.level, x)
-            const jobChange = hadJobClassChange(s.player.level, res.level)
-            success = true
-            
+
+            const res = applyXP(s.player.xp, s.player.level, x);
+            const jobChange = hadJobClassChange(s.player.level, res.level);
+            success = true;
+
             return {
               player: { ...s.player, gold: s.player.gold + g, xp: res.xp, level: res.level, inventory: s.player.inventory.map(e => e.itemId === 'loot_box' ? { ...e, quantity: e.quantity - 1 } : e).filter(e => e.quantity > 0), dungeonKeys: k ? Array.from(new Set([...(s.player.dungeonKeys ?? []), k])) : getNewLevelKeys(s.player.dungeonKeys ?? [], res.level), maxLevelReached: Math.max(s.player.maxLevelReached, res.level) },
               system: { ...s.system, receivedKeyIds: k ? Array.from(new Set([...(s.system.receivedKeyIds ?? []), k])) : s.system.receivedKeyIds },
               currentLootReward: reward,
               ...(res.leveledUp && res.level > s.player.maxLevelReached ? { levelUpReward: { level: res.level, items: [] } } : {}),
               ...(jobChange ? { jobChangeReward: jobChange } : {}),
-            }
-          })
-          return success
+            };
+          });
+          return success;
         },
 
         enterDungeon(keyId) {
-          let success = false
-          const COOLDOWN_MS = 24 * 60 * 60_000 // 24 hours
+          let success = false;
+          const COOLDOWN_MS = 24 * 60 * 60_000; // 24 hours
           set((s: GameState) => {
-            if (!s.player.dungeonKeys?.includes(keyId)) return {}
-            const lastUsed = s.system.keyLastUsedAt?.[keyId] ?? 0
-            if (Date.now() - lastUsed < COOLDOWN_MS) return {} // still on cooldown
-            success = true
+            if (!s.player.dungeonKeys?.includes(keyId)) {return {};}
+            const lastUsed = s.system.keyLastUsedAt?.[keyId] ?? 0;
+            if (Date.now() - lastUsed < COOLDOWN_MS) {return {};} // still on cooldown
+            success = true;
             return {
               system: { ...s.system, keyLastUsedAt: { ...(s.system.keyLastUsedAt ?? {}), [keyId]: Date.now() } },
-            }
-          })
-          return success
+            };
+          });
+          return success;
         },
 
         addToInventory(itemId, qty = 1) {
           set((s: GameState) => {
-            const inv = [...s.player.inventory]
-            const idx = inv.findIndex(e => e.itemId === itemId)
+            const inv = [...s.player.inventory];
+            const idx = inv.findIndex(e => e.itemId === itemId);
             // #1 Fix: do not mutate the existing object; spread it instead
-            if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + qty }
-            else inv.push({ itemId, quantity: qty })
-            return { player: { ...s.player, inventory: inv } }
-          })
+            if (idx >= 0) {inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + qty };}
+            else {inv.push({ itemId, quantity: qty });}
+            return { player: { ...s.player, inventory: inv } };
+          });
         },
 
         purchaseShadow(shadowId, cost) {
-          const state = get()
-          const { shopDiscount } = computeActivePassives(state.player.activeShadowIds, state.player.shadows, state.customShadows, state.activeBuffs)
-          const finalCost = Math.round(cost * (1 - shopDiscount))
+          const state = get();
+          const { shopDiscount } = computeActivePassives(state.player.activeShadowIds, state.player.shadows, state.customShadows, state.activeBuffs);
+          const finalCost = Math.round(cost * (1 - shopDiscount));
 
-          if (state.player.gold < finalCost || !SHADOW_MAP[shadowId]) return false
-          const existing = state.player.shadows.find(e => e.id === shadowId)
+          if (state.player.gold < finalCost || !SHADOW_MAP[shadowId]) {return false;}
+          const existing = state.player.shadows.find(e => e.id === shadowId);
           set((s: GameState) => ({
-            player: { 
-              ...s.player, 
-              gold: s.player.gold - finalCost, 
-              shadows: existing ? s.player.shadows.map(e => e.id === shadowId ? { ...e, level: e.level + 1 } : e) : [...s.player.shadows, { id: shadowId, level: 1 }] 
+            player: {
+              ...s.player,
+              gold: s.player.gold - finalCost,
+              shadows: existing ? s.player.shadows.map(e => e.id === shadowId ? { ...e, level: e.level + 1 } : e) : [...s.player.shadows, { id: shadowId, level: 1 }],
             },
             statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + finalCost },
             rewardsQueue: [...s.rewardsQueue, { type: 'shadow', id: shadowId, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 }],
-          }))
-          fireEvent('shadow_collected', { shadowId }, ref); checkAndUnlockAchievements(ref)
-          return true
+          }));
+          fireEvent('shadow_collected', { shadowId }, ref); checkAndUnlockAchievements(ref);
+          return true;
         },
 
         defeatDungeonBoss(shadowId, customDef, bossLabel) {
-          const { player, system, customShadows } = get()
-          const { xpBoost, goldBoost, lootBoost } = computeActivePassives(player.activeShadowIds, player.shadows, customShadows, get().activeBuffs)
-          const xpReward = Math.round(800 * (1 + xpBoost) * (system.xpBoostNext ? 2 : 1))
-          const goldReward = Math.round(2000 * (1 + goldBoost))
-          let shadowName, leveledUpShadow = false, isNew = false
-          let newShadows = [...player.shadows]
-          let shadowReward: { type: 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number } | null = null
+          const { player, system, customShadows } = get();
+          const { xpBoost, goldBoost, lootBoost } = computeActivePassives(player.activeShadowIds, player.shadows, customShadows, get().activeBuffs);
+          const xpReward = Math.round(800 * (1 + xpBoost) * (system.xpBoostNext ? 2 : 1));
+          const goldReward = Math.round(2000 * (1 + goldBoost));
+          let shadowName, leveledUpShadow = false, isNew = false;
+          let newShadows = [...player.shadows];
+          let shadowReward: { type: 'shadow'; id: string; isLevelUp?: boolean; newLevel?: number } | null = null;
 
           if (shadowId) {
-            let finalId = shadowId
-            const exclusiveShadow = getBossDropShadow(shadowId)
+            let finalId = shadowId;
+            const exclusiveShadow = getBossDropShadow(shadowId);
             if (exclusiveShadow) {
-                finalId = exclusiveShadow.id
+                finalId = exclusiveShadow.id;
             } else if (!customDef && !SHADOW_MAP[shadowId]) {
-                const rank = pickExtractionRank(player.level)
-                const rolled = rollShadow(rank, [])
-                if (rolled) finalId = rolled.id
+                const rank = pickExtractionRank(player.level);
+                const rolled = rollShadow(rank, []);
+                if (rolled) {finalId = rolled.id;}
             }
 
-            const existingShadow = player.shadows.find(e => e.id === finalId)
-            leveledUpShadow = !!existingShadow
-            isNew = !existingShadow
+            const existingShadow = player.shadows.find(e => e.id === finalId);
+            leveledUpShadow = !!existingShadow;
+            isNew = !existingShadow;
             if (customDef && !existingShadow) {
-              const newCustom: Shadow = { id: finalId, name: customDef.name, rank: 'Normal' as ShadowRank, type: 'Custom', dropRate: 0, passiveEffect: getCustomShadowPassive(customDef.questType), lore: `"${customDef.name} — lealdade absoluta."`, icon: customDef.icon, color: '#a855f7' }
-              set((s: GameState & GameActions) => ({ customShadows: [...s.customShadows, newCustom] }))
-              newShadows.push({ id: finalId, level: 1 })
-              shadowName = customDef.name
+              const newCustom: Shadow = { id: finalId, name: customDef.name, rank: 'Normal' as ShadowRank, type: 'Custom', dropRate: 0, passiveEffect: getCustomShadowPassive(customDef.questType), lore: `"${customDef.name} — lealdade absoluta."`, icon: customDef.icon, color: '#a855f7' };
+              set((s: GameState & GameActions) => ({ customShadows: [...s.customShadows, newCustom] }));
+              newShadows.push({ id: finalId, level: 1 });
+              shadowName = customDef.name;
             } else {
-              newShadows = existingShadow ? player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e) : [...player.shadows, { id: finalId, level: 1 }]
-              shadowName = customDef?.name ?? SHADOW_MAP[finalId]?.name ?? finalId
+              newShadows = existingShadow ? player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e) : [...player.shadows, { id: finalId, level: 1 }];
+              shadowName = customDef?.name ?? SHADOW_MAP[finalId]?.name ?? finalId;
             }
 
             shadowReward = {
               type: 'shadow',
               id: finalId,
               isLevelUp: leveledUpShadow,
-              newLevel: existingShadow ? existingShadow.level + 1 : 1
-            }
-            
-            set({ lastExtraction: { shadow: SHADOW_MAP[finalId] ?? get().customShadows.find(s => s.id === finalId), isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } })
+              newLevel: existingShadow ? existingShadow.level + 1 : 1,
+            };
+
+            set({ lastExtraction: { shadow: SHADOW_MAP[finalId] ?? get().customShadows.find(s => s.id === finalId), isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } });
           }
 
           set(s => {
-            const isNormalBoss = shadowId && (shadowId.startsWith('normal_boss_') || shadowId.includes('cerberus') || shadowId.includes('igris'))
-            const newCompleted = isNormalBoss ? [...s.system.completedNormalBossIds, shadowId] : s.system.completedNormalBossIds
-            
-            const res = applyXP(s.player.xp, s.player.level, xpReward)
-            const jobChange = hadJobClassChange(s.player.level, res.level)
-            
-            let bossLevelItems: string[] = []
+            const isNormalBoss = shadowId && (shadowId.startsWith('normal_boss_') || shadowId.includes('cerberus') || shadowId.includes('igris'));
+            const newCompleted = isNormalBoss ? [...s.system.completedNormalBossIds, shadowId] : s.system.completedNormalBossIds;
+
+            const res = applyXP(s.player.xp, s.player.level, xpReward);
+            const jobChange = hadJobClassChange(s.player.level, res.level);
+
+            let bossLevelItems: string[] = [];
             if (res.leveledUp) {
-              const count = res.level % 10 === 0 ? 2 : res.level % 5 === 0 ? 1 : 0
-              for (let i = 0; i < count; i++) bossLevelItems.push(Math.random() < 0.5 ? 'lagrima_purificacao' : 'relogio_ampulheta')
+              const count = res.level % 10 === 0 ? 2 : res.level % 5 === 0 ? 1 : 0;
+              for (let i = 0; i < count; i++) {bossLevelItems.push(Math.random() < 0.5 ? 'lagrima_purificacao' : 'relogio_ampulheta');}
             }
 
             return {
@@ -1163,170 +1223,186 @@ const useGameStore = create<GameState & GameActions>()(
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1, totalBossesCompleted: (s.statistics.totalBossesCompleted ?? 0) + 1, questsByRank: { ...s.statistics.questsByRank, A: (s.statistics.questsByRank.A ?? 0) + 1 } },
               // Show simple toast ONLY for non-multiple of 5 level-ups
               levelUpToast: res.leveledUp && res.level % 5 !== 0 ? res.level : null,
-            }
-          })
+            };
+          });
 
           // Thematic loot table — specific drops per boss + generic pool
-          const dropItems: string[] = []
-          const lootMult = (1 + lootBoost)
-          const sid = shadowId ?? ''
+          const dropItems: string[] = [];
+          const lootMult = (1 + lootBoost);
+          const sid = shadowId ?? '';
 
-          const specificEntries = BOSS_LOOT_TABLE[sid] ?? []
+          const specificEntries = BOSS_LOOT_TABLE[sid] ?? [];
           specificEntries.forEach(({ itemId, chance }) => {
-            if (Math.random() < chance * lootMult) dropItems.push(itemId)
-          })
+            if (Math.random() < chance * lootMult) {dropItems.push(itemId);}
+          });
           GENERIC_BOSS_DROPS.forEach(({ itemId, chance }) => {
-            if (Math.random() < chance * lootMult) dropItems.push(itemId)
-          })
+            if (Math.random() < chance * lootMult) {dropItems.push(itemId);}
+          });
 
           if (dropItems.length > 0) {
             set((s: GameState) => {
-              const inv = [...s.player.inventory]
+              const inv = [...s.player.inventory];
               dropItems.forEach(itemId => {
-                const idx = inv.findIndex(e => e.itemId === itemId)
-                if (idx >= 0) inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 }
-                else inv.push({ itemId, quantity: 1 })
-              })
-              return { player: { ...s.player, inventory: inv } }
-            })
+                const idx = inv.findIndex(e => e.itemId === itemId);
+                if (idx >= 0) {inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 };}
+                else {inv.push({ itemId, quantity: 1 });}
+              });
+              return { player: { ...s.player, inventory: inv } };
+            });
           }
 
           // Push boss_defeated FIRST so victory screen appears before shadow extraction
-          const currQueue = get().rewardsQueue
+          const currQueue = get().rewardsQueue;
           const bossDefeatedItem = {
             type: 'boss_defeated' as const,
             id: shadowId || 'boss',
-            data: { xp: xpReward, gold: goldReward, shadowName: shadowName ?? '', leveledUpShadow, droppedItems: dropItems, bossLabel }
-          }
-          set((s: GameState & GameActions) => ({
+            data: { xp: xpReward, gold: goldReward, shadowName: shadowName ?? '', leveledUpShadow, droppedItems: dropItems, bossLabel },
+          };
+          set({
             rewardsQueue: shadowReward
               ? [bossDefeatedItem, shadowReward as any, ...currQueue]
-              : [bossDefeatedItem, ...currQueue]
-          }))
+              : [bossDefeatedItem, ...currQueue],
+          });
 
-          fireEvent('boss_defeated', { missionId: shadowId }, ref); if (shadowName) fireEvent('shadow_collected', {}, ref); checkAndUnlockAchievements(ref)
-          return { xp: xpReward, gold: goldReward, shadowName, leveledUpShadow, isNew }
+          fireEvent('boss_defeated', { missionId: shadowId }, ref); if (shadowName) {fireEvent('shadow_collected', {}, ref);} checkAndUnlockAchievements(ref);
+          return { xp: xpReward, gold: goldReward, shadowName, leveledUpShadow, isNew };
         },
 
-        setFocusModeActive(v, endTimeMs) { set((s: GameState) => ({ system: { ...s.system, focusModeActive: v, focusEndTime: endTimeMs } })) },
-        setHardcoreFocusMode(v) { set((s: GameState) => ({ system: { ...s.system, hardcoreFocusMode: v } })) },
-        setHardcorePunished(v) { set((s: GameState) => ({ system: { ...s.system, hardcorePunished: v } })) },
-        setXpBoostNext(v) { set((s: GameState) => ({ system: { ...s.system, xpBoostNext: v } })) },
-        setPenaltyReduced(v) { set((s: GameState) => ({ system: { ...s.system, penaltyReduced: v } })) },
-        removePenalty() { set((s: GameState) => ({ system: { ...s.system, hasPenalty: false, penaltyTriggered: false, penaltyQuests: [], penaltyBlockEnd: 0, focusModeActive: false, focusEndTime: undefined } })); fireEvent('penalty_cleared', {}, ref) },
-        deductGold(amount) { if (get().player.gold < amount) return false; set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold - amount }, statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + amount } })); return true },
-        toggleBlockedApp(pkg) { set((s: GameState) => ({ system: { ...s.system, blockedApps: s.system.blockedApps.includes(pkg) ? s.system.blockedApps.filter(p => p !== pkg) : [...s.system.blockedApps, pkg] } })) },
-        dismissAchievement() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'achievement') })) },
+        setFocusModeActive(v, endTimeMs) { set((s: GameState) => ({ system: { ...s.system, focusModeActive: v, focusEndTime: endTimeMs } })); },
+        setHardcoreFocusMode(v) { set((s: GameState) => ({ system: { ...s.system, hardcoreFocusMode: v } })); },
+        setHardcorePunished(v) { set((s: GameState) => ({ system: { ...s.system, hardcorePunished: v } })); },
+        setXpBoostNext(v) { set((s: GameState) => ({ system: { ...s.system, xpBoostNext: v } })); },
+        setPenaltyReduced(v) { set((s: GameState) => ({ system: { ...s.system, penaltyReduced: v } })); },
+        removePenalty() { set((s: GameState) => ({ system: { ...s.system, hasPenalty: false, penaltyTriggered: false, penaltyQuests: [], penaltyBlockEnd: 0, focusModeActive: false, focusEndTime: undefined } })); fireEvent('penalty_cleared', {}, ref); },
+        deductGold(amount) { if (get().player.gold < amount) {return false;} set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold - amount }, statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + amount } })); return true; },
+        toggleBlockedApp(pkg) { set((s: GameState) => ({ system: { ...s.system, blockedApps: s.system.blockedApps.includes(pkg) ? s.system.blockedApps.filter(p => p !== pkg) : [...s.system.blockedApps, pkg] } })); },
+        dismissAchievement() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'achievement') })); },
 
         setPomodoroState(phase, cycle, breakEnd) {
           set((_s: GameState & GameActions) => ({
             system: { ..._s.system, pomodoroPhase: phase, pomodoroCycle: cycle, pomodoroBreakEnd: breakEnd },
-          }))
+          }));
         },
-        addQuestDefinition(def) { set((s: GameState) => ({ questDictionary: [...s.questDictionary, def] })) },
-        updateQuestDefinition(id, patch) { set((s: GameState) => ({ questDictionary: s.questDictionary.map(d => d.id === id ? { ...d, ...patch } : d) })) },
-        setActiveTheme(themeId) { set((s: GameState) => ({ player: { ...s.player, activeThemeId: themeId } })) },
-        deleteQuestDefinition(id) { set((s: GameState) => ({ questDictionary: s.questDictionary.filter(d => d.id !== id) })) },
-        updateSettings(patch) { set((s: GameState) => ({ settings: { ...s.settings, ...patch } })) },
-        saveQuestRecord(questId, time, note) { set((s: GameState & GameActions) => { const prev = s.questRecords[questId]; const bestTime = time > 0 && (!prev || time < prev.bestTime) ? time : prev?.bestTime ?? 0; const history = [...(prev?.history ?? [])]; history.push({ date: new Date().toISOString(), time, note }); return { questRecords: { ...s.questRecords, [questId]: { bestTime, lastNote: note, history } } } }) },
-        dismissLevelUpReward() { set((s: GameState & GameActions) => ({ levelUpReward: null })) },
-        dismissLevelUpToast() { set((s: GameState & GameActions) => ({ levelUpToast: null })) },
-        dismissLootReward() { set((s: GameState & GameActions) => ({ currentLootReward: null })) },
-        dismissJobChangeReward() { set((s: GameState & GameActions) => ({ jobChangeReward: null })) },
-        startMissionTimer(id) { set((s: GameState & GameActions) => { const t = s.activeMissionTimers[id]; if (t && !t.isPaused) return {}; return { activeMissionTimers: { ...s.activeMissionTimers, [id]: { startTime: Date.now(), accumulatedMs: t?.accumulatedMs ?? 0, isPaused: false } } } }) },
-        pauseMissionTimer(id) { set((s: GameState) => { const t = s.activeMissionTimers[id]; if (!t || t.isPaused) return {}; return { activeMissionTimers: { ...s.activeMissionTimers, [id]: { startTime: 0, accumulatedMs: t.accumulatedMs + (Date.now() - t.startTime), isPaused: true } } } }) },
-        clearMissionTimer(id) { set((s: GameState) => { const { [id]: _, ...rest } = s.activeMissionTimers; return { activeMissionTimers: rest } }) },
-        dismissExtraction() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'shadow') })) },
-        toggleActiveShadow(id) { set((s: GameState & GameActions) => { const active = s.player.activeShadowIds; const isActive = active.includes(id); const newActive = isActive ? active.filter(a => a !== id) : active.length < 3 ? [...active, id] : active; return { player: { ...s.player, activeShadowIds: newActive } } }) },
-        setEventBossState(key, required, total) { set((s: GameState) => ({ system: { ...s.system, eventBossKey: key, eventBossCompletedIds: [], eventBossRequired: required, eventBossTotal: total, eventBossDefeated: false } })) },
-        completeEventTrial(id, key, required, total) { let completed = 0; set((s: GameState & GameActions) => { const reset = s.system.eventBossKey !== key; const nextIds = (reset ? [] : s.system.eventBossCompletedIds).includes(id) ? (reset ? [] : s.system.eventBossCompletedIds) : [...(reset ? [] : s.system.eventBossCompletedIds), id]; completed = nextIds.length; return { system: { ...s.system, eventBossKey: key, eventBossCompletedIds: nextIds, eventBossRequired: required, eventBossTotal: total } } }); return { completed, required } },
-        markEventBossDefeated(key) { set((s: GameState & GameActions) => ({ system: { ...s.system, eventBossKey: key, eventBossDefeated: true } })) },
-        setPendingKeyMission(keyId) { set((s: GameState) => ({ system: { ...s.system, pendingKeyId: keyId } })) },
-        clearPendingKeyMission() { set((s: GameState) => ({ system: { ...s.system, pendingKeyId: null } })) },
-        clearActiveDungeonBreak() { set((s: GameState) => ({ system: { ...s.system, activeDungeonBreak: null, portalCooldownEnd: Date.now() + 60 * 60_000 } })) },
-        releaseShadow(id) { const { player, customShadows } = get(); const entry = player.shadows.find(e => e.id === id); if (!entry) return { gold: 0 }; const shadow = ({ ...SHADOW_MAP, ...Object.fromEntries(customShadows.map(sh => [sh.id, sh])) })[id]; const goldGained = shadow ? getShadowReleaseGold(shadow, entry.level) : 0; set((s: GameState & GameActions) => ({ player: { ...s.player, gold: s.player.gold + goldGained, shadows: s.player.shadows.filter(e => e.id !== id), activeShadowIds: s.player.activeShadowIds.filter(a => a !== id) }, customShadows: s.customShadows.filter(sh => sh.id !== id) })); return { gold: goldGained } },
+        addQuestDefinition(def) { set((s: GameState) => ({ questDictionary: [...s.questDictionary, def] })); },
+        updateQuestDefinition(id, patch) { set((s: GameState) => ({ questDictionary: s.questDictionary.map(d => d.id === id ? { ...d, ...patch } : d) })); },
+        setActiveTheme(themeId) { set((s: GameState) => ({ player: { ...s.player, activeThemeId: themeId } })); },
+        deleteQuestDefinition(id) { set((s: GameState) => ({ questDictionary: s.questDictionary.filter(d => d.id !== id) })); },
+        updateSettings(patch) { set((s: GameState) => ({ settings: { ...s.settings, ...patch } })); },
+        saveQuestRecord(questId, time, note) { set((s: GameState & GameActions) => { const prev = s.questRecords[questId]; const bestTime = time > 0 && (!prev || time < prev.bestTime) ? time : prev?.bestTime ?? 0; const history = [...(prev?.history ?? [])]; history.push({ date: new Date().toISOString(), time, note }); return { questRecords: { ...s.questRecords, [questId]: { bestTime, lastNote: note, history } } }; }); },
+        dismissLevelUpReward() { set({ levelUpReward: null }); },
+        dismissLevelUpToast() { set({ levelUpToast: null }); },
+        dismissLootReward() { set({ currentLootReward: null }); },
+        dismissJobChangeReward() { set({ jobChangeReward: null }); },
+        startMissionTimer(id) { set((s: GameState & GameActions) => { const t = s.activeMissionTimers[id]; if (t && !t.isPaused) {return {};} return { activeMissionTimers: { ...s.activeMissionTimers, [id]: { startTime: Date.now(), accumulatedMs: t?.accumulatedMs ?? 0, isPaused: false } } }; }); },
+        pauseMissionTimer(id) { set((s: GameState) => { const t = s.activeMissionTimers[id]; if (!t || t.isPaused) {return {};} return { activeMissionTimers: { ...s.activeMissionTimers, [id]: { startTime: 0, accumulatedMs: t.accumulatedMs + (Date.now() - t.startTime), isPaused: true } } }; }); },
+        clearMissionTimer(id) {
+          set((s: GameState) => {
+            const rest = { ...s.activeMissionTimers };
+            delete rest[id];
+            return { activeMissionTimers: rest };
+          });
+        },
+        dismissExtraction() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'shadow') })); },
+        toggleActiveShadow(id) { set((s: GameState & GameActions) => { const active = s.player.activeShadowIds; const isActive = active.includes(id); const newActive = isActive ? active.filter(a => a !== id) : active.length < 3 ? [...active, id] : active; return { player: { ...s.player, activeShadowIds: newActive } }; }); },
+        setEventBossState(key, required, total) { set((s: GameState) => ({ system: { ...s.system, eventBossKey: key, eventBossCompletedIds: [], eventBossRequired: required, eventBossTotal: total, eventBossDefeated: false } })); },
+        completeEventTrial(id, key, required, total) { let completed = 0; set((s: GameState & GameActions) => { const reset = s.system.eventBossKey !== key; const nextIds = (reset ? [] : s.system.eventBossCompletedIds).includes(id) ? (reset ? [] : s.system.eventBossCompletedIds) : [...(reset ? [] : s.system.eventBossCompletedIds), id]; completed = nextIds.length; return { system: { ...s.system, eventBossKey: key, eventBossCompletedIds: nextIds, eventBossRequired: required, eventBossTotal: total } }; }); return { completed, required }; },
+        markEventBossDefeated(key) { set((s: GameState & GameActions) => ({ system: { ...s.system, eventBossKey: key, eventBossDefeated: true } })); },
+        setPendingKeyMission(keyId) { set((s: GameState) => ({ system: { ...s.system, pendingKeyId: keyId } })); },
+        clearPendingKeyMission() { set((s: GameState) => ({ system: { ...s.system, pendingKeyId: null } })); },
+        clearActiveDungeonBreak() { set((s: GameState) => ({ system: { ...s.system, activeDungeonBreak: null, portalCooldownEnd: Date.now() + 60 * 60_000 } })); },
+        releaseShadow(id) { const { player, customShadows } = get(); const entry = player.shadows.find(e => e.id === id); if (!entry) {return { gold: 0 };} const shadow = ({ ...SHADOW_MAP, ...Object.fromEntries(customShadows.map(sh => [sh.id, sh])) })[id]; const goldGained = shadow ? getShadowReleaseGold(shadow, entry.level) : 0; set((s: GameState & GameActions) => ({ player: { ...s.player, gold: s.player.gold + goldGained, shadows: s.player.shadows.filter(e => e.id !== id), activeShadowIds: s.player.activeShadowIds.filter(a => a !== id) }, customShadows: s.customShadows.filter(sh => sh.id !== id) })); return { gold: goldGained }; },
 
         regenerateSingleDailyQuest(questId) {
-          const { system, player, questDictionary, quests } = get()
-          if (system.weeklyRegenCount >= 7) return { success: false, reason: 'Limite semanal atingido (7/7).' }
-          const targetQuest = quests.find(q => q.id === questId)
-          if (!targetQuest || targetQuest.done) return { success: false, reason: 'Missão inválida.' }
-          const baseSeed = Date.now() + system.weeklyRegenCount
-          let newQuest: Quest | undefined = undefined
-          const activeIds = quests.map(q => q.id)
+          const { system, player, questDictionary, quests } = get();
+          if (system.weeklyRegenCount >= 7) {return { success: false, reason: 'Limite semanal atingido (7/7).' };}
+          const targetQuest = quests.find(q => q.id === questId);
+          if (!targetQuest || targetQuest.done) {return { success: false, reason: 'Missão inválida.' };}
+          const baseSeed = Date.now() + system.weeklyRegenCount;
+          let newQuest: Quest | undefined;
+          const activeIds = quests.map(q => q.id);
           for (let i = 0; i < 40; i++) {
-            const candidates = createDailyQuests(player.level, questDictionary, get().settings.missionDifficulty, baseSeed + i)
-            newQuest = candidates.find(q => !activeIds.includes(q.id))
-            if (newQuest) break
+            const candidates = createDailyQuests(
+              player.level,
+              questDictionary,
+              get().settings.missionDifficulty,
+              get().settings.customDailyMissions,
+              baseSeed + i
+            );
+            newQuest = candidates.find(q => !activeIds.includes(q.id));
+            if (newQuest) {break;}
           }
-          if (!newQuest) return { success: false, reason: 'Não há outras missões disponíveis.' }
+          if (!newQuest) {return { success: false, reason: 'Não há outras missões disponíveis.' };}
           // #4 Fix: use s.quests from the set() callback to avoid stale closure
-          set((s: GameState & GameActions) => ({ quests: s.quests.map(q => q.id === questId ? newQuest! : q), system: { ...s.system, weeklyRegenCount: s.system.weeklyRegenCount + 1 } }))
-          return { success: true }
+          set((s: GameState & GameActions) => ({ quests: s.quests.map(q => q.id === questId ? newQuest! : q), system: { ...s.system, weeklyRegenCount: s.system.weeklyRegenCount + 1 } }));
+          return { success: true };
         },
 
         replaceExtraQuest(questId) {
-          const { extraQuests, extraQuestRerolledIds, extraQuestUsedPoolIds, questDictionary, player } = get()
-          if (extraQuestRerolledIds.includes(questId)) return { success: false, reason: 'Já substituída hoje.' }
-          const target = extraQuests.find(q => q.id === questId)
-          if (!target || target.done) return { success: false, reason: 'Inválida.' }
-          const usedPoolIds = new Set([...extraQuestUsedPoolIds, ...extraQuests.filter(q => q.id !== questId).map(q => q.id.split('_').slice(1, -1).join('_')).filter(Boolean)])
-          const available = questDictionary.filter(def => def.type === 'pool' && !usedPoolIds.has(def.id))
-          if (available.length === 0) return { success: false, reason: 'Pool vazia.' }
-          const chosen = available[Math.floor(Math.random() * available.length)]
-          const base = defToQuest(chosen, player.level, getQuestTier(player.level))
-          const newQ = { ...base, id: `extra_${chosen.id}_${Date.now()}`, xp: Math.round(base.xp * 1.5), gold: Math.round(base.gold * 1.5) }
-          set((s: GameState) => ({ extraQuests: s.extraQuests.map(q => q.id === questId ? newQ : q), extraQuestRerolledIds: [...s.extraQuestRerolledIds, questId, newQ.id], extraQuestUsedPoolIds: [...s.extraQuestUsedPoolIds, chosen.id] }))
-          return { success: true }
+          const { extraQuests, extraQuestRerolledIds, extraQuestUsedPoolIds, questDictionary, player } = get();
+          if (extraQuestRerolledIds.includes(questId)) {return { success: false, reason: 'Já substituída hoje.' };}
+          const target = extraQuests.find(q => q.id === questId);
+          if (!target || target.done) {return { success: false, reason: 'Inválida.' };}
+          const usedPoolIds = new Set([...extraQuestUsedPoolIds, ...extraQuests.filter(q => q.id !== questId).map(q => q.id.split('_').slice(1, -1).join('_')).filter(Boolean)]);
+          const available = questDictionary.filter(def => def.type === 'pool' && !usedPoolIds.has(def.id));
+          if (available.length === 0) {return { success: false, reason: 'Pool vazia.' };}
+          const chosen = available[Math.floor(Math.random() * available.length)];
+          const base = defToQuest(chosen, player.level, getQuestTier(player.level));
+          const newQ = { ...base, id: `extra_${chosen.id}_${Date.now()}`, xp: Math.round(base.xp * 1.5), gold: Math.round(base.gold * 1.5) };
+          set((s: GameState) => ({ extraQuests: s.extraQuests.map(q => q.id === questId ? newQ : q), extraQuestRerolledIds: [...s.extraQuestRerolledIds, questId, newQ.id], extraQuestUsedPoolIds: [...s.extraQuestUsedPoolIds, chosen.id] }));
+          return { success: true };
         },
 
         generateExtraQuests() {
-          const { player, questDictionary, extraQuests, settings } = get()
-          const targetLimit = getDailyMissionTarget(player.level, settings.missionDifficulty)
-          if (extraQuests.length >= Math.min(3, targetLimit)) return { success: false, reason: 'Limite atingido.' }
-          const usedIds = new Set(extraQuests.map(q => q.id))
-          const available = questDictionary.filter(def => def.type === 'pool' && !usedIds.has(def.id))
-          if (available.length === 0) return { success: false, reason: 'Pool vazia.' }
-          const chosen = available[Math.floor(Math.random() * available.length)]
-          const base = defToQuest(chosen, player.level, getQuestTier(player.level))
-          const newQ = { ...base, id: `extra_${base.id}_${Date.now()}`, xp: Math.round(base.xp * 1.5), gold: Math.round(base.gold * 1.5) }
-          set((s: GameState) => ({ extraQuests: [...s.extraQuests, newQ] }))
-          return { success: true }
+          const { player, questDictionary, extraQuests, settings } = get();
+          const targetLimit = getDailyMissionTarget(
+            player.level,
+            settings.missionDifficulty,
+            settings.customDailyMissions
+          );
+          if (extraQuests.length >= Math.min(3, targetLimit)) {return { success: false, reason: 'Limite atingido.' };}
+          const usedIds = new Set(extraQuests.map(q => q.id));
+          const available = questDictionary.filter(def => def.type === 'pool' && !usedIds.has(def.id));
+          if (available.length === 0) {return { success: false, reason: 'Pool vazia.' };}
+          const chosen = available[Math.floor(Math.random() * available.length)];
+          const base = defToQuest(chosen, player.level, getQuestTier(player.level));
+          const newQ = { ...base, id: `extra_${base.id}_${Date.now()}`, xp: Math.round(base.xp * 1.5), gold: Math.round(base.gold * 1.5) };
+          set((s: GameState) => ({ extraQuests: [...s.extraQuests, newQ] }));
+          return { success: true };
         },
 
         completeExtraQuest(id) {
-          let leveledUp = false
+          let leveledUp = false;
           set((s: GameState & GameActions) => {
-            const quest = s.extraQuests.find(q => q.id === id)
-            if (!quest || quest.done) return {}
-            const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs)
-            const xpGain = Math.round((s.system.xpBoostNext ? quest.xp * 2 : quest.xp) * (1 + xpBoost))
-            const res = applyXP(s.player.xp, s.player.level, xpGain)
-            leveledUp = res.leveledUp
-            const isNewLevel = res.level > s.player.maxLevelReached
+            const quest = s.extraQuests.find(q => q.id === id);
+            if (!quest || quest.done) {return {};}
+            const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs);
+            const xpGain = Math.round((s.system.xpBoostNext ? quest.xp * 2 : quest.xp) * (1 + xpBoost));
+            const res = applyXP(s.player.xp, s.player.level, xpGain);
+            leveledUp = res.leveledUp;
+            const isNewLevel = res.level > s.player.maxLevelReached;
             return {
               extraQuests: s.extraQuests.map(q => q.id === id ? { ...q, done: true } : q), player: { ...s.player, xp: res.xp, level: res.level, gold: s.player.gold + Math.round(quest.gold * (1 + goldBoost)), ...getAttrXpBoost(s.player, quest.type), maxLevelReached: Math.max(s.player.maxLevelReached, res.level) },
               ...(res.leveledUp && isNewLevel ? { levelUpReward: { level: res.level, items: [] } } : {}),
               system: { ...s.system, xpBoostNext: false }, statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
-            }
-          })
-          fireEvent('quest_completed', { isLastQuest: false }, ref); 
+            };
+          });
+          fireEvent('quest_completed', { isLastQuest: false }, ref);
           fireEvent('extra_quest_completed', {}, ref);
-          const { extraQuests } = get()
+          const { extraQuests } = get();
           if (extraQuests.length > 0 && extraQuests.every(q => q.done)) {
             fireEvent('all_extra_quests_completed', {}, ref);
           }
-          Vibration.vibrate(leveledUp ? [0, 150, 50, 150, 50, 300] : 50); 
-          checkAndUnlockAchievements(ref)
-          return { leveledUp }
+          Vibration.vibrate(leveledUp ? [0, 150, 50, 150, 50, 300] : 50);
+          checkAndUnlockAchievements(ref);
+          return { leveledUp };
         },
 
         restoreBackup(data) {
-          if (!data || typeof data !== 'object') return
-          const safe: Partial<GameState> = {}
-          const allowed: Array<keyof GameState> = ['player', 'quests', 'extraQuests', 'sideQuests', 'questDictionary', 'customShadows', 'settings', 'statistics', 'system', 'lastResetDate', 'unlockedAchievements', 'achievementProgress', 'questRecords', 'questCompletions', 'activeMissionTimers']
-          for (const key of allowed) if (key in data) (safe as any)[key] = (data as any)[key]
-          set((s: GameState & GameActions) => ({ ...s, ...safe } as Partial<GameState & GameActions>))
+          if (!data || typeof data !== 'object') {return;}
+          const safe: Partial<GameState> = {};
+          const allowed: Array<keyof GameState> = ['player', 'quests', 'extraQuests', 'sideQuests', 'questDictionary', 'customShadows', 'settings', 'statistics', 'system', 'lastResetDate', 'unlockedAchievements', 'achievementProgress', 'questRecords', 'questCompletions', 'activeMissionTimers'];
+          for (const key of allowed) {if (key in data) {(safe as any)[key] = (data as any)[key];}}
+          set((s: GameState & GameActions) => ({ ...s, ...safe } as Partial<GameState & GameActions>));
         },
 
         /** @deprecated Extraction is handled atomically inside completeQuest/defeatDungeonBoss.
@@ -1336,52 +1412,52 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         checkDailyReset() {
-          get().bootSystem()
+          get().bootSystem();
         },
 
         checkDynamicPortalSpawn() {
-          const now = Date.now()
-          const s = get().system
+          const now = Date.now();
+          const s = get().system;
 
           // Clear expired active portal.
           if (s.activeDungeonBreak && now >= s.activeDungeonBreak.expiresAt) {
-            set((st: GameState) => ({ system: { ...st.system, activeDungeonBreak: null } }))
+            set((st: GameState) => ({ system: { ...st.system, activeDungeonBreak: null } }));
           }
           // Never roll while a portal is active.
-          if (get().system.activeDungeonBreak && now < (get().system.activeDungeonBreak?.expiresAt ?? 0)) return
+          if (get().system.activeDungeonBreak && now < (get().system.activeDungeonBreak?.expiresAt ?? 0)) {return;}
           // Respect cooldown after a finished portal.
-          if ((s.portalCooldownEnd ?? 0) > now) return
+          if ((s.portalCooldownEnd ?? 0) > now) {return;}
 
-          const d = new Date(now)
-          const hourKey = `${d.toDateString()}-${d.getHours()}`
-          if ((s.portalLastRollHourKey ?? '') === hourKey) return
+          const d = new Date(now);
+          const hourKey = `${d.toDateString()}-${d.getHours()}`;
+          if ((s.portalLastRollHourKey ?? '') === hourKey) {return;}
 
           // Mark this hour as already rolled (success or fail).
-          set((st: GameState) => ({ system: { ...st.system, portalLastRollHourKey: hourKey } }))
+          set((st: GameState) => ({ system: { ...st.system, portalLastRollHourKey: hourKey } }));
 
-          const dailyCap = 3
-          if ((get().system.portalDailyCount ?? 0) >= dailyCap) return
-          if (Math.random() >= 0.30) return
+          const dailyCap = 3;
+          if ((get().system.portalDailyCount ?? 0) >= dailyCap) {return;}
+          if (Math.random() >= 0.30) {return;}
 
           const questPool = get().questDictionary
             .filter(isPortalBossDefinition)
-            .map(def => ({ source: 'quest' as const, bossId: def.id }))
+            .map(def => ({ source: 'quest' as const, bossId: def.id }));
           const breakPool = RAID_BOSSES
             .filter(b => b.id.startsWith('break_boss_'))
-            .map(b => ({ source: 'break' as const, bossId: b.id }))
+            .map(b => ({ source: 'break' as const, bossId: b.id }));
 
-          const usedToday = new Set(get().system.completedNormalBossIds ?? [])
-          const combined = [...questPool, ...breakPool]
-          const available = combined.filter(p => !usedToday.has(p.bossId))
-          const pool = available.length > 0 ? available : combined
-          if (pool.length === 0) return
+          const usedToday = new Set(get().system.completedNormalBossIds ?? []);
+          const combined = [...questPool, ...breakPool];
+          const available = combined.filter(p => !usedToday.has(p.bossId));
+          const pool = available.length > 0 ? available : combined;
+          if (pool.length === 0) {return;}
 
-          const pick = pool[Math.floor(Math.random() * pool.length)]
-          const durationMin = 30 * 60_000
-          const durationMax = 3 * 60 * 60_000
-          const duration = durationMin + Math.floor(Math.random() * (durationMax - durationMin + 1))
-          const expiresAt = now + duration
-          const cooldownMs = 45 * 60_000
+          const pick = pool[Math.floor(Math.random() * pool.length)];
+          const durationMin = 30 * 60_000;
+          const durationMax = 3 * 60 * 60_000;
+          const duration = durationMin + Math.floor(Math.random() * (durationMax - durationMin + 1));
+          const expiresAt = now + duration;
+          const cooldownMs = 45 * 60_000;
 
           set((st: GameState) => ({
             system: {
@@ -1390,60 +1466,60 @@ const useGameStore = create<GameState & GameActions>()(
               portalDailyCount: (st.system.portalDailyCount ?? 0) + 1,
               portalCooldownEnd: expiresAt + cooldownMs,
             },
-          }))
+          }));
         },
 
         checkAndUnlockAchievements() {
-          checkAndUnlockAchievements(ref)
+          checkAndUnlockAchievements(ref);
         },
-      }
+      };
     },
     {
       name: 'solo-leveling-v3',
       storage: createJSONStorage(() => AsyncStorage),
       merge: (persisted: any, current: GameState & GameActions) => {
-        const data = (persisted || {}) as any
-        const rawPlayer = data.player ?? {}
-        const rawShadows = rawPlayer.shadows ?? []
-        const migratedShadows: ShadowEntry[] = rawShadows.map((s: any) => typeof s === 'string' ? { id: s, level: 1 } : s)
-        const sXp = rawPlayer.strXp ?? Math.pow(Math.max(0, (rawPlayer.str ?? 10) - 10), 2) * 5
-        const aXp = rawPlayer.agiXp ?? Math.pow(Math.max(0, (rawPlayer.agi ?? 10) - 10), 2) * 5
-        const iXp = rawPlayer.intXp ?? Math.pow(Math.max(0, (rawPlayer.int ?? 10) - 10), 2) * 5
-        const vXp = rawPlayer.vitXp ?? Math.pow(Math.max(0, (rawPlayer.vit ?? 10) - 10), 2) * 5
+        const data = (persisted || {}) as any;
+        const rawPlayer = data.player ?? {};
+        const rawShadows = rawPlayer.shadows ?? [];
+        const migratedShadows: ShadowEntry[] = rawShadows.map((s: any) => typeof s === 'string' ? { id: s, level: 1 } : s);
+        const sXp = rawPlayer.strXp ?? Math.pow(Math.max(0, (rawPlayer.str ?? 10) - 10), 2) * 5;
+        const aXp = rawPlayer.agiXp ?? Math.pow(Math.max(0, (rawPlayer.agi ?? 10) - 10), 2) * 5;
+        const iXp = rawPlayer.intXp ?? Math.pow(Math.max(0, (rawPlayer.int ?? 10) - 10), 2) * 5;
+        const vXp = rawPlayer.vitXp ?? Math.pow(Math.max(0, (rawPlayer.vit ?? 10) - 10), 2) * 5;
         return {
           ...current, ...data,
           player: { ...current.player, ...rawPlayer, strXp: sXp, agiXp: aXp, intXp: iXp, vitXp: vXp, str: attrLevelFromXP(sXp), agi: attrLevelFromXP(aXp), int: attrLevelFromXP(iXp), vit: attrLevelFromXP(vXp), shadows: migratedShadows, activeShadowIds: rawPlayer.activeShadowIds ?? [], dungeonKeys: getNewLevelKeys(rawPlayer.dungeonKeys ?? [], rawPlayer.level ?? 1) },
           system: { ...current.system, ...(data.system ?? {}) }, settings: { ...current.settings, ...(data.settings ?? {}) }, statistics: { ...current.statistics, ...(data.statistics ?? {}) }, questDictionary: data.questDictionary ?? current.questDictionary, customShadows: data.customShadows ?? current.customShadows, lastExtraction: data.lastExtraction ?? null, achievementProgress: Object.fromEntries(Object.entries(data.achievementProgress ?? {}).map(([id, val]) => [id, typeof val === 'number' ? { currentValue: val, currentTierIndex: 0 } : val])), questRecords: data.questRecords ?? {}, questCompletions: data.questCompletions ?? {}, activeMissionTimers: data.activeMissionTimers ?? {}, extraQuestRerolledIds: data.extraQuestRerolledIds ?? [], extraQuestUsedPoolIds: data.extraQuestUsedPoolIds ?? [], newAchievementIds: [],
-        }
+        };
       },
       partialize: s => ({ player: s.player, quests: s.quests, sideQuests: s.sideQuests, extraQuests: s.extraQuests, questDictionary: s.questDictionary, customShadows: s.customShadows, settings: s.settings, system: { ...s.system, penaltyTriggered: false, pendingKeyId: null }, statistics: s.statistics, lastResetDate: s.lastResetDate, unlockedAchievements: s.unlockedAchievements, achievementProgress: s.achievementProgress, questRecords: s.questRecords, questCompletions: s.questCompletions, activeMissionTimers: s.activeMissionTimers, extraQuestRerolledIds: s.extraQuestRerolledIds, extraQuestUsedPoolIds: s.extraQuestUsedPoolIds }),
     }
   )
-)
+);
 
 // ── Widget Synchronization ───────────────────────────────────────────────────
-let lastWidgetSync = 0
-const WIDGET_SYNC_THROTTLE = 5000
+let lastWidgetSync = 0;
+const WIDGET_SYNC_THROTTLE = 5000;
 
 useGameStore.subscribe((state) => {
-  const now = Date.now()
-  if (now - lastWidgetSync < WIDGET_SYNC_THROTTLE) return
-  lastWidgetSync = now
+  const now = Date.now();
+  if (now - lastWidgetSync < WIDGET_SYNC_THROTTLE) {return;}
+  lastWidgetSync = now;
   try {
-    if (!state || !state.player || !state.statistics || !state.system) return
-    const rankObj = getRank(state.player.level, state.statistics.totalCompleted, state.system.bossesDefeated, state.statistics.questsByRank)
+    if (!state || !state.player || !state.statistics || !state.system) {return;}
+    const rankObj = getRank(state.player.level, state.statistics.totalCompleted, state.system.bossesDefeated, state.statistics.questsByRank);
     const snapshot = {
       streak: state.player.currentStreak,
       dailyQuests: Array.isArray(state.quests) ? state.quests.map(q => ({ id: q.id, label: q.label, type: q.type, done: q.done })) : [],
       activeShadows: Array.isArray(state.player.activeShadowIds) ? state.player.activeShadowIds.map(id => {
-        const entry = Array.isArray(state.player.shadows) ? state.player.shadows.find(s => s.id === id) : undefined
-        const shDef = SHADOW_MAP[id] || (Array.isArray(state.customShadows) ? state.customShadows.find(s => s.id === id) : undefined)
-        return { name: shDef?.name ?? id, level: entry?.level ?? 1 }
+        const entry = Array.isArray(state.player.shadows) ? state.player.shadows.find(s => s.id === id) : undefined;
+        const shDef = SHADOW_MAP[id] || (Array.isArray(state.customShadows) ? state.customShadows.find(s => s.id === id) : undefined);
+        return { name: shDef?.name ?? id, level: entry?.level ?? 1 };
       }) : [],
-      status: { name: state.player.name, level: state.player.level, xp: state.player.xp, rank: rankObj.rank, nextRankXp: xpForLevel(state.player.level), totalCompleted: state.statistics.totalCompleted || 0 }
-    }
-    if (SharedStorage?.setWidgetData) SharedStorage.setWidgetData(JSON.stringify(snapshot))
-  } catch (err) { console.error('Failed to sync widget data:', err) }
-})
+      status: { name: state.player.name, level: state.player.level, xp: state.player.xp, rank: rankObj.rank, nextRankXp: xpForLevel(state.player.level), totalCompleted: state.statistics.totalCompleted || 0 },
+    };
+    if (SharedStorage?.setWidgetData) {SharedStorage.setWidgetData(JSON.stringify(snapshot));}
+  } catch (err) { console.error('Failed to sync widget data:', err); }
+});
 
-export default useGameStore
+export default useGameStore;

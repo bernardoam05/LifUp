@@ -1,15 +1,15 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   Animated, Easing,
-} from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { SHADOW_RANK_COLOR } from '../data/shadows'
-import type { ExtractionResult } from '../store/useGameStore'
-import { useTheme, FONT, SPACING } from '../theme'
-import { playSound } from '../utils/audioService'
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { SHADOW_RANK_COLOR } from '../data/shadows';
+import type { ExtractionResult } from '../store/useGameStore';
+import { useTheme, FONT, SPACING } from '../theme';
+import { playSound } from '../utils/audioService';
 
-import SoloLevelingModal from './SoloLevelingModal'
+import SoloLevelingModal from './SoloLevelingModal';
 
 // Rank labels
 const RANK_LABELS: Record<string, string> = {
@@ -18,7 +18,7 @@ const RANK_LABELS: Record<string, string> = {
   Knight: 'CAVALEIRO',
   Commander: 'COMANDANTE',
   Marshal: 'MARECHAL',
-}
+};
 
 interface Props {
   result: ExtractionResult
@@ -26,41 +26,23 @@ interface Props {
 }
 
 export default function ExtractionModal({ result, onDismiss }: Props) {
-  const C = useTheme()
-  const st = React.useMemo(() => getStyles(C), [C])
-  const shadow = result?.shadow
-  const isLevelUp = result?.isLevelUp
-  const newLevel = result?.newLevel
-
-
-  if (!shadow) return null
-
-  const isCustom = (shadow as any).type === 'Custom'
-  const isAchievement = shadow?.unlockMethod?.type === 'achievement'
-  const rankColor = isCustom ? C.purple : (SHADOW_RANK_COLOR[shadow?.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.text.secondary)
-  const rankLabel = RANK_LABELS[shadow?.rank] ?? shadow?.rank?.toUpperCase() ?? ''
-
-  // Determine friendly origin label
-  const originLabel = (() => {
-    if (isCustom) return 'CRIADA NA FORJA'
-    if (shadow.unlockMethod?.type === 'achievement') return 'CONQUISTA DESBLOQUEADA'
-    if (shadow.unlockMethod?.type === 'boss_drop') return 'QUEDA DE BOSS'
-    if (shadow.unlockMethod?.type === 'shop') return 'COMPRA NA LOJA'
-    // Default: standard extraction from completing all daily quests
-    return 'EXTRAÇÃO DIÁRIA'
-  })()
+  const C = useTheme();
+  const st = React.useMemo(() => getStyles(C), [C]);
+  const shadow = result?.shadow;
+  const isLevelUp = result?.isLevelUp;
+  const newLevel = result?.newLevel;
 
   // Animations
-  const glowAnim = useRef(new Animated.Value(0)).current
-  const slideAnim = useRef(new Animated.Value(60)).current
-  const fadeAnim = useRef(new Animated.Value(0)).current
-  const iconScaleAnim = useRef(new Animated.Value(0)).current
-  const glitchAnim = useRef(new Animated.Value(0)).current
-  const ariseAnim = useRef(new Animated.Value(0)).current
-  const ariseScale = useRef(new Animated.Value(0.2)).current
-  const poolAnim = useRef(new Animated.Value(0)).current
+  const glowAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(60)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const iconScaleAnim = useRef(new Animated.Value(0)).current;
+  const ariseAnim = useRef(new Animated.Value(0)).current;
+  const ariseScale = useRef(new Animated.Value(0.2)).current;
+  const poolAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    if (!shadow) {return;}
     // Stage 1: "ARISE" Text
     Animated.sequence([
       Animated.delay(200),
@@ -72,19 +54,19 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
       Animated.timing(ariseAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
     ]).start(() => {
       // Stage 2: Reveal Card
-      playSound('shadow')
+      playSound('shadow');
 
       Animated.parallel([
         Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
         Animated.timing(slideAnim, { toValue: 0, duration: 700, easing: Easing.out(Easing.back(1.5)), useNativeDriver: true }),
         Animated.timing(poolAnim, { toValue: 1, duration: 800, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-      ]).start()
+      ]).start();
 
       // icon scale bounce
       setTimeout(() => {
-        Animated.spring(iconScaleAnim, { toValue: 1, friction: 5, tension: 100, useNativeDriver: true }).start()
-      }, 100)
-    })
+        Animated.spring(iconScaleAnim, { toValue: 1, friction: 5, tension: 100, useNativeDriver: true }).start();
+      }, 100);
+    });
 
     // Removed Glitch flicker for epilepsy safety
 
@@ -94,11 +76,27 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
         Animated.timing(glowAnim, { toValue: 1, duration: 2500, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
         Animated.timing(glowAnim, { toValue: 0, duration: 2500, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
       ])
-    ).start()
-  }, [])
+    ).start();
+  }, [ariseAnim, ariseScale, fadeAnim, glowAnim, iconScaleAnim, poolAnim, shadow, slideAnim]);
 
-  const glowOpacity = glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] })
-  const glitchOpacity = 0 // Removed glitch
+  if (!shadow) {return null;}
+
+  const isCustom = (shadow as any).type === 'Custom';
+  const isAchievement = shadow?.unlockMethod?.type === 'achievement';
+  const rankColor = isCustom ? C.purple : (SHADOW_RANK_COLOR[shadow?.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.text.secondary);
+  const rankLabel = RANK_LABELS[shadow?.rank] ?? shadow?.rank?.toUpperCase() ?? '';
+
+  // Determine friendly origin label
+  const originLabel = (() => {
+    if (isCustom) {return 'CRIADA NA FORJA';}
+    if (shadow.unlockMethod?.type === 'achievement') {return 'CONQUISTA DESBLOQUEADA';}
+    if (shadow.unlockMethod?.type === 'boss_drop') {return 'QUEDA DE BOSS';}
+    if (shadow.unlockMethod?.type === 'shop') {return 'COMPRA NA LOJA';}
+    // Default: standard extraction from completing all daily quests
+    return 'EXTRAÇÃO DIÁRIA';
+  })();
+
+  const glowOpacity = glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] });
 
   return (
     <SoloLevelingModal visible onRequestClose={onDismiss}>
@@ -206,7 +204,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
       </Animated.View>
       </View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -505,4 +503,4 @@ const getStyles = (C: any) => StyleSheet.create({
     borderRadius: 16,
     borderWidth: 2,
   },
-})
+});

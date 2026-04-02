@@ -1,20 +1,20 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import SoloLevelingModal from '../components/SoloLevelingModal'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { ShadowEntry, getShadowReleaseGold } from '../store/useGameStore'
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import SoloLevelingModal from '../components/SoloLevelingModal';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useGameStore, { ShadowEntry, getShadowReleaseGold } from '../store/useGameStore';
 import {
   SHADOW_MAP, SHADOW_BY_RANK, SHADOW_RANK_COLOR,
   Shadow, ShadowRank, PassiveEffectType,
-} from '../data/shadows'
-import { useTheme, FONT, SPACING } from '../theme'
+} from '../data/shadows';
+import { useTheme, FONT, SPACING } from '../theme';
 
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 
-const MAX_ACTIVE = 3
-const RANK_ORDER: ShadowRank[] = ['Marshal', 'Commander', 'Knight', 'Elite', 'Normal']
+const MAX_ACTIVE = 3;
+const RANK_ORDER: ShadowRank[] = ['Marshal', 'Commander', 'Knight', 'Elite', 'Normal'];
 
 const RANK_LABELS: Record<ShadowRank, string> = {
   Marshal:   'MARECHAL',
@@ -22,7 +22,7 @@ const RANK_LABELS: Record<ShadowRank, string> = {
   Knight:    'CAVALEIRO',
   Elite:     'ELITE',
   Normal:    'NORMAL',
-}
+};
 
 const RANK_SHORT: Record<ShadowRank, string> = {
   Marshal:   'MAR',
@@ -30,7 +30,7 @@ const RANK_SHORT: Record<ShadowRank, string> = {
   Knight:    'CAV',
   Elite:     'ELI',
   Normal:    'NOR',
-}
+};
 
 const PASSIVE_LABELS: Record<PassiveEffectType, string> = {
   gold_boost:        'Bónus de Gold',
@@ -45,7 +45,7 @@ const PASSIVE_LABELS: Record<PassiveEffectType, string> = {
   loot_perception:  'Percepção de Loot',
   daily_bonus:      'XP Diário Grátis',
   all_stats_boost:  'Bónus Global (XP/Gold)',
-}
+};
 
 function formatPassiveValue(type: PassiveEffectType, value: number): string {
   switch (type) {
@@ -53,35 +53,35 @@ function formatPassiveValue(type: PassiveEffectType, value: number): string {
     case 'xp_boost':
     case 'boss_bonus_xp':
     case 'penalty_reduce':
-      return `+${Math.round(value * 100)}%`
+      return `+${Math.round(value * 100)}%`;
     case 'shop_discount':
-      return `-${Math.round(value * 100)}%`
+      return `-${Math.round(value * 100)}%`;
     case 'penalty_immunity':
     case 'streak_protect':
-      return `${value}× / semana`
+      return `${value}× / semana`;
     case 'focus_mastery':
-      return `-${Math.round(value * 100)}% tempo`
+      return `-${Math.round(value * 100)}% tempo`;
     case 'arise_resonance':
-      return `+${Math.round(value * 100)}% extração`
+      return `+${Math.round(value * 100)}% extração`;
     case 'loot_perception':
-      return `+${Math.round(value * 100)}% loot`
+      return `+${Math.round(value * 100)}% loot`;
     case 'daily_bonus':
-      return `+${value} XP / dia`
+      return `+${value} XP / dia`;
     case 'all_stats_boost':
-      return `+${Math.round(value * 100)}% Global`
+      return `+${Math.round(value * 100)}% Global`;
     default:
-      return String(value)
+      return String(value);
   }
 }
 
 function scaledValue(base: number, level: number): number {
-  return base * (1 + (level - 1) * 0.2)
+  return base * (1 + (level - 1) * 0.2);
 }
 
 // ── Locked screen ─────────────────────────────────────────────────────────────
 
 function LockedScreen({ currentLevel, C }: { currentLevel: number; C: any }) {
-  const lk = getLKStyles(C)
+  const lk = getLKStyles(C);
 
   return (
     <View style={lk.container}>
@@ -91,7 +91,7 @@ function LockedScreen({ currentLevel, C }: { currentLevel: number; C: any }) {
       <Text style={lk.title}>SALA DO TRONO</Text>
       <View style={lk.divider} />
       <Text style={lk.body}>
-        {"O teu corpo ainda é demasiado\nfraco para suportar a Morte.\n\nAtinge o Nível 10 para o\nDespertar."}
+        {'O teu corpo ainda é demasiado\nfraco para suportar a Morte.\n\nAtinge o Nível 10 para o\nDespertar.'}
       </Text>
       <View style={lk.progressRow}>
         <View style={lk.progressTrack}>
@@ -104,7 +104,7 @@ function LockedScreen({ currentLevel, C }: { currentLevel: number; C: any }) {
         <Text style={lk.sealTxt}> DESPERTAR BLOQUEADO</Text>
       </View>
     </View>
-  )
+  );
 }
 
 // ── Passive summary card ───────────────────────────────────────────────────────
@@ -121,25 +121,25 @@ function PassiveSummaryCard({
   shadowLookup:    Record<string, Shadow>
   C: any
 }) {
-  const ps = getPSStyles(C)
+  const ps = getPSStyles(C);
 
-  const activeEntries = entries.filter(e => activeShadowIds.includes(e.id))
-  if (activeEntries.length === 0) return (
+  const activeEntries = entries.filter(e => activeShadowIds.includes(e.id));
+  if (activeEntries.length === 0) {return (
     <View style={ps.emptyContainer}>
       <Icon name="sword-off" size={14} color={C.dimmed} />
       <Text style={ps.emptyTxt}> Nenhuma sombra na Vanguarda — passivas inativas</Text>
     </View>
-  )
+  );}
 
-  const totals: Partial<Record<PassiveEffectType, number>> = {}
+  const totals: Partial<Record<PassiveEffectType, number>> = {};
   for (const { id, level } of activeEntries) {
-    const shadow = shadowLookup[id]
-    if (!shadow?.passiveEffect) continue
-    const { type, value } = shadow.passiveEffect
-    totals[type] = (totals[type] ?? 0) + scaledValue(value, level)
+    const shadow = shadowLookup[id];
+    if (!shadow?.passiveEffect) {continue;}
+    const { type, value } = shadow.passiveEffect;
+    totals[type] = (totals[type] ?? 0) + scaledValue(value, level);
   }
 
-  const rows = Object.entries(totals) as [PassiveEffectType, number][]
+  const rows = Object.entries(totals) as [PassiveEffectType, number][];
 
   return (
     <View style={ps.container}>
@@ -167,7 +167,7 @@ function PassiveSummaryCard({
       </View>
       <Text style={ps.note}>{entries.length} sombras na coleção · {activeEntries.length} na Vanguarda</Text>
     </View>
-  )
+  );
 }
 
 // ── Release confirmation modal ─────────────────────────────────────────────────
@@ -186,10 +186,10 @@ function ReleaseConfirmModal({
   onCancel:  () => void
   C: any
 }) {
-  const rel = getRELStyles(C)
+  const rel = getRELStyles(C);
 
-  const isCustom   = (shadow as any).type === 'Custom'
-  const rankColor  = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank]
+  const isCustom   = (shadow as any).type === 'Custom';
+  const rankColor  = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank];
 
   return (
     <SoloLevelingModal visible onRequestClose={onCancel}>
@@ -216,7 +216,7 @@ function ReleaseConfirmModal({
         </View>
       </View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 // ── Shadow detail modal ────────────────────────────────────────────────────────
@@ -226,20 +226,17 @@ function ShadowDetailModal({
   level,
   isActive,
   canEquipMore,
-  shadowLookup,
   onClose,
   onToggleActive,
   onToggleFavorite,
   onRelease,
   isFavorite,
   C,
-
 }: {
   shadow:       Shadow
   level:        number
   isActive:     boolean
   canEquipMore: boolean
-  shadowLookup: Record<string, Shadow>
   onClose:      () => void
   onToggleActive: () => void
   onToggleFavorite: () => void
@@ -247,13 +244,13 @@ function ShadowDetailModal({
   isFavorite:   boolean
   C: any
 }) {
-  const dm = getDMStyles(C)
+  const dm = getDMStyles(C);
 
-  const isCustom   = (shadow as any).type === 'Custom'
-  const rankColor  = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank]
-  const baseValue  = shadow.passiveEffect.value
-  const scaledVal  = scaledValue(baseValue, level)
-  const releaseGold = getShadowReleaseGold(shadow, level)
+  const isCustom   = (shadow as any).type === 'Custom';
+  const rankColor  = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank];
+  const baseValue  = shadow.passiveEffect.value;
+  const scaledVal  = scaledValue(baseValue, level);
+  const releaseGold = getShadowReleaseGold(shadow, level);
 
   return (
     <SoloLevelingModal visible onRequestClose={onClose}>
@@ -270,7 +267,7 @@ function ShadowDetailModal({
           onPress={onToggleFavorite}
           activeOpacity={0.7}
         >
-          <Icon name={isFavorite ? "star" : "star-outline"} size={22} color={isFavorite ? "#facc15" : C.muted} />
+          <Icon name={isFavorite ? 'star' : 'star-outline'} size={22} color={isFavorite ? '#facc15' : C.muted} />
         </TouchableOpacity>
 
         <View style={[dm.iconWrap, { backgroundColor: rankColor + '18', borderColor: rankColor + '55' }]}>
@@ -366,7 +363,7 @@ function ShadowDetailModal({
         </TouchableOpacity>
       </View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 // ── Shadow card ───────────────────────────────────────────────────────────────
@@ -386,11 +383,11 @@ function ShadowCard({
   onPress:  () => void
   C: any
 }) {
-  const sc = getSCStyles(C)
+  const sc = getSCStyles(C);
 
-  const isCustom  = (shadow as any).type === 'Custom'
-  const rankColor = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank]
-  const scaledVal = scaledValue(shadow.passiveEffect.value, level)
+  const isCustom  = (shadow as any).type === 'Custom';
+  const rankColor = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank];
+  const scaledVal = scaledValue(shadow.passiveEffect.value, level);
 
   return (
     <TouchableOpacity
@@ -407,7 +404,7 @@ function ShadowCard({
       <View style={[sc.iconWrap, { backgroundColor: rankColor + '12', borderColor: rankColor + '44' }]}>
         <Icon name={shadow.icon} size={28} color={rankColor} />
       </View>
-      
+
       <View style={sc.info}>
         <View style={sc.nameRow}>
           {isFavorite && <Icon name="star" size={12} color={C.gold} />}
@@ -417,14 +414,14 @@ function ShadowCard({
           {shadow.passiveEffect.description.replace('{val}', formatPassiveValue(shadow.passiveEffect.type, scaledVal))}
         </Text>
       </View>
- 
+
       <View style={sc.rightSide}>
         <View style={[sc.rankBadge, { borderColor: rankColor + '66', backgroundColor: rankColor + '12' }]}>
           <Text style={[sc.rankTxt, { color: rankColor }]}>
             {isCustom ? 'CUSTOM' : RANK_LABELS[shadow.rank as ShadowRank].toUpperCase()}
           </Text>
         </View>
-        
+
         {isActive ? (
           <View style={sc.activeIndicator}>
             <Icon name="shield-sword" size={10} color={C.gold} />
@@ -435,61 +432,61 @@ function ShadowCard({
         )}
       </View>
     </TouchableOpacity>
-  )
+  );
 }
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function ShadowsScreen() {
-  const C = useTheme()
-  const s = getStyles(C)
+  const C = useTheme();
+  const s = getStyles(C);
 
-  const level            = useGameStore(s => s.player.level)
-  const shadowEntries    = useGameStore(s => s.player.shadows) as ShadowEntry[]
-  const activeShadowIds  = useGameStore(s => s.player.activeShadowIds)
-  const customShadows    = useGameStore(s => s.customShadows)
-  const toggleActive     = useGameStore(s => s.toggleActiveShadow)
-  const toggleFavorite   = useGameStore(s => s.toggleFavoriteShadow)
-  const releaseShadow    = useGameStore(s => s.releaseShadow)
+  const level            = useGameStore(st => st.player.level);
+  const shadowEntries    = useGameStore(st => st.player.shadows) as ShadowEntry[];
+  const activeShadowIds  = useGameStore(st => st.player.activeShadowIds);
+  const customShadows    = useGameStore(st => st.customShadows);
+  const toggleActive     = useGameStore(st => st.toggleActiveShadow);
+  const toggleFavorite   = useGameStore(st => st.toggleFavoriteShadow);
+  const releaseShadow    = useGameStore(st => st.releaseShadow);
 
-  const [selected, setSelected]   = useState<{ shadow: Shadow; level: number } | null>(null)
-  const [toRelease, setToRelease] = useState<{ shadow: Shadow; level: number; gold: number } | null>(null)
+  const [selected, setSelected]   = useState<{ shadow: Shadow; level: number } | null>(null);
+  const [toRelease, setToRelease] = useState<{ shadow: Shadow; level: number; gold: number } | null>(null);
 
   if (level < 10) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['bottom']}>
         <LockedScreen currentLevel={level} C={C} />
       </SafeAreaView>
-    )
+    );
   }
 
 
   // Build unified lookup: standard + custom shadows
-  const customMap: Record<string, Shadow> = {}
-  for (const sh of customShadows) customMap[sh.id] = sh
-  const shadowLookup: Record<string, Shadow> = { ...SHADOW_MAP, ...customMap }
+  const customMap: Record<string, Shadow> = {};
+  for (const sh of customShadows) {customMap[sh.id] = sh;}
+  const shadowLookup: Record<string, Shadow> = { ...SHADOW_MAP, ...customMap };
 
   // Separate entries into standard and custom
-  const standardEntries = shadowEntries.filter(e => !customMap[e.id] && SHADOW_MAP[e.id])
-  const customEntries   = shadowEntries.filter(e => !!customMap[e.id])
+  const standardEntries = shadowEntries.filter(e => !customMap[e.id] && SHADOW_MAP[e.id]);
+  const customEntries   = shadowEntries.filter(e => !!customMap[e.id]);
 
   // Level map
-  const levelMap: Record<string, number> = {}
-  for (const e of shadowEntries) levelMap[e.id] = e.level
+  const levelMap: Record<string, number> = {};
+  for (const e of shadowEntries) {levelMap[e.id] = e.level;}
 
-  const totalCount   = shadowEntries.length
-  const canEquipMore = activeShadowIds.length < MAX_ACTIVE
+  const totalCount   = shadowEntries.length;
+  const canEquipMore = activeShadowIds.length < MAX_ACTIVE;
 
   function openRelease(shadow: Shadow, lvl: number) {
-    setSelected(null)
-    const gold = getShadowReleaseGold(shadow, lvl)
-    setToRelease({ shadow, level: lvl, gold })
+    setSelected(null);
+    const gold = getShadowReleaseGold(shadow, lvl);
+    setToRelease({ shadow, level: lvl, gold });
   }
 
   function confirmRelease() {
-    if (!toRelease) return
-    releaseShadow(toRelease.shadow.id)
-    setToRelease(null)
+    if (!toRelease) {return;}
+    releaseShadow(toRelease.shadow.id);
+    setToRelease(null);
   }
 
   return (
@@ -504,7 +501,7 @@ export default function ShadowsScreen() {
             <Icon name="ghost-outline" size={52} color="#a855f733" />
             <Text style={s.emptyTitle}>EXÉRCITO VAZIO</Text>
             <Text style={s.emptyDesc}>
-              {"Derrota Bosses nos Portais Dinâmicos e Raids para\nconquistar sombras para o teu exército."}
+              {'Derrota Bosses nos Portais Dinâmicos e Raids para\nconquistar sombras para o teu exército.'}
             </Text>
           </View>
         ) : (
@@ -521,9 +518,9 @@ export default function ShadowsScreen() {
             {RANK_ORDER.map(rank => {
               const shadows = SHADOW_BY_RANK[rank].filter(sh =>
                 standardEntries.some(e => e.id === sh.id)
-              )
-              if (shadows.length === 0) return null
-              const rankColor = SHADOW_RANK_COLOR[rank]
+              );
+              if (shadows.length === 0) {return null;}
+              const rankColor = SHADOW_RANK_COLOR[rank];
               return (
                 <View key={rank} style={s.rankGroup}>
                   <View style={s.rankHeader}>
@@ -546,7 +543,7 @@ export default function ShadowsScreen() {
 
                   ))}
                 </View>
-              )
+              );
             })}
 
             {/* Custom shadows group */}
@@ -560,8 +557,8 @@ export default function ShadowsScreen() {
                   </View>
                 </View>
                 {customEntries.map(({ id, level: lvl }) => {
-                  const shadow = customMap[id]
-                  if (!shadow) return null
+                  const shadow = customMap[id];
+                  if (!shadow) {return null;}
                   return (
                     <ShadowCard
                       key={id}
@@ -573,7 +570,7 @@ export default function ShadowsScreen() {
                       C={C}
                     />
 
-                  )
+                  );
                 })}
               </View>
             )}
@@ -589,11 +586,10 @@ export default function ShadowsScreen() {
           isActive={activeShadowIds.includes(selected.shadow.id)}
           isFavorite={!!shadowEntries.find(e => e.id === selected.shadow.id)?.isFavorite}
           canEquipMore={canEquipMore}
-          shadowLookup={shadowLookup}
           onClose={() => setSelected(null)}
           onToggleActive={() => {
-            toggleActive(selected.shadow.id)
-            setSelected(null)
+            toggleActive(selected.shadow.id);
+            setSelected(null);
           }}
           onToggleFavorite={() => toggleFavorite(selected.shadow.id)}
           onRelease={() => openRelease(selected.shadow, selected.level)}
@@ -613,7 +609,7 @@ export default function ShadowsScreen() {
 
       )}
     </SafeAreaView>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -636,7 +632,7 @@ const getStyles = (C: any) => StyleSheet.create({
   rankLabel:      { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2, flex: 1 },
   rankCountBadge: { borderWidth: 1, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2 },
   rankCount:      { fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '700' },
-})
+});
 
 const getLKStyles = (C: any) => StyleSheet.create({
   container:    { flex: 1, alignItems: 'center', justifyContent: 'center', padding: SPACING.xl, backgroundColor: C.bg },
@@ -651,7 +647,7 @@ const getLKStyles = (C: any) => StyleSheet.create({
   progressTxt:  { color: C.neonRed + '88', fontFamily: FONT.orbitron, fontSize: 9 },
   sealRow:      { flexDirection: 'row', alignItems: 'center' },
   sealTxt:      { color: C.neonRed + '44', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
-})
+});
 
 const getPSStyles = (C: any) => StyleSheet.create({
   container:      { backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: C.gold + '44', padding: SPACING.md, marginBottom: SPACING.lg },
@@ -668,7 +664,7 @@ const getPSStyles = (C: any) => StyleSheet.create({
   vanguardLvl:    { position: 'absolute', bottom: -5, right: -5, backgroundColor: C.bg, borderRadius: 4, paddingHorizontal: 4, borderWidth: 1, borderColor: C.border },
   vanguardLvlTxt: { color: C.muted, fontSize: 7, fontWeight: '900', fontFamily: FONT.orbitron },
   note:           { color: C.dimmed, fontSize: 10, fontStyle: 'italic' },
-})
+});
 
 const getSCStyles = (C: any) => StyleSheet.create({
   card: {
@@ -746,7 +742,7 @@ const getSCStyles = (C: any) => StyleSheet.create({
     borderWidth: 1,
     borderColor: C.gold + '44',
   },
-})
+});
 
 const getDMStyles = (C: any) => StyleSheet.create({
   overlay:      { flex: 1, backgroundColor: C.bg + 'ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
@@ -774,7 +770,7 @@ const getDMStyles = (C: any) => StyleSheet.create({
   releaseTxt:   { fontFamily: FONT.orbitron, fontSize: 9, color: C.neonRed, letterSpacing: 1 },
   closeBtn:     { borderWidth: 1, borderRadius: 10, paddingVertical: 12, paddingHorizontal: SPACING.xl },
   closeTxt:     { fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
-})
+});
 
 const getRELStyles = (C: any) => StyleSheet.create({
   overlay:    { flex: 1, backgroundColor: C.bg + 'ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
@@ -788,5 +784,4 @@ const getRELStyles = (C: any) => StyleSheet.create({
   cancelTxt:  { fontFamily: FONT.orbitron, fontSize: 10, color: C.muted, letterSpacing: 1 },
   confirmBtn: { flex: 1, flexDirection: 'row', borderWidth: 1, borderColor: C.neonRed + '66', borderRadius: 8, paddingVertical: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: C.neonRed + '10' },
   confirmTxt: { fontFamily: FONT.orbitron, fontSize: 10, color: C.neonRed, fontWeight: '700' },
-})
-
+});

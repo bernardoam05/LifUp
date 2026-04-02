@@ -1,5 +1,5 @@
-import type { Shadow, PassiveEffectType, ShadowRank } from '../data/shadows'
-import type { AchievementProg, EventTrigger } from '../data/achievements'
+import type { Shadow } from '../data/shadows';
+import type { AchievementProg, EventTrigger } from '../data/achievements';
 
 // ── XP / Rank ──────────────────────────────────────────────────────────────────
 
@@ -18,6 +18,7 @@ export type Quest = {
   xp: number
   gold: number
   type: 'training' | 'knowledge' | 'focus' | 'gps' | 'forbidden' | 'limit' | 'pomodoro'
+  unit?: string
   failed?: boolean
   currentValue?: number
   targetValue?: number
@@ -39,14 +40,16 @@ export type SideQuest = {
   note?: string
 }
 
-export type PunishmentIntensity = 'light' | 'medium' | 'hardcore'
-export type MissionDifficulty = 'easy' | 'normal' | 'hard'
+export type PunishmentIntensity = 'light' | 'medium' | 'hardcore' | 'custom'
+export type MissionDifficulty = 'easy' | 'normal' | 'hard' | 'custom'
 
 export type GameSettings = {
   notifications: boolean
   sound: boolean
   punishmentIntensity: PunishmentIntensity
   missionDifficulty: MissionDifficulty
+  customDailyMissions: number
+  customPenaltyHours: number
   restDay: boolean   // user-activated rest day for today
   lastFocusDuration: { hours: number; minutes: number }
   dynamicTheme: boolean // Rank-based theme colors
@@ -62,6 +65,8 @@ export const INITIAL_SETTINGS: GameSettings = {
   sound: true,
   punishmentIntensity: 'medium',
   missionDifficulty: 'normal',
+  customDailyMissions: 3,
+  customPenaltyHours: 6,
   restDay: false,
   lastFocusDuration: { hours: 0, minutes: 25 },
   dynamicTheme: true,
@@ -70,12 +75,12 @@ export const INITIAL_SETTINGS: GameSettings = {
   pomodoroWorkMins: 25,
   pomodoroBreakMins: 5,
   pomodoroRounds: 4,
-}
+};
 
 export const INITIAL_SHOP_STOCKS: Record<string, number> = {
   system_pass: 5,
   lagrima_purificacao: 3,
-}
+};
 
 export const INITIAL_PLAYER: Player = {
   name: 'Hunter',
@@ -93,7 +98,7 @@ export const INITIAL_PLAYER: Player = {
   maxLevelReached: 1,
   unlockedThemes: ['theme_e_rank'],
   activeThemeId: 'theme_e_rank',
-}
+};
 
 // ── Shadow entry (owned shadow with level) ────────────────────────────────────
 
@@ -168,7 +173,7 @@ export const INITIAL_STATS: Statistics = {
   totalSideCompleted: 0,
   pomodoroSessionsToday: 0,
   totalPomodoroSessions: 0,
-}
+};
 
 // ── Player ─────────────────────────────────────────────────────────────────────
 

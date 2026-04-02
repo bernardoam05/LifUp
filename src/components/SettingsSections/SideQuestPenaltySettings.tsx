@@ -1,7 +1,7 @@
-import React from 'react'
-import { View, Text, Switch, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme, SPACING, FONT } from '../../theme'
+import React from 'react';
+import { View, Text, Switch, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme, SPACING, FONT } from '../../theme';
 
 interface SideQuestPenaltySettingsProps {
   sideQuestPenalize: boolean
@@ -12,8 +12,8 @@ const SideQuestPenaltySettings = ({
   sideQuestPenalize,
   onToggle,
 }: SideQuestPenaltySettingsProps) => {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View>
@@ -50,8 +50,8 @@ const SideQuestPenaltySettings = ({
         />
       </View>
     </View>
-  )
-}
+  );
+};
 
 const getStyles = (C: any) => StyleSheet.create({
   sectionHeader: {
@@ -94,6 +94,6 @@ const getStyles = (C: any) => StyleSheet.create({
   rowInfo: { flex: 1 },
   rowLabel: { fontSize: 13, fontWeight: '600' },
   rowSub: { color: C.dimmed, fontSize: 11, marginTop: 2 },
-})
+});
 
-export default SideQuestPenaltySettings
+export default SideQuestPenaltySettings;

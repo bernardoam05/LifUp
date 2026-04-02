@@ -1,4 +1,4 @@
-import { Shadow } from './shadows_types'
+import { Shadow } from './shadows_types';
 
 export const SHADOWS_ACHIEVEMENT: Shadow[] = [
   {
@@ -181,5 +181,5 @@ export const SHADOWS_ACHIEVEMENT: Shadow[] = [
     lore: '"Um eco de alguém que um dia salvou a humanidade. Reconhece em ti o mesmo potencial divino."',
     icon: 'crown', color: '#ef4444',
     unlockMethod: { type: 'achievement', id: 'quests_perfect' },
-  }
-]
+  },
+];

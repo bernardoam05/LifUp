@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import MissionHistoryModal from './MissionHistoryModal'
-import { CATALOG_MAP } from '../data/shopItems'
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MissionHistoryModal from './MissionHistoryModal';
+import { CATALOG_MAP } from '../data/shopItems';
 
 // Renders a MCI icon with 'help-circle' as fallback for unknown icon names
 const KNOWN_SAFE = new Set([
@@ -18,34 +18,33 @@ const KNOWN_SAFE = new Set([
   'lock-outline','check-circle','star-circle-outline','trophy-outline','timer-sand',
   'cash-multiple','check',
   'snowflake','skull','weather-sunny','star-four-points','heart','mask','rabbit','flower','corn','dragon',
-])
+]);
 
 function SafeIcon({ name, size, color, style }: { name: string; size: number; color: string; style?: object }) {
-  const safeName = KNOWN_SAFE.has(name) ? name : 'help-circle'
-  return <Icon name={safeName} size={size} color={color} style={style} />
+  const safeName = KNOWN_SAFE.has(name) ? name : 'help-circle';
+  return <Icon name={safeName} size={size} color={color} style={style} />;
 }
-import useGameStore, { getRank, xpForLevel, RankKey, LevelUpReward, CLASS_REQUIREMENTS } from '../store/useGameStore'
-import { getJobClass } from '../store/helpers'
+import useGameStore, { getRank, xpForLevel, RankKey, LevelUpReward, CLASS_REQUIREMENTS } from '../store/useGameStore';
+import { getJobClass } from '../store/helpers';
 import {
   ACHIEVEMENTS_CATALOG, Achievement, AchievementProg,
   TIER_COLORS, getActiveTier, getCompletedTier, isAchievementMaxed, getTierIndex,
-} from '../data/achievements'
-import { SHADOW_MAP, SHADOW_RANK_COLOR } from '../data/shadows'
-import SharedStorage from '../native/SharedStorage'
-import SoloLevelingModal from '../components/SoloLevelingModal'
-import { useTheme, FONT, SPACING, RANK_COLORS as THEME_RANK_COLORS } from '../theme'
-import RankModal from '../components/RankModal'
+} from '../data/achievements';
+import { SHADOW_MAP, SHADOW_RANK_COLOR } from '../data/shadows';
+import SoloLevelingModal from '../components/SoloLevelingModal';
+import { useTheme, FONT, SPACING, RANK_COLORS as THEME_RANK_COLORS } from '../theme';
+import RankModal from '../components/RankModal';
 
 // Format minutes into "Xh Ym" for focus achievements
 function formatMinutes(min: number): string {
-  const h = Math.floor(min / 60)
-  const m = min % 60
-  return h > 0 ? (m > 0 ? `${h}h ${m}m` : `${h}h`) : `${m}m`
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h > 0 ? (m > 0 ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
 }
 
 function fmtVal(a: Achievement, val: number): string {
-  if (a.conditionType === 'focus_total_hours') return formatMinutes(val)
-  return String(val)
+  if (a.conditionType === 'focus_total_hours') {return formatMinutes(val);}
+  return String(val);
 }
 
 // ── Stat bar ───────────────────────────────────────────────────────────────────
@@ -56,9 +55,9 @@ function StatBar({ label, level, C }: { label: string; level: number; C: any }) 
     AGI: { icon: 'run-fast',    color: C.green },
     INT: { icon: 'brain',       color: C.neonBlue },
     VIT: { icon: 'heart-pulse', color: C.purple },
-  }
-  const { icon, color } = ATTR_ICONS[label as keyof typeof ATTR_ICONS] ?? { icon: 'help-circle', color: C.muted }
-  const s = getStyles(C)
+  };
+  const { icon, color } = ATTR_ICONS[label as keyof typeof ATTR_ICONS] ?? { icon: 'help-circle', color: C.muted };
+  const s = getStyles(C);
 
   return (
     <View style={s.statRow}>
@@ -70,49 +69,48 @@ function StatBar({ label, level, C }: { label: string; level: number; C: any }) 
         </View>
       </View>
     </View>
-  )
+  );
 }
 
 // ── Section header ─────────────────────────────────────────────────────────────
 
 function SectionHeader({ icon, label, C }: { icon: string; label: string; C: any }) {
-  const s = getStyles(C) // Assuming getStyles is defined later and contains sectionHeader, sectionTitle
+  const s = getStyles(C); // Assuming getStyles is defined later and contains sectionHeader, sectionTitle
   return (
     <View style={s.sectionHeader}>
       <Icon name={icon} size={12} color={C.neonBlue} />
       <Text style={s.sectionTitle}> {label}</Text>
     </View>
-  )
+  );
 }
 
 // ── Statistics panel ───────────────────────────────────────────────────────────
 
 function StatisticsPanel({ C }: { C: any }) {
-  const sp = getSPStyles(C) // Assuming getSPStyles is defined later
-  const kpi = getKPIStyles(C) // Assuming getKPIStyles is defined later
-  const stats = useGameStore(st => st.statistics)
+  const sp = getSPStyles(C); // Assuming getSPStyles is defined later
+  const stats = useGameStore(st => st.statistics);
 
-  const hours   = Math.floor(stats.totalFocusMinutes / 60)
-  const minutes = stats.totalFocusMinutes % 60
+  const hours   = Math.floor(stats.totalFocusMinutes / 60);
+  const minutes = stats.totalFocusMinutes % 60;
 
-  const RANK_ORDER: RankKey[] = ['E', 'D', 'C', 'B', 'A', 'S']
-  const RANK_COLORS = THEME_RANK_COLORS
+  const RANK_ORDER: RankKey[] = ['E', 'D', 'C', 'B', 'A', 'S'];
+  const RANK_COLORS = THEME_RANK_COLORS;
 
-  const totalQuestsByRank = RANK_ORDER.reduce((sum, r) => sum + (stats.questsByRank[r] || 0), 0)
-  
+  const totalQuestsByRank = RANK_ORDER.reduce((sum, r) => sum + (stats.questsByRank[r] || 0), 0);
+
   // Counts for extra categories
-  const extraCount = stats.questsByRank['Extra' as RankKey] || 0
-  const bossCount  = stats.questsByRank['Boss' as RankKey] || 0
-  const eventCount = stats.questsByRank['Event' as RankKey] || 0
-  
+  const extraCount = stats.questsByRank['Extra' as RankKey] || 0;
+  const bossCount  = stats.questsByRank['Boss' as RankKey] || 0;
+  const eventCount = stats.questsByRank['Event' as RankKey] || 0;
+
   const categories = [
     ...RANK_ORDER.map(r => ({ id: r, label: r, count: stats.questsByRank[r] || 0, color: RANK_COLORS[r] })),
     { id: 'Extra', label: 'EXTRA', count: extraCount, color: C.gold },
     { id: 'Boss',  label: 'BOSS',  count: bossCount,  color: C.neonRed },
     { id: 'Event', label: 'EVNT',  count: eventCount, color: C.gold },
-  ]
+  ];
 
-  const grandTotal = totalQuestsByRank + extraCount + bossCount + eventCount
+  const grandTotal = totalQuestsByRank + extraCount + bossCount + eventCount;
 
   return (
     <View style={sp.container}>
@@ -127,7 +125,7 @@ function StatisticsPanel({ C }: { C: any }) {
         <Text style={sp.rankTitle}>DETALHE DE OPERAÇÕES</Text>
         <View style={sp.rankGrid}>
           {categories.map(cat => {
-            const pct = grandTotal > 0 ? (cat.count / grandTotal) * 100 : 0
+            const pct = grandTotal > 0 ? (cat.count / grandTotal) * 100 : 0;
             return (
               <View key={cat.id} style={sp.rankItem}>
                 <View style={[sp.rankBadge, { borderColor: cat.color + '44', backgroundColor: cat.color + '0a' }]}>
@@ -138,23 +136,23 @@ function StatisticsPanel({ C }: { C: any }) {
                 </View>
                 <Text style={sp.rankCount}>{cat.count}</Text>
               </View>
-            )
+            );
           })}
         </View>
       </View>
     </View>
-  )
+  );
 }
 
 function KPICard({ icon, color, label, value, C }: { icon: string; color: string; label: string; value: string; C: any }) {
-  const kpi = getKPIStyles(C) // Assuming getKPIStyles is defined later
+  const kpi = getKPIStyles(C); // Assuming getKPIStyles is defined later
   return (
     <View style={[kpi.card, { borderColor: color + '44' }]}>
       <Icon name={icon} size={20} color={color} />
       <Text style={[kpi.value, { color }]}>{value}</Text>
       <Text style={kpi.label}>{label}</Text>
     </View>
-  )
+  );
 }
 
 // ── Achievement Detail Modal ────────────────────────────────────────────────────
@@ -162,24 +160,24 @@ function KPICard({ icon, color, label, value, C }: { icon: string; color: string
 function AchievementDetailModal({
   achievement: a, prog, done, onClose, C,
 }: { achievement: Achievement; prog: AchievementProg | undefined; done: boolean; onClose: () => void; C: any }) {
-  const am = getAMStyles(C) // Assuming getAMStyles is defined later
-  const secret    = a.isSecret && !done && !a.tiers
-  const maxed     = a.tiers ? isAchievementMaxed(a, prog) : done
-  const activeTier    = getActiveTier(a, prog)
-  const completedTier = getCompletedTier(a, prog)
-  const displayTier   = maxed ? a.tiers?.[a.tiers.length - 1] : (completedTier ?? activeTier)
-  const tierColor     = displayTier ? TIER_COLORS[displayTier.rank] : a.color
-  const cardColor     = a.tiers ? (maxed ? C.gold : completedTier ? tierColor : C.dimmed) : (done ? a.color : C.dimmed)
+  const am = getAMStyles(C); // Assuming getAMStyles is defined later
+  const secret    = a.isSecret && !done && !a.tiers;
+  const maxed     = a.tiers ? isAchievementMaxed(a, prog) : done;
+  const activeTier    = getActiveTier(a, prog);
+  const completedTier = getCompletedTier(a, prog);
+  const displayTier   = maxed ? a.tiers?.[a.tiers.length - 1] : (completedTier ?? activeTier);
+  const tierColor     = displayTier ? TIER_COLORS[displayTier.rank] : a.color;
+  const cardColor     = a.tiers ? (maxed ? C.gold : completedTier ? tierColor : C.dimmed) : (done ? a.color : C.dimmed);
 
   // Progress bar for active tier
-  const currentVal  = prog?.currentValue ?? 0
-  const tierIdx     = prog?.currentTierIndex ?? 0
-  const prevTarget  = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0
-  const thisTarget  = activeTier?.targetValue ?? 1
-  const range = thisTarget - prevTarget
+  const currentVal  = prog?.currentValue ?? 0;
+  const tierIdx     = prog?.currentTierIndex ?? 0;
+  const prevTarget  = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0;
+  const thisTarget  = activeTier?.targetValue ?? 1;
+  const range = thisTarget - prevTarget;
   const pct = a.tiers
     ? (maxed ? 100 : range > 0 ? Math.min(100, ((currentVal - prevTarget) / range) * 100) : 0)
-    : (done ? 100 : 0)
+    : (done ? 100 : 0);
 
   return (
     <SoloLevelingModal visible onRequestClose={onClose}>
@@ -245,9 +243,9 @@ function AchievementDetailModal({
           {a.tiers && !secret && (
             <View style={am.tiersSection}>
               {a.tiers.map((tier, i) => {
-                const isCompleted = i < tierIdx
-                const isActive    = i === tierIdx
-                const tc = TIER_COLORS[tier.rank]
+                const isCompleted = i < tierIdx;
+                const isActive    = i === tierIdx;
+                const tc = TIER_COLORS[tier.rank];
                 return (
                   <View key={tier.rank} style={[am.tierRow, isActive && { backgroundColor: tc + '12' }]}>
                     <View style={[am.tierDot, { borderColor: tc, backgroundColor: isCompleted ? tc : 'transparent' }]}>
@@ -263,7 +261,7 @@ function AchievementDetailModal({
                       +{tier.rewardGold}G{tier.rewardXP ? ` +${tier.rewardXP}XP` : ''}
                     </Text>
                   </View>
-                )
+                );
               })}
             </View>
           )}
@@ -304,25 +302,25 @@ function AchievementDetailModal({
 
         </View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 
 // ── Achievements panel (compact summary — tap to open full modal) ───────────────
 
 function AchievementsPanel({ onOpen, C }: { onOpen: () => void; C: any }) {
-  const ac = getACStyles(C)
-  const unlockedIds         = useGameStore(s => s.unlockedAchievements)
-  const achievementProgress = useGameStore(s => s.achievementProgress)
-  const unlockedSet = new Set(unlockedIds)
-  const total    = ACHIEVEMENTS_CATALOG.length
+  const ac = getACStyles(C);
+  const unlockedIds         = useGameStore(s => s.unlockedAchievements);
+  const achievementProgress = useGameStore(s => s.achievementProgress);
+  const unlockedSet = new Set(unlockedIds);
+  const total    = ACHIEVEMENTS_CATALOG.length;
   const unlocked = ACHIEVEMENTS_CATALOG.filter(a =>
     unlockedSet.has(a.id) || (a.tiers && isAchievementMaxed(a, achievementProgress[a.id]))
-  ).length
+  ).length;
 
   const preview = ACHIEVEMENTS_CATALOG.filter(a =>
     unlockedSet.has(a.id) || (a.tiers && isAchievementMaxed(a, achievementProgress[a.id]))
-  ).slice(-5)
+  ).slice(-5);
 
   return (
     <TouchableOpacity style={ac.summaryBtn} onPress={onOpen} activeOpacity={0.75}>
@@ -349,7 +347,7 @@ function AchievementsPanel({ onOpen, C }: { onOpen: () => void; C: any }) {
         )}
       </View>
     </TouchableOpacity>
-  )
+  );
 }
 
 // ── Achievements full modal ─────────────────────────────────────────────────────
@@ -360,14 +358,14 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
   onSelect: (a: Achievement, prog: AchievementProg | undefined, done: boolean) => void
   C: any
 }) {
-  const ac = getACStyles(C)
-  const unlockedIds         = useGameStore(s => s.unlockedAchievements)
-  const achievementProgress = useGameStore(s => s.achievementProgress)
-  const unlockedSet = new Set(unlockedIds)
-  const total    = ACHIEVEMENTS_CATALOG.length
+  const ac = getACStyles(C);
+  const unlockedIds         = useGameStore(s => s.unlockedAchievements);
+  const achievementProgress = useGameStore(s => s.achievementProgress);
+  const unlockedSet = new Set(unlockedIds);
+  const total    = ACHIEVEMENTS_CATALOG.length;
   const unlocked = ACHIEVEMENTS_CATALOG.filter(a =>
     unlockedSet.has(a.id) || (a.tiers && isAchievementMaxed(a, achievementProgress[a.id]))
-  ).length
+  ).length;
 
   return (
     <SoloLevelingModal visible={visible} onRequestClose={onClose}>
@@ -385,27 +383,27 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
         <View style={ac.modalDivider} />
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={ac.modalGrid}>
           {ACHIEVEMENTS_CATALOG.map(a => {
-            const prog          = achievementProgress[a.id]
-            const fullyDone     = unlockedSet.has(a.id) || (a.tiers ? isAchievementMaxed(a, prog) : false)
-            const secret        = a.isSecret && !fullyDone && !a.tiers
-            const completedTier = getCompletedTier(a, prog)
-            const activeTier    = getActiveTier(a, prog)
-            const maxed         = a.tiers ? isAchievementMaxed(a, prog) : fullyDone
-            const displayTier   = maxed ? a.tiers?.[a.tiers.length - 1] : completedTier
+            const prog          = achievementProgress[a.id];
+            const fullyDone     = unlockedSet.has(a.id) || (a.tiers ? isAchievementMaxed(a, prog) : false);
+            const secret        = a.isSecret && !fullyDone && !a.tiers;
+            const completedTier = getCompletedTier(a, prog);
+            const activeTier    = getActiveTier(a, prog);
+            const maxed         = a.tiers ? isAchievementMaxed(a, prog) : fullyDone;
+            const displayTier   = maxed ? a.tiers?.[a.tiers.length - 1] : completedTier;
             const cardColor     = a.tiers
               ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : C.border)
-              : (fullyDone ? a.color : C.border)
+              : (fullyDone ? a.color : C.border);
             const iconColor     = a.tiers
               ? (maxed ? C.gold : completedTier ? TIER_COLORS[completedTier.rank] : C.dimmed)
-              : (fullyDone ? a.color : C.dimmed)
-            const currentVal  = prog?.currentValue ?? 0
-            const tierIdx     = getTierIndex(prog)
-            const prevTarget  = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0
-            const thisTarget  = activeTier?.targetValue ?? 1
-            const _range = Math.max(1, thisTarget - prevTarget)
+              : (fullyDone ? a.color : C.dimmed);
+            const currentVal  = prog?.currentValue ?? 0;
+            const tierIdx     = getTierIndex(prog);
+            const prevTarget  = a.tiers && tierIdx > 0 ? a.tiers[tierIdx - 1].targetValue : 0;
+            const thisTarget  = activeTier?.targetValue ?? 1;
+            const _range = Math.max(1, thisTarget - prevTarget);
             const progressPct = (a.tiers && !maxed && activeTier)
               ? Math.min(100, ((currentVal - prevTarget) / _range) * 100)
-              : (maxed ? 100 : 0)
+              : (maxed ? 100 : 0);
 
             return (
               <TouchableOpacity
@@ -438,18 +436,18 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
                   </View>
                 )}
               </TouchableOpacity>
-            )
+            );
           })}
         </ScrollView>
       </View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 // ── Level Up Reward Modal ──────────────────────────────────────────────────────
 
 export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { visible?: boolean; reward: LevelUpReward; onClose: () => void; C: any }) {
-  const lm = getLMStyles(C) // Assuming getLMStyles is defined later
+  const lm = getLMStyles(C); // Assuming getLMStyles is defined later
   return (
     <SoloLevelingModal visible={visible} onRequestClose={onClose}>
       <View style={lm.card}>
@@ -463,8 +461,8 @@ export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { vis
             <>
               <Text style={lm.rewardLabel}>RECOMPENSA AUTOMÁTICA</Text>
               {reward.items.map((id, i) => {
-                const item = CATALOG_MAP[id]
-                if (!item) return null
+                const item = CATALOG_MAP[id];
+                if (!item) {return null;}
                 return (
                   <View key={i} style={[lm.itemRow, { borderColor: item.color + '44' }]}>
                     <View style={[lm.itemIcon, { backgroundColor: item.color + '22' }]}>
@@ -475,7 +473,7 @@ export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { vis
                       <Text style={lm.itemDesc} numberOfLines={2}>{item.description}</Text>
                     </View>
                   </View>
-                )
+                );
               })}
             </>
           ) : (
@@ -488,12 +486,12 @@ export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { vis
 
       </View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 // ── Job Change Modal ───────────────────────────────────────────────────────────
 export function JobChangeModal({ visible = true, job, onClose, C }: { visible?: boolean; job: any; onClose: () => void; C: any }) {
-  const lm = getLMStyles(C)
+  const lm = getLMStyles(C);
   return (
     <SoloLevelingModal visible={visible} onRequestClose={onClose}>
       <View style={[lm.card, { borderColor: job.color + 'aa' }]}>
@@ -502,55 +500,46 @@ export function JobChangeModal({ visible = true, job, onClose, C }: { visible?: 
         <Text style={lm.rewardLabel}>NOVO TÍTULO CONQUISTADO</Text>
         <Text style={[lm.levelTxt, { color: job.color, fontSize: 24, marginTop: 4 }]}>{job.name}</Text>
         <Text style={[lm.itemDesc, { textAlign: 'center', marginTop: SPACING.md }]}>
-          O Sistema reconhece a tua evolução.{"\n"}A tua lenda começa a ganhar forma.
+          O Sistema reconhece a tua evolução.{'\n'}A tua lenda começa a ganhar forma.
         </Text>
         <TouchableOpacity style={[lm.btn, { backgroundColor: job.color + '22', borderColor: job.color }]} onPress={onClose}>
           <Text style={[lm.btnTxt, { color: job.color }]}>[ ACEITAR PODER ]</Text>
         </TouchableOpacity>
       </View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
-export default function StatusScreen({ onClose }: { onClose?: () => void }) {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
-  const am = React.useMemo(() => getAMStyles(C), [C])
-  const lm = React.useMemo(() => getLMStyles(C), [C])
-  const sp = React.useMemo(() => getSPStyles(C), [C])
-  const kpi = React.useMemo(() => getKPIStyles(C), [C])
-  const ac = React.useMemo(() => getACStyles(C), [C])
+export default function StatusScreen() {
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
-  const player = useGameStore(st => st.player)
-  const statistics         = useGameStore(st => st.statistics)
-  const system             = useGameStore(st => st.system)
-  const customShadows      = useGameStore(st => st.customShadows)
-  const activeShadowIds    = useGameStore(st => st.player.activeShadowIds)
-  const levelUpReward      = useGameStore(st => st.levelUpReward)
-  const dismissLevelUpReward = useGameStore(st => st.dismissLevelUpReward)
-  const jobChangeReward      = useGameStore(st => st.jobChangeReward)
-  const dismissJobChangeReward = useGameStore(st => st.dismissJobChangeReward)
-  const activeBuffs         = useGameStore(st => st.activeBuffs)
+  const player = useGameStore(st => st.player);
+  const statistics         = useGameStore(st => st.statistics);
+  const system             = useGameStore(st => st.system);
+  const customShadows      = useGameStore(st => st.customShadows);
+  const activeShadowIds    = useGameStore(st => st.player.activeShadowIds);
+  const activeBuffs         = useGameStore(st => st.activeBuffs);
 
-  const qualifiedRankInfo = getRank(player.level, statistics.totalCompleted, system.bossesDefeated, statistics.questsByRank)
-  const playerRankLetter = player.rank || 'E'
-  const currentRankInfo = CLASS_REQUIREMENTS.find(r => r.rank === playerRankLetter) || CLASS_REQUIREMENTS[0]
-  
-  const currentIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank)
-  const qualifiedIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === qualifiedRankInfo.rank)
-  const canRankUp = qualifiedIdx > currentIdx
-  const rank = currentRankInfo
-  const jobClass = getJobClass(player.level)
+  const qualifiedRankInfo = getRank(player.level, statistics.totalCompleted, system.bossesDefeated, statistics.questsByRank);
+  const playerRankLetter = player.rank || 'E';
+  const currentRankInfo = CLASS_REQUIREMENTS.find(r => r.rank === playerRankLetter) || CLASS_REQUIREMENTS[0];
 
-  const xpNeeded = xpForLevel(player.level)
-  const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100)
+  const currentIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank);
+  const qualifiedIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === qualifiedRankInfo.rank);
+  const canRankUp = qualifiedIdx > currentIdx;
+  const rank = currentRankInfo;
+  const jobClass = getJobClass(player.level);
 
-  const [selectedAch, setSelectedAch] = useState<{ a: Achievement; prog: AchievementProg | undefined; done: boolean } | null>(null)
-  const [showRankInfo, setShowRankInfo] = useState(false)
-  const [showHistory,  setShowHistory]  = useState(false)
-  const [showAchievements, setShowAchievements] = useState(false)
+  const xpNeeded = xpForLevel(player.level);
+  const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100);
+
+  const [selectedAch, setSelectedAch] = useState<{ a: Achievement; prog: AchievementProg | undefined; done: boolean } | null>(null);
+  const [showRankInfo, setShowRankInfo] = useState(false);
+  const [showHistory,  setShowHistory]  = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
 
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
@@ -575,7 +564,7 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
             )}
           </TouchableOpacity>
           <View style={s.rankInfo}>
-            <Text style={[s.playerName, { maxWidth: '85%' }]} numberOfLines={1} ellipsizeMode='tail'>{jobClass.name}</Text>
+            <Text style={[s.playerName, { maxWidth: '85%' }]} numberOfLines={1} ellipsizeMode="tail">{jobClass.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
               <Text style={s.lvlText}>NÍVEL {player.level}</Text>
             </View>
@@ -644,9 +633,9 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
               {activeShadowIds.length > 0 ? (
                 <View style={s.shadowVanguardRow}>
                   {activeShadowIds.map(id => {
-                    const data = SHADOW_MAP[id as keyof typeof SHADOW_MAP] ?? customShadows.find(cs => cs.id === id)
-                    if (!data) return null
-                    const rankColor = SHADOW_RANK_COLOR[data.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.purple
+                    const data = SHADOW_MAP[id as keyof typeof SHADOW_MAP] ?? customShadows.find(cs => cs.id === id);
+                    if (!data) {return null;}
+                    const rankColor = SHADOW_RANK_COLOR[data.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.purple;
                     return (
                       <View key={id} style={[s.shadowVanguardCard, { borderColor: rankColor + '55' }]}>
                         <Icon name={data.icon || 'ghost'} size={20} color={rankColor} />
@@ -657,7 +646,7 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
                           </Text>
                         </View>
                       </View>
-                    )
+                    );
                   })}
                 </View>
               ) : (
@@ -677,7 +666,7 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
       <AchievementsModal
         visible={showAchievements}
         onClose={() => setShowAchievements(false)}
-        onSelect={(a, pr, d) => { setShowAchievements(false); setSelectedAch({ a, prog: pr, done: d }) }}
+        onSelect={(a, pr, d) => { setShowAchievements(false); setSelectedAch({ a, prog: pr, done: d }); }}
         C={C}
       />
 
@@ -709,7 +698,7 @@ export default function StatusScreen({ onClose }: { onClose?: () => void }) {
       {/* Modals are now handled globally in App.tsx rewardsQueue */}
 
     </SafeAreaView>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -769,13 +758,13 @@ const getStyles = (C: any) => StyleSheet.create({
 
   historyBtn:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 10, marginBottom: SPACING.lg },
   historyBtnTxt: { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
-})
+});
 
 const getKPIStyles = (C: any) => StyleSheet.create({
   card:  { flex: 1, backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.sm, alignItems: 'center', gap: 4 },
   value: { fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '900', color: C.text.primary },
   label: { color: C.text.secondary, fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1 },
-})
+});
 
 
 const getSPStyles = (C: any) => StyleSheet.create({
@@ -790,7 +779,7 @@ const getSPStyles = (C: any) => StyleSheet.create({
   rankBarTrack: { flex: 1, height: 4, backgroundColor: C.border, borderRadius: 0, overflow: 'hidden' },
   rankBarFill:  { height: '100%', borderRadius: 0, minWidth: 2 },
   rankCount:    { color: C.muted, fontSize: 12, fontFamily: FONT.orbitron, width: 28, textAlign: 'right' },
-})
+});
 
 const getACStyles = (C: any) => StyleSheet.create({
   container: { marginBottom: SPACING.lg },
@@ -824,7 +813,7 @@ const getACStyles = (C: any) => StyleSheet.create({
   modalHeader:  { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },
   modalDivider: { height: 1, backgroundColor: C.border, marginBottom: SPACING.md },
   modalGrid:    { flexDirection: 'row', flexWrap: 'wrap', gap: SPACING.sm, paddingBottom: SPACING.md },
-})
+});
 
 const getAMStyles = (C: any) => StyleSheet.create({
   card:          { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg, alignItems: 'center' },
@@ -858,31 +847,7 @@ const getAMStyles = (C: any) => StyleSheet.create({
   tierRowTarget: { flex: 1, fontFamily: FONT.orbitron, fontSize: 9 },
   tierRowReward: { fontFamily: FONT.orbitron, fontSize: 8 },
   maxLabel:      { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center', marginTop: 4 },
-})
-
-const getRMStyles = (C: any) => StyleSheet.create({
-  overlay:      { flex: 1, backgroundColor: C.bg + 'dd', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
-  card:         { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg },
-  headerRow:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
-  headerTxt:    { flex: 1, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
-  closeBtn:     { padding: 4 },
-  divider:      { height: 1, backgroundColor: C.border, marginBottom: SPACING.md },
-  row:          { flexDirection: 'row', alignItems: 'center', borderRadius: 4, paddingVertical: 8, paddingHorizontal: SPACING.sm, marginBottom: 6, gap: SPACING.sm },
-  badge:        { width: 30, height: 30, borderRadius: 3, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
-  badgeTxt:     { fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900' },
-  rowInfo:      { flex: 1 },
-  rowLabel:     { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
-  rowSub:       { color: C.dimmed, fontSize: 10, marginTop: 1 },
-  currentTag:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
-  currentTagTxt:{ fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
-  nextSection:  { flexDirection: 'row', alignItems: 'center', marginTop: SPACING.sm, paddingTop: SPACING.sm, borderTopWidth: 1, borderTopColor: C.border },
-  nextTxt:      { fontSize: 11, flex: 1, fontFamily: FONT.orbitron },
-  reqRow:       { flexDirection: 'row', alignItems: 'center', marginTop: 3, gap: 4 },
-  reqLabel:     { flex: 1, color: C.dimmed, fontSize: 9, fontFamily: FONT.orbitron, letterSpacing: 0.5 },
-  reqVal:       { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
-  reqMet:       { color: C.green },
-  reqFail:      { color: C.neonRed },
-})
+});
 
 const getLMStyles = (C: any) => StyleSheet.create({
   overlay:   { flex: 1, backgroundColor: C.bg + 'ee', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
@@ -899,66 +864,4 @@ const getLMStyles = (C: any) => StyleSheet.create({
   noReward:  { color: C.dimmed, fontSize: 11, textAlign: 'center' },
   btn:       { marginTop: SPACING.sm, borderWidth: 1, borderColor: C.neonBlue + '66', borderRadius: 4, paddingVertical: 10, paddingHorizontal: SPACING.xl },
   btnTxt:    { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
-})
-
-const getSKStyles = (C: any) => StyleSheet.create({
-  keyGrid: {
-    gap: SPACING.sm,
-    marginBottom: SPACING.lg,
-  },
-  keyCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: C.panel,
-    borderRadius: 4,
-    borderWidth: 1,
-    padding: SPACING.md,
-    gap: SPACING.sm,
-  },
-  keyIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: C.muted + '10',
-  },
-  keyInfo: {
-    flex: 1,
-  },
-  keyName: {
-    fontFamily: FONT.orbitron,
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1,
-    marginBottom: 2,
-  },
-  keyBoss: {
-    color: C.muted,
-    fontSize: 9,
-    fontStyle: 'italic',
-  },
-  emptyKeys: {
-    padding: SPACING.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: C.panel,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: C.border,
-    borderStyle: 'dashed',
-  },
-  emptyKeysTxt: {
-    color: C.dimmed,
-    fontFamily: FONT.orbitron,
-    fontSize: 10,
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  emptyKeysSub: {
-    color: C.dimmed,
-    fontSize: 9,
-    textAlign: 'center',
-  },
-})
+});

@@ -1,8 +1,8 @@
-import React from 'react'
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme, SPACING, FONT } from '../../theme'
-import { APP_THEMES } from '../../data/themes'
+import React from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme, SPACING, FONT } from '../../theme';
+import { APP_THEMES } from '../../data/themes';
 
 interface ThemeSettingsProps {
   activeThemeId: string
@@ -15,8 +15,8 @@ const ThemeSettings = ({
   unlockedThemes,
   onThemeChange,
 }: ThemeSettingsProps) => {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View>
@@ -35,10 +35,10 @@ const ThemeSettings = ({
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} nestedScrollEnabled={true} style={s.themeScroll}>
         {APP_THEMES.map(theme => {
-          const isUnlocked = unlockedThemes.includes(theme.id)
-          const isActive = activeThemeId === theme.id
-          
-          if (!isUnlocked) return null
+          const isUnlocked = unlockedThemes.includes(theme.id);
+          const isActive = activeThemeId === theme.id;
+
+          if (!isUnlocked) {return null;}
 
           return (
             <TouchableOpacity
@@ -46,7 +46,7 @@ const ThemeSettings = ({
               style={[
                 s.themeCard,
                 { borderColor: theme.colors.neonBlue + (isActive ? 'ff' : '44') },
-                isActive && { backgroundColor: theme.colors.neonBlue + '11' }
+                isActive && { backgroundColor: theme.colors.neonBlue + '11' },
               ]}
               onPress={() => onThemeChange(theme.id)}
             >
@@ -58,45 +58,45 @@ const ThemeSettings = ({
               </Text>
               {isActive && <Icon name="check-circle" size={12} color={theme.colors.neonBlue} style={s.themeCheck} />}
             </TouchableOpacity>
-          )
+          );
         })}
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
 const getStyles = (C: any) => StyleSheet.create({
-  sectionHeader: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: SPACING.md, 
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
     marginBottom: SPACING.md,
     paddingBottom: SPACING.sm,
     borderBottomWidth: 1,
     borderBottomColor: C.border + '44',
   },
-  sectionDot:    { 
-    width: 3, 
-    height: 16, 
+  sectionDot:    {
+    width: 3,
+    height: 16,
     borderRadius: 2,
   },
-  sectionTitle:  { 
-    color: C.neonBlue, 
-    fontFamily: FONT.orbitron, 
-    fontSize: 11, 
-    letterSpacing: 2, 
-    fontWeight: '900' 
+  sectionTitle:  {
+    color: C.neonBlue,
+    fontFamily: FONT.orbitron,
+    fontSize: 11,
+    letterSpacing: 2,
+    fontWeight: '900',
   },
 
-  intensityInfo:    { 
-    flexDirection: 'row', 
-    alignItems: 'flex-start', 
-    backgroundColor: C.panel, 
-    borderRadius: 8, 
-    borderWidth: 1, 
-    borderColor: C.border + '66', 
-    padding: SPACING.md, 
-    marginBottom: SPACING.md 
+  intensityInfo:    {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: C.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: C.border + '66',
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
   },
   intensityInfoTxt: { flex: 1, color: C.dimmed, fontSize: 10, lineHeight: 16 },
 
@@ -138,6 +138,6 @@ const getStyles = (C: any) => StyleSheet.create({
     top: 4,
     right: 4,
   },
-})
+});
 
-export default ThemeSettings
+export default ThemeSettings;

@@ -1,17 +1,17 @@
-import { Shadow } from './shadows_types'
+import { Shadow } from './shadows_types';
 
 const pickBossCategory = (bossId: string): 'dungeon' | 'dungeon_break' | 'key' | 'raid' => {
-  if (bossId.startsWith('normal_boss_') || ['alpha_wolf', 'sea_king', 'dungeon_queen', 'king_of_the_dead'].includes(bossId)) return 'dungeon'
-  if (bossId.includes('astral') || bossId.includes('lich') || bossId.includes('reaper') || bossId.includes('nebula')) return 'raid'
-  if (bossId.includes('goblin') || bossId.includes('ant_') || bossId.includes('stone_golem') || bossId.includes('stringsinger')) return 'key'
-  return 'dungeon_break'
-}
+  if (bossId.startsWith('normal_boss_') || ['alpha_wolf', 'sea_king', 'dungeon_queen', 'king_of_the_dead'].includes(bossId)) {return 'dungeon';}
+  if (bossId.includes('astral') || bossId.includes('lich') || bossId.includes('reaper') || bossId.includes('nebula')) {return 'raid';}
+  if (bossId.includes('goblin') || bossId.includes('ant_') || bossId.includes('stone_golem') || bossId.includes('stringsinger')) {return 'key';}
+  return 'dungeon_break';
+};
 
 const bossDrop = (bossId: string, s: Omit<Shadow, 'unlockMethod' | 'dropRate'> & { dropRate?: number }): Shadow => ({
   dropRate: 0,
   ...s,
   unlockMethod: { type: 'boss_drop', bossId, category: pickBossCategory(bossId) },
-})
+});
 
 /** Sombras de bosses distribuídas por dungeon, dungeon_break, key e raid. */
 export const SHADOWS_BOSS_MIXED: Shadow[] = [
@@ -469,4 +469,4 @@ export const SHADOWS_BOSS_MIXED: Shadow[] = [
     icon: 'snowflake-alert',
     color: '#94a3b8',
   }),
-]
+];

@@ -15,6 +15,14 @@ jest.mock('@notifee/react-native', () => ({
   requestPermission: jest.fn(),
 }));
 
+jest.mock('@react-navigation/native', () => {
+  const actual = jest.requireActual('@react-navigation/native');
+  return {
+    ...actual,
+    useBackButton: () => {},
+  };
+});
+
 jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => 'Icon');
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
@@ -23,6 +31,24 @@ jest.mock('react-native-geolocation-service', () => ({
   getCurrentPosition: jest.fn(),
   watchPosition: jest.fn(),
 }));
+
+jest.mock('react-native-sound', () => {
+  const Sound = function () {
+    return {
+      play: jest.fn(),
+      stop: jest.fn(),
+      release: jest.fn(),
+      setVolume: jest.fn(),
+      setNumberOfLoops: jest.fn(),
+      getCurrentTime: jest.fn((cb) => cb(0)),
+      getDuration: jest.fn(() => 0),
+    };
+  };
+  Sound.setCategory = jest.fn();
+  Sound.setMode = jest.fn();
+  Sound.MAIN_BUNDLE = 0;
+  return Sound;
+});
 jest.mock('@react-native-clipboard/clipboard', () => ({
   setString: jest.fn(),
   getString: jest.fn(() => Promise.resolve('')),

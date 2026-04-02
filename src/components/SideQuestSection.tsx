@@ -32,7 +32,7 @@ export default function SideQuestSection({ C }: SideQuestSectionProps) {
 
   function handleAdd() {
     const title = input.trim();
-    if (!title) return;
+    if (!title) {return;}
     addSQ(title);
     setInput('');
   }

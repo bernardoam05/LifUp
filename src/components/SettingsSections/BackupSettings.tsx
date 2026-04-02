@@ -1,7 +1,7 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme, SPACING, FONT } from '../../theme'
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme, SPACING, FONT } from '../../theme';
 
 interface BackupSettingsProps {
   onExport: () => void
@@ -12,8 +12,8 @@ const BackupSettings = ({
   onExport,
   onImport,
 }: BackupSettingsProps) => {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View>
@@ -41,41 +41,41 @@ const BackupSettings = ({
         </TouchableOpacity>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const getStyles = (C: any) => StyleSheet.create({
-  sectionHeader: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: SPACING.md, 
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
     marginBottom: SPACING.md,
     paddingBottom: SPACING.sm,
     borderBottomWidth: 1,
     borderBottomColor: C.border + '44',
   },
-  sectionDot:    { 
-    width: 3, 
-    height: 16, 
+  sectionDot:    {
+    width: 3,
+    height: 16,
     borderRadius: 2,
   },
-  sectionTitle:  { 
-    color: C.neonBlue, 
-    fontFamily: FONT.orbitron, 
-    fontSize: 11, 
-    letterSpacing: 2, 
-    fontWeight: '900' 
+  sectionTitle:  {
+    color: C.neonBlue,
+    fontFamily: FONT.orbitron,
+    fontSize: 11,
+    letterSpacing: 2,
+    fontWeight: '900',
   },
 
-  intensityInfo:    { 
-    flexDirection: 'row', 
-    alignItems: 'flex-start', 
-    backgroundColor: C.panel, 
-    borderRadius: 8, 
-    borderWidth: 1, 
-    borderColor: C.border + '66', 
-    padding: SPACING.md, 
-    marginBottom: SPACING.md 
+  intensityInfo:    {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: C.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: C.border + '66',
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
   },
   intensityInfoTxt: { flex: 1, color: C.dimmed, fontSize: 10, lineHeight: 16 },
 
@@ -94,6 +94,6 @@ const getStyles = (C: any) => StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 1.5,
   },
-})
+});
 
-export default BackupSettings
+export default BackupSettings;

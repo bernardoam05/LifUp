@@ -1,4 +1,4 @@
-import { Shadow } from './shadows_types'
+import { Shadow } from './shadows_types';
 
 export const SHADOWS_GACHA: Shadow[] = [
   {
@@ -31,7 +31,7 @@ export const SHADOWS_GACHA: Shadow[] = [
   // ════════════════════════════════════════════════════════════════════════════
         // ── KNIGHT RANK — Raro · Bónus fortes · Campeões de masmorras e guerreiros lendários
         // ════════════════════════════════════════════════════════════════════════════
-      
+
         {
           id: 'grizzly_shadow',
           name: 'Urso Cinzento das Sombras',
@@ -188,7 +188,7 @@ export const SHADOWS_GACHA: Shadow[] = [
   // ════════════════════════════════════════════════════════════════════════════
         // ── COMMANDER RANK — Muito Raro · Bónus poderosos · Lendas dos dungeons ──
         // ════════════════════════════════════════════════════════════════════════════
-      
+
         {
           id: 'igris',
           name: 'Igris, o Cavaleiro Sanguíneo',
@@ -291,7 +291,7 @@ export const SHADOWS_GACHA: Shadow[] = [
   // ════════════════════════════════════════════════════════════════════════════
         // ── MARSHAL RANK — Lendário · Passivas quebra-jogo · Uma raridade absoluta ──
         // ════════════════════════════════════════════════════════════════════════════
-      
+
         {
           id: 'beru',
           name: 'Beru, o Rei Formiga',
@@ -1124,5 +1124,5 @@ export const SHADOWS_GACHA: Shadow[] = [
           lore: '"Ultrapassa a barreira do som num borrão azul frenético. O inimigo cai antes de sequer ouvir o vento passar."',
           icon: 'run-fast', color: '#94a3b8',
           unlockMethod: { type: 'gacha' },
-        }
-]
+        },
+];

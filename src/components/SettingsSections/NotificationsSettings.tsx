@@ -1,7 +1,7 @@
-import React from 'react'
-import { View, Text, Switch, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme, SPACING, FONT } from '../../theme'
+import React from 'react';
+import { View, Text, Switch, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme, SPACING, FONT } from '../../theme';
 
 interface NotificationsSettingsProps {
   notifications: boolean
@@ -16,8 +16,8 @@ const NotificationsSettings = ({
   onNotificationsChange,
   onSoundChange,
 }: NotificationsSettingsProps) => {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View>
@@ -54,47 +54,47 @@ const NotificationsSettings = ({
         />
       </View>
     </View>
-  )
-}
+  );
+};
 
 const getStyles = (C: any) => StyleSheet.create({
-  sectionHeader: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: SPACING.md, 
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
     marginBottom: SPACING.md,
     paddingBottom: SPACING.sm,
     borderBottomWidth: 1,
     borderBottomColor: C.border + '44',
   },
-  sectionDot:    { 
-    width: 3, 
-    height: 16, 
+  sectionDot:    {
+    width: 3,
+    height: 16,
     borderRadius: 2,
   },
-  sectionTitle:  { 
-    color: C.neonBlue, 
-    fontFamily: FONT.orbitron, 
-    fontSize: 11, 
-    letterSpacing: 2, 
-    fontWeight: '900' 
+  sectionTitle:  {
+    color: C.neonBlue,
+    fontFamily: FONT.orbitron,
+    fontSize: 11,
+    letterSpacing: 2,
+    fontWeight: '900',
   },
 
-  row:       { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: C.panel, 
+  row:       {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: C.panel,
     borderWidth: 1,
     borderColor: C.border + '66',
     borderRadius: 8,
-    paddingVertical: SPACING.md, 
-    paddingHorizontal: SPACING.md, 
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.md,
     gap: SPACING.sm,
     marginBottom: SPACING.sm,
   },
   rowInfo:   { flex: 1 },
   rowLabel:  { color: C.muted, fontSize: 13, fontWeight: '700' },
   rowSub:    { color: C.dimmed, fontSize: 10, marginTop: 3 },
-})
+});
 
-export default NotificationsSettings
+export default NotificationsSettings;

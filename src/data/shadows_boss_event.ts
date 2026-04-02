@@ -1,4 +1,4 @@
-import { Shadow } from './shadows_types'
+import { Shadow } from './shadows_types';
 
 export const SHADOWS_BOSS_EVENT: Shadow[] = [
   {
@@ -107,4 +107,4 @@ export const SHADOWS_BOSS_EVENT: Shadow[] = [
         icon: 'weather-night', color: '#64748b',
         unlockMethod: { type: 'boss_drop', bossId: 'event_midnight_wraith', category: 'event' },
       },
-]
+];

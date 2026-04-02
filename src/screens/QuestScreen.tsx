@@ -1,32 +1,21 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, AppState, AppStateStatus,
-  Vibration, TextInput, BackHandler, Alert,
-} from 'react-native'
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { Quest, SideQuest, getDailyMissionTarget } from '../store/useGameStore'
-import { SHADOW_MAP } from '../data/shadows'
-import { RAID_BOSSES, DungeonMission, getActiveEventBossMissions, buildEventTrials, EVENT_BOSS_DEFS } from '../data/bosses'
-import QuestForgeScreen from './QuestForgeScreen'
-import MissionActiveScreen from './MissionActiveScreen'
-import CustomModal from '../components/CustomModal'
-import SoloLevelingModal from '../components/SoloLevelingModal'
-import { useLocationTracker } from '../hooks/useLocationTracker'
-import { scheduleSideQuestNotification, cancelSideQuestNotification } from '../utils/notifications'
-import BottomSheetModal from '../components/BottomSheetModal'
-import GPSTrackerModal from '../components/GPSTrackerModal'
-import QuestCard from '../components/QuestCard'
-import EventDungeonModal from '../components/EventDungeonModal'
-import ShadowExtractionModal from '../components/ShadowExtractionModal'
-import SideQuestSection from '../components/SideQuestSection'
-import { useTheme, FONT, SPACING, RANK_COLORS } from '../theme'
-import { ALL_DUNGEON_KEYS } from '../data/dungeonKeys'
-
-// Vibration patterns
-const VIB_COMPLETE = [0, 80, 40, 120]
-const VIB_FOCUS = [0, 200, 80, 200, 80, 400]
+  TouchableOpacity, BackHandler,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useGameStore, { Quest, getDailyMissionTarget } from '../store/useGameStore';
+import { RAID_BOSSES, DungeonMission, getActiveEventBossMissions, buildEventTrials, EVENT_BOSS_DEFS } from '../data/bosses';
+import QuestForgeScreen from './QuestForgeScreen';
+import MissionActiveScreen from './MissionActiveScreen';
+import CustomModal from '../components/CustomModal';
+import GPSTrackerModal from '../components/GPSTrackerModal';
+import QuestCard from '../components/QuestCard';
+import EventDungeonModal from '../components/EventDungeonModal';
+import ShadowExtractionModal from '../components/ShadowExtractionModal';
+import SideQuestSection from '../components/SideQuestSection';
+import { useTheme, FONT, SPACING } from '../theme';
+import { ALL_DUNGEON_KEYS } from '../data/dungeonKeys';
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
@@ -126,35 +115,7 @@ const getStyles = (C: any) => StyleSheet.create({
   generateExtraBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1, borderColor: C.gold + '66', borderRadius: 4, paddingVertical: 14, marginBottom: SPACING.sm },
   generateExtraTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
   generateExtraSub: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9 },
-})
-
-
-const getSKStyles = (C: any) => StyleSheet.create({
-  keyGrid: { gap: SPACING.md, paddingRight: SPACING.md, marginTop: 4 },
-  keyCard: { 
-    flexDirection: 'row', 
-    width: 200, 
-    height: 70, 
-    backgroundColor: C.panel, 
-    borderWidth: 1, 
-    borderRadius: 8, 
-    padding: SPACING.sm, 
-    alignItems: 'center', 
-    gap: SPACING.sm 
-  },
-  keyIconWrap: { 
-    width: 44, 
-    height: 44, 
-    borderRadius: 8, 
-    alignItems: 'center', 
-    justifyContent: 'center',
-    borderWidth: 1,
-  },
-  keyInfo: { flex: 1, justifyContent: 'center' },
-  keyName: { fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '900', marginBottom: 2 },
-  keyBoss: { color: C.dimmed, fontSize: 7, textTransform: 'uppercase', fontFamily: FONT.orbitron },
-})
-
+});
 
 
 
@@ -164,24 +125,24 @@ const getSKStyles = (C: any) => StyleSheet.create({
 
 
 function formatCountdown(ms: number): string {
-  if (ms <= 0) return 'Termina em 0m'
-  const totalMinutes = Math.floor(ms / 60_000)
-  const h = Math.floor(totalMinutes / 60)
-  const m = totalMinutes % 60
-  if (h > 0) return `Termina em ${h}h ${m}m`
-  return `Termina em ${m}m`
+  if (ms <= 0) {return 'Termina em 0m';}
+  const totalMinutes = Math.floor(ms / 60_000);
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  if (h > 0) {return `Termina em ${h}h ${m}m`;}
+  return `Termina em ${m}m`;
 }
 
 function getEventCountdownMs(endDate: string): number {
-  const now = new Date()
-  const [month, day] = endDate.split('-').map(n => parseInt(n, 10))
-  const year = now.getFullYear()
-  let eventEnd = new Date(year, month - 1, day, 23, 59, 59, 999)
+  const now = new Date();
+  const [month, day] = endDate.split('-').map(n => parseInt(n, 10));
+  const year = now.getFullYear();
+  let eventEnd = new Date(year, month - 1, day, 23, 59, 59, 999);
   // If already passed this year, the event wraps into next year (e.g. Jan event visible in Dec)
   if (eventEnd.getTime() < now.getTime()) {
-    eventEnd = new Date(year + 1, month - 1, day, 23, 59, 59, 999)
+    eventEnd = new Date(year + 1, month - 1, day, 23, 59, 59, 999);
   }
-  return Math.max(0, eventEnd.getTime() - now.getTime())
+  return Math.max(0, eventEnd.getTime() - now.getTime());
 }
 
 
@@ -189,49 +150,48 @@ function getEventCountdownMs(endDate: string): number {
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function QuestScreen() {
-  const C = useTheme()
-  const s = getStyles(C)
-  const sk = getSKStyles(C)
-  const insets = useSafeAreaInsets()
+  const C = useTheme();
+  const s = getStyles(C);
 
-  const quests = useGameStore(s => s.quests)
-  const hasPenalty = useGameStore(s => s.system.hasPenalty)
-  const penaltyQ = useGameStore(s => s.system.penaltyQuests)
-  const xpBoostNext = useGameStore(s => s.system.xpBoostNext)
-  const defeatBoss = useGameStore(s => s.defeatDungeonBoss)
-  const recordFocus = useGameStore(s => s.recordFocusTime)
-  const triggerEvent = useGameStore(s => s.triggerEvent)
-  const questDictionary = useGameStore(s => s.questDictionary)
-  const updateSettings = useGameStore(s => s.updateSettings)
-  const activeRaidBoss = useGameStore(s => s.system.activeRaidBoss)
-  const eventBossKey = useGameStore(s => s.system.eventBossKey)
-  const eventBossCompletedIds = useGameStore(s => s.system.eventBossCompletedIds)
-  const eventBossRequired = useGameStore(s => s.system.eventBossRequired)
-  const eventBossDefeated = useGameStore(s => s.system.eventBossDefeated)
-  const setEventBossState = useGameStore(s => s.setEventBossState)
-  const completeEventTrial = useGameStore(s => s.completeEventTrial)
-  const markEventBossDefeated = useGameStore(s => s.markEventBossDefeated)
-  const pendingRaidId = useGameStore(s => s.system.pendingRaidExtractionId)
-  const clearRaid     = useGameStore(s => s.clearPendingRaidExtraction)
-  const pendingKeyId  = useGameStore(s => s.system.pendingKeyId)
-  const clearPendingKeyMission = useGameStore(s => s.clearPendingKeyMission)
-  const clearActiveDungeonBreak = useGameStore(s => s.clearActiveDungeonBreak)
+  const quests = useGameStore(st => st.quests);
+  const hasPenalty = useGameStore(st => st.system.hasPenalty);
+  const penaltyQ = useGameStore(st => st.system.penaltyQuests);
+  const xpBoostNext = useGameStore(st => st.system.xpBoostNext);
+  const defeatBoss = useGameStore(st => st.defeatDungeonBoss);
+  const recordFocus = useGameStore(st => st.recordFocusTime);
+  const triggerEvent = useGameStore(st => st.triggerEvent);
+  const questDictionary = useGameStore(st => st.questDictionary);
+  const updateSettings = useGameStore(st => st.updateSettings);
+  const activeRaidBoss = useGameStore(st => st.system.activeRaidBoss);
+  const eventBossKey = useGameStore(st => st.system.eventBossKey);
+  const eventBossCompletedIds = useGameStore(st => st.system.eventBossCompletedIds);
+  const eventBossDefeated = useGameStore(st => st.system.eventBossDefeated);
+  const setEventBossState = useGameStore(st => st.setEventBossState);
+  const completeEventTrial = useGameStore(st => st.completeEventTrial);
+  const markEventBossDefeated = useGameStore(st => st.markEventBossDefeated);
+  const pendingRaidId = useGameStore(st => st.system.pendingRaidExtractionId);
+  const clearRaid     = useGameStore(st => st.clearPendingRaidExtraction);
+  const pendingKeyId  = useGameStore(st => st.system.pendingKeyId);
+  const clearPendingKeyMission = useGameStore(st => st.clearPendingKeyMission);
+  const clearActiveDungeonBreak = useGameStore(st => st.clearActiveDungeonBreak);
+  const system = useGameStore(st => st.system);
+  const enterDungeon = useGameStore(st => st.enterDungeon);
   // Trigger extraction for Raid bosses (which are defeated globally via store)
   useEffect(() => {
     if (pendingRaidId) {
-      setExtractionBossId(pendingRaidId)
-      setExtractionCategory('raid')
-      clearRaid()
+      setExtractionBossId(pendingRaidId);
+      setExtractionCategory('raid');
+      clearRaid();
     }
-  }, [pendingRaidId])
+  }, [pendingRaidId, clearRaid]);
 
   // Pick up key mission triggered from Inventory → Cofre de Chaves
   // User already confirmed in DungeonKeyModal — skip the redundant CustomModal
   useEffect(() => {
-    if (!pendingKeyId) return
-    const key = ALL_DUNGEON_KEYS.find(k => k.id === pendingKeyId)
-    clearPendingKeyMission()
-    if (!key) return
+    if (!pendingKeyId) {return;}
+    const key = ALL_DUNGEON_KEYS.find(k => k.id === pendingKeyId);
+    clearPendingKeyMission();
+    if (!key) {return;}
     const mission: DungeonMission = {
       id: `key_${key.id}`,
       label: key.name,
@@ -243,205 +203,197 @@ export default function QuestScreen() {
       category: 'key',
       focusDuration: key.missionType === 'focus' ? key.missionTarget : undefined,
       gpsTarget: key.missionType === 'gps' ? key.missionTarget : undefined,
-    }
+    };
     if (enterDungeon(key.id)) {
-      handleMissionSelect(mission)
+      handleMissionSelect(mission);
     }
-  }, [pendingKeyId])
+  }, [pendingKeyId, clearPendingKeyMission, enterDungeon]);
 
-  const system = useGameStore(s => s.system)
-  const enterDungeon = useGameStore(s => s.enterDungeon)
-  const eventBossMissions = React.useMemo(() => getActiveEventBossMissions(), [])
+  const eventBossMissions = React.useMemo(() => getActiveEventBossMissions(), []);
   const activeEventDef = React.useMemo(() =>
     EVENT_BOSS_DEFS.find(def => eventBossMissions.some(m => m.id === def.id)),
-    [eventBossMissions])
+    [eventBossMissions]);
 
   const eventTrials = React.useMemo(() =>
     activeEventDef ? buildEventTrials(activeEventDef, C) : [],
-    [activeEventDef, C])
+    [activeEventDef, C]);
 
 
   const activeEventKey = React.useMemo(() =>
     activeEventDef ? `${activeEventDef.id}-${new Date().getFullYear()}` : '',
-    [activeEventDef])
+    [activeEventDef]);
 
-  const eventCompleted = (activeEventKey && eventBossKey === activeEventKey) ? eventBossCompletedIds : []
-  const eventRequired = activeEventDef?.required ?? 0
-  const eventUnlocked = activeEventDef ? eventCompleted.length >= eventRequired : false
+  const eventCompleted = (activeEventKey && eventBossKey === activeEventKey) ? eventBossCompletedIds : [];
+  const eventRequired = activeEventDef?.required ?? 0;
+  const eventUnlocked = activeEventDef ? eventCompleted.length >= eventRequired : false;
   const eventBossMission = (activeEventDef && eventUnlocked)
     ? eventBossMissions.find(m => m.id === activeEventDef.id) ?? null
-    : null
+    : null;
 
-  const extraQuests = useGameStore(s => s.extraQuests)
-  const generateExtraQuests = useGameStore(s => s.generateExtraQuests)
-  const completeExtraQuest = useGameStore(s => s.completeExtraQuest)
-  const playerLevel = useGameStore(s => s.player.level)
-  const missionDifficulty = useGameStore(s => s.settings.missionDifficulty)
-  const normalBossIds = useGameStore(s => s.system.normalBossIds || [])
+  const extraQuests = useGameStore(st => st.extraQuests);
+  const generateExtraQuests = useGameStore(st => st.generateExtraQuests);
+  const playerLevel = useGameStore(st => st.player.level);
+  const missionDifficulty = useGameStore(st => st.settings.missionDifficulty);
+  const customDailyMissions = useGameStore(st => st.settings.customDailyMissions);
 
-  const done = quests.filter(q => q.done).length
-  const total = quests.length
-  const allDailyDone = quests.every(q => q.done || q.type === 'limit' || q.type === 'forbidden') && total > 0
+  const done = quests.filter(q => q.done).length;
+  const total = quests.length;
+  const allDailyDone = quests.every(q => q.done || q.type === 'limit' || q.type === 'forbidden') && total > 0;
 
-  const isRestDay = useGameStore(s => s.settings.restDay)
+  const isRestDay = useGameStore(st => st.settings.restDay);
 
-  const [showEventDungeon, setShowEventDungeon] = useState(false)
-  const [showForge, setShowForge] = useState(false)
-  const [activeMission, setActiveMission] = useState<DungeonMission | null>(null)
+  const [showEventDungeon, setShowEventDungeon] = useState(false);
+  const [showForge, setShowForge] = useState(false);
+  const [activeMission, setActiveMission] = useState<DungeonMission | null>(null);
 
-  const [portalConfirm, setPortalConfirm] = useState<DungeonMission | null>(null)
-  const [acceptedPortal, setAcceptedPortal] = useState<DungeonMission | null>(null)
-  const [eventProgressInfo, setEventProgressInfo] = useState<{ name: string; completed: number; required: number } | null>(null)
-  const [extractionBossId, setExtractionBossId] = useState<string | null>(null)
-  const [extractionCategory, setExtractionCategory] = useState<'dungeon' | 'dungeon_break' | 'event' | 'key' | 'raid'>('dungeon')
-  const [keyConfirm, setKeyConfirm] = useState<{ type: 'normal' | 'weekly', mission: DungeonMission, key: any } | null>(null)
-  const [eventCountdownMs, setEventCountdownMs] = useState(0)
-  const [portalCountdownMs, setPortalCountdownMs] = useState(0)
+  const [portalConfirm, setPortalConfirm] = useState<DungeonMission | null>(null);
+  const [acceptedPortal, setAcceptedPortal] = useState<DungeonMission | null>(null);
+  const [eventProgressInfo, setEventProgressInfo] = useState<{ name: string; completed: number; required: number } | null>(null);
+  const [extractionBossId, setExtractionBossId] = useState<string | null>(null);
+  const [extractionCategory, setExtractionCategory] = useState<'dungeon' | 'dungeon_break' | 'event' | 'key' | 'raid'>('dungeon');
+  const [keyConfirm, setKeyConfirm] = useState<{ type: 'normal' | 'weekly', mission: DungeonMission, key: any } | null>(null);
+  const [eventCountdownMs, setEventCountdownMs] = useState(0);
+  const [portalCountdownMs, setPortalCountdownMs] = useState(0);
   const [sectionsOpen, setSectionsOpen] = useState({
     now: true,
     today: true,
     events: true,
     extras: true,
-  })
-  const scrollViewRef = useRef<ScrollView>(null)
-  const sectionPositions = useRef<Record<string, number>>({})
+  });
+  const scrollViewRef = useRef<ScrollView>(null);
+  const sectionPositions = useRef<Record<string, number>>({});
 
   const scrollToSection = (sectionKey: string) => {
     // Open the section first
-    setSectionsOpen(prev => ({ ...prev, [sectionKey]: true }))
-    
+    setSectionsOpen(prev => ({ ...prev, [sectionKey]: true }));
+
     // Scroll to the section after a short delay to allow re-render
     setTimeout(() => {
-      const yOffset = sectionPositions.current[sectionKey] ?? 0
-      scrollViewRef.current?.scrollTo({ y: Math.max(0, yOffset - 100), animated: true })
-    }, 100)
-  }
+      const yOffset = sectionPositions.current[sectionKey] ?? 0;
+      scrollViewRef.current?.scrollTo({ y: Math.max(0, yOffset - 100), animated: true });
+    }, 100);
+  };
 
   const toggleSection = (key: keyof typeof sectionsOpen) => {
-    setSectionsOpen(prev => ({ ...prev, [key]: !prev[key] }))
-  }
+    setSectionsOpen(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const handleNowPanelQuest = () => {
     // Click handler for "Missão em foco" - could scroll to HOJE section
-    scrollToSection('today')
-  }
+    scrollToSection('today');
+  };
 
   const handleNowPanelDungeonBreak = () => {
     // Dynamic portal alert is now shown directly above, no need to scroll
-  }
+  };
 
   const handleNowPanelEvent = () => {
     // Click handler for event alert
-    scrollToSection('events')
-  }
+    scrollToSection('events');
+  };
 
-  const nowForReset = new Date()
-  const resetAt = new Date(nowForReset)
-  resetAt.setHours(24, 0, 0, 0)
-  const nextReset = formatCountdown(resetAt.getTime() - nowForReset.getTime())
-
-  const activeDailyQuest = quests.find(q => !q.done && q.type !== 'limit' && q.type !== 'forbidden')
+  const activeDailyQuest = quests.find(q => !q.done && q.type !== 'limit' && q.type !== 'forbidden');
 
   useEffect(() => {
-    if (!activeEventDef || !activeEventKey) return
+    if (!activeEventDef || !activeEventKey) {return;}
     // Only reset/initialize if the key actually changed
     if (eventBossKey !== activeEventKey) {
-      setEventBossState(activeEventKey, activeEventDef.required, eventTrials.length)
+      setEventBossState(activeEventKey, activeEventDef.required, eventTrials.length);
     }
-  }, [activeEventKey, activeEventDef?.required, eventTrials.length, eventBossKey, setEventBossState])
+  }, [activeEventDef, activeEventKey, eventTrials.length, eventBossKey, setEventBossState]);
 
   // Update portal countdown timer every second
   useEffect(() => {
-    const expiresAt = system.activeDungeonBreak?.expiresAt ?? 0
+    const expiresAt = system.activeDungeonBreak?.expiresAt ?? 0;
     if (!expiresAt) {
-      setPortalCountdownMs(0)
-      return
+      setPortalCountdownMs(0);
+      return;
     }
-    const update = () => setPortalCountdownMs(Math.max(0, expiresAt - Date.now()))
-    update()
-    const interval = setInterval(update, 1000)
-    return () => clearInterval(interval)
-  }, [system.activeDungeonBreak?.expiresAt])
+    const update = () => setPortalCountdownMs(Math.max(0, expiresAt - Date.now()));
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [system.activeDungeonBreak?.expiresAt]);
 
   // Update event countdown timer every second
   useEffect(() => {
     if (!activeEventDef) {
-      setEventCountdownMs(0)
-      return
+      setEventCountdownMs(0);
+      return;
     }
-    
+
     const updateCountdown = () => {
-      const ms = getEventCountdownMs(activeEventDef.event.end)
-      setEventCountdownMs(ms)
-    }
-    
+      const ms = getEventCountdownMs(activeEventDef.event.end);
+      setEventCountdownMs(ms);
+    };
+
     // Update immediately
-    updateCountdown()
-    
+    updateCountdown();
+
     // Then update every second
-    const interval = setInterval(updateCountdown, 1000)
-    return () => clearInterval(interval)
-  }, [activeEventDef?.event.end])
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [activeEventDef]);
 
   useEffect(() => {
     const onBackPress = () => {
       if (activeMission) {
-        setActiveMission(null)
-        return true
+        setActiveMission(null);
+        return true;
       }
       if (showEventDungeon) {
-        setShowEventDungeon(false)
-        return true
+        setShowEventDungeon(false);
+        return true;
       }
       if (showForge) {
-        setShowForge(false)
-        return true
+        setShowForge(false);
+        return true;
       }
-      return false
-    }
-    BackHandler.addEventListener('hardwareBackPress', onBackPress)
-    return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress)
-  }, [activeMission, showEventDungeon, showForge])
+      return false;
+    };
+    BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+  }, [activeMission, showEventDungeon, showForge]);
 
   function handleMissionSelect(m: DungeonMission) {
-    setActiveMission(m)
+    setActiveMission(m);
   }
 
   const handleExtractionClose = (_success: boolean) => {
     // Raid-only extraction close: boss was already defeated by the store
-    setExtractionBossId(null)
-  }
+    setExtractionBossId(null);
+  };
   function completeBossMission(m: DungeonMission, focusMinutes?: number) {
-    setActiveMission(null)
+    setActiveMission(null);
     // Clear accepted portal when mission is completed successfully
-    setAcceptedPortal(null)
+    setAcceptedPortal(null);
     // If this was a portal/dungeon-break mission, clear it from the store so it doesn't re-appear
     if (m.category === 'dungeon' || m.category === 'dungeon_break') {
-      clearActiveDungeonBreak()
+      clearActiveDungeonBreak();
     }
 
     // Event trials just progress the event, no extraction, no time recording (they're practice)
     if (m.isEventTrial && m.eventKey) {
-      const res = completeEventTrial(m.id, m.eventKey, eventRequired, eventTrials.length)
-      setEventProgressInfo({ name: m.eventName ?? 'EVENTO', completed: res.completed, required: res.required })
-      return
+      const res = completeEventTrial(m.id, m.eventKey, eventRequired, eventTrials.length);
+      setEventProgressInfo({ name: m.eventName ?? 'EVENTO', completed: res.completed, required: res.required });
+      return;
     }
 
     // Only real boss missions (not trials) record focus time
-    if (focusMinutes) recordFocus(focusMinutes)
+    if (focusMinutes) {recordFocus(focusMinutes);}
 
     // Defeat boss — pushes boss_defeated + shadow to global rewardsQueue (no local modal needed)
-    defeatBoss(m.shadowHint, m.customShadow, m.label)
+    defeatBoss(m.shadowHint, m.customShadow, m.label);
 
     // Fire event triggers
-    const missionId = m.id.startsWith('custom_boss_') ? m.id.slice('custom_boss_'.length) : m.id
+    const missionId = m.id.startsWith('custom_boss_') ? m.id.slice('custom_boss_'.length) : m.id;
     if (m.id === 'boss_gps' || (m.id.startsWith('custom_boss_') && m.type === 'gps') || (m.isEventBoss && m.type === 'gps') || (m.id.startsWith('normal_dungeon_') && m.type === 'gps'))
-      triggerEvent('boss_gps_completed', { missionId })
+      {triggerEvent('boss_gps_completed', { missionId });}
     if (m.id === 'boss_focus' || (m.id.startsWith('custom_boss_') && m.type === 'focus') || (m.isEventBoss && m.type === 'focus') || (m.id.startsWith('normal_dungeon_') && m.type === 'focus'))
-      triggerEvent('boss_focus_completed', { missionId })
+      {triggerEvent('boss_focus_completed', { missionId });}
     if (m.id === 'boss_training' || (m.id.startsWith('custom_boss_') && m.type === 'training') || (m.isEventBoss && m.type === 'training') || (m.id.startsWith('normal_dungeon_') && m.type === 'training'))
-      triggerEvent('boss_training_completed', { missionId })
-    if (m.isEventBoss && m.eventKey) markEventBossDefeated(m.eventKey)
+      {triggerEvent('boss_training_completed', { missionId });}
+    if (m.isEventBoss && m.eventKey) {markEventBossDefeated(m.eventKey);}
   }
 
   // Convert active dungeon mission to Quest shape for existing tracker modals
@@ -455,7 +407,7 @@ export default function QuestScreen() {
     done: false,
     gpsTarget: activeMission.gpsTarget,
     focusDuration: activeMission.focusDuration,
-  } : null
+  } : null;
 
   return (
     <View style={s.safeArea}>
@@ -463,10 +415,10 @@ export default function QuestScreen() {
 
         {/* ── GLOBAL RAID BOSS ── */}
         {activeRaidBoss && (() => {
-          const def = RAID_BOSSES.find(b => b.id === activeRaidBoss.defId)
-          if (!def) return null
-          const progress = activeRaidBoss.currentHp / activeRaidBoss.maxHp
-          const timeLeftMs = activeRaidBoss.endDate - Date.now()
+          const def = RAID_BOSSES.find(b => b.id === activeRaidBoss.defId);
+          if (!def) {return null;}
+          const progress = activeRaidBoss.currentHp / activeRaidBoss.maxHp;
+          const timeLeftMs = activeRaidBoss.endDate - Date.now();
 
           return (
             <View style={[s.systemCard, s.cardWarning, { marginBottom: 20, padding: 12, backgroundColor: def.color + '15', borderColor: def.color + '50', borderRadius: 8 }]}>
@@ -491,10 +443,10 @@ export default function QuestScreen() {
                 <Text style={{ fontFamily: FONT.orbitron, fontSize: 10, color: C.muted }}>{Math.floor(activeRaidBoss.currentHp)} <Text style={{ fontSize: 9, color: C.dimmed }}>/ {activeRaidBoss.maxHp}</Text></Text>
               </View>
             </View>
-          )
+          );
         })()}
 
-        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('now')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current['now'] = e.nativeEvent.layout.y }}>
+        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('now')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.now = e.nativeEvent.layout.y; }}>
           <Text style={s.collapsibleTitle}>AGORA</Text>
           <Icon name={sectionsOpen.now ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
@@ -520,7 +472,7 @@ export default function QuestScreen() {
           </View>
         )}
 
-        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('today')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current['today'] = e.nativeEvent.layout.y }}>
+        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('today')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.today = e.nativeEvent.layout.y; }}>
           <Text style={s.collapsibleTitle}>HOJE</Text>
           <Icon name={sectionsOpen.today ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
@@ -596,7 +548,7 @@ export default function QuestScreen() {
         {acceptedPortal && (
           <TouchableOpacity
             style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: acceptedPortal.color || C.neonRed, opacity: activeMission ? 0.85 : 1 }]}
-            onPress={() => { if (!activeMission) handleMissionSelect(acceptedPortal) }}
+            onPress={() => { if (!activeMission) {handleMissionSelect(acceptedPortal);} }}
             disabled={!!activeMission}
           >
             <Icon name={activeMission ? 'sword-cross' : (acceptedPortal.icon || 'gate')} size={24} color={acceptedPortal.color || C.neonRed} />
@@ -611,28 +563,28 @@ export default function QuestScreen() {
         {!acceptedPortal && system.activeDungeonBreak &&
           Date.now() >= (system.activeDungeonBreak.startsAt ?? 0) &&
           Date.now() < system.activeDungeonBreak.expiresAt && (() => {
-            const db = system.activeDungeonBreak!
-            const isQuest = db.source === 'quest'
-            const qDef = isQuest ? questDictionary.find(d => d.id === db.bossId) : undefined
-            const rBoss = !isQuest ? RAID_BOSSES.find(b => b.id === db.bossId) : undefined
+            const db = system.activeDungeonBreak!;
+            const isQuest = db.source === 'quest';
+            const qDef = isQuest ? questDictionary.find(d => d.id === db.bossId) : undefined;
+            const rBoss = !isQuest ? RAID_BOSSES.find(b => b.id === db.bossId) : undefined;
             const displayIcon = qDef
               ? (qDef.questType === 'focus' ? 'timer-sand' : qDef.questType === 'gps' ? 'run-fast' : 'arm-flex')
-              : 'skull-scan'
+              : 'skull-scan';
             const displayColor = qDef
               ? (qDef.questType === 'focus' ? C.purple : qDef.questType === 'gps' ? C.green : C.neonRed)
-              : C.neonRed
+              : (rBoss?.color ?? C.neonRed);
             const displayLore = qDef
               ? qDef.description.replace(/{target}/g, String(qDef.baseTarget)).replace(/{unit}/g, qDef.unit)
               : rBoss
                 ? `Rank ${rBoss.rank} — Elimina ${rBoss.name} antes que o portal colapse.`
-                : 'Um portal dinâmico abriu-se. Entra antes que a janela feche.'
+                : 'Um portal dinâmico abriu-se. Entra antes que a janela feche.';
             return (
               <TouchableOpacity
-                style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: C.neonRed }]}
+                style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: displayColor }]}
                 onPress={() => {
-                  if (!db) return
+                  if (!db) {return;}
                   if (db.source === 'quest') {
-                    if (!qDef) return
+                    if (!qDef) {return;}
                     const mission: DungeonMission = {
                       id: `portal_${qDef.id}`,
                       label: `Portal Dinâmico: ${qDef.title}`,
@@ -642,13 +594,13 @@ export default function QuestScreen() {
                       icon: displayIcon,
                       color: displayColor,
                       category: 'dungeon',
-                    }
-                    setPortalConfirm(mission)
-                    return
+                    };
+                    setPortalConfirm(mission);
+                    return;
                   }
-                  if (!rBoss) return
-                  const remainingMs = Math.max(0, db.expiresAt - Date.now())
-                  const targetFocus = Math.max(10 * 60_000, Math.min(25 * 60_000, Math.floor(remainingMs * 0.5)))
+                  if (!rBoss) {return;}
+                  const remainingMs = Math.max(0, db.expiresAt - Date.now());
+                  const targetFocus = Math.max(10 * 60_000, Math.min(25 * 60_000, Math.floor(remainingMs * 0.5)));
                   const mission: DungeonMission = {
                     id: `break_${rBoss.id}`,
                     label: `Dungeon Break: ${rBoss.name}`,
@@ -656,30 +608,30 @@ export default function QuestScreen() {
                     type: 'focus',
                     shadowHint: rBoss.id,
                     icon: 'skull-scan',
-                    color: C.neonRed,
+                    color: rBoss.color,
                     focusDuration: targetFocus,
                     category: 'dungeon_break',
-                  }
-                  setPortalConfirm(mission)
+                  };
+                  setPortalConfirm(mission);
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Icon name="alert-octagram" size={22} color={C.neonRed} />
+                  <Icon name="alert-octagram" size={22} color={displayColor} />
                   <View style={{ flex: 1 }}>
-                    <Text style={[s.dungeonBreakTxt, { color: C.neonRed }]} numberOfLines={1}>
+                    <Text style={[s.dungeonBreakTxt, { color: displayColor }]} numberOfLines={1}>
                       PORTAL DINÂMICO DETECTADO
                     </Text>
                     <Text style={s.dungeonBreakSub} numberOfLines={2}>Anomalia dimensional activa. Toca para investigar.</Text>
                   </View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 4 }}>
-                  <Icon name="timer-alert-outline" size={10} color={C.neonRed + 'cc'} />
-                  <Text style={[s.dungeonBreakSub, { color: C.neonRed }]}>
+                  <Icon name="timer-alert-outline" size={10} color={displayColor + 'cc'} />
+                  <Text style={[s.dungeonBreakSub, { color: displayColor }]}>
                     {formatCountdown(portalCountdownMs)} RESTANTES — TOCA PARA ENTRAR
                   </Text>
                 </View>
               </TouchableOpacity>
-            )
+            );
           })()
         }
 
@@ -744,7 +696,7 @@ export default function QuestScreen() {
 
             {extraQuests.map(q => <QuestCard key={q.id} quest={q} isExtra C={C} />)}
 
-            {extraQuests.length < Math.min(3, getDailyMissionTarget(playerLevel, missionDifficulty)) && (
+            {extraQuests.length < Math.min(3, getDailyMissionTarget(playerLevel, missionDifficulty, customDailyMissions)) && (
               <TouchableOpacity
                 style={s.generateExtraBtn}
                 onPress={() => generateExtraQuests()}
@@ -764,7 +716,7 @@ export default function QuestScreen() {
           </>
         )}
 
-        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('events')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current['events'] = e.nativeEvent.layout.y }}>
+        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('events')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.events = e.nativeEvent.layout.y; }}>
           <Text style={s.collapsibleTitle}>MASMORRAS</Text>
           <Icon name={sectionsOpen.events ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
@@ -821,8 +773,8 @@ export default function QuestScreen() {
           quest={activeBossQuest}
           onClose={() => setActiveMission(null)}
           onComplete={() => {
-            const mins = Math.max(1, Math.round((activeMission.focusDuration ?? 90 * 60_000) / 60_000))
-            completeBossMission(activeMission, mins)
+            const mins = Math.max(1, Math.round((activeMission.focusDuration ?? 90 * 60_000) / 60_000));
+            completeBossMission(activeMission, mins);
           }}
           targetSeconds={activeMission.focusDuration ? activeMission.focusDuration / 1000 : 90 * 60}
           C={C}
@@ -855,17 +807,16 @@ export default function QuestScreen() {
       {portalConfirm && (
         <CustomModal
           visible={!!portalConfirm}
-          title={portalConfirm.label?.toUpperCase() || 'PORTAL DINÂMICO'}
-          message={portalConfirm.detail || ''}
+          title={'PORTAL DINÂMICO'}
+          message={`${portalConfirm.label ?? 'Portal detectado'}\nEntra para veres os detalhes e iniciares a missão.`}
           confirmLabel="ENTRAR"
           confirmIcon="play"
           confirmColor={portalConfirm.color || C.neonRed}
-          onConfirm={() => { 
-            setAcceptedPortal(portalConfirm)
-            handleMissionSelect(portalConfirm)
-            setPortalConfirm(null)
+          onConfirm={() => {
+            setAcceptedPortal(portalConfirm);
+            setPortalConfirm(null);
           }}
-          onCancel={() => { setPortalConfirm(null) }}
+          onCancel={() => { setPortalConfirm(null); }}
           C={C}
         />
       )}
@@ -895,9 +846,9 @@ export default function QuestScreen() {
           confirmColor={keyConfirm.key.color || C.neonBlue}
           onConfirm={() => {
             if (enterDungeon(keyConfirm.key.id)) {
-              handleMissionSelect(keyConfirm.mission)
+              handleMissionSelect(keyConfirm.mission);
             }
-            setKeyConfirm(null)
+            setKeyConfirm(null);
           }}
           cancelLabel="CANCELAR"
           onCancel={() => setKeyConfirm(null)}
@@ -916,7 +867,7 @@ export default function QuestScreen() {
 
       {showForge && <QuestForgeScreen onClose={() => setShowForge(false)} />}
     </View>
-  )
+  );
 }
 
 
@@ -924,4 +875,3 @@ export default function QuestScreen() {
 
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
-

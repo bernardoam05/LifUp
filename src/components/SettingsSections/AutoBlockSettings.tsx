@@ -1,7 +1,7 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme, SPACING, FONT } from '../../theme'
+import React from 'react';
+import { View, Text, StyleSheet, Switch } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme, SPACING, FONT } from '../../theme';
 
 interface AutoBlockSettingsProps {
   autoBlockApps: boolean
@@ -12,8 +12,8 @@ const AutoBlockSettings = ({
   autoBlockApps,
   onToggle,
 }: AutoBlockSettingsProps) => {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View style={s.container}>
@@ -51,32 +51,32 @@ const AutoBlockSettings = ({
         />
       </View>
     </View>
-  )
-}
+  );
+};
 
 const getStyles = (C: any) => StyleSheet.create({
   container: {
     marginBottom: SPACING.xl,
   },
-  sectionHeader: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: SPACING.md, 
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
     marginBottom: SPACING.md,
     paddingBottom: SPACING.sm,
     borderBottomWidth: 1,
     borderBottomColor: C.border + '44',
   },
-  sectionDot: { 
-    width: 3, 
-    height: 16, 
+  sectionDot: {
+    width: 3,
+    height: 16,
     borderRadius: 2,
   },
-  sectionTitle: { 
-    fontFamily: FONT.orbitron, 
-    fontSize: 11, 
-    letterSpacing: 2, 
-    fontWeight: '900' 
+  sectionTitle: {
+    fontFamily: FONT.orbitron,
+    fontSize: 11,
+    letterSpacing: 2,
+    fontWeight: '900',
   },
   infoCard: {
     flexDirection: 'row',
@@ -154,6 +154,6 @@ const getStyles = (C: any) => StyleSheet.create({
     color: C.dimmed,
     fontSize: 10,
   },
-})
+});
 
-export default AutoBlockSettings
+export default AutoBlockSettings;

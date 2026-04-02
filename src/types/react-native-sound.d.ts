@@ -1,9 +1,9 @@
 declare module 'react-native-sound' {
   class Sound {
-    static MAIN_BUNDLE: string
-    static DOCUMENT: string
-    static LIBRARY: string
-    static CACHES: string
+    static MAIN_BUNDLE: string;
+    static DOCUMENT: string;
+    static LIBRARY: string;
+    static CACHES: string;
     static setCategory(category: string, mixWithOthers?: boolean): void
 
     constructor(filename: string, basePath: string, callback?: (error: any) => void)
@@ -16,5 +16,5 @@ declare module 'react-native-sound' {
     isLoaded(): boolean
     isPlaying(): boolean
   }
-  export default Sound
+  export default Sound;
 }

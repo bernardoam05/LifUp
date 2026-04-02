@@ -6,16 +6,16 @@
  *   phase={2} → Level-10 shadow mechanics
  */
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions,
-  Animated, Easing, ScrollView, PanResponder
-} from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme, FONT, SPACING } from '../theme'
+  Animated, Easing, PanResponder,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme, FONT, SPACING } from '../theme';
 
 
-const { width: SW, height: SH } = Dimensions.get('window')
+const { width: SW } = Dimensions.get('window');
 
 // ── Step definitions ───────────────────────────────────────────────────────────
 
@@ -41,10 +41,10 @@ type TutorialStep = {
 
 // ─── Phase 1 steps ────────────────────────────────────────────────────────────
 
-const TAB_COUNT   = 6
-const TAB_W       = SW / TAB_COUNT
+const TAB_COUNT   = 6;
+const TAB_W       = SW / TAB_COUNT;
 // Approximate center X of each tab (0-indexed)
-const tabX = (i: number) => TAB_W * i + TAB_W / 2 - SW / 2   // offset from center of screen
+const tabX = (i: number) => TAB_W * i + TAB_W / 2 - SW / 2;   // offset from center of screen
 
 const getPhase1Steps = (C: any): TutorialStep[] => [
   {
@@ -111,7 +111,7 @@ const getPhase1Steps = (C: any): TutorialStep[] => [
     body:   'A tua primeira missão é simples: completa as Missões Diárias de hoje.\n\nQuanto mais consistente fores, mais o teu Rank vai subir. Vai em frente, Hunter.',
     targetTab: 'Missões',
   },
-]
+];
 
 const getPhase2Steps = (C: any): TutorialStep[] => [
   {
@@ -154,7 +154,7 @@ const getPhase2Steps = (C: any): TutorialStep[] => [
     body:   'Continua a conquistar, Hunter. As sombras mais poderosas ainda estão por vir — bosses de Rank S aguardam-te.\n\nForja o teu exército. Torna-te imparável.',
     targetTab: 'Missões',
   },
-]
+];
 
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -166,18 +166,18 @@ interface Props {
 }
 
 export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
-  const C = useTheme()
-  const st = React.useMemo(() => getStyles(C), [C])
-  const steps = React.useMemo(() => (phase === 1 ? getPhase1Steps(C) : getPhase2Steps(C)), [phase, C])
-  const [step, setStep] = useState(0)
+  const C = useTheme();
+  const st = React.useMemo(() => getStyles(), []);
+  const steps = React.useMemo(() => (phase === 1 ? getPhase1Steps(C) : getPhase2Steps(C)), [phase, C]);
+  const [step, setStep] = useState(0);
 
-  const [direction, setDirection] = useState<1 | -1>(1)
-  
-  const fadeAnim   = useRef(new Animated.Value(0)).current
-  const slideXAnim = useRef(new Animated.Value(50)).current
+  const [direction, setDirection] = useState<1 | -1>(1);
 
-  const current = steps[step]
-  const isLast  = step === steps.length - 1
+  const fadeAnim   = useRef(new Animated.Value(0)).current;
+  const slideXAnim = useRef(new Animated.Value(50)).current;
+
+  const current = steps[step];
+  const isLast  = step === steps.length - 1;
 
   const panResponder = useRef(
     PanResponder.create({
@@ -187,60 +187,60 @@ export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
       onPanResponderRelease: (evt, gestureState) => {
         if (gestureState.dx < -40) {
           // swiped left -> next
-          handleNext()
+          handleNext();
         } else if (gestureState.dx > 40) {
           // swiped right -> prev
-          handlePrev()
+          handlePrev();
         }
       },
     })
-  ).current
+  ).current;
 
   // Animate in on each step change and trigger tab navigate
   useEffect(() => {
-    fadeAnim.setValue(0)
-    slideXAnim.setValue(direction * 50)
+    fadeAnim.setValue(0);
+    slideXAnim.setValue(direction * 50);
     Animated.parallel([
       Animated.timing(fadeAnim, { toValue: 1, duration: 300, easing: Easing.out(Easing.quad), useNativeDriver: true }),
       Animated.timing(slideXAnim, { toValue: 0, duration: 350, easing: Easing.out(Easing.back(1.1)), useNativeDriver: true }),
-    ]).start()
+    ]).start();
 
     if (current.targetTab && onChangeTab) {
-      onChangeTab(current.targetTab)
+      onChangeTab(current.targetTab);
     }
-  }, [step, phase])
+  }, [step, phase, current.targetTab, direction, fadeAnim, onChangeTab, slideXAnim]);
 
   function handleNext() {
     if (isLast) {
-      onDone()
+      onDone();
     } else {
-      setDirection(1)
-      setStep(s => s + 1)
+      setDirection(1);
+      setStep(s => s + 1);
     }
   }
 
   function handlePrev() {
     if (step > 0) {
-      setDirection(-1)
-      setStep(s => s - 1)
+      setDirection(-1);
+      setStep(s => s - 1);
     }
   }
 
   function handleSkip() {
-    onDone()
+    onDone();
   }
 
   /** Vertical position of the tooltip card */
-  const tooltipOnTop = !!current.arrow && current.arrow.side === 'bottom'
+  const tooltipOnTop = !!current.arrow && current.arrow.side === 'bottom';
 
-  const spotlightX = current.arrow?.offsetX ? (SW / 2 + current.arrow.offsetX - TAB_W / 2) : 0
-  const spotlightW = TAB_W
+  const spotlightX = current.arrow?.offsetX ? (SW / 2 + current.arrow.offsetX - TAB_W / 2) : 0;
+  const spotlightW = TAB_W;
 
   return (
     <Modal transparent animationType="none" visible statusBarTranslucent onRequestClose={handleSkip}>
       {/* Dark overlay with swipe handler */}
       <View style={st.overlay} {...panResponder.panHandlers}>
-        
+
         {/* Spotlight Effect (Cut-out simulation) */}
         {!current.splash && current.arrow?.side === 'bottom' && (
           <View style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -363,12 +363,12 @@ export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
         </Animated.View>
       </View>
     </Modal>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
- 
-const getStyles = (C: any) => StyleSheet.create({
+
+const getStyles = () => StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: '#00000099', // Slightly lighter to let spotlight stand out
@@ -456,4 +456,4 @@ const getStyles = (C: any) => StyleSheet.create({
     paddingVertical: 12, paddingHorizontal: 20,
   },
   nextTxt: { fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 1.5, fontWeight: '900' },
-})
+});

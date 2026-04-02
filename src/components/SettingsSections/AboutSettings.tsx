@@ -1,10 +1,10 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import { useTheme, SPACING, FONT } from '../../theme'
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { useTheme, SPACING, FONT } from '../../theme';
 
 const AboutSettings = () => {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View>
@@ -28,36 +28,36 @@ const AboutSettings = () => {
         </Text>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const getStyles = (C: any) => StyleSheet.create({
-  sectionHeader: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: SPACING.md, 
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
     marginBottom: SPACING.md,
     paddingBottom: SPACING.sm,
     borderBottomWidth: 1,
     borderBottomColor: C.border + '44',
   },
-  sectionDot:    { 
-    width: 3, 
-    height: 16, 
+  sectionDot:    {
+    width: 3,
+    height: 16,
     borderRadius: 2,
   },
-  sectionTitle:  { 
-    color: C.neonBlue, 
-    fontFamily: FONT.orbitron, 
-    fontSize: 11, 
-    letterSpacing: 2, 
-    fontWeight: '900' 
+  sectionTitle:  {
+    color: C.neonBlue,
+    fontFamily: FONT.orbitron,
+    fontSize: 11,
+    letterSpacing: 2,
+    fontWeight: '900',
   },
 
   aboutCard:  { backgroundColor: C.panel, borderRadius: 8, borderWidth: 1, borderColor: C.border + '66', padding: SPACING.md, gap: 6 },
   aboutLine:  { fontSize: 12 },
   aboutKey:   { color: C.dimmed },
   aboutVal:   { color: C.muted },
-})
+});
 
-export default AboutSettings
+export default AboutSettings;

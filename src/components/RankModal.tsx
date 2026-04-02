@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ScrollView } from 'react-native'
-import SoloLevelingModal from './SoloLevelingModal'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { getRank, CLASS_REQUIREMENTS, RankKey, RankLetter } from '../store/useGameStore'
-import { FONT } from '../theme'
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ScrollView } from 'react-native';
+import SoloLevelingModal from './SoloLevelingModal';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useGameStore, { getRank, CLASS_REQUIREMENTS } from '../store/useGameStore';
+import { FONT } from '../theme';
 
 
 type Props = {
@@ -18,47 +18,47 @@ type Props = {
 
 
 export default function RankModal({ visible = true, level, totalCompleted, bossesDefeated, questsByRank, onClose, C }: Props) {
-  const s = getStyles(C)
+  const s = getStyles(C);
 
-  const playerRankLetter = useGameStore(s => s.player.rank) || 'E'
-  const rankUpAction = useGameStore(s => s.rankUp)
-  const currentRankInfo = CLASS_REQUIREMENTS.find(r => r.rank === playerRankLetter) || CLASS_REQUIREMENTS[0]
-  const qualifiedRankInfo = getRank(level, totalCompleted, bossesDefeated, questsByRank)
-  
-  const currentIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank)
-  const qualifiedIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === qualifiedRankInfo.rank)
-  const canRankUp = qualifiedIdx > currentIdx
+  const playerRankLetter = useGameStore(st => st.player.rank) || 'E';
+  const rankUpAction = useGameStore(st => st.rankUp);
+  const currentRankInfo = CLASS_REQUIREMENTS.find(r => r.rank === playerRankLetter) || CLASS_REQUIREMENTS[0];
+  const qualifiedRankInfo = getRank(level, totalCompleted, bossesDefeated, questsByRank);
 
-  const [isRankingUp, setIsRankingUp] = useState(false)
-  const scaleAnim = useRef(new Animated.Value(1)).current
-  const glowAnim = useRef(new Animated.Value(0)).current
+  const currentIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank);
+  const qualifiedIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === qualifiedRankInfo.rank);
+  const canRankUp = qualifiedIdx > currentIdx;
+
+  const [isRankingUp, setIsRankingUp] = useState(false);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (canRankUp && !isRankingUp) {
       Animated.loop(
         Animated.sequence([
           Animated.timing(glowAnim, { toValue: 1, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: false }),
-          Animated.timing(glowAnim, { toValue: 0, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: false })
+          Animated.timing(glowAnim, { toValue: 0, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: false }),
         ])
-      ).start()
+      ).start();
     }
-  }, [canRankUp, isRankingUp])
+  }, [canRankUp, isRankingUp, glowAnim]);
 
   const handleRankUp = () => {
-    setIsRankingUp(true)
+    setIsRankingUp(true);
     Animated.sequence([
       Animated.timing(scaleAnim, { toValue: 1.5, duration: 800, useNativeDriver: true }),
-      Animated.spring(scaleAnim, { toValue: 1, friction: 3, useNativeDriver: true })
+      Animated.spring(scaleAnim, { toValue: 1, friction: 3, useNativeDriver: true }),
     ]).start(() => {
-      rankUpAction()
+      rankUpAction();
       setTimeout(() => {
-        onClose()
-      }, 500)
-    })
-  }
+        onClose();
+      }, 500);
+    });
+  };
 
   // Visual rank being shown, changes right when animation finishes roughly
-  const displayRank = (isRankingUp ? qualifiedRankInfo : currentRankInfo) as { rank: string; label: string; color: string; bgColor: string }
+  const displayRank = (isRankingUp ? qualifiedRankInfo : currentRankInfo) as { rank: string; label: string; color: string; bgColor: string };
 
   return (
     <SoloLevelingModal visible={visible} onRequestClose={onClose}>
@@ -84,14 +84,14 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
         ) : (
           <>
             {CLASS_REQUIREMENTS.map(r => {
-              const isCurrent = r.rank === currentRankInfo.rank
-              const lvlOk = level >= r.minLevel
-              const misOk = totalCompleted >= r.minMissions
-              const bossOk = bossesDefeated >= r.minBosses
+              const isCurrent = r.rank === currentRankInfo.rank;
+              const lvlOk = level >= r.minLevel;
+              const misOk = totalCompleted >= r.minMissions;
+              const bossOk = bossesDefeated >= r.minBosses;
               const rankMisOk = r.minRankMissions === 0 || !r.prevRank
-                || (questsByRank[r.prevRank] ?? 0) >= r.minRankMissions
-              const met = lvlOk && misOk && bossOk && rankMisOk
-              const prevRankCount = r.prevRank ? (questsByRank[r.prevRank] ?? 0) : 0
+                || (questsByRank[r.prevRank] ?? 0) >= r.minRankMissions;
+              const met = lvlOk && misOk && bossOk && rankMisOk;
+              const prevRankCount = r.prevRank ? (questsByRank[r.prevRank] ?? 0) : 0;
 
               return (
                 <View key={r.rank} style={[s.row, isCurrent && { backgroundColor: r.color + '15' }]}>
@@ -142,7 +142,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
                   )}
                   {!isCurrent && met && <Icon name="check-circle" size={14} color={r.color + 'aa'} />}
                 </View>
-              )
+              );
             })}
 
             {canRankUp ? (
@@ -173,7 +173,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
         </ScrollView>
       </Animated.View>
     </SoloLevelingModal>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -204,9 +204,8 @@ const getStyles = (C: any) => StyleSheet.create({
   warningText: { color: C.neonRed, fontSize: 9, fontFamily: FONT.orbitron, textAlign: 'center', marginBottom: 12 },
   rankUpBtn: { paddingVertical: 12, paddingHorizontal: 24, borderRadius: 4 },
   rankUpBtnTxt: { fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900', letterSpacing: 1 },
-  
+
   rankUpContainer: { alignItems: 'center', paddingVertical: 32 },
   rankUpTitle: { fontFamily: FONT.orbitron, fontSize: 24, fontWeight: '900', letterSpacing: 2, marginBottom: 8 },
   rankUpText: { color: C.muted, fontSize: 14, fontFamily: FONT.orbitron },
-})
-
+});

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SoloLevelingModal from './SoloLevelingModal';
 import { FONT, SPACING } from '../theme';
@@ -43,7 +43,7 @@ export default function BossVictoryModal({
   onClose,
   onRequestClose,
   info,
-  C
+  C,
 }: BossVictoryModalProps) {
   const bv = getBVStyles(C);
 
@@ -91,14 +91,14 @@ export default function BossVictoryModal({
             <Text style={bv.lootHeader}>— LOOT —</Text>
             <View style={bv.lootBox}>
               {info.droppedItems.map((itemId, idx) => {
-                const itm = CATALOG_MAP[itemId]
-                if (!itm) return null
+                const itm = CATALOG_MAP[itemId];
+                if (!itm) {return null;}
                 return (
                   <View key={`${itemId}-${idx}`} style={bv.lootRow}>
                     <Icon name={itm.icon} size={14} color={itm.color} />
                     <Text style={[bv.lootTxt, { color: itm.color }]}> {itm.name}</Text>
                   </View>
-                )
+                );
               })}
             </View>
           </>

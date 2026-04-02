@@ -1,6 +1,6 @@
-import type { QuestDefinition, Quest, MissionDifficulty, SideQuest, RankLetter } from './types'
-import { seededPick, getQuestTier, TIER_MULT, rankFromXP } from './helpers'
-import type { PassiveEffectType } from '../data/shadows'
+import type { QuestDefinition, Quest, MissionDifficulty } from './types';
+import { seededPick, getQuestTier, TIER_MULT, rankFromXP } from './helpers';
+import type { PassiveEffectType } from '../data/shadows';
 
 // ── Daily Misson Limits & Key Gates ──────────────────────────────────────────
 
@@ -8,43 +8,47 @@ export const LEVEL_GATED_KEYS = [
   { id: 'key_crypt', name: 'Chave da Cripta', color: '#ff4444', icon: 'key', unlockLevel: 5 },
   { id: 'key_astral', name: 'Chave do Eclipse', color: '#a855f7', icon: 'key', unlockLevel: 15 },
   { id: 'key_seraphim', name: 'Chave do Serafim', color: '#fbbf24', icon: 'key', unlockLevel: 30 },
-]
+];
 
 export const BOX_KEY_META = [
   { id: 'key_goblin', name: 'Chave Goblin', color: '#10b981', icon: 'key' },
   { id: 'key_orc', name: 'Chave Orc de Fogo', color: '#f97316', icon: 'key' },
   { id: 'key_dragon', name: 'Chave do Dragão', color: '#8b5cf6', icon: 'key' },
-]
+];
 
-export function getDailyMissionTarget(level: number, difficulty: MissionDifficulty): number {
+export function getDailyMissionTarget(level: number, difficulty: MissionDifficulty, customTarget?: number): number {
   switch (difficulty) {
-    case 'easy': return 2
-    case 'hard': return Math.min(4 + Math.floor(level / 8), 7)
+    case 'easy': return 2;
+    case 'hard': return Math.min(4 + Math.floor(level / 8), 7);
+    case 'custom': {
+      const safe = Number.isFinite(customTarget) ? Math.round(customTarget as number) : 3;
+      return Math.min(Math.max(safe, 1), 10);
+    }
     case 'normal':
-    default: return Math.min(3 + Math.floor(level / 12), 5)
+    default: return Math.min(3 + Math.floor(level / 12), 5);
   }
 }
 
 // ── Quest Conversion & Generation ────────────────────────────────────────────
 
 export function defToQuest(def: QuestDefinition, level: number, tier: string): Quest {
-  const mult = TIER_MULT[tier] || 1.0
-  const m = (n: number) => Math.round(n * mult)
-  const amount = def.scalingAmount ?? (def as any).scalingPerLevel ?? 0
-  const interval = def.scalingInterval ?? 1
-  let targetRaw = def.baseTarget + Math.floor((level - 1) / interval) * (def.isDescending ? -amount : amount)
-  
+  const mult = TIER_MULT[tier] || 1.0;
+  const m = (n: number) => Math.round(n * mult);
+  const amount = def.scalingAmount ?? (def as any).scalingPerLevel ?? 0;
+  const interval = def.scalingInterval ?? 1;
+  let targetRaw = def.baseTarget + Math.floor((level - 1) / interval) * (def.isDescending ? -amount : amount);
+
   // Dynamic scaling for elite/boss content
   if (def.dynamicScaling) {
     // Increase target by 5% every 5 levels
-    const factor = 1 + (Math.floor(level / 5) * 0.05)
-    targetRaw *= factor
+    const factor = 1 + (Math.floor(level / 5) * 0.05);
+    targetRaw *= factor;
   }
 
-  const target = Math.max(def.questType === 'forbidden' ? 0 : 1, Math.round(targetRaw))
+  const target = Math.max(def.questType === 'forbidden' ? 0 : 1, Math.round(targetRaw));
   const detail = def.description
     .replace(/{target}/g, String(target))
-    .replace(/{unit}/g, def.unit)
+    .replace(/{unit}/g, def.unit);
 
   const quest: Quest = {
     id: def.id,
@@ -56,54 +60,60 @@ export function defToQuest(def: QuestDefinition, level: number, tier: string): Q
     done: false,
     rank: def.rank ?? rankFromXP(def.baseXP),
     targetValue: target,
+    unit: def.unit,
     rewards: def.rewards,
+  };
+  if (def.questType === 'focus') {
+    const unit = def.unit?.toLowerCase() ?? 'min';
+    const focusMinutes = unit.startsWith('h') ? target * 60 : target;
+    quest.focusDuration = focusMinutes * 60_000;
   }
-  if (def.questType === 'focus') quest.focusDuration = target * 60_000
-  if (def.questType === 'gps') quest.gpsTarget = target
-  if (def.questType === 'limit') quest.currentValue = 0
-  if (def.questType === 'pomodoro') { quest.pomodoroTarget = target; quest.currentValue = 0 }
-  return quest
+  if (def.questType === 'gps') {quest.gpsTarget = target;}
+  if (def.questType === 'limit') {quest.currentValue = 0;}
+  if (def.questType === 'pomodoro') { quest.pomodoroTarget = target; quest.currentValue = 0; }
+  return quest;
 }
 
 export function createDailyQuests(
   level: number,
   questDictionary: QuestDefinition[],
   difficulty: MissionDifficulty = 'normal',
+  customTarget?: number,
   overrideSeed?: number,
 ): Quest[] {
-  const tier = getQuestTier(level)
-  const dayOfWeek = new Date().getDay()
-  const d = new Date()
-  const seed = overrideSeed ?? (d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate())
+  const tier = getQuestTier(level);
+  const dayOfWeek = new Date().getDay();
+  const d = new Date();
+  const seed = overrideSeed ?? (d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate());
 
   const coreDefs = questDictionary
     .filter(def => def.type === 'core')
-    .filter(def => !def.daysOfWeek || def.daysOfWeek.includes(dayOfWeek))
+    .filter(def => !def.daysOfWeek || def.daysOfWeek.includes(dayOfWeek));
 
-  const poolDefs = questDictionary.filter(def => def.type === 'pool')
-  const poolCount = getDailyMissionTarget(level, difficulty)
-  const picks = seededPick(poolCount, poolDefs.length, seed)
+  const poolDefs = questDictionary.filter(def => def.type === 'pool');
+  const poolCount = getDailyMissionTarget(level, difficulty, customTarget);
+  const picks = seededPick(poolCount, poolDefs.length, seed);
 
   return [
     ...coreDefs.map(def => defToQuest(def, level, tier)),
     ...picks.map(i => defToQuest(poolDefs[i], level, tier)),
-  ]
+  ];
 }
 
 export function generateSideQuestReward(): { rank: 'E' | 'D' | 'C'; xp: number; gold: number } {
-  const roll = Math.random()
-  if (roll < 0.60) return { rank: 'E', xp: 10 + Math.floor(Math.random() * 21), gold: 3 + Math.floor(Math.random() * 6) }
-  if (roll < 0.90) return { rank: 'D', xp: 30 + Math.floor(Math.random() * 31), gold: 8 + Math.floor(Math.random() * 8) }
-  return { rank: 'C', xp: 60 + Math.floor(Math.random() * 41), gold: 15 + Math.floor(Math.random() * 11) }
+  const roll = Math.random();
+  if (roll < 0.60) {return { rank: 'E', xp: 10 + Math.floor(Math.random() * 21), gold: 3 + Math.floor(Math.random() * 6) };}
+  if (roll < 0.90) {return { rank: 'D', xp: 30 + Math.floor(Math.random() * 31), gold: 8 + Math.floor(Math.random() * 8) };}
+  return { rank: 'C', xp: 60 + Math.floor(Math.random() * 41), gold: 15 + Math.floor(Math.random() * 11) };
 }
 
 export function getCustomShadowPassive(questType: Quest['type']): { type: PassiveEffectType; value: number; description: string } {
   switch (questType) {
-    case 'training': return { type: 'gold_boost', value: 0.02, description: '+2% Gold em missões de treino' }
-    case 'knowledge': return { type: 'xp_boost', value: 0.02, description: '+2% XP em missões de conhecimento' }
-    case 'focus': return { type: 'focus_mastery', value: 0.10, description: '-10% tempo de foco necessário' }
-    case 'gps': return { type: 'boss_bonus_xp', value: 0.05, description: '+5% XP extra em Boss Raids' }
-    default: return { type: 'gold_boost', value: 0, description: '' }
+    case 'training': return { type: 'gold_boost', value: 0.02, description: '+2% Gold em missões de treino' };
+    case 'knowledge': return { type: 'xp_boost', value: 0.02, description: '+2% XP em missões de conhecimento' };
+    case 'focus': return { type: 'focus_mastery', value: 0.10, description: '-10% tempo de foco necessário' };
+    case 'gps': return { type: 'boss_bonus_xp', value: 0.05, description: '+5% XP extra em Boss Raids' };
+    default: return { type: 'gold_boost', value: 0, description: '' };
   }
 }
 
@@ -112,11 +122,11 @@ export function getCustomShadowPassive(questType: Quest['type']): { type: Passiv
 export const PENALTY_QUEST_POOL: Quest[] = [
   { id: 'p_cardio', label: 'Penalização: Cardio', detail: '20 min de corrida contínua', xp: 0, gold: 0, type: 'training', done: false },
   { id: 'p_squat', label: 'Penalização: Agachamentos', detail: '50 agachamentos consecutivos', xp: 0, gold: 0, type: 'training', done: false },
-  { id: 'p_focus', label: 'Penalização: Foco Forçado', detail: '30 min de foco sem interrupções', xp: 0, gold: 0, type: 'focus', focusDuration: 30 * 60_000, done: false },
+  { id: 'p_focus', label: 'Penalização: Foco Forçado', detail: '30 min de foco sem interrupções', xp: 0, gold: 0, type: 'focus', unit: 'min', targetValue: 30, currentValue: 0, focusDuration: 30 * 60_000, done: false },
   { id: 'p_reading', label: 'Penalização: Leitura Disciplinar', detail: '15 páginas (livro não-ficção)', xp: 0, gold: 0, type: 'knowledge', done: false },
   { id: 'p_plank', label: 'Penalização: Prancha do Sistema', detail: '3 min de prancha (acumulados)', xp: 0, gold: 0, type: 'training', done: false },
   { id: 'p_pushups', label: 'Penalização: Flexões', detail: '30 flexões de execução lenta', xp: 0, gold: 0, type: 'training', done: false },
-]
+];
 
 // ── Quest Dictionary ─────────────────────────────────────────────────────────
 
@@ -557,29 +567,29 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
     baseTarget: 20, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 700, baseGold: 220,
   },
-]
+];
 
 /** Portais periódicos (rotação diária) — não entram na rotação semanal de bosses. */
-const PORTAL_BOSS_IDS = new Set(['alpha_wolf', 'sea_king', 'dungeon_queen', 'king_of_the_dead'])
+const PORTAL_BOSS_IDS = new Set(['alpha_wolf', 'sea_king', 'dungeon_queen', 'king_of_the_dead']);
 
 export function isPortalBossDefinition(def: Pick<QuestDefinition, 'type' | 'id'>): boolean {
-  if (def.type !== 'boss') return false
-  if (def.id.startsWith('normal_boss_')) return true
-  return PORTAL_BOSS_IDS.has(def.id)
+  if (def.type !== 'boss') {return false;}
+  if (def.id.startsWith('normal_boss_')) {return true;}
+  return PORTAL_BOSS_IDS.has(def.id);
 }
 
 export function isWeeklyBossDefinition(def: Pick<QuestDefinition, 'type' | 'id'>): boolean {
-  return def.type === 'boss' && !isPortalBossDefinition(def)
+  return def.type === 'boss' && !isPortalBossDefinition(def);
 }
 
 export function getQuestConfig(type: Quest['type']): { icon: string; colorKey: string } {
   switch (type) {
-    case 'training': return { icon: 'arm-flex', colorKey: 'neonRed' }
-    case 'knowledge': return { icon: 'book-open-variant', colorKey: 'neonBlue' }
-    case 'focus': return { icon: 'timer-sand', colorKey: 'purple' }
-    case 'forbidden': return { icon: 'lock-open-alert-outline', colorKey: 'gold' }
-    case 'limit': return { icon: 'clock-alert-outline', colorKey: 'dimmed' }
-    case 'gps': return { icon: 'map-marker-distance', colorKey: 'green' }
-    default: return { icon: 'circle-outline', colorKey: 'dimmed' }
+    case 'training': return { icon: 'arm-flex', colorKey: 'neonRed' };
+    case 'knowledge': return { icon: 'book-open-variant', colorKey: 'neonBlue' };
+    case 'focus': return { icon: 'timer-sand', colorKey: 'purple' };
+    case 'forbidden': return { icon: 'lock-open-alert-outline', colorKey: 'gold' };
+    case 'limit': return { icon: 'clock-alert-outline', colorKey: 'dimmed' };
+    case 'gps': return { icon: 'map-marker-distance', colorKey: 'green' };
+    default: return { icon: 'circle-outline', colorKey: 'dimmed' };
   }
 }

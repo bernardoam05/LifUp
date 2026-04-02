@@ -1,48 +1,48 @@
-import React from 'react'
+import React from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Modal
-} from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import Clipboard from '@react-native-clipboard/clipboard'
-import useGameStore from '../store/useGameStore'
-import SystemAlertModal from '../components/SystemAlertModal'
-import { useTheme, FONT, SPACING } from '../theme'
+  TouchableOpacity, Modal,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Clipboard from '@react-native-clipboard/clipboard';
+import useGameStore from '../store/useGameStore';
+import SystemAlertModal from '../components/SystemAlertModal';
+import { useTheme, FONT, SPACING } from '../theme';
 
 // Settings sections
-import NotificationsSettings from '../components/SettingsSections/NotificationsSettings'
-import ThemeSettings from '../components/SettingsSections/ThemeSettings'
-import IntensitySettings from '../components/SettingsSections/IntensitySettings'
-import DifficultySettings from '../components/SettingsSections/DifficultySettings'
-import RestDaySettings from '../components/SettingsSections/RestDaySettings'
-import AutoBlockSettings from '../components/SettingsSections/AutoBlockSettings'
-import SideQuestPenaltySettings from '../components/SettingsSections/SideQuestPenaltySettings'
-import BackupSettings from '../components/SettingsSections/BackupSettings'
-import AboutSettings from '../components/SettingsSections/AboutSettings'
-import ImportModal from '../components/SettingsSections/ImportModal'
+import NotificationsSettings from '../components/SettingsSections/NotificationsSettings';
+import ThemeSettings from '../components/SettingsSections/ThemeSettings';
+import IntensitySettings from '../components/SettingsSections/IntensitySettings';
+import DifficultySettings from '../components/SettingsSections/DifficultySettings';
+import RestDaySettings from '../components/SettingsSections/RestDaySettings';
+import AutoBlockSettings from '../components/SettingsSections/AutoBlockSettings';
+import SideQuestPenaltySettings from '../components/SettingsSections/SideQuestPenaltySettings';
+import BackupSettings from '../components/SettingsSections/BackupSettings';
+import AboutSettings from '../components/SettingsSections/AboutSettings';
+import ImportModal from '../components/SettingsSections/ImportModal';
 
 // Utilities
-import { btoa, atob } from '../utils/backup'
+import { btoa, atob } from '../utils/backup';
 
 // ── Settings Screen ────────────────────────────────────────────────────────────
 
 export default function SettingsScreen({ onClose }: { onClose: () => void }) {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
-  const player         = useGameStore(s => s.player)
-  const settings       = useGameStore(s => s.settings)
-  const updateSettings = useGameStore(s => s.updateSettings)
-  const setActiveTheme = useGameStore(s => s.setActiveTheme)
+  const player         = useGameStore(st => st.player);
+  const settings       = useGameStore(st => st.settings);
+  const updateSettings = useGameStore(st => st.updateSettings);
+  const setActiveTheme = useGameStore(st => st.setActiveTheme);
 
-  const [alertConfig, setAlertConfig] = React.useState<{ title: string; message: string } | null>(null)
-  const [importVisible, setImportVisible] = React.useState(false)
-  const [importText, setImportText] = React.useState('')
+  const [alertConfig, setAlertConfig] = React.useState<{ title: string; message: string } | null>(null);
+  const [importVisible, setImportVisible] = React.useState(false);
+  const [importText, setImportText] = React.useState('');
 
   const handleExport = () => {
     try {
-      const state = useGameStore.getState()
+      const state = useGameStore.getState();
       const payload = {
         player: state.player,
         system: state.system,
@@ -60,39 +60,39 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
         extraQuestUsedPoolIds: state.extraQuestUsedPoolIds,
         lastResetDate: state.lastResetDate,
         activeMissionTimers: state.activeMissionTimers,
-      }
-      const json = JSON.stringify(payload)
-      const b64 = btoa(json)
-      Clipboard.setString(b64)
+      };
+      const json = JSON.stringify(payload);
+      const b64 = btoa(json);
+      Clipboard.setString(b64);
       setAlertConfig({
         title: 'BACKUP CONCLUÍDO',
         message: 'Código de Backup copiado para a área de transferência! Guarda este código num local seguro.',
-      })
+      });
     } catch (err) {
-      console.error('Backup export error:', err)
-      setAlertConfig({ title: 'ERRO', message: 'Falha ao exportar backup. Tenta novamente.' })
+      console.error('Backup export error:', err);
+      setAlertConfig({ title: 'ERRO', message: 'Falha ao exportar backup. Tenta novamente.' });
     }
-  }
+  };
 
   const handleImport = () => {
     try {
-      if (!importText.trim()) return
-      const json = atob(importText.trim())
-      const data = JSON.parse(json)
-      if (!data.player || typeof data.player !== 'object') throw new Error('Estrutura de backup inválida')
-      if (typeof data.player.level !== 'number' || data.player.level < 1) throw new Error('Dados de player corrompidos')
-      useGameStore.getState().restoreBackup(data)
-      setImportVisible(false)
-      setImportText('')
+      if (!importText.trim()) {return;}
+      const json = atob(importText.trim());
+      const data = JSON.parse(json);
+      if (!data.player || typeof data.player !== 'object') {throw new Error('Estrutura de backup inválida');}
+      if (typeof data.player.level !== 'number' || data.player.level < 1) {throw new Error('Dados de player corrompidos');}
+      useGameStore.getState().restoreBackup(data);
+      setImportVisible(false);
+      setImportText('');
       setAlertConfig({
         title: 'RESTAURO CONCLUÍDO',
         message: 'Alma importada com sucesso! Podes precisar de reiniciar se houver bugs visuais.',
-      })
+      });
     } catch (err) {
-      console.error('Backup import error:', err)
-      setAlertConfig({ title: 'ERRO', message: 'Código inválido ou corrompido. Verifica se copiaste bem.' })
+      console.error('Backup import error:', err);
+      setAlertConfig({ title: 'ERRO', message: 'Código inválido ou corrompido. Verifica se copiaste bem.' });
     }
-  }
+  };
 
   return (
     <Modal visible animationType="slide" onRequestClose={onClose}>
@@ -109,36 +109,20 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
 
         <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
 
-          {/* ── DESAFIOS ─────────────────────────────────────────────────────── */}
+          {/* ── MISSÕES ─────────────────────────────────────────────────────── */}
           <View style={s.group}>
             <View style={s.groupHeader}>
-              <Icon name="sword-cross" size={13} color={C.neonRed} />
-              <Text style={[s.groupTitle, { color: C.neonRed }]}>DESAFIOS</Text>
+              <Icon name="clipboard-list-outline" size={13} color={C.neonBlue} />
+              <Text style={[s.groupTitle, { color: C.neonBlue }]}>MISSÕES</Text>
             </View>
 
             <View style={s.groupBody}>
               <View style={s.section}>
-                <IntensitySettings
-                  currentIntensity={settings.punishmentIntensity}
-                  onIntensityChange={v => updateSettings({ punishmentIntensity: v })}
-                />
-              </View>
-
-              <View style={s.divider} />
-
-              <View style={s.section}>
                 <DifficultySettings
                   currentDifficulty={settings.missionDifficulty}
                   onDifficultyChange={v => updateSettings({ missionDifficulty: v })}
-                />
-              </View>
-
-              <View style={s.divider} />
-
-              <View style={s.section}>
-                <AutoBlockSettings
-                  autoBlockApps={settings.autoBlockApps}
-                  onToggle={v => updateSettings({ autoBlockApps: v })}
+                  customDailyMissions={settings.customDailyMissions}
+                  onCustomDailyMissionsChange={v => updateSettings({ customDailyMissions: v })}
                 />
               </View>
 
@@ -148,6 +132,34 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
                 <RestDaySettings
                   restDay={settings.restDay}
                   onRestDayChange={v => updateSettings({ restDay: v })}
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* ── PENALIDADES & BLOQUEIO ─────────────────────────────────────── */}
+          <View style={[s.group, s.groupGap]}>
+            <View style={s.groupHeader}>
+              <Icon name="shield-alert-outline" size={13} color={C.neonRed} />
+              <Text style={[s.groupTitle, { color: C.neonRed }]}>PENALIDADES & BLOQUEIO</Text>
+            </View>
+
+            <View style={s.groupBody}>
+              <View style={s.section}>
+                <IntensitySettings
+                  currentIntensity={settings.punishmentIntensity}
+                  onIntensityChange={v => updateSettings({ punishmentIntensity: v })}
+                  customPenaltyHours={settings.customPenaltyHours}
+                  onCustomPenaltyHoursChange={v => updateSettings({ customPenaltyHours: v })}
+                />
+              </View>
+
+              <View style={s.divider} />
+
+              <View style={s.section}>
+                <AutoBlockSettings
+                  autoBlockApps={settings.autoBlockApps}
+                  onToggle={v => updateSettings({ autoBlockApps: v })}
                 />
               </View>
 
@@ -252,7 +264,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
         onCancel={() => setImportVisible(false)}
       />
     </Modal>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -302,4 +314,4 @@ const getStyles = (C: any) => StyleSheet.create({
 
   section: { padding: SPACING.md },
   divider: { height: 1, backgroundColor: C.border + '22', marginHorizontal: SPACING.md },
-})
+});

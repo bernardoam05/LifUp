@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity,
   TextInput, KeyboardAvoidingView, Platform,
-} from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import SoloLevelingModal from '../components/SoloLevelingModal'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { QuestDefinition, Quest, INITIAL_QUEST_DICTIONARY, RankKey, rankFromXP } from '../store/useGameStore'
-import CustomModal from '../components/CustomModal'
-import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal'
-import BottomSheetModal from '../components/BottomSheetModal'
-import { useTheme, FONT, SPACING } from '../theme'
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import SoloLevelingModal from '../components/SoloLevelingModal';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useGameStore, { QuestDefinition, INITIAL_QUEST_DICTIONARY, RankKey } from '../store/useGameStore';
+import CustomModal from '../components/CustomModal';
+import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal';
+import BottomSheetModal from '../components/BottomSheetModal';
+import { useTheme, FONT, SPACING } from '../theme';
 
 
 // ── Config ─────────────────────────────────────────────────────────────────────
@@ -20,12 +20,12 @@ const getQuestTypeOpts = (C: any) => [
   { value: 'focus', label: 'Foco', icon: 'timer-sand', color: C.purple },
   { value: 'knowledge', label: 'Conhecimento', icon: 'book-open-variant', color: C.neonBlue },
   { value: 'gps', label: 'GPS', icon: 'run-fast', color: C.green },
-]
+];
 
 
-const UNIT_CHIPS = ['reps', 'min', 'km', 'páginas', 'séries', 'horas', 'litros']
+const UNIT_CHIPS = ['reps', 'min', 'km', 'páginas', 'séries', 'horas', 'litros'];
 
-const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
 // Popular MaterialCommunityIcons for the icon picker
 const ICON_GRID = [
@@ -33,7 +33,7 @@ const ICON_GRID = [
   'book-open-variant', 'clock-outline', 'heart-pulse', 'lightning-bolt', 'star-four-points', 'target',
   'trophy', 'weight-lifter', 'yoga', 'meditation', 'food-apple', 'cup-water', 'sleep', 'code-tags',
   'briefcase', 'school', 'crosshairs-gps', 'ghost', 'dragon', 'flash',
-]
+];
 
 const getRankOpts = (C: any): { value: RankKey; color: string }[] => [
   { value: 'E', color: C.muted },
@@ -42,14 +42,14 @@ const getRankOpts = (C: any): { value: RankKey; color: string }[] => [
   { value: 'B', color: C.purple },
   { value: 'A', color: C.gold },
   { value: 'S', color: C.neonRed },
-]
+];
 
 const getBossClassOpts = (C: any): { value: QuestDefinition['bossClass']; label: string; color: string }[] => [
   { value: 'A', label: 'A-Rank', color: C.gold },
   { value: 'S', label: 'S-Rank', color: C.neonRed },
   { value: 'Event', label: 'Evento', color: C.neonBlue },
   { value: 'Raid', label: 'Raid', color: C.purple },
-]
+];
 
 const BLANK_DEF: Omit<QuestDefinition, 'id'> = {
   title: '',
@@ -65,7 +65,7 @@ const BLANK_DEF: Omit<QuestDefinition, 'id'> = {
   daysOfWeek: undefined,
   rank: undefined,
   bossClass: undefined,
-}
+};
 
 // ── Form modal ─────────────────────────────────────────────────────────────────
 
@@ -76,7 +76,7 @@ type FormState = Omit<QuestDefinition, 'id'> & {
 }
 
 function toFormState(def?: QuestDefinition): FormState {
-  if (!def) return { ...BLANK_DEF, daysRaw: [], shadowName: '', shadowIcon: 'ghost' }
+  if (!def) {return { ...BLANK_DEF, daysRaw: [], shadowName: '', shadowIcon: 'ghost' };}
   return {
     ...def,
     // migrate legacy field
@@ -85,12 +85,12 @@ function toFormState(def?: QuestDefinition): FormState {
     daysRaw: def.daysOfWeek ?? [],
     shadowName: def.shadowName ?? '',
     shadowIcon: def.shadowIcon ?? 'ghost',
-  }
+  };
 }
 
 // Chip — reusable small selectable pill
 function Chip({
-  label, active, color, onPress, C
+  label, active, color, onPress, C,
 }: {
 
   label: string
@@ -99,7 +99,7 @@ function Chip({
   onPress: () => void
   C: any
 }) {
-  const ch = getCHStyles(C)
+  const ch = getCHStyles(C);
   return (
     <TouchableOpacity
       style={[ch.base, active ? { backgroundColor: color + '22', borderColor: color } : ch.inactive]}
@@ -108,13 +108,13 @@ function Chip({
     >
       <Text style={[ch.txt, { color: active ? color : C.muted }]}>{label}</Text>
     </TouchableOpacity>
-  )
+  );
 }
 
 
 // CategoryChip — chip with icon + label
 function CategoryChip({
-  opt, active, onPress, C
+  opt, active, onPress, C,
 }: {
 
   opt: any
@@ -122,7 +122,7 @@ function CategoryChip({
   onPress: () => void
   C: any
 }) {
-  const ch = getCHStyles(C)
+  const ch = getCHStyles(C);
   return (
     <TouchableOpacity
       style={[ch.base, ch.catBase, active ? { backgroundColor: opt.color + '22', borderColor: opt.color } : ch.inactive]}
@@ -132,7 +132,7 @@ function CategoryChip({
       <Icon name={opt.icon} size={13} color={active ? opt.color : C.muted} />
       <Text style={[ch.txt, { color: active ? opt.color : C.muted }]}>{opt.label}</Text>
     </TouchableOpacity>
-  )
+  );
 }
 
 
@@ -150,42 +150,42 @@ function FormModal({
   onClose: () => void
   C: any
 }) {
-  const fm = getFMStyles(C)
-  const ip = getIPStyles(C)
-  const QUEST_TYPE_OPTS = getQuestTypeOpts(C)
-  const RANK_OPTS = getRankOpts(C)
-  const BOSS_CLASS_OPTS = getBossClassOpts(C)
+  const fm = getFMStyles(C);
+  const ip = getIPStyles(C);
+  const QUEST_TYPE_OPTS = getQuestTypeOpts(C);
+  const RANK_OPTS = getRankOpts(C);
+  const BOSS_CLASS_OPTS = getBossClassOpts(C);
 
-  const insets = useSafeAreaInsets()
-  const [form, setForm] = useState<FormState>(() => toFormState(initial))
-  const [showIconPicker, setShowIconPicker] = useState(false)
-  const [alertCfg, setAlertCfg] = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null)
+  const insets = useSafeAreaInsets();
+  const [form, setForm] = useState<FormState>(() => toFormState(initial));
+  const [showIconPicker, setShowIconPicker] = useState(false);
+  const [alertCfg, setAlertCfg] = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null);
 
   React.useEffect(() => {
     if (visible) {
-      setForm(toFormState(initial))
+      setForm(toFormState(initial));
     }
-  }, [visible, initial])
+  }, [visible, initial]);
 
-  const isCore = form.type === 'core'
-  const isBoss = form.type === 'boss'
-  const isEditing = !!initial   // type field locked when editing
+  const isCore = form.type === 'core';
+  const isBoss = form.type === 'boss';
+  const isEditing = !!initial;   // type field locked when editing
 
   function field<K extends keyof FormState>(key: K, value: FormState[K]) {
-    setForm(f => ({ ...f, [key]: value }))
+    setForm(f => ({ ...f, [key]: value }));
   }
 
   function toggleDay(d: number) {
     const days = form.daysRaw.includes(d)
       ? form.daysRaw.filter(x => x !== d)
-      : [...form.daysRaw, d].sort()
-    setForm(f => ({ ...f, daysRaw: days }))
+      : [...form.daysRaw, d].sort();
+    setForm(f => ({ ...f, daysRaw: days }));
   }
 
   function handleSave() {
     if (!form.title.trim()) {
-      setAlertCfg({ title: 'Título obrigatório', message: 'A diretiva precisa de um nome.' })
-      return
+      setAlertCfg({ title: 'Título obrigatório', message: 'A diretiva precisa de um nome.' });
+      return;
     }
     const def: Omit<QuestDefinition, 'id'> = {
       title: form.title.trim(),
@@ -203,8 +203,8 @@ function FormModal({
       bossClass: isBoss ? (form.bossClass ?? 'A') : undefined,
       shadowName: isBoss && form.shadowName.trim() ? form.shadowName.trim() : undefined,
       shadowIcon: isBoss && form.shadowName.trim() ? form.shadowIcon.trim() || 'ghost' : undefined,
-    }
-    onSave(def)
+    };
+    onSave(def);
   }
 
   return (
@@ -406,7 +406,7 @@ function FormModal({
             <TextInput
               style={[fm.input, { marginTop: 6 }]}
                value={UNIT_CHIPS.includes(form.unit) ? '' : form.unit}
-               onChangeText={v => { if (v) field('unit', v) }}
+               onChangeText={v => { if (v) {field('unit', v);} }}
                placeholder="Outra unidade (ex: passadas)..."
                placeholderTextColor={C.muted}
                autoCapitalize="none"
@@ -552,7 +552,7 @@ function FormModal({
               renderItem={({ item: iconName }) => (
                 <TouchableOpacity
                   style={[ip.cell, form.shadowIcon === iconName && ip.cellActive]}
-                  onPress={() => { field('shadowIcon', iconName); setShowIconPicker(false) }}
+                  onPress={() => { field('shadowIcon', iconName); setShowIconPicker(false); }}
                   activeOpacity={0.7}
                 >
                   <Icon name={iconName} size={24} color={form.shadowIcon === iconName ? C.purple : C.muted} />
@@ -578,7 +578,7 @@ function FormModal({
 
       )}
     </BottomSheetModal>
-  )
+  );
 }
 
 // ── Quest definition row ───────────────────────────────────────────────────────
@@ -596,10 +596,10 @@ function DefRow({
   onDeleteRequest: () => void
   C: any
 }) {
-  const dr = getDRStyles(C)
-  const QUEST_TYPE_OPTS = getQuestTypeOpts(C)
+  const dr = getDRStyles(C);
+  const QUEST_TYPE_OPTS = getQuestTypeOpts(C);
 
-  const qtCfg = QUEST_TYPE_OPTS.find(o => o.value === def.questType) ?? QUEST_TYPE_OPTS[0]
+  const qtCfg = QUEST_TYPE_OPTS.find(o => o.value === def.questType) ?? QUEST_TYPE_OPTS[0];
 
   return (
     <View style={dr.row}>
@@ -626,49 +626,46 @@ function DefRow({
         </TouchableOpacity>
       </View>
     </View>
-  )
+  );
 }
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
-  const C = useTheme()
-  const s = getSStyles(C)
+  const C = useTheme();
+  const s = getSStyles(C);
 
-  const questDictionary = useGameStore(s => s.questDictionary)
-  const addQuestDefinition = useGameStore(s => s.addQuestDefinition)
-  const updateQuestDefinition = useGameStore(s => s.updateQuestDefinition)
-  const deleteQuestDefinition = useGameStore(s => s.deleteQuestDefinition)
-  const regenerateDailyQuests = useGameStore(s => (s as any).regenerateDailyQuests)
+  const questDictionary = useGameStore(st => st.questDictionary);
+  const addQuestDefinition = useGameStore(st => st.addQuestDefinition);
+  const updateQuestDefinition = useGameStore(st => st.updateQuestDefinition);
+  const deleteQuestDefinition = useGameStore(st => st.deleteQuestDefinition);
 
-  const [formTarget, setFormTarget] = useState<QuestDefinition | null | 'new'>(null)
-  const [deleteTarget, setDeleteTarget] = useState<QuestDefinition | null>(null)
-  const [showRegen, setShowRegen] = useState(false)
-  const [showReset, setShowReset] = useState(false)
-  const [regenResult, setRegenResult] = useState<{ success: boolean; reason?: string } | null>(null)
-  const [expandedSections, setExpandedSections] = useState({ core: true, pool: true, boss: true })
+  const [formTarget, setFormTarget] = useState<QuestDefinition | null | 'new'>(null);
+  const [deleteTarget, setDeleteTarget] = useState<QuestDefinition | null>(null);
+  const [showReset, setShowReset] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({ core: true, pool: true, boss: true });
 
   const toggleSection = (section: 'core' | 'pool' | 'boss') => {
-    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }))
-  }
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
-  const coreDefs = questDictionary.filter(d => d.type === 'core')
-  const poolDefs = questDictionary.filter(d => d.type === 'pool')
-  const bossDefs = questDictionary.filter(d => d.type === 'boss')
+  const coreDefs = questDictionary.filter(d => d.type === 'core');
+  const poolDefs = questDictionary.filter(d => d.type === 'pool');
+  const bossDefs = questDictionary.filter(d => d.type === 'boss');
 
   function handleSave(def: Omit<QuestDefinition, 'id'>) {
     if (formTarget === 'new') {
-      addQuestDefinition({ ...def, id: `custom_${Date.now()}` })
+      addQuestDefinition({ ...def, id: `custom_${Date.now()}` });
     } else if (formTarget) {
-      updateQuestDefinition(formTarget.id, def)
+      updateQuestDefinition(formTarget.id, def);
     }
-    setFormTarget(null)
+    setFormTarget(null);
   }
 
   function confirmReset() {
-    questDictionary.forEach(d => deleteQuestDefinition(d.id))
-    INITIAL_QUEST_DICTIONARY.forEach(d => addQuestDefinition(d))
-    setShowReset(false)
+    questDictionary.forEach(d => deleteQuestDefinition(d.id));
+    INITIAL_QUEST_DICTIONARY.forEach(d => addQuestDefinition(d));
+    setShowReset(false);
   }
 
   return (
@@ -700,7 +697,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
           </View>
 
           {/* Core section */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={s.sectionHeader}
             onPress={() => toggleSection('core')}
             activeOpacity={0.7}
@@ -728,7 +725,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
           )}
 
           {/* Pool section */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[s.sectionHeader, { marginTop: SPACING.lg }]}
             onPress={() => toggleSection('pool')}
             activeOpacity={0.7}
@@ -758,7 +755,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
           )}
 
           {/* Boss section */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[s.sectionHeader, { marginTop: SPACING.lg }]}
             onPress={() => toggleSection('boss')}
             activeOpacity={0.7}
@@ -830,7 +827,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
         message={`Remover "${deleteTarget?.title || ''}" do Sistema? As missões de hoje não serão afetadas.`}
         buttons={[
           { text: 'Cancelar', style: 'cancel' },
-          { text: 'Apagar', style: 'destructive', onPress: () => { if (deleteTarget) deleteQuestDefinition(deleteTarget.id) } },
+          { text: 'Apagar', style: 'destructive', onPress: () => { if (deleteTarget) {deleteQuestDefinition(deleteTarget.id);} } },
         ]}
         onClose={() => setDeleteTarget(null)}
         useNativeModal={false}
@@ -838,7 +835,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
       />
 
     </SoloLevelingModal>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -871,7 +868,7 @@ const getSStyles = (C: any) => StyleSheet.create({
     shadowColor: C.purple, shadowOpacity: 0.5, shadowRadius: 12, elevation: 8,
   },
   fabTxt: { color: C.bg, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 2 },
-})
+});
 
 const getDRStyles = (C: any) => StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: C.border, padding: SPACING.sm, marginBottom: 8, gap: SPACING.sm },
@@ -883,14 +880,14 @@ const getDRStyles = (C: any) => StyleSheet.create({
   actions: { flexDirection: 'row', gap: 6, flexShrink: 0 },
   editBtn: { padding: 8, borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 8, backgroundColor: C.neonBlue + '0a' },
   deleteBtn: { padding: 8, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 8, backgroundColor: C.neonRed + '0a' },
-})
+});
 
 const getCHStyles = (C: any) => StyleSheet.create({
   base: { borderRadius: 20, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 7 },
   catBase: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   inactive: { borderColor: C.border, backgroundColor: C.panel },
   txt: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-})
+});
 
 const getFMStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.bg + 'e8', justifyContent: 'flex-end' },
@@ -955,7 +952,7 @@ const getFMStyles = (C: any) => StyleSheet.create({
   iconLabelRow: { flexDirection: 'row', alignItems: 'center', marginTop: SPACING.md, marginBottom: 8 },
   iconPickerBtn: { marginLeft: SPACING.sm, flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '18', borderWidth: 1, borderColor: C.purple + '55', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
   iconPickerBtnTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
-})
+});
 
 const getIPStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.bg + 'f2', justifyContent: 'center', padding: SPACING.md },
@@ -967,5 +964,4 @@ const getIPStyles = (C: any) => StyleSheet.create({
   cell: { flex: 1, alignItems: 'center', padding: SPACING.sm, borderRadius: 4, marginBottom: 4 },
   cellActive: { backgroundColor: C.purple + '18' },
   cellTxt: { color: C.dimmed, fontSize: 7, fontFamily: FONT.orbitron, marginTop: 3, textAlign: 'center' },
-})
-
+});

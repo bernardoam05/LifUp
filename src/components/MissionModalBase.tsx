@@ -1,8 +1,8 @@
-import React from 'react'
-import { Text, StyleSheet, Modal, Pressable, ScrollView, Dimensions } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { FONT, SPACING } from '../theme'
+import React from 'react';
+import { Text, StyleSheet, Modal, Pressable, ScrollView, Dimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { FONT, SPACING } from '../theme';
 
 interface MissionModalBaseProps {
   visible: boolean
@@ -40,10 +40,10 @@ export default function MissionModalBase({
   children,
   C,
 }: MissionModalBaseProps) {
-  const insets = useSafeAreaInsets()
-  const s = getStyles(C)
-  const screenHeight = Dimensions.get('window').height
-  const cardMaxHeight = screenHeight - insets.top - insets.bottom - 2 * SPACING.lg
+  const insets = useSafeAreaInsets();
+  const s = getStyles(C);
+  const screenHeight = Dimensions.get('window').height;
+  const cardMaxHeight = screenHeight - insets.top - insets.bottom - 2 * SPACING.lg;
 
   return (
     <Modal
@@ -73,7 +73,7 @@ export default function MissionModalBase({
         </Pressable>
       </Pressable>
     </Modal>
-  )
+  );
 }
 
 export const getStyles = (C: any) => StyleSheet.create({
@@ -114,4 +114,4 @@ export const getStyles = (C: any) => StyleSheet.create({
     marginBottom: SPACING.sm,
     textAlign: 'center',
   },
-})
+});

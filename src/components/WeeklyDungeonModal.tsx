@@ -11,19 +11,19 @@ import { FONT, SPACING } from '../theme';
 // Helper function to get boss name from bossId
 function getBossName(bossId: string): string {
   // Try to find in RAID_BOSSES first
-  const raidBoss = RAID_BOSSES.find(b => b.id === bossId)
-  if (raidBoss) return raidBoss.name
-  
+  const raidBoss = RAID_BOSSES.find(b => b.id === bossId);
+  if (raidBoss) {return raidBoss.name;}
+
   // Try to get from drop shadow name
-  const shadow = getBossDropPreview(bossId)
-  if (shadow) return shadow.name
-  
+  const shadow = getBossDropPreview(bossId);
+  if (shadow) {return shadow.name;}
+
   // Try direct lookup in SHADOW_MAP
-  const shadowMapEntry = SHADOW_MAP[bossId as keyof typeof SHADOW_MAP]
-  if (shadowMapEntry) return shadowMapEntry.name
-  
+  const shadowMapEntry = SHADOW_MAP[bossId as keyof typeof SHADOW_MAP];
+  if (shadowMapEntry) {return shadowMapEntry.name;}
+
   // Fallback: format the ID nicely
-  return bossId.replace(/_/g, ' ').replace(/(^|\s)\w/g, c => c.toUpperCase())
+  return bossId.replace(/_/g, ' ').replace(/(^|\s)\w/g, c => c.toUpperCase());
 }
 
 export const getDMStyles = (C: any) => StyleSheet.create({
@@ -67,7 +67,7 @@ export default function WeeklyDungeonModal({
   customMissions,
   defeatedId,
   playerKeys,
-  C
+  C,
 }: WeeklyDungeonModalProps) {
   const insets = useSafeAreaInsets();
   const dm = getDMStyles(C);
@@ -78,8 +78,8 @@ export default function WeeklyDungeonModal({
       <View style={[dm.card, { paddingBottom: Math.max(40, insets.bottom + SPACING.sm) }]}>
         <Icon name="gate" size={40} color={C.neonRed} style={{ marginBottom: SPACING.sm }} />
         <Text style={dm.warning}>⚠ ALERTA DO SISTEMA ⚠</Text>
-        <Text 
-          style={[dm.title, { maxWidth: '90%' }]} 
+        <Text
+          style={[dm.title, { maxWidth: '90%' }]}
           numberOfLines={1}
         >
           {weeklyMissions.length > 0 ? `[ ${weeklyMissions[0].label.toUpperCase()} ]` : '[ PORTAL DIÁRIO ]'}

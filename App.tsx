@@ -1,40 +1,41 @@
-import React, { useEffect, useState, Fragment } from 'react'
-import { View, Text, StyleSheet, StatusBar, Modal, TouchableOpacity, Vibration, NativeModules } from 'react-native'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import { NavigationContainer, DarkTheme, createNavigationContainerRef } from '@react-navigation/native'
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { getRank, xpForLevel, CLASS_REQUIREMENTS } from './src/store/useGameStore'
-import { setupNotifications, requestNotificationPermission } from './src/utils/notifications'
-import { initializeAudio } from './src/utils/audioService'
-import { ACHIEVEMENTS_MAP } from './src/data/achievements'
-import { SHADOW_MAP } from './src/data/shadows'
-import RankModal from './src/components/RankModal'
-import ExtractionModal from './src/components/ExtractionModal'
-import LevelUpModal from './src/components/LevelUpModal'
-import BossVictoryModal from './src/components/BossVictoryModal'
+import React, { useEffect, useState, Fragment } from 'react';
+import { View, Text, StyleSheet, StatusBar, NativeModules } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { NavigationContainer, DarkTheme, createNavigationContainerRef } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useGameStore from './src/store/useGameStore';
+import { setupNotifications, requestNotificationPermission } from './src/utils/notifications';
+import { initializeAudio } from './src/utils/audioService';
+import { SHADOW_MAP } from './src/data/shadows';
+import RankModal from './src/components/RankModal';
+import ExtractionModal from './src/components/ExtractionModal';
+import LevelUpModal from './src/components/LevelUpModal';
+import BossVictoryModal from './src/components/BossVictoryModal';
 
 
-import LevelUpToast from "./src/components/LevelUpToast"
+import LevelUpToast from './src/components/LevelUpToast';
 
-import StatusScreen from './src/screens/StatusScreen'
-import QuestScreen from './src/screens/QuestScreen'
-import ShopScreen from './src/screens/ShopScreen'
-import InventoryScreen from './src/screens/InventoryScreen'
-import FocusScreen from './src/screens/FocusScreen'
-import ShadowsScreen from './src/screens/ShadowsScreen'
-import SettingsScreen from './src/screens/SettingsScreen'
-import { C, FONT, SPACING } from './src/theme'
-import { useDayWatcher } from './src/hooks/useDayWatcher'
+import StatusScreen from './src/screens/StatusScreen';
+import QuestScreen from './src/screens/QuestScreen';
+import ShopScreen from './src/screens/ShopScreen';
+import InventoryScreen from './src/screens/InventoryScreen';
+import FocusScreen from './src/screens/FocusScreen';
+import ShadowsScreen from './src/screens/ShadowsScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
+import { C, FONT, SPACING } from './src/theme';
+import { useDayWatcher } from './src/hooks/useDayWatcher';
 
-import AchievementModal from './src/components/AchievementModal'
-import { JobChangeModal } from './src/screens/StatusScreen'
-import TutorialOverlay from './src/components/TutorialOverlay'
-import PenaltyModal from './src/components/PenaltyModal'
-import SystemHUD from './src/components/SystemHUD'
-import { LootBoxModal } from './src/components/LootBoxModal'
+import AchievementModal from './src/components/AchievementModal';
+import { JobChangeModal } from './src/screens/StatusScreen';
+import TutorialOverlay from './src/components/TutorialOverlay';
+import PenaltyModal from './src/components/PenaltyModal';
+import SystemHUD from './src/components/SystemHUD';
+import { LootBoxModal } from './src/components/LootBoxModal';
 
-const Tab = createMaterialTopTabNavigator()
+/* eslint-disable react/no-unstable-nested-components */
+
+const Tab = createMaterialTopTabNavigator();
 
 const TAB_ICONS: Record<string, string> = {
   'Status': 'sword-cross',
@@ -43,94 +44,134 @@ const TAB_ICONS: Record<string, string> = {
   'Inventário': 'bag-personal',
   'Focus Mode': 'brain',
   'Sombras': 'account-group-outline',
+};
+
+const navigationRef = createNavigationContainerRef<any>();
+const { FocusBlocker } = NativeModules;
+
+function PenaltyBadge() {
+  return (
+    <View style={styles.penaltyBadge}>
+      <Text style={styles.penaltyBadgeText}>!</Text>
+    </View>
+  );
 }
 
-const navigationRef = createNavigationContainerRef<any>()
-const { FocusBlocker } = NativeModules
+function InventoryBadge({ count }: { count: number }) {
+  return (
+    <View style={styles.inventoryBadge}>
+      <Text style={styles.inventoryBadgeText}>{count}</Text>
+    </View>
+  );
+}
 
 // ── App Root ───────────────────────────────────────────────────────────────────
 
 export default function App() {
-  const levelUpReward = useGameStore(s => s.levelUpReward)
-  const dismissLevelUpReward = useGameStore(s => s.dismissLevelUpReward)
-  const levelUpToast = useGameStore(s => s.levelUpToast)
-  const dismissLevelUpToast = useGameStore(s => s.dismissLevelUpToast)
-  const currentLootReward = useGameStore(s => s.currentLootReward)
-  const dismissLootReward = useGameStore(s => s.dismissLootReward)
+  const levelUpToast = useGameStore(s => s.levelUpToast);
+  const dismissLevelUpToast = useGameStore(s => s.dismissLevelUpToast);
+  const currentLootReward = useGameStore(s => s.currentLootReward);
+  const dismissLootReward = useGameStore(s => s.dismissLootReward);
 
-  const focusActive = useGameStore(s => s.system.focusModeActive)
-  const focusEndTime = useGameStore(s => s.system.focusEndTime)
+  const focusActive = useGameStore(s => s.system.focusModeActive);
+  const focusEndTime = useGameStore(s => s.system.focusEndTime);
+  const setFocusActive = useGameStore(s => s.setFocusModeActive);
 
-  const bootSystem = useGameStore(s => s.bootSystem)
-  const hasPenalty = useGameStore(s => s.system.hasPenalty)
-  const penaltyBlockStart = useGameStore(s => s.system.penaltyBlockStart)
-  const penaltyBlockEnd = useGameStore(s => s.system.penaltyBlockEnd)
-  const blockedApps = useGameStore(s => s.system.blockedApps)
-  const hardcorePunished = useGameStore(s => s.system.hardcorePunished)
-  const autoBlockApps = useGameStore(s => s.settings.autoBlockApps)
-  const penaltyTriggered = useGameStore(s => s.system.penaltyTriggered)
-  const dismissPenalty = useGameStore(s => s.dismissPenaltyModal)
-  const setPenaltyTriggered = useGameStore(s => s.setPenaltyTriggered)
-  const inventory = useGameStore(s => s.player.inventory)
-  const invTotal = inventory.filter(e => e.quantity > 0).reduce((sum, e) => sum + e.quantity, 0)
-  const rewardsQueue = useGameStore(s => s.rewardsQueue)
-  const popReward = useGameStore(s => s.popReward)
-  const tutorialPhase = useGameStore(s => s.system.tutorialPhase)
-  const advanceTutorial = useGameStore(s => s.advanceTutorialPhase)
+  const bootSystem = useGameStore(s => s.bootSystem);
+  const hasPenalty = useGameStore(s => s.system.hasPenalty);
+  const penaltyBlockStart = useGameStore(s => s.system.penaltyBlockStart);
+  const penaltyBlockEnd = useGameStore(s => s.system.penaltyBlockEnd);
+  const blockedApps = useGameStore(s => s.system.blockedApps);
+  const autoBlockApps = useGameStore(s => s.settings.autoBlockApps);
+  const penaltyTriggered = useGameStore(s => s.system.penaltyTriggered);
+  const dismissPenalty = useGameStore(s => s.dismissPenaltyModal);
+  const inventory = useGameStore(s => s.player.inventory);
+  const invTotal = inventory.filter(e => e.quantity > 0).reduce((sum, e) => sum + e.quantity, 0);
+  const rewardsQueue = useGameStore(s => s.rewardsQueue);
+  const popReward = useGameStore(s => s.popReward);
+  const tutorialPhase = useGameStore(s => s.system.tutorialPhase);
+  const advanceTutorial = useGameStore(s => s.advanceTutorialPhase);
 
-  const [showSettings, setShowSettings] = useState(false)
-  const [showRankInfo, setShowRankInfo] = useState(false)
-  const statistics = useGameStore(s => s.statistics)
-  const bossesDefeated = useGameStore(s => s.system.bossesDefeated)
-  const playerLevel = useGameStore(s => s.player.level)
+  const [showSettings, setShowSettings] = useState(false);
+  const [showRankInfo, setShowRankInfo] = useState(false);
+  const statistics = useGameStore(s => s.statistics);
+  const bossesDefeated = useGameStore(s => s.system.bossesDefeated);
+  const playerLevel = useGameStore(s => s.player.level);
+  const toastBlocked = penaltyTriggered || rewardsQueue.length > 0 || showSettings || showRankInfo || !!currentLootReward;
 
   // Register the midnight reset watcher
-  useDayWatcher()
+  useDayWatcher();
 
   // Decide if tutorial should run
-  const activeTutorialPhase = tutorialPhase === 0 ? 1 : (tutorialPhase === 1 && playerLevel >= 10 ? 2 : null)
+  const activeTutorialPhase = tutorialPhase === 0 ? 1 : (tutorialPhase === 1 && playerLevel >= 10 ? 2 : null);
 
   useEffect(() => {
-    bootSystem()
-    initializeAudio().catch(() => { })
+    bootSystem();
+    initializeAudio().catch(() => { });
     setupNotifications()
       .then(() => requestNotificationPermission())
-      .catch(() => { })
-  }, [])
+      .catch(() => { });
+  }, [bootSystem]);
 
 
   // Unified Background Service Sync: Restores Focus Blocker if killed by OS/Force Close
   useEffect(() => {
-    const lockWindowOpen = !penaltyBlockStart || penaltyBlockStart <= Date.now()
-    const isPenaltyBlock = hasPenalty && autoBlockApps && penaltyBlockEnd > Date.now() && lockWindowOpen
-    const isNormalBlock = focusActive && focusEndTime && focusEndTime > Date.now()
+    const isPenaltySession =
+      hasPenalty &&
+      penaltyBlockEnd > Date.now() &&
+      focusEndTime &&
+      focusEndTime === penaltyBlockEnd;
+    const isPenaltyBlock = hasPenalty && autoBlockApps && penaltyBlockEnd > Date.now();
+    const isNormalBlock = focusActive && focusEndTime && focusEndTime > Date.now() && !isPenaltySession;
 
     if (isNormalBlock) {
       FocusBlocker?.startFocusMode(
         blockedApps,
         Date.now(),
         focusEndTime,
-        hardcorePunished
-      ).catch(() => {})
+        false
+      ).catch(() => {});
     } else if (isPenaltyBlock) {
       FocusBlocker?.startFocusMode(
-        blockedApps, 
-        penaltyBlockStart || Date.now(), 
-        penaltyBlockEnd, 
-        hardcorePunished
-      ).catch(() => {})
-    } else if (!isNormalBlock && !isPenaltyBlock && autoBlockApps) {
-      FocusBlocker?.stopFocusMode().catch(() => {})
+        blockedApps,
+        penaltyBlockStart || Date.now(),
+        penaltyBlockEnd,
+        true
+      ).catch(() => {});
+    } else if (!isNormalBlock && !isPenaltyBlock) {
+      FocusBlocker?.stopFocusMode().catch(() => {});
     }
   }, [
-    hasPenalty, autoBlockApps, penaltyBlockStart, penaltyBlockEnd, 
-    blockedApps, hardcorePunished, focusActive, focusEndTime
-  ])
+    hasPenalty, autoBlockApps, penaltyBlockStart, penaltyBlockEnd,
+    blockedApps, focusActive, focusEndTime,
+  ]);
+
+  // Schedule penalty focus activation so the UI timer starts on time.
+  useEffect(() => {
+    if (!hasPenalty || !autoBlockApps || penaltyBlockEnd <= Date.now()) {return;}
+    const start = penaltyBlockStart ?? 0;
+    if (start > Date.now()) {
+      const id = setTimeout(() => {
+        setFocusActive(true, penaltyBlockEnd);
+      }, start - Date.now());
+      return () => clearTimeout(id);
+    }
+    if (!focusActive) {
+      setFocusActive(true, penaltyBlockEnd);
+    }
+  }, [hasPenalty, autoBlockApps, penaltyBlockStart, penaltyBlockEnd, focusActive, setFocusActive]);
+
+  // If auto-block is turned off, clear any penalty-driven focus state.
+  useEffect(() => {
+    if (!autoBlockApps && hasPenalty && focusActive && focusEndTime === penaltyBlockEnd) {
+      setFocusActive(false, 0);
+    }
+  }, [autoBlockApps, hasPenalty, focusActive, focusEndTime, penaltyBlockEnd, setFocusActive]);
 
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['top']}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         <StatusBar barStyle="light-content" backgroundColor={C.bg} />
 
         <SystemHUD onSettings={() => setShowSettings(true)} onRankPress={() => setShowRankInfo(true)} />
@@ -150,14 +191,14 @@ export default function App() {
             prefixes: ['sololeveling://'],
             config: {
               screens: {
-                "Status": 'status',
-                "Missões": 'missions',
-                "Focus Mode": 'focus',
-                "Loja": 'shop',
-                "Inventário": 'inventory',
-                "Sombras": 'shadows',
-              }
-            }
+                'Status': 'status',
+                'Missões': 'missions',
+                'Focus Mode': 'focus',
+                'Loja': 'shop',
+                'Inventário': 'inventory',
+                'Sombras': 'shadows',
+              },
+            },
           }}
           theme={{ ...DarkTheme, colors: { ...DarkTheme.colors, background: C.bg, card: C.panel, border: C.border } }}
         >
@@ -172,8 +213,8 @@ export default function App() {
               tabBarInactiveTintColor: C.dimmed,
               tabBarLabelStyle: styles.tabLabel,
               tabBarIcon: ({ color, ...rest }) => {
-                const iconSize = (rest as any).size ?? 22
-                return <Icon name={TAB_ICONS[route.name] ?? 'circle'} size={iconSize - 2} color={color} />
+                const iconSize = (rest as any).size ?? 22;
+                return <Icon name={TAB_ICONS[route.name] ?? 'circle'} size={iconSize - 2} color={color} />;
               },
             })}
           >
@@ -182,11 +223,7 @@ export default function App() {
               name="Missões"
               component={QuestScreen}
               options={{
-                tabBarBadge: hasPenalty ? () => (
-                  <View style={{ backgroundColor: C.neonRed, borderRadius: 10, minWidth: 14, height: 14, justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
-                    <Text style={{ color: '#000', fontSize: 9, fontWeight: 'bold', fontFamily: FONT.orbitron }}>!</Text>
-                  </View>
-                ) : undefined
+                tabBarBadge: hasPenalty ? PenaltyBadge : undefined,
               }}
             />
             <Tab.Screen name="Loja" component={ShopScreen} />
@@ -194,11 +231,7 @@ export default function App() {
               name="Inventário"
               component={InventoryScreen}
               options={{
-                tabBarBadge: invTotal > 0 ? () => (
-                  <View style={{ backgroundColor: C.neonBlue, borderRadius: 10, minWidth: 14, height: 14, justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
-                    <Text style={{ color: '#000', fontSize: 9, fontWeight: 'bold', fontFamily: FONT.orbitron }}>{invTotal}</Text>
-                  </View>
-                ) : undefined
+                tabBarBadge: invTotal > 0 ? () => <InventoryBadge count={invTotal} /> : undefined,
               }}
             />
             <Tab.Screen name="Focus Mode" component={FocusScreen} />
@@ -217,7 +250,7 @@ export default function App() {
 
         {/* Sequential Reward System */}
         {!penaltyTriggered && rewardsQueue.length > 0 && (
-          <View style={{ zIndex: 10000 }} pointerEvents="box-none">
+          <View style={styles.rewardsLayer} pointerEvents="box-none">
             <Fragment key={`${rewardsQueue[0].type}-${rewardsQueue[0].id}`}>
               {rewardsQueue[0].type === 'boss_defeated' && rewardsQueue[0].data && (
                 <BossVictoryModal
@@ -239,7 +272,7 @@ export default function App() {
                   result={{
                     shadow: (SHADOW_MAP[rewardsQueue[0].id] || (useGameStore.getState().customShadows.find(cs => cs.id === rewardsQueue[0].id)))!,
                     isLevelUp: !!rewardsQueue[0].isLevelUp,
-                    newLevel: rewardsQueue[0].newLevel || 1
+                    newLevel: rewardsQueue[0].newLevel || 1,
                   }}
                   onDismiss={popReward}
                 />
@@ -286,9 +319,10 @@ export default function App() {
         {showSettings && <SettingsScreen onClose={() => setShowSettings(false)} />}
 
         {/* Simple level-up toast for non-multiples of 5 (levels 1,2,3,4,6,7,8,9...) */}
-        <View style={{ zIndex: 10001 }} pointerEvents="box-none">
+        {/* Toast is suppressed while a modal/reward is on screen to avoid late/short display */}
+        <View style={styles.toastLayer} pointerEvents="box-none">
           <LevelUpToast
-            reward={levelUpToast ? { level: levelUpToast, items: [] } : null}
+            reward={!toastBlocked && levelUpToast ? { level: levelUpToast, items: [] } : null}
             onDismiss={dismissLevelUpToast}
           />
         </View>
@@ -300,7 +334,7 @@ export default function App() {
             onDone={advanceTutorial}
             onChangeTab={(tab: string) => {
               if (navigationRef.isReady()) {
-                navigationRef.navigate(tab)
+                navigationRef.navigate(tab);
               }
             }}
           />
@@ -308,12 +342,16 @@ export default function App() {
 
       </SafeAreaView>
     </SafeAreaProvider>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: C.bg,
+  },
   tabBar: {
     backgroundColor: C.panel,
     borderTopWidth: 1,
@@ -345,4 +383,40 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.5,
   },
-})
+  penaltyBadge: {
+    backgroundColor: C.neonRed,
+    borderRadius: 10,
+    minWidth: 14,
+    height: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  penaltyBadgeText: {
+    color: '#000',
+    fontSize: 9,
+    fontWeight: 'bold',
+    fontFamily: FONT.orbitron,
+  },
+  inventoryBadge: {
+    backgroundColor: C.neonBlue,
+    borderRadius: 10,
+    minWidth: 14,
+    height: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  inventoryBadgeText: {
+    color: '#000',
+    fontSize: 9,
+    fontWeight: 'bold',
+    fontFamily: FONT.orbitron,
+  },
+  rewardsLayer: {
+    zIndex: 10000,
+  },
+  toastLayer: {
+    zIndex: 10001,
+  },
+});

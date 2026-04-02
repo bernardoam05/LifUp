@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Modal,
   View,
@@ -8,9 +8,8 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
   ViewStyle,
-} from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useTheme } from '../theme'
+} from 'react-native';
+import { useTheme } from '../theme';
 
 interface Props {
   visible: boolean
@@ -21,18 +20,18 @@ interface Props {
   useNativeModal?: boolean
 }
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window')
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function BottomSheetModal({ visible, onClose, children, contentStyle, dimmed, useNativeModal = true }: Props) {
-  const C = useTheme()
-  const [showModal, setShowModal] = useState(visible)
-  const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current
-  const fadeAnim = useRef(new Animated.Value(0)).current
-  const s = getStyles(C)
+  const C = useTheme();
+  const [showModal, setShowModal] = useState(visible);
+  const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const s = getStyles(C);
 
   useEffect(() => {
     if (visible) {
-      setShowModal(true)
+      setShowModal(true);
       Animated.parallel([
         Animated.timing(translateY, {
           toValue: 0,
@@ -44,7 +43,7 @@ export default function BottomSheetModal({ visible, onClose, children, contentSt
           duration: 300,
           useNativeDriver: true,
         }),
-      ]).start()
+      ]).start();
     } else {
       Animated.parallel([
         Animated.timing(translateY, {
@@ -58,10 +57,10 @@ export default function BottomSheetModal({ visible, onClose, children, contentSt
           useNativeDriver: true,
         }),
       ]).start(() => {
-        setShowModal(false)
-      })
+        setShowModal(false);
+      });
     }
-  }, [visible])
+  }, [visible, fadeAnim, translateY]);
 
   const triggerClose = () => {
     Animated.parallel([
@@ -76,39 +75,39 @@ export default function BottomSheetModal({ visible, onClose, children, contentSt
         useNativeDriver: true,
       }),
     ]).start(() => {
-      setShowModal(false)
-      onClose()
-    })
-  }
+      setShowModal(false);
+      onClose();
+    });
+  };
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: (_, gestureState) => {
         // Only take over if pulling down significantly
-        return gestureState.dy > 10
+        return gestureState.dy > 10;
       },
       onPanResponderMove: (_, gestureState) => {
         if (gestureState.dy > 0) {
-          translateY.setValue(gestureState.dy)
+          translateY.setValue(gestureState.dy);
         }
       },
       onPanResponderRelease: (_, gestureState) => {
         if (gestureState.vy > 0.5 || gestureState.dy > 100) {
-          triggerClose() // Swipe down to close
+          triggerClose(); // Swipe down to close
         } else {
           // Snap back
           Animated.spring(translateY, {
             toValue: 0,
             useNativeDriver: true,
             bounciness: 10,
-          }).start()
+          }).start();
         }
       },
     })
-  ).current
+  ).current;
 
-  if (!showModal) return null
+  if (!showModal) {return null;}
 
   const content = (
     <>
@@ -134,21 +133,21 @@ export default function BottomSheetModal({ visible, onClose, children, contentSt
         </TouchableWithoutFeedback>
       </Animated.View>
     </>
-  )
+  );
 
   if (!useNativeModal) {
     return (
-      <View style={[StyleSheet.absoluteFill, { zIndex: 9999 }]} pointerEvents="box-none">
+      <View style={[StyleSheet.absoluteFill, s.stacked]} pointerEvents="box-none">
         {content}
       </View>
-    )
+    );
   }
 
   return (
     <Modal transparent visible={showModal} animationType="none" statusBarTranslucent>
       {content}
     </Modal>
-  )
+  );
 }
 
 const getStyles = (C: any) => StyleSheet.create({
@@ -179,4 +178,7 @@ const getStyles = (C: any) => StyleSheet.create({
     backgroundColor: C.text.secondary + '40',
     borderRadius: 2,
   },
-})
+  stacked: {
+    zIndex: 9999,
+  },
+});

@@ -70,4 +70,4 @@ export const SHADOW_RANK_COLOR: Record<ShadowRank, string> = {
   Knight:     '#3b82f6',
   Commander:  '#f59e0b',
   Marshal:    '#ef4444',
-}
+};

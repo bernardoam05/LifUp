@@ -1,24 +1,29 @@
-import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme, SPACING, FONT } from '../../theme'
-import { IntensityOption, getIntensityOptions } from '../../data/settingsConfig'
-import { PunishmentIntensity } from '../../store/useGameStore'
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme, SPACING, FONT } from '../../theme';
+import { getIntensityOptions } from '../../data/settingsConfig';
+import { PunishmentIntensity } from '../../store/useGameStore';
 
 interface IntensitySettingsProps {
   currentIntensity: PunishmentIntensity
   onIntensityChange: (intensity: PunishmentIntensity) => void
+  customPenaltyHours: number
+  onCustomPenaltyHoursChange: (value: number) => void
 }
 
 const IntensitySettings = ({
   currentIntensity,
   onIntensityChange,
+  customPenaltyHours,
+  onCustomPenaltyHoursChange,
 }: IntensitySettingsProps) => {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
-  const INTENSITY_OPTIONS = React.useMemo(() => getIntensityOptions(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
+  const INTENSITY_OPTIONS = React.useMemo(() => getIntensityOptions(C), [C]);
+  const clampCustom = (v: number) => Math.min(Math.max(v, 1), 24);
 
-  const current = INTENSITY_OPTIONS.find(o => o.value === currentIntensity) ?? INTENSITY_OPTIONS[1]
+  const current = INTENSITY_OPTIONS.find(o => o.value === currentIntensity) ?? INTENSITY_OPTIONS[1];
 
   return (
     <View>
@@ -36,7 +41,7 @@ const IntensitySettings = ({
       </View>
 
       {INTENSITY_OPTIONS.map(opt => {
-        const active = currentIntensity === opt.value
+        const active = currentIntensity === opt.value;
         return (
           <TouchableOpacity
             key={opt.value}
@@ -68,8 +73,30 @@ const IntensitySettings = ({
                 </Text>
               ))}
             </View>
+            {opt.value === 'custom' && active && (
+              <View style={s.customRow}>
+                <Text style={s.customLabel}>Horas de bloqueio</Text>
+                <View style={s.customStepper}>
+                  <TouchableOpacity
+                    style={s.stepBtn}
+                    onPress={() => onCustomPenaltyHoursChange(clampCustom(customPenaltyHours - 1))}
+                  >
+                    <Icon name="minus" size={16} color={C.neonBlue} />
+                  </TouchableOpacity>
+                  <View style={s.stepValue}>
+                    <Text style={s.stepValueTxt}>{clampCustom(customPenaltyHours)}h</Text>
+                  </View>
+                  <TouchableOpacity
+                    style={s.stepBtn}
+                    onPress={() => onCustomPenaltyHoursChange(clampCustom(customPenaltyHours + 1))}
+                  >
+                    <Icon name="plus" size={16} color={C.neonBlue} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
           </TouchableOpacity>
-        )
+        );
       })}
 
       <View style={[s.activeSummary, { borderColor: current.color + '44' }]}>
@@ -79,41 +106,41 @@ const IntensitySettings = ({
         </Text>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const getStyles = (C: any) => StyleSheet.create({
-  sectionHeader: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: SPACING.md, 
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
     marginBottom: SPACING.md,
     paddingBottom: SPACING.sm,
     borderBottomWidth: 1,
     borderBottomColor: C.border + '44',
   },
-  sectionDot:    { 
-    width: 3, 
-    height: 16, 
+  sectionDot:    {
+    width: 3,
+    height: 16,
     borderRadius: 2,
   },
-  sectionTitle:  { 
-    color: C.neonBlue, 
-    fontFamily: FONT.orbitron, 
-    fontSize: 11, 
-    letterSpacing: 2, 
-    fontWeight: '900' 
+  sectionTitle:  {
+    color: C.neonBlue,
+    fontFamily: FONT.orbitron,
+    fontSize: 11,
+    letterSpacing: 2,
+    fontWeight: '900',
   },
 
-  intensityInfo:    { 
-    flexDirection: 'row', 
-    alignItems: 'flex-start', 
-    backgroundColor: C.panel, 
-    borderRadius: 8, 
-    borderWidth: 1, 
-    borderColor: C.border + '66', 
-    padding: SPACING.md, 
-    marginBottom: SPACING.md 
+  intensityInfo:    {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: C.panel,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: C.border + '66',
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
   },
   intensityInfoTxt: { flex: 1, color: C.dimmed, fontSize: 10, lineHeight: 16 },
 
@@ -127,6 +154,13 @@ const getStyles = (C: any) => StyleSheet.create({
 
   activeSummary:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderRadius: 4, padding: SPACING.sm, marginTop: SPACING.sm },
   activeSummaryTxt: { fontSize: 12, flex: 1 },
-})
 
-export default IntensitySettings
+  customRow: { marginTop: SPACING.sm, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  customLabel: { color: C.muted, fontSize: 11, fontFamily: FONT.orbitron, letterSpacing: 1 },
+  customStepper: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  stepBtn: { width: 28, height: 28, borderRadius: 4, borderWidth: 1, borderColor: C.border + '66', alignItems: 'center', justifyContent: 'center' },
+  stepValue: { minWidth: 40, alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4, borderWidth: 1, borderColor: C.border + '66', backgroundColor: C.bg },
+  stepValueTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900' },
+});
+
+export default IntensitySettings;

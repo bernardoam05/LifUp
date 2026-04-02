@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react'
-import { Animated, StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme } from '../theme'
-import { playSound } from '../utils/audioService'
+import React, { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme } from '../theme';
+import { playSound } from '../utils/audioService';
 
 
-const { width: SW } = Dimensions.get('window')
+const { width: SW } = Dimensions.get('window');
 
 interface LevelUpReward {
   level: number
@@ -18,46 +18,46 @@ interface Props {
 }
 
 export default function LevelUpToast({ reward, onDismiss }: Props) {
-  const C = useTheme()
-  const st = React.useMemo(() => getStyles(C), [C])
-  const slideAnim = useRef(new Animated.Value(-150)).current
+  const C = useTheme();
+  const st = React.useMemo(() => getStyles(C), [C]);
+  const slideAnim = useRef(new Animated.Value(-150)).current;
 
 
-  useEffect(() => {
-    if (reward) {
-      // Play level up sound
-      playSound('levelUp')
-      
-      // Animate in quickly
-      Animated.timing(slideAnim, {
-        toValue: 50,
-        duration: 250,
-        useNativeDriver: true,
-      }).start()
-
-      // Auto dismiss after 6 seconds
-      const timer = setTimeout(() => {
-        closeToast()
-      }, 6000)
-
-      return () => clearTimeout(timer)
-    } else {
-      // Ensure it's hidden
-      slideAnim.setValue(-150)
-    }
-  }, [reward])
-
-  function closeToast() {
+  const closeToast = React.useCallback(() => {
     Animated.timing(slideAnim, {
       toValue: -150,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
-      onDismiss()
-    })
-  }
+      onDismiss();
+    });
+  }, [onDismiss, slideAnim]);
 
-  if (!reward) return null
+  useEffect(() => {
+    if (reward) {
+      // Play level up sound
+      playSound('levelUp');
+
+      // Animate in quickly
+      Animated.timing(slideAnim, {
+        toValue: 50,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+
+      // Auto dismiss after 6 seconds
+      const timer = setTimeout(() => {
+        closeToast();
+      }, 6000);
+
+      return () => clearTimeout(timer);
+    } else {
+      // Ensure it's hidden
+      slideAnim.setValue(-150);
+    }
+  }, [reward, closeToast, slideAnim]);
+
+  if (!reward) {return null;}
 
   return (
     <Animated.View style={[st.container, { transform: [{ translateY: slideAnim }] }]}>
@@ -74,7 +74,7 @@ export default function LevelUpToast({ reward, onDismiss }: Props) {
         </View>
       </TouchableOpacity>
     </Animated.View>
-  )
+  );
 }
 
 const getStyles = (C: any) => StyleSheet.create({
@@ -121,5 +121,5 @@ const getStyles = (C: any) => StyleSheet.create({
   },
   closeWrap: {
     padding: 4,
-  }
-})
+  },
+});

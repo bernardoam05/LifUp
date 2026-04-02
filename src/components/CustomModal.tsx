@@ -1,7 +1,7 @@
-import React from 'react'
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { FONT, SPACING } from '../theme'
+import React from 'react';
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { FONT, SPACING } from '../theme';
 
 
 type Props = {
@@ -29,8 +29,8 @@ export default function CustomModal({
   useNativeModal = true,
   C,
 }: Props) {
-  const s = getStyles(C)
-  const finalConfirmColor = confirmColor || C.neonBlue
+  const s = getStyles(C);
+  const finalConfirmColor = confirmColor || C.neonBlue;
 
   const content = (
     <View style={s.overlay}>
@@ -70,22 +70,22 @@ export default function CustomModal({
 
       </View>
     </View>
-  )
+  );
 
   if (!useNativeModal) {
-    if (!visible) return null
+    if (!visible) {return null;}
     return (
       <View style={[StyleSheet.absoluteFill, { zIndex: 9999 }]} pointerEvents="box-none">
         {content}
       </View>
-    )
+    );
   }
 
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onCancel}>
       {content}
     </Modal>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -165,5 +165,5 @@ const getStyles = (C: any) => StyleSheet.create({
     fontSize: 10,
     letterSpacing: 1,
   },
-})
+});
 

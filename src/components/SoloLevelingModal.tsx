@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   Modal,
   ModalProps,
@@ -6,9 +6,9 @@ import {
   StyleSheet,
   ViewStyle,
   TouchableWithoutFeedback,
-} from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useTheme } from '../theme'
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../theme';
 
 export interface SoloLevelingModalProps extends ModalProps {
   children: React.ReactNode
@@ -36,9 +36,9 @@ export interface SoloLevelingModalProps extends ModalProps {
  * Only top/bottom insets are applied to the content wrapper.
  */
 export default function SoloLevelingModal({ children, contentStyle, dimmed, slide, useNativeModal = true, bottomOffset = 0, noPadding = false, ...modalProps }: SoloLevelingModalProps) {
-  const C = useTheme()
-  const insets = useSafeAreaInsets()
-  const s = getStyles(C)
+  const C = useTheme();
+  const insets = useSafeAreaInsets();
+  const s = getStyles(C);
 
   const content = (
     <View style={[s.overlay, dimmed && s.overlayDimmed]} pointerEvents="box-none">
@@ -57,15 +57,15 @@ export default function SoloLevelingModal({ children, contentStyle, dimmed, slid
         {children}
       </View>
     </View>
-  )
+  );
 
   if (!useNativeModal) {
-    if (!modalProps.visible) return null
+    if (!modalProps.visible) {return null;}
     return (
       <View style={[StyleSheet.absoluteFill, { zIndex: 9999 }]} pointerEvents="box-none">
         {content}
       </View>
-    )
+    );
   }
 
   return (
@@ -77,7 +77,7 @@ export default function SoloLevelingModal({ children, contentStyle, dimmed, slid
     >
       {content}
     </Modal>
-  )
+  );
 }
 
 const getStyles = (C: any) => StyleSheet.create({
@@ -96,4 +96,4 @@ const getStyles = (C: any) => StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-})
+});

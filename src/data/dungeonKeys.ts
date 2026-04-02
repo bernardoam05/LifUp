@@ -29,7 +29,7 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
     missionDetail: '50 flexões de braços (ou variações adaptadas) para forjar resistência ao veneno.',
     lore: 'Kasaka é uma cobra antiga e leal, guardiã de poderes ocultos. Diz-se que derrotar este monstro concederá ao caçador a velocidade de um réptil.',
     environment: 'Pântano denso e venenoso, coberto de vegetação tóxica e água contaminada. Ar sufocante.',
-    difficulty: 1
+    difficulty: 1,
   },
   {
     id: 'key_baruka',
@@ -43,7 +43,7 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
     missionDetail: '60 minutos de Foco Produtivo ou Estudo Ininterrupto para sobreviver à tempestade de neve.',
     lore: 'Baruka governa o reino gelado com mão de ferro. Legendas falam de seus domínios arcanos onde o frio congela até a alma.',
     environment: 'Montanha coberta de neve eterna, castelo de gelo e cristal azul. Ventos cortantes e aurora boreal.',
-    difficulty: 2
+    difficulty: 2,
   },
   {
     id: 'key_kargalgan',
@@ -57,7 +57,7 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
     missionDetail: '100 agachamentos livres pesados para esmagar as maldições dos orcs.',
     lore: 'Kargalgan, o Xamã Orc, comanda legiões com magia corrupta. Diz-se que seus rituais amaldiçoam qualquer um que ouse entrar.',
     environment: 'Planície vulcânica árida com crateras, totem orcs antigos e neblina vermelha de lava.',
-    difficulty: 2
+    difficulty: 2,
   },
   {
     id: 'key_vulcan',
@@ -71,7 +71,7 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
     missionDetail: '90 minutos de Foco Total no Trabalho ou Estudo (sem distrações) no calor escaldante.',
     lore: 'Vulcan o Demónio da Ganância acumula riquezas no fundo de seu vulcão. Sua ganância é lendária entre os monstros.',
     environment: 'Vulcão ativo com lava escorrendo, cavernas aquecidas e tesouro brilhando no escuro.',
-    difficulty: 3
+    difficulty: 3,
   },
   {
     id: 'key_metus',
@@ -85,7 +85,7 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
     missionDetail: '120 minutos de Imersão (Trabalho, Leitura ou Arte) para resistir aos guias espectrais.',
     lore: 'Metus guia espíritos através dos planos sombrios. Encontrá-lo significa fazer um pacto com o próprio reino dos mortos.',
     environment: 'Floresta etérea habitada por espíritos, lua cheia suspensa, árvores antigas e sussurros ancestrais.',
-    difficulty: 4
+    difficulty: 4,
   },
   {
     id: 'key_beru',
@@ -99,7 +99,7 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
     missionDetail: '200 burpees (ou equivalente em exercícios intensos de cardio/crossfit). Ganha a velocidade de Beru.',
     lore: 'Beru, o Rei das Formigas Mágicas, comanda um império subterrâneo. É dito ser mais poderoso que qualquer amo até agora encontrado.',
     environment: 'Caverna imensa com colónias de formigas, câmaras cristalinas, e rainha monstruosa.',
-    difficulty: 5
+    difficulty: 5,
   },
   {
     id: 'key_kamish',
@@ -113,7 +113,7 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
     missionDetail: 'Caminha ou corre 5 km ininterruptos (ou pedala 15 km) para escapar ao Sopro de Fogo.',
     lore: 'Kamish é a Pior Calamidade — um dragão corrupto capaz de destruir cidades. Sua escama queima com poder cataclísmico.',
     environment: 'Ruínas de civilizações destruídas, paisagem queimada, céu escuro com chuva de fogo.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_statue_god',
@@ -127,7 +127,7 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
     missionDetail: '150 minutos a executar a tua tarefa mais importante em silêncio e imobilidade absoluta.',
     lore: 'Uma Estátua Divina guarda o conhecimento primordial. Diz-se que está conectada ao próprio destino do caçador.',
     environment: 'Templo antigo com suas duas câmaras espelhadas, ouro e mármore, e uma aura transcendental.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_ashborn',
@@ -141,9 +141,9 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
     missionDetail: '4 horas de Deep Work (Foco Profundo). Só a disciplina absoluta forja um verdadeiro Herdeiro.',
     lore: 'Ashborn, o Verdadeiro Monarca das Sombras. Lenda suprema. O último teste antes de se tornar imortal.',
     environment: 'Dimensão paralela de sombra pura, onde luz não existe. Poder absoluto concentrado num ponto.',
-    difficulty: '???'
-  }
-]
+    difficulty: '???',
+  },
+];
 
 // Box-exclusive keys: can only be found in loot boxes
 export const BOX_KEYS: DungeonKey[] = [
@@ -159,7 +159,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: 'Medita rigorosamente por 2 horas ou faz Jejum Digital total durante a noite.',
     lore: 'Drácula, o Vampiro Eterno. Sua sede de sangue é insaciável. Atravessou milênios em escuridão.',
     environment: 'Castelo gótico decadente, salões cheios de teias, sangue seco nas paredes, morcegos voando eternamente.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_cthulhu',
@@ -173,7 +173,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '3 horas de Foco Exclusivo numa só tarefa crítica profunda. Rejeita o ruído mental.',
     lore: 'Cthulhu, Deus Adormecido. Sua existência quebra a razão. Quando acordar, mundos perecerão.',
     environment: 'Cidade submersa de R\'lyeh, arquitetura alienígena impossível, água antiga, sussurros de loucura cósmica.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_sauron',
@@ -187,7 +187,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '150 Elevações (Pull-ups) ou exercícios intensos para costas/braços. Forja a tua vontade.',
     lore: 'Sauron, Senhor Sombrio. Su poder é absoluto. Seu anel controla tudo ao seu redor.',
     environment: 'Torre de Barad-dûr, chamas infernais, olho gigante observando, terra devastada abaixo.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_sun_wukong',
@@ -201,7 +201,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: 'Percorre 10 km (Corrida, Caminhada Acelerada ou equivalente de bicicleta/natação) nos céus ou em terreno variado.',
     lore: 'Sun Wukong, Rei Macaco Celestial. Invencível, malabarista de nuvens, senhor de setenta-duas transformações.',
     environment: 'Montanha do Pêssego Celestial, nuvens douradas, criadores observando, tempestade mágica constante.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_kratos_ghost',
@@ -215,7 +215,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '300 repetições acumuladas de exercícios de força (Flexões, Agachamentos e Abdominais) ou 1h de desporto intenso (Futebol, Basket, Ginásio).',
     lore: 'Kratos, o Fantasma de Esparta. Deuses caíram sob sua fúria. Sua sede de vingança nunca foi saciada.',
     environment: 'Ruínas de templos antigos, cinzas vulcânicas, deuses derrotados espalhados, raiva materializada no ar.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_orc',
@@ -242,7 +242,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '60 min de foco total em silêncio absoluto para resistir ao olhar do Basilisco.',
     lore: 'Basilisco, a Rainha das Serpentes. Seu contato paralisa. Um olho pode congelar a vida em pedra.',
     environment: 'Covil subterrâneo vasto, ovos gigantes, veneno que corrói rocha, fria e úmida eternamente.',
-    difficulty: 4
+    difficulty: 4,
   },
   {
     id: 'key_manticore',
@@ -254,7 +254,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '120 repetições de exercícios explosivos para acompanhar a agilidade da Manticora.',
     lore: 'Manticora, Besta Venenosa do Abismo. Seu ferrão mata com uma gota. Instinto puro de predador.',
     environment: 'Abismo cavernoso profundo, ossos de vítimas no chão, veneno gotejando, besta gigante esticando as asas.',
-    difficulty: 4
+    difficulty: 4,
   },
   {
     id: 'key_phoenix',
@@ -266,7 +266,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '90 min de foco produtivo profundo para renascer das tuas próprias cinzas.',
     lore: 'A Fénix Sombria renascer-se a cada mil anos. Seu poder queima tudo. Dizem que derrotá-la traz renascimento.',
     environment: 'Pira de fogo eterno, cinzas volantes, e labaredas que queimam sem consumir.',
-    difficulty: 4
+    difficulty: 4,
   },
   {
     id: 'key_beholder',
@@ -278,7 +278,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '75 min de estudo intenso ou leitura técnica sob o olhar vigilante.',
     lore: 'O Beholder observa todas as realidades. Dez mil olhos veem tudo. A verdade espera-se para aquele que conseguir resistir.',
     environment: 'Sala flutuante no vazio, olhos gigantes em todas as paredes, espaço que não segue geometria normal.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_demon_astaroth',
@@ -290,7 +290,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '150 flexões de braços para forjar a força necessária para enfrentar um Príncipe Demónio.',
     lore: 'Astaroth, Príncipe do Medo. Sua presença traz pesadelos à realidade. Confrontá-lo significaria vencer o próprio medo.',
     environment: 'Castelo demoníaco escuro, chamas vermelhas, sussurros de almas presas, ar sufocante de malignidade.',
-    difficulty: 4
+    difficulty: 4,
   },
   {
     id: 'key_undead_dragon',
@@ -302,7 +302,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '2 horas de imersão total em trabalho ou criação complexa.',
     lore: 'Um dragão antigo que desafiou o próprio destino. Morte não o venceu. Sua fúria ressoa através dos séculos.',
     environment: 'Ruinas de castelo antigo, ossos gigantescos, necromancia e ar gelado que esfria a alma.',
-    difficulty: 5
+    difficulty: 5,
   },
   {
     id: 'key_titania',
@@ -314,7 +314,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '7 km de marcha ritual para atravessar o jardim corrompido.',
     lore: 'Titania, Rainha das Fadas, corrompida pelo poder escuro. Sua corte é um pesadelo de beleza e horror.',
     environment: 'Jardim de flores que sugam energia, luz distorcida, magia negra visível flutuando entre as árvores.',
-    difficulty: 4
+    difficulty: 4,
   },
   {
     id: 'key_anubis',
@@ -326,7 +326,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '100 min de foco reflexivo ou reflexão profunda sobre os teus objetivos.',
     lore: 'Anúbis, Juiz das Almas. Seu julgamento é justo e irrevogável. Apenas aquele com coração puro pode passar.',
     environment: 'Câmara do julgamento com escala de ouro, hieróglifos antigos brilhando, luz sobrenatural dourada.',
-    difficulty: 3
+    difficulty: 3,
   },
   {
     id: 'key_cerberus',
@@ -338,7 +338,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '200 agachamentos livres para fortalecer as pernas contra as três mandíbulas.',
     lore: 'Cérbero, o Porteiro do Inferno. Com três cabeças e força titânica, nada passa sem sua permissão.',
     environment: 'Portão do inferno, correntes ancestrais, fogo e fumaça, as três cabeças rosnam eternamente.',
-    difficulty: 5
+    difficulty: 5,
   },
   {
     id: 'key_medusa',
@@ -350,7 +350,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '150 min de foco inamóvel. Não pestanejes perante o trabalho árduo.',
     lore: 'Medusa, cujo olhar petrifica. Condenada à solidão, sua fúria cresce com cada vítima que congela em pedra.',
     environment: 'Caverna cheia de estátuas humanas, serpentes na cabeça de Medusa, piso de pedra, escuridão opressiva.',
-    difficulty: 4
+    difficulty: 4,
   },
   {
     id: 'key_hydra_ancient',
@@ -362,7 +362,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '250 Burpees ou exercícios de cardio intenso para queimar o veneno no sangue.',
     lore: 'A Hidra Primordial com cem cabeças. Cada que tu cortas, duas crescem. Luto infinito e regeneração eterna.',
     environment: 'Pântano antigo com água tóxica, neblina verde venenosa, cabeças da Hidra saíndo da água.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_fenrir',
@@ -374,7 +374,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '10 km de corrida para escapar às mandíbulas que devoram o céu.',
     lore: 'Fenrir, o Lobo Devorador. Encadeado desde os primórdios, agora livre. Seu apetite é infinito.',
     environment: 'Montanhas nórdicas, neve eterna, lobo titânico rasgando o pano da realidade, céu em chamas.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_odin',
@@ -386,7 +386,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '3 horas de Deep Work absoluto (Foco nível National) para provar o teu valor em Valhalla.',
     lore: 'Odin, o Deus da Sabedoria. Sacrificou um olho por conhecimento. Seu poder atravessa mundos.',
     environment: 'Hall de Valhala com guerreiros eternos, trono dourado, Gungnir brilhando, realidade se descosendo.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_zeus',
@@ -398,7 +398,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '300 repetições de exercícios de calistenia ou 1h30 de desporto de alta intensidade.',
     lore: 'Zeus, Rei dos Deuses. Ele controla relâmpago e tempestades. Seu poder é absoluto no Olimpo.',
     environment: 'Topo do Olimpo com relâmpagos constantes, trono de ouro, deuses observando, céu em tempestade.',
-    difficulty: '???'
+    difficulty: '???',
   },
   {
     id: 'key_cthulhu_spawn',
@@ -410,7 +410,7 @@ export const BOX_KEYS: DungeonKey[] = [
     missionDetail: '4 horas de foco ininterrupto em tarefas que desafiem a tua sanidade mental.',
     lore: 'Descendente de Cthulhu. Sua existência não obedece lógica. A realidade falha perto dele.',
     environment: 'Dimensão paralela impossível, geometria que quebra a mente, sussurros de loucura, nada faz sentido.',
-    difficulty: '???'
+    difficulty: '???',
   },
   // ── DISCOVERED DUNGEON KEYS — Portais selados de criaturas antigas ──────────
   {
@@ -526,14 +526,14 @@ export const BOX_KEYS: DungeonKey[] = [
     environment: 'Ruínas de fortaleza antiga, pedras queimadas por décadas de fogo draconiano, fumo eterno no ar.',
     difficulty: 4,
   },
-]
+];
 
-export const ALL_DUNGEON_KEYS = [...LEVEL_GATED_KEYS, ...BOX_KEYS]
+export const ALL_DUNGEON_KEYS = [...LEVEL_GATED_KEYS, ...BOX_KEYS];
 
 export function getKeyByBossId(bossId: string) {
-  return ALL_DUNGEON_KEYS.find(k => k.bossId === bossId)
+  return ALL_DUNGEON_KEYS.find(k => k.bossId === bossId);
 }
 
 export function getKeyById(id: string) {
-  return ALL_DUNGEON_KEYS.find(k => k.id === id)
+  return ALL_DUNGEON_KEYS.find(k => k.id === id);
 }

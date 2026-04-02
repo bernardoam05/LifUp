@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore from '../store/useGameStore'
-import SoloLevelingModal from '../components/SoloLevelingModal'
-import { FONT, SPACING } from '../theme'
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useGameStore from '../store/useGameStore';
+import SoloLevelingModal from '../components/SoloLevelingModal';
+import { FONT, SPACING } from '../theme';
 
 
 const QUEST_TYPE_ICON: Record<string, string> = {
@@ -13,7 +13,7 @@ const QUEST_TYPE_ICON: Record<string, string> = {
   focus: 'timer-sand',
   gps: 'run-fast',
   pomodoro: 'timer-sand-complete',
-}
+};
 
 const getQuestTypeColor = (C: any): Record<string, string> => ({
   training: '#ef4444',
@@ -21,24 +21,24 @@ const getQuestTypeColor = (C: any): Record<string, string> => ({
   focus: '#a855f7',
   gps: '#22c55e',
   pomodoro: C.gold,
-})
+});
 
 
 function formatSeconds(secs: number): string {
-  const m = Math.floor(secs / 60)
-  const s = secs % 60
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
 // ── MissionHistoryModal ────────────────────────────────────────────────────────
 
 export default function MissionHistoryModal({ visible = true, onClose, C }: { visible?: boolean; onClose: () => void; C: any }) {
-  const s = getStyles(C)
-  const QUEST_TYPE_COLOR = getQuestTypeColor(C)
+  const s = getStyles(C);
+  const QUEST_TYPE_COLOR = getQuestTypeColor(C);
 
-  const questRecords = useGameStore(s => s.questRecords)
-  const questCompletions = useGameStore(s => s.questCompletions)
-  const questDictionary = useGameStore(s => s.questDictionary)
+  const questRecords = useGameStore(st => st.questRecords);
+  const questCompletions = useGameStore(st => st.questCompletions);
+  const questDictionary = useGameStore(st => st.questDictionary);
 
   // Build display entries from dictionary + records/completions
   const entries = questDictionary
@@ -53,9 +53,9 @@ export default function MissionHistoryModal({ visible = true, onClose, C }: { vi
       history: questRecords[def.id]?.history ?? [],
     }))
     .filter(e => e.completions > 0)
-    .sort((a, b) => b.completions - a.completions)
+    .sort((a, b) => b.completions - a.completions);
 
-  const [expandedId, setExpandedId] = React.useState<string | null>(null)
+  const [expandedId, setExpandedId] = React.useState<string | null>(null);
 
   return (
     <SoloLevelingModal visible={visible} onRequestClose={onClose} contentStyle={{ flex: 1, width: '100%' }}>
@@ -85,10 +85,10 @@ export default function MissionHistoryModal({ visible = true, onClose, C }: { vi
         ) : (
           <ScrollView contentContainerStyle={s.list}>
             {entries.map(e => {
-              const icon = QUEST_TYPE_ICON[e.questType] ?? 'help-circle'
-              const color = QUEST_TYPE_COLOR[e.questType] ?? C.muted
-              const isExpanded = expandedId === e.id
-              const history = e.history
+              const icon = QUEST_TYPE_ICON[e.questType] ?? 'help-circle';
+              const color = QUEST_TYPE_COLOR[e.questType] ?? C.muted;
+              const isExpanded = expandedId === e.id;
+              const history = e.history;
 
               return (
                 <View key={e.id} style={{ marginBottom: SPACING.sm }}>
@@ -143,14 +143,14 @@ export default function MissionHistoryModal({ visible = true, onClose, C }: { vi
                     </View>
                   )}
                 </View>
-              )
+              );
             })}
           </ScrollView>
         )}
 
       </SafeAreaView>
     </SoloLevelingModal>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -190,5 +190,4 @@ const getStyles = (C: any) => StyleSheet.create({
   historyTime: { color: C.muted, fontSize: 11, fontFamily: FONT.orbitron },
   historyNote: { color: C.muted, fontSize: 12, fontStyle: 'italic', lineHeight: 18 },
   emptyHistory: { color: C.dimmed, fontSize: 11, textAlign: 'center', padding: SPACING.md, fontStyle: 'italic' },
-})
-
+});

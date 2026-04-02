@@ -132,7 +132,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     color:       '#ef4444',
     effect:      'cosmetic',
   },
-]
+];
 
 // ── Boss drop materials (not purchasable, but must be defined for inventory rendering) ──────────
 export const BOSS_DROP_ITEMS: ShopItem[] = [
@@ -263,11 +263,11 @@ export const BOSS_DROP_ITEMS: ShopItem[] = [
     buffMult:     0.25,
     buffDuration: 2 * 60 * 60_000,
   },
-]
+];
 
 export const CATALOG_MAP = Object.fromEntries(
   [...SHOP_CATALOG, ...BOSS_DROP_ITEMS].map(i => [i.id, i])
-)
+);
 
 // ── Thematic Loot Table ───────────────────────────────────────────────────────
 // Maps bossId → specific drops (thematic) + chance per drop.
@@ -299,11 +299,13 @@ export const BOSS_LOOT_TABLE: Record<string, LootEntry[]> = {
   key_boss_demon_prince_astaroth: [{ itemId: 'blood_fallen',     chance: 0.35 }],
   key_boss_undead_dragon_king:    [{ itemId: 'dragon_scale',     chance: 0.40 }],
   key_boss_titania_queen_dark:    [{ itemId: 'shadow_essence',   chance: 0.40 }],
+  key_boss_goblin_king:           [{ itemId: 'shadow_essence',   chance: 0.30 }],
   key_boss_anubis_guardian_soul:  [{ itemId: 'iron_will_crystal',chance: 0.35 }],
   key_boss_cerberus_gate_final:   [{ itemId: 'cerberus_fang',    chance: 0.55 }],
   key_boss_medusa_queen_gaze:     [{ itemId: 'kasaka_venom',     chance: 0.45 }],
   key_boss_hydra_ancient_world:   [{ itemId: 'kasaka_venom',     chance: 0.35 }, { itemId: 'blood_fallen', chance: 0.30 }],
   key_boss_fenrir_wolf_star:      [{ itemId: 'iron_will_crystal',chance: 0.35 }],
+  key_boss_dragon_wyvern:         [{ itemId: 'dragon_scale',     chance: 0.30 }],
   key_boss_odin_simulation_valhalla: [{ itemId: 'iron_will_crystal', chance: 0.40 }, { itemId: 'lich_eye', chance: 0.25 }],
   key_boss_zeus_simulation_olympus:  [{ itemId: 'iron_will_crystal', chance: 0.40 }],
   key_boss_cthulhu_spawn_outer:   [{ itemId: 'lich_eye',         chance: 0.40 }, { itemId: 'shadow_essence', chance: 0.35 }],
@@ -380,10 +382,10 @@ export const BOSS_LOOT_TABLE: Record<string, LootEntry[]> = {
   break_boss_ancient_machine_core:      [{ itemId: 'iron_will_crystal',chance: 0.30 }],
   break_boss_star_spawn_void:           [{ itemId: 'lich_eye',         chance: 0.35 }, { itemId: 'shadow_essence', chance: 0.30 }],
   break_boss_monarch_shadow_clone_sim:  [{ itemId: 'dragon_scale',     chance: 0.35 }, { itemId: 'lich_eye', chance: 0.30 }],
-}
+};
 
 // Generic drops that always roll independently for every boss
 export const GENERIC_BOSS_DROPS: LootEntry[] = [
   { itemId: 'shadow_essence', chance: 0.45 },
   { itemId: 'blood_fallen',   chance: 0.18 },
-]
+];

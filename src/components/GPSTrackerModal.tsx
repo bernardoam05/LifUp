@@ -1,13 +1,13 @@
 // src/components/GPSTrackerModal.tsx
-import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import useGameStore, { Quest } from '../store/useGameStore'
-import { useLocationTracker } from '../hooks/useLocationTracker'
-import { formatTime } from '../utils/time'
-import BottomSheetModal from './BottomSheetModal'
-import { FONT, SPACING } from '../theme'
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import useGameStore, { Quest } from '../store/useGameStore';
+import { useLocationTracker } from '../hooks/useLocationTracker';
+import { formatTime } from '../utils/time';
+import BottomSheetModal from './BottomSheetModal';
+import { FONT, SPACING } from '../theme';
 
 const getGMStyles = (C: any) => StyleSheet.create({
   card: { backgroundColor: C.panel, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.xl, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.green + '55' },
@@ -24,85 +24,85 @@ const getGMStyles = (C: any) => StyleSheet.create({
   timerText: { color: C.green, fontFamily: FONT.orbitron, fontSize: 42, fontWeight: '900', letterSpacing: 2 },
   timerSub: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: 4 },
   completeBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 4, paddingVertical: 14 },
-})
+});
 
 export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
   quest: Quest; onClose: () => void; onComplete: () => void; C: any
 }) {
 
-  const insets = useSafeAreaInsets()
-  const target = quest.gpsTarget ?? 1.5
-  const record = useGameStore(s => s.questRecords[quest.id])
-  const saveRec = useGameStore(s => s.saveQuestRecord)
-  const timerStore = useGameStore(s => s.activeMissionTimers[quest.id])
-  const startT = useGameStore(s => s.startMissionTimer)
-  const pauseT = useGameStore(s => s.pauseMissionTimer)
-  const clearT = useGameStore(s => s.clearMissionTimer)
+  const insets = useSafeAreaInsets();
+  const target = quest.gpsTarget ?? 1.5;
+  const record = useGameStore(s => s.questRecords[quest.id]);
+  const saveRec = useGameStore(s => s.saveQuestRecord);
+  const timerStore = useGameStore(s => s.activeMissionTimers[quest.id]);
+  const startT = useGameStore(s => s.startMissionTimer);
+  const pauseT = useGameStore(s => s.pauseMissionTimer);
+  const clearT = useGameStore(s => s.clearMissionTimer);
 
   const [elapsed, setElapsed] = useState(
     timerStore ? (timerStore.accumulatedMs + (timerStore.isPaused ? 0 : Date.now() - timerStore.startTime)) : 0
-  )
-  const [running, setRunning] = useState(!timerStore?.isPaused && !!timerStore)
-  const [note, setNote] = useState(record?.lastNote ?? '')
+  );
+  const [running, setRunning] = useState(!timerStore?.isPaused && !!timerStore);
+  const [note, setNote] = useState(record?.lastNote ?? '');
 
   const tracker = useLocationTracker(target, () => {
-    handleFinalize()
-  })
+    handleFinalize();
+  });
 
   // Control distance accumulation based on timer
   useEffect(() => {
     if (running && !tracker.isTracking) {
-      tracker.startTracking()
+      tracker.startTracking();
     } else if (!running && tracker.isTracking) {
-      tracker.stopTracking()
+      tracker.stopTracking();
     }
-  }, [running])
+  }, [running, tracker]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null
+    let interval: NodeJS.Timeout | null = null;
     if (running) {
-      const startTime = Date.now() - elapsed
+      const startTime = Date.now() - elapsed;
       interval = setInterval(() => {
-        setElapsed(Date.now() - startTime)
-      }, 500)
-      tracker.startTracking()
+        setElapsed(Date.now() - startTime);
+      }, 500);
+      tracker.startTracking();
     } else {
-      tracker.stopTracking()
+      tracker.stopTracking();
     }
     return () => {
-      if (interval) clearInterval(interval)
-      tracker.stopTracking()
-    }
-  }, [running])
+      if (interval) {clearInterval(interval);}
+      tracker.stopTracking();
+    };
+  }, [running, elapsed, tracker]);
 
   // NO AUTO-START: Timer will only start when user clicks the play button
   // Persistent store sync happens via tracker state changes
 
   function togglePause() {
     if (running) {
-      pauseT(quest.id)
-      setRunning(false)
+      pauseT(quest.id);
+      setRunning(false);
     } else {
-      startT(quest.id)
-      setRunning(true)
+      startT(quest.id);
+      setRunning(true);
     }
   }
 
   function handleRestart() {
-    clearT(quest.id)
-    setElapsed(0)
-    setRunning(false)
-    tracker.reset?.()
+    clearT(quest.id);
+    setElapsed(0);
+    setRunning(false);
+    tracker.reset?.();
   }
 
   function handleFinalize() {
-    tracker.stopTracking()
-    clearT(quest.id)
-    saveRec(quest.id, Math.floor(elapsed / 1000), note.trim())
-    onComplete()
+    tracker.stopTracking();
+    clearT(quest.id);
+    saveRec(quest.id, Math.floor(elapsed / 1000), note.trim());
+    onComplete();
   }
 
-  const gm = getGMStyles(C)
+  const gm = getGMStyles(C);
 
   return (
     <BottomSheetModal visible={true} onClose={onClose} contentStyle={{ backgroundColor: 'transparent' }}>
@@ -189,5 +189,5 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
         </View>
       </ScrollView>
     </BottomSheetModal>
-  )
+  );
 }

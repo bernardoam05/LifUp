@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
-import { StyleSheet, Text, View, Modal, TouchableOpacity, ScrollView } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme } from '../theme'
-import { playSound } from '../utils/audioService'
-import { SHOP_CATALOG } from '../data/shopItems'
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, View, Modal, TouchableOpacity, ScrollView } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme } from '../theme';
+import { playSound } from '../utils/audioService';
+import { SHOP_CATALOG } from '../data/shopItems';
 
 interface Props {
   level: number
@@ -11,20 +11,20 @@ interface Props {
   onDismiss: () => void
 }
 
-const ITEM_NAMES: Record<string, string> = Object.fromEntries(SHOP_CATALOG.map(i => [i.id, i.name]))
+const ITEM_NAMES: Record<string, string> = Object.fromEntries(SHOP_CATALOG.map(i => [i.id, i.name]));
 const EXTRA_NAMES: Record<string, string> = {
   shadow_essence: 'Essência das Sombras',
   blood_fallen: 'Sangue dos Caídos',
   loot_box: 'Cofre Misterioso',
-}
+};
 
 export default function LevelUpModal({ level, items, onDismiss }: Props) {
-  const C = useTheme()
-  const st = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const st = React.useMemo(() => getStyles(C), [C]);
 
   useEffect(() => {
-    playSound('levelUp')
-  }, [])
+    playSound('levelUp');
+  }, []);
 
   return (
     <Modal
@@ -61,7 +61,7 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
         </View>
       </View>
     </Modal>
-  )
+  );
 }
 
 const getStyles = (C: any) => StyleSheet.create({
@@ -141,4 +141,4 @@ const getStyles = (C: any) => StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-})
+});

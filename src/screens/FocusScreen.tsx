@@ -1,22 +1,22 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, TextInput, AppState, AppStateStatus,
-} from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { NativeModules } from 'react-native'
-import useGameStore from '../store/useGameStore'
-import CustomModal from '../components/CustomModal'
-import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal'
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { NativeModules } from 'react-native';
+import useGameStore from '../store/useGameStore';
+import CustomModal from '../components/CustomModal';
+import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal';
 
-import { useTheme, FONT, SPACING } from '../theme'
-import { playSound, playAmbient, stopAmbient, AMBIENT_META, type AmbientSoundId } from '../utils/audioService'
+import { useTheme, FONT, SPACING } from '../theme';
+import { playSound, playAmbient, stopAmbient, AMBIENT_META, type AmbientSoundId } from '../utils/audioService';
 import {
   notifyPomodoroBreakStarted,
   schedulePomodoroBreakEndNotification,
   cancelPomodoroNotifications,
-} from '../utils/notifications'
+} from '../utils/notifications';
 
 
 const { FocusBlocker } = NativeModules as {
@@ -33,7 +33,7 @@ const { FocusBlocker } = NativeModules as {
     updateBlockedApps:  (pkgs: string[]) => Promise<boolean>
     getInstalledApps:   () => Promise<Array<{ pkg: string; label: string }>>
   }
-}
+};
 
 // ── Preset apps (fallback when native enumeration fails or returns empty) ───────
 
@@ -48,9 +48,9 @@ const PRESET_APPS = [
   { pkg: 'com.discord',                label: 'Discord',     icon: 'discord'    },
   { pkg: 'com.netflix.mediaclient',    label: 'Netflix',     icon: 'netflix'    },
   { pkg: 'com.reddit.frontpage',       label: 'Reddit',      icon: 'reddit'     },
-]
+];
 
-const HARDCORE_DURATION_MS = 365 * 24 * 60 * 60_000  // 1 year — effectively infinite; only ends via quebrar juramento
+const HARDCORE_DURATION_MS = 365 * 24 * 60 * 60_000;  // 1 year — effectively infinite; only ends via quebrar juramento
 
 // ── App Selector — absolute full-screen overlay (no Modal) ────────────────────
 // Using StyleSheet.absoluteFill avoids the MIUI Modal rendering pipeline
@@ -69,46 +69,46 @@ function AppSelectorOverlay({
   onClose:     () => void
   C: any
 }) {
-  const ov = getOVStyles(C)
+  const ov = getOVStyles(C);
 
-  const [displayApps, setDisplayApps] = useState<AppEntry[]>(PRESET_APPS)
-  const [loading, setLoading]         = useState(true)
-  const [customPkg, setCustomPkg]     = useState('')
-  const [search, setSearch]           = useState('')
-  const [showOnlySelected, setShowOnlySelected] = useState(false)
+  const [displayApps, setDisplayApps] = useState<AppEntry[]>(PRESET_APPS);
+  const [loading, setLoading]         = useState(true);
+  const [customPkg, setCustomPkg]     = useState('');
+  const [search, setSearch]           = useState('');
+  const [showOnlySelected, setShowOnlySelected] = useState(false);
 
   const loadApps = useCallback(() => {
-    setLoading(true)
+    setLoading(true);
     if (!FocusBlocker?.getInstalledApps) {
-      setDisplayApps(PRESET_APPS)
-      setLoading(false)
-      return
+      setDisplayApps(PRESET_APPS);
+      setLoading(false);
+      return;
     }
     FocusBlocker.getInstalledApps()
       .then(apps => {
         if (!apps || apps.length === 0) {
-          setDisplayApps(PRESET_APPS)
-          return
+          setDisplayApps(PRESET_APPS);
+          return;
         }
         const merged: AppEntry[] = apps.map(a => {
-          const preset = PRESET_APPS.find(p => p.pkg === a.pkg)
-          return { pkg: a.pkg, label: a.label || a.pkg, icon: preset?.icon ?? 'android' }
-        })
-        merged.sort((a, b) => a.label.localeCompare(b.label))
-        setDisplayApps(merged)
+          const preset = PRESET_APPS.find(p => p.pkg === a.pkg);
+          return { pkg: a.pkg, label: a.label || a.pkg, icon: preset?.icon ?? 'android' };
+        });
+        merged.sort((a, b) => a.label.localeCompare(b.label));
+        setDisplayApps(merged);
       })
       .catch(() => setDisplayApps(PRESET_APPS))
-      .finally(() => setLoading(false))
-  }, [])
+      .finally(() => setLoading(false));
+  }, []);
 
-  useEffect(() => { loadApps() }, [loadApps])
+  useEffect(() => { loadApps(); }, [loadApps]);
 
-  const installedPkgs = new Set(displayApps.map(a => a.pkg))
-  const customApps    = blockedApps.filter(p => !installedPkgs.has(p))
+  const installedPkgs = new Set(displayApps.map(a => a.pkg));
+  const customApps    = blockedApps.filter(p => !installedPkgs.has(p));
 
-  let displayList = displayApps
+  let displayList = displayApps;
   if (showOnlySelected) {
-    displayList = displayList.filter(a => blockedApps.includes(a.pkg))
+    displayList = displayList.filter(a => blockedApps.includes(a.pkg));
   }
 
   const filtered = search.trim()
@@ -116,13 +116,13 @@ function AppSelectorOverlay({
         a.label.toLowerCase().includes(search.toLowerCase()) ||
         a.pkg.toLowerCase().includes(search.toLowerCase())
       )
-    : displayList
+    : displayList;
 
   function addCustom() {
-    const pkg = customPkg.trim()
-    if (!pkg) return
-    if (!blockedApps.includes(pkg)) onToggle(pkg)
-    setCustomPkg('')
+    const pkg = customPkg.trim();
+    if (!pkg) {return;}
+    if (!blockedApps.includes(pkg)) {onToggle(pkg);}
+    setCustomPkg('');
   }
 
   return (
@@ -161,8 +161,8 @@ function AppSelectorOverlay({
             <Icon name="close-circle" size={16} color={C.dimmed} />
           </TouchableOpacity>
         )}
-        <TouchableOpacity 
-          style={[ov.filterBtn, showOnlySelected && ov.filterBtnActive]} 
+        <TouchableOpacity
+          style={[ov.filterBtn, showOnlySelected && ov.filterBtnActive]}
           onPress={() => setShowOnlySelected(!showOnlySelected)}
         >
           <Icon name="filter-variant" size={16} color={showOnlySelected ? C.neonBlue : C.dimmed} />
@@ -213,7 +213,7 @@ function AppSelectorOverlay({
 
           {/* App rows */}
           {filtered.map(item => {
-            const active = blockedApps.includes(item.pkg)
+            const active = blockedApps.includes(item.pkg);
             return (
               <TouchableOpacity
                 key={item.pkg}
@@ -242,7 +242,7 @@ function AppSelectorOverlay({
                   : <Icon name="circle-outline" size={24} color="#1e293b" />
                 }
               </TouchableOpacity>
-            )
+            );
           })}
 
           {/* Custom (manually added) packages */}
@@ -285,307 +285,227 @@ function AppSelectorOverlay({
         </ScrollView>
       )}
     </View>
-  )
+  );
 }
 
 function formatTimeRemaining(ms: number) {
-  const totalSecs = Math.ceil(ms / 1000)
-  const h = Math.floor(totalSecs / 3600)
-  const m = Math.floor((totalSecs % 3600) / 60)
-  const s = totalSecs % 60
-  if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  const totalSecs = Math.ceil(ms / 1000);
+  const h = Math.floor(totalSecs / 3600);
+  const m = Math.floor((totalSecs % 3600) / 60);
+  const s = totalSecs % 60;
+  if (h > 0) {return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;}
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
 function formatElapsed(ms: number) {
-  const totalSecs = Math.floor(ms / 1000)
-  const h = Math.floor(totalSecs / 3600)
-  const m = Math.floor((totalSecs % 3600) / 60)
-  const s = totalSecs % 60
-  if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  const totalSecs = Math.floor(ms / 1000);
+  const h = Math.floor(totalSecs / 3600);
+  const m = Math.floor((totalSecs % 3600) / 60);
+  const s = totalSecs % 60;
+  if (h > 0) {return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;}
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function FocusScreen() {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
 
-  const blockedApps        = useGameStore(s => s.system.blockedApps)
-  const toggleApp          = useGameStore(s => s.toggleBlockedApp)
-  const setFocusActive     = useGameStore(s => s.setFocusModeActive)
-  const setHardcoreMode    = useGameStore(s => s.setHardcoreFocusMode)
-  const focusActive        = useGameStore(s => s.system.focusModeActive)
-  const hardcoreFocusMode  = useGameStore(s => s.system.hardcoreFocusMode)
-  const hardcorePunished   = useGameStore(s => s.system.hardcorePunished)
-  const hasPenalty         = useGameStore(s => s.system.hasPenalty)
-  const penaltyBlockEnd = useGameStore(s => s.system.penaltyBlockEnd)
-  const isPenaltyActive = penaltyBlockEnd > Date.now()
-  const penaltyMsRemaining = isPenaltyActive ? penaltyBlockEnd - Date.now() : 0
-  const triggerEvent       = useGameStore(s => s.triggerEvent)
-  const focusEndTime       = useGameStore(s => s.system.focusEndTime)
-  const penaltyBlockStart  = useGameStore(s => s.system.penaltyBlockStart)
+  const blockedApps        = useGameStore(st => st.system.blockedApps);
+  const toggleApp          = useGameStore(st => st.toggleBlockedApp);
+  const setFocusActive     = useGameStore(st => st.setFocusModeActive);
+  const setHardcoreMode    = useGameStore(st => st.setHardcoreFocusMode);
+  const focusActive        = useGameStore(st => st.system.focusModeActive);
+  const hardcoreFocusMode  = useGameStore(st => st.system.hardcoreFocusMode);
+  const hardcorePunished   = useGameStore(st => st.system.hardcorePunished);
+  const hasPenalty         = useGameStore(st => st.system.hasPenalty);
+  const penaltyBlockEnd = useGameStore(st => st.system.penaltyBlockEnd);
+  const triggerEvent       = useGameStore(st => st.triggerEvent);
+  const focusEndTime       = useGameStore(st => st.system.focusEndTime);
+  const penaltyBlockStart  = useGameStore(st => st.system.penaltyBlockStart);
 
-  const recordPomodoroSession = useGameStore(s => s.recordPomodoroSession)
-  const recordFocusTime       = useGameStore(s => s.recordFocusTime)
-  const setPomodoroState      = useGameStore(s => s.setPomodoroState)
-  const updateSettings        = useGameStore(s => s.updateSettings)
-  const lastFocusDuration     = useGameStore(s => s.settings.lastFocusDuration)
+  const recordPomodoroSession = useGameStore(st => st.recordPomodoroSession);
+  const recordFocusTime       = useGameStore(st => st.recordFocusTime);
+  const setPomodoroState      = useGameStore(st => st.setPomodoroState);
+  const updateSettings        = useGameStore(st => st.updateSettings);
+  const lastFocusDuration     = useGameStore(st => st.settings.lastFocusDuration);
 
   // Pomodoro config — persisted in settings
-  const pomodoroWorkMins  = useGameStore(s => s.settings.pomodoroWorkMins  ?? 25)
-  const pomodoroBreakMins = useGameStore(s => s.settings.pomodoroBreakMins ?? 5)
-  const pomodoroRounds    = useGameStore(s => s.settings.pomodoroRounds    ?? 4)
+  const pomodoroWorkMins  = useGameStore(st => st.settings.pomodoroWorkMins  ?? 25);
+  const pomodoroBreakMins = useGameStore(st => st.settings.pomodoroBreakMins ?? 5);
+  const pomodoroRounds    = useGameStore(st => st.settings.pomodoroRounds    ?? 4);
 
   // Pomodoro execution state — persisted in system (survives app restart)
-  const pomodoroPhase    = useGameStore(s => s.system.pomodoroPhase    ?? 'idle')
-  const pomodoroCycle    = useGameStore(s => s.system.pomodoroCycle    ?? 0)
-  const pomodoroBreakEnd = useGameStore(s => s.system.pomodoroBreakEnd ?? 0)
+  const pomodoroPhase    = useGameStore(st => st.system.pomodoroPhase    ?? 'idle');
+  const pomodoroCycle    = useGameStore(st => st.system.pomodoroCycle    ?? 0);
+  const pomodoroBreakEnd = useGameStore(st => st.system.pomodoroBreakEnd ?? 0);
 
   // Local UI state
-  const [pomodoroMode,     setPomodoroMode]     = useState(pomodoroPhase !== 'idle')
-  const [editingPomodoro,  setEditingPomodoro]  = useState<'work' | 'break' | 'rounds' | null>(null)
-  const [pomodoroInputVal, setPomodoroInputVal] = useState('')
-  const pomodoroBreakFiredRef = useRef(false)
-  const pomodoroWorkRef   = useRef<TextInput>(null)
-  const pomodoroBreakRef  = useRef<TextInput>(null)
-  const pomodoroRoundsRef = useRef<TextInput>(null)
+  const [pomodoroMode,     setPomodoroMode]     = useState(pomodoroPhase !== 'idle');
+  const [editingPomodoro,  setEditingPomodoro]  = useState<'work' | 'break' | 'rounds' | null>(null);
+  const [pomodoroInputVal, setPomodoroInputVal] = useState('');
+  const pomodoroBreakFiredRef = useRef(false);
+  const pomodoroWorkRef   = useRef<TextInput>(null);
+  const pomodoroBreakRef  = useRef<TextInput>(null);
+  const pomodoroRoundsRef = useRef<TextInput>(null);
 
   // Sync local pomodoroMode toggle when store phase changes (e.g. restored from background)
   useEffect(() => {
-    if (pomodoroPhase !== 'idle') setPomodoroMode(true)
-  }, [pomodoroPhase])
+    if (pomodoroPhase !== 'idle') {setPomodoroMode(true);}
+  }, [pomodoroPhase]);
 
-  const [activeAmbient, setActiveAmbient] = useState<AmbientSoundId | null>(null)
+  const [activeAmbient, setActiveAmbient] = useState<AmbientSoundId | null>(null);
 
-  const [nowMs, setNowMs] = useState(Date.now())
+  const [nowMs, setNowMs] = useState(Date.now());
   useEffect(() => {
-    if (!focusActive && pomodoroPhase !== 'break') return
-    setNowMs(Date.now())
-    const id = setInterval(() => setNowMs(Date.now()), 1000)
-    return () => clearInterval(id)
-  }, [focusActive, pomodoroPhase])
+    if (!focusActive && pomodoroPhase !== 'break') {return;}
+    setNowMs(Date.now());
+    const id = setInterval(() => setNowMs(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [focusActive, pomodoroPhase]);
+
+  const penaltyStart = penaltyBlockStart ?? 0;
+  const penaltyWindowOpen =
+    hasPenalty &&
+    penaltyBlockEnd > 0 &&
+    (penaltyStart === 0 || nowMs >= penaltyStart) &&
+    nowMs < penaltyBlockEnd;
+  const isPenaltyActive = penaltyWindowOpen;
+  const penaltyMsRemaining = penaltyWindowOpen ? penaltyBlockEnd - nowMs : 0;
+
+  const [hasUsage,         setHasUsage]         = useState(false);
+  const [hasOverlay,       setHasOverlay]       = useState(false);
+  const [hasAccessibility, setHasAccessibility] = useState(false);
+  const [hours,          setHours]          = useState(() => lastFocusDuration?.hours   ?? 0);
+  const [minutes,        setMinutes]        = useState(() => lastFocusDuration?.minutes ?? 25);
+  const [editingField,   setEditingField]   = useState<'hours' | 'minutes' | null>(null);
+  const [inputValue,     setInputValue]     = useState('');
+  const [hardcoreToggle, setHardcoreToggle] = useState(false);
+  const [showAppOverlay, setShowAppOverlay] = useState(false);
+  const [showBreakModal, setShowBreakModal] = useState(false);
+  const [alertCfg, setAlertCfg] = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null);
+  const appStateRef   = useRef(AppState.currentState);
+  const hoursInputRef = useRef<TextInput>(null);
+  const minsInputRef  = useRef<TextInput>(null);
 
   // Alert when focus timer reaches zero (non-hardcore mode only)
-  const focusEndAlertFiredRef = useRef(false)
+  const focusEndAlertFiredRef = useRef(false);
   useEffect(() => {
     if (!focusActive || !focusEndTime || hardcoreFocusMode) {
-      focusEndAlertFiredRef.current = false
-      return
+      focusEndAlertFiredRef.current = false;
+      return;
     }
-    if (nowMs >= focusEndTime && !focusEndAlertFiredRef.current) {
-      focusEndAlertFiredRef.current = true
-      playSound('focusEnd')
-      if (pomodoroMode || pomodoroPhase === 'work') {
-        // Work → break: stop native blocker, schedule break timer in store
-        FocusBlocker?.stopFocusMode().catch(() => {})
-        setFocusActive(false, 0)
-        setHardcoreMode(false)
-        recordPomodoroSession()
-        const cycle = pomodoroCycle
-        const breakEndMs = Date.now() + pomodoroBreakMins * 60_000
-        setPomodoroState('break', cycle, breakEndMs)
-        notifyPomodoroBreakStarted(cycle, pomodoroBreakMins).catch(() => {})
-        schedulePomodoroBreakEndNotification(breakEndMs, cycle + 1).catch(() => {})
-        setAlertCfg({
-          title: `⚡ CICLO ${cycle} CONCLUÍDO!`,
-          message: `Pausa de ${pomodoroBreakMins} min iniciada. O próximo ciclo começa automaticamente.`,
-          buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
-        })
-      } else {
-        recordFocusTime(hours * 60 + minutes)
-        setAlertCfg({
-          title: '⚡ FOCO CONCLUÍDO',
-          message: 'O tempo de foco terminou. Regressa ao campo de batalha e reclama as tuas recompensas.',
-          buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
-        })
-      }
-    }
-  }, [nowMs, focusActive, focusEndTime, hardcoreFocusMode, pomodoroMode, pomodoroPhase, pomodoroBreakMins, pomodoroCycle])
+    if (nowMs >= focusEndTime) {
+      if (!focusEndAlertFiredRef.current) {
+        focusEndAlertFiredRef.current = true;
+        playSound('focusEnd');
+        if (pomodoroMode || pomodoroPhase === 'work') {
+          // Work → break: stop native blocker, schedule break timer in store
+          FocusBlocker?.stopFocusMode().catch(() => {});
+          setFocusActive(false, 0);
+          setHardcoreMode(false);
+          recordPomodoroSession();
+          const cycle = pomodoroCycle;
+          const breakEndMs = Date.now() + pomodoroBreakMins * 60_000;
+          setPomodoroState('break', cycle, breakEndMs);
+          notifyPomodoroBreakStarted(cycle, pomodoroBreakMins).catch(() => {});
+          schedulePomodoroBreakEndNotification(breakEndMs, cycle + 1).catch(() => {});
+          setAlertCfg({
+            title: `⚡ CICLO ${cycle} CONCLUÍDO!`,
+            message: `Pausa de ${pomodoroBreakMins} min iniciada. O próximo ciclo começa automaticamente.`,
+            buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
+          });
+        } else {
+          const isPenaltySession =
+            hasPenalty &&
+            penaltyBlockEnd > 0 &&
+            focusEndTime === penaltyBlockEnd &&
+            (penaltyStart === 0 || penaltyStart <= focusEndTime);
 
-  // Pomodoro break end detection — auto-cycle
-  useEffect(() => {
-    if (pomodoroPhase !== 'break' || !pomodoroBreakEnd) {
-      pomodoroBreakFiredRef.current = false
-      return
-    }
-    if (nowMs >= pomodoroBreakEnd && !pomodoroBreakFiredRef.current) {
-      pomodoroBreakFiredRef.current = true
-      playSound('focusEnd')
-      cancelPomodoroNotifications().catch(() => {})
-      const nextCycle = pomodoroCycle + 1
-      const maxRounds = pomodoroRounds  // 0 = infinite
-      if (maxRounds === 0 || pomodoroCycle < maxRounds) {
-        // Auto-start next work cycle
-        setPomodoroState('idle', nextCycle, 0)
-        startNextPomodoroCycle(nextCycle)
-      } else {
-        // Session complete
-        setPomodoroState('idle', 0, 0)
-        setAlertCfg({
-          title: '🏆 SESSÃO POMODORO COMPLETA',
-          message: `Completaste ${pomodoroCycle} ciclos. Excelente trabalho!`,
-          buttons: [{ text: 'FECHAR', style: 'destructive' }],
-        })
-      }
-    }
-  }, [nowMs, pomodoroPhase, pomodoroBreakEnd, pomodoroCycle, pomodoroRounds])
+          if (!isPenaltySession) {
+            recordFocusTime(hours * 60 + minutes);
+          }
 
-  const penaltyRemainingH = Math.ceil(penaltyMsRemaining / 3_600_000)
-
-  const [hasUsage,         setHasUsage]         = useState(false)
-  const [hasOverlay,       setHasOverlay]       = useState(false)
-  const [hasAccessibility, setHasAccessibility] = useState(false)
-  const [hours,          setHours]          = useState(() => lastFocusDuration?.hours   ?? 0)
-  const [minutes,        setMinutes]        = useState(() => lastFocusDuration?.minutes ?? 25)
-  const [editingField,   setEditingField]   = useState<'hours' | 'minutes' | null>(null)
-  const [inputValue,     setInputValue]     = useState('')
-  const [hardcoreToggle, setHardcoreToggle] = useState(false)
-  const [showAppOverlay, setShowAppOverlay] = useState(false)
-  const [showBreakModal, setShowBreakModal] = useState(false)
-  const [alertCfg, setAlertCfg] = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null)
-  const appStateRef   = useRef(AppState.currentState)
-  const hoursInputRef = useRef<TextInput>(null)
-  const minsInputRef  = useRef<TextInput>(null)
-
-  function openInput(field: 'hours' | 'minutes') {
-    setEditingField(field)
-    setInputValue(field === 'hours' ? String(hours) : String(minutes))
-    setTimeout(() => {
-      (field === 'hours' ? hoursInputRef : minsInputRef).current?.focus()
-    }, 50)
-  }
-
-  function applyInput(field: 'hours' | 'minutes') {
-    setEditingField(null)
-    const raw = parseInt(inputValue, 10)
-    if (isNaN(raw)) return
-    if (field === 'hours') {
-      const h = Math.min(Math.max(raw, 0), 24)
-      setHours(h)
-      if (h === 24) setMinutes(0)
-    } else {
-      const m = Math.min(Math.max(raw, 0), hours === 24 ? 0 : 59)
-      setMinutes(m)
-    }
-  }
-
-  function openPomodoroInput(field: 'work' | 'break' | 'rounds') {
-    setEditingPomodoro(field)
-    const val = field === 'work' ? pomodoroWorkMins : field === 'break' ? pomodoroBreakMins : pomodoroRounds
-    setPomodoroInputVal(String(val))
-    setTimeout(() => {
-      const ref = field === 'work' ? pomodoroWorkRef : field === 'break' ? pomodoroBreakRef : pomodoroRoundsRef
-      ref.current?.focus()
-    }, 50)
-  }
-
-  function applyPomodoroInput(field: 'work' | 'break' | 'rounds') {
-    setEditingPomodoro(null)
-    const raw = parseInt(pomodoroInputVal, 10)
-    if (isNaN(raw)) return
-    if (field === 'work') {
-      updateSettings({ pomodoroWorkMins: Math.min(Math.max(raw, 1), 120) })
-    } else if (field === 'break') {
-      updateSettings({ pomodoroBreakMins: Math.min(Math.max(raw, 1), 60) })
-    } else {
-      updateSettings({ pomodoroRounds: Math.min(Math.max(raw, 0), 20) })
-    }
-  }
-
-  function incrementHours() {
-    setHours(h => {
-      const next = h >= 24 ? 0 : h + 1
-      if (next === 24) setMinutes(0)
-      return next
-    })
-  }
-  function decrementHours() {
-    setHours(h => {
-      const next = h <= 0 ? 24 : h - 1
-      if (next === 24) setMinutes(0)
-      return next
-    })
-  }
-  function incrementMinutes() {
-    if (hours === 24) return
-    setMinutes(m => m >= 55 ? 0 : m + 5)
-  }
-  function decrementMinutes() {
-    if (hours === 24) return
-    setMinutes(m => m <= 0 ? 55 : m - 5)
-  }
-
-  useEffect(() => { checkPerms() }, [])
-
-  // Fix: detect when native focus ends naturally (AppState becomes active again)
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
-      if (appStateRef.current.match(/inactive|background/) && next === 'active') {
-        checkPerms()
-        const state = useGameStore.getState()
-        const phase = state.system.pomodoroPhase ?? 'idle'
-        const bEnd  = state.system.pomodoroBreakEnd ?? 0
-        const cycle = state.system.pomodoroCycle ?? 0
-        const bMins = state.settings.pomodoroBreakMins ?? 5
-        const maxR  = state.settings.pomodoroRounds ?? 4
-        const now   = Date.now()
-
-        if (focusActive && FocusBlocker) {
-          FocusBlocker.isFocusModeActive().then(active => {
-            if (!active) {
-              setFocusActive(false)
-              setHardcoreMode(false)
-              // Work phase ended while in background → transition to break
-              if (phase === 'work' && state.system.focusEndTime && now >= (state.system.focusEndTime - 5000)) {
-                focusEndAlertFiredRef.current = true
-                state.recordPomodoroSession()
-                const breakEndMs = now + bMins * 60_000
-                state.setPomodoroState('break', cycle, breakEndMs)
-                notifyPomodoroBreakStarted(cycle, bMins).catch(() => {})
-                schedulePomodoroBreakEndNotification(breakEndMs, cycle + 1).catch(() => {})
-              }
-            }
-          }).catch(() => {})
-        }
-
-        // Break ended while in background → auto-cycle or finish
-        if (phase === 'break' && bEnd > 0 && now >= bEnd) {
-          pomodoroBreakFiredRef.current = true
-          cancelPomodoroNotifications().catch(() => {})
-          const nextCycle = cycle + 1
-          if (maxR === 0 || cycle < maxR) {
-            state.setPomodoroState('idle', nextCycle, 0)
-            startNextPomodoroCycle(nextCycle)
-          } else {
-            state.setPomodoroState('idle', 0, 0)
+          if (!isPenaltySession) {
+            setAlertCfg({
+              title: '⚡ FOCO CONCLUÍDO',
+              message: 'O tempo de foco terminou. Regressa ao campo de batalha e reclama as tuas recompensas.',
+              buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
+            });
           }
         }
       }
-      appStateRef.current = next
-    })
-    return () => sub.remove()
-  }, [focusActive, setFocusActive, setHardcoreMode])
 
-  useEffect(() => {
-    if (!focusActive || !FocusBlocker) return
-    FocusBlocker.updateBlockedApps(blockedApps).catch(() => {})
-  }, [blockedApps, focusActive])
+      // Fail-safe: ensure focus truly ends when timer hits 00:00
+      FocusBlocker?.stopFocusMode().catch(() => {});
+      setFocusActive(false, 0);
+      setHardcoreMode(false);
+      stopAmbient();
+      setActiveAmbient(null);
+    }
+  }, [
+    nowMs,
+    focusActive,
+    focusEndTime,
+    hardcoreFocusMode,
+    pomodoroMode,
+    pomodoroPhase,
+    pomodoroBreakMins,
+    pomodoroCycle,
+    hasPenalty,
+    penaltyBlockEnd,
+    penaltyStart,
+    hours,
+    minutes,
+    recordPomodoroSession,
+    recordFocusTime,
+    setFocusActive,
+    setHardcoreMode,
+    setPomodoroState,
+  ]);
 
-  async function checkPerms() {
-    if (!FocusBlocker) return
+  const checkPerms = React.useCallback(async () => {
+    if (!FocusBlocker) {return;}
     const [u, o, a] = await Promise.all([
       FocusBlocker.hasUsagePermission(),
       FocusBlocker.hasOverlayPermission(),
       FocusBlocker.hasAccessibilityPermission().catch(() => false),
-    ])
-    setHasUsage(u)
-    setHasOverlay(o)
-    setHasAccessibility(a)
-  }
+    ]);
+    setHasUsage(u);
+    setHasOverlay(o);
+    setHasAccessibility(a);
+  }, [setHasUsage, setHasOverlay, setHasAccessibility]);
 
-  async function startFocus() {
+  const startFocus = React.useCallback(async () => {
+    if (!FocusBlocker) {
+      // Fallback for platforms without native blocker: timer-only focus mode
+      let dur: number;
+      if (hardcorePunished) {
+        dur = Math.max(penaltyBlockEnd - Date.now(), 60_000);
+      } else if (hardcoreToggle) {
+        dur = HARDCORE_DURATION_MS;
+      } else if (pomodoroMode || pomodoroPhase === 'work') {
+        dur = pomodoroWorkMins * 60_000;
+        const liveCycle = useGameStore.getState().system.pomodoroCycle ?? 0;
+        const nextCycle = liveCycle === 0 ? 1 : liveCycle;
+        setPomodoroState('work', nextCycle, 0);
+      } else {
+        dur = (hours * 60 + minutes) * 60_000;
+      }
+      if (!hardcoreToggle && !hardcorePunished && dur < 60_000) {
+        setAlertCfg({ title: 'Duração inválida', message: 'Define pelo menos 1 minuto de duração.' });
+        return;
+      }
+      if (!hardcoreToggle && !hardcorePunished && !pomodoroMode) {
+        updateSettings({ lastFocusDuration: { hours, minutes } });
+      }
+      const start = Date.now();
+      const end = hardcorePunished ? penaltyBlockEnd : start + dur;
+      setFocusActive(true, end);
+      setHardcoreMode(hardcoreToggle);
+      return;
+    }
     if (!hasUsage) {
       setAlertCfg({
         title: 'Permissão necessária',
@@ -594,8 +514,8 @@ export default function FocusScreen() {
           { text: 'Abrir',    onPress: () => FocusBlocker.requestUsagePermission().then(checkPerms) },
           { text: 'Cancelar', style: 'cancel' },
         ],
-      })
-      return
+      });
+      return;
     }
     if (!hasOverlay) {
       setAlertCfg({
@@ -605,94 +525,266 @@ export default function FocusScreen() {
           { text: 'Abrir',    onPress: () => FocusBlocker.requestOverlayPermission().then(checkPerms) },
           { text: 'Cancelar', style: 'cancel' },
         ],
-      })
-      return
+      });
+      return;
     }
     if (blockedApps.length === 0) {
-      setAlertCfg({ title: 'Nenhuma app selecionada', message: 'Seleciona pelo menos uma app para bloquear.' })
-      return
+      setAlertCfg({ title: 'Nenhuma app selecionada', message: 'Seleciona pelo menos uma app para bloquear.' });
+      return;
     }
     // When punished, the block must end at the actual penalty deadline — NOT at +1 year.
     // HARDCORE_DURATION_MS (1 year) is only for the voluntary Hardcore Mode.
-    let dur: number
+    let dur: number;
     if (hardcorePunished) {
-      dur = Math.max(penaltyBlockEnd - Date.now(), 60_000)
+      dur = Math.max(penaltyBlockEnd - Date.now(), 60_000);
     } else if (hardcoreToggle) {
-      dur = HARDCORE_DURATION_MS
+      dur = HARDCORE_DURATION_MS;
     } else if (pomodoroMode || pomodoroPhase === 'work') {
-      dur = pomodoroWorkMins * 60_000
+      dur = pomodoroWorkMins * 60_000;
       // Read live store cycle (not stale closure) to handle auto-cycling correctly
-      const liveCycle = useGameStore.getState().system.pomodoroCycle ?? 0
-      const nextCycle = liveCycle === 0 ? 1 : liveCycle
-      setPomodoroState('work', nextCycle, 0)
+      const liveCycle = useGameStore.getState().system.pomodoroCycle ?? 0;
+      const nextCycle = liveCycle === 0 ? 1 : liveCycle;
+      setPomodoroState('work', nextCycle, 0);
     } else {
-      dur = (hours * 60 + minutes) * 60_000
+      dur = (hours * 60 + minutes) * 60_000;
     }
     if (!hardcoreToggle && !hardcorePunished && dur < 60_000) {
-      setAlertCfg({ title: 'Duração inválida', message: 'Define pelo menos 1 minuto de duração.' })
-      return
+      setAlertCfg({ title: 'Duração inválida', message: 'Define pelo menos 1 minuto de duração.' });
+      return;
     }
     if (!hardcoreToggle && !hardcorePunished && !pomodoroMode) {
-      updateSettings({ lastFocusDuration: { hours, minutes } })
+      updateSettings({ lastFocusDuration: { hours, minutes } });
     }
-    const start = Date.now()
-    const end = hardcorePunished ? penaltyBlockEnd : start + dur
-    await FocusBlocker.startFocusMode(blockedApps, start, end, hardcorePunished)
-    setFocusActive(true, end)
-    setHardcoreMode(hardcoreToggle)
-    const hour = new Date().getHours()
+    const start = Date.now();
+    const end = hardcorePunished ? penaltyBlockEnd : start + dur;
+    await FocusBlocker.startFocusMode(blockedApps, start, end, hardcorePunished);
+    setFocusActive(true, end);
+    setHardcoreMode(hardcoreToggle);
+    const hour = new Date().getHours();
     if (hour >= 1 && hour < 6) {
-      triggerEvent('focus_started_after_1am')
+      triggerEvent('focus_started_after_1am');
+    }
+  }, [
+    blockedApps,
+    checkPerms,
+    hasOverlay,
+    hasUsage,
+    hardcorePunished,
+    hardcoreToggle,
+    hours,
+    minutes,
+    penaltyBlockEnd,
+    pomodoroMode,
+    pomodoroPhase,
+    pomodoroWorkMins,
+    setFocusActive,
+    setHardcoreMode,
+    setPomodoroState,
+    setAlertCfg,
+    triggerEvent,
+    updateSettings,
+  ]);
+
+  const startNextPomodoroCycle = React.useCallback(async (_cycle: number) => {
+    // phase/cycle already updated by caller via setPomodoroState; just start focus
+    await startFocus();
+  }, [startFocus]);
+
+  // Pomodoro break end detection — auto-cycle
+  useEffect(() => {
+    if (pomodoroPhase !== 'break' || !pomodoroBreakEnd) {
+      pomodoroBreakFiredRef.current = false;
+      return;
+    }
+    if (nowMs >= pomodoroBreakEnd && !pomodoroBreakFiredRef.current) {
+      pomodoroBreakFiredRef.current = true;
+      playSound('focusEnd');
+      cancelPomodoroNotifications().catch(() => {});
+      const nextCycle = pomodoroCycle + 1;
+      const maxRounds = pomodoroRounds;  // 0 = infinite
+      if (maxRounds === 0 || pomodoroCycle < maxRounds) {
+        // Auto-start next work cycle
+        setPomodoroState('idle', nextCycle, 0);
+        startNextPomodoroCycle(nextCycle);
+      } else {
+        // Session complete
+        setPomodoroState('idle', 0, 0);
+        setAlertCfg({
+          title: '🏆 SESSÃO POMODORO COMPLETA',
+          message: `Completaste ${pomodoroCycle} ciclos. Excelente trabalho!`,
+          buttons: [{ text: 'FECHAR', style: 'destructive' }],
+        });
+      }
+    }
+  }, [nowMs, pomodoroPhase, pomodoroBreakEnd, pomodoroCycle, pomodoroRounds, setPomodoroState, startNextPomodoroCycle]);
+
+  const penaltyRemainingH = Math.ceil(penaltyMsRemaining / 3_600_000);
+
+  function openInput(field: 'hours' | 'minutes') {
+    setEditingField(field);
+    setInputValue(field === 'hours' ? String(hours) : String(minutes));
+    setTimeout(() => {
+      (field === 'hours' ? hoursInputRef : minsInputRef).current?.focus();
+    }, 50);
+  }
+
+  function applyInput(field: 'hours' | 'minutes') {
+    setEditingField(null);
+    const raw = parseInt(inputValue, 10);
+    if (isNaN(raw)) {return;}
+    if (field === 'hours') {
+      const h = Math.min(Math.max(raw, 0), 24);
+      setHours(h);
+      if (h === 24) {setMinutes(0);}
+    } else {
+      const m = Math.min(Math.max(raw, 0), hours === 24 ? 0 : 59);
+      setMinutes(m);
     }
   }
 
-  async function startNextPomodoroCycle(_cycle: number) {
-    // phase/cycle already updated by caller via setPomodoroState; just start focus
-    await startFocus()
+  function openPomodoroInput(field: 'work' | 'break' | 'rounds') {
+    setEditingPomodoro(field);
+    const val = field === 'work' ? pomodoroWorkMins : field === 'break' ? pomodoroBreakMins : pomodoroRounds;
+    setPomodoroInputVal(String(val));
+    setTimeout(() => {
+      const ref = field === 'work' ? pomodoroWorkRef : field === 'break' ? pomodoroBreakRef : pomodoroRoundsRef;
+      ref.current?.focus();
+    }, 50);
   }
 
+  function applyPomodoroInput(field: 'work' | 'break' | 'rounds') {
+    setEditingPomodoro(null);
+    const raw = parseInt(pomodoroInputVal, 10);
+    if (isNaN(raw)) {return;}
+    if (field === 'work') {
+      updateSettings({ pomodoroWorkMins: Math.min(Math.max(raw, 1), 120) });
+    } else if (field === 'break') {
+      updateSettings({ pomodoroBreakMins: Math.min(Math.max(raw, 1), 60) });
+    } else {
+      updateSettings({ pomodoroRounds: Math.min(Math.max(raw, 0), 20) });
+    }
+  }
+
+  function incrementHours() {
+    setHours(h => {
+      const next = h >= 24 ? 0 : h + 1;
+      if (next === 24) {setMinutes(0);}
+      return next;
+    });
+  }
+  function decrementHours() {
+    setHours(h => {
+      const next = h <= 0 ? 24 : h - 1;
+      if (next === 24) {setMinutes(0);}
+      return next;
+    });
+  }
+  function incrementMinutes() {
+    if (hours === 24) {return;}
+    setMinutes(m => m >= 55 ? 0 : m + 5);
+  }
+  function decrementMinutes() {
+    if (hours === 24) {return;}
+    setMinutes(m => m <= 0 ? 55 : m - 5);
+  }
+
+  useEffect(() => { checkPerms(); }, [checkPerms]);
+
+  // Fix: detect when native focus ends naturally (AppState becomes active again)
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
+      if (appStateRef.current.match(/inactive|background/) && next === 'active') {
+        checkPerms();
+        const state = useGameStore.getState();
+        const phase = state.system.pomodoroPhase ?? 'idle';
+        const bEnd  = state.system.pomodoroBreakEnd ?? 0;
+        const cycle = state.system.pomodoroCycle ?? 0;
+        const bMins = state.settings.pomodoroBreakMins ?? 5;
+        const maxR  = state.settings.pomodoroRounds ?? 4;
+        const now   = Date.now();
+
+        if (focusActive && FocusBlocker) {
+          FocusBlocker.isFocusModeActive().then(active => {
+            if (!active) {
+              setFocusActive(false);
+              setHardcoreMode(false);
+              // Work phase ended while in background → transition to break
+              if (phase === 'work' && state.system.focusEndTime && now >= (state.system.focusEndTime - 5000)) {
+                focusEndAlertFiredRef.current = true;
+                state.recordPomodoroSession();
+                const breakEndMs = now + bMins * 60_000;
+                state.setPomodoroState('break', cycle, breakEndMs);
+                notifyPomodoroBreakStarted(cycle, bMins).catch(() => {});
+                schedulePomodoroBreakEndNotification(breakEndMs, cycle + 1).catch(() => {});
+              }
+            }
+          }).catch(() => {});
+        }
+
+        // Break ended while in background → auto-cycle or finish
+        if (phase === 'break' && bEnd > 0 && now >= bEnd) {
+          pomodoroBreakFiredRef.current = true;
+          cancelPomodoroNotifications().catch(() => {});
+          const nextCycle = cycle + 1;
+          if (maxR === 0 || cycle < maxR) {
+            state.setPomodoroState('idle', nextCycle, 0);
+            startNextPomodoroCycle(nextCycle);
+          } else {
+            state.setPomodoroState('idle', 0, 0);
+          }
+        }
+      }
+      appStateRef.current = next;
+    });
+    return () => sub.remove();
+  }, [checkPerms, focusActive, setFocusActive, setHardcoreMode, startNextPomodoroCycle]);
+
+  useEffect(() => {
+    if (!focusActive || !FocusBlocker) {return;}
+    FocusBlocker.updateBlockedApps(blockedApps).catch(() => {});
+  }, [blockedApps, focusActive]);
   function finishPomodoro() {
-    setPomodoroState('idle', 0, 0)
-    cancelPomodoroNotifications().catch(() => {})
+    setPomodoroState('idle', 0, 0);
+    cancelPomodoroNotifications().catch(() => {});
   }
 
   async function stopFocus() {
     // Bloqueia saída do foco durante penalidade ativa
-    const isPenaltyBlocking = hasPenalty && isPenaltyActive
+    const isPenaltyBlocking = hasPenalty && isPenaltyActive;
     if (isPenaltyBlocking) {
-      const hoursRemaining = penaltyRemainingH
+      const hoursRemaining = penaltyRemainingH;
       setAlertCfg({
         title: '🔒 FOCO TRAVADO PELA PENALIDADE',
         message: `Você está sob penalidade! Só pode sair do modo foco daqui a ${hoursRemaining}h.\nComplete as missões de penalização para se livrar mais rápido.`,
         buttons: [
-          { text: 'Entendi', style: 'destructive' }
-        ]
-      })
-      return
+          { text: 'Entendi', style: 'destructive' },
+        ],
+      });
+      return;
     }
 
     if (FocusBlocker) {
-      await FocusBlocker.stopFocusMode().catch(() => {})
+      await FocusBlocker.stopFocusMode().catch(() => {});
     }
-    setFocusActive(false, 0)
-    setHardcoreMode(false)
-    stopAmbient()
-    setActiveAmbient(null)
+    setFocusActive(false, 0);
+    setHardcoreMode(false);
+    stopAmbient();
+    setActiveAmbient(null);
     if (pomodoroMode || pomodoroPhase !== 'idle') {
-      setPomodoroState('idle', 0, 0)
-      cancelPomodoroNotifications().catch(() => {})
+      setPomodoroState('idle', 0, 0);
+      cancelPomodoroNotifications().catch(() => {});
     }
   }
 
-  function handleHardcoreBreak() { setShowBreakModal(true) }
+  function handleHardcoreBreak() { setShowBreakModal(true); }
 
   function confirmHardcoreBreak() {
-    setShowBreakModal(false)
-    stopFocus()
+    setShowBreakModal(false);
+    stopFocus();
   }
 
-  const permsOk       = hasUsage && hasOverlay
-  const selectedCount = blockedApps.length
+  const permsOk       = hasUsage && hasOverlay;
+  const selectedCount = blockedApps.length;
 
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
@@ -761,7 +853,7 @@ export default function FocusScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[s.modeToggleBtn, pomodoroMode && s.modeToggleBtnPomodoro]}
-              onPress={() => { setPomodoroMode(true); setHardcoreToggle(false) }}
+              onPress={() => { setPomodoroMode(true); setHardcoreToggle(false); }}
             >
               <Icon name="timer-sand" size={12} color={pomodoroMode ? C.gold : C.dimmed} />
               <Text style={[s.modeToggleTxt, pomodoroMode && { color: C.gold }]}> POMODORO</Text>
@@ -789,15 +881,15 @@ export default function FocusScreen() {
             </Text>
             <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
               <TouchableOpacity style={s.pomodoroSkipBtn} onPress={() => {
-                const nextCycle = pomodoroCycle + 1
-                const maxR = pomodoroRounds
-                cancelPomodoroNotifications().catch(() => {})
+                const nextCycle = pomodoroCycle + 1;
+                const maxR = pomodoroRounds;
+                cancelPomodoroNotifications().catch(() => {});
                 if (maxR === 0 || pomodoroCycle < maxR) {
-                  pomodoroBreakFiredRef.current = true
-                  setPomodoroState('idle', nextCycle, 0)
-                  startNextPomodoroCycle(nextCycle)
+                  pomodoroBreakFiredRef.current = true;
+                  setPomodoroState('idle', nextCycle, 0);
+                  startNextPomodoroCycle(nextCycle);
                 } else {
-                  finishPomodoro()
+                  finishPomodoro();
                 }
               }}>
                 <Text style={s.pomodoroSkipTxt}>SALTAR PAUSA</Text>
@@ -1067,19 +1159,19 @@ export default function FocusScreen() {
             <Text style={s.section}>SOM AMBIENTE</Text>
             <View style={s.ambientRow}>
               {([null, 'lofi', 'rain', 'fire'] as (AmbientSoundId | null)[]).map(id => {
-                const isActive = activeAmbient === id
-                const meta = id ? AMBIENT_META[id] : null
+                const isActive = activeAmbient === id;
+                const meta = id ? AMBIENT_META[id] : null;
                 return (
                   <TouchableOpacity
                     key={id ?? 'off'}
                     style={[s.ambientBtn, isActive && s.ambientBtnActive]}
                     onPress={() => {
                       if (id === null) {
-                        stopAmbient()
-                        setActiveAmbient(null)
+                        stopAmbient();
+                        setActiveAmbient(null);
                       } else {
-                        playAmbient(id)
-                        setActiveAmbient(id)
+                        playAmbient(id);
+                        setActiveAmbient(id);
                       }
                     }}
                   >
@@ -1093,7 +1185,7 @@ export default function FocusScreen() {
                       : <Text style={[s.ambientBtnTxt, isActive && { color: C.neonBlue }]}> Off</Text>
                     }
                   </TouchableOpacity>
-                )
+                );
               })}
             </View>
           </>
@@ -1216,8 +1308,8 @@ export default function FocusScreen() {
         confirmColor={C.neonRed}
         onConfirm={confirmHardcoreBreak}
         onCancel={() => {
-          triggerEvent('hardcore_cancel_attempt')
-          setShowBreakModal(false)
+          triggerEvent('hardcore_cancel_attempt');
+          setShowBreakModal(false);
         }}
         C={C}
       />
@@ -1235,14 +1327,14 @@ export default function FocusScreen() {
 
 
     </SafeAreaView>
-  )
+  );
 }
 
 // ── PermRow sub-component ──────────────────────────────────────────────────────
 
 function PermRow({ label, ok, onFix, C, optional }: { label: string; ok: boolean; onFix: () => void; C: any; optional?: boolean }) {
-  const p = getPRStyles(C)
-  const warnColor = optional ? C.gold : C.neonRed
+  const p = getPRStyles(C);
+  const warnColor = optional ? C.gold : C.neonRed;
   return (
     <View style={p.row}>
       <Icon
@@ -1258,7 +1350,7 @@ function PermRow({ label, ok, onFix, C, optional }: { label: string; ok: boolean
         </TouchableOpacity>
       )}
     </View>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -1366,7 +1458,7 @@ const getStyles = (C: any) => StyleSheet.create({
   hardcoreInlineBtnActive: { borderColor: C.neonRed, backgroundColor: C.surface?.dangerHover || C.bg },
   hardcoreInlineBtnTxt:    { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
   hardcoreInlineSub:       { color: C.dimmed, fontSize: 10, marginTop: 3 },
-  
+
   hardcoreMiniBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 32, paddingVertical: 8, paddingHorizontal: 16, borderWidth: 1, borderColor: C.border, alignSelf: 'center', marginBottom: SPACING.md, marginTop: SPACING.sm },
   hardcoreMiniBtnActive: { borderColor: C.neonRed, backgroundColor: C.surface?.danger || C.bg },
   hardcoreMiniTxt: { color: C.dimmed, fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginLeft: 6 },
@@ -1378,14 +1470,14 @@ const getStyles = (C: any) => StyleSheet.create({
   batterySteps:  { backgroundColor: C.bg, borderRadius: 4, padding: SPACING.sm, gap: 4 },
   batteryStep:   { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5 },
   batteryNote:   { color: C.gold + 'aa', fontSize: 10, lineHeight: 15 },
-})
+});
 
 const getPRStyles = (C: any) => StyleSheet.create({
   row:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
   label:  { flex: 1, color: C.muted, fontSize: 12, marginLeft: SPACING.sm },
   fixBtn: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.neonRed, borderRadius: 6, paddingHorizontal: SPACING.sm, paddingVertical: 4 },
   fixTxt: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
-})
+});
 
 
 // Overlay styles — absolute full-screen, no Modal involved
@@ -1616,5 +1708,4 @@ const getOVStyles = (C: any) => StyleSheet.create({
     fontSize: 9,
     letterSpacing: 1,
   },
-})
-
+});

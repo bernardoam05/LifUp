@@ -27,9 +27,9 @@ export default function EventDungeonModal({
   eventBossMission,
   eventProgress,
   eventWindow,
-  C
+  C,
 }: EventDungeonModalProps) {
-  if (!eventProgress) return null;
+  if (!eventProgress) {return null;}
   const ed = getEDStyles(C);
 
   return (
@@ -79,7 +79,7 @@ export default function EventDungeonModal({
                 </Text>
                 <Text style={ed.missionDetail}>{m.detail}</Text>
               </View>
-              <Icon name={completed ? "check-circle" : "chevron-right"} size={18} color={completed ? C.green : m.color} />
+              <Icon name={completed ? 'check-circle' : 'chevron-right'} size={18} color={completed ? C.green : m.color} />
             </TouchableOpacity>
           );
         })}
@@ -111,7 +111,7 @@ export default function EventDungeonModal({
                 </View>
               )}
             </View>
-            <Icon name={eventProgress.defeated ? "check-circle" : "chevron-right"} size={18} color={eventProgress.defeated ? C.green : eventBossMission.color} />
+            <Icon name={eventProgress.defeated ? 'check-circle' : 'chevron-right'} size={18} color={eventProgress.defeated ? C.green : eventBossMission.color} />
           </TouchableOpacity>
         ) : (
           <Text style={ed.eventLockedTxt}>

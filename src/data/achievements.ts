@@ -95,7 +95,7 @@ export const TIER_COLORS: Record<NonNullable<AchievementTier['rank']>, string> =
   Ouro:     '#f59e0b',
   Platina:  '#e2e8f0',
   Lendário: '#f97316',
-}
+};
 
 // ── Progress helpers ──────────────────────────────────────────────────────────
 
@@ -103,27 +103,27 @@ export type AchievementProg = { currentValue: number; currentTierIndex: number }
 
 /** Index of the tier currently being worked on (= number of completed tiers). */
 export function getTierIndex(prog: AchievementProg | undefined): number {
-  return prog?.currentTierIndex ?? 0
+  return prog?.currentTierIndex ?? 0;
 }
 
 /** True when every tier is done (or the achievement is fully unlocked). */
 export function isAchievementMaxed(a: Achievement, prog: AchievementProg | undefined): boolean {
-  if (!a.tiers) return false
-  return getTierIndex(prog) >= a.tiers.length
+  if (!a.tiers) {return false;}
+  return getTierIndex(prog) >= a.tiers.length;
 }
 
 /** Tier currently in progress (undefined = maxed or no tiers). */
 export function getActiveTier(a: Achievement, prog: AchievementProg | undefined): AchievementTier | undefined {
-  if (!a.tiers) return undefined
-  const idx = getTierIndex(prog)
-  return idx < a.tiers.length ? a.tiers[idx] : undefined
+  if (!a.tiers) {return undefined;}
+  const idx = getTierIndex(prog);
+  return idx < a.tiers.length ? a.tiers[idx] : undefined;
 }
 
 /** Last completed tier (undefined = none completed yet). */
 export function getCompletedTier(a: Achievement, prog: AchievementProg | undefined): AchievementTier | undefined {
-  if (!a.tiers) return undefined
-  const idx = getTierIndex(prog)
-  return idx > 0 ? a.tiers[idx - 1] : undefined
+  if (!a.tiers) {return undefined;}
+  const idx = getTierIndex(prog);
+  return idx > 0 ? a.tiers[idx - 1] : undefined;
 }
 
 // ── Achievement Catalog — 42 unique concepts ──────────────────────────────────
@@ -647,16 +647,16 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     category: 'boss', conditionType: 'boss_defeated',
     icon: 'castle', color: '#ef4444', isSecret: true, rewardGold: 600,
   },
-]
+];
 
 // ── Maps ──────────────────────────────────────────────────────────────────────
 
 export const ACHIEVEMENTS_MAP: Record<string, Achievement> =
-  Object.fromEntries(ACHIEVEMENTS_CATALOG.map(a => [a.id, a]))
+  Object.fromEntries(ACHIEVEMENTS_CATALOG.map(a => [a.id, a]));
 
 export const ACHIEVEMENTS_BY_CATEGORY: Record<AchievementCategory, Achievement[]> =
   ACHIEVEMENTS_CATALOG.reduce((acc, a) => {
-    if (!acc[a.category]) acc[a.category] = []
-    acc[a.category].push(a)
-    return acc
-  }, {} as Record<AchievementCategory, Achievement[]>)
+    if (!acc[a.category]) {acc[a.category] = [];}
+    acc[a.category].push(a);
+    return acc;
+  }, {} as Record<AchievementCategory, Achievement[]>);

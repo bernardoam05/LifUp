@@ -1,4 +1,4 @@
-import { Shadow } from './shadows_types'
+import { Shadow } from './shadows_types';
 
 export const SHADOWS_BOSS_DUNGEON_BREAK: Shadow[] = [
   {
@@ -181,5 +181,5 @@ export const SHADOWS_BOSS_DUNGEON_BREAK: Shadow[] = [
     lore: '"O teu próprio reflexo nas trevas. Quem pode vencer aquele que é tu?"',
     icon: 'account-question', color: '#ef4444',
     unlockMethod: { type: 'boss_drop', bossId: 'break_boss_monarch_shadow_clone_sim', category: 'dungeon_break' },
-  }
-]
+  },
+];

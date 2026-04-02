@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Modal, StyleSheet, Text, View, Dimensions, Animated, TouchableOpacity, Easing } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTheme } from '../theme'
+import React, { useEffect, useRef, useState } from 'react';
+import { Modal, StyleSheet, Text, View, Animated, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme } from '../theme';
 
-import { CATALOG_MAP } from '../data/shopItems'
-
-const { width: SW, height: SH } = Dimensions.get('window')
+import { CATALOG_MAP } from '../data/shopItems';
 
 interface Props {
   reward: { type: string; title: string; gold: number; xp: number; items: string[] } | null
@@ -13,40 +11,40 @@ interface Props {
 }
 
 export function LootBoxModal({ reward, onClose }: Props) {
-  const C = useTheme()
-  const st = React.useMemo(() => getStyles(C), [C])
-  const fadeAnim = useRef(new Animated.Value(0)).current
-  const scaleAnim = useRef(new Animated.Value(0.8)).current
-  const [isVisible, setIsVisible] = useState(false)
+  const C = useTheme();
+  const st = React.useMemo(() => getStyles(C), [C]);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (reward) {
-      setIsVisible(true)
+      setIsVisible(true);
       Animated.parallel([
         Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
-        Animated.spring(scaleAnim, { toValue: 1, friction: 5, useNativeDriver: true })
-      ]).start()
+        Animated.spring(scaleAnim, { toValue: 1, friction: 5, useNativeDriver: true }),
+      ]).start();
     } else {
       Animated.parallel([
         Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
-        Animated.timing(scaleAnim, { toValue: 0.8, duration: 200, useNativeDriver: true })
+        Animated.timing(scaleAnim, { toValue: 0.8, duration: 200, useNativeDriver: true }),
       ]).start(() => {
-        setIsVisible(false)
-      })
+        setIsVisible(false);
+      });
     }
-  }, [reward, fadeAnim, scaleAnim])
+  }, [reward, fadeAnim, scaleAnim]);
 
-  if (!isVisible || !reward) return null
+  if (!isVisible || !reward) {return null;}
 
   return (
     <Modal transparent animationType="fade" visible onRequestClose={onClose}>
       <View style={st.overlay}>
         <Animated.View style={[st.card, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
           <Icon name="treasure-chest" size={56} color={C.gold} style={st.icon} />
-          
+
           <Text style={st.title}>{reward.title}</Text>
           <Text style={st.subTitle}>RECOMPENSAS ABERTAS</Text>
-          
+
           <View style={st.rewardsContainer}>
             {reward.gold > 0 && (
               <View style={st.rewardRow}>
@@ -60,30 +58,30 @@ export function LootBoxModal({ reward, onClose }: Props) {
                 <Text style={st.rewardText}>+{reward.xp} XP</Text>
               </View>
             )}
-            
+
             {reward.items && reward.items.length > 0 && (
               <View style={st.itemsContainer}>
                 <Text style={st.itemsTitle}>ITENS ADQUIRIDOS:</Text>
                 {reward.items.map((itemId, i) => {
-                  const item = CATALOG_MAP[itemId]
+                  const item = CATALOG_MAP[itemId];
                   return (
                     <View key={`${itemId}-${i}`} style={st.itemRow}>
                       <Icon name={item?.icon || 'help-box'} size={20} color={C.purple} />
                       <Text style={st.itemText}>{item?.name || itemId}</Text>
                     </View>
-                  )
+                  );
                 })}
               </View>
             )}
           </View>
-          
+
           <TouchableOpacity style={st.confirmButton} onPress={onClose}>
             <Text style={st.confirmText}>ACEITAR</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
     </Modal>
-  )
+  );
 }
 
 const getStyles = (C: any) => StyleSheet.create({
@@ -93,7 +91,7 @@ const getStyles = (C: any) => StyleSheet.create({
     backgroundColor: C.surface.overlay,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20
+    padding: 20,
   },
   card: {
     width: '100%',
@@ -102,23 +100,23 @@ const getStyles = (C: any) => StyleSheet.create({
     borderWidth: 2,
     borderColor: C.gold,
     padding: 24,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   icon: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   title: {
     color: C.text.primary,
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   subTitle: {
     color: C.text.secondary,
     fontSize: 14,
     marginBottom: 24,
-    letterSpacing: 2
+    letterSpacing: 2,
   },
   rewardsContainer: {
     width: '100%',
@@ -127,30 +125,30 @@ const getStyles = (C: any) => StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: C.border,
-    marginBottom: 24
+    marginBottom: 24,
   },
   rewardRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   rewardText: {
     color: C.text.primary,
     fontSize: 18,
     fontWeight: 'bold',
-    marginLeft: 12
+    marginLeft: 12,
   },
   itemsContainer: {
     marginTop: 12,
     borderTopWidth: 1,
     borderTopColor: C.border,
-    paddingTop: 12
+    paddingTop: 12,
   },
   itemsTitle: {
     color: C.text.secondary,
     fontSize: 12,
     marginBottom: 8,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   itemRow: {
     flexDirection: 'row',
@@ -158,23 +156,23 @@ const getStyles = (C: any) => StyleSheet.create({
     marginBottom: 8,
     backgroundColor: C.surface.elevated,
     padding: 8,
-    borderRadius: 6
+    borderRadius: 6,
   },
   itemText: {
     color: C.text.primary,
     fontSize: 14,
     fontWeight: 'bold',
-    marginLeft: 10
+    marginLeft: 10,
   },
   confirmButton: {
     backgroundColor: C.gold,
     paddingVertical: 12,
     paddingHorizontal: 32,
-    borderRadius: 8
+    borderRadius: 8,
   },
   confirmText: {
     color: C.text.inverse,
     fontSize: 16,
-    fontWeight: 'bold'
-  }
-})
+    fontWeight: 'bold',
+  },
+});

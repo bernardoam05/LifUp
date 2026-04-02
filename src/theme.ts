@@ -1,20 +1,20 @@
-import { APP_THEMES } from './data/themes'
-export { APP_THEMES } from './data/themes'
-import useGameStore from './store/useGameStore'
+import { APP_THEMES } from './data/themes';
+export { APP_THEMES } from './data/themes';
+import useGameStore from './store/useGameStore';
 
-export const C = APP_THEMES[0].colors
+export const C = APP_THEMES[0].colors;
 
 export function useTheme() {
-  const activeThemeId = useGameStore(s => s.player?.activeThemeId)
-  const theme = APP_THEMES.find(t => t.id === activeThemeId) || APP_THEMES[0]
-  return theme.colors
+  const activeThemeId = useGameStore(s => s.player?.activeThemeId);
+  const theme = APP_THEMES.find(t => t.id === activeThemeId) || APP_THEMES[0];
+  return theme.colors;
 }
 
 export const FONT = {
   // Place Orbitron-Bold.ttf in android/app/src/main/assets/fonts/ to enable
   orbitron: 'monospace',
   system:   'monospace',
-} as const
+} as const;
 
 export const SPACING = {
   xs:  4,
@@ -22,7 +22,7 @@ export const SPACING = {
   md:  16,
   lg:  24,
   xl:  32,
-} as const
+} as const;
 
 export const RANK_COLORS: Record<string, string> = {
   'E': '#94a3b8', // Gray
@@ -32,4 +32,4 @@ export const RANK_COLORS: Record<string, string> = {
   'A': '#f97316', // Orange
   'S': '#fbbf24', // Yellow/Gold
   'National': '#ef4444', // Red
-}
+};

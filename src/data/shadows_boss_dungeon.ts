@@ -1,4 +1,4 @@
-import { Shadow } from './shadows_types'
+import { Shadow } from './shadows_types';
 
 export const SHADOWS_BOSS_DUNGEON: Shadow[] = [
   {
@@ -44,7 +44,7 @@ export const SHADOWS_BOSS_DUNGEON: Shadow[] = [
       passiveEffect: { type: 'xp_boost', value: 0.15, description: '+15% XP em todas as missões' },
       lore: '"A governante das profundezas da Cripta. As suas teias são feitas de desespero solidificado."',
       icon: 'spider', color: '#f59e0b',
-      unlockMethod: { type: 'boss_drop', bossId: 'boss_crypt_omega', category: 'dungeon' }
+      unlockMethod: { type: 'boss_drop', bossId: 'boss_crypt_omega', category: 'dungeon' },
     },
   {
       id: 'fallen_seraphim',
@@ -53,6 +53,6 @@ export const SHADOWS_BOSS_DUNGEON: Shadow[] = [
       passiveEffect: { type: 'penalty_immunity', value: 1, description: 'Imunidade completa a 1 penalidade por semana' },
       lore: '"Desafiou o Sistema na sua forma pura e pagou o preço. As suas asas não caíram — foram arrancadas. O que sobreviveu ao julgamento serve agora com uma fúria que a redenção nunca apagará."',
       icon: 'feather', color: '#a855f7',
-      unlockMethod: { type: 'boss_drop', bossId: 'boss_seraphim', category: 'dungeon' }
-    }
-]
+      unlockMethod: { type: 'boss_drop', bossId: 'boss_seraphim', category: 'dungeon' },
+    },
+];

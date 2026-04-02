@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, FlatList } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Vibration } from 'react-native'
-import useGameStore from '../store/useGameStore'
-import { CATALOG_MAP } from '../data/shopItems'
-import KeyVaultModal from '../components/KeyVaultModal'
-import CustomModal from '../components/CustomModal'
-import { useTheme, FONT, SPACING } from '../theme'
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Vibration } from 'react-native';
+import useGameStore from '../store/useGameStore';
+import { CATALOG_MAP } from '../data/shopItems';
+import KeyVaultModal from '../components/KeyVaultModal';
+import CustomModal from '../components/CustomModal';
+import { useTheme, FONT, SPACING } from '../theme';
 
 
 // ── Quest picker modal (for System Pass) ──────────────────────────────────────
@@ -17,9 +17,9 @@ function QuestPickerModal({ onPick, onCancel, C }: {
   onCancel: () => void
   C: any
 }) {
-  const qp = getQPStyles(C)
+  const qp = getQPStyles(C);
 
-  const quests = useGameStore(s => s.quests).filter(q => !q.done)
+  const quests = useGameStore(s => s.quests).filter(q => !q.done);
 
   return (
     <Modal transparent animationType="fade">
@@ -58,143 +58,143 @@ function QuestPickerModal({ onPick, onCancel, C }: {
         </View>
       </View>
     </Modal>
-  )
+  );
 }
 
 // ── Inventory item card ────────────────────────────────────────────────────────
 
 function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: number; C: any }) {
-  const ic = getICStyles(C)
+  const ic = getICStyles(C);
 
-  const item            = CATALOG_MAP[itemId]
-  const useItem         = useGameStore(s => s.useInventoryItem)
-  const addXP           = useGameStore(s => s.addXP)
-  const skipQuest       = useGameStore(s => s.skipQuest)
-  const setPenRed       = useGameStore(s => s.setPenaltyReduced)
-  const removePenalty   = useGameStore(s => s.removePenalty)
-  const setXpBoostNext  = useGameStore(s => s.setXpBoostNext)
-  const setHardcoreMode = useGameStore(s => s.setHardcoreFocusMode)
-  const hardcoreActive  = useGameStore(s => s.system.hardcoreFocusMode)
-  const triggerEvent    = useGameStore(s => s.triggerEvent)
-  const openLootBox     = useGameStore(s => s.openLootBox)
-  const applyBuff       = useGameStore(s => s.applyBuff)
-  const resetExtraction = useGameStore(s => s.resetExtraction)
+  const item            = CATALOG_MAP[itemId];
+  const consumeItem     = useGameStore(s => s.useInventoryItem);
+  const addXP           = useGameStore(s => s.addXP);
+  const skipQuest       = useGameStore(s => s.skipQuest);
+  const setPenRed       = useGameStore(s => s.setPenaltyReduced);
+  const removePenalty   = useGameStore(s => s.removePenalty);
+  const setXpBoostNext  = useGameStore(s => s.setXpBoostNext);
+  const setHardcoreMode = useGameStore(s => s.setHardcoreFocusMode);
+  const hardcoreActive  = useGameStore(s => s.system.hardcoreFocusMode);
+  const triggerEvent    = useGameStore(s => s.triggerEvent);
+  const openLootBox     = useGameStore(s => s.openLootBox);
+  const applyBuff       = useGameStore(s => s.applyBuff);
+  const resetExtraction = useGameStore(s => s.resetExtraction);
 
-  const [confirmUse, setConfirmUse] = useState(false)
-  const [showPicker, setShowPicker] = useState(false)
-  const [feedback,   setFeedback]   = useState<string | null>(null)
+  const [confirmUse, setConfirmUse] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
+  const [feedback,   setFeedback]   = useState<string | null>(null);
 
-  if (!item) return null
+  if (!item) {return null;}
 
   function handleUse() {
     if (item.effect === 'skip_quest') {
-      setShowPicker(true)
+      setShowPicker(true);
     } else {
-      setConfirmUse(true)
+      setConfirmUse(true);
     }
   }
 
   function applyEffect() {
-    Vibration.vibrate([0, 80, 40, 120])
+    Vibration.vibrate([0, 80, 40, 120]);
 
     switch (item.effect) {
       case 'add_xp': {
-        useItem(itemId)
-        const { leveledUp } = addXP(item.effectValue ?? 50)
+        consumeItem(itemId);
+        const { leveledUp } = addXP(item.effectValue ?? 50);
         // health_potion also grants gold
         if (item.effectGold && item.effectGold > 0) {
           // grant gold by adding negative deduction (use store set directly via addXP side-effect workaround)
           // We call deductGold with a negative amount isn't valid, so we reach into the store
           useGameStore.setState((s: any) => ({
-            player: { ...s.player, gold: s.player.gold + (item.effectGold ?? 0) }
-          }))
+            player: { ...s.player, gold: s.player.gold + (item.effectGold ?? 0) },
+          }));
         }
-        const goldText = item.effectGold ? ` e +${item.effectGold} Gold` : ''
+        const goldText = item.effectGold ? ` e +${item.effectGold} Gold` : '';
         setFeedback(leveledUp
           ? `+${item.effectValue} XP${goldText} — LEVEL UP!`
           : `+${item.effectValue} XP${goldText} absorvido!`
-        )
-        break
+        );
+        break;
       }
       case 'reduce_penalty': {
-        useItem(itemId)
-        setPenRed(true)
-        setFeedback('Pergaminho ativado! Penalização de amanhã reduzida em 50%.')
-        break
+        consumeItem(itemId);
+        setPenRed(true);
+        setFeedback('Pergaminho ativado! Penalização de amanhã reduzida em 50%.');
+        break;
       }
       case 'remove_penalty': {
-        useItem(itemId)
-        triggerEvent('lagrima_used_during_penalty')
-        removePenalty()
-        setFeedback('Penalização removida! O Sistema purificou o teu registo.')
-        break
+        consumeItem(itemId);
+        triggerEvent('lagrima_used_during_penalty');
+        removePenalty();
+        setFeedback('Penalização removida! O Sistema purificou o teu registo.');
+        break;
       }
       case 'xp_boost_next': {
-        useItem(itemId)
-        setXpBoostNext(true)
-        setFeedback('Ampulheta ativada! Próxima missão com XP dobrado.')
-        break
+        consumeItem(itemId);
+        setXpBoostNext(true);
+        setFeedback('Ampulheta ativada! Próxima missão com XP dobrado.');
+        break;
       }
       case 'open_loot_box': {
-        const success = openLootBox()
+        const success = openLootBox();
         if (success) {
-          setFeedback('Cofre aberto! Verifica a recompensa...')
+          setFeedback('Cofre aberto! Verifica a recompensa...');
         } else {
-          setFeedback('Nenhum cofre disponível!')
+          setFeedback('Nenhum cofre disponível!');
         }
-        break
+        break;
       }
       case 'break_hardcore': {
         if (!hardcoreActive) {
-          setFeedback('Nenhum Modo Hardcore ativo para quebrar.')
+          setFeedback('Nenhum Modo Hardcore ativo para quebrar.');
         } else {
-          useItem(itemId)
-          setHardcoreMode(false)
-          setFeedback('Juramento quebrado! Podes parar o Focus Mode livremente.')
+          consumeItem(itemId);
+          setHardcoreMode(false);
+          setFeedback('Juramento quebrado! Podes parar o Focus Mode livremente.');
         }
-        break
+        break;
       }
       case 'material': {
-        useItem(itemId)
+        consumeItem(itemId);
         if (itemId === 'shadow_essence') {
-          resetExtraction()
-          setFeedback('O Sistema cedeu! Extração de sombras resetada para hoje.')
+          resetExtraction();
+          setFeedback('O Sistema cedeu! Extração de sombras resetada para hoje.');
         } else if (item.buffStat && item.buffMult && item.buffDuration) {
-          const pct = Math.round(item.buffMult * 100)
-          const stat = item.buffStat === 'xp' ? 'XP' : 'Gold'
-          const mins = item.buffDuration / 60_000
-          const timeLabel = mins >= 60 ? `${mins / 60}h` : `${mins}min`
+          const pct = Math.round(item.buffMult * 100);
+          const stat = item.buffStat === 'xp' ? 'XP' : 'Gold';
+          const mins = item.buffDuration / 60_000;
+          const timeLabel = mins >= 60 ? `${mins / 60}h` : `${mins}min`;
           applyBuff(
             { id: itemId, label: item.name, multiplier: item.buffMult, stat: item.buffStat },
             item.buffDuration
-          )
-          setFeedback(`Buff ativo: +${pct}% ${stat} por ${timeLabel}!`)
+          );
+          setFeedback(`Buff ativo: +${pct}% ${stat} por ${timeLabel}!`);
         } else {
-          setFeedback('Consumível ativado!')
+          setFeedback('Consumível ativado!');
         }
-        break
+        break;
       }
       default: {
-        useItem(itemId)
-        setFeedback('Item utilizado com sucesso!')
+        consumeItem(itemId);
+        setFeedback('Item utilizado com sucesso!');
       }
     }
-    setConfirmUse(false)
-    setTimeout(() => setFeedback(null), 3000)
+    setConfirmUse(false);
+    setTimeout(() => setFeedback(null), 3000);
   }
 
   function handleSkip(questId: string) {
-    skipQuest(questId)
-    useItem(itemId)
-    Vibration.vibrate([0, 80, 40, 120])
-    setShowPicker(false)
-    setFeedback('Missão completada pelo Sistema!')
-    setTimeout(() => setFeedback(null), 3000)
+    skipQuest(questId);
+    consumeItem(itemId);
+    Vibration.vibrate([0, 80, 40, 120]);
+    setShowPicker(false);
+    setFeedback('Missão completada pelo Sistema!');
+    setTimeout(() => setFeedback(null), 3000);
   }
 
   // Warn if break_hardcore used when no hardcore mode active
-  const isBreakHardcore = item.effect === 'break_hardcore'
-  const breakHardcoreDisabled = isBreakHardcore && !hardcoreActive
+  const isBreakHardcore = item.effect === 'break_hardcore';
+  const breakHardcoreDisabled = isBreakHardcore && !hardcoreActive;
 
   return (
     <View style={[ic.card, { borderColor: item.color + '44' }]}>
@@ -245,21 +245,21 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
 
       )}
     </View>
-  )
+  );
 }
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function InventoryScreen() {
-  const C = useTheme()
-  const s = React.useMemo(() => getStyles(C), [C])
-  const inventory = useGameStore(s => s.player.inventory)
-  const dungeonKeys = useGameStore(s => s.player.dungeonKeys)
+  const C = useTheme();
+  const s = React.useMemo(() => getStyles(C), [C]);
+  const inventory = useGameStore(st => st.player.inventory);
+  const dungeonKeys = useGameStore(st => st.player.dungeonKeys);
 
-  const gold      = useGameStore(s => s.player.gold)
-  const total = inventory.filter(e => e.quantity > 0).reduce((sum, e) => sum + e.quantity, 0)
+  const gold      = useGameStore(st => st.player.gold);
+  const total = inventory.filter(e => e.quantity > 0).reduce((sum, e) => sum + e.quantity, 0);
 
-  const [showVaultModal, setShowVaultModal] = useState(false)
+  const [showVaultModal, setShowVaultModal] = useState(false);
 
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
@@ -330,7 +330,7 @@ export default function InventoryScreen() {
       />
 
     </SafeAreaView>
-  )
+  );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -353,7 +353,7 @@ const getStyles = (C: any) => StyleSheet.create({
   vaultInfo: { flex: 1 },
   vaultTitle: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 1 },
   vaultCount: { color: C.muted, fontSize: 10, marginTop: 2 },
-})
+});
 
 const getICStyles = (C: any) => StyleSheet.create({
   card: {
@@ -404,7 +404,7 @@ const getICStyles = (C: any) => StyleSheet.create({
   },
   useBtnDisabled: { opacity: 0.3 },
   useTxt: { fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '900' },
-})
+});
 
 const getQPStyles = (C: any) => StyleSheet.create({
   overlay:    { flex: 1, backgroundColor: '#000d', alignItems: 'center', justifyContent: 'center', padding: SPACING.lg },
@@ -421,4 +421,4 @@ const getQPStyles = (C: any) => StyleSheet.create({
   rewardTxt:  { color: C.neonBlue, fontSize: 10, fontWeight: '700' },
   cancelBtn:  { flexDirection: 'row', alignItems: 'center', marginTop: SPACING.md, borderWidth: 1, borderColor: C.dimmed, borderRadius: 8, paddingHorizontal: SPACING.md, paddingVertical: 10 },
   cancelTxt:  { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-})
+});

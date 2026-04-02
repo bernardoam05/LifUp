@@ -1,4 +1,15 @@
 module.exports = {
   root: true,
   extends: '@react-native',
+  rules: {
+    '@typescript-eslint/no-unused-vars': 'warn',
+    'react-hooks/exhaustive-deps': 'warn',
+    'react-native/no-inline-styles': 'off',
+  },
+  overrides: [
+    {
+      files: ['jest.setup.js', '**/*.test.js', '**/*.test.ts', '**/*.test.tsx'],
+      env: { jest: true },
+    },
+  ],
 };

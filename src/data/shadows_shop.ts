@@ -1,4 +1,4 @@
-import { Shadow } from './shadows_types'
+import { Shadow } from './shadows_types';
 
 export const SHADOWS_SHOP: Shadow[] = [
   {
@@ -58,7 +58,7 @@ export const SHADOWS_SHOP: Shadow[] = [
   // ════════════════════════════════════════════════════════════════════════════
         // ── NORMAL RANK — Common · Pequenos bónus · A espinha dorsal do exército ──
         // ════════════════════════════════════════════════════════════════════════════
-      
+
         {
           id: 'goblin_grunt',
           name: 'Goblin Grunt',
@@ -266,5 +266,5 @@ export const SHADOWS_SHOP: Shadow[] = [
           lore: '"A primeira montanha a ganhar vida. Inabalável, imortal, absoluto."',
           icon: 'image-filter-hdr', color: '#ef4444',
           unlockMethod: { type: 'shop', price: 80000 },
-        }
-      ]
+        },
+      ];
