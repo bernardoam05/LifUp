@@ -103,7 +103,12 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
   const gm = getGMStyles(C);
 
   return (
-    <BottomSheetModal visible={true} onClose={onClose} contentStyle={{ backgroundColor: 'transparent' }}>
+    <BottomSheetModal
+      visible={true}
+      onClose={onClose}
+      contentStyle={{ backgroundColor: 'transparent' }}
+      useNativeModal={false}
+    >
       <ScrollView contentContainerStyle={{ flexGrow: 1, width: '100%' }}>
         <View style={[gm.card, { paddingBottom: Math.max(SPACING.xl, insets.bottom + SPACING.sm) }]}>
           <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.sm }}>

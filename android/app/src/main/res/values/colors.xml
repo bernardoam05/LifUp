@@ -8,4 +8,5 @@
     <color name="text_main">#ffffff</color>
     <color name="text_dim">#888888</color>
     <color name="divider">#22ffffff</color>
+    <color name="ic_launcher_background">#0D1B2A</color>
 </resources>

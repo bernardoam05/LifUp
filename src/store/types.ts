@@ -49,7 +49,8 @@ export type GameSettings = {
   punishmentIntensity: PunishmentIntensity
   missionDifficulty: MissionDifficulty
   customDailyMissions: number
-  customPenaltyHours: number
+  customPenaltyStartHour?: number
+  customPenaltyEndHour?: number
   restDay: boolean   // user-activated rest day for today
   lastFocusDuration: { hours: number; minutes: number }
   dynamicTheme: boolean // Rank-based theme colors
@@ -66,7 +67,8 @@ export const INITIAL_SETTINGS: GameSettings = {
   punishmentIntensity: 'medium',
   missionDifficulty: 'normal',
   customDailyMissions: 3,
-  customPenaltyHours: 6,
+  customPenaltyStartHour: 10,
+  customPenaltyEndHour: 22,
   restDay: false,
   lastFocusDuration: { hours: 0, minutes: 25 },
   dynamicTheme: true,
@@ -227,6 +229,7 @@ export type SystemState = {
   penaltyQuests: Quest[]
   blockedApps: string[]
   focusEndTime?: number
+  focusStartTime?: number
   weeklyTrainingCount: number
   weeklyRegenCount: number
   weeklyResetDate: string

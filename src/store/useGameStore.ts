@@ -283,8 +283,7 @@ const useGameStore = create<GameState & GameActions>()(
               get().settings.punishmentIntensity,
               penaltyReduction,
               tier,
-              PENALTY_QUEST_POOL,
-              get().settings.customPenaltyHours
+              PENALTY_QUEST_POOL
             );
 
             newXp = Math.max(0, player.xp - punishment.xpLost);
@@ -299,7 +298,10 @@ const useGameStore = create<GameState & GameActions>()(
               const todayStart = new Date();
               const todayEnd = new Date();
 
-              if (difficulty === 'normal') {
+              if (get().settings.punishmentIntensity === 'custom') {
+                todayStart.setHours(get().settings.customPenaltyStartHour ?? 10, 0, 0, 0);
+                todayEnd.setHours(get().settings.customPenaltyEndHour ?? 22, 0, 0, 0);
+              } else if (difficulty === 'normal') {
                 // 12 hours centered at 16:00 (10:00 to 22:00)
                 todayStart.setHours(10, 0, 0, 0);
                 todayEnd.setHours(22, 0, 0, 0);

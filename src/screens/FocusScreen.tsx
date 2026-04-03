@@ -1025,8 +1025,8 @@ export default function FocusScreen() {
               <View style={s.pomodoroPicker}>
                 <Text style={s.pomodoroPickerLabel}>TRABALHO</Text>
                 <View style={s.pomodoroPickerCtrl}>
-                  <TouchableOpacity onPress={() => updateSettings({ pomodoroWorkMins: Math.max(1, pomodoroWorkMins - 5) })} style={s.pomodoroPickerBtn}>
-                    <Text style={s.pomodoroPickerArrow}>▼</Text>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroWorkMins: Math.min(120, pomodoroWorkMins + 5) })} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▲</Text>
                   </TouchableOpacity>
                   {editingPomodoro === 'work' ? (
                     <TextInput
@@ -1045,8 +1045,8 @@ export default function FocusScreen() {
                       <Text style={s.pomodoroPickerVal}>{pomodoroWorkMins}<Text style={s.pomodoroPickerUnit}>m</Text></Text>
                     </TouchableOpacity>
                   )}
-                  <TouchableOpacity onPress={() => updateSettings({ pomodoroWorkMins: Math.min(120, pomodoroWorkMins + 5) })} style={s.pomodoroPickerBtn}>
-                    <Text style={s.pomodoroPickerArrow}>▲</Text>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroWorkMins: Math.max(1, pomodoroWorkMins - 5) })} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▼</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -1055,8 +1055,8 @@ export default function FocusScreen() {
               <View style={s.pomodoroPicker}>
                 <Text style={s.pomodoroPickerLabel}>PAUSA</Text>
                 <View style={s.pomodoroPickerCtrl}>
-                  <TouchableOpacity onPress={() => updateSettings({ pomodoroBreakMins: Math.max(1, pomodoroBreakMins - 1) })} style={s.pomodoroPickerBtn}>
-                    <Text style={s.pomodoroPickerArrow}>▼</Text>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroBreakMins: Math.min(60, pomodoroBreakMins + 1) })} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▲</Text>
                   </TouchableOpacity>
                   {editingPomodoro === 'break' ? (
                     <TextInput
@@ -1075,8 +1075,8 @@ export default function FocusScreen() {
                       <Text style={s.pomodoroPickerVal}>{pomodoroBreakMins}<Text style={s.pomodoroPickerUnit}>m</Text></Text>
                     </TouchableOpacity>
                   )}
-                  <TouchableOpacity onPress={() => updateSettings({ pomodoroBreakMins: Math.min(60, pomodoroBreakMins + 1) })} style={s.pomodoroPickerBtn}>
-                    <Text style={s.pomodoroPickerArrow}>▲</Text>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroBreakMins: Math.max(1, pomodoroBreakMins - 1) })} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▼</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -1085,8 +1085,8 @@ export default function FocusScreen() {
               <View style={s.pomodoroPicker}>
                 <Text style={s.pomodoroPickerLabel}>RONDAS</Text>
                 <View style={s.pomodoroPickerCtrl}>
-                  <TouchableOpacity onPress={() => updateSettings({ pomodoroRounds: Math.max(0, pomodoroRounds - 1) })} style={s.pomodoroPickerBtn}>
-                    <Text style={s.pomodoroPickerArrow}>▼</Text>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroRounds: Math.min(20, pomodoroRounds + 1) })} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▲</Text>
                   </TouchableOpacity>
                   {editingPomodoro === 'rounds' ? (
                     <TextInput
@@ -1107,8 +1107,8 @@ export default function FocusScreen() {
                       </Text>
                     </TouchableOpacity>
                   )}
-                  <TouchableOpacity onPress={() => updateSettings({ pomodoroRounds: Math.min(20, pomodoroRounds + 1) })} style={s.pomodoroPickerBtn}>
-                    <Text style={s.pomodoroPickerArrow}>▲</Text>
+                  <TouchableOpacity onPress={() => updateSettings({ pomodoroRounds: Math.max(0, pomodoroRounds - 1) })} style={s.pomodoroPickerBtn}>
+                    <Text style={s.pomodoroPickerArrow}>▼</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -1416,10 +1416,10 @@ const getStyles = (C: any) => StyleSheet.create({
   pomodoroConfigRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
   pomodoroConfigTitle: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2 },
   pomodoroPickersRow:  { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
-  pomodoroPicker:      { flex: 1, alignItems: 'center', gap: 6 },
+  pomodoroPicker:      { flex: 1, alignItems: 'center', gap: 4 },
   pomodoroPickerLabel: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1.5 },
-  pomodoroPickerCtrl:  { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
-  pomodoroPickerBtn:   { paddingHorizontal: SPACING.md, paddingVertical: 10, backgroundColor: C.gold + '15', borderRadius: 6, minWidth: 40, alignItems: 'center' },
+  pomodoroPickerCtrl:  { flexDirection: 'column', alignItems: 'center', gap: 4 },
+  pomodoroPickerBtn:   { paddingHorizontal: SPACING.md, paddingVertical: 8, backgroundColor: C.gold + '15', borderRadius: 6, minWidth: 44, alignItems: 'center' },
   pomodoroPickerArrow: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 12 },
   pomodoroPickerVal:   { color: C.gold, fontFamily: FONT.orbitron, fontSize: 28, fontWeight: '900', minWidth: 52, textAlign: 'center' },
   pomodoroPickerUnit:  { color: C.gold + 'aa', fontFamily: FONT.orbitron, fontSize: 14 },

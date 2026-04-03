@@ -29,10 +29,12 @@ function getBossName(bossId: string): string {
 export const getDMStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.bg + 'cc', justifyContent: 'flex-end' },
   card: { backgroundColor: C.panel, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.lg, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.neonRed + '88' },
-  warning: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3, marginBottom: 4 },
-  iconBox: { width: 64, height: 64, borderRadius: 12, backgroundColor: C.neonRed + '15', alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonRed + '33' },
-  title: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm },
-  sub: { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 18, marginBottom: SPACING.lg },
+  header: { width: '100%', alignItems: 'center', marginBottom: SPACING.lg },
+  headerIconWrap: { width: 56, height: 56, borderRadius: 12, backgroundColor: C.neonRed + '12', alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.sm, borderWidth: 1, borderColor: C.neonRed + '44' },
+  headerBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, borderWidth: 1, borderColor: C.neonRed + '55', backgroundColor: C.neonRed + '10', marginBottom: SPACING.sm },
+  headerBadgeTxt: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  title: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm, textAlign: 'center' },
+  sub: { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 18, marginBottom: 0, maxWidth: '92%' },
   missionBtn: { flexDirection: 'row', alignItems: 'center', width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
   missionIcon: { width: 40, height: 40, borderRadius: 4, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   missionInfo: { flex: 1 },
@@ -76,17 +78,20 @@ export default function WeeklyDungeonModal({
   return (
     <BottomSheetModal visible={visible} onClose={onRequestClose ?? onClose} contentStyle={{ backgroundColor: 'transparent' }}>
       <View style={[dm.card, { paddingBottom: Math.max(40, insets.bottom + SPACING.sm) }]}>
-        <Icon name="gate" size={40} color={C.neonRed} style={{ marginBottom: SPACING.sm }} />
-        <Text style={dm.warning}>⚠ ALERTA DO SISTEMA ⚠</Text>
-        <Text
-          style={[dm.title, { maxWidth: '90%' }]}
-          numberOfLines={1}
-        >
-          {weeklyMissions.length > 0 ? `[ ${weeklyMissions[0].label.toUpperCase()} ]` : '[ PORTAL DIÁRIO ]'}
-        </Text>
-        <Text style={dm.sub}>
-          Completa a Missão do Boss Diário para ganhares XP, Gold e extraíres a sua Sombra.
-        </Text>
+        <View style={dm.header}>
+          <View style={dm.headerIconWrap}>
+            <Icon name="gate" size={32} color={C.neonRed} />
+          </View>
+          <View style={dm.headerBadge}>
+            <Text style={dm.headerBadgeTxt}>ALERTA DO SISTEMA</Text>
+          </View>
+          <Text style={dm.title} numberOfLines={2}>
+            {weeklyMissions.length > 0 ? `[ ${weeklyMissions[0].label.toUpperCase()} ]` : '[ PORTAL DIÁRIO ]'}
+          </Text>
+          <Text style={dm.sub}>
+            Completa a Missão do Boss Diário para ganhares XP, Gold e extraíres a sua Sombra.
+          </Text>
+        </View>
 
         <ScrollView style={{ width: '100%', maxHeight: 400 }} contentContainerStyle={{ alignItems: 'center' }} showsVerticalScrollIndicator={false}>
           {weeklyMissions.map(m => {

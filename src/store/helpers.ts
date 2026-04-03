@@ -345,8 +345,7 @@ export function computePunishment(
   intensity: PunishmentIntensity,
   penaltyReduction: number, // percentage reduction from shadows
   tier: string,
-  pool: Quest[],
-  customPenaltyHours?: number
+  pool: Quest[]
 ): { xpLost: number; goldLost: number; penaltyQuests: Quest[]; hardcorePunished: boolean; streakReset: boolean; penaltyHours: number } {
 
   // Tier-scaled 60% daily XP values (baseXP=50, target=4)
@@ -376,14 +375,13 @@ export function computePunishment(
   }
 
   if (intensity === 'medium' || intensity === 'custom') {
-    const safeHours = Math.min(Math.max(Math.round(customPenaltyHours ?? (4 + failedCount * 2)), 1), 24);
     return {
       xpLost,
       goldLost,
       penaltyQuests: pickPenaltyQuests(Math.min(1 + Math.floor(failedCount / 2), 3), pool),
       hardcorePunished: failedCount >= Math.ceil(totalCount * 0.5),
       streakReset: true,
-      penaltyHours: intensity === 'custom' ? safeHours : Math.min(4 + failedCount * 2, 12),
+      penaltyHours: Math.min(4 + failedCount * 2, 12),
     };
   }
 

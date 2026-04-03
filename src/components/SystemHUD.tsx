@@ -36,7 +36,7 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
       backgroundColor: C.bg,
     },
     row: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
-    badge: { width: 48, height: 48, borderRadius: 8, borderWidth: 2, alignItems: 'center', justifyContent: 'center', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.6, shadowRadius: 10, elevation: 6 },
+    badge: { width: 48, height: 48, borderRadius: 8, borderWidth: 2, alignItems: 'center', justifyContent: 'center', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.6, shadowRadius: 10, elevation: 6, backgroundColor: C.bg },
     badgeText: { fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900' },
     info: { flex: 1, gap: 4 },
     nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },

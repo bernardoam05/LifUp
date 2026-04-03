@@ -44,7 +44,7 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
         toValue: 1,
         tension: 90,
         friction: 8,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
       Animated.timing(cardOpacity, {
         toValue: 1,

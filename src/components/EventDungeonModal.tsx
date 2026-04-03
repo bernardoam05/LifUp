@@ -39,7 +39,7 @@ export default function EventDungeonModal({
       onRequestClose={onRequestClose}
       iconName="calendar-star"
       iconColor={C.gold}
-      warningText="⚠ EVENTO LIMITADO ⚠"
+      warningText="EVENTO LIMITADO"
       title="[ MASMORRA ESPECIAL DE EVENTO ]"
       titleColor={C.gold}
       borderColor={C.gold + '88'}

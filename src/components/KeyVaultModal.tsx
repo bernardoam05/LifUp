@@ -63,11 +63,18 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
                       <Text style={[st.keyName, { color: key.color }]} numberOfLines={1}>
                         {key.name.toUpperCase()}
                       </Text>
-                      <Text style={st.keyType} numberOfLines={1}>
-                        {key.missionType === 'focus' && '⏱️ FOCO'}
-                        {key.missionType === 'training' && '💪 TREINO'}
-                        {key.missionType === 'gps' && '🏃 PASSEIO'}
-                      </Text>
+                      <View style={st.keyTypeRow}>
+                        <Icon
+                          name={key.missionType === 'focus' ? 'timer-sand' : key.missionType === 'training' ? 'arm-flex' : 'run-fast'}
+                          size={12}
+                          color={C.muted}
+                        />
+                        <Text style={st.keyType} numberOfLines={1}>
+                          {key.missionType === 'focus' && 'FOCO'}
+                          {key.missionType === 'training' && 'TREINO'}
+                          {key.missionType === 'gps' && 'PASSEIO'}
+                        </Text>
+                      </View>
                       <Text style={st.keyDesc} numberOfLines={2}>
                         {key.description}
                       </Text>
@@ -174,11 +181,16 @@ const getStyles = (C: any) => StyleSheet.create({
     fontWeight: '900',
     marginBottom: 4,
   },
+  keyTypeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 2,
+  },
   keyType: {
     color: C.muted,
     fontSize: 9,
     fontFamily: FONT.orbitron,
-    marginBottom: 2,
   },
   keyDesc: {
     color: C.text.secondary,

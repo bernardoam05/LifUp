@@ -99,7 +99,8 @@ export default function App() {
   const statistics = useGameStore(s => s.statistics);
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated);
   const playerLevel = useGameStore(s => s.player.level);
-  const toastBlocked = penaltyTriggered || rewardsQueue.length > 0 || showSettings || showRankInfo || !!currentLootReward || missionModalOpen;
+  const rewardsBlocked = penaltyTriggered || showSettings || showRankInfo || !!currentLootReward || missionModalOpen;
+  const toastBlocked = rewardsBlocked || rewardsQueue.length > 0;
 
   // Register the midnight reset watcher
   useDayWatcher();
@@ -251,7 +252,7 @@ export default function App() {
         <PenaltyModal visible={penaltyTriggered} onDismiss={dismissPenalty} />
 
         {/* Sequential Reward System */}
-        {!penaltyTriggered && rewardsQueue.length > 0 && (
+        {!rewardsBlocked && rewardsQueue.length > 0 && (
           <View style={styles.rewardsLayer} pointerEvents="box-none">
             <Fragment key={`${rewardsQueue[0].type}-${rewardsQueue[0].id}`}>
               {rewardsQueue[0].type === 'boss_defeated' && rewardsQueue[0].data && (

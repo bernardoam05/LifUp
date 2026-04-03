@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { DungeonKey } from '../data/dungeonKeys';
 import MissionModalBase from './MissionModalBase';
 import { FONT, SPACING } from '../theme';
@@ -22,7 +23,6 @@ export const getDKMStyles = (C: any) => StyleSheet.create({
   difficultyRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
   difficultyLabel: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
   difficultyStars: { flexDirection: 'row', gap: 2 },
-  star: { fontSize: 14 },
 
   missionTypeRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
   missionTypeLabel: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
@@ -92,7 +92,12 @@ export default function DungeonKeyModal({
       );
     }
     const stars = Array.from({ length: 5 }).map((_, i) => (
-      <Text key={i} style={dm.star}>{i < difficulty ? '⭐' : '☆'}</Text>
+      <Icon
+        key={i}
+        name={i < difficulty ? 'star' : 'star-outline'}
+        size={14}
+        color={i < difficulty ? C.gold : C.border}
+      />
     ));
     return (
       <View style={dm.difficultyRow}>
@@ -121,7 +126,7 @@ export default function DungeonKeyModal({
       onRequestClose={onRequestClose}
       iconName="key-alert"
       iconColor={key.color}
-      warningText="⚠ PORTAL PERIGOSO ⚠"
+      warningText="PORTAL PERIGOSO"
       title={key.name}
       titleColor={key.color}
       borderColor={C.neonRed + '88'}
@@ -149,7 +154,7 @@ export default function DungeonKeyModal({
 
         {onCooldown ? (
           <View style={[dm.alertBox, { borderColor: C.gold + '66', backgroundColor: C.gold + '10' }]}>
-            <Text style={[dm.alertTitle, { color: C.gold }]}>⏳ COOLDOWN ATIVO</Text>
+            <Text style={[dm.alertTitle, { color: C.gold }]}>COOLDOWN ATIVO</Text>
             <Text style={dm.alertText}>
               Este portal já foi usado recentemente. Podes entrar novamente em:{'\n\n'}
               <Text style={{ color: C.gold, fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900' }}>
@@ -159,7 +164,7 @@ export default function DungeonKeyModal({
           </View>
         ) : (
           <View style={dm.alertBox}>
-            <Text style={dm.alertTitle}>⚠️ AVISO CRÍTICO</Text>
+            <Text style={dm.alertTitle}>AVISO CRÍTICO</Text>
             <Text style={dm.alertText}>
               Uma missão perigosa e desafiante te aguarda. {'\n\n'}
               As recompensas são grandes, mas as penalizações também são severas. Tens a certeza de que estás pronto?
@@ -173,7 +178,7 @@ export default function DungeonKeyModal({
         disabled={onCooldown}
       >
         <Text style={[dm.startBtnTxt, onCooldown && { color: C.gold }]}>
-          {onCooldown ? `⏳ COOLDOWN: ${formatCooldown(cooldownMs)}` : 'ACEITAR DESAFIO'}
+          {onCooldown ? `COOLDOWN: ${formatCooldown(cooldownMs)}` : 'ACEITAR DESAFIO'}
         </Text>
       </TouchableOpacity>
 
