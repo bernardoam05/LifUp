@@ -33,8 +33,6 @@ const getStyles = (C: any) => StyleSheet.create({
   actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingVertical: 10, backgroundColor: C.panel },
   actionBtnTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
   actionBtnSub: { color: C.dimmed, fontSize: 9, marginTop: 2 },
-  restDayBanner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.green + '12', borderWidth: 1, borderColor: C.green + '55', borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.md },
-  restDayBannerTxt: { color: C.green, fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', letterSpacing: 2 },
   systemCard: { borderRadius: 4, borderWidth: 1, padding: SPACING.sm, marginBottom: SPACING.sm },
   cardNormal: { backgroundColor: C.panel, borderColor: C.neonBlue + '33' },
   cardWarning: { backgroundColor: C.neonRed + '10', borderColor: C.neonRed + '66' },
@@ -492,27 +490,21 @@ export default function QuestScreen() {
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[s.actionBtn, isRestDay && { borderColor: C.green + '88', backgroundColor: C.green + '0d' }]}
+            style={s.actionBtn}
             onPress={() => updateSettings({ restDay: !isRestDay })}
             activeOpacity={0.75}
           >
-            <Icon name="bed" size={13} color={isRestDay ? C.green : C.muted} />
+            <Icon name="bed" size={13} color={isRestDay ? C.neonBlue : C.muted} />
             <View>
-              <Text style={[s.actionBtnTxt, { color: isRestDay ? C.green : C.muted }]}>
+              <Text style={[s.actionBtnTxt, { color: isRestDay ? C.neonBlue : C.muted }]}>
                 {isRestDay ? ' REPOUSO ATIVO' : ' REPOUSO'}
               </Text>
-              <Text style={s.actionBtnSub}>  Pausa sem penalidades</Text>
+              <Text style={s.actionBtnSub}>
+                {isRestDay ? '  Ativo — sem penalidades' : '  Pausa sem penalidades'}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
-
-        {/* Rest day overlay banner */}
-        {isRestDay && (
-          <View style={s.restDayBanner}>
-            <Icon name="shield-moon" size={16} color={C.green} />
-            <Text style={s.restDayBannerTxt}> [ ESTADO: REPOUSO DO MONARCA ]</Text>
-          </View>
-        )}
 
         <View style={s.titleRow}>
           <Icon name="clipboard-list-outline" size={16} color={C.neonBlue} />
@@ -667,7 +659,7 @@ export default function QuestScreen() {
           </View>
         )}
 
-        <View style={isRestDay ? { opacity: 0.45 } : undefined}>
+        <View style={isRestDay ? { opacity: 0.7 } : undefined}>
           {quests.length === 0 && !isRestDay ? (
             <View style={{
               alignItems: 'center', paddingVertical: 40,

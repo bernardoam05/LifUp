@@ -15,7 +15,6 @@ import NotificationsSettings from '../components/SettingsSections/NotificationsS
 import ThemeSettings from '../components/SettingsSections/ThemeSettings';
 import IntensitySettings from '../components/SettingsSections/IntensitySettings';
 import DifficultySettings from '../components/SettingsSections/DifficultySettings';
-import RestDaySettings from '../components/SettingsSections/RestDaySettings';
 import AutoBlockSettings from '../components/SettingsSections/AutoBlockSettings';
 import SideQuestPenaltySettings from '../components/SettingsSections/SideQuestPenaltySettings';
 import BackupSettings from '../components/SettingsSections/BackupSettings';
@@ -39,6 +38,18 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
   const [alertConfig, setAlertConfig] = React.useState<{ title: string; message: string } | null>(null);
   const [importVisible, setImportVisible] = React.useState(false);
   const [importText, setImportText] = React.useState('');
+  const [openSections, setOpenSections] = React.useState({
+    missions: false,
+    penalties: false,
+    visual: false,
+    system: false,
+    data: false,
+    about: false,
+  });
+
+  const toggleSection = (key: keyof typeof openSections) => {
+    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const handleExport = () => {
     try {
@@ -111,12 +122,24 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
 
           {/* ── MISSÕES ─────────────────────────────────────────────────────── */}
           <View style={s.group}>
-            <View style={s.groupHeader}>
-              <Icon name="clipboard-list-outline" size={13} color={C.neonBlue} />
-              <Text style={[s.groupTitle, { color: C.neonBlue }]}>MISSÕES</Text>
-            </View>
+            <TouchableOpacity
+              style={s.groupHeader}
+              onPress={() => toggleSection('missions')}
+              activeOpacity={0.8}
+            >
+              <View style={s.groupHeaderLeft}>
+                <Icon name="clipboard-list-outline" size={13} color={C.neonBlue} />
+                <Text style={[s.groupTitle, { color: C.neonBlue }]}>MISSÕES</Text>
+              </View>
+              <Icon
+                name={openSections.missions ? 'chevron-down' : 'chevron-right'}
+                size={18}
+                color={C.muted}
+              />
+            </TouchableOpacity>
 
-            <View style={s.groupBody}>
+            {openSections.missions && (
+              <View style={s.groupBody}>
               <View style={s.section}>
                 <DifficultySettings
                   currentDifficulty={settings.missionDifficulty}
@@ -126,25 +149,30 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
                 />
               </View>
 
-              <View style={s.divider} />
-
-              <View style={s.section}>
-                <RestDaySettings
-                  restDay={settings.restDay}
-                  onRestDayChange={v => updateSettings({ restDay: v })}
-                />
               </View>
-            </View>
+            )}
           </View>
 
           {/* ── PENALIDADES & BLOQUEIO ─────────────────────────────────────── */}
           <View style={[s.group, s.groupGap]}>
-            <View style={s.groupHeader}>
-              <Icon name="shield-alert-outline" size={13} color={C.neonRed} />
-              <Text style={[s.groupTitle, { color: C.neonRed }]}>PENALIDADES & BLOQUEIO</Text>
-            </View>
+            <TouchableOpacity
+              style={s.groupHeader}
+              onPress={() => toggleSection('penalties')}
+              activeOpacity={0.8}
+            >
+              <View style={s.groupHeaderLeft}>
+                <Icon name="shield-alert-outline" size={13} color={C.neonRed} />
+                <Text style={[s.groupTitle, { color: C.neonRed }]}>PENALIDADES & BLOQUEIO</Text>
+              </View>
+              <Icon
+                name={openSections.penalties ? 'chevron-down' : 'chevron-right'}
+                size={18}
+                color={C.muted}
+              />
+            </TouchableOpacity>
 
-            <View style={s.groupBody}>
+            {openSections.penalties && (
+              <View style={s.groupBody}>
               <View style={s.section}>
                 <IntensitySettings
                   currentIntensity={settings.punishmentIntensity}
@@ -173,17 +201,30 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
                   onToggle={v => updateSettings({ sideQuestPenalize: v })}
                 />
               </View>
-            </View>
+              </View>
+            )}
           </View>
 
           {/* ── VISUAL ───────────────────────────────────────────────────────── */}
           <View style={[s.group, s.groupGap]}>
-            <View style={s.groupHeader}>
-              <Icon name="palette-outline" size={13} color={C.purple} />
-              <Text style={[s.groupTitle, { color: C.purple }]}>VISUAL</Text>
-            </View>
+            <TouchableOpacity
+              style={s.groupHeader}
+              onPress={() => toggleSection('visual')}
+              activeOpacity={0.8}
+            >
+              <View style={s.groupHeaderLeft}>
+                <Icon name="palette-outline" size={13} color={C.purple} />
+                <Text style={[s.groupTitle, { color: C.purple }]}>VISUAL</Text>
+              </View>
+              <Icon
+                name={openSections.visual ? 'chevron-down' : 'chevron-right'}
+                size={18}
+                color={C.muted}
+              />
+            </TouchableOpacity>
 
-            <View style={s.groupBody}>
+            {openSections.visual && (
+              <View style={s.groupBody}>
               <View style={s.section}>
                 <ThemeSettings
                   activeThemeId={player.activeThemeId}
@@ -191,17 +232,30 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
                   onThemeChange={setActiveTheme}
                 />
               </View>
-            </View>
+              </View>
+            )}
           </View>
 
           {/* ── SISTEMA ──────────────────────────────────────────────────────── */}
           <View style={[s.group, s.groupGap]}>
-            <View style={s.groupHeader}>
-              <Icon name="bell-outline" size={13} color={C.neonBlue} />
-              <Text style={[s.groupTitle, { color: C.neonBlue }]}>SISTEMA</Text>
-            </View>
+            <TouchableOpacity
+              style={s.groupHeader}
+              onPress={() => toggleSection('system')}
+              activeOpacity={0.8}
+            >
+              <View style={s.groupHeaderLeft}>
+                <Icon name="bell-outline" size={13} color={C.neonBlue} />
+                <Text style={[s.groupTitle, { color: C.neonBlue }]}>SISTEMA</Text>
+              </View>
+              <Icon
+                name={openSections.system ? 'chevron-down' : 'chevron-right'}
+                size={18}
+                color={C.muted}
+              />
+            </TouchableOpacity>
 
-            <View style={s.groupBody}>
+            {openSections.system && (
+              <View style={s.groupBody}>
               <View style={s.section}>
                 <NotificationsSettings
                   notifications={settings.notifications}
@@ -210,38 +264,65 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
                   onSoundChange={v => updateSettings({ sound: v })}
                 />
               </View>
-            </View>
+              </View>
+            )}
           </View>
 
           {/* ── DADOS ────────────────────────────────────────────────────────── */}
           <View style={[s.group, s.groupGap]}>
-            <View style={s.groupHeader}>
-              <Icon name="database-outline" size={13} color={C.gold} />
-              <Text style={[s.groupTitle, { color: C.gold }]}>DADOS</Text>
-            </View>
+            <TouchableOpacity
+              style={s.groupHeader}
+              onPress={() => toggleSection('data')}
+              activeOpacity={0.8}
+            >
+              <View style={s.groupHeaderLeft}>
+                <Icon name="database-outline" size={13} color={C.gold} />
+                <Text style={[s.groupTitle, { color: C.gold }]}>DADOS</Text>
+              </View>
+              <Icon
+                name={openSections.data ? 'chevron-down' : 'chevron-right'}
+                size={18}
+                color={C.muted}
+              />
+            </TouchableOpacity>
 
-            <View style={s.groupBody}>
+            {openSections.data && (
+              <View style={s.groupBody}>
               <View style={s.section}>
                 <BackupSettings
                   onExport={handleExport}
                   onImport={() => setImportVisible(true)}
                 />
               </View>
-            </View>
+              </View>
+            )}
           </View>
 
           {/* ── SOBRE ────────────────────────────────────────────────────────── */}
           <View style={[s.group, s.groupGap, { marginBottom: SPACING.xl }]}>
-            <View style={s.groupHeader}>
-              <Icon name="information-outline" size={13} color={C.muted} />
-              <Text style={[s.groupTitle, { color: C.muted }]}>SOBRE</Text>
-            </View>
+            <TouchableOpacity
+              style={s.groupHeader}
+              onPress={() => toggleSection('about')}
+              activeOpacity={0.8}
+            >
+              <View style={s.groupHeaderLeft}>
+                <Icon name="information-outline" size={13} color={C.muted} />
+                <Text style={[s.groupTitle, { color: C.muted }]}>SOBRE</Text>
+              </View>
+              <Icon
+                name={openSections.about ? 'chevron-down' : 'chevron-right'}
+                size={18}
+                color={C.muted}
+              />
+            </TouchableOpacity>
 
-            <View style={s.groupBody}>
+            {openSections.about && (
+              <View style={s.groupBody}>
               <View style={s.section}>
                 <AboutSettings />
               </View>
-            </View>
+              </View>
+            )}
           </View>
 
         </ScrollView>
@@ -298,12 +379,18 @@ const getStyles = (C: any) => StyleSheet.create({
   groupHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
     paddingHorizontal: SPACING.md,
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: C.border + '33',
     backgroundColor: C.panel + '44',
+  },
+  groupHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
   },
   groupTitle: {
     fontFamily: FONT.orbitron,
