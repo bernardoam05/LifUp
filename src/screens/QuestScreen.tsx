@@ -550,7 +550,7 @@ export default function QuestScreen() {
             <Icon name={activeMission ? 'sword-cross' : (acceptedPortal.icon || 'gate')} size={24} color={acceptedPortal.color || C.neonRed} />
             <Text style={s.dungeonBreakTxt}>{acceptedPortal.label?.toUpperCase()}</Text>
             <Text style={s.dungeonBreakSub}>
-              {activeMission ? '⚔ EM PROGRESSO — Conclui a missão para fechar o portal.' : (acceptedPortal.detail || 'Pressiona para abrir a missão.')}
+              {activeMission ? 'EM PROGRESSO — Conclui a missão para fechar o portal.' : (acceptedPortal.detail || 'Pressiona para abrir a missão.')}
             </Text>
           </TouchableOpacity>
         )}

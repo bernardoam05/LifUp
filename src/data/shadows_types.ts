@@ -48,6 +48,7 @@ export type UnlockMethod =
   | { type: 'achievement'; id: string }
   | { type: 'boss_drop';   bossId: string; category: 'dungeon' | 'dungeon_break' | 'event' | 'key' | 'raid' }
   | { type: 'custom' }
+  | { type: 'calendar';    day: number }
 
 export type Shadow = {
   id:             string

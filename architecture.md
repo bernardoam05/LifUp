@@ -34,9 +34,10 @@ Solo Leveling RN is a gamified productivity app inspired by RPG systems. Users c
 - **Navigation**: `MaterialTopTabNavigator` in bottom position (tab bar). See [App.tsx](App.tsx#L87).
 - **Global overlays**:
   - System HUD (rank/settings) sits above navigation.
-  - Reward queue renders a single modal at a time to avoid overlap.
+  - Reward queue renders a single modal at a time to avoid overlap. A local `activeReward` latch in App.tsx ensures a reward stays visible once it starts showing — it is NOT hidden/reshown when other modals (e.g., QuestCard) open and close. `missionModalOpen` is intentionally excluded from `rewardsBlocked` so rewards appear immediately and stay on top.
   - Penalty modal is prioritized when penalty is triggered.
   - Level-up toast (non-5/10 levels) is suppressed while modals/reward overlays are active to avoid late/short display.
+  - Level-up rewards (multiples of 5) include newly unlocked dungeon key ids in their `items` array so the LevelUpModal can display them. Key ids are filtered out of the inventory update (keys go to `player.dungeonKeys`, not inventory).
 - **Theme system**: Theme colors are derived from a theme catalog and the active theme in the store. See [src/theme.ts](src/theme.ts#L1).
 
 ## State Management (Zustand)
@@ -57,7 +58,7 @@ Defined in [src/store/types.ts](src/store/types.ts#L1).
 - Identity/progression: `name`, `level`, `xp`, `rank`, `maxLevelReached`.
 - Economy: `gold`.
 - Attributes: `strXp`, `agiXp`, `intXp`, `vitXp` and derived `str`, `agi`, `int`, `vit`.
-- Streaks: `currentStreak`, `highestStreak`.
+- Streaks: `currentStreak`, `highestStreak`; `statistics.maxStreakReached` tracks the all-time peak streak and is updated every time `currentStreak` rises during daily reset.
 - Inventory: list of `InventoryEntry { itemId, quantity }`.
 - Dungeon keys: `dungeonKeys` (string ids).
 - Shadows: owned `shadows` (levelled entries), active `activeShadowIds`.
@@ -122,7 +123,7 @@ Defined in [src/data/achievements.ts](src/data/achievements.ts#L1).
 - Buffs affect XP/gold multipliers, loot rates, focus duration, and penalties.
 - Some shadow passives (weekly cooldown) can nullify penalty or protect streaks:
   - `penalty_immunity`: if active and cooldown available, the entire penalty is absorbed — XP/gold loss, block window, and penalty quests are all cancelled. The `penaltyImmunityUsed` flag ensures the main daily-reset `set()` does not re-apply `hasPenalty: true` after the immunity fires.
-  - `streak_protect`: if streak would reset on a failed day, the streak is preserved (once per week).
+  - `streak_protect`: if streak would reset on a failed day, the streak is preserved (once per week). When `streak_protect` fires it also **freezes** the Login Calendar (`calendarFrozen: true`) — the player keeps their current day progress but cannot claim new days until the next perfect day. Without `streak_protect`, a penalty day resets the calendar to day 1.
 
 ## Quest Generation & Daily Cycle
 
@@ -233,15 +234,64 @@ Implemented in [src/screens/InventoryScreen.tsx](src/screens/InventoryScreen.tsx
 - `system_pass`: opens quest picker and auto-completes chosen quest.
 - `relogio_ampulheta`: doubles XP of the next quest.
 - `lagrima_purificacao`: removes active penalty immediately.
-- `shadow_essence`: resets daily shadow extraction limit.
+- `shadow_essence`: invokes a random shadow directly (weighted rank roll: Normal 45% / Elite 35% / Knight 15% / Commander 4% / Marshal 1%). If all shadows in the rolled rank are already owned, falls back to Normal rank; if still unavailable, grants 100 gold.
 - Boss materials: apply timed XP/Gold buffs.
+- Evolution materials (purchasable in shop + boss drops): used in `upgradeShadow` cost calculation:
+  - `evolution_shard_common`: required for every upgrade (quantity scales with level).
+  - `void_crystal`: required for Knight+ rank or milestone levels (×10).
+  - `beast_core`: required for Beast/Insect type shadows.
+  - `phantom_essence`: required for Undead/Ghost/Demon type shadows.
+
+## Login Calendar System
+
+Defined in [src/store/types.ts](src/store/types.ts#L1) (`CalendarState`, `CALENDAR_REWARDS`, `INITIAL_CALENDAR`) and data in [src/data/shadows_calendar.ts](src/data/shadows_calendar.ts#L1).
+
+- **Purpose**: Replaces Gacha as the primary daily engagement mechanic. Rewards players for logging in across 30 days per month.
+- **Structure**: `CalendarState { month: 'YYYY-MM', days: CalendarDayEntry[] }`.
+- **Monthly reset**: `bootSystem()` checks `calendarState.month` against the current `YYYY-MM` on every daily boot. When mismatched (new month), all 30 days reset to `claimed: false`.
+- **Reward table** (`CALENDAR_REWARDS`): fixed 30-day array with a mix of Gold, Items (`shadow_essence`, `loot_box`, `relogio_ampulheta`, `lagrima_purificacao`, `blood_fallen`), and two exclusive shadow drops on days 15 and 30.
+- **Exclusive calendar shadows** (unlockMethod `{ type: 'calendar', day }`) — not in any other pool:
+  - Day 15 — **Guardião do Calendário** (Knight · +5% XP)
+  - Day 30 — **Marechal da Perseverança** (Marshal · +8% Gold)
+- **Claim action**: `claimCalendarDay(day)` — validates not already claimed and `calendarFrozen === false`, then applies reward atomically (gold add / inventory add / shadow add + rewardsQueue push).
+- **Freeze / Reset rules** (evaluated in `bootSystem` daily reset):
+  - Perfect day → `calendarFrozen: false` (unfreeze if previously frozen).
+  - Penalty day + `streak_protect` active → `calendarFrozen: true`, days preserved.
+  - Penalty day + no protection → all days reset to `claimed: false` (restart from day 1).
 
 ## Shadows System
 
 ### Shadow Catalog
 Defined in [src/data/shadows.ts](src/data/shadows.ts#L1).
-- Aggregates multiple sources (gacha, boss drops, achievements, shop, custom).
+- Aggregates multiple sources (gacha, boss drops, achievements, shop, custom, calendar).
 - Provides mapping by id and by rank for retrieval.
+
+### Shadows Screen (ShadowsScreen.tsx)
+Implemented in [src/screens/ShadowsScreen.tsx](src/screens/ShadowsScreen.tsx#L1).
+- **Vanguard card**: 3 clickable slots — tapping an occupied slot opens `ShadowDetailModal` directly for that unit.
+- **Filter bar**: filter by rank (Normal/Elite/Knight/Commander/Marshal), Favorites, or All. Sort by Rank, Level, or Favorites.
+- **ShadowDetailModal**: redesigned RPG UI showing stats grid, lore, scaled passive, upgrade requirements panel (gold + items with owned/needed counts + ✓/✗ indicators), equip button, and a visually separated danger zone (red divider + outlined release button) to prevent accidental dismissal.
+- `isFavorite` is persisted in the `ShadowEntry` within `player.shadows` via `toggleFavoriteShadow`.
+
+### Shadow Upgrade System
+
+Implemented in [src/store/helpers.ts](src/store/helpers.ts#L1) (`getShadowUpgradeCost`) and [src/store/useGameStore.ts](src/store/useGameStore.ts#L1) (`upgradeShadow`).
+
+- **Cost formula** (`getShadowUpgradeCost(shadow, currentLevel)`):
+  - Gold: `base × (1 + (level-1) × 0.3)` where base = Normal 150 / Elite 300 / Knight 600 / Commander 1200 / Marshal 2500.
+  - Always: `evolution_shard_common` × `(1 + floor(level/5))`.
+  - Knight+ rank or level milestone (×10): `void_crystal` × 1.
+  - Beast/Insect type: `beast_core` × 1.
+  - Undead/Ghost/Demon type: `phantom_essence` × 1.
+- **`upgradeShadow(shadowId)`**: validates gold + items + level cap, deducts all costs atomically, pushes to `rewardsQueue`.
+- **UI** (`ShadowDetailModal`): shows each requirement with current owned quantity, green checkmarks when met, red if missing, upgrade button disabled if any requirement fails.
+
+### Shadow Level Cap
+
+- A shadow's level can never exceed `player.level`. This is enforced at every upgrade point:
+  - **`purchaseShadow`**: returns `false` (blocks upgrade) if `existing.level >= player.level`. The upgrade computes `Math.min(existing.level + 1, player.level)`.
+  - **Gacha extraction** (daily completion), **boss drops** (`defeatDungeonBoss`), **shadow_essence** item use, and **calendar reward claims**: all cap the new level with `Math.min(existing.level + 1, player.level)`.
+  - New (unowned) shadows always enter at level 1, which is always valid.
 
 ### Drop System — Rarity Philosophy
 

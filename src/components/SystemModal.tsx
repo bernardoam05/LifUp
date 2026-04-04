@@ -10,7 +10,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme';
 
-export interface SoloLevelingModalProps extends ModalProps {
+export interface SystemModalProps extends ModalProps {
   children: React.ReactNode
   /** Extra container styles for the centered card/content */
   contentStyle?: ViewStyle
@@ -35,7 +35,7 @@ export interface SoloLevelingModalProps extends ModalProps {
  * NOTE: The overlay is always truly full-width (no left/right inset shrinking).
  * Only top/bottom insets are applied to the content wrapper.
  */
-export default function SoloLevelingModal({ children, contentStyle, dimmed, slide, useNativeModal = true, bottomOffset = 0, noPadding = false, ...modalProps }: SoloLevelingModalProps) {
+export default function SystemModal({ children, contentStyle, dimmed, slide, useNativeModal = true, bottomOffset = 0, noPadding = false, ...modalProps }: SystemModalProps) {
   const C = useTheme();
   const insets = useSafeAreaInsets();
   const s = getStyles(C);

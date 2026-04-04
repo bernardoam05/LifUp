@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useGameStore from '../store/useGameStore';
-import SoloLevelingModal from '../components/SoloLevelingModal';
+import SystemModal from '../components/SystemModal';
 import { FONT, SPACING } from '../theme';
 
 
@@ -58,7 +58,7 @@ export default function MissionHistoryModal({ visible = true, onClose, C }: { vi
   const [expandedId, setExpandedId] = React.useState<string | null>(null);
 
   return (
-    <SoloLevelingModal visible={visible} onRequestClose={onClose} contentStyle={{ flex: 1, width: '100%' }}>
+    <SystemModal visible={visible} onRequestClose={onClose} contentStyle={{ flex: 1, width: '100%' }}>
       <SafeAreaView style={s.safeArea} edges={['top', 'bottom']}>
 
         <View style={s.header}>
@@ -149,7 +149,7 @@ export default function MissionHistoryModal({ visible = true, onClose, C }: { vi
         )}
 
       </SafeAreaView>
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }
 

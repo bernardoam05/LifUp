@@ -16,7 +16,7 @@ const AboutSettings = () => {
       <View style={s.aboutCard}>
         <Text style={s.aboutLine}>
           <Text style={s.aboutKey}>Versão </Text>
-          <Text style={s.aboutVal}>Solo Leveling OS v3</Text>
+          <Text style={s.aboutVal}>LifUp OS v3</Text>
         </Text>
         <Text style={s.aboutLine}>
           <Text style={s.aboutKey}>Motor de Missões </Text>
@@ -24,7 +24,7 @@ const AboutSettings = () => {
         </Text>
         <Text style={s.aboutLine}>
           <Text style={s.aboutKey}>Persistência </Text>
-          <Text style={s.aboutVal}>AsyncStorage · solo-leveling-v3</Text>
+          <Text style={s.aboutVal}>AsyncStorage · lifup-v3</Text>
         </Text>
       </View>
     </View>

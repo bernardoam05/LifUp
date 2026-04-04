@@ -214,22 +214,22 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
   },
   // --- Normal Dungeons (Classic Bosses) ---
   {
-    id: 'normal_boss_kasaka', title: 'Veneno de Kasaka',
+    id: 'normal_boss_viper', title: 'Veneno da Víbora',
     description: 'Corre 5km ou pedala 15km sem parar. A serpente aguarda no final.',
     type: 'boss', questType: 'gps',
     baseTarget: 5, scalingAmount: 0, scalingInterval: 1, unit: 'km',
     baseXP: 500, baseGold: 200,
     dynamicScaling: true,
-    rewards: ['kasaka_venom'],
+    rewards: ['viper_venom'],
   },
   {
-    id: 'normal_boss_igris', title: 'O Trono de Igris',
-    description: '90 min de foco absoluto. O cavaleiro negro observa. Sem distrações.',
+    id: 'normal_boss_crimson_knight', title: 'O Voto do Cavaleiro Carmesim',
+    description: '90 min de foco absoluto. O Cavaleiro Carmesim observa. Sem distrações.',
     type: 'boss', questType: 'focus',
     baseTarget: 90, scalingAmount: 0, scalingInterval: 1, unit: 'min',
     baseXP: 600, baseGold: 250,
     dynamicScaling: true,
-    rewards: ['igris_soul_shard'],
+    rewards: ['crimson_knight_soul'],
   },
   {
     id: 'normal_boss_cerberus', title: 'Rugido de Cerberus',

@@ -8,14 +8,14 @@ import notifee, {
   TimestampTrigger,
 } from '@notifee/react-native';
 
-const CHANNEL_ID = 'solo_leveling';
+const CHANNEL_ID = 'lifup';
 
 // ── Setup ──────────────────────────────────────────────────────────────────────
 
 export async function setupNotifications(): Promise<void> {
   await notifee.createChannel({
     id:          CHANNEL_ID,
-    name:        'Solo Leveling',
+    name:        'LifUp',
     importance:  AndroidImportance.HIGH,
     sound:       'default',
     vibration:   true,
@@ -32,7 +32,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 
 export async function notifyFocusComplete(questLabel: string): Promise<void> {
   await notifee.displayNotification({
-    title: '⚡ Foco Concluído!',
+    title: 'Foco Concluído',
     body:  `O foco na missão "${questLabel}" foi concluído. Recolhe as tuas recompensas.`,
     android: {
       channelId:   CHANNEL_ID,
@@ -44,7 +44,7 @@ export async function notifyFocusComplete(questLabel: string): Promise<void> {
 
 export async function notifyLevelUp(newLevel: number): Promise<void> {
   await notifee.displayNotification({
-    title: `🎖 EVOLUÇÃO — Nível ${newLevel}`,
+    title: `EVOLUÇÃO — Nível ${newLevel}`,
     body:  'Os teus atributos foram atualizados pelo Sistema.',
     android: {
       channelId: CHANNEL_ID,
@@ -97,7 +97,7 @@ export async function scheduleFocusCompletionNotification(
 
   pendingTriggerNotifId = await notifee.createTriggerNotification(
     {
-      title: '⚡ Foco Concluído!',
+      title: 'Foco Concluído',
       body:  `O foco na missão "${questLabel}" foi concluído. Recolhe as tuas recompensas.`,
       android: {
         channelId:   CHANNEL_ID,
@@ -123,7 +123,7 @@ const POMODORO_BREAK_END_ID = 'pomodoro_break_end';
 /** Immediate notification when a work cycle ends and break starts. */
 export async function notifyPomodoroBreakStarted(cycle: number, breakMins: number): Promise<void> {
   await notifee.displayNotification({
-    title: `☕ CICLO ${cycle} CONCLUÍDO — PAUSA`,
+    title: `CICLO ${cycle} CONCLUÍDO — PAUSA`,
     body: `Pausa de ${breakMins} min iniciada. Descansa e volta ao trabalho.`,
     android: {
       channelId: CHANNEL_ID,
@@ -146,7 +146,7 @@ export async function schedulePomodoroBreakEndNotification(
   await notifee.createTriggerNotification(
     {
       id: POMODORO_BREAK_END_ID,
-      title: `⚡ CICLO ${nextCycle} — HORA DE TRABALHAR`,
+      title: `CICLO ${nextCycle} — HORA DE TRABALHAR`,
       body: 'A pausa terminou. O próximo ciclo Pomodoro está pronto.',
       android: {
         channelId: CHANNEL_ID,
@@ -175,7 +175,7 @@ export async function scheduleSideQuestNotification(
   await notifee.createTriggerNotification(
     {
       id,
-      title: '⚡ Lembrete de Missão',
+      title: 'Lembrete de Missão',
       body:  `A missão "${title}" ainda aguarda conclusão.`,
       android: {
         channelId:   CHANNEL_ID,
@@ -224,7 +224,7 @@ export async function scheduleSystemWarnings(): Promise<void> {
     await notifee.createTriggerNotification(
       {
         id:    slot.id,
-        title: '⚠ Aviso do Sistema',
+        title: 'Aviso do Sistema',
         body:  slot.body,
         android: {
           channelId:   CHANNEL_ID,

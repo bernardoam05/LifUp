@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import SoloLevelingModal from './SoloLevelingModal';
+import SystemModal from './SystemModal';
 import { FONT, SPACING } from '../theme';
 import { playSound } from '../utils/audioService';
 import { CATALOG_MAP } from '../data/shopItems';
@@ -54,7 +54,7 @@ export default function BossVictoryModal({
   }, [visible]);
 
   return (
-    <SoloLevelingModal transparent visible={visible} onRequestClose={onRequestClose}>
+    <SystemModal transparent visible={visible} onRequestClose={onRequestClose}>
       <View style={bv.card}>
         <Icon name="sword" size={48} color={C.gold} style={{ marginBottom: SPACING.sm }} />
         <Text style={bv.header}>BOSS DERROTADO!</Text>
@@ -112,6 +112,6 @@ export default function BossVictoryModal({
           <Text style={bv.btnTxt}>CONTINUAR</Text>
         </TouchableOpacity>
       </View>
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }

@@ -82,6 +82,10 @@ export const INITIAL_SETTINGS: GameSettings = {
 export const INITIAL_SHOP_STOCKS: Record<string, number> = {
   system_pass: 5,
   lagrima_purificacao: 3,
+  evolution_shard_common: 10,
+  void_crystal: 2,
+  beast_core: 2,
+  phantom_essence: 2,
 };
 
 export const INITIAL_PLAYER: Player = {
@@ -107,6 +111,7 @@ export const INITIAL_PLAYER: Player = {
 export type ShadowEntry = {
   id: string
   level: number
+  copies?: number      // accumulated duplicate copies — consumed when leveling up
   isFavorite?: boolean
 }
 
@@ -161,6 +166,8 @@ export type Statistics = {
   pomodoroSessionsToday: number
   /** Total Pomodoro cycles ever completed */
   totalPomodoroSessions: number
+  /** All-time highest login streak ever reached */
+  maxStreakReached: number
 }
 
 export const INITIAL_STATS: Statistics = {
@@ -175,6 +182,81 @@ export const INITIAL_STATS: Statistics = {
   totalSideCompleted: 0,
   pomodoroSessionsToday: 0,
   totalPomodoroSessions: 0,
+  maxStreakReached: 0,
+};
+
+// ── Calendar ───────────────────────────────────────────────────────────────────
+
+export type CalendarReward =
+  | { type: 'gold'; amount: number }
+  | { type: 'item'; itemId: string; quantity: number }
+  | { type: 'shadow'; shadowId: string }
+
+export type CalendarDayEntry = {
+  day: number
+  reward: CalendarReward
+  claimed: boolean
+}
+
+export type CalendarState = {
+  /** 0-indexed page. Page 0 = days 1-30, page 1 = days 31-60, etc. */
+  page: number
+  days: CalendarDayEntry[]
+  /** 'YYYY-MM-DD' of last successful claim. Empty string if never claimed. */
+  lastClaimDate: string
+  /** Whether the user already claimed today's reward. Resets each day. */
+  claimedToday: boolean
+}
+
+/** Base 30-day reward pattern (day numbers are 1-relative within a page) */
+export const CALENDAR_REWARDS: Omit<CalendarDayEntry, 'claimed'>[] = [
+  { day: 1,  reward: { type: 'gold', amount: 50 } },
+  { day: 2,  reward: { type: 'item', itemId: 'shadow_essence', quantity: 1 } },
+  { day: 3,  reward: { type: 'gold', amount: 75 } },
+  { day: 4,  reward: { type: 'item', itemId: 'loot_box', quantity: 1 } },
+  { day: 5,  reward: { type: 'gold', amount: 100 } },
+  { day: 6,  reward: { type: 'item', itemId: 'relogio_ampulheta', quantity: 1 } },
+  { day: 7,  reward: { type: 'gold', amount: 150 } },
+  { day: 8,  reward: { type: 'item', itemId: 'shadow_essence', quantity: 1 } },
+  { day: 9,  reward: { type: 'gold', amount: 100 } },
+  { day: 10, reward: { type: 'item', itemId: 'loot_box', quantity: 1 } },
+  { day: 11, reward: { type: 'gold', amount: 150 } },
+  { day: 12, reward: { type: 'item', itemId: 'lagrima_purificacao', quantity: 1 } },
+  { day: 13, reward: { type: 'gold', amount: 200 } },
+  { day: 14, reward: { type: 'item', itemId: 'shadow_essence', quantity: 2 } },
+  { day: 15, reward: { type: 'shadow', shadowId: 'calendar_knight' } },
+  { day: 16, reward: { type: 'gold', amount: 200 } },
+  { day: 17, reward: { type: 'item', itemId: 'loot_box', quantity: 1 } },
+  { day: 18, reward: { type: 'gold', amount: 250 } },
+  { day: 19, reward: { type: 'item', itemId: 'shadow_essence', quantity: 1 } },
+  { day: 20, reward: { type: 'item', itemId: 'blood_fallen', quantity: 1 } },
+  { day: 21, reward: { type: 'gold', amount: 300 } },
+  { day: 22, reward: { type: 'item', itemId: 'loot_box', quantity: 1 } },
+  { day: 23, reward: { type: 'gold', amount: 250 } },
+  { day: 24, reward: { type: 'item', itemId: 'shadow_essence', quantity: 2 } },
+  { day: 25, reward: { type: 'item', itemId: 'lagrima_purificacao', quantity: 1 } },
+  { day: 26, reward: { type: 'gold', amount: 300 } },
+  { day: 27, reward: { type: 'item', itemId: 'loot_box', quantity: 1 } },
+  { day: 28, reward: { type: 'gold', amount: 350 } },
+  { day: 29, reward: { type: 'item', itemId: 'shadow_essence', quantity: 2 } },
+  { day: 30, reward: { type: 'shadow', shadowId: 'calendar_marshal' } },
+];
+
+/** Generate a page of 30 days with absolute day numbers (page 0 = 1-30, page 1 = 31-60, ...) */
+export function generateCalendarPage(page: number): CalendarDayEntry[] {
+  const offset = page * 30;
+  return CALENDAR_REWARDS.map(r => ({
+    day: r.day + offset,
+    reward: r.reward,
+    claimed: false,
+  }));
+}
+
+export const INITIAL_CALENDAR: CalendarState = {
+  page: 0,
+  days: generateCalendarPage(0),
+  lastClaimDate: '',
+  claimedToday: false,
 };
 
 // ── Player ─────────────────────────────────────────────────────────────────────
@@ -328,6 +410,7 @@ export type GameState = {
   }[]
   newAchievementIds: string[]
   currentLootReward: { type: string; title: string; gold: number; xp: number; items: string[] } | null
+  calendarState: CalendarState
 }
 
 export type TriggerPayload = Record<string, unknown>
@@ -414,6 +497,8 @@ export type GameActions = {
   resetExtraction: () => void
   dismissAchievement: () => void
   setPomodoroState: (phase: 'idle' | 'work' | 'break', cycle: number, breakEnd: number) => void
+  claimCalendarDay: (day: number) => void
+  upgradeShadow: (shadowId: string) => boolean
 }
 
 // ── StoreRef (used by achievement helpers) ─────────────────────────────────────

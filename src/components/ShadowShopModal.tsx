@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Shadow, ShadowRank, SHADOW_RANK_COLOR } from '../data/shadows_types';
 import { SHADOWS_SHOP } from '../data/shadows_shop';
 import { FONT, SPACING } from '../theme';
-import SoloLevelingModal from './SoloLevelingModal';
+import SystemModal from './SystemModal';
 
 interface ShadowShopModalProps {
   visible: boolean
@@ -24,7 +24,7 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
   const filteredShadows = SHADOWS_SHOP.filter(sh => sh.rank === selectedRank);
 
   return (
-    <SoloLevelingModal
+    <SystemModal
       visible={visible}
       onRequestClose={onClose}
     >
@@ -101,7 +101,7 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
           )}
         </ScrollView>
       </View>
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }
 

@@ -48,23 +48,23 @@ export const SHADOWS_BOSS_MIXED: Shadow[] = [
   }),
 
   // Portais normais — drops temáticos (ids únicos; não duplicam gacha)
-  bossDrop('normal_boss_kasaka', {
-    id: 'quest_normal_boss_kasaka',
-    name: 'Eco Venenoso de Kasaka',
+  bossDrop('normal_boss_viper', {
+    id: 'quest_normal_boss_viper',
+    name: 'Eco Venenoso da Víbora',
     rank: 'Commander',
     type: 'Beast',
     passiveEffect: { type: 'boss_bonus_xp', value: 0.12, description: '+12% XP extra em Boss Raids' },
-    lore: '"Fragmento do veneno que não perdoa. A serpente lembra-se do caçador."',
+    lore: '"Fragmento do veneno que não perdoa. A víbora lembra-se do caçador."',
     icon: 'snake',
     color: '#f59e0b',
   }),
-  bossDrop('normal_boss_igris', {
-    id: 'quest_normal_boss_igris',
-    name: 'Voto de Igris',
+  bossDrop('normal_boss_crimson_knight', {
+    id: 'quest_normal_boss_crimson_knight',
+    name: 'Voto do Cavaleiro Carmesim',
     rank: 'Commander',
     type: 'Warrior',
     passiveEffect: { type: 'xp_boost', value: 0.10, description: '+10% XP em todas as missões' },
-    lore: '"O trono vazio ainda exige lealdade. A lâmina obedece ao foco absoluto."',
+    lore: '"O trono sombrio ainda exige lealdade. A lâmina obedece ao foco absoluto."',
     icon: 'sword-cross',
     color: '#f59e0b',
   }),

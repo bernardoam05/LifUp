@@ -77,7 +77,6 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
   const hardcoreActive  = useGameStore(s => s.system.hardcoreFocusMode);
   const triggerEvent    = useGameStore(s => s.triggerEvent);
   const openLootBox     = useGameStore(s => s.openLootBox);
-  const applyBuff       = useGameStore(s => s.applyBuff);
   const resetExtraction = useGameStore(s => s.resetExtraction);
 
   const [confirmUse, setConfirmUse] = useState(false);
@@ -86,7 +85,15 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
 
   if (!item) {return null;}
 
+  // Upgrade materials (shadow evolution) can only be used in the Shadows screen
+  const isUpgradeMaterial = item.effect === 'material' && !item.buffStat && itemId !== 'shadow_essence';
+
   function handleUse() {
+    if (isUpgradeMaterial) {
+      setFeedback('Material de evolução — usa no ecrã de Sombras para evoluir');
+      setTimeout(() => setFeedback(null), 3500);
+      return;
+    }
     if (item.effect === 'skip_quest') {
       setShowPicker(true);
     } else {
@@ -159,14 +166,11 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
         if (itemId === 'shadow_essence') {
           setFeedback('O Sistema cedeu! Uma nova sombra foi invocada.');
         } else if (item.buffStat && item.buffMult && item.buffDuration) {
-          const pct = Math.round(item.buffMult * 100);
+          const pct = Math.round((item.buffMult - 1) * 100);
           const stat = item.buffStat === 'xp' ? 'XP' : 'Gold';
           const mins = item.buffDuration / 60_000;
           const timeLabel = mins >= 60 ? `${mins / 60}h` : `${mins}min`;
-          applyBuff(
-            { id: itemId, label: item.name, multiplier: item.buffMult, stat: item.buffStat },
-            item.buffDuration
-          );
+          // Buff is applied by the store's useInventoryItem — no duplicate needed here
           setFeedback(`Buff ativo: +${pct}% ${stat} por ${timeLabel}!`);
         } else {
           setFeedback('Consumível ativado!');
@@ -207,17 +211,26 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
       <View style={ic.info}>
         <Text style={[ic.name, { color: item.color }]}>{item.name.toUpperCase()}</Text>
         <Text style={[ic.desc, { color: C.text.secondary }]} numberOfLines={2}>{item.description}</Text>
+        {isUpgradeMaterial && !feedback && (
+          <View style={ic.upgradeBadge}>
+            <Icon name="sword-cross" size={8} color={C.neonBlue} />
+            <Text style={ic.upgradeTxt}> Usa em Sombras para evoluir</Text>
+          </View>
+        )}
         {feedback && (
-          <Text style={[ic.feedback, { color: item.color }]}>{feedback}</Text>
+          <Text style={[ic.feedback, { color: isUpgradeMaterial ? C.neonBlue : item.color }]}>{feedback}</Text>
         )}
       </View>
 
       <TouchableOpacity
-        style={[ic.useBtn, { borderColor: item.color + '66', backgroundColor: item.color + '10' }, breakHardcoreDisabled && ic.useBtnDisabled]}
+        style={[ic.useBtn, isUpgradeMaterial ? { borderColor: C.neonBlue + '44', backgroundColor: C.neonBlue + '10' } : { borderColor: item.color + '66', backgroundColor: item.color + '10' }, breakHardcoreDisabled && ic.useBtnDisabled]}
         onPress={handleUse}
         disabled={quantity === 0 || breakHardcoreDisabled}
       >
-        <Text style={[ic.useTxt, { color: breakHardcoreDisabled ? C.dimmed : item.color }]}>USAR</Text>
+        {isUpgradeMaterial
+          ? <Icon name="ghost" size={14} color={C.neonBlue} />
+          : <Text style={[ic.useTxt, { color: breakHardcoreDisabled ? C.dimmed : item.color }]}>USAR</Text>
+        }
       </TouchableOpacity>
 
       {/* Confirm use */}
@@ -394,6 +407,8 @@ const getICStyles = (C: any) => StyleSheet.create({
   name: { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '900', marginBottom: 4, letterSpacing: 1 },
   desc: { color: C.muted, fontSize: 10, lineHeight: 14 },
   feedback: { fontSize: 10, marginTop: 4, fontFamily: FONT.orbitron, letterSpacing: 0.5 },
+  upgradeBadge: { flexDirection: 'row', alignItems: 'center', marginTop: 4, backgroundColor: C.neonBlue + '12', borderRadius: 4, borderWidth: 1, borderColor: C.neonBlue + '33', paddingHorizontal: 4, paddingVertical: 2, alignSelf: 'flex-start' },
+  upgradeTxt: { color: C.neonBlue, fontSize: 8, fontFamily: FONT.orbitron },
   useBtn: {
     borderWidth: 1,
     borderRadius: 4,

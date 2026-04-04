@@ -196,8 +196,8 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     icon: 'undo-variant', color: '#06b6d4', isSecret: true, rewardGold: 35,
   },
   {
-    id: 'focus_igris', title: 'Trono Conquistado',
-    description: 'Completa o desafio Boss "O Trono de Igris" (90 min de foco).',
+    id: 'focus_crimson_knight', title: 'Trono Conquistado',
+    description: 'Completa o desafio Boss "O Voto do Cavaleiro" (90 min de foco).',
     category: 'boss', conditionType: 'boss_focus_completed',
     icon: 'timer-sand', color: '#a855f7', isSecret: false, rewardGold: 120,
   },
@@ -224,7 +224,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
   },
   {
     id: 'boss_runner', title: 'O Veneno Não Me Alcança',
-    description: 'Completa o Boss "Veneno de Kasaka" (5km GPS run).',
+    description: 'Completa o Boss "Veneno da Víbora" (5km GPS run).',
     category: 'boss', conditionType: 'boss_gps_completed',
     icon: 'run-fast', color: '#22c55e', isSecret: false, rewardGold: 130,
   },
@@ -613,7 +613,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
   },
   {
     id: 'secret_all_bosses', title: 'Caçador Completo',
-    description: 'Completa um boss de cada tipo: GPS (Kasaka), Foco (Igris) e Treino (Cerberus).',
+    description: 'Completa um boss de cada tipo: GPS (Víbora), Foco (Cavaleiro) e Treino (Cerberus).',
     category: 'secret', conditionType: 'boss_defeated',
     icon: 'sword', color: '#f59e0b', isSecret: true, rewardGold: 500,
   },

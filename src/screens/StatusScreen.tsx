@@ -18,6 +18,7 @@ const KNOWN_SAFE = new Set([
   'lock-outline','check-circle','star-circle-outline','trophy-outline','timer-sand',
   'cash-multiple','check',
   'snowflake','skull','weather-sunny','star-four-points','heart','mask','rabbit','flower','corn','dragon',
+  'key-variant','gift-outline','calendar-month','gift',
 ]);
 
 function SafeIcon({ name, size, color, style }: { name: string; size: number; color: string; style?: object }) {
@@ -25,13 +26,14 @@ function SafeIcon({ name, size, color, style }: { name: string; size: number; co
   return <Icon name={safeName} size={size} color={color} style={style} />;
 }
 import useGameStore, { getRank, xpForLevel, RankKey, LevelUpReward, CLASS_REQUIREMENTS } from '../store/useGameStore';
+import type { CalendarReward } from '../store/types';
 import { getJobClass } from '../store/helpers';
 import {
   ACHIEVEMENTS_CATALOG, Achievement, AchievementProg,
   TIER_COLORS, getActiveTier, getCompletedTier, isAchievementMaxed, getTierIndex,
 } from '../data/achievements';
 import { SHADOW_MAP, SHADOW_RANK_COLOR } from '../data/shadows';
-import SoloLevelingModal from '../components/SoloLevelingModal';
+import SystemModal from '../components/SystemModal';
 import { useTheme, FONT, SPACING, RANK_COLORS as THEME_RANK_COLORS } from '../theme';
 import RankModal from '../components/RankModal';
 
@@ -180,7 +182,7 @@ function AchievementDetailModal({
     : (done ? 100 : 0);
 
   return (
-    <SoloLevelingModal visible onRequestClose={onClose}>
+    <SystemModal visible onRequestClose={onClose}>
       <View style={[am.card, { borderColor: cardColor + '66' }]}>
 
           {/* Header */}
@@ -301,7 +303,7 @@ function AchievementDetailModal({
           )}
 
         </View>
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }
 
@@ -368,7 +370,7 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
   ).length;
 
   return (
-    <SoloLevelingModal visible={visible} onRequestClose={onClose}>
+    <SystemModal visible={visible} onRequestClose={onClose}>
       <View style={ac.modalCard}>
         <View style={ac.modalHeader}>
           <Icon name="trophy-outline" size={12} color={C.gold} />
@@ -440,7 +442,7 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
           })}
         </ScrollView>
       </View>
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }
 
@@ -449,7 +451,7 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
 export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { visible?: boolean; reward: LevelUpReward; onClose: () => void; C: any }) {
   const lm = getLMStyles(C); // Assuming getLMStyles is defined later
   return (
-    <SoloLevelingModal visible={visible} onRequestClose={onClose}>
+    <SystemModal visible={visible} onRequestClose={onClose}>
       <View style={lm.card}>
 
           <Text style={lm.title}>[ LEVEL UP ]</Text>
@@ -485,7 +487,7 @@ export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { vis
           </TouchableOpacity>
 
       </View>
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }
 
@@ -493,7 +495,7 @@ export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { vis
 export function JobChangeModal({ visible = true, job, onClose, C }: { visible?: boolean; job: any; onClose: () => void; C: any }) {
   const lm = getLMStyles(C);
   return (
-    <SoloLevelingModal visible={visible} onRequestClose={onClose}>
+    <SystemModal visible={visible} onRequestClose={onClose}>
       <View style={[lm.card, { borderColor: job.color + 'aa' }]}>
         <Text style={[lm.title, { color: job.color }]}>[ CLASSE ALTERADA ]</Text>
         <Icon name="medal" size={60} color={job.color} style={{ marginVertical: SPACING.md }} />
@@ -506,7 +508,181 @@ export function JobChangeModal({ visible = true, job, onClose, C }: { visible?: 
           <Text style={[lm.btnTxt, { color: job.color }]}>[ ACEITAR PODER ]</Text>
         </TouchableOpacity>
       </View>
-    </SoloLevelingModal>
+    </SystemModal>
+  );
+}
+
+// ── Calendar helpers (shared between summary and modal) ───────────────────────
+
+function calRewardIcon(r: CalendarReward) {
+  if (r.type === 'gold') {return 'rhombus';}
+  if (r.type === 'item') {return CATALOG_MAP[r.itemId]?.icon ?? 'gift-outline';}
+  return 'ghost';
+}
+function calRewardColor(r: CalendarReward, C: any) {
+  if (r.type === 'gold') {return C.gold;}
+  if (r.type === 'item') {return CATALOG_MAP[r.itemId]?.color ?? C.neonBlue;}
+  return C.purple;
+}
+function calRewardLabel(r: CalendarReward) {
+  if (r.type === 'gold') {return `+${r.amount}G`;}
+  if (r.type === 'item') {
+    const item = CATALOG_MAP[r.itemId];
+    const name = (item?.name ?? r.itemId).slice(0, 8);
+    return r.quantity > 1 ? `${r.quantity}× ${name}` : name;
+  }
+  const smap = SHADOW_MAP as Record<string, { name: string }>;
+  return (smap[r.shadowId]?.name ?? r.shadowId).slice(0, 8);
+}
+
+// ── Calendar full modal ────────────────────────────────────────────────────────
+
+function CalendarModal({ visible, onClose, C }: { visible: boolean; onClose: () => void; C: any }) {
+  const cp = getCalStyles(C);
+  const calendarState = useGameStore(st => st.calendarState);
+  const claimCalendarDay = useGameStore(st => st.claimCalendarDay);
+  const extractionDone = useGameStore(st => st.system.extractionDoneToday);
+
+  const { days, page, claimedToday } = calendarState;
+  const firstUnclaimed = days.find(d => !d.claimed);
+  const canClaim = extractionDone && !claimedToday && !!firstUnclaimed;
+  const claimableDay = canClaim ? firstUnclaimed!.day : null;
+  const claimedCount = days.filter(d => d.claimed).length;
+
+  return (
+    <SystemModal visible={visible} onRequestClose={onClose}>
+      <View style={cp.modalCard}>
+        {/* Header */}
+        <View style={cp.modalHeader}>
+          <Icon name="calendar-star" size={14} color={C.gold} />
+          <Text style={[cp.title, { flex: 1 }]}> CALENDÁRIO DE LOGIN</Text>
+          <View style={cp.progressBadge}>
+            <Text style={cp.progressTxt}>{claimedCount}/30</Text>
+          </View>
+          {page > 0 && <Text style={[cp.month, { marginLeft: SPACING.sm }]}>PÁG.{page + 1}</Text>}
+          <TouchableOpacity onPress={onClose} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={{ marginLeft: SPACING.sm }}>
+            <Icon name="close" size={16} color={C.dimmed} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={cp.modalDivider} />
+
+        {!extractionDone && (
+          <View style={cp.frozenBanner}>
+            <Icon name="ghost" size={11} color={C.neonBlue} />
+            <Text style={cp.frozenText}> Faz a Extração diária primeiro para recolher a recompensa</Text>
+          </View>
+        )}
+        {extractionDone && claimedToday && (
+          <View style={[cp.frozenBanner, { borderColor: C.green + '44' }]}>
+            <Icon name="check-circle" size={11} color={C.green} />
+            <Text style={[cp.frozenText, { color: C.green }]}> Recompensa recolhida hoje!</Text>
+          </View>
+        )}
+
+        {/* Grid */}
+        <View style={cp.grid}>
+          {days.map(entry => {
+            const isClaimed = entry.claimed;
+            const isClaimable = entry.day === claimableDay;
+            const rc = calRewardColor(entry.reward, C);
+            return (
+              <TouchableOpacity
+                key={entry.day}
+                style={[
+                  cp.cell,
+                  isClaimed && cp.cellClaimed,
+                  isClaimable && { borderColor: C.gold + '99', backgroundColor: C.gold + '12' },
+                ]}
+                onPress={() => isClaimable && claimCalendarDay(entry.day)}
+                disabled={!isClaimable}
+                activeOpacity={isClaimable ? 0.7 : 1}
+              >
+                <Text style={[cp.dayNum, isClaimed && { color: C.dimmed }]}>{entry.day}</Text>
+                {isClaimed
+                  ? <Icon name="check" size={11} color={C.green} />
+                  : <Icon name={calRewardIcon(entry.reward)} size={11} color={isClaimable ? rc : C.dimmed} />
+                }
+                <Text style={[cp.rewardLabel, { color: isClaimed ? C.dimmed : isClaimable ? rc : C.dimmed }]} numberOfLines={1}>
+                  {calRewardLabel(entry.reward)}
+                </Text>
+                {!isClaimed && !isClaimable && (
+                  <View style={cp.lockWrap}><Icon name="lock-outline" size={8} color={C.dimmed} /></View>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Claim button */}
+        {claimableDay ? (
+          <TouchableOpacity
+            style={[cp.claimBtn, { borderColor: C.gold }]}
+            onPress={() => claimCalendarDay(claimableDay)}
+            activeOpacity={0.8}
+          >
+            <Icon name="gift-outline" size={14} color={C.gold} />
+            <Text style={[cp.claimBtnTxt, { color: C.gold }]}> RECOLHER DIA {claimableDay}</Text>
+          </TouchableOpacity>
+        ) : claimedCount === 30 ? (
+          <View style={[cp.claimBtn, { borderColor: C.green + '66', backgroundColor: C.green + '10' }]}>
+            <Icon name="check-circle" size={14} color={C.green} />
+            <Text style={[cp.claimBtnTxt, { color: C.green }]}> CICLO COMPLETO!</Text>
+          </View>
+        ) : null}
+      </View>
+    </SystemModal>
+  );
+}
+
+// ── Calendar summary button (compact, opens modal) ────────────────────────────
+
+function CalendarSummaryButton({ onOpen, C }: { onOpen: () => void; C: any }) {
+  const cp = getCalStyles(C);
+  const calendarState = useGameStore(st => st.calendarState);
+  const extractionDone = useGameStore(st => st.system.extractionDoneToday);
+
+  const { days, claimedToday } = calendarState;
+  const firstUnclaimed = days.find(d => !d.claimed);
+  const canClaim = extractionDone && !claimedToday && !!firstUnclaimed;
+  const claimedCount = days.filter(d => d.claimed).length;
+  const nextReward = firstUnclaimed?.reward;
+
+  return (
+    <TouchableOpacity style={cp.summaryBtn} onPress={onOpen} activeOpacity={0.75}>
+      <View style={cp.summaryRow}>
+        <Icon name="calendar-star" size={12} color={C.gold} />
+        <Text style={cp.title}> CALENDÁRIO DE LOGIN</Text>
+        <View style={cp.progressBadge}>
+          <Text style={cp.progressTxt}>{claimedCount}/30</Text>
+        </View>
+        <Icon name="chevron-right" size={16} color={C.muted} style={{ marginLeft: 'auto' }} />
+      </View>
+
+      {/* Next reward preview */}
+      <View style={cp.summaryPreview}>
+        {nextReward ? (
+          <View style={cp.nextRewardRow}>
+            <Icon name="gift-outline" size={11} color={C.gold} />
+            <Text style={cp.nextRewardTxt}> Próximo (dia {firstUnclaimed!.day}): </Text>
+            <Icon name={calRewardIcon(nextReward)} size={11} color={calRewardColor(nextReward, C)} />
+            <Text style={[cp.nextRewardTxt, { color: calRewardColor(nextReward, C) }]}> {calRewardLabel(nextReward)}</Text>
+            {canClaim && (
+              <View style={cp.claimBadge}>
+                <Text style={cp.claimBadgeTxt}>DISPONÍVEL</Text>
+              </View>
+            )}
+            {!extractionDone && (
+              <View style={[cp.claimBadge, { backgroundColor: C.neonBlue + '22', borderColor: C.neonBlue + '55' }]}>
+                <Text style={[cp.claimBadgeTxt, { color: C.neonBlue }]}>EXTRAÇÃO 1ª</Text>
+              </View>
+            )}
+          </View>
+        ) : (
+          <Text style={[cp.nextRewardTxt, { color: C.green }]}>Ciclo completo! Novo ciclo amanhã.</Text>
+        )}
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -540,6 +716,7 @@ export default function StatusScreen() {
   const [showRankInfo, setShowRankInfo] = useState(false);
   const [showHistory,  setShowHistory]  = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
@@ -619,6 +796,9 @@ export default function StatusScreen() {
         {/* Statistics Panel */}
         <StatisticsPanel C={C} />
 
+        {/* Login Calendar — compact button, opens full modal */}
+        <CalendarSummaryButton onOpen={() => setShowCalendar(true)} C={C} />
+
         {/* Achievements Panel */}
         <AchievementsPanel onOpen={() => setShowAchievements(true)} C={C} />
 
@@ -694,6 +874,7 @@ export default function StatusScreen() {
 
       <MissionHistoryModal visible={showHistory} onClose={() => setShowHistory(false)} C={C} />
 
+      <CalendarModal visible={showCalendar} onClose={() => setShowCalendar(false)} C={C} />
 
       {/* Modals are now handled globally in App.tsx rewardsQueue */}
 
@@ -847,6 +1028,38 @@ const getAMStyles = (C: any) => StyleSheet.create({
   tierRowTarget: { flex: 1, fontFamily: FONT.orbitron, fontSize: 9 },
   tierRowReward: { fontFamily: FONT.orbitron, fontSize: 8 },
   maxLabel:      { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center', marginTop: 4 },
+});
+
+const getCalStyles = (C: any) => StyleSheet.create({
+  // Shared
+  title:        { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+  month:        { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8 },
+  progressBadge:{ backgroundColor: C.gold + '22', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: C.gold + '44' },
+  progressTxt:  { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9 },
+  frozenBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.neonBlue + '12', borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  frozenText:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 8, flex: 1 },
+  grid:         { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: SPACING.sm },
+  cell:         { width: '18%', backgroundColor: C.bg, borderRadius: 4, borderWidth: 1, borderColor: C.border, alignItems: 'center', justifyContent: 'center', paddingVertical: 6, paddingHorizontal: 2, position: 'relative', minHeight: 56 },
+  cellClaimed:  { borderColor: C.green + '33', backgroundColor: C.green + '08', opacity: 0.55 },
+  dayNum:       { color: C.muted, fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '900', marginBottom: 2 },
+  rewardLabel:  { fontFamily: FONT.orbitron, fontSize: 6, marginTop: 2, textAlign: 'center' },
+  lockWrap:     { position: 'absolute', bottom: 2, right: 3 },
+  claimBtn:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderRadius: 4, paddingVertical: 10, gap: SPACING.sm, backgroundColor: C.gold + '10' },
+  claimBtnTxt:  { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', letterSpacing: 1 },
+
+  // Summary button
+  summaryBtn:     { backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.md, marginBottom: SPACING.lg },
+  summaryRow:     { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  summaryPreview: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 2 },
+  nextRewardRow:  { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 2 },
+  nextRewardTxt:  { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9 },
+  claimBadge:     { backgroundColor: C.gold + '22', borderRadius: 3, paddingHorizontal: 5, paddingVertical: 2, borderWidth: 1, borderColor: C.gold + '55', marginLeft: SPACING.sm },
+  claimBadgeTxt:  { color: C.gold, fontFamily: FONT.orbitron, fontSize: 7, fontWeight: '900' },
+
+  // Full modal
+  modalCard:      { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg },
+  modalHeader:    { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
+  modalDivider:   { height: 1, backgroundColor: C.border, marginBottom: SPACING.md },
 });
 
 const getLMStyles = (C: any) => StyleSheet.create({

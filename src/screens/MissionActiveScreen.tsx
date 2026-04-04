@@ -145,7 +145,6 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
       visible
       onClose={onClose}
       contentStyle={{ backgroundColor: 'transparent' }}
-      useNativeModal={false}
     >
       <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
         <View style={[s.card, { paddingBottom: Math.max(SPACING.md, insets.bottom + SPACING.sm) }]}>

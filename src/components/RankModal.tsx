@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ScrollView } from 'react-native';
-import SoloLevelingModal from './SoloLevelingModal';
+import SystemModal from './SystemModal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useGameStore, { getRank, CLASS_REQUIREMENTS } from '../store/useGameStore';
 import { FONT } from '../theme';
@@ -61,7 +61,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
   const displayRank = (isRankingUp ? qualifiedRankInfo : currentRankInfo) as { rank: string; label: string; color: string; bgColor: string };
 
   return (
-    <SoloLevelingModal visible={visible} onRequestClose={onClose}>
+    <SystemModal visible={visible} onRequestClose={onClose}>
       <Animated.View style={[s.card, { borderColor: displayRank.color + '55', transform: [{ scale: scaleAnim }] }]}>
         <View style={s.headerRow}>
           <Icon name="shield-star-outline" size={12} color={displayRank.color} />
@@ -147,7 +147,10 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
 
             {canRankUp ? (
               <View style={[s.rankUpAction, { borderColor: qualifiedRankInfo.color }]}>
-                <Text style={s.warningText}>⚠ AVISO GERAL: Subir de classe vai aumentar a dificuldade das missões sugeridas.</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 5, marginBottom: 12 }}>
+                  <Icon name="alert-outline" size={11} color={C.neonRed} style={{ marginTop: 1 }} />
+                  <Text style={[s.warningText, { marginBottom: 0, flex: 1, textAlign: 'left' }]}>AVISO GERAL: Subir de classe vai aumentar a dificuldade das missões sugeridas.</Text>
+                </View>
                 <Animated.View style={{
                   shadowColor: qualifiedRankInfo.color,
                   shadowOffset: { width: 0, height: 0 },
@@ -172,7 +175,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
         )}
         </ScrollView>
       </Animated.View>
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }
 

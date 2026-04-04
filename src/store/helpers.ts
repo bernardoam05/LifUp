@@ -99,15 +99,15 @@ export const CLASS_REQUIREMENTS = [
 
 export function getNewLevelKeys(currentKeys: string[], level: number): string[] {
   const newKeys = [...(currentKeys || [])];
-  if (level >= 5 && !newKeys.includes('key_kasaka')) {newKeys.push('key_kasaka');}
-  if (level >= 10 && !newKeys.includes('key_baruka')) {newKeys.push('key_baruka');}
-  if (level >= 15 && !newKeys.includes('key_kargalgan')) {newKeys.push('key_kargalgan');}
+  if (level >= 5 && !newKeys.includes('key_swamp_viper')) {newKeys.push('key_swamp_viper');}
+  if (level >= 10 && !newKeys.includes('key_ice_realm')) {newKeys.push('key_ice_realm');}
+  if (level >= 15 && !newKeys.includes('key_orc_territory')) {newKeys.push('key_orc_territory');}
   if (level >= 20 && !newKeys.includes('key_vulcan')) {newKeys.push('key_vulcan');}
-  if (level >= 30 && !newKeys.includes('key_metus')) {newKeys.push('key_metus');}
-  if (level >= 40 && !newKeys.includes('key_beru')) {newKeys.push('key_beru');}
-  if (level >= 50 && !newKeys.includes('key_kamish')) {newKeys.push('key_kamish');}
-  if (level >= 70 && !newKeys.includes('key_statue_god')) {newKeys.push('key_statue_god');}
-  if (level >= 100 && !newKeys.includes('key_ashborn')) {newKeys.push('key_ashborn');}
+  if (level >= 30 && !newKeys.includes('key_soul_realm')) {newKeys.push('key_soul_realm');}
+  if (level >= 40 && !newKeys.includes('key_swarm_sovereign')) {newKeys.push('key_swarm_sovereign');}
+  if (level >= 50 && !newKeys.includes('key_calamity_drake')) {newKeys.push('key_calamity_drake');}
+  if (level >= 70 && !newKeys.includes('key_ancient_trial')) {newKeys.push('key_ancient_trial');}
+  if (level >= 100 && !newKeys.includes('key_void_monarch')) {newKeys.push('key_void_monarch');}
   return Array.from(new Set(newKeys));
 }
 
@@ -217,6 +217,53 @@ const SHADOW_RELEASE_BASE: Partial<Record<string, number>> = {
   Marshal: 3000,
 };
 
+// ── Shadow upgrade cost ────────────────────────────────────────────────────────
+
+export type UpgradeCost = {
+  gold: number
+  copies: number       // shadow copies to consume (0 = none required)
+  items: { itemId: string; quantity: number }[]
+}
+
+/**
+ * Returns the cost to upgrade a shadow from currentLevel to currentLevel+1.
+ *
+ * Copies needed (rarer = fewer required, since duplicates are harder to get):
+ *   Normal: 3 · Elite: 3 · Knight: 2 · Commander: 2 · Marshal: 1
+ *
+ * Evolution items only at milestone levels:
+ *   Every ×5 level: evolution_shard_common ×1
+ *   Every ×10 level (Knight+): additionally void_crystal ×1
+ */
+export function getShadowUpgradeCost(shadow: Shadow, currentLevel: number): UpgradeCost {
+  const GOLD_BASE: Record<string, number> = {
+    Normal: 100, Elite: 220, Knight: 500, Commander: 1000, Marshal: 2000,
+  };
+  const base = GOLD_BASE[shadow.rank] ?? 100;
+  const gold = Math.round(base * (1 + (currentLevel - 1) * 0.3));
+
+  // Copies required per level (rarer rank = fewer copies needed)
+  const COPIES_BY_RANK: Record<string, number> = {
+    Normal: 3, Elite: 3, Knight: 2, Commander: 2, Marshal: 1,
+  };
+  const copies = shadow.type === 'Custom' ? 0 : (COPIES_BY_RANK[shadow.rank] ?? 1);
+
+  // Evolution items only at milestone levels (every 5 levels)
+  const items: UpgradeCost['items'] = [];
+  const targetLevel = currentLevel + 1;
+  if (targetLevel % 5 === 0) {
+    items.push({ itemId: 'evolution_shard_common', quantity: 1 });
+  }
+  if (targetLevel % 10 === 0) {
+    const isHighRank = shadow.rank === 'Knight' || shadow.rank === 'Commander' || shadow.rank === 'Marshal';
+    if (isHighRank) {
+      items.push({ itemId: 'void_crystal', quantity: 1 });
+    }
+  }
+
+  return { gold, copies, items };
+}
+
 export function getShadowReleaseGold(shadow: Shadow, level: number): number {
   if (shadow.type === 'Custom') {return 0;}
   const base = SHADOW_RELEASE_BASE[shadow.rank as string] ?? 50;
@@ -262,7 +309,7 @@ export function computeActivePassives(
     const entry = shadows.find(e => e.id === id);
     const shadow = lookup[id];
     if (!entry || !shadow) {continue;}
-    const val = shadow.passiveEffect.value * (1 + (entry.level - 1) * 0.2);
+    const val = shadow.passiveEffect.value * (1 + (entry.level - 1) * 0.12);
 
     switch (shadow.passiveEffect.type) {
       case 'xp_boost': xpBoost += val; break;

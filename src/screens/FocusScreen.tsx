@@ -412,7 +412,7 @@ export default function FocusScreen() {
           notifyPomodoroBreakStarted(cycle, pomodoroBreakMins).catch(() => {});
           schedulePomodoroBreakEndNotification(breakEndMs, cycle + 1).catch(() => {});
           setAlertCfg({
-            title: `⚡ CICLO ${cycle} CONCLUÍDO!`,
+            title: `CICLO ${cycle} CONCLUÍDO`,
             message: `Pausa de ${pomodoroBreakMins} min iniciada. O próximo ciclo começa automaticamente.`,
             buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
           });
@@ -431,13 +431,13 @@ export default function FocusScreen() {
 
           if (isPenaltySession) {
             setAlertCfg({
-              title: '⛓️ PENITÊNCIA CONCLUÍDA',
+              title: 'PENITÊNCIA CONCLUÍDA',
               message: 'O tempo de foco obrigatório terminou. Podes voltar às batalhas e redimir as tuas falhas.',
               buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
             });
           } else {
             setAlertCfg({
-              title: '⚡ FOCO CONCLUÍDO',
+              title: 'FOCO CONCLUÍDO',
               message: 'O tempo de foco terminou. Regressa ao campo de batalha e reclama as tuas recompensas.',
               buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
             });
@@ -618,7 +618,7 @@ export default function FocusScreen() {
         // Session complete
         setPomodoroState('idle', 0, 0);
         setAlertCfg({
-          title: '🏆 SESSÃO POMODORO COMPLETA',
+          title: 'SESSÃO POMODORO COMPLETA',
           message: `Completaste ${pomodoroCycle} ciclos. Excelente trabalho!`,
           buttons: [{ text: 'FECHAR', style: 'destructive' }],
         });
@@ -762,7 +762,7 @@ export default function FocusScreen() {
     if (isPenaltyBlocking) {
       const hoursRemaining = penaltyRemainingH;
       setAlertCfg({
-        title: '🔒 FOCO TRAVADO PELA PENALIDADE',
+        title: 'FOCO TRAVADO PELA PENALIDADE',
         message: `Você está sob penalidade! Só pode sair do modo foco daqui a ${hoursRemaining}h.\nComplete as missões de penalização para se livrar mais rápido.`,
         buttons: [
           { text: 'Entendi', style: 'destructive' },
@@ -1297,7 +1297,7 @@ export default function FocusScreen() {
           </Text>
           <View style={s.batterySteps}>
             <Text style={s.batteryStep}>1. Definições → Apps → Gerir Apps</Text>
-            <Text style={s.batteryStep}>2. Procura "Arise" (ou Solo Leveling)</Text>
+            <Text style={s.batteryStep}>2. Procura "Arise" (ou LifUp)</Text>
             <Text style={s.batteryStep}>3. Bateria → Sem restrições</Text>
           </View>
           <Text style={s.batteryNote}>

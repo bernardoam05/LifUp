@@ -27,6 +27,9 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
   const xpNeeded = xpForLevel(player.level);
   const xpPct = Math.min((player.xp / xpNeeded) * 100, 100);
   const focusOn = useGameStore(s => s.system.focusModeActive);
+  const maxStreakReached = stats.maxStreakReached ?? 0;
+  const isRecordStreak = player.currentStreak > 0 && maxStreakReached > 0 && player.currentStreak >= maxStreakReached;
+  const fireColor = isRecordStreak ? '#facc15' : '#f97316';
 
   const hud = StyleSheet.create({
     container: {
@@ -49,9 +52,8 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
     xpText: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8 },
     focusTag: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1, fontWeight: '700' },
     gearBtn: { padding: 8, borderRadius: 4, backgroundColor: '#ffffff08' },
-    streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fbbf2415', borderWidth: 1, borderColor: '#fbbf2444', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 1, marginRight: 4 },
-    streakFire: { fontSize: 9 },
-    streakNum: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '900', marginLeft: 2 },
+    streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fbbf2415', borderWidth: 1, borderColor: '#fbbf2444', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, marginRight: 4, gap: 3 },
+    streakNum: { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '900' },
     rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonBlue, width: 14, height: 14, borderRadius: 7, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.bg },
     rankUpIndicatorText: { color: '#fff', fontSize: 9, fontWeight: '900' },
   });
@@ -73,9 +75,10 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
             <Text style={hud.level}> LVL {player.level}</Text>
             <View style={{ flex: 1 }} />
             {player.currentStreak > 0 && (
-              <View style={hud.streakBadge}>
-                <Text style={hud.streakFire}>🔥</Text>
-                <Text style={hud.streakNum}>{player.currentStreak}</Text>
+              <View style={[hud.streakBadge, isRecordStreak && { borderColor: fireColor + '88', backgroundColor: fireColor + '18' }]}>
+                <Icon name="fire" size={11} color={fireColor} />
+                <Text style={[hud.streakNum, { color: fireColor }]}>{player.currentStreak}</Text>
+                {isRecordStreak && <Icon name="trophy" size={9} color={C.gold} />}
               </View>
             )}
             <Icon name="rhombus" size={12} color={C.gold} />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FONT, SPACING } from '../theme';
-import SoloLevelingModal from './SoloLevelingModal';
+import SystemModal from './SystemModal';
 
 export type AlertButton = {
   text: string
@@ -34,7 +34,7 @@ export default function SystemAlertModal({
     : [{ text: 'OK', style: 'default' }];
 
   return (
-    <SoloLevelingModal visible={visible} onRequestClose={onClose} useNativeModal={useNativeModal}>
+    <SystemModal visible={visible} onRequestClose={onClose} useNativeModal={useNativeModal}>
       <View style={s.overlay}>
         <View style={s.card}>
           <Text style={s.title}>{title}</Text>
@@ -61,7 +61,7 @@ export default function SystemAlertModal({
           </View>
         </View>
       </View>
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }
 

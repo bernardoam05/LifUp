@@ -12,6 +12,7 @@ import { SHADOWS_BOSS_KEY } from './shadows_boss_key';
 import { SHADOWS_BOSS_RAID } from './shadows_boss_raid';
 import { SHADOWS_CUSTOM } from './shadows_custom';
 import { SHADOWS_BOSS_MIXED } from './shadows_boss_quest';
+import { SHADOWS_CALENDAR } from './shadows_calendar';
 
 export const SHADOW_DATABASE: Shadow[] = [
   ...SHADOWS_GACHA,
@@ -24,6 +25,7 @@ export const SHADOW_DATABASE: Shadow[] = [
   ...SHADOWS_BOSS_KEY,
   ...SHADOWS_BOSS_RAID,
   ...SHADOWS_CUSTOM,
+  ...SHADOWS_CALENDAR,
 ];
 
 export const SHADOW_MAP: Record<string, Shadow> =

@@ -9,7 +9,7 @@ import type { ExtractionResult } from '../store/useGameStore';
 import { useTheme, FONT, SPACING } from '../theme';
 import { playSound } from '../utils/audioService';
 
-import SoloLevelingModal from './SoloLevelingModal';
+import SystemModal from './SystemModal';
 
 // Rank labels
 const RANK_LABELS: Record<string, string> = {
@@ -99,7 +99,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
   const glowOpacity = glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] });
 
   return (
-    <SoloLevelingModal visible onRequestClose={onDismiss}>
+    <SystemModal visible onRequestClose={onDismiss}>
       <View style={st.centeredContent}>
         {/* Stage 1: ARISE Text overlay — only for new shadows (not level-up/achievement) */}
       {!isLevelUp && !isAchievement && (
@@ -172,15 +172,16 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
           <Text style={[st.passiveTxt, { color: rankColor }]}> {shadow.passiveEffect?.description ?? ''}</Text>
         </View>
 
-        {/* Level-up vs new soul reveal */}
+        {/* Copy obtained vs new soul reveal */}
         {isLevelUp ? (
           <View style={st.awakenBox}>
-            <Icon name="arrow-up-bold-circle" size={20} color={C.gold} style={{ marginBottom: 6 }} />
-            <Text style={st.awakenTitle}>FRAGMENTOS ABSORVIDOS</Text>
+            <Icon name="content-copy" size={20} color={C.gold} style={{ marginBottom: 6 }} />
+            <Text style={st.awakenTitle}>CÓPIA REGISTADA</Text>
             <Text style={st.awakenSub}>
-              {shadow.name.toUpperCase()} SUBIU PARA O{'\n'}
-              <Text style={st.awakenLevel}>NÍVEL {newLevel}</Text>
+              {shadow.name.toUpperCase()}{'\n'}
+              <Text style={st.awakenLevel}>{newLevel} CÓPIA{newLevel !== 1 ? 'S' : ''} ACUMULADA{newLevel !== 1 ? 'S' : ''}</Text>
             </Text>
+            <Text style={st.newSoulSub}>Usa as cópias para evoluir na Sala do Trono.</Text>
           </View>
         ) : (
           <View style={st.newSoulBox}>
@@ -203,7 +204,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
         </TouchableOpacity>
       </Animated.View>
       </View>
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }
 

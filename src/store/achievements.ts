@@ -28,7 +28,7 @@ export function evaluateAchievementCondition(
     // Focus
     case 'focus_night_owl': return hour >= 1 && hour < 6;
     case 'focus_hardcore_surrender': return true;
-    case 'focus_igris': return payload.missionId === 'boss_focus';
+    case 'focus_crimson_knight': return payload.missionId === 'boss_focus';
     case 'focus_long_session': return Number(payload.minutes ?? 0) >= 120;
 
     // Boss
@@ -286,7 +286,7 @@ export function checkAndUnlockAchievements(ref: StoreRef) {
     economy_spender: (statistics.totalGoldSpent ?? 0) >= 3000,
     secret_monarch: player.level >= 20,
     shadow_elite: player.activeShadowIds.length >= 3,
-    secret_all_bosses: ['boss_runner', 'boss_cerberus', 'focus_igris', 'boss_omega_slayer', 'boss_eclipse_survivor', 'boss_seraph_fall']
+    secret_all_bosses: ['boss_runner', 'boss_cerberus', 'focus_crimson_knight', 'boss_omega_slayer', 'boss_eclipse_survivor', 'boss_seraph_fall']
       .every(id => unlockedAchievements.includes(id)),
   };
 

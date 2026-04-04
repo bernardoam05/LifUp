@@ -71,8 +71,8 @@ export const RAID_BOSSES: RaidBossDef[] = [
 
   // ── RANK S ────────────────────────────────────────────────────────────────
   {
-    id: 'demon_king_baran',
-    name: 'Baran, o Rei dos Demónios',
+    id: 'infernal_monarch',
+    name: 'Monarca Infernal',
     rank: 'S',
     baseHp: 18000,
     durationDays: 5,
@@ -80,8 +80,8 @@ export const RAID_BOSSES: RaidBossDef[] = [
     color: '#ea580c',
   },
   {
-    id: 'monarch_querehsha',
-    name: 'Querehsha, Monarca das Pragas',
+    id: 'plague_sovereign',
+    name: 'Soberana das Pragas',
     rank: 'S',
     baseHp: 22000,
     durationDays: 6,
@@ -89,8 +89,8 @@ export const RAID_BOSSES: RaidBossDef[] = [
     color: '#a855f7',
   },
   {
-    id: 'monarch_silad',
-    name: 'Silad, o Monarca do Gelo',
+    id: 'frost_sovereign',
+    name: 'Soberano do Gelo Eterno',
     rank: 'S',
     baseHp: 30000,
     durationDays: 7,
@@ -109,8 +109,8 @@ export const RAID_BOSSES: RaidBossDef[] = [
 
   // ── NATIONAL / MONARCHS ───────────────────────────────────────────────────
   {
-    id: 'monarch_rakan',
-    name: 'Rakan, o Monarca das Bestas',
+    id: 'beast_sovereign',
+    name: 'Soberano das Feras',
     rank: 'National',
     baseHp: 70000,
     durationDays: 8,
@@ -118,8 +118,8 @@ export const RAID_BOSSES: RaidBossDef[] = [
     color: '#f97316',
   },
   {
-    id: 'monarch_legia',
-    name: 'Legia, o Monarca dos Gigantes',
+    id: 'giant_sovereign',
+    name: 'Soberano dos Gigantes',
     rank: 'National',
     baseHp: 90000,
     durationDays: 10,
@@ -127,8 +127,8 @@ export const RAID_BOSSES: RaidBossDef[] = [
     color: '#dc2626',
   },
   {
-    id: 'monarch_antares',
-    name: 'Antares, o Monarca da Destruição',
+    id: 'void_sovereign',
+    name: 'Soberano da Destruição Total',
     rank: 'National',
     baseHp: 150000,
     durationDays: 14,
@@ -147,7 +147,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     color: '#b91c1c',
   },
   {
-    id: 'kurama_spirit',
+    id: 'primal_fox_deity',
     name: 'Divindade do Ódio Primordial',
     rank: 'S',
     baseHp: 45000,
@@ -165,7 +165,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     color: '#7c2d12',
   },
   {
-    id: 'lich_king_arthas',
+    id: 'frozen_throne_king',
     name: 'O Senhor do Trono Congelante',
     rank: 'National',
     baseHp: 140000,
@@ -174,7 +174,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     color: '#0ea5e9',
   },
   {
-    id: 'sephiroth_angel',
+    id: 'dark_wing_herald',
     name: 'O Arauto da Asa Negra',
     rank: 'National',
     baseHp: 180000,
@@ -183,7 +183,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     color: '#475569',
   },
   {
-    id: 'acnologia_chaos',
+    id: 'void_dragon_chaos',
     name: 'O Vórtice do Apocalipse Dracónico',
     rank: 'National',
     baseHp: 250000,
@@ -192,7 +192,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
     color: '#1e293b',
   },
   {
-    id: 'morgoth_abyss',
+    id: 'primordial_abyss_lord',
     name: 'O Primeiro Senhor do Abismo',
     rank: 'National',
     baseHp: 400000,
@@ -267,23 +267,23 @@ export const RAID_BOSSES: RaidBossDef[] = [
     rank: 'S', baseHp: 32000, durationDays: 6, icon: 'ghost-outline', color: '#a855f7',
   },
   {
-    id: 'monarch_yogumun_giant',
-    name: 'Yogumun, Monarca dos Gigantes',
+    id: 'stone_giant_sovereign',
+    name: 'Soberano Ancestral dos Gigantes',
     rank: 'National', baseHp: 85000, durationDays: 9, icon: 'weight-lifter', color: '#dc2626',
   },
   {
-    id: 'monarch_silad_true',
-    name: 'Silad (Forma Verdadeira)',
+    id: 'frost_sovereign_true',
+    name: 'Soberano do Gelo (Forma Verdadeira)',
     rank: 'National', baseHp: 110000, durationDays: 10, icon: 'snowflake-alert', color: '#60a5fa',
   },
   {
-    id: 'national_hunter_thomas',
-    name: 'Thomas Andre (Simulação)',
+    id: 'titan_champion_sim',
+    name: 'Campeão Titã (Simulação)',
     rank: 'National', baseHp: 160000, durationDays: 12, icon: 'arm-flex', color: '#facc15',
   },
   {
-    id: 'dragon_monarch_general_1',
-    name: 'General de Antares',
+    id: 'void_dragon_general',
+    name: 'General Draconiano do Vazio',
     rank: 'National', baseHp: 130000, durationDays: 11, icon: 'dinosaur-variant', color: '#991b1b',
   },
   {

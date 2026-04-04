@@ -32,7 +32,7 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
     if (byId) {return byId;}
     const byBoss = getBossDropPreview(shadowId);
     if (byBoss) {return byBoss;}
-    return SHADOW_DATABASE.find(sh => sh.id === 'igris')!;
+    return SHADOW_DATABASE.find(sh => sh.id === 'crimson_knight')!;
   })();
 
   useEffect(() => {

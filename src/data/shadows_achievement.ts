@@ -17,7 +17,7 @@ export const SHADOWS_ACHIEVEMENT: Shadow[] = [
       passiveEffect: { type: 'xp_boost', value: 0.04, description: '+4% XP em todas as missões' },
       lore: '"Operava exclusivamente durante a noite. Os caçadores da madrugada conhecem o seu olhar. Completar o Dungeon de Foco revelou a sua existência."',
       icon: 'moon-waxing-crescent', color: '#22c55e',
-      unlockMethod: { type: 'achievement', id: 'focus_igris' },
+      unlockMethod: { type: 'achievement', id: 'focus_crimson_knight' },
     },
   {
       id: 'mind_flayer',
@@ -29,11 +29,11 @@ export const SHADOWS_ACHIEVEMENT: Shadow[] = [
       unlockMethod: { type: 'achievement', id: 'focus_night_owl' },
     },
   {
-      id: 'ashborn_fragment',
-      name: 'Fragmento de Ashborn',
+      id: 'void_monarch_fragment',
+      name: 'Fragmento do Monarca Sombrio',
       rank: 'Commander', type: 'Ancient', dropRate: 0,
       passiveEffect: { type: 'boss_bonus_xp', value: 0.20, description: '+20% XP extra em Boss Raids' },
-      lore: '"Um eco do Monarca das Sombras anterior. Quando derrotes Cerberus, este fragmento reconhece em ti a mesma chama. Não serve por obrigação — serve por reconhecimento."',
+      lore: '"Um eco do Soberano Sombrio anterior. Quando derrotes o Guardião, este fragmento reconhece em ti a mesma chama. Não serve por obrigação — serve por reconhecimento."',
       icon: 'star-four-points', color: '#f59e0b',
       unlockMethod: { type: 'achievement', id: 'boss_cerberus' },
     },

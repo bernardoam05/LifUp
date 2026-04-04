@@ -1,6 +1,6 @@
 // src/utils/audioService.ts
 /**
- * Haptic feedback system for Solo Leveling RN
+ * Haptic feedback system for LifUp
  * Uses vibration for audio feedback - works on all Android devices
  *
  * Ambient sounds: place .mp3 files in android/app/src/main/res/raw/

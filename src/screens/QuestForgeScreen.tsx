@@ -4,7 +4,7 @@ import {
   TextInput, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import SoloLevelingModal from '../components/SoloLevelingModal';
+import SystemModal from '../components/SystemModal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useGameStore, { QuestDefinition, INITIAL_QUEST_DICTIONARY, RankKey } from '../store/useGameStore';
 import CustomModal from '../components/CustomModal';
@@ -535,7 +535,7 @@ function FormModal({
 
       {/* ── Icon Picker Modal ── */}
       {showIconPicker && (
-        <SoloLevelingModal visible onRequestClose={() => setShowIconPicker(false)} useNativeModal={false}>
+        <SystemModal visible onRequestClose={() => setShowIconPicker(false)} useNativeModal={false}>
           <View style={ip.card}>
             <View style={ip.header}>
               <Text style={ip.headerTxt}> BIBLIOTECA DE ÍCONES</Text>
@@ -563,7 +563,7 @@ function FormModal({
               )}
             />
           </View>
-        </SoloLevelingModal>
+        </SystemModal>
       )}
 
       {alertCfg && (
@@ -669,7 +669,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <SoloLevelingModal
+    <SystemModal
       visible
       onRequestClose={onClose}
     >
@@ -834,7 +834,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
         C={C}
       />
 
-    </SoloLevelingModal>
+    </SystemModal>
   );
 }
 

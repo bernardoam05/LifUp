@@ -9,7 +9,8 @@ import { playSound } from '../utils/audioService';
 const getStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.surface.overlay, justifyContent: 'center', alignItems: 'center' },
   card: { width: '85%', backgroundColor: C.surface.elevated, borderWidth: 1, borderRadius: 8, padding: SPACING.xl, alignItems: 'center' },
-  system: { color: C.text.secondary, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 4, marginBottom: SPACING.lg },
+  systemRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: SPACING.lg },
+  system: { color: C.text.secondary, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 4 },
   header: { color: C.text.primary, fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900', letterSpacing: 1, marginBottom: SPACING.lg },
   iconWrap: { width: 80, height: 80, borderRadius: 40, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.md },
   title: { fontFamily: FONT.orbitron, fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: SPACING.sm, color: C.text.primary },
@@ -36,7 +37,11 @@ export default function AchievementModal({ achievementId, onDismiss }: { achieve
     <Modal transparent animationType="fade" visible onRequestClose={onDismiss}>
       <View style={s.overlay}>
         <View style={[s.card, { borderColor: achievement.color + '88' }]}>
-          <Text style={s.system}>⚡ SISTEMA ⚡</Text>
+          <View style={s.systemRow}>
+            <Icon name="lightning-bolt" size={10} color={C.text.secondary} />
+            <Text style={s.system}>SISTEMA</Text>
+            <Icon name="lightning-bolt" size={10} color={C.text.secondary} />
+          </View>
           <Text style={s.header}>ACHIEVEMENT DESBLOQUEADO</Text>
           <View style={[s.iconWrap, { backgroundColor: achievement.color + '18', borderColor: achievement.color + '44' }]}>
             <Icon name={achievement.icon} size={52} color={achievement.color} />

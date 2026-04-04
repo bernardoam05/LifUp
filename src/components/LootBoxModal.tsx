@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../theme';
 
 import { CATALOG_MAP } from '../data/shopItems';
+import { ALL_DUNGEON_KEYS } from '../data/dungeonKeys';
 
 interface Props {
   reward: { type: string; title: string; gold: number; xp: number; items: string[] } | null
@@ -64,10 +65,14 @@ export function LootBoxModal({ reward, onClose }: Props) {
                 <Text style={st.itemsTitle}>ITENS ADQUIRIDOS:</Text>
                 {reward.items.map((itemId, i) => {
                   const item = CATALOG_MAP[itemId];
+                  const key = !item ? ALL_DUNGEON_KEYS.find(k => k.id === itemId) : null;
+                  const displayName = item?.name ?? key?.name ?? itemId;
+                  const displayIcon = item?.icon ?? (key ? 'key-variant' : 'help-box');
+                  const displayColor = item?.color ?? key?.color ?? C.purple;
                   return (
                     <View key={`${itemId}-${i}`} style={st.itemRow}>
-                      <Icon name={item?.icon || 'help-box'} size={20} color={C.purple} />
-                      <Text style={st.itemText}>{item?.name || itemId}</Text>
+                      <Icon name={displayIcon} size={20} color={displayColor} />
+                      <Text style={[st.itemText, key && { color: displayColor }]}>{displayName}</Text>
                     </View>
                   );
                 })}

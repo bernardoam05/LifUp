@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme, FONT, SPACING } from '../theme';
 import { playSound } from '../utils/audioService';
 import { SHOP_CATALOG } from '../data/shopItems';
+import { getKeyById } from '../data/dungeonKeys';
 
 interface Props {
   level: number
@@ -132,16 +133,21 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
                 nestedScrollEnabled
                 showsVerticalScrollIndicator={false}
               >
-                {items.map((item, idx) => (
-                  <View key={idx} style={st.itemRow}>
-                    <View style={st.itemIcon}>
-                      <Icon name="gift-outline" size={16} color={C.gold} />
+                {items.map((item, idx) => {
+                  const keyData = getKeyById(item);
+                  const isKey = !!keyData;
+                  const iconName = isKey ? 'key-variant' : 'gift-outline';
+                  const iconColor = isKey ? (keyData.color ?? C.gold) : C.gold;
+                  const displayName = ITEM_NAMES[item] ?? EXTRA_NAMES[item] ?? keyData?.name ?? item;
+                  return (
+                    <View key={idx} style={st.itemRow}>
+                      <View style={[st.itemIcon, isKey && { backgroundColor: iconColor + '14' }]}>
+                        <Icon name={iconName} size={16} color={iconColor} />
+                      </View>
+                      <Text style={st.itemText}>{displayName}</Text>
                     </View>
-                    <Text style={st.itemText}>
-                      {ITEM_NAMES[item] ?? EXTRA_NAMES[item] ?? item}
-                    </Text>
-                  </View>
-                ))}
+                  );
+                })}
               </ScrollView>
             </View>
           )}

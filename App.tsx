@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState, useCallback, Fragment } from 'react';
 import { View, Text, StyleSheet, StatusBar, NativeModules, TouchableOpacity, Vibration } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer, DarkTheme, createNavigationContainerRef } from '@react-navigation/native';
@@ -99,8 +99,24 @@ export default function App() {
   const statistics = useGameStore(s => s.statistics);
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated);
   const playerLevel = useGameStore(s => s.player.level);
-  const rewardsBlocked = penaltyTriggered || showSettings || showRankInfo || !!currentLootReward || missionModalOpen;
+  // missionModalOpen excluded: reward shows on top of mission modals, not blocked by them
+  const rewardsBlocked = penaltyTriggered || showSettings || showRankInfo || !!currentLootReward;
   const toastBlocked = rewardsBlocked || rewardsQueue.length > 0;
+
+  // Latch: once a reward starts showing, keep it until explicitly dismissed
+  type RewardItem = typeof rewardsQueue[0];
+  const [activeReward, setActiveReward] = useState<RewardItem | null>(null);
+
+  useEffect(() => {
+    if (!rewardsBlocked && rewardsQueue.length > 0 && !activeReward) {
+      setActiveReward(rewardsQueue[0]);
+    }
+  }, [rewardsBlocked, rewardsQueue.length, activeReward]);
+
+  const handlePopReward = useCallback(() => {
+    setActiveReward(null);
+    popReward();
+  }, [popReward]);
 
   // Register the midnight reset watcher
   useDayWatcher();
@@ -251,56 +267,56 @@ export default function App() {
         {/* Scary penalty modal */}
         <PenaltyModal visible={penaltyTriggered} onDismiss={dismissPenalty} />
 
-        {/* Sequential Reward System */}
-        {!rewardsBlocked && rewardsQueue.length > 0 && (
+        {/* Sequential Reward System — activeReward latches once started, stays until dismissed */}
+        {!!activeReward && (
           <View style={styles.rewardsLayer} pointerEvents="box-none">
-            <Fragment key={`${rewardsQueue[0].type}-${rewardsQueue[0].id}`}>
-              {rewardsQueue[0].type === 'boss_defeated' && rewardsQueue[0].data && (
+            <Fragment key={`${activeReward.type}-${activeReward.id}`}>
+              {activeReward.type === 'boss_defeated' && activeReward.data && (
                 <BossVictoryModal
                   visible={true}
-                  info={rewardsQueue[0].data}
-                  onClose={popReward}
-                  onRequestClose={popReward}
+                  info={activeReward.data}
+                  onClose={handlePopReward}
+                  onRequestClose={handlePopReward}
                   C={C}
                 />
               )}
-              {rewardsQueue[0].type === 'achievement' && (
+              {activeReward.type === 'achievement' && (
                 <AchievementModal
-                  achievementId={rewardsQueue[0].id}
-                  onDismiss={popReward}
+                  achievementId={activeReward.id}
+                  onDismiss={handlePopReward}
                 />
               )}
-              {rewardsQueue[0].type === 'shadow' && (
+              {activeReward.type === 'shadow' && (
                 <ExtractionModal
                   result={{
-                    shadow: (SHADOW_MAP[rewardsQueue[0].id] || customShadows.find(cs => cs.id === rewardsQueue[0].id))!,
-                    isLevelUp: !!rewardsQueue[0].isLevelUp,
-                    newLevel: rewardsQueue[0].newLevel || 1,
+                    shadow: (SHADOW_MAP[activeReward.id] || customShadows.find(cs => cs.id === activeReward.id))!,
+                    isLevelUp: !!activeReward.isLevelUp,
+                    newLevel: activeReward.newLevel || 1,
                   }}
-                  onDismiss={popReward}
+                  onDismiss={handlePopReward}
                 />
               )}
-              {rewardsQueue[0].type === 'level_up' && rewardsQueue[0].data && (
+              {activeReward.type === 'level_up' && activeReward.data && (
                 <LevelUpModal
-                  level={(rewardsQueue[0].data as any).level}
-                  items={(rewardsQueue[0].data as any).items || []}
-                  onDismiss={popReward}
+                  level={(activeReward.data as any).level}
+                  items={(activeReward.data as any).items || []}
+                  onDismiss={handlePopReward}
                 />
               )}
-              {rewardsQueue[0].type === 'shadow_miss' && rewardsQueue[0].data && (
+              {activeReward.type === 'shadow_miss' && activeReward.data && (
                 <View style={styles.shadowMissOverlay} pointerEvents="box-none">
                   <View style={styles.shadowMissCard}>
                     <Text style={styles.shadowMissTitle}>A SOMBRA FUGIU!</Text>
-                    <Text style={styles.shadowMissName}>{(rewardsQueue[0].data as any).shadowName}</Text>
+                    <Text style={styles.shadowMissName}>{(activeReward.data as any).shadowName}</Text>
                     <Text style={styles.shadowMissChance}>
-                      Chance de drop: {Math.round(((rewardsQueue[0].data as any).dropChance ?? 0) * 100)}%
+                      Chance de drop: {Math.round(((activeReward.data as any).dropChance ?? 0) * 100)}%
                     </Text>
                     <Text style={styles.shadowMissLore}>
                       "A escuridão recua... mas a sombra aguarda uma próxima oportunidade."
                     </Text>
                     <TouchableOpacity
                       style={styles.shadowMissBtn}
-                      onPress={() => { Vibration.vibrate(30); popReward(); }}
+                      onPress={() => { Vibration.vibrate(30); handlePopReward(); }}
                       activeOpacity={0.8}
                     >
                       <Text style={styles.shadowMissBtnTxt}>ENTENDIDO</Text>
@@ -308,10 +324,10 @@ export default function App() {
                   </View>
                 </View>
               )}
-              {rewardsQueue[0].type === 'job_change' && (
+              {activeReward.type === 'job_change' && (
                 <JobChangeModal
-                  job={rewardsQueue[0].data}
-                  onClose={popReward}
+                  job={activeReward.data}
+                  onClose={handlePopReward}
                   C={C}
                 />
               )}

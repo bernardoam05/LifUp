@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Vibration } from 'react-native';
 
 // ── Constants (declared early to avoid TDZ issues) ─────────────────────────────
-const STOCKED_ITEMS = ['system_pass', 'lagrima_purificacao'];
+const STOCKED_ITEMS = ['system_pass', 'lagrima_purificacao', 'evolution_shard_common', 'void_crystal', 'beast_core', 'phantom_essence'];
 
 // Native Modules / Storage
 import SharedStorage from '../native/SharedStorage';
@@ -15,12 +15,12 @@ import type {
   GameState, GameActions, Quest, SideQuest, RankKey, SystemState,
   ShadowEntry, StoreRef,
 } from './types';
-import { INITIAL_PLAYER, INITIAL_STATS, INITIAL_SETTINGS, INITIAL_SHOP_STOCKS } from './types';
+import { INITIAL_PLAYER, INITIAL_STATS, INITIAL_SETTINGS, INITIAL_SHOP_STOCKS, INITIAL_CALENDAR, generateCalendarPage } from './types';
 
 import {
   xpForLevel, getRank, applyXP, attrLevelFromXP, getAttrXpBoost,
   getNewLevelKeys, getMondayDateString, seededPick, computeActivePassives,
-  pickExtractionRank, getShadowReleaseGold, computePunishment,
+  pickExtractionRank, getShadowReleaseGold, getShadowUpgradeCost, computePunishment,
   getQuestTier, TIER_MULT, hadJobClassChange,
 } from './helpers';
 
@@ -135,6 +135,7 @@ const useGameStore = create<GameState & GameActions>()(
         activeBuffs: [],
         newAchievementIds: [],
         currentLootReward: null,
+        calendarState: INITIAL_CALENDAR,
 
         applyBuff: (buff: { id: string; label: string; multiplier: number; stat: 'xp' | 'gold'; }, duration: number) => {
           set(s => {
@@ -368,6 +369,7 @@ const useGameStore = create<GameState & GameActions>()(
 
           let newStreak = player.currentStreak;
           let newHighest = player.highestStreak;
+          let calendarProtected = false; // streak_protect fired → freeze calendar instead of reset
 
           if (!wasRestDay && !isFirstDay) {
             const pendingRewards = quests.filter((q: Quest) => {
@@ -403,6 +405,7 @@ const useGameStore = create<GameState & GameActions>()(
 
               if (streakProtect && canUseProtect) {
                 newStreak = player.currentStreak;
+                calendarProtected = true;
                 set((s: GameState & GameActions) => ({
                   system: {
                     ...s.system,
@@ -444,7 +447,18 @@ const useGameStore = create<GameState & GameActions>()(
               perfectDaysStreak: allDone ? (s.statistics.perfectDaysStreak ?? 0) + 1 : 0,
               sideQuestsCompletedToday: 0,
               pomodoroSessionsToday: 0,
+              maxStreakReached: Math.max(s.statistics.maxStreakReached ?? 0, newStreak),
             },
+            calendarState: (() => {
+              const todayISO = new Date().toISOString().slice(0, 10);
+              const yesterdayISO = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+              const { lastClaimDate } = s.calendarState;
+              // Streak broken if user missed at least one day without claiming
+              const streakBroken = lastClaimDate !== '' && lastClaimDate < yesterdayISO;
+              return streakBroken
+                ? { page: 0, days: generateCalendarPage(0), lastClaimDate: '', claimedToday: false }
+                : { ...s.calendarState, claimedToday: false };
+            })(),
             player: { ...s.player, xp: newXp, gold: newGold, currentStreak: newStreak, highestStreak: newHighest },
             system: {
               ...s.system,
@@ -674,6 +688,10 @@ const useGameStore = create<GameState & GameActions>()(
             if (res.leveledUp) {
               const count = res.level % 10 === 0 ? 2 : res.level % 5 === 0 ? 1 : 0;
               for (let i = 0; i < count; i++) {rewardItems.push(Math.random() < 0.5 ? 'lagrima_purificacao' : 'relogio_ampulheta');}
+              // Include newly unlocked level-gated dungeon keys so the LevelUpModal shows them
+              const oldKeys = s.player.dungeonKeys ?? [];
+              const newKeys = getNewLevelKeys(oldKeys, res.level).filter(k => !oldKeys.includes(k));
+              rewardItems.push(...newKeys);
             }
 
             if (Math.random() < 0.1 * (1 + lootBoost)) {rewardItems.push('loot_box'); hadRandomLootDrop = true;}
@@ -682,7 +700,8 @@ const useGameStore = create<GameState & GameActions>()(
             if (Math.random() < 0.05 * (1 + lootBoost)) {rewardItems.push('shadow_essence'); hadRandomLootDrop = true;}
             if (Math.random() < 0.03 * (1 + lootBoost)) {rewardItems.push('blood_fallen'); hadRandomLootDrop = true;}
 
-            rewardItems.forEach(itemId => {
+            // Only add inventory items (not dungeon key ids which start with 'key_')
+            rewardItems.filter(id => !id.startsWith('key_')).forEach(itemId => {
               const idx = rewardInv.findIndex(e => e.itemId === itemId);
               if (idx >= 0) {rewardInv[idx] = { ...rewardInv[idx], quantity: rewardInv[idx].quantity + 1 };}
               else {rewardInv.push({ itemId, quantity: 1 });}
@@ -736,19 +755,20 @@ const useGameStore = create<GameState & GameActions>()(
             const shadow = rollShadow(rank, []);
             if (shadow) {
               const existing = state.player.shadows.find(e => e.id === shadow.id);
+              const newCopies = existing ? (existing.copies ?? 0) + 1 : 0;
               const currQueue = get().rewardsQueue;
               set((s: GameState & GameActions) => ({
                 player: {
                   ...s.player,
                   shadows: existing
-                    ? s.player.shadows.map(e => e.id === shadow.id ? { ...e, level: e.level + 1 } : e)
-                    : [...s.player.shadows, { id: shadow.id, level: 1 }],
+                    ? s.player.shadows.map(e => e.id === shadow.id ? { ...e, copies: (e.copies ?? 0) + 1 } : e)
+                    : [...s.player.shadows, { id: shadow.id, level: 1, copies: 0 }],
                 },
-                lastExtraction: { shadow, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 },
+                lastExtraction: { shadow, isLevelUp: !!existing, newLevel: newCopies },
                 system: { ...s.system, extractionDoneToday: true },
                 // Insert extraction at BEGINNING of queue so it displays FIRST
                 rewardsQueue: [
-                  { type: 'shadow' as const, id: shadow.id, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 },
+                  { type: 'shadow' as const, id: shadow.id, isLevelUp: !!existing, newLevel: newCopies },
                   ...currQueue,
                 ],
               }));
@@ -1055,6 +1075,40 @@ const useGameStore = create<GameState & GameActions>()(
         },
 
         useInventoryItem(itemId) {
+          // shadow_essence: consume item and invoke a random shadow directly
+          if (itemId === 'shadow_essence') {
+            const RANKS: ShadowRank[] = ['Normal', 'Elite', 'Knight', 'Commander', 'Marshal'];
+            const WEIGHTS = [0.45, 0.35, 0.15, 0.04, 0.01];
+            const r = Math.random();
+            let cum = 0;
+            let pickedRank: ShadowRank = 'Normal';
+            for (let i = 0; i < WEIGHTS.length; i++) {
+              cum += WEIGHTS[i];
+              if (r < cum) { pickedRank = RANKS[i]; break; }
+            }
+            const ownedIds = get().player.shadows.map(s => s.id);
+            const shadow = rollShadow(pickedRank, ownedIds) ?? rollShadow('Normal', ownedIds);
+            set((s: GameState & GameActions) => {
+              const nextInv = s.player.inventory
+                .map(e => e.itemId === 'shadow_essence' ? { ...e, quantity: e.quantity - 1 } : e)
+                .filter(e => e.quantity > 0);
+              if (shadow) {
+                const existing = s.player.shadows.find(e => e.id === shadow.id);
+                const essenceCopies = existing ? (existing.copies ?? 0) + 1 : 0;
+                const newShadows = existing
+                  ? s.player.shadows.map(e => e.id === shadow.id ? { ...e, copies: (e.copies ?? 0) + 1 } : e)
+                  : [...s.player.shadows, { id: shadow.id, level: 1, copies: 0 }];
+                return {
+                  player: { ...s.player, inventory: nextInv, shadows: newShadows },
+                  rewardsQueue: [...s.rewardsQueue, { type: 'shadow' as const, id: shadow.id, isLevelUp: !!existing, newLevel: essenceCopies }],
+                };
+              }
+              // Fallback: nenhuma sombra disponível — consolação em ouro
+              return { player: { ...s.player, inventory: nextInv, gold: s.player.gold + 100 } };
+            });
+            return;
+          }
+
           // #2 Fix: consume item and apply any special non-buff effects atomically.
           // Buff items call applyBuff() AFTER the inventory update so we don't
           // overwrite activeBuffs with a stale copy in the same set().
@@ -1063,19 +1117,14 @@ const useGameStore = create<GameState & GameActions>()(
               .map(e => e.itemId === itemId ? { ...e, quantity: e.quantity - 1 } : e)
               .filter(e => e.quantity > 0);
 
-            if (itemId === 'shadow_essence') {
-              // Special: reset extraction flag — handle fully inside this set()
-              return { player: { ...s.player, inventory: nextInv }, system: { ...s.system, extractionDoneToday: false } };
-            }
-
             return { player: { ...s.player, inventory: nextInv } };
           });
 
           // Apply timed buffs AFTER inventory deduction so applyBuff's own set() is not overwritten
-          if (itemId === 'kasaka_venom') {
-            get().applyBuff({ id: 'kasaka_xp', label: 'Veneno de Kasaka', multiplier: 1.15, stat: 'xp' }, 2 * 3600_000);
-          } else if (itemId === 'igris_fragment') {
-            get().applyBuff({ id: 'igris_xp', label: 'Fragmento de Igris', multiplier: 1.20, stat: 'xp' }, 3600_000);
+          if (itemId === 'viper_venom') {
+            get().applyBuff({ id: 'viper_xp', label: 'Veneno da Víbora', multiplier: 1.15, stat: 'xp' }, 2 * 3600_000);
+          } else if (itemId === 'crimson_knight_shard') {
+            get().applyBuff({ id: 'crimson_xp', label: 'Fragmento do Cavaleiro Carmesim', multiplier: 1.20, stat: 'xp' }, 3600_000);
           } else if (itemId === 'cerberus_fang') {
             get().applyBuff({ id: 'cerberus_gold', label: 'Presa de Cerberus', multiplier: 1.20, stat: 'gold' }, 2 * 3600_000);
           } else if (itemId === 'iron_will_crystal') {
@@ -1173,15 +1222,69 @@ const useGameStore = create<GameState & GameActions>()(
 
           if (state.player.gold < finalCost || !SHADOW_MAP[shadowId]) {return false;}
           const existing = state.player.shadows.find(e => e.id === shadowId);
+          const newCopies = existing ? (existing.copies ?? 0) + 1 : 0;
           set((s: GameState) => ({
             player: {
               ...s.player,
               gold: s.player.gold - finalCost,
-              shadows: existing ? s.player.shadows.map(e => e.id === shadowId ? { ...e, level: e.level + 1 } : e) : [...s.player.shadows, { id: shadowId, level: 1 }],
+              shadows: existing
+                ? s.player.shadows.map(e => e.id === shadowId ? { ...e, copies: (e.copies ?? 0) + 1 } : e)
+                : [...s.player.shadows, { id: shadowId, level: 1, copies: 0 }],
             },
             statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + finalCost },
-            rewardsQueue: [...s.rewardsQueue, { type: 'shadow', id: shadowId, isLevelUp: !!existing, newLevel: existing ? existing.level + 1 : 1 }],
+            rewardsQueue: [...s.rewardsQueue, { type: 'shadow', id: shadowId, isLevelUp: !!existing, newLevel: newCopies }],
           }));
+          fireEvent('shadow_collected', { shadowId }, ref); checkAndUnlockAchievements(ref);
+          return true;
+        },
+
+        upgradeShadow(shadowId: string): boolean {
+          const state = get();
+          const existing = state.player.shadows.find(e => e.id === shadowId);
+          const shadow = SHADOW_MAP[shadowId] ?? state.customShadows.find(s => s.id === shadowId);
+          if (!existing || !shadow) { return false; }
+          // Level cap: cannot exceed player level
+          if (existing.level >= state.player.level) { return false; }
+
+          const cost = getShadowUpgradeCost(shadow, existing.level);
+
+          // Validate gold
+          if (state.player.gold < cost.gold) { return false; }
+
+          // Validate copies
+          const currentCopies = existing.copies ?? 0;
+          if (currentCopies < cost.copies) { return false; }
+
+          // Validate items
+          for (const req of cost.items) {
+            const inv = state.player.inventory.find(e => e.itemId === req.itemId);
+            if (!inv || inv.quantity < req.quantity) { return false; }
+          }
+
+          const newLevel = existing.level + 1;
+
+          set((s: GameState & GameActions) => {
+            let inv = [...s.player.inventory];
+            for (const req of cost.items) {
+              inv = inv
+                .map(e => e.itemId === req.itemId ? { ...e, quantity: e.quantity - req.quantity } : e)
+                .filter(e => e.quantity > 0);
+            }
+            return {
+              player: {
+                ...s.player,
+                gold: s.player.gold - cost.gold,
+                inventory: inv,
+                shadows: s.player.shadows.map(e =>
+                  e.id === shadowId
+                    ? { ...e, level: newLevel, copies: Math.max(0, (e.copies ?? 0) - cost.copies) }
+                    : e
+                ),
+              },
+              statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + cost.gold },
+              rewardsQueue: [...s.rewardsQueue, { type: 'shadow' as const, id: shadowId, isLevelUp: true, newLevel }],
+            };
+          });
           fireEvent('shadow_collected', { shadowId }, ref); checkAndUnlockAchievements(ref);
           return true;
         },
@@ -1214,17 +1317,18 @@ const useGameStore = create<GameState & GameActions>()(
               const existingShadow = player.shadows.find(e => e.id === finalId);
               leveledUpShadow = !!existingShadow;
               isNew = !existingShadow;
+              const bossDropCopies = existingShadow ? (existingShadow.copies ?? 0) + 1 : 0;
               newShadows = existingShadow
-                ? player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e)
-                : [...player.shadows, { id: finalId, level: 1 }];
+                ? player.shadows.map(e => e.id === finalId ? { ...e, copies: (e.copies ?? 0) + 1 } : e)
+                : [...player.shadows, { id: finalId, level: 1, copies: 0 }];
               shadowName = SHADOW_MAP[finalId]?.name ?? finalId;
               shadowReward = {
                 type: 'shadow',
                 id: finalId,
                 isLevelUp: leveledUpShadow,
-                newLevel: existingShadow ? existingShadow.level + 1 : 1,
+                newLevel: bossDropCopies,
               };
-              set({ lastExtraction: { shadow: SHADOW_MAP[finalId], isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } });
+              set({ lastExtraction: { shadow: SHADOW_MAP[finalId], isLevelUp: leveledUpShadow, newLevel: bossDropCopies } });
             } else if (!customDef && !SHADOW_MAP[shadowId]) {
               // Boss has no registered shadow drop — fall back to a random gacha roll.
               const rank = pickExtractionRank(player.level);
@@ -1234,42 +1338,44 @@ const useGameStore = create<GameState & GameActions>()(
                 const existingShadow = player.shadows.find(e => e.id === finalId);
                 leveledUpShadow = !!existingShadow;
                 isNew = !existingShadow;
+                const rollDropCopies = existingShadow ? (existingShadow.copies ?? 0) + 1 : 0;
                 newShadows = existingShadow
-                  ? player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e)
-                  : [...player.shadows, { id: finalId, level: 1 }];
+                  ? player.shadows.map(e => e.id === finalId ? { ...e, copies: (e.copies ?? 0) + 1 } : e)
+                  : [...player.shadows, { id: finalId, level: 1, copies: 0 }];
                 shadowName = SHADOW_MAP[finalId]?.name ?? finalId;
                 shadowReward = {
                   type: 'shadow',
                   id: finalId,
                   isLevelUp: leveledUpShadow,
-                  newLevel: existingShadow ? existingShadow.level + 1 : 1,
+                  newLevel: rollDropCopies,
                 };
-                set({ lastExtraction: { shadow: SHADOW_MAP[finalId], isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } });
+                set({ lastExtraction: { shadow: SHADOW_MAP[finalId], isLevelUp: leveledUpShadow, newLevel: rollDropCopies } });
               }
             } else if (customDef) {
               const existingShadow = player.shadows.find(e => e.id === finalId);
               if (!existingShadow) {
                 const newCustom: Shadow = { id: finalId, name: customDef.name, rank: 'Normal' as ShadowRank, type: 'Custom', dropRate: 0, passiveEffect: getCustomShadowPassive(customDef.questType), lore: `"${customDef.name} — lealdade absoluta."`, icon: customDef.icon, color: '#a855f7' };
                 set((s: GameState & GameActions) => ({ customShadows: [...s.customShadows, newCustom] }));
-                newShadows.push({ id: finalId, level: 1 });
+                newShadows.push({ id: finalId, level: 1, copies: 0 });
               } else {
-                newShadows = player.shadows.map(e => e.id === finalId ? { ...e, level: e.level + 1 } : e);
+                newShadows = player.shadows.map(e => e.id === finalId ? { ...e, copies: (e.copies ?? 0) + 1 } : e);
               }
               shadowName = customDef.name;
               leveledUpShadow = !!existingShadow;
               isNew = !existingShadow;
+              const customDropCopies = existingShadow ? (existingShadow.copies ?? 0) + 1 : 0;
               shadowReward = {
                 type: 'shadow',
                 id: finalId,
                 isLevelUp: leveledUpShadow,
-                newLevel: existingShadow ? existingShadow.level + 1 : 1,
+                newLevel: customDropCopies,
               };
-              set({ lastExtraction: { shadow: SHADOW_MAP[finalId] ?? get().customShadows.find(s => s.id === finalId), isLevelUp: leveledUpShadow, newLevel: existingShadow ? existingShadow.level + 1 : 1 } });
+              set({ lastExtraction: { shadow: SHADOW_MAP[finalId] ?? get().customShadows.find(s => s.id === finalId), isLevelUp: leveledUpShadow, newLevel: customDropCopies } });
             }
           }
 
           set(s => {
-            const isNormalBoss = shadowId && (shadowId.startsWith('normal_boss_') || shadowId.includes('cerberus') || shadowId.includes('igris'));
+            const isNormalBoss = shadowId && (shadowId.startsWith('normal_boss_') || shadowId.includes('cerberus') || shadowId.includes('crimson_knight'));
             const newCompleted = isNormalBoss ? [...s.system.completedNormalBossIds, shadowId] : s.system.completedNormalBossIds;
 
             const res = applyXP(s.player.xp, s.player.level, xpReward);
@@ -1355,6 +1461,62 @@ const useGameStore = create<GameState & GameActions>()(
           set((_s: GameState & GameActions) => ({
             system: { ..._s.system, pomodoroPhase: phase, pomodoroCycle: cycle, pomodoroBreakEnd: breakEnd },
           }));
+        },
+
+        claimCalendarDay(day: number) {
+          set((s: GameState & GameActions) => {
+            // Must have done today's extraction/gacha first
+            if (!s.system.extractionDoneToday) { return {}; }
+            // Can only claim once per day
+            if (s.calendarState.claimedToday) { return {}; }
+
+            const dayEntry = s.calendarState.days.find(d => d.day === day);
+            if (!dayEntry || dayEntry.claimed) { return {}; }
+
+            const todayISO = new Date().toISOString().slice(0, 10);
+            const updatedDays = s.calendarState.days.map(d =>
+              d.day === day ? { ...d, claimed: true } : d
+            );
+
+            // After claiming, check if entire 30-day page is complete → advance page
+            const allClaimed = updatedDays.every(d => d.claimed);
+            const nextPage = s.calendarState.page + 1;
+            const nextCalendar = allClaimed
+              ? { page: nextPage, days: generateCalendarPage(nextPage), lastClaimDate: todayISO, claimedToday: true }
+              : { ...s.calendarState, days: updatedDays, lastClaimDate: todayISO, claimedToday: true };
+
+            const reward = dayEntry.reward;
+
+            if (reward.type === 'gold') {
+              return {
+                calendarState: nextCalendar,
+                player: { ...s.player, gold: s.player.gold + reward.amount },
+              };
+            }
+
+            if (reward.type === 'item') {
+              const inv = [...s.player.inventory];
+              const idx = inv.findIndex(e => e.itemId === reward.itemId);
+              if (idx >= 0) { inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + reward.quantity }; }
+              else { inv.push({ itemId: reward.itemId, quantity: reward.quantity }); }
+              return {
+                calendarState: nextCalendar,
+                player: { ...s.player, inventory: inv },
+              };
+            }
+
+            // reward.type === 'shadow'
+            const existing = s.player.shadows.find(e => e.id === reward.shadowId);
+            const calendarCopies = existing ? (existing.copies ?? 0) + 1 : 0;
+            const newShadows = existing
+              ? s.player.shadows.map(e => e.id === reward.shadowId ? { ...e, copies: (e.copies ?? 0) + 1 } : e)
+              : [...s.player.shadows, { id: reward.shadowId, level: 1, copies: 0 }];
+            return {
+              calendarState: nextCalendar,
+              player: { ...s.player, shadows: newShadows },
+              rewardsQueue: [...s.rewardsQueue, { type: 'shadow' as const, id: reward.shadowId, isLevelUp: !!existing, newLevel: calendarCopies }],
+            };
+          });
         },
         addQuestDefinition(def) { set((s: GameState) => ({ questDictionary: [...s.questDictionary, def] })); },
         updateQuestDefinition(id, patch) { set((s: GameState) => ({ questDictionary: s.questDictionary.map(d => d.id === id ? { ...d, ...patch } : d) })); },
@@ -1553,7 +1715,7 @@ const useGameStore = create<GameState & GameActions>()(
       };
     },
     {
-      name: 'solo-leveling-v3',
+      name: 'lifup-v3',
       storage: createJSONStorage(() => AsyncStorage),
       merge: (persisted: any, current: GameState & GameActions) => {
         const data = (persisted || {}) as any;
@@ -1567,10 +1729,18 @@ const useGameStore = create<GameState & GameActions>()(
         return {
           ...current, ...data,
           player: { ...current.player, ...rawPlayer, strXp: sXp, agiXp: aXp, intXp: iXp, vitXp: vXp, str: attrLevelFromXP(sXp), agi: attrLevelFromXP(aXp), int: attrLevelFromXP(iXp), vit: attrLevelFromXP(vXp), shadows: migratedShadows, activeShadowIds: rawPlayer.activeShadowIds ?? [], dungeonKeys: getNewLevelKeys(rawPlayer.dungeonKeys ?? [], rawPlayer.level ?? 1) },
-          system: { ...current.system, ...(data.system ?? {}) }, settings: { ...current.settings, ...(data.settings ?? {}) }, statistics: { ...current.statistics, ...(data.statistics ?? {}) }, questDictionary: data.questDictionary ?? current.questDictionary, customShadows: data.customShadows ?? current.customShadows, lastExtraction: data.lastExtraction ?? null, achievementProgress: Object.fromEntries(Object.entries(data.achievementProgress ?? {}).map(([id, val]) => [id, typeof val === 'number' ? { currentValue: val, currentTierIndex: 0 } : val])), questRecords: data.questRecords ?? {}, questCompletions: data.questCompletions ?? {}, activeMissionTimers: data.activeMissionTimers ?? {}, extraQuestRerolledIds: data.extraQuestRerolledIds ?? [], extraQuestUsedPoolIds: data.extraQuestUsedPoolIds ?? [], newAchievementIds: [],
+          system: { ...current.system, ...(data.system ?? {}), shopStocks: { ...INITIAL_SHOP_STOCKS, ...(data.system?.shopStocks ?? {}) } }, settings: { ...current.settings, ...(data.settings ?? {}) }, statistics: { ...current.statistics, ...(data.statistics ?? {}) }, questDictionary: data.questDictionary ?? current.questDictionary, customShadows: data.customShadows ?? current.customShadows, lastExtraction: data.lastExtraction ?? null, achievementProgress: Object.fromEntries(Object.entries(data.achievementProgress ?? {}).map(([id, val]) => [id, typeof val === 'number' ? { currentValue: val, currentTierIndex: 0 } : val])), questRecords: data.questRecords ?? {}, questCompletions: data.questCompletions ?? {}, activeMissionTimers: data.activeMissionTimers ?? {}, extraQuestRerolledIds: data.extraQuestRerolledIds ?? [], extraQuestUsedPoolIds: data.extraQuestUsedPoolIds ?? [], newAchievementIds: [],
+          calendarState: (() => {
+            const raw = data.calendarState ?? {};
+            // Migrate old format (month/calendarFrozen fields) to new streak-based format
+            if (!raw.page && raw.page !== 0 || 'calendarFrozen' in raw || 'month' in raw) {
+              return current.calendarState;
+            }
+            return { ...current.calendarState, ...raw };
+          })(),
         };
       },
-      partialize: s => ({ player: s.player, quests: s.quests, sideQuests: s.sideQuests, extraQuests: s.extraQuests, questDictionary: s.questDictionary, customShadows: s.customShadows, settings: s.settings, system: { ...s.system, penaltyTriggered: false, pendingKeyId: null }, statistics: s.statistics, lastResetDate: s.lastResetDate, unlockedAchievements: s.unlockedAchievements, achievementProgress: s.achievementProgress, questRecords: s.questRecords, questCompletions: s.questCompletions, activeMissionTimers: s.activeMissionTimers, extraQuestRerolledIds: s.extraQuestRerolledIds, extraQuestUsedPoolIds: s.extraQuestUsedPoolIds }),
+      partialize: s => ({ player: s.player, quests: s.quests, sideQuests: s.sideQuests, extraQuests: s.extraQuests, questDictionary: s.questDictionary, customShadows: s.customShadows, settings: s.settings, system: { ...s.system, penaltyTriggered: false, pendingKeyId: null }, statistics: s.statistics, lastResetDate: s.lastResetDate, unlockedAchievements: s.unlockedAchievements, achievementProgress: s.achievementProgress, questRecords: s.questRecords, questCompletions: s.questCompletions, activeMissionTimers: s.activeMissionTimers, extraQuestRerolledIds: s.extraQuestRerolledIds, extraQuestUsedPoolIds: s.extraQuestUsedPoolIds, calendarState: s.calendarState }),
     }
   )
 );
