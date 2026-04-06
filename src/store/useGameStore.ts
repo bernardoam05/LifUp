@@ -465,7 +465,7 @@ const useGameStore = create<GameState & GameActions>()(
               hasPenalty: hadPenalty && !penaltyImmunityUsed,
               penaltyTriggered,
               penaltyReduced: false,
-              hardcorePunished: (hadPenalty && !penaltyImmunityUsed) ? newHardcorePunished : false,
+              hardcorePunished: (hadPenalty && !penaltyImmunityUsed && get().settings.autoBlockApps) ? newHardcorePunished : false,
               penaltyQuests: newPenaltyQuests,
               lastPenaltyInfo: hadPenalty ? {
                 intensity: get().settings.punishmentIntensity,
@@ -496,13 +496,13 @@ const useGameStore = create<GameState & GameActions>()(
               // Scheduled blocks (normal/easy difficulty, future start) activate
               // via the 60-second useDayWatcher tick so native blocking isn't
               // triggered before the intended time.
-              focusModeActive: (hadPenalty && !penaltyImmunityUsed) && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
+              focusModeActive: (hadPenalty && !penaltyImmunityUsed && get().settings.autoBlockApps) && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
                 ? true
                 : s.system.focusModeActive,
-              focusEndTime: (hadPenalty && !penaltyImmunityUsed) && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
+              focusEndTime: (hadPenalty && !penaltyImmunityUsed && get().settings.autoBlockApps) && newPenaltyBlockEnd > 0 && newPenaltyBlockStart <= Date.now()
                 ? newPenaltyBlockEnd
                 : s.system.focusEndTime,
-              hardcoreFocusMode: (hadPenalty && !penaltyImmunityUsed) && newHardcorePunished ? true : s.system.hardcoreFocusMode,
+              hardcoreFocusMode: (hadPenalty && !penaltyImmunityUsed && get().settings.autoBlockApps) && newHardcorePunished ? true : s.system.hardcoreFocusMode,
               // Portais dinâmicos foram unificados no roll horário (sem lista fixa diária).
               normalBossRotationDate: new Date().toDateString(),
               normalBossIds: [],

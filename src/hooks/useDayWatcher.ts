@@ -25,8 +25,10 @@ export function useDayWatcher() {
       // that native blocking doesn't trigger before the intended window.
       const sys = useGameStore.getState().system;
       const now = Date.now();
+      const settings = useGameStore.getState().settings;
       if (
         sys.hasPenalty &&
+        settings.autoBlockApps &&
         !sys.focusModeActive &&
         (sys.penaltyBlockStart ?? 0) > 0 &&
         (sys.penaltyBlockStart ?? 0) <= now &&

@@ -426,7 +426,7 @@ export function computePunishment(
       xpLost,
       goldLost,
       penaltyQuests: pickPenaltyQuests(Math.min(1 + Math.floor(failedCount / 2), 3), pool),
-      hardcorePunished: failedCount >= Math.ceil(totalCount * 0.5),
+      hardcorePunished: false,
       streakReset: true,
       penaltyHours: Math.min(4 + failedCount * 2, 12),
     };
@@ -437,7 +437,7 @@ export function computePunishment(
     xpLost,
     goldLost,
     penaltyQuests: pickPenaltyQuests(Math.min(2 + failedCount, 4), pool),
-    hardcorePunished: true,
+    hardcorePunished: false,
     streakReset: true,
     penaltyHours: Math.min(8 + failedCount * 2, 24),
   };

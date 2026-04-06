@@ -536,6 +536,17 @@ export default function FocusScreen() {
       });
       return;
     }
+    if (!hasAccessibility) {
+      setAlertCfg({
+        title: 'Permissão necessária',
+        message: 'Ativa o serviço de acessibilidade desta app para que o bloqueio funcione.',
+        buttons: [
+          { text: 'Abrir', onPress: () => FocusBlocker.requestAccessibilityPermission().then(checkPerms) },
+          { text: 'Cancelar', style: 'cancel' },
+        ],
+      });
+      return;
+    }
     if (blockedApps.length === 0) {
       setAlertCfg({ title: 'Nenhuma app selecionada', message: 'Seleciona pelo menos uma app para bloquear.' });
       return;
@@ -565,7 +576,22 @@ export default function FocusScreen() {
     }
     const start = Date.now();
     const end = hardcorePunished ? penaltyBlockEnd : start + dur;
-    await FocusBlocker.startFocusMode(blockedApps, start, end, hardcorePunished);
+    
+    try {
+      await FocusBlocker.startFocusMode(blockedApps, start, end, hardcorePunished);
+    } catch (err: any) {
+      const msg = err?.message || 'Erro desconhecido ao ativar o bloqueio nativo.';
+      setAlertCfg({
+        title: 'Falha ao ativar Focus Mode',
+        message: `O módulo nativo não conseguiu iniciar o bloqueio.\n\nMotivo: ${msg}\n\nVerifica que todas as permissões estão ativas nas Definições do sistema.`,
+        buttons: [
+          { text: 'Abrir Permissões', onPress: () => checkPerms() },
+          { text: 'Fechar', style: 'cancel' },
+        ],
+      });
+      return;
+    }
+    
     setFocusActive(true, end);
     setHardcoreMode(hardcoreToggle);
     const hour = new Date().getHours();
@@ -807,7 +833,7 @@ export default function FocusScreen() {
     stopFocus();
   }
 
-  const permsOk       = hasUsage && hasOverlay;
+  const permsOk       = hasUsage && hasOverlay && hasAccessibility;
   const selectedCount = blockedApps.length;
 
   return (

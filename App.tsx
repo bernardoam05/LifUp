@@ -156,7 +156,9 @@ export default function App() {
         penaltyBlockStart || Date.now(),
         penaltyBlockEnd,
         true
-      ).catch(() => {});
+      ).catch((err: any) => {
+        console.warn('[App] Penalty focus sync failed:', err?.message ?? err);
+      });
     } else if (!isNormalBlock && !isPenaltyBlock) {
       FocusBlocker?.stopFocusMode().catch(() => {});
     }
