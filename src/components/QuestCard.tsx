@@ -325,11 +325,28 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
             <View style={{ flex: 1 }} />
             <Icon name="chevron-right" size={14} color={C.neonBlue} />
           </View>
+        ) : quest.type === 'focus' ? (
+          <View style={{ marginTop: 12, gap: 8 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', opacity: 0.6 }}>
+              <Icon name="lightning-bolt" size={13} color={C.neonBlue} style={{ opacity: 0.7 }} />
+              <Text style={{ color: C.neonBlue, fontSize: 10, fontFamily: FONT.orbitron, marginLeft: 4 }}>
+                Toca para abrir Focus Mode e contar automaticamente
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={[qc.actionBtn, { borderColor: C.green + '66', backgroundColor: C.green + '12', alignSelf: 'flex-start', paddingHorizontal: 12 }]}
+              onPress={e => { e.stopPropagation?.(); handleComplete(); }}
+              activeOpacity={0.75}
+            >
+              <Icon name="check" size={13} color={C.green} />
+              <Text style={[qc.actionTxt, { color: C.green, marginLeft: 4 }]}>Completar Manualmente</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, opacity: 1, paddingRight: 50 }}>
-            <Icon name={quest.type === 'focus' || quest.type === 'pomodoro' ? 'lightning-bolt' : 'gesture-tap'} size={14} color={C.neonBlue} style={{ opacity: 0.5 }} />
+            <Icon name={quest.type === 'pomodoro' ? 'lightning-bolt' : 'gesture-tap'} size={14} color={C.neonBlue} style={{ opacity: 0.5 }} />
             <Text style={{ color: C.neonBlue, fontSize: 10, fontFamily: FONT.orbitron, marginLeft: 4, opacity: 0.5 }}>
-              {quest.type === 'focus' || quest.type === 'pomodoro' ? 'Abrir Focus Mode' : 'Toca para iniciar'}
+              {quest.type === 'pomodoro' ? 'Abrir Focus Mode' : 'Toca para iniciar'}
             </Text>
             <View style={{ flex: 1 }} />
           </View>

@@ -487,10 +487,38 @@ export const getDungeonMissions = (C: any, now: Date = new Date()): DungeonMissi
   const focusMap: Record<string, number> = { B: 45, A: 60, S: 90, National: 120 };
   const duration = focusMap[boss.rank] || 30;
 
+  // Deterministic creative description per boss/rank
+  const detailByRank: Record<string, string[]> = {
+    B: [
+      `${duration} min de foco contínuo para fechar este portal. ${boss.name} não espera que estejas "a ganhar disposição".`,
+      `Sessão de trabalho de ${duration} min sem desvios. O portal de Rank B testa a tua consistência diária.`,
+      `${duration} min de concentração ininterrupta. Fecha o portal de ${boss.name} antes que colapse para o mundo real.`,
+    ],
+    A: [
+      `${duration} min de imersão total. ${boss.name} comanda este portal de Rank A — foco de elite, sem pausas.`,
+      `Sessão de deep work de ${duration} min. Sem notificações. Sem pausas. O portal de ${boss.name} não aceita meias medidas.`,
+      `${duration} min de trabalho profundo no teu projeto mais importante. O portal de ${boss.name} fecha com disciplina, não com intenção.`,
+    ],
+    S: [
+      `${duration} min de trabalho de máxima intensidade. ${boss.name} é S-Rank — o teu esforço deve ser também.`,
+      `Imersão absoluta por ${duration} min. Define um entregável concreto antes de começar — o portal S-Rank exige resultados.`,
+      `${duration} min de foco total no teu desafio mais difícil do dia. ${boss.name} mede-se em execução, não em intenções.`,
+    ],
+    National: [
+      `${duration} min de foco de Nível Nacional. ${boss.name} representa a mais alta ameaça — o teu melhor é o mínimo aceite.`,
+      `Imersão de ${duration} min: define o objetivo, elimina tudo o resto. O Monarca não perdoa distrações.`,
+      `${duration} min de deep work de elite. ${boss.name} aguarda — apenas uma mente inabalável fecha este portal.`,
+    ],
+  };
+  const pool = detailByRank[boss.rank] ?? detailByRank.A;
+  let hash = 0;
+  for (let i = 0; i < boss.id.length; i++) {hash = (hash * 31 + boss.id.charCodeAt(i)) >>> 0;}
+  const detail = pool[hash % pool.length];
+
   return [{
     id: `daily_boss_${boss.id}`,
     label: `Portal de ${boss.name}`,
-    detail: `Derrota o Boss Diário com ${duration} min de foco.`,
+    detail,
     type: 'focus',
     focusDuration: duration * 60_000,
     shadowHint: boss.id,

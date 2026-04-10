@@ -161,11 +161,7 @@ function FormModal({
   const [showIconPicker, setShowIconPicker] = useState(false);
   const [alertCfg, setAlertCfg] = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null);
 
-  React.useEffect(() => {
-    if (visible) {
-      setForm(toFormState(initial));
-    }
-  }, [visible, initial]);
+  // Form is initialized via useState lazy init; no effect needed (parent uses key to remount on target change)
 
   const isCore = form.type === 'core';
   const isBoss = form.type === 'boss';
@@ -795,6 +791,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
       </View>
 
       <FormModal
+        key={formTarget === 'new' ? '__new__' : (typeof formTarget === 'object' && formTarget ? formTarget.id : '__none__')}
         visible={formTarget !== null}
          initial={formTarget && formTarget !== 'new' ? formTarget : undefined}
          onSave={handleSave}

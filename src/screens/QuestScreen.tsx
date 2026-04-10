@@ -121,6 +121,82 @@ const getStyles = (C: any) => StyleSheet.create({
 
 // Normals moved to dictionary
 
+// Creative task descriptions for raid boss dungeon breaks — varied by boss id / rank
+const RAID_BREAK_TASKS: Record<string, string[]> = {
+  B: [
+    'Realiza 40 flexões + 40 agachamentos no menor tempo possível.',
+    'Medita em silêncio por {min} min. Elimina o ruído interior antes que o portal se expanda.',
+    'Salta à corda ou faz jumping jacks durante {min} min seguidos. Ritmo constante.',
+    'Escreve 3 objetivos desta semana com detalhe e prazo concreto.',
+    'Corre em passo acelerado durante {min} min sem parar. O portal fecha-se ao teu ritmo.',
+    'Faz 50 squats + 50 abdominais. O corpo é a tua primeira arma.',
+    'Bebe 1,5L de água e lê 10 páginas de um livro não-ficção.',
+    '3 séries de prancha até ao limite. Regista os tempos de cada série.',
+    'Vai à janela/exterior durante {min} min: caminha ou faz respirações profundas.',
+    'Escreve um diário de 10 min sobre o que te está a impedir de avançar.',
+    'Completa uma tarefa pequena que adiaste há mais de 3 dias.',
+    'Faz 30 burpees + 30 mountain climbers. Portal de baixo rank — ainda assim exige sangue.',
+  ],
+  A: [
+    'Foco absoluto em trabalho ou estudo durante {min} min. Sem notificações, sem pausas.',
+    '60 burpees + 60 agachamentos consecutivos. Paga o tributo ao portal com suor.',
+    'Lê {min} páginas de um livro de desenvolvimento pessoal ou técnico. Sem distrações.',
+    'Sessão de treino de força: 4 séries de push-ups até falha + 4 séries de squats.',
+    'Escreve um plano detalhado para o teu maior desafio atual. Inclui próximos 3 passos.',
+    'Shadowboxing ou sombra de luta durante {min} min. Intensidade máxima nos últimos 3 min.',
+    'Estuda ou pratica uma skill técnica específica por {min} min. Documenta o que aprendeste.',
+    'Corre ao ritmo que conseguires durante {min} min. Não pares. O portal não espera.',
+    'Prepara e come uma refeição saudável do zero. Sem fast food ou processados.',
+    'Resolve um problema concreto que estás a adiar. Escreve a solução em 3 passos.',
+    'Faz {min} min de alongamentos dinâmicos avançados. Mobilidade é poder.',
+    'Aprende algo novo durante {min} min: tutorial, curso ou artigo técnico. Tira notas.',
+    'Organiza o teu espaço de trabalho e planeia as próximas 24h com detalhe.',
+    'Faz tabata: 8 rounds de 20s esforço máximo + 10s repouso (burpees ou sprints).',
+  ],
+  S: [
+    'Modo Foco ativo durante {min} min. Define um entregável concreto antes de começar.',
+    'Corre {min} min em ritmo constante ao ar livre. Sem música — só tu e o silêncio.',
+    '100 repetições à escolha: burpees, flexões ou agachamentos. Regista o tempo total.',
+    'Estuda algo difícil durante {min} min: matemática, código, filosofia ou ciência.',
+    'Escreve e revê um plano de ação para o próximo mês. Mínimo 5 ações concretas.',
+    'Sessão de respiração Wim Hof: 3 rounds de 30 respirações + retenção + {min} min de meditação.',
+    'Técnica Feynman: explica em voz alta (ou por escrito) um conceito complexo que dominas.',
+    'Cria um protótipo funcional, esboço ou plano detalhado de um projeto teu em {min} min.',
+    'Lê {min} páginas de um livro denso (filosofia, ciência ou estratégia). Toma notas.',
+    'Treino de alta intensidade: 5 séries de (10 burpees + 15 push-ups + 20 squats). Sem pausa entre exercícios.',
+    'Documenta 3 lições que aprendeste este mês e o que vais mudar por causa delas.',
+    'Pratica uma habilidade criativa durante {min} min: escrita, código, desenho ou música.',
+    'Resolve 3 desafios de lógica ou matemática. Cronometra cada um.',
+    'Executa {min} min de trabalho profundo no teu projeto mais importante. Zero distrações.',
+    'Faz uma corrida de {min} min em terreno variado ou com sprints intercalados.',
+  ],
+  National: [
+    'O maior portal exige o maior sacrifício. Foco total por {min} min. Zero distrações absolutas.',
+    'Treino épico: 60 push-ups + 100 squats + 40 burpees + prancha até ao limite. Executa tudo.',
+    'Lê 40 páginas de um livro técnico ou de desenvolvimento pessoal. Escreve um resumo de meia página ao terminar.',
+    'Corre o mais longe possível em {min} min. Regista a distância e bate o teu recorde.',
+    'Define e documenta a tua visão de longo prazo em {min} min de escrita focada sem interrupções.',
+    'Medita em silêncio absoluto por {min} min. Nenhum pensamento sem resolução — só presença.',
+    'Estuda o tema mais difícil que tens em mãos durante {min} min. Técnica Pomodoro proibida — foco contínuo.',
+    'Escreve o teu manifesto pessoal: valores, missão e o legado que queres deixar.',
+    'Treino final: 20 min corrida + 50 push-ups + 80 squats + 30 burpees + 5 min prancha.',
+    'Aprende algo novo do zero: 45 min de leitura ou tutorial + 45 min de prática. Toma notas ao longo.',
+    'Identifica a tua maior fraqueza atual e escreve um plano de 30 dias para a eliminar — com ações diárias.',
+    'Realiza {min} min de prática deliberada na tua skill principal. Sem atalhos, sem conteúdo passivo.',
+    'Sessão de recuperação profunda: {min} min de yoga avançado ou alongamentos + 10 min de meditação.',
+    'Lê 50 páginas de uma obra densa. Anota 5 insights e 2 mudanças concretas que vais fazer.',
+    '{min} min de escrita de diário: objetivos da semana, o que falhaste, o que vais mudar e porquê.',
+  ],
+};
+
+function getRaidBossBreakDetail(rank: string, minutes: number, bossId: string): string {
+  const pool = RAID_BREAK_TASKS[rank] ?? RAID_BREAK_TASKS.A;
+  // deterministic pick based on boss id to avoid changing on re-render
+  let hash = 0;
+  for (let i = 0; i < bossId.length; i++) {hash = (hash * 31 + bossId.charCodeAt(i)) >>> 0;}
+  const template = pool[hash % pool.length];
+  return template.replace(/{min}/g, String(minutes));
+}
 
 function formatCountdown(ms: number): string {
   if (ms <= 0) {return 'Termina em 0m';}
@@ -569,11 +645,6 @@ export default function QuestScreen() {
             const displayColor = qDef
               ? (qDef.questType === 'focus' ? C.purple : qDef.questType === 'gps' ? C.green : C.neonRed)
               : (rBoss?.color ?? C.neonRed);
-            const displayLore = qDef
-              ? qDef.description.replace(/{target}/g, String(qDef.baseTarget)).replace(/{unit}/g, qDef.unit)
-              : rBoss
-                ? `Rank ${rBoss.rank} — Elimina ${rBoss.name} antes que o portal colapse.`
-                : 'Um portal dinâmico abriu-se. Entra antes que a janela feche.';
             return (
               <TouchableOpacity
                 style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: displayColor }]}
@@ -597,10 +668,11 @@ export default function QuestScreen() {
                   if (!rBoss) {return;}
                   const remainingMs = Math.max(0, db.expiresAt - Date.now());
                   const targetFocus = Math.max(10 * 60_000, Math.min(25 * 60_000, Math.floor(remainingMs * 0.5)));
+                  const breakMinutes = Math.round(targetFocus / 60_000);
                   const mission: DungeonMission = {
                     id: `break_${rBoss.id}`,
                     label: `Dungeon Break: ${rBoss.name}`,
-                    detail: displayLore,
+                    detail: getRaidBossBreakDetail(rBoss.rank, breakMinutes, rBoss.id),
                     type: 'focus',
                     shadowHint: rBoss.id,
                     icon: 'skull-scan',

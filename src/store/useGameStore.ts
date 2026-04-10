@@ -206,7 +206,17 @@ const useGameStore = create<GameState & GameActions>()(
           }
 
           if (system.hasPenalty && system.penaltyBlockEnd > 0 && Date.now() >= system.penaltyBlockEnd) {
-            set((s: GameState & GameActions) => ({ system: { ...s.system, hasPenalty: false, penaltyBlockEnd: 0 } }));
+            set((s: GameState & GameActions) => ({
+              system: {
+                ...s.system,
+                hasPenalty: false,
+                penaltyBlockEnd: 0,
+                penaltyBlockStart: 0,
+                penaltyTriggered: false,
+                focusModeActive: false,
+                focusEndTime: undefined,
+              },
+            }));
           }
 
           {
@@ -918,7 +928,8 @@ const useGameStore = create<GameState & GameActions>()(
             const { xpBoost, goldBoost } = computeActivePassives(s.player.activeShadowIds, s.player.shadows, s.customShadows, s.activeBuffs);
 
             // Progress focus quests by actual minutes (converted to quest unit)
-            const updatedQuests = s.quests.map(q => {
+            // During penalty, skip regular quests — only penalty focus quests should advance
+            const updatedQuests = s.system.hasPenalty ? s.quests : s.quests.map(q => {
               if (q.type !== 'focus' || q.done) {return q;}
               const unit = getUnit(q);
               const addVal = minutesToUnit(unit);
@@ -1519,7 +1530,28 @@ const useGameStore = create<GameState & GameActions>()(
           });
         },
         addQuestDefinition(def) { set((s: GameState) => ({ questDictionary: [...s.questDictionary, def] })); },
-        updateQuestDefinition(id, patch) { set((s: GameState) => ({ questDictionary: s.questDictionary.map(d => d.id === id ? { ...d, ...patch } : d) })); },
+        updateQuestDefinition(id, patch) {
+          set((s: GameState) => {
+            const updatedDict = s.questDictionary.map(d => d.id === id ? { ...d, ...patch } : d);
+            // Also update any live quest with the same id so the change is visible today
+            const updatedQuests = s.quests.map(q => {
+              if (q.id !== id) {return q;}
+              const merged: Quest = { ...q };
+              if (patch.questType !== undefined) {merged.type = patch.questType as Quest['type'];}
+              if (patch.questType === 'focus') {
+                const unit = (patch.unit ?? q.unit ?? 'min').toLowerCase();
+                const target = patch.baseTarget ?? q.targetValue ?? 30;
+                const focusMinutes = unit.startsWith('h') ? target * 60 : target;
+                merged.focusDuration = focusMinutes * 60_000;
+                merged.currentValue = 0;
+              } else if (patch.questType !== undefined) {
+                merged.focusDuration = undefined;
+              }
+              return merged;
+            });
+            return { questDictionary: updatedDict, quests: updatedQuests };
+          });
+        },
         setActiveTheme(themeId) { set((s: GameState) => ({ player: { ...s.player, activeThemeId: themeId } })); },
         deleteQuestDefinition(id) { set((s: GameState) => ({ questDictionary: s.questDictionary.filter(d => d.id !== id) })); },
         updateSettings(patch) { set((s: GameState) => ({ settings: { ...s.settings, ...patch } })); },
