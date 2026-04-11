@@ -1,4 +1,4 @@
-package com.sololevelingrn.focusblocker
+package com.lifup.app.focusblocker
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent

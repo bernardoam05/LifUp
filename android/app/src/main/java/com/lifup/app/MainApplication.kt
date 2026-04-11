@@ -1,4 +1,4 @@
-package com.sololevelingrn
+package com.lifup.app
 
 import android.app.Application
 import com.facebook.react.PackageList
@@ -10,8 +10,8 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
-import com.sololevelingrn.focusblocker.FocusBlockerPackage
-import com.sololevelingrn.SharedStoragePackage
+import com.lifup.app.focusblocker.FocusBlockerPackage
+import com.lifup.app.SharedStoragePackage
 
 class MainApplication : Application(), ReactApplication {
 

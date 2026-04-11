@@ -80,6 +80,15 @@ const INITIAL_SYSTEM: Omit<SystemState, 'weeklyBossIds' | 'normalBossIds' | 'nor
   pomodoroPhase: 'idle',
   pomodoroCycle: 0,
   pomodoroBreakEnd: 0,
+  goldAdsToday: 0,
+  adItemsToday: 0,
+  adXpBoostToday: false,
+  adLastDate: '',
+  adStreakShieldActive: false,
+  adStreakShieldUsedWeek: false,
+  adPenaltyUsedWeek: false,
+  adBossUsedForId: '',
+  shadowSkillFiredMsg: null,
 };
 
 const INITIAL_RESET_SYSTEM = {
@@ -345,10 +354,14 @@ const useGameStore = create<GameState & GameActions>()(
             const canUseImmunity = !usedSkills.penalty_immunity || (now - usedSkills.penalty_immunity > oneWeekMs);
 
             if (penaltyImmunity && canUseImmunity) {
+              const immunityShadow = player.activeShadowIds
+                .map(id => SHADOW_MAP[id])
+                .find(sh => sh?.passiveEffect?.type === 'penalty_immunity');
               set((s: GameState & GameActions) => ({
                 system: {
                   ...s.system,
                   usedShadowSkills: { ...usedSkills, ['penalty_immunity']: now },
+                  shadowSkillFiredMsg: `${immunityShadow?.name ?? 'Sombra'} absorveu a penalização!`,
                 },
               }));
               // Bypass penalty logic — mark immunity so main set() doesn't re-apply hasPenalty
@@ -397,8 +410,8 @@ const useGameStore = create<GameState & GameActions>()(
 
             const effectiveDone = quests.filter((q: Quest) => {
               if (q.done && !q.failed) {return true;}
-              if (!q.done && q.type === 'forbidden' && !q.failed) {return true;}
-              if (!q.done && q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) {return true;}
+              if (q.type === 'forbidden' && !(q.done && q.failed)) {return true;}
+              if (q.type === 'limit' && (q.currentValue ?? 0) <= (q.targetValue ?? 0)) {return true;}
               return false;
             }).length;
 
@@ -414,13 +427,24 @@ const useGameStore = create<GameState & GameActions>()(
               const canUseProtect = !usedSkills.streak_protect || (now - usedSkills.streak_protect > oneWeekMs);
 
               if (streakProtect && canUseProtect) {
+                // Shadow skill takes priority
                 newStreak = player.currentStreak;
                 calendarProtected = true;
+                const protectShadow = player.activeShadowIds
+                  .map(id => SHADOW_MAP[id])
+                  .find(sh => sh?.passiveEffect?.type === 'streak_protect');
                 set((s: GameState & GameActions) => ({
                   system: {
                     ...s.system,
                     usedShadowSkills: { ...(s.system.usedShadowSkills ?? {}), ['streak_protect']: now },
+                    shadowSkillFiredMsg: `${protectShadow?.name ?? 'Sombra'} protegeu o teu streak!`,
                   },
+                }));
+              } else if (system.adStreakShieldActive) {
+                // Ad shield fallback — only fires if shadow not available
+                newStreak = player.currentStreak;
+                set((s: GameState & GameActions) => ({
+                  system: { ...s.system, adStreakShieldActive: false, shadowSkillFiredMsg: 'Escudo de Streak (anúncio) consumido — streak protegido!' },
                 }));
               } else {
                 newStreak = 0;
@@ -486,6 +510,8 @@ const useGameStore = create<GameState & GameActions>()(
               } : s.system.lastPenaltyInfo,
               weeklyTrainingCount: weeklyReset ? 0 : s.system.weeklyTrainingCount,
               weeklyRegenCount: weeklyReset ? 0 : s.system.weeklyRegenCount,
+              adStreakShieldUsedWeek: weeklyReset ? false : s.system.adStreakShieldUsedWeek,
+              adPenaltyUsedWeek: weeklyReset ? false : s.system.adPenaltyUsedWeek,
               weeklyResetDate: weeklyReset ? thisMonday : s.system.weeklyResetDate,
               weeklyBossIds: (weeklyReset || s.system.weeklyBossIds.length === 0)
                 ? (() => {
@@ -539,7 +565,7 @@ const useGameStore = create<GameState & GameActions>()(
             set({ jobChangeReward: jobChange });
           }
           checkAndUnlockAchievements(ref);
-          scheduleSystemWarnings().catch(() => { });
+          scheduleSystemWarnings().catch((err: any) => { console.warn('[Store] scheduleSystemWarnings failed:', err?.message ?? err); });
           get().checkRaidBoss();
           get().checkDynamicPortalSpawn();
         },
@@ -643,9 +669,10 @@ const useGameStore = create<GameState & GameActions>()(
 
         checkRaidBoss() {
           if (get().player.level < 10) {return;}
-          const s = get().system.activeRaidBoss;
-          if (s && Date.now() > s.endDate) {set((state: GameState & GameActions) => ({ system: { ...state.system, activeRaidBoss: null } }));}
-          if (!get().system.activeRaidBoss) {get().spawnRaidBoss();}
+          const { activeRaidBoss } = get().system;
+          const expired = activeRaidBoss && Date.now() > activeRaidBoss.endDate;
+          if (expired) {set((state: GameState & GameActions) => ({ system: { ...state.system, activeRaidBoss: null } }));}
+          if (!activeRaidBoss || expired) {get().spawnRaidBoss();}
         },
 
         clearExtraction() { set({ lastExtraction: null }); },
@@ -748,7 +775,7 @@ const useGameStore = create<GameState & GameActions>()(
           });
 
           const allNowDone = get().quests.every(q => q.done || q.type === 'limit' || q.type === 'forbidden');
-          if (allNowDone) {cancelSystemWarnings().catch(() => { });}
+          if (allNowDone) {cancelSystemWarnings().catch((err: any) => { console.warn('[Store] cancelSystemWarnings failed:', err?.message ?? err); });}
 
           fireEvent('quest_completed', { isLastQuest: allNowDone }, ref);
           if (allNowDone) {fireEvent('all_quests_completed', { afterPerfectDay: true, firstDay: get().statistics.perfectDays === 0, afterPenalty: get().system.hasPenalty }, ref);}
@@ -766,7 +793,6 @@ const useGameStore = create<GameState & GameActions>()(
             if (shadow) {
               const existing = state.player.shadows.find(e => e.id === shadow.id);
               const newCopies = existing ? (existing.copies ?? 0) + 1 : 0;
-              const currQueue = get().rewardsQueue;
               set((s: GameState & GameActions) => ({
                 player: {
                   ...s.player,
@@ -779,7 +805,7 @@ const useGameStore = create<GameState & GameActions>()(
                 // Insert extraction at BEGINNING of queue so it displays FIRST
                 rewardsQueue: [
                   { type: 'shadow' as const, id: shadow.id, isLevelUp: !!existing, newLevel: newCopies },
-                  ...currQueue,
+                  ...s.rewardsQueue,
                 ],
               }));
               // Distinct vibration for shadow extraction — pulse pattern to feel "summoning"
@@ -820,7 +846,9 @@ const useGameStore = create<GameState & GameActions>()(
               statistics: { ...s.statistics, totalCompleted: s.statistics.totalCompleted + 1 },
             };
           });
-          if (get().quests.every(q => q.done)) {cancelSystemWarnings().catch(() => { });}
+          if (get().quests.every(q => q.done)) {cancelSystemWarnings().catch((err: any) => { console.warn('[Store] cancelSystemWarnings failed:', err?.message ?? err); });}
+          const skippedQuest = get().quests.find(q => q.id === id);
+          if (skippedQuest) {get().dealRaidBossDamage(skippedQuest.xp);}
           fireEvent('quest_skipped_via_pass', { itemId: 'system_pass' }, ref);
           checkAndUnlockAchievements(ref);
         },
@@ -1077,7 +1105,7 @@ const useGameStore = create<GameState & GameActions>()(
             else {inv.push({ itemId, quantity: 1 });}
             return {
               player: { ...s.player, gold: s.player.gold - finalCost, inventory: inv },
-              system: { ...s.system, shopStocks: STOCKED_ITEMS.includes(itemId) ? { ...s.system.shopStocks, [itemId]: s.system.shopStocks[itemId]! - 1 } : s.system.shopStocks },
+              system: { ...s.system, shopStocks: STOCKED_ITEMS.includes(itemId) ? { ...s.system.shopStocks, [itemId]: (s.system.shopStocks[itemId] ?? 0) - 1 } : s.system.shopStocks },
               statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + finalCost },
             };
           });
@@ -1464,9 +1492,121 @@ const useGameStore = create<GameState & GameActions>()(
         setPenaltyReduced(v) { set((s: GameState) => ({ system: { ...s.system, penaltyReduced: v } })); },
         removePenalty() { set((s: GameState) => ({ system: { ...s.system, hasPenalty: false, penaltyTriggered: false, penaltyQuests: [], penaltyBlockEnd: 0, focusModeActive: false, focusEndTime: undefined } })); fireEvent('penalty_cleared', {}, ref); },
         deductGold(amount) { if (get().player.gold < amount) {return false;} set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold - amount }, statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + amount } })); return true; },
-        setMissionModalOpen(v) { set((s: GameState) => ({ missionModalOpen: v })); },
+        addGold(amount) { set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold + amount } })); },
+        claimAdGoldReward() {
+          const today = new Date().toISOString().split('T')[0];
+          const { system } = get();
+          const isNewDay = system.adLastDate !== today;
+          const count = isNewDay ? 0 : (system.goldAdsToday ?? 0);
+          if (count >= 3) { return false; }
+          set((s: GameState) => ({
+            player: { ...s.player, gold: s.player.gold + 500 },
+            system: { ...s.system, goldAdsToday: count + 1, adLastDate: today },
+          }));
+          return true;
+        },
+        claimAdStreakShield() {
+          const { system, player } = get();
+          if (system.adStreakShieldActive || system.adStreakShieldUsedWeek) { return false; }
+          // Only offer when shadow streak_protect is not available
+          const { streakProtect } = computeActivePassives(player.activeShadowIds, player.shadows, get().customShadows, get().activeBuffs ?? []);
+          const usedSkills = system.usedShadowSkills ?? {};
+          const shadowCanProtect = streakProtect && (!usedSkills.streak_protect || Date.now() - usedSkills.streak_protect > 7 * 24 * 3600_000);
+          if (shadowCanProtect) { return false; }
+          set((s: GameState) => ({ system: { ...s.system, adStreakShieldActive: true, adStreakShieldUsedWeek: true } }));
+          return true;
+        },
+        claimAdPenaltyReduction() {
+          const { system } = get();
+          if (system.adPenaltyUsedWeek) { return false; }
+          if (!system.hasPenalty && (system.penaltyMissionsOwed ?? 0) === 0) { return false; }
+          set((s: GameState) => ({
+            system: {
+              ...s.system,
+              adPenaltyUsedWeek: true,
+              penaltyMissionsOwed: Math.max(0, (s.system.penaltyMissionsOwed ?? 0) - 1),
+              penaltyQuests: s.system.penaltyQuests.slice(1),
+              hasPenalty: s.system.penaltyQuests.length <= 1 ? false : s.system.hasPenalty,
+            },
+          }));
+          return true;
+        },
+        claimAdXpBoost() {
+          const today = new Date().toISOString().split('T')[0];
+          const { system } = get();
+          const isNewDay = system.adLastDate !== today;
+          if (!isNewDay && system.adXpBoostToday) { return false; }
+          if (system.xpBoostNext) { return false; } // already active from another source
+          set((s: GameState) => ({
+            system: { ...s.system, xpBoostNext: true, adXpBoostToday: true, adLastDate: today },
+          }));
+          return true;
+        },
+        claimAdRandomItem() {
+          const today = new Date().toISOString().split('T')[0];
+          const { system } = get();
+          const isNewDay = system.adLastDate !== today;
+          const count = isNewDay ? 0 : (system.adItemsToday ?? 0);
+          if (count >= 2) { return false; }
+          const ITEM_POOL = ['health_potion', 'xp_crystal', 'health_potion', 'rest_scroll', 'evolution_shard_common'];
+          const itemId = ITEM_POOL[Math.floor(Math.random() * ITEM_POOL.length)];
+          const ITEM_NAMES: Record<string, string> = {
+            health_potion: 'Poção de Vida',
+            xp_crystal: 'Cristal de XP',
+            rest_scroll: 'Pergaminho de Descanso',
+            evolution_shard_common: 'Fragmento de Evolução',
+          };
+          set((s: GameState) => {
+            const inv = [...s.player.inventory];
+            const idx = inv.findIndex(e => e.itemId === itemId);
+            if (idx >= 0) { inv[idx] = { ...inv[idx], quantity: inv[idx].quantity + 1 }; }
+            else { inv.push({ itemId, quantity: 1 }); }
+            return {
+              player: { ...s.player, inventory: inv },
+              system: { ...s.system, adItemsToday: count + 1, adLastDate: today },
+            };
+          });
+          return { itemId, itemName: ITEM_NAMES[itemId] ?? itemId };
+        },
+        claimAdBossHp() {
+          const { system } = get();
+          const boss = system.activeRaidBoss;
+          if (!boss) { return false; }
+          if (system.adBossUsedForId === boss.defId) { return false; }
+          const reduction = Math.floor(boss.maxHp * 0.20);
+          const newHp = Math.max(1, boss.currentHp - reduction);
+          set((s: GameState) => ({
+            system: {
+              ...s.system,
+              adBossUsedForId: boss.defId,
+              activeRaidBoss: { ...boss, currentHp: newHp },
+            },
+          }));
+          return true;
+        },
+        rerollQuestViaAd(questId) {
+          const { player, questDictionary, quests } = get();
+          const targetQuest = quests.find(q => q.id === questId);
+          if (!targetQuest || targetQuest.done) { return { success: false, reason: 'Missão inválida.' }; }
+          const baseSeed = Date.now();
+          let newQuest: Quest | undefined;
+          const activeIds = quests.map(q => q.id);
+          for (let i = 0; i < 40; i++) {
+            const candidates = createDailyQuests(
+              player.level, questDictionary,
+              get().settings.missionDifficulty, get().settings.customDailyMissions, baseSeed + i
+            );
+            newQuest = candidates.find(q => !activeIds.includes(q.id));
+            if (newQuest) { break; }
+          }
+          if (!newQuest) { return { success: false, reason: 'Sem missões disponíveis.' }; }
+          set((s: GameState & GameActions) => ({ quests: s.quests.map(q => q.id === questId ? newQuest! : q) }));
+          return { success: true };
+        },
+        setMissionModalOpen(v) { set(() => ({ missionModalOpen: v })); },
         toggleBlockedApp(pkg) { set((s: GameState) => ({ system: { ...s.system, blockedApps: s.system.blockedApps.includes(pkg) ? s.system.blockedApps.filter(p => p !== pkg) : [...s.system.blockedApps, pkg] } })); },
         dismissAchievement() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'achievement') })); },
+        dismissShadowSkillMsg() { set((s: GameState) => ({ system: { ...s.system, shadowSkillFiredMsg: null } })); },
 
         setPomodoroState(phase, cycle, breakEnd) {
           set((_s: GameState & GameActions) => ({
@@ -1572,7 +1712,24 @@ const useGameStore = create<GameState & GameActions>()(
           });
         },
         dismissExtraction() { set((s: GameState & GameActions) => ({ rewardsQueue: s.rewardsQueue.filter(r => r.type !== 'shadow') })); },
-        toggleActiveShadow(id) { set((s: GameState & GameActions) => { const active = s.player.activeShadowIds; const isActive = active.includes(id); const newActive = isActive ? active.filter(a => a !== id) : active.length < 3 ? [...active, id] : active; return { player: { ...s.player, activeShadowIds: newActive } }; }); },
+        toggleActiveShadow(id) {
+          set((s: GameState & GameActions) => {
+            const active = s.player.activeShadowIds;
+            const isActive = active.includes(id);
+            if (!isActive) {
+              if (active.length >= 3) { return {}; }
+              // Only one streak_protect shadow allowed in the active team
+              const customMap = Object.fromEntries(s.customShadows.map(sh => [sh.id, sh]));
+              const lookup: Record<string, any> = { ...SHADOW_MAP, ...customMap };
+              if (lookup[id]?.passiveEffect?.type === 'streak_protect') {
+                const alreadyHasProtect = active.some(aid => lookup[aid]?.passiveEffect?.type === 'streak_protect');
+                if (alreadyHasProtect) { return {}; }
+              }
+            }
+            const newActive = isActive ? active.filter(a => a !== id) : [...active, id];
+            return { player: { ...s.player, activeShadowIds: newActive } };
+          });
+        },
         setEventBossState(key, required, total) { set((s: GameState) => ({ system: { ...s.system, eventBossKey: key, eventBossCompletedIds: [], eventBossRequired: required, eventBossTotal: total, eventBossDefeated: false } })); },
         completeEventTrial(id, key, required, total) { let completed = 0; set((s: GameState & GameActions) => { const reset = s.system.eventBossKey !== key; const nextIds = (reset ? [] : s.system.eventBossCompletedIds).includes(id) ? (reset ? [] : s.system.eventBossCompletedIds) : [...(reset ? [] : s.system.eventBossCompletedIds), id]; completed = nextIds.length; return { system: { ...s.system, eventBossKey: key, eventBossCompletedIds: nextIds, eventBossRequired: required, eventBossTotal: total } }; }); return { completed, required }; },
         markEventBossDefeated(key) { set((s: GameState & GameActions) => ({ system: { ...s.system, eventBossKey: key, eventBossDefeated: true } })); },

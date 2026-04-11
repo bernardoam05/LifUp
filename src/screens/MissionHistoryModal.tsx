@@ -124,7 +124,7 @@ export default function MissionHistoryModal({ visible = true, onClose, C }: { vi
                   {isExpanded && (
                     <View style={[s.historyContainer, { borderColor: C.border }]}>
                       {history.length > 0 ? history.slice().reverse().map((h, i) => (
-                        <View key={i} style={[s.historyItem, i < history.length - 1 && s.historyItemBorder]}>
+                        <View key={h.date} style={[s.historyItem, i < history.length - 1 && s.historyItemBorder]}>
                           <View style={s.historyHeader}>
                             <Text style={s.historyDate}>
                               <Icon name="calendar-blank" size={10} color={C.dimmed} /> {new Date(h.date).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })}

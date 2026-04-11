@@ -14,7 +14,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24")
     }
 }
 
@@ -27,5 +27,20 @@ allprojects {
         google()
         maven { url "$rootDir/../node_modules/react-native/android" }
         maven { url "https://jitpack.io" }
+    }
+    configurations.all {
+        resolutionStrategy {
+            force "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.24"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.24"
+        }
+    }
+}
+
+subprojects {
+    plugins.withId("org.jetbrains.kotlin.android") {
+        tasks.withType(Class.forName("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")).configureEach {
+            it.kotlinOptions.freeCompilerArgs += ["-Xskip-metadata-version-check"]
+        }
     }
 }

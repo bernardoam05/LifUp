@@ -7,6 +7,7 @@ import { SHOP_CATALOG, ShopItem } from '../data/shopItems';
 import CustomModal from '../components/CustomModal';
 import ShadowShopModal from '../components/ShadowShopModal';
 import { useTheme, FONT, SPACING } from '../theme';
+import { useRewardedAd, AD_UNIT_GOLD, AD_UNIT_ITEM } from '../hooks/useRewardedAd';
 
 // ── Item card ──────────────────────────────────────────────────────────────────
 
@@ -113,7 +114,23 @@ export default function ShopScreen() {
   const shopStocks = useGameStore(st => st.system.shopStocks);
   const purchaseItem = useGameStore(st => st.purchaseItem);
   const purchaseShadow = useGameStore(st => st.purchaseShadow);
+  const claimAdGoldReward = useGameStore(st => st.claimAdGoldReward);
+  const claimAdRandomItem = useGameStore(st => st.claimAdRandomItem);
+  const goldAdsToday = useGameStore(st => st.system.goldAdsToday ?? 0);
+  const adItemsToday = useGameStore(st => st.system.adItemsToday ?? 0);
+  const adLastDate = useGameStore(st => st.system.adLastDate ?? '');
   const unlockedThemes = player.unlockedThemes ?? [];
+
+  const today = new Date().toISOString().split('T')[0];
+  const goldAdsCount = adLastDate === today ? goldAdsToday : 0;
+  const itemAdsCount = adLastDate === today ? adItemsToday : 0;
+  const MAX_GOLD_ADS = 3;
+  const MAX_ITEM_ADS = 2;
+
+  const { loaded: adLoaded, show: showAd } = useRewardedAd(AD_UNIT_GOLD);
+  const { loaded: adItemLoaded, show: showItemAd } = useRewardedAd(AD_UNIT_ITEM);
+
+  const [lastItemWon, setLastItemWon] = useState<string | null>(null);
 
   const [pending, setPending] = useState<(ShopItem & { amount?: number }) | null>(null);
   const [pendingShadow, setPendingShadow] = useState<any | null>(null);
@@ -155,6 +172,45 @@ export default function ShopScreen() {
         <View style={s.goldBar}>
           <Icon name="rhombus" size={18} color={C.gold} />
           <Text style={s.goldTxt}> {player.gold.toLocaleString()} Gold disponível</Text>
+        </View>
+
+        {/* Ad Rewards */}
+        <View style={s.adCard}>
+          <View style={s.adCardHeader}>
+            <Icon name="television-play" size={14} color={C.gold} />
+            <Text style={s.adCardTitle}> BÓNUS DIÁRIO</Text>
+            <Text style={s.adCardCount}>{goldAdsCount}/{MAX_GOLD_ADS}</Text>
+          </View>
+          <Text style={s.adCardDesc}>Vê um anúncio voluntário e recebe 500 Gold.</Text>
+          <TouchableOpacity
+            style={[s.adBtn, (goldAdsCount >= MAX_GOLD_ADS || !adLoaded) && s.adBtnDisabled]}
+            disabled={goldAdsCount >= MAX_GOLD_ADS || !adLoaded}
+            onPress={() => showAd(() => { claimAdGoldReward(); })}
+          >
+            <Icon name={goldAdsCount >= MAX_GOLD_ADS ? 'check-circle' : 'play-circle'} size={14} color={goldAdsCount >= MAX_GOLD_ADS ? C.green : C.gold} />
+            <Text style={[s.adBtnTxt, goldAdsCount >= MAX_GOLD_ADS && { color: C.green }]}>
+              {goldAdsCount >= MAX_GOLD_ADS ? ' LIMITE ATINGIDO' : !adLoaded ? ' A CARREGAR...' : ' VER ANÚNCIO → +500 GOLD'}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[s.adBtn, { marginTop: 6, borderColor: C.neonBlue + '55', backgroundColor: C.neonBlue + '10' }, (itemAdsCount >= MAX_ITEM_ADS || !adItemLoaded) && s.adBtnDisabled]}
+            disabled={itemAdsCount >= MAX_ITEM_ADS || !adItemLoaded}
+            onPress={() => showItemAd(() => {
+              const result = claimAdRandomItem();
+              if (result) { setLastItemWon(result.itemName); }
+            })}
+          >
+            <Icon name={itemAdsCount >= MAX_ITEM_ADS ? 'check-circle' : 'play-circle'} size={14} color={itemAdsCount >= MAX_ITEM_ADS ? C.green : C.neonBlue} />
+            <Text style={[s.adBtnTxt, { color: itemAdsCount >= MAX_ITEM_ADS ? C.green : C.neonBlue }]}>
+              {itemAdsCount >= MAX_ITEM_ADS ? ' LIMITE ATINGIDO' : !adItemLoaded ? ' A CARREGAR...' : ` VER ANÚNCIO → ITEM ALEATÓRIO (${itemAdsCount}/${MAX_ITEM_ADS})`}
+            </Text>
+          </TouchableOpacity>
+          {lastItemWon && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+              <Icon name="gift-outline" size={12} color={C.green} />
+              <Text style={{ color: C.green, fontSize: 11, marginLeft: 4 }}> {lastItemWon} adicionado ao inventário!</Text>
+            </View>
+          )}
         </View>
 
         {/* Success banner */}
@@ -277,6 +333,14 @@ const getStyles = (C: any) => StyleSheet.create({
   sectionTitle: { fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 3 },
   lockedBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 8, borderWidth: 1, borderColor: '#334155', padding: SPACING.md, marginBottom: SPACING.sm },
   lockedTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
+  adCard: { backgroundColor: C.panel, borderRadius: 8, borderWidth: 1, borderColor: C.gold + '44', padding: SPACING.md, marginBottom: SPACING.md },
+  adCardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  adCardTitle: { flex: 1, color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+  adCardCount: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10 },
+  adCardDesc: { color: C.muted, fontSize: 11, marginBottom: SPACING.sm },
+  adBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.gold + '18', borderWidth: 1, borderColor: C.gold + '66', borderRadius: 6, paddingVertical: 10 },
+  adBtnDisabled: { opacity: 0.45 },
+  adBtnTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
 });
 
 const getGateStyles = (C: any) => StyleSheet.create({

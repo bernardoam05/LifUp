@@ -1,4 +1,4 @@
-package com.sololevelingrn.focusblocker
+package com.lifup.app.focusblocker
 
 import android.app.*
 import android.app.usage.UsageEvents
@@ -13,7 +13,7 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.app.NotificationCompat
-import com.sololevelingrn.R
+import com.lifup.app.R
 import org.json.JSONArray
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,10 +24,10 @@ import android.app.PendingIntent
 class FocusBlockerService : Service() {
 
     companion object {
-        const val ACTION_START       = "com.sololevelingrn.FOCUS_START"
-        const val ACTION_STOP        = "com.sololevelingrn.FOCUS_STOP"
-        const val ACTION_UPDATE_APPS = "com.sololevelingrn.FOCUS_UPDATE_APPS"
-        const val ACTION_KEEPALIVE   = "com.sololevelingrn.FOCUS_KEEPALIVE"
+        const val ACTION_START       = "com.lifup.app.FOCUS_START"
+        const val ACTION_STOP        = "com.lifup.app.FOCUS_STOP"
+        const val ACTION_UPDATE_APPS = "com.lifup.app.FOCUS_UPDATE_APPS"
+        const val ACTION_KEEPALIVE   = "com.lifup.app.FOCUS_KEEPALIVE"
         const val EXTRA_BLOCKED_PACKAGES = "blocked_packages"
         const val EXTRA_START_TIME_MS    = "start_time_ms"
         const val EXTRA_END_TIME_MS      = "end_time_ms"
@@ -36,7 +36,7 @@ class FocusBlockerService : Service() {
         const val KEEPALIVE_REQUEST_CODE = 4242
 
         // The own app package — overlay must NEVER block this
-        const val OWN_PACKAGE = "com.sololevelingrn"
+        const val OWN_PACKAGE = "com.lifup.app"
 
         @Volatile var isRunning = false
 

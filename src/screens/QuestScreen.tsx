@@ -12,10 +12,13 @@ import CustomModal from '../components/CustomModal';
 import GPSTrackerModal from '../components/GPSTrackerModal';
 import QuestCard from '../components/QuestCard';
 import EventDungeonModal from '../components/EventDungeonModal';
+import DailyBossDungeonModal from '../components/DailyBossDungeonModal';
 import ShadowExtractionModal from '../components/ShadowExtractionModal';
 import SideQuestSection from '../components/SideQuestSection';
 import { useTheme, FONT, SPACING } from '../theme';
 import { ALL_DUNGEON_KEYS } from '../data/dungeonKeys';
+import { useRewardedAd, AD_UNIT_STREAK, AD_UNIT_PENALTY, AD_UNIT_XP_BOOST, AD_UNIT_BOSS_HP } from '../hooks/useRewardedAd';
+import { computeActivePassives } from '../store/helpers'; // used for shadow streak_protect check
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
@@ -77,6 +80,12 @@ const getStyles = (C: any) => StyleSheet.create({
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.md },
   regenBtnInline: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: C.neonBlue + '15', borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
   regenBtnTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+  adRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#f59e0b55', borderRadius: 4, paddingVertical: 8, marginBottom: SPACING.sm, backgroundColor: '#f59e0b10' },
+  adRowTxt: { color: '#f59e0b', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginLeft: 6 },
+  adShieldRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#22d3ee55', borderRadius: 4, paddingVertical: 8, marginTop: 6, marginBottom: 2, backgroundColor: '#22d3ee10' },
+  adShieldTxt: { color: '#22d3ee', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginLeft: 6 },
+  adShieldActive: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#22d3ee15', borderWidth: 1, borderColor: '#22d3ee55', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  adShieldActiveTxt: { color: '#22d3ee', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
 
   statusBar: { padding: SPACING.sm, marginBottom: SPACING.md },
   statusBarRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
@@ -237,6 +246,7 @@ export default function QuestScreen() {
   const questDictionary = useGameStore(st => st.questDictionary);
   const updateSettings = useGameStore(st => st.updateSettings);
   const activeRaidBoss = useGameStore(st => st.system.activeRaidBoss);
+  const weeklyDefeatedBossId = useGameStore(st => st.system.weeklyDefeatedBossId);
   const eventBossKey = useGameStore(st => st.system.eventBossKey);
   const eventBossCompletedIds = useGameStore(st => st.system.eventBossCompletedIds);
   const eventBossDefeated = useGameStore(st => st.system.eventBossDefeated);
@@ -251,6 +261,27 @@ export default function QuestScreen() {
   const clearActiveDungeonBreak = useGameStore(st => st.clearActiveDungeonBreak);
   const system = useGameStore(st => st.system);
   const enterDungeon = useGameStore(st => st.enterDungeon);
+  const player = useGameStore(st => st.player);
+  const customShadows = useGameStore(st => st.customShadows);
+  const activeBuffs = useGameStore(st => st.activeBuffs ?? []);
+  const claimAdStreakShield = useGameStore(st => st.claimAdStreakShield);
+  const claimAdPenaltyReduction = useGameStore(st => st.claimAdPenaltyReduction);
+  const claimAdXpBoost = useGameStore(st => st.claimAdXpBoost);
+  const claimAdBossHp = useGameStore(st => st.claimAdBossHp);
+
+  // Compute whether shadow streak_protect is still available (priority over ad)
+  const { streakProtect } = React.useMemo(
+    () => computeActivePassives(player.activeShadowIds, player.shadows, customShadows, activeBuffs),
+    [player.activeShadowIds, player.shadows, customShadows, activeBuffs]
+  );
+  const usedShadowSkills = system.usedShadowSkills ?? {};
+  const shadowCanProtect = streakProtect && (!usedShadowSkills.streak_protect || Date.now() - usedShadowSkills.streak_protect > 7 * 24 * 3600_000);
+  const showStreakShieldAd = !shadowCanProtect && !system.adStreakShieldActive && !system.adStreakShieldUsedWeek && player.currentStreak > 0;
+
+  const { loaded: adStreakLoaded, show: showStreakAd } = useRewardedAd(AD_UNIT_STREAK);
+  const { loaded: adPenaltyLoaded, show: showPenaltyAd } = useRewardedAd(AD_UNIT_PENALTY);
+  const { loaded: adXpLoaded, show: showXpAd } = useRewardedAd(AD_UNIT_XP_BOOST);
+  const { loaded: adBossLoaded, show: showBossAd } = useRewardedAd(AD_UNIT_BOSS_HP);
   // Trigger extraction for Raid bosses (which are defeated globally via store)
   useEffect(() => {
     if (pendingRaidId) {
@@ -318,6 +349,7 @@ export default function QuestScreen() {
   const isRestDay = useGameStore(st => st.settings.restDay);
 
   const [showEventDungeon, setShowEventDungeon] = useState(false);
+  const [showWeeklyDungeon, setShowWeeklyDungeon] = useState(false);
   const [showForge, setShowForge] = useState(false);
   const [activeMission, setActiveMission] = useState<DungeonMission | null>(null);
 
@@ -420,6 +452,10 @@ export default function QuestScreen() {
         setShowEventDungeon(false);
         return true;
       }
+      if (showWeeklyDungeon) {
+        setShowWeeklyDungeon(false);
+        return true;
+      }
       if (showForge) {
         setShowForge(false);
         return true;
@@ -428,7 +464,7 @@ export default function QuestScreen() {
     };
     BackHandler.addEventListener('hardwareBackPress', onBackPress);
     return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-  }, [activeMission, showEventDungeon, showForge]);
+  }, [activeMission, showEventDungeon, showWeeklyDungeon, showForge]);
 
   function handleMissionSelect(m: DungeonMission) {
     if (m.type === 'focus' || m.type === 'gps' || m.type === 'training') {
@@ -491,38 +527,6 @@ export default function QuestScreen() {
     <View style={s.safeArea}>
       <ScrollView ref={scrollViewRef} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
 
-        {/* ── GLOBAL RAID BOSS ── */}
-        {activeRaidBoss && (() => {
-          const def = RAID_BOSSES.find(b => b.id === activeRaidBoss.defId);
-          if (!def) {return null;}
-          const progress = activeRaidBoss.currentHp / activeRaidBoss.maxHp;
-          const timeLeftMs = activeRaidBoss.endDate - Date.now();
-
-          return (
-            <View style={[s.systemCard, s.cardWarning, { marginBottom: 20, padding: 12, backgroundColor: def.color + '15', borderColor: def.color + '50', borderRadius: 8 }]}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <Icon name={def.icon} size={24} color={def.color} style={{ marginRight: 10 }} />
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 10, color: def.color, letterSpacing: 1 }}>RAID BOSS GLOBAL · RANK {def.rank}</Text>
-                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 14, color: '#fff', fontWeight: 'bold', marginTop: 2 }}>{def.name}</Text>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <Icon name="timer-sand" size={12} color={C.dimmed} />
-                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed, marginTop: 2 }}>{formatCountdown(timeLeftMs)}</Text>
-                </View>
-              </View>
-
-              <View style={{ height: 6, backgroundColor: C.bg, borderRadius: 3, overflow: 'hidden', marginBottom: 4, borderWidth: 1, borderColor: C.border }}>
-                <View style={{ width: `${progress * 100}%`, height: '100%', backgroundColor: def.color }} />
-              </View>
-
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed }}>HP RESTANTE</Text>
-                <Text style={{ fontFamily: FONT.orbitron, fontSize: 10, color: C.muted }}>{Math.floor(activeRaidBoss.currentHp)} <Text style={{ fontSize: 9, color: C.dimmed }}>/ {activeRaidBoss.maxHp}</Text></Text>
-              </View>
-            </View>
-          );
-        })()}
 
         <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('now')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.now = e.nativeEvent.layout.y; }}>
           <Text style={s.collapsibleTitle}>AGORA</Text>
@@ -713,6 +717,27 @@ export default function QuestScreen() {
           </View>
         </View>
 
+        {/* Streak shield active indicator */}
+        {system.adStreakShieldActive && (
+          <View style={s.adShieldActive}>
+            <Icon name="shield-check" size={12} color="#22d3ee" />
+            <Text style={s.adShieldActiveTxt}> ESCUDO DE STREAK ATIVO — o teu streak está protegido</Text>
+          </View>
+        )}
+
+        {/* Streak shield ad button — only when shadow protect not available */}
+        {showStreakShieldAd && (
+          <TouchableOpacity
+            style={[s.adShieldRow, !adStreakLoaded && { opacity: 0.45 }]}
+            disabled={!adStreakLoaded}
+            onPress={() => showStreakAd(() => { claimAdStreakShield(); })}
+            activeOpacity={0.75}
+          >
+            <Icon name="play-circle-outline" size={13} color="#22d3ee" />
+            <Text style={s.adShieldTxt}>VER ANÚNCIO → PROTEGER STREAK (1×/semana)</Text>
+          </TouchableOpacity>
+        )}
+
         {/* XP Boost active indicator */}
         {xpBoostNext && (
           <View style={s.boostBanner}>
@@ -721,12 +746,36 @@ export default function QuestScreen() {
           </View>
         )}
 
+        {/* XP Boost ad — when no boost active and not used today */}
+        {!xpBoostNext && !system.adXpBoostToday && (
+          <TouchableOpacity
+            style={[s.adRow, !adXpLoaded && { opacity: 0.45 }]}
+            disabled={!adXpLoaded}
+            onPress={() => showXpAd(() => { claimAdXpBoost(); })}
+            activeOpacity={0.75}
+          >
+            <Icon name="play-circle-outline" size={13} color="#f59e0b" />
+            <Text style={s.adRowTxt}>VER ANÚNCIO → XP ×2 PRÓXIMA MISSÃO (1×/dia)</Text>
+          </TouchableOpacity>
+        )}
+
         {hasPenalty && (
           <View style={s.penalSection}>
             <View style={s.penalHeader}>
               <Icon name="alert-circle" size={12} color={C.neonRed} />
               <Text style={[s.penalTitle, { flex: 1 }]}>Penalizações ativas</Text>
             </View>
+            {!system.adPenaltyUsedWeek && penaltyQ.length > 0 && (
+              <TouchableOpacity
+                style={[s.adRow, { borderColor: C.neonRed + '55', backgroundColor: C.neonRed + '10', marginBottom: SPACING.sm }, !adPenaltyLoaded && { opacity: 0.45 }]}
+                disabled={!adPenaltyLoaded}
+                onPress={() => showPenaltyAd(() => { claimAdPenaltyReduction(); })}
+                activeOpacity={0.75}
+              >
+                <Icon name="play-circle-outline" size={13} color={C.neonRed} />
+                <Text style={[s.adRowTxt, { color: C.neonRed }]}>VER ANÚNCIO → REMOVER 1 PENALIZAÇÃO (1×/semana)</Text>
+              </TouchableOpacity>
+            )}
             {penaltyQ.map(q => <QuestCard key={q.id} quest={q} isPenalty C={C} />)}
           </View>
         )}
@@ -806,10 +855,69 @@ export default function QuestScreen() {
         </TouchableOpacity>
         {sectionsOpen.events && (
           <>
+            {/* Raid Boss Global */}
+            {activeRaidBoss && (() => {
+              const def = RAID_BOSSES.find(b => b.id === activeRaidBoss.defId);
+              if (!def) {return null;}
+              const progress = activeRaidBoss.currentHp / activeRaidBoss.maxHp;
+              const timeLeftMs = activeRaidBoss.endDate - Date.now();
+              return (
+                <View style={[s.systemCard, s.cardWarning, { marginBottom: SPACING.sm, padding: 12, backgroundColor: def.color + '15', borderColor: def.color + '50', borderRadius: 8 }]}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <Icon name={def.icon} size={22} color={def.color} style={{ marginRight: 10 }} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: def.color, letterSpacing: 1 }}>RAID BOSS GLOBAL · RANK {def.rank}</Text>
+                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 13, color: '#fff', fontWeight: 'bold', marginTop: 2 }}>{def.name}</Text>
+                    </View>
+                    <View style={{ alignItems: 'flex-end' }}>
+                      <Icon name="timer-sand" size={11} color={C.dimmed} />
+                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed, marginTop: 2 }}>{formatCountdown(timeLeftMs)}</Text>
+                    </View>
+                  </View>
+                  <View style={{ height: 5, backgroundColor: C.bg, borderRadius: 3, overflow: 'hidden', marginBottom: 4, borderWidth: 1, borderColor: C.border }}>
+                    <View style={{ width: `${progress * 100}%`, height: '100%', backgroundColor: def.color }} />
+                  </View>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                    <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed }}>HP RESTANTE</Text>
+                    <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.muted }}>{Math.floor(activeRaidBoss.currentHp)} <Text style={{ color: C.dimmed }}>/ {activeRaidBoss.maxHp}</Text></Text>
+                  </View>
+                  {system.adBossUsedForId !== activeRaidBoss.defId && (
+                    <TouchableOpacity
+                      style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 6, borderWidth: 1, borderColor: def.color + '66', borderRadius: 4, paddingVertical: 7, backgroundColor: def.color + '12' }, !adBossLoaded && { opacity: 0.45 }]}
+                      disabled={!adBossLoaded}
+                      onPress={() => showBossAd(() => { claimAdBossHp(); })}
+                      activeOpacity={0.75}
+                    >
+                      <Icon name="play-circle-outline" size={12} color={def.color} />
+                      <Text style={{ color: def.color, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginLeft: 6 }}>VER ANÚNCIO → -20% HP DO BOSS</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              );
+            })()}
+
+            {/* Boss Dungeon */}
+            <TouchableOpacity
+              style={[s.systemCard, s.bossBanner, { borderColor: C.neonRed + '66', backgroundColor: C.neonRed + '08' }]}
+              onPress={() => setShowWeeklyDungeon(true)}
+              activeOpacity={0.8}
+            >
+              <View style={s.bossBannerLeft}>
+                <Icon name="gate" size={20} color={C.neonRed} />
+                <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
+                  <Text style={s.bossTitle}>Masmorra de Boss</Text>
+                  <Text style={s.bossSub}>
+                    {weeklyDefeatedBossId ? 'Boss derrotado esta semana · Volta na próxima.' : 'Derrota o boss para extrair a sua Sombra.'}
+                  </Text>
+                </View>
+              </View>
+              <Icon name="chevron-right" size={18} color={C.neonRed} />
+            </TouchableOpacity>
+
             {/* Event Dungeon */}
             {activeEventDef && eventCountdownMs > 0 && (
               <TouchableOpacity
-                style={[s.systemCard, s.cardWarning, s.bossBanner, { marginTop: SPACING.sm, borderColor: C.gold + '88', backgroundColor: C.gold + '08' }]}
+                style={[s.systemCard, s.cardWarning, s.bossBanner, { borderColor: C.gold + '88', backgroundColor: C.gold + '08' }]}
                 onPress={() => setShowEventDungeon(true)}
                 activeOpacity={0.8}
               >
@@ -825,6 +933,16 @@ export default function QuestScreen() {
                 </View>
                 <Icon name="chevron-right" size={18} color={C.gold} />
               </TouchableOpacity>
+            )}
+
+            {/* Empty state */}
+            {!activeRaidBoss && !activeEventDef && (
+              <View style={{ alignItems: 'center', paddingVertical: SPACING.lg }}>
+                <Icon name="gate" size={28} color={C.dimmed} />
+                <Text style={{ color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: SPACING.sm }}>
+                  NENHUM EVENTO ATIVO
+                </Text>
+              </View>
             )}
           </>
         )}
@@ -847,6 +965,18 @@ export default function QuestScreen() {
         eventBossMission={eventBossMission}
         eventProgress={activeEventDef ? { completedIds: eventCompleted, required: eventRequired, defeated: eventBossDefeated && eventBossKey === activeEventKey } : null}
         eventWindow={activeEventDef?.event ?? null}
+        C={C}
+      />
+
+      {/* Boss Dungeon selection modal */}
+      <DailyBossDungeonModal
+        visible={showWeeklyDungeon}
+        onClose={() => setShowWeeklyDungeon(false)}
+        onRequestClose={() => setShowWeeklyDungeon(false)}
+        onSelectMission={handleMissionSelect}
+        customMissions={[]}
+        defeatedId={weeklyDefeatedBossId}
+        playerKeys={player.dungeonKeys ?? []}
         C={C}
       />
 

@@ -1,4 +1,4 @@
-package com.sololevelingrn.focusblocker
+package com.lifup.app.focusblocker
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

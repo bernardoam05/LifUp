@@ -1,4 +1,4 @@
-package com.sololevelingrn
+package com.lifup.app
 
 import android.view.View
 import com.facebook.react.ReactPackage

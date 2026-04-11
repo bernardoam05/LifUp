@@ -1,4 +1,4 @@
-package com.sololevelingrn.focusblocker
+package com.lifup.app.focusblocker
 
 import android.app.AppOpsManager
 import android.content.ComponentName

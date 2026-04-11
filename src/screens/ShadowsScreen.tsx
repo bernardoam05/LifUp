@@ -243,7 +243,7 @@ function ReleaseConfirmModal({
 
 function ShadowDetailModal({
   shadow, entry, isActive, canEquipMore,
-  playerLevel, inventory, gold,
+  playerLevel, inventory, gold, usedShadowSkills,
   onClose, onToggleActive, onToggleFavorite, onRelease, onUpgrade,
   C,
 }: {
@@ -254,6 +254,7 @@ function ShadowDetailModal({
   playerLevel:   number
   inventory:     { itemId: string; quantity: number }[]
   gold:          number
+  usedShadowSkills: Record<string, number>
   onClose:       () => void
   onToggleActive: () => void
   onToggleFavorite: () => void
@@ -350,6 +351,33 @@ function ShadowDetailModal({
             {level > 1 && ` (×${(1 + (level - 1) * 0.12).toFixed(2)})`}
           </Text>
         </View>
+
+        {/* Weekly cooldown badge for streak_protect / penalty_immunity */}
+        {(shadow.passiveEffect.type === 'streak_protect' || shadow.passiveEffect.type === 'penalty_immunity') && (() => {
+          const skillKey = shadow.passiveEffect.type;
+          const lastUsed = usedShadowSkills[skillKey];
+          const oneWeekMs = 7 * 24 * 3600_000;
+          const now = Date.now();
+          const onCooldown = !!lastUsed && (now - lastUsed) < oneWeekMs;
+          if (!onCooldown) {
+            return (
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#22c55e18', borderWidth: 1, borderColor: '#22c55e44', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4, marginTop: 6, alignSelf: 'flex-start' }}>
+                <Icon name="shield-check" size={11} color="#22c55e" />
+                <Text style={{ color: '#22c55e', fontFamily: 'Orbitron-Regular', fontSize: 9, marginLeft: 4, letterSpacing: 1 }}>DISPONÍVEL</Text>
+              </View>
+            );
+          }
+          const msLeft = oneWeekMs - (now - lastUsed);
+          const daysLeft = Math.ceil(msLeft / 86400000);
+          return (
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#ef444418', borderWidth: 1, borderColor: '#ef444444', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4, marginTop: 6, alignSelf: 'flex-start' }}>
+              <Icon name="timer-sand" size={11} color="#ef4444" />
+              <Text style={{ color: '#ef4444', fontFamily: 'Orbitron-Regular', fontSize: 9, marginLeft: 4, letterSpacing: 1 }}>
+                COOLDOWN — {daysLeft} {daysLeft === 1 ? 'DIA' : 'DIAS'}
+              </Text>
+            </View>
+          );
+        })()}
 
         {level > 1 && (
           <Text style={dm.scaledHint}>
@@ -587,6 +615,7 @@ export default function ShadowsScreen() {
   const playerLevel    = useGameStore(st => st.player.level);
   const playerGold     = useGameStore(st => st.player.gold);
   const inventory      = useGameStore(st => st.player.inventory);
+  const usedShadowSkills = useGameStore(st => st.system.usedShadowSkills ?? {});
   const shadowEntries  = useGameStore(st => st.player.shadows) as ShadowEntry[];
   const activeShadowIds = useGameStore(st => st.player.activeShadowIds);
   const customShadows  = useGameStore(st => st.customShadows);
@@ -715,6 +744,7 @@ export default function ShadowsScreen() {
           playerLevel={playerLevel}
           inventory={inventory}
           gold={playerGold}
+          usedShadowSkills={usedShadowSkills}
           onClose={() => setSelected(null)}
           onToggleActive={() => { toggleActive(selected); setSelected(null); }}
           onToggleFavorite={() => toggleFavorite(selected)}

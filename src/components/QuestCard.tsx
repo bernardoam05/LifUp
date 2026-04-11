@@ -8,6 +8,7 @@ import CustomModal from './CustomModal';
 import GPSTrackerModal from './GPSTrackerModal';
 import MissionActiveScreen from '../screens/MissionActiveScreen';
 import { SPACING, FONT, RANK_COLORS } from '../theme';
+import { useRewardedAd, AD_UNIT_REROLL } from '../hooks/useRewardedAd';
 
 const getQCStyles = (C: any) => StyleSheet.create({
   card: { opacity: 1, backgroundColor: C.panel, borderRadius: 8, padding: SPACING.md, marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonBlue + '33' },
@@ -90,6 +91,8 @@ const getQCStyles = (C: any) => StyleSheet.create({
     fontFamily: FONT.orbitron,
     letterSpacing: 1,
   },
+  adRerollBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10, backgroundColor: '#f59e0b18', borderWidth: 1, borderColor: '#f59e0b55', borderRadius: 6, paddingVertical: 8 },
+  adRerollTxt: { color: '#f59e0b', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
 });
 
 // Specific extra badge styles needed internally by QuestCard
@@ -102,6 +105,7 @@ const getExtraStyles = (C: any) => StyleSheet.create({
 export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Quest; isExtra?: boolean; isPenalty?: boolean; C: any }) {
   const qc = getQCStyles(C);
   const ex = getExtraStyles(C);
+  const limitDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cfgInfo = getQuestConfig(quest.type);
   const cfg = { icon: cfgInfo.icon, color: (C as any)[cfgInfo.colorKey] || C.dimmed };
 
@@ -116,7 +120,10 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
   const setMissionModalOpen = useGameStore(s => s.setMissionModalOpen);
   const regenerateSingleDailyQuest = useGameStore(s => isExtra ? undefined : s.regenerateSingleDailyQuest);
   const weeklyRegenCount = useGameStore(s => s.system.weeklyRegenCount);
+  const rerollQuestViaAd = useGameStore(s => s.rerollQuestViaAd);
   const replaceExtraQuest = useGameStore(s => isExtra ? s.replaceExtraQuest : undefined);
+
+  const { loaded: adRerollLoaded, show: showRerollAd } = useRewardedAd(AD_UNIT_REROLL);
   const extraQuestRerolledIds = useGameStore(s => s.extraQuestRerolledIds);
 
   const timer = activeMissionTimers[quest.id];
@@ -305,11 +312,19 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
         ) : quest.type === 'limit' ? (
           <View style={[qc.limitRow, { paddingRight: 50 }]}>
             <View style={qc.limitControls}>
-              <TouchableOpacity onPress={() => updateQuestValue(quest.id, Math.max(0, (quest.currentValue ?? 0) - 10))}>
+              <TouchableOpacity onPress={() => {
+                if (limitDebounceRef.current) { return; }
+                updateQuestValue(quest.id, Math.max(0, (quest.currentValue ?? 0) - 10));
+                limitDebounceRef.current = setTimeout(() => { limitDebounceRef.current = null; }, 300);
+              }}>
                 <Icon name="minus-box-outline" size={20} color={C.dimmed} />
               </TouchableOpacity>
               <Text style={qc.limitValue}>{(quest.currentValue ?? 0).toString()}</Text>
-              <TouchableOpacity onPress={() => updateQuestValue(quest.id, (quest.currentValue ?? 0) + 10)}>
+              <TouchableOpacity onPress={() => {
+                if (limitDebounceRef.current) { return; }
+                updateQuestValue(quest.id, (quest.currentValue ?? 0) + 10);
+                limitDebounceRef.current = setTimeout(() => { limitDebounceRef.current = null; }, 300);
+              }}>
                 <Icon name="plus-box-outline" size={20} color={C.neonBlue} />
               </TouchableOpacity>
             </View>
@@ -319,12 +334,19 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
             </Text>
           </View>
         ) : isTimerActive ? (
-          <View style={[qc.activeTimerRow, { paddingRight: 110 }]}>
-            <Icon name="timer-outline" size={13} color={C.neonBlue} />
-            <Text style={qc.activeTimerTxt}> A DECORRER</Text>
-            <View style={{ flex: 1 }} />
-            <Icon name="chevron-right" size={14} color={C.neonBlue} />
-          </View>
+          <>
+            <View style={qc.activeTimerRow}>
+              <Icon name="timer-outline" size={13} color={C.neonBlue} />
+              <Text style={qc.activeTimerTxt}> A DECORRER</Text>
+              <View style={{ flex: 1 }} />
+              <Icon name="chevron-right" size={14} color={C.neonBlue} />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 6 }}>
+              <Text style={{ color: (quest.rank ? RANK_COLORS[quest.rank] : '#94a3b8'), fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', letterSpacing: 1 }}>
+                {quest.rank || 'E'}-RANK
+              </Text>
+            </View>
+          </>
         ) : quest.type === 'focus' ? (
           <View style={{ marginTop: 12, gap: 8 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', opacity: 0.6 }}>
@@ -350,6 +372,19 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
             </Text>
             <View style={{ flex: 1 }} />
           </View>
+        )}
+
+        {/* Ad re-roll — appears when weekly regen limit is hit */}
+        {!isExtra && !isPenalty && !quest.done && weeklyRegenCount >= 7 && (
+          <TouchableOpacity
+            style={[qc.adRerollBtn, !adRerollLoaded && { opacity: 0.45 }]}
+            disabled={!adRerollLoaded}
+            onPress={() => showRerollAd(() => { rerollQuestViaAd(quest.id); })}
+            activeOpacity={0.75}
+          >
+            <Icon name="play-circle-outline" size={13} color="#f59e0b" />
+            <Text style={qc.adRerollTxt}> VER ANÚNCIO → TROCAR MISSÃO</Text>
+          </TouchableOpacity>
         )}
 
         {showGPS && (
@@ -387,12 +422,14 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
           C={C}
         />
 
-        {/* Indicador de Classe */}
-        <View style={{ position: 'absolute', bottom: 12, right: 12, flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ color: (quest.rank ? RANK_COLORS[quest.rank] : '#94a3b8') + (quest.done ? '88' : ''), fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', letterSpacing: 1 }}>
-            {quest.rank || 'E'}-RANK
-          </Text>
-        </View>
+        {/* Indicador de Classe — só mostra absolute quando o timer não está ativo (timer state mostra inline) */}
+        {!isTimerActive && (
+          <View style={{ position: 'absolute', bottom: 12, right: 12, flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ color: (quest.rank ? RANK_COLORS[quest.rank] : '#94a3b8') + (quest.done ? '88' : ''), fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', letterSpacing: 1 }}>
+              {quest.rank || 'E'}-RANK
+            </Text>
+          </View>
+        )}
       </Animated.View>
       </Pressable>
 

@@ -77,6 +77,7 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
   const hardcoreActive  = useGameStore(s => s.system.hardcoreFocusMode);
   const triggerEvent    = useGameStore(s => s.triggerEvent);
   const openLootBox     = useGameStore(s => s.openLootBox);
+  const addGold         = useGameStore(s => s.addGold);
   const resetExtraction = useGameStore(s => s.resetExtraction);
 
   const [confirmUse, setConfirmUse] = useState(false);
@@ -110,11 +111,7 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
         const { leveledUp } = addXP(item.effectValue ?? 50);
         // health_potion also grants gold
         if (item.effectGold && item.effectGold > 0) {
-          // grant gold by adding negative deduction (use store set directly via addXP side-effect workaround)
-          // We call deductGold with a negative amount isn't valid, so we reach into the store
-          useGameStore.setState((s: any) => ({
-            player: { ...s.player, gold: s.player.gold + (item.effectGold ?? 0) },
-          }));
+          addGold(item.effectGold);
         }
         const goldText = item.effectGold ? ` e +${item.effectGold} Gold` : '';
         setFeedback(leveledUp
@@ -269,7 +266,8 @@ export default function InventoryScreen() {
   const dungeonKeys = useGameStore(st => st.player.dungeonKeys);
 
   const gold      = useGameStore(st => st.player.gold);
-  const total = inventory.filter(e => e.quantity > 0).reduce((sum, e) => sum + e.quantity, 0);
+  const activeInventory = React.useMemo(() => inventory.filter(e => e.quantity > 0), [inventory]);
+  const total = activeInventory.reduce((sum, e) => sum + e.quantity, 0);
 
   const [showVaultModal, setShowVaultModal] = useState(false);
 
@@ -318,14 +316,14 @@ export default function InventoryScreen() {
           <Text style={s.sectionTitle}> ITENS</Text>
         </View>
 
-        {inventory.filter(e => e.quantity > 0).length === 0 ? (
+        {activeInventory.length === 0 ? (
           <View style={s.emptyWrap}>
             <Icon name="bag-personal-outline" size={48} color={C.dimmed} />
             <Text style={s.emptyTitle}>INVENTÁRIO VAZIO</Text>
             <Text style={s.emptyDesc}>Visita a Loja do Sistema para adquirir itens.</Text>
           </View>
         ) : (
-          inventory.filter(e => e.quantity > 0).map(entry => (
+          activeInventory.map(entry => (
             <InventoryCard key={entry.itemId} itemId={entry.itemId} quantity={entry.quantity} C={C} />
           ))
         )}

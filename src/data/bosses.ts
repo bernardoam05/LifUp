@@ -478,7 +478,7 @@ export type DungeonMission = {
   customShadow?: { name: string; icon: string; questType: Quest['type'] }
 }
 
-export const getDungeonMissions = (C: any, now: Date = new Date()): DungeonMission[] => {
+export const getDailyBossMissions = (C: any, now: Date = new Date()): DungeonMission[] => {
   const [m, d, y] = [now.getMonth() + 1, now.getDate(), now.getFullYear()];
   const base = new Date(y, m - 1, d);
   const dayIndex = Math.floor(base.getTime() / 86400000);

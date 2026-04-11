@@ -1,4 +1,7 @@
 {
   "name": "SoloLevelingRN",
-  "displayName": "LifUp"
+  "displayName": "LifUp",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-9715313780417793~7510960019"
+  }
 }

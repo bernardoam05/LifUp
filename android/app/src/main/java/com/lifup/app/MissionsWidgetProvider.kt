@@ -1,4 +1,4 @@
-package com.sololevelingrn
+package com.lifup.app
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider

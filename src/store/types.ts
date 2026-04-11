@@ -366,6 +366,15 @@ export type SystemState = {
   pomodoroPhase: 'idle' | 'work' | 'break'
   pomodoroCycle: number       // current cycle number (1-based during session)
   pomodoroBreakEnd: number    // epoch ms when break ends (0 = not in break)
+  goldAdsToday: number        // rewarded ads watched for gold today
+  adItemsToday: number        // random item ads today (max 2)
+  adXpBoostToday: boolean     // xp boost ad used today
+  adLastDate: string          // 'YYYY-MM-DD' — shared daily reset for gold/item/xpboost
+  adStreakShieldActive: boolean   // active shield — consumed on next streak reset
+  adStreakShieldUsedWeek: boolean // used this week (resets Monday)
+  adPenaltyUsedWeek: boolean      // penalty reduction used this week
+  adBossUsedForId: string         // raid boss defId that HP ad was used for
+  shadowSkillFiredMsg: string | null  // toast shown when a shadow passive fires automatically
 }
 
 // ── Level Up Reward ────────────────────────────────────────────────────────────
@@ -451,6 +460,15 @@ export type GameActions = {
   setPenaltyReduced: (v: boolean) => void
   removePenalty: () => void
   deductGold: (amount: number) => boolean
+  addGold: (amount: number) => void
+  claimAdGoldReward: () => boolean
+  rerollQuestViaAd: (questId: string) => { success: boolean; reason?: string }
+  claimAdStreakShield: () => boolean
+  claimAdPenaltyReduction: () => boolean
+  claimAdXpBoost: () => boolean
+  claimAdRandomItem: () => { itemId: string; itemName: string } | false
+  claimAdBossHp: () => boolean
+  dismissShadowSkillMsg: () => void
   setMissionModalOpen: (v: boolean) => void
   defeatDungeonBoss: (shadowId: string, customDef?: { name: string; icon: string; questType: Quest['type'] }, bossLabel?: string) => { xp: number; gold: number; shadowName?: string; leveledUpShadow?: boolean, isNew?: boolean }
   checkAndUnlockAchievements: () => void

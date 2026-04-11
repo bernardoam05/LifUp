@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { DungeonMission, getDungeonMissions, RAID_BOSSES } from '../data/bosses';
+import { DungeonMission, getDailyBossMissions, RAID_BOSSES } from '../data/bosses';
 import { getKeyByBossId } from '../data/dungeonKeys';
 import { SHADOW_MAP, getBossDropPreview } from '../data/shadows';
 import BottomSheetModal from './BottomSheetModal';
@@ -10,19 +10,15 @@ import { FONT, SPACING } from '../theme';
 
 // Helper function to get boss name from bossId
 function getBossName(bossId: string): string {
-  // Try to find in RAID_BOSSES first
   const raidBoss = RAID_BOSSES.find(b => b.id === bossId);
   if (raidBoss) {return raidBoss.name;}
 
-  // Try to get from drop shadow name
   const shadow = getBossDropPreview(bossId);
   if (shadow) {return shadow.name;}
 
-  // Try direct lookup in SHADOW_MAP
   const shadowMapEntry = SHADOW_MAP[bossId as keyof typeof SHADOW_MAP];
   if (shadowMapEntry) {return shadowMapEntry.name;}
 
-  // Fallback: format the ID nicely
   return bossId.replace(/_/g, ' ').replace(/(^|\s)\w/g, c => c.toUpperCase());
 }
 
@@ -40,17 +36,13 @@ export const getDMStyles = (C: any) => StyleSheet.create({
   missionInfo: { flex: 1 },
   missionLabel: { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', marginBottom: 3 },
   missionDetail: { color: C.muted, fontSize: 11, lineHeight: 15 },
-  eventHeader: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', marginBottom: SPACING.sm, paddingHorizontal: 4 },
-  eventHeaderTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
-  eventProgressTxt: { color: C.dimmed, fontSize: 11, marginBottom: SPACING.sm, alignSelf: 'flex-start' },
-  eventLockedTxt: { color: C.dimmed, fontSize: 11, marginTop: SPACING.xs, marginBottom: SPACING.sm, textAlign: 'center' },
   cancelBtn: { marginTop: SPACING.sm, paddingVertical: 10, paddingHorizontal: SPACING.xl },
   cancelTxt: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   shadowExtractTag: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },
   shadowExtractTxt: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5 },
 });
 
-interface WeeklyDungeonModalProps {
+interface DailyBossDungeonModalProps {
   visible: boolean;
   onClose: () => void;
   onRequestClose?: () => void;
@@ -61,7 +53,7 @@ interface WeeklyDungeonModalProps {
   C: any;
 }
 
-export default function WeeklyDungeonModal({
+export default function DailyBossDungeonModal({
   visible,
   onClose,
   onRequestClose,
@@ -70,10 +62,10 @@ export default function WeeklyDungeonModal({
   defeatedId,
   playerKeys,
   C,
-}: WeeklyDungeonModalProps) {
+}: DailyBossDungeonModalProps) {
   const insets = useSafeAreaInsets();
   const dm = getDMStyles(C);
-  const weeklyMissions = customMissions.length > 0 ? [...customMissions] : getDungeonMissions(C);
+  const dailyMissions = customMissions.length > 0 ? [...customMissions] : getDailyBossMissions(C);
 
   return (
     <BottomSheetModal visible={visible} onClose={onRequestClose ?? onClose} contentStyle={{ backgroundColor: 'transparent' }}>
@@ -83,10 +75,10 @@ export default function WeeklyDungeonModal({
             <Icon name="gate" size={32} color={C.neonRed} />
           </View>
           <View style={dm.headerBadge}>
-            <Text style={dm.headerBadgeTxt}>ALERTA DO SISTEMA</Text>
+            <Text style={dm.headerBadgeTxt}>PORTAL DIÁRIO DE BOSS</Text>
           </View>
           <Text style={dm.title} numberOfLines={2}>
-            {weeklyMissions.length > 0 ? `[ ${weeklyMissions[0].label.toUpperCase()} ]` : '[ PORTAL DIÁRIO ]'}
+            {dailyMissions.length > 0 ? `[ ${dailyMissions[0].label.toUpperCase()} ]` : '[ PORTAL DIÁRIO ]'}
           </Text>
           <Text style={dm.sub}>
             Completa a Missão do Boss Diário para ganhares XP, Gold e extraíres a sua Sombra.
@@ -94,10 +86,10 @@ export default function WeeklyDungeonModal({
         </View>
 
         <ScrollView style={{ width: '100%', maxHeight: 400 }} contentContainerStyle={{ alignItems: 'center' }} showsVerticalScrollIndicator={false}>
-          {weeklyMissions.map(m => {
+          {dailyMissions.map(m => {
             const isDefeated = defeatedId === m.shadowHint;
             const key = getKeyByBossId(m.shadowHint);
-            const hasKey = key ? playerKeys.includes(key.id) : true; // fallback true for event/special
+            const hasKey = key ? playerKeys.includes(key.id) : true;
             const isLocked = (!!defeatedId && !isDefeated) || (!isDefeated && !hasKey);
 
             return (

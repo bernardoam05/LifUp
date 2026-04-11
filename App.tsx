@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, Fragment } from 'react';
-import { View, Text, StyleSheet, StatusBar, NativeModules, TouchableOpacity, Vibration } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, NativeModules, TouchableOpacity, Vibration, Animated } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer, DarkTheme, createNavigationContainerRef } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -57,6 +57,31 @@ function PenaltyBadge() {
   );
 }
 
+function ShadowSkillToast({ msg, onDismiss }: { msg: string | null; onDismiss: () => void }) {
+  const anim = React.useRef(new Animated.Value(120)).current;
+  React.useEffect(() => {
+    if (!msg) { anim.setValue(120); return; }
+    Animated.spring(anim, { toValue: 0, useNativeDriver: true, tension: 80, friction: 10 }).start();
+    const t = setTimeout(() => {
+      Animated.timing(anim, { toValue: 120, duration: 300, useNativeDriver: true }).start(onDismiss);
+    }, 4000);
+    return () => clearTimeout(t);
+  }, [msg]);
+
+  if (!msg) { return null; }
+  return (
+    <Animated.View style={{ position: 'absolute', bottom: 90, left: 16, right: 16, transform: [{ translateY: anim }] }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#0f1a2e', borderWidth: 1, borderColor: '#a855f744', borderRadius: 8, padding: 12, gap: 10 }}>
+        <Icon name="shield-star" size={18} color="#a855f7" />
+        <Text style={{ flex: 1, color: '#e2e8f0', fontSize: 12, fontFamily: 'Orbitron-Regular' }}>{msg}</Text>
+        <TouchableOpacity onPress={onDismiss}>
+          <Icon name="close" size={16} color="#64748b" />
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
+  );
+}
+
 function InventoryBadge({ count }: { count: number }) {
   return (
     <View style={styles.inventoryBadge}>
@@ -70,6 +95,8 @@ function InventoryBadge({ count }: { count: number }) {
 export default function App() {
   const levelUpToastQueue = useGameStore(s => s.levelUpToastQueue);
   const dismissLevelUpToast = useGameStore(s => s.dismissLevelUpToast);
+  const shadowSkillFiredMsg = useGameStore(s => s.system.shadowSkillFiredMsg);
+  const dismissShadowSkillMsg = useGameStore(s => s.dismissShadowSkillMsg);
   const currentLootReward = useGameStore(s => s.currentLootReward);
   const dismissLootReward = useGameStore(s => s.dismissLootReward);
   const missionModalOpen = useGameStore(s => s.missionModalOpen);
@@ -126,10 +153,10 @@ export default function App() {
 
   useEffect(() => {
     bootSystem();
-    initializeAudio().catch(() => { });
+    initializeAudio().catch((err: any) => { console.warn('[App] Audio init failed:', err?.message ?? err); });
     setupNotifications()
       .then(() => requestNotificationPermission())
-      .catch(() => { });
+      .catch((err: any) => { console.warn('[App] Notifications setup failed:', err?.message ?? err); });
   }, [bootSystem]);
 
 
@@ -199,9 +226,9 @@ export default function App() {
 
         {hasPenalty && (
           <View style={styles.penalBanner}>
-            <Icon name="alert" size={12} color={C.neonRed} />
+            <Icon name="alert" size={13} color={C.neonRed} />
             <Text style={styles.penalBannerText}>
-              {'  '}ZONA DE PENALIDADE ATIVA — Completa as missões de penalização!
+              ZONA DE PENALIDADE ATIVA — Completa as missões de penalização!
             </Text>
           </View>
         )}
@@ -288,16 +315,20 @@ export default function App() {
                   onDismiss={handlePopReward}
                 />
               )}
-              {activeReward.type === 'shadow' && (
-                <ExtractionModal
-                  result={{
-                    shadow: (SHADOW_MAP[activeReward.id] || customShadows.find(cs => cs.id === activeReward.id))!,
-                    isLevelUp: !!activeReward.isLevelUp,
-                    newLevel: activeReward.newLevel || 1,
-                  }}
-                  onDismiss={handlePopReward}
-                />
-              )}
+              {activeReward.type === 'shadow' && (() => {
+                const shadowData = SHADOW_MAP[activeReward.id] || customShadows.find(cs => cs.id === activeReward.id);
+                if (!shadowData) { handlePopReward(); return null; }
+                return (
+                  <ExtractionModal
+                    result={{
+                      shadow: shadowData,
+                      isLevelUp: !!activeReward.isLevelUp,
+                      newLevel: activeReward.newLevel || 1,
+                    }}
+                    onDismiss={handlePopReward}
+                  />
+                );
+              })()}
               {activeReward.type === 'level_up' && activeReward.data && (
                 <LevelUpModal
                   level={(activeReward.data as any).level}
@@ -368,6 +399,7 @@ export default function App() {
             blocked={toastBlocked}
             onDismiss={dismissLevelUpToast}
           />
+          <ShadowSkillToast msg={shadowSkillFiredMsg} onDismiss={dismissShadowSkillMsg} />
         </View>
 
         {/* Tutorial Overlay */}
@@ -413,16 +445,18 @@ const styles = StyleSheet.create({
   penalBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#1a0505',
     borderBottomWidth: 1,
     borderBottomColor: '#ef444455',
-    paddingVertical: 6,
+    paddingVertical: 7,
     paddingHorizontal: SPACING.md,
   },
   penalBannerText: {
+    flex: 1,
+    marginLeft: 8,
     color: C.neonRed,
-    fontSize: 11,
+    fontFamily: FONT.orbitron,
+    fontSize: 10,
     fontWeight: '700',
     letterSpacing: 0.5,
   },
