@@ -1,0 +1,410 @@
+{
+  "keys": {
+    "key_swamp_viper": {
+      "name": "Chave do Pântano Venenoso",
+      "description": "Permite aceder ao covil da Serpente Venenosa.",
+      "lore": "A Serpente Venenosa é uma cobra antiga e leal, guardiã de poderes ocultos. Diz-se que derrotar esta criatura concede ao caçador a velocidade de um réptil.",
+      "environment": "Pântano denso e venenoso, coberto de vegetação tóxica e água contaminada. Ar sufocante.",
+      "missionDetail": "50 flexões de braços (ou variações adaptadas) para forjar resistência ao veneno."
+    },
+    "key_ice_realm": {
+      "name": "Chave do Portão Vermelho Nevado",
+      "description": "Abre o domínio congelado do chefe dos Elfos Gélidos.",
+      "lore": "O Senhor Gélido governa o reino congelado com mão de ferro. Lendas falam de seus domínios arcanos onde o frio congela até a alma.",
+      "environment": "Montanha coberta de neve eterna, castelo de gelo e cristal azul. Ventos cortantes e aurora boreal.",
+      "missionDetail": "70 minutos de Foco Produtivo ou Estudo Ininterrupto para sobreviver à tempestade de neve."
+    },
+    "key_orc_territory": {
+      "name": "Máscara do Xamã Orc",
+      "description": "Garante entrada no território amaldiçoado pelo Xamã Orc.",
+      "lore": "O Xamã Orc Supremo comanda legiões com magia corrupta. Diz-se que seus rituais amaldiçoam qualquer um que ouse entrar.",
+      "environment": "Planície vulcânica árida com crateras, totem orcs antigos e neblina vermelha de lava.",
+      "missionDetail": "100 agachamentos livres pesados para esmagar as maldições dos orcs."
+    },
+    "key_vulcan": {
+      "name": "Chave da Ganância de Vulcan",
+      "description": "Sela o acesso ao vulcão onde reside o Demónio da Ganância.",
+      "lore": "Vulcan o Demónio da Ganância acumula riquezas no fundo de seu vulcão. Sua ganância é lendária entre os monstros.",
+      "environment": "Vulcão ativo com lava escorrendo, cavernas aquecidas e tesouro brilhando no escuro.",
+      "missionDetail": "90 minutos de Foco Total no Trabalho ou Estudo (sem distrações) no calor escaldante."
+    },
+    "key_soul_realm": {
+      "name": "Lanterna das Almas",
+      "description": "Ilumina o caminho até o Guia das Almas.",
+      "lore": "O Guia das Almas conduz espíritos através dos planos sombrios. Encontrá-lo significa fazer um pacto com o próprio reino dos mortos.",
+      "environment": "Floresta etérea habitada por espíritos, lua cheia suspensa, árvores antigas e sussurros ancestrais.",
+      "missionDetail": "120 minutos de Imersão (Trabalho, Leitura ou Arte) para resistir aos guias espectrais."
+    },
+    "key_swarm_sovereign": {
+      "name": "Cristal Amaldiçoado do Enxame",
+      "description": "Um fragmento de aura sombria pura. O Soberano do Enxame aguarda.",
+      "lore": "O Soberano do Enxame comanda um império subterrâneo de formigas mágicas. É dito ser mais poderoso que qualquer adversário encontrado.",
+      "environment": "Caverna imensa com colónias de formigas, câmaras cristalinas, e rainha monstruosa.",
+      "missionDetail": "200 burpees (ou equivalente em exercícios intensos de cardio/crossfit). Ganha a velocidade do Enxame."
+    },
+    "key_calamity_drake": {
+      "name": "Escama do Dragão Calamidade",
+      "description": "Aura draconiana intensa. Invoca o Dragão Calamidade, o maior flagelo.",
+      "lore": "O Dragão Calamidade é o maior flagelo — um dragão corrupto capaz de destruir cidades. Sua escama queima com poder cataclísmico.",
+      "environment": "Ruínas de civilizações destruídas, paisagem queimada, céu escuro com chuva de fogo.",
+      "missionDetail": "Caminha ou corre 5 km ininterruptos (ou pedala 15 km) para escapar ao Sopro de Fogo."
+    },
+    "key_ancient_trial": {
+      "name": "Chave do Templo Primordial",
+      "description": "Levar-te-á ao início de tudo. O Guardião Ancestral Observa.",
+      "lore": "Um Guardião Ancestral protege o conhecimento primordial. Diz-se que está conectado ao próprio destino do caçador.",
+      "environment": "Templo antigo com suas duas câmaras espelhadas, ouro e mármore, e uma aura transcendental.",
+      "missionDetail": "150 minutos a executar a tua tarefa mais importante em silêncio e imobilidade absoluta."
+    },
+    "key_void_monarch": {
+      "name": "Essência do Monarca Sombrio",
+      "description": "A prova final. O Soberano do Vazio testa o teu valor.",
+      "lore": "O Soberano do Vazio. Lenda suprema. O último teste antes de se tornar imortal.",
+      "environment": "Dimensão paralela de sombra pura, onde luz não existe. Poder absoluto concentrado num ponto.",
+      "missionDetail": "4 horas de Deep Work (Foco Profundo). Só a disciplina absoluta forja um verdadeiro Herdeiro."
+    },
+    "key_dracula": {
+      "name": "Cálice de Sangue Frio",
+      "description": "Sacia a sede daquele que habita no castelo esquecido.",
+      "lore": "Drácula, o Vampiro Eterno. Sua sede de sangue é insaciável. Atravessou milênios em escuridão.",
+      "environment": "Castelo gótico decadente, salões cheios de teias, sangue seco nas paredes, morcegos voando eternamente.",
+      "missionDetail": "Medita rigorosamente por 2 horas ou faz Jejum Digital total durante a noite."
+    },
+    "key_cthulhu": {
+      "name": "Ídolo Partido de R'lyeh",
+      "description": "Sussurros ecoam da sua superfície. Cthulhu desperta.",
+      "lore": "Cthulhu, Deus Adormecido. Sua existência quebra a razão. Quando acordar, mundos perecerão.",
+      "environment": "Cidade submersa de R'lyeh, arquitetura alienígena impossível, água antiga, sussurros de loucura cósmica.",
+      "missionDetail": "3 horas de Foco Exclusivo numa só tarefa crítica profunda. Rejeita o ruído mental."
+    },
+    "key_sauron": {
+      "name": "Fragmento do Anel",
+      "description": "O Senhor do Escuro consegue ver-te.",
+      "lore": "Sauron, Senhor Sombrio. Su poder é absoluto. Seu anel controla tudo ao seu redor.",
+      "environment": "Torre de Barad-dûr, chamas infernais, olho gigante observando, terra devastada abaixo.",
+      "missionDetail": "150 Elevações (Pull-ups) ou exercícios intensos para costas/braços. Forja a tua vontade."
+    },
+    "key_sun_wukong": {
+      "name": "Coroa de Ouro Voadora",
+      "description": "O Rei Macaco desafia-te para um duelo nos céus.",
+      "lore": "Sun Wukong, Rei Macaco Celestial. Invencível, malabarista de nuvens, senhor de setenta-duas transformações.",
+      "environment": "Montanha do Pêssego Celestial, nuvens douradas, criadores observando, tempestade mágica constante.",
+      "missionDetail": "Percorre 10 km (Corrida, Caminhada Acelerada ou equivalente de bicicleta/natação) nos céus ou em terreno variado."
+    },
+    "key_sparta_warrior": {
+      "name": "Cinzas do Guerreiro",
+      "description": "Uma chave de pura determinação. Invoca o Guerreiro de Esparta.",
+      "lore": "O Guerreiro de Esparta. Deuses caíram sob sua fúria. Sua força sem par nunca foi igualada.",
+      "environment": "Ruínas de templos antigos, cinzas vulcânicas, deuses derrotados espalhados, raiva materializada no ar.",
+      "missionDetail": "300 repetições acumuladas de exercícios de força (Flexões, Agachamentos e Abdominais) ou 1h de desporto intenso (Futebol, Basket, Ginásio)."
+    },
+    "key_orc": {
+      "name": "Fragmento de Chama Orc",
+      "description": "Uma chave forjada em fogo orc. Dá acesso ao território dos Orcs de Fogo.",
+      "lore": "Os Orcs de Fogo habitam territórios vulcânicos, forjando armas em lava. A sua chama nunca se apaga.",
+      "environment": "Planície de lava com crateras abertas, Orcs a forjar metal fundido, calor insuportável.",
+      "missionDetail": "80 agachamentos explosivos para resistir à força bruta dos Orcs de Fogo."
+    },
+    "key_basilisk": {
+      "name": "Olho do Basilisco Petrificado",
+      "description": "Um ídolo que paralisa os fracos. Dá acesso ao covil do Basilisco.",
+      "lore": "Basilisco, a Rainha das Serpentes. Seu contato paralisa. Um olho pode congelar a vida em pedra.",
+      "environment": "Covil subterrâneo vasto, ovos gigantes, veneno que corrói rocha, fria e úmida eternamente.",
+      "missionDetail": "60 min de foco total em silêncio absoluto para resistir ao olhar do Basilisco."
+    },
+    "key_manticore": {
+      "name": "Ferrão de Manticora Gélido",
+      "description": "Aura venenosa e instintiva. Atrai a Manticora do Abismo.",
+      "lore": "Manticora, Besta Venenosa do Abismo. Seu ferrão mata com uma gota. Instinto puro de predador.",
+      "environment": "Abismo cavernoso profundo, ossos de vítimas no chão, veneno gotejando, besta gigante esticando as asas.",
+      "missionDetail": "120 repetições de exercícios explosivos para acompanhar a agilidade da Manticora."
+    },
+    "key_phoenix": {
+      "name": "Pena Eternamente em Chamas",
+      "description": "Fogo que não se apaga. Convoca a Fénix da Renascença Sombria.",
+      "lore": "A Fénix Sombria renascer-se a cada mil anos. Seu poder queima tudo. Dizem que derrotá-la traz renascimento.",
+      "environment": "Pira de fogo eterno, cinzas volantes, e labaredas que queimam sem consumir.",
+      "missionDetail": "90 min de foco produtivo profundo para renascer das tuas próprias cinzas."
+    },
+    "key_beholder": {
+      "name": "Lente de Observação do Caos",
+      "description": "Vê através de todas as mentiras. O Observador aguarda.",
+      "lore": "O Beholder observa todas as realidades. Dez mil olhos veem tudo. A verdade espera-se para aquele que conseguir resistir.",
+      "environment": "Sala flutuante no vazio, olhos gigantes em todas as paredes, espaço que não segue geometria normal.",
+      "missionDetail": "75 min de estudo intenso ou leitura técnica sob o olhar vigilante."
+    },
+    "key_demon_astaroth": {
+      "name": "Sigilo de Astaroth",
+      "description": "O símbolo da realeza demoníaca. Invoca o Príncipe do Medo.",
+      "lore": "Astaroth, Príncipe do Medo. Sua presença traz pesadelos à realidade. Confrontá-lo significaria vencer o próprio medo.",
+      "environment": "Castelo demoníaco escuro, chamas vermelhas, sussurros de almas presas, ar sufocante de malignidade.",
+      "missionDetail": "150 flexões de braços para forjar a força necessária para enfrentar um Príncipe Demónio."
+    },
+    "key_undead_dragon": {
+      "name": "Crânio de Serpe espectral",
+      "description": "Restos de um dragão que se recusou a morrer. O Rei Dragão aguarda.",
+      "lore": "Um dragão antigo que desafiou o próprio destino. Morte não o venceu. Sua fúria ressoa através dos séculos.",
+      "environment": "Ruinas de castelo antigo, ossos gigantescos, necromancia e ar gelado que esfria a alma.",
+      "missionDetail": "2 horas de imersão total em trabalho ou criação complexa."
+    },
+    "key_titania": {
+      "name": "Asa de Fada Corrompida",
+      "description": "Beleza distorcida e magia negra. A Rainha Titania desafia-te.",
+      "lore": "Titania, Rainha das Fadas, corrompida pelo poder escuro. Sua corte é um pesadelo de beleza e horror.",
+      "environment": "Jardim de flores que sugam energia, luz distorcida, magia negra visível flutuando entre as árvores.",
+      "missionDetail": "7 km de marcha ritual para atravessar o jardim corrompido."
+    },
+    "key_anubis": {
+      "name": "Pesagem do Coração de Ouro",
+      "description": "A prova da verdade. Anúbis aguarda por julgamento.",
+      "lore": "Anúbis, Juiz das Almas. Seu julgamento é justo e irrevogável. Apenas aquele com coração puro pode passar.",
+      "environment": "Câmara do julgamento com escala de ouro, hieróglifos antigos brilhando, luz sobrenatural dourada.",
+      "missionDetail": "100 min de foco reflexivo ou reflexão profunda sobre os teus objetivos."
+    },
+    "key_cerberus": {
+      "name": "Coleira do Porteiro",
+      "description": "Três cabeças, uma intenção: Impedir a tua passagem.",
+      "lore": "Cérbero, o Porteiro do Inferno. Com três cabeças e força titânica, nada passa sem sua permissão.",
+      "environment": "Portão do inferno, correntes ancestrais, fogo e fumaça, as três cabeças rosnam eternamente.",
+      "missionDetail": "200 agachamentos livres para fortalecer as pernas contra as três mandíbulas."
+    },
+    "key_medusa": {
+      "name": "Escama de Serpente de Pedra",
+      "description": "A pele daquela que transforma Heróis em estátuas.",
+      "lore": "Medusa, cujo olhar petrifica. Condenada à solidão, sua fúria cresce com cada vítima que congela em pedra.",
+      "environment": "Caverna cheia de estátuas humanas, serpentes na cabeça de Medusa, piso de pedra, escuridão opressiva.",
+      "missionDetail": "150 min de foco inamóvel. Não pestanejes perante o trabalho árduo."
+    },
+    "key_hydra_ancient": {
+      "name": "Sangue da Hidra Primordial",
+      "description": "Um veneno que corroi o próprio tempo. A Hidra Proibida desperta.",
+      "lore": "A Hidra Primordial com cem cabeças. Cada que tu cortas, duas crescem. Luto infinito e regeneração eterna.",
+      "environment": "Pântano antigo com água tóxica, neblina verde venenosa, cabeças da Hidra saíndo da água.",
+      "missionDetail": "250 Burpees ou exercícios de cardio intenso para queimar o veneno no sangue."
+    },
+    "key_fenrir": {
+      "name": "Corrente Quebrada de Gleipnir",
+      "description": "Aquilo que prendia o Devorador de Estrelas foi rompido.",
+      "lore": "Fenrir, o Lobo Devorador. Encadeado desde os primórdios, agora livre. Seu apetite é infinito.",
+      "environment": "Montanhas nórdicas, neve eterna, lobo titânico rasgando o pano da realidade, céu em chamas.",
+      "missionDetail": "10 km de corrida para escapar às mandíbulas que devoram o céu."
+    },
+    "key_odin": {
+      "name": "Lança Gungnir Simulada",
+      "description": "Um fragmento de código de um Deus. Odin observa o Sistema.",
+      "lore": "Odin, o Deus da Sabedoria. Sacrificou um olho por conhecimento. Seu poder atravessa mundos.",
+      "environment": "Hall de Valhala com guerreiros eternos, trono dourado, Gungnir brilhando, realidade se descosendo.",
+      "missionDetail": "3 horas de Deep Work absoluto (Foco nível National) para provar o teu valor em Valhalla."
+    },
+    "key_zeus": {
+      "name": "Relâmpago do Olimpo Digital",
+      "description": "Pura energia condensada. O Senhor do Olimpo invoca-te.",
+      "lore": "Zeus, Rei dos Deuses. Ele controla relâmpago e tempestades. Seu poder é absoluto no Olimpo.",
+      "environment": "Topo do Olimpo com relâmpagos constantes, trono de ouro, deuses observando, céu em tempestade.",
+      "missionDetail": "300 repetições de exercícios de calistenia ou 1h30 de desporto de alta intensidade."
+    },
+    "key_cthulhu_spawn": {
+      "name": "Medalhão do Infinito Inominável",
+      "description": "Um objeto que não devia existir. A Prole do Vazio aproxima-se.",
+      "lore": "Descendente de Cthulhu. Sua existência não obedece lógica. A realidade falha perto dele.",
+      "environment": "Dimensão paralela impossível, geometria que quebra a mente, sussurros de loucura, nada faz sentido.",
+      "missionDetail": "4 horas de foco ininterrupto em tarefas que desafiem a tua sanidade mental."
+    },
+    "key_alpha_wolf": {
+      "name": "Presa do Lobo Alfa",
+      "description": "O canino de um predador que dominou uma alcateia inteira de dungeon.",
+      "lore": "O Lobo Alfa dominou a alcateia do dungeon através de pura brutalidade e instinto. Nenhum caçador sobreviveu para contar a história — apenas a presa ficou para trás.",
+      "environment": "Floresta densa e sombria, uivos constantes, chão coberto de pegadas imensas, luz filtrada pela copa fechada.",
+      "missionDetail": "80 repetições de exercícios de força (Flexões + Agachamentos) para merecer o respeito da alcateia."
+    },
+    "key_sea_king": {
+      "name": "Escama do Rei dos Abismos",
+      "description": "Uma escama iridescente de um ser que governa os mares sombrios.",
+      "lore": "O Rei do Mar Sombrio governa os corredores subaquáticos com crueldade absoluta. Dizem que o seu rugido provoca tsunamis nos planos mortais.",
+      "environment": "Dungeon subaquático, corredores de pedra cobertos de bioluminescência, pressão colossal, silêncio mortal.",
+      "missionDetail": "8 km em terreno variado (corrida ou caminhada rápida) para simular as correntes abissais."
+    },
+    "key_dungeon_queen": {
+      "name": "Véu da Rainha Velada",
+      "description": "Tecido de névoa solidificada. A Rainha do Dungeon sente a tua chegada.",
+      "lore": "A Rainha do Dungeon Velado comanda legiões com telecinese. O seu olhar paralisa a vontade. Apenas a concentração absoluta protege a mente do caçador.",
+      "environment": "Castelo suspenso na névoa, câmaras flutuantes no vazio, trono de cristal negro, silêncio opressivo que esmaga.",
+      "missionDetail": "90 minutos de foco absoluto — a mente deve ser impenetrável ao olhar da Rainha."
+    },
+    "key_king_of_the_dead": {
+      "name": "Coroa do Rei dos Mortos",
+      "description": "Uma coroa de osso negro que irradia poder necromântico. Ativa a cripta mais profunda.",
+      "lore": "O Rei dos Mortos governa aqueles que se recusaram a aceitar a morte. A sua cripta é um labirinto de almas presas. Entrar é fácil. Sair é o teste.",
+      "environment": "Cripta ancestral de pedra negra, almas flutuantes, chão coberto de cinzas, ar que congela os pulmões.",
+      "missionDetail": "2 horas de imersão total em silêncio — enfrenta o tribunal dos mortos sem fraquejar."
+    },
+    "key_crypt_omega": {
+      "name": "Teia de Seda Negra da Cripta",
+      "description": "Tecida com veneno solidificado. A Aranha Ômega sente a tua presença.",
+      "lore": "A Aranha Ômega governa as profundezas da Cripta. As suas teias são feitas de desespero solidificado. Nenhum caçador sobreviveu à câmara central.",
+      "environment": "Caverna de cristal negro coberta de teias imensas, ovos pulsando, veneno escorrendo do teto em fios dourados.",
+      "missionDetail": "180 repetições explosivas (Burpees, Agachamentos, Flexões) para resistir à teia da Cripta."
+    },
+    "key_seraphim_fallen": {
+      "name": "Pena de Asa Decepada",
+      "description": "Uma pena negra de seis asas destruídas. Convoca o Serafim que caiu.",
+      "lore": "Um Serafim que desafiou o próprio Sistema e perdeu tudo. As suas asas decepadas carregam o peso de um poder que nunca devia ter sido corrompido.",
+      "environment": "Dimensão partida, luz fragmentada em prismas negros, penas flutuando no vazio, silêncio sobrenatural total.",
+      "missionDetail": "150 minutos de foco — o Serafim testa a pureza da tua mente antes do combate."
+    },
+    "key_goblin": {
+      "name": "Dente do Rei Goblin",
+      "description": "Um dente afiado de um Goblin Rei. Abre o covil das criaturas surdas.",
+      "lore": "O Rei Goblin domina uma horda ruidosa de criaturas famintas. Subestimado por muitos caçadores — e fatal para todos eles.",
+      "environment": "Caverna húmida e sombria repleta de tochas fumegantes, ossos e detritos de batalhas passadas.",
+      "missionDetail": "60 repetições de exercícios de força (Flexões ou Agachamentos) para esmagar os Goblins."
+    },
+    "key_dragon": {
+      "name": "Escama do Wyvern Negro",
+      "description": "Uma escama de dragão que irradia calor intenso. Desperta o Wyvern das ruínas.",
+      "lore": "Um Wyvern negro que guarda ruínas antigas. As suas escamas absorvem a luz, tornando-o quase invisível na escuridão total.",
+      "environment": "Ruínas de fortaleza antiga, pedras queimadas por décadas de fogo draconiano, fumo eterno no ar.",
+      "missionDetail": "90 minutos de foco intenso para sobreviver ao sopro de fogo do Wyvern."
+    }
+  },
+  "bosses": {
+    "steel_fanged_lycan": { "name": "Lobo de Presas de Aço" },
+    "hobgoblin_chieftain": { "name": "Chefe Hobgoblin" },
+    "twin_headed_ogre": { "name": "Ogre de Duas Cabeças" },
+    "giant_ice_bear": { "name": "Tank, o Urso de Gelo Gigante" },
+    "high_orc_guard": { "name": "Guarda Real de Elite High Orc" },
+    "naga_general": { "name": "General Naga do Abismo" },
+    "infernal_monarch": { "name": "Monarca Infernal" },
+    "plague_sovereign": { "name": "Soberana das Pragas" },
+    "frost_sovereign": { "name": "Soberano do Gelo Eterno" },
+    "architect_system": { "name": "O Arquiteto do Sistema" },
+    "beast_sovereign": { "name": "Soberano das Feras" },
+    "giant_sovereign": { "name": "Soberano dos Gigantes" },
+    "void_sovereign": { "name": "Soberano da Destruição Total" },
+    "rathalos_sky": { "name": "O Soberano dos Céus Escarlates" },
+    "primal_fox_deity": { "name": "Divindade do Ódio Primordial" },
+    "malenia_blade": { "name": "A Lâmina da Podridão Escarlate" },
+    "frozen_throne_king": { "name": "O Senhor do Trono Congelante" },
+    "dark_wing_herald": { "name": "O Arauto da Asa Negra" },
+    "void_dragon_chaos": { "name": "O Vórtice do Apocalipse Dracónico" },
+    "primordial_abyss_lord": { "name": "O Primeiro Senhor do Abismo" },
+    "undead_legionnaire": { "name": "Legionário Morto-Vivo" },
+    "mountain_troll_brute": { "name": "Troll da Montanha Enfurecido" },
+    "inferno_hound_alpha": { "name": "Cão Infernal Alfa" },
+    "cave_horror_spider": { "name": "Horror das Cavernas" },
+    "high_orc_raider": { "name": "Saqueador High Orc" },
+    "dark_elf_assassin_leader": { "name": "Líder Assassino Elfo Negro" },
+    "harpy_matriarch": { "name": "Matriarca Harpia" },
+    "chimera_of_waste": { "name": "Quimera do Ermo" },
+    "vampire_noble_valerius": { "name": "Nobre Vampiro Valerius" },
+    "archdemon_malphas": { "name": "Malphas, o Arquidemónio" },
+    "abyssal_kraken_tentacle": { "name": "Tentáculo do Kraken Abissal" },
+    "ancient_guardian_statue": { "name": "Estátua do Guardião Ancestral" },
+    "spectral_lich_king_shadow": { "name": "Rei Lich Espectral" },
+    "stone_giant_sovereign": { "name": "Soberano Ancestral dos Gigantes" },
+    "frost_sovereign_true": { "name": "Soberano do Gelo (Forma Verdadeira)" },
+    "titan_champion_sim": { "name": "Campeão Titã (Simulação)" },
+    "void_dragon_general": { "name": "General Draconiano do Vazio" },
+    "abyssal_void_walker": { "name": "Caminhante do Vazio Primordial" },
+    "seraphim_fallen_angel": { "name": "Serafim, o Anjo Caído" },
+    "monarch_of_beginnings": { "name": "Monarca dos Primórdios" },
+    "key_boss_basilisk": { "name": "Basilisco das Sombras" },
+    "key_boss_manticore": { "name": "Manticora do Abismo" },
+    "key_boss_phoenix_rebirth": { "name": "Fénix da Renascença Sombria" },
+    "key_boss_beholder_eye": { "name": "Observador do Caos" },
+    "key_boss_demon_prince_astaroth": { "name": "Príncipe Demónio Astaroth" },
+    "key_boss_undead_dragon_king": { "name": "Rei Dragão Morto-Vivo" },
+    "key_boss_titania_queen_dark": { "name": "Rainha das Fadas Corrompida" },
+    "key_boss_anubis_guardian_soul": { "name": "Anúbis, Guardião das Almas" },
+    "key_boss_cerberus_gate_final": { "name": "Cérbero, o Porteiro do Inferno" },
+    "key_boss_medusa_queen_gaze": { "name": "Medusa, a Rainha das Serpentes" },
+    "key_boss_hydra_ancient_world": { "name": "Hidra Ancestral Proibida" },
+    "key_boss_fenrir_wolf_star": { "name": "Fenrir, o Devorador de Estrelas" },
+    "key_boss_odin_simulation_valhalla": { "name": "Odin (Simulação do Sistema)" },
+    "key_boss_zeus_simulation_olympus": { "name": "Zeus (Simulação do Sistema)" },
+    "key_boss_cthulhu_spawn_outer": { "name": "Prole do Infinito (Spawn de Cthulhu)" },
+    "break_boss_lich_servant_vanguard": { "name": "Vanguarda do Rei Lich" },
+    "break_boss_giant_worm_abyss": { "name": "Verme Gigante do Abismo" },
+    "break_boss_dark_knight_traitor": { "name": "Cavaleiro Negro Traidor" },
+    "break_boss_succubus_scout_night": { "name": "Batedora Succubus da Noite" },
+    "break_boss_gargoyle_watcher_stone": { "name": "Gárgula Vigia de Pedra" },
+    "break_boss_orc_shaman_ritual_corrupt": { "name": "Xamã Orc Corrompido" },
+    "break_boss_ice_troll_frost_bite": { "name": "Troll de Gelo (Mordida Gélida)" },
+    "break_boss_fire_spirit_ember": { "name": "Espírito de Brasas Infernais" },
+    "break_boss_void_wraith_silent": { "name": "Wraith do Vazio Silencioso" },
+    "break_boss_corrupted_monk_temple": { "name": "Monge Corrompido do Templo" },
+    "break_boss_abyssal_beast_chimera": { "name": "Besta Abissal (Quimera Negra)" },
+    "break_boss_chaos_reaper_final": { "name": "Ceifador do Caos Final" },
+    "break_boss_ancient_machine_core": { "name": "Núcleo da Máquina Ancestral" },
+    "break_boss_star_spawn_void": { "name": "Prole das Estrelas (Vazio)" },
+    "break_boss_monarch_shadow_clone_sim": { "name": "Clone Sombrio do Monarca (Simulação)" },
+    "swamp_viper": { "name": "Serpente Venenosa do Pântano" },
+    "ice_elf_lord": { "name": "Senhor Gélido dos Elfos" },
+    "orc_high_shaman": { "name": "Xamã Orc Supremo" },
+    "vulcan_greed_demon": { "name": "Vulcan, Demónio da Ganância" },
+    "soul_guide_boss": { "name": "Guia das Almas" },
+    "swarm_sovereign": { "name": "Soberano do Enxame" },
+    "calamity_drake": { "name": "Dragão Calamidade" },
+    "ancient_trial_guardian": { "name": "Guardião Ancestral" },
+    "void_monarch": { "name": "Soberano do Vazio" },
+    "dracula_vampire_lord": { "name": "Drácula, o Vampiro Eterno" },
+    "cthulhu_mad_god": { "name": "Cthulhu, o Deus Adormecido" },
+    "sauron_dark_lord": { "name": "Sauron, Senhor Sombrio" },
+    "sun_wukong_celestial": { "name": "Sun Wukong, Rei Macaco Celestial" },
+    "sparta_warrior": { "name": "Guerreiro de Esparta" },
+    "alpha_wolf": { "name": "Lobo Alfa" },
+    "sea_king": { "name": "Rei do Mar Sombrio" },
+    "dungeon_queen": { "name": "Rainha do Dungeon Velado" },
+    "king_of_the_dead": { "name": "Rei dos Mortos" },
+    "boss_crypt_omega": { "name": "Aranha Ômega da Cripta" },
+    "boss_seraphim": { "name": "Serafim Caído" },
+    "key_boss_goblin_king": { "name": "Rei Goblin" },
+    "key_boss_dragon_wyvern": { "name": "Wyvern Negro" }
+  },
+  "ui": {
+    "dangerousPortal": "PORTAL PERIGOSO",
+    "legend": "LENDA",
+    "environment": "AMBIENTE",
+    "difficulty": "DIFICULDADE:",
+    "missionType": "TIPO DE MISSÃO:",
+    "missionTypeFocus": "FOCO",
+    "missionTypeTraining": "TREINO",
+    "missionTypeGps": "GPS",
+    "cooldownActive": "COOLDOWN ATIVO",
+    "cooldownText": "Este portal já foi usado recentemente. Podes entrar novamente em:",
+    "criticalWarning": "AVISO CRÍTICO",
+    "criticalWarningText": "Uma missão perigosa e desafiante te aguarda. \n\nAs recompensas são grandes, mas as penalizações também são severas. Tens a certeza de que estás pronto?",
+    "cooldownBtn": "COOLDOWN: {{time}}",
+    "acceptChallenge": "ACEITAR DESAFIO",
+    "retreat": "RECUAR",
+    "defaultLore": "Um poderoso inimigo aguarda-te neste portal. {{description}}",
+    "defaultEnvironment": "Um local perigoso e desafiante, repleto de obstáculos mortais.",
+    "keyVaultTitle": "COFRE DE CHAVES",
+    "emptyVaultTitle": "Cofre Vazio",
+    "emptyVaultSub": "Sobe de nível ou abre Cofres para encontrar chaves raras.",
+    "missionExecution": "EXECUÇÃO DE MISSÃO",
+    "personalRecord": "Recorde Pessoal:",
+    "newRecord": "NOVO!",
+    "timerRunning": "a decorrer…",
+    "timerPaused": "pausado",
+    "timerStopped": "parado",
+    "resume": "RETOMAR",
+    "start": "INICIAR",
+    "pause": "PAUSAR",
+    "reset": "REINICIAR",
+    "combatDiary": "DIÁRIO DE COMBATE",
+    "notesPlaceholder": "Ex: 52 Flexões • 3 séries • sensação boa",
+    "completeMission": "CONCLUIR MISSÃO",
+    "completeWithoutTimer": "CONCLUIR SEM TIMER (REGISTO MANUAL)",
+    "insufficientTime": "TEMPO INSUFICIENTE",
+    "insufficientTimeMsg": "Apenas {{time}} registado.\nGuardar apenas as notas sem atualizar recorde?",
+    "saveNotes": "GUARDAR NOTAS",
+    "systemRecords": "[ REGISTOS DO SISTEMA ]",
+    "systemRecordsSub": "Missões completadas pelo menos uma vez · Ordenadas por frequência",
+    "noRecords": "Nenhum registo ainda.",
+    "noRecordsSub": "Completa missões para ver o teu historial aqui.",
+    "noHistory": "Sem eventos passados.",
+    "missionTypeFocusLabel": "FOCO",
+    "missionTypeGpsLabel": "PASSEIO"
+  }
+}

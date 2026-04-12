@@ -1,0 +1,62 @@
+{
+  "alerts": {
+    "quest_invalid": "Misión inválida.",
+    "no_quests_available": "Sin misiones disponibles.",
+    "weekly_limit_reached": "Límite semanal alcanzado (7/7).",
+    "no_other_quests": "No hay otras misiones disponibles.",
+    "already_replaced": "Ya sustituida hoy.",
+    "invalid": "Inválida.",
+    "pool_empty": "Grupo vacío.",
+    "limit_reached": "Límite alcanzado."
+  },
+  "shadows": {
+    "immunity_absorbed": "{{name}} absorbió la penalización!",
+    "streak_protected": "{{name}} protegió tu racha!",
+    "ad_shield_consumed": "Escudo de Racha (anuncio) consumido — ¡racha protegida!"
+  },
+  "buffs": {
+    "viper_venom": "Veneno de Víbora",
+    "crimson_knight_shard": "Fragmento del Caballero Carmesí",
+    "cerberus_fang": "Colmillo de Cerbero",
+    "iron_will_crystal": "Voluntad de Hierro",
+    "blood_fallen": "Sangre de los Caídos",
+    "dragon_scale": "Escama de Dragón",
+    "lich_eye": "Ojo del Lich"
+  },
+  "items": {
+    "health_potion": "Poción de Vida",
+    "xp_crystal": "Cristal de XP",
+    "rest_scroll": "Pergamino de Descanso",
+    "evolution_shard_common": "Fragmento de Evolución"
+  },
+  "loot": {
+    "gold_title": "TESORO DE ORO",
+    "xp_title": "ESENCIA ABSORBIDA",
+    "key_title": "LLAVE RARA DESCUBIERTA",
+    "gold_abundant_title": "ORO ABUNDANTE"
+  },
+  "helpers": {
+    "rank_e_label": "Novato",
+    "rank_d_label": "Cazador Básico",
+    "rank_c_label": "Maestro de la Voluntad",
+    "rank_b_label": "Caballero de las Sombras",
+    "rank_a_label": "Comandante",
+    "rank_s_label": "Monarca",
+    "rank_national_label": "Cazador de Nivel Nacional"
+  },
+  "notifications": {
+    "focus_complete_title": "Foco Completado",
+    "focus_complete_body": "El foco en la misión \"{{questLabel}}\" ha terminado. Recoge tus recompensas.",
+    "level_up_title": "EVOLUCIÓN — Nivel {{newLevel}}",
+    "level_up_body": "Tus atributos han sido actualizados por el Sistema.",
+    "ongoing_mission_title": "Misión en Curso",
+    "pomodoro_break_title": "CICLO {{cycle}} COMPLETADO — DESCANSO",
+    "pomodoro_break_body": "Descanso de {{breakMins}} min iniciado. Descansa y vuelve al trabajo.",
+    "pomodoro_work_title": "CICLO {{nextCycle}} — HORA DE TRABAJAR",
+    "pomodoro_work_body": "El descanso terminó. El siguiente ciclo Pomodoro está listo.",
+    "side_quest_reminder_title": "Recordatorio de Misión",
+    "side_quest_reminder_body": "La misión \"{{title}}\" sigue esperando ser completada.",
+    "system_warning_final_body": "Aviso Final: Completa las misiones diarias antes de la reactivación del Sistema a medianoche.",
+    "system_warning_title": "Aviso del Sistema"
+  }
+}

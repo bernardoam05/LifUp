@@ -1,0 +1,197 @@
+{
+  "items": {
+    "system_pass": {
+      "name": "System Pass",
+      "description": "Automatically completes a Daily Quest of your choice.",
+      "lore": "\"The System grants reprieve. But the body does not forget.\""
+    },
+    "xp_crystal": {
+      "name": "XP Crystal",
+      "description": "You absorb the crystal's energy. +100 XP immediately.",
+      "lore": "\"A relic of a forgotten dungeon. It glows with latent power.\""
+    },
+    "health_potion": {
+      "name": "Recovery Potion",
+      "description": "Restores motivation. Grants +30 XP and +10 Gold immediately.",
+      "lore": "\"It tastes like determination. Drink it when your strength falters.\""
+    },
+    "rest_scroll": {
+      "name": "Rest Scroll",
+      "description": "Reduces the next day's penalty by 50%.",
+      "lore": "\"Even the greatest Hunters need strategic rest.\""
+    },
+    "lagrima_purificacao": {
+      "name": "Tear of Purification",
+      "description": "Immediately removes the active penalty debuff.",
+      "lore": "\"Distilled from pain and redemption. A second chance the System rarely grants.\""
+    },
+    "relogio_ampulheta": {
+      "name": "Hourglass",
+      "description": "The next completed Quest grants double XP.",
+      "lore": "\"Time bends for the worthy. But only once.\""
+    },
+    "quebra_feiticos": {
+      "name": "Spell Breaker",
+      "description": "Allows you to abandon Hardcore Focus Mode without additional cost.",
+      "lore": "\"Forged in the depths of the darkest dungeon. Breaks any oath... at a price already paid.\""
+    },
+    "loot_box": {
+      "name": "Mystery Chest",
+      "description": "A chest sealed by System magic. May contain Gold, XP or Rare Keys.",
+      "lore": "\"What lies within? Only the System decides.\""
+    },
+    "theme_monarch": {
+      "name": "Theme: Shadow Monarch",
+      "description": "A deep black and purple UI that reflects absolute power.",
+      "lore": "\"Rise with the crown that rules the dead.\""
+    },
+    "theme_blood": {
+      "name": "Theme: Blood Night",
+      "description": "A dark scarlet UI for the relentless hunters.",
+      "lore": "\"Thirsty. Merciless. Predator.\""
+    },
+    "evolution_shard_common": {
+      "name": "Evolution Shard",
+      "description": "Basic material to evolve any unit. Required in all upgrades.",
+      "lore": "\"The raw material of growth. Each shard carries the echo of a battle.\""
+    },
+    "void_crystal": {
+      "name": "Void Crystal",
+      "description": "Rare crystal from dimensional rifts. Required to evolve Knight+ units or at level milestones (×10).",
+      "lore": "\"It exists between dimensions. The Void gazes back at you through it.\""
+    },
+    "beast_core": {
+      "name": "Beast Core",
+      "description": "Core extracted from bestial creatures. Amplifies Beast or Insect type units.",
+      "lore": "\"The raw essence of the predator. It pulses with an instinct impossible to tame.\""
+    },
+    "phantom_essence": {
+      "name": "Phantom Essence",
+      "description": "Distilled from dungeon souls. Required to evolve Undead, Phantom or Demon shadows.",
+      "lore": "\"It is not death that frightens — it is what remains after it.\""
+    },
+    "shadow_essence": {
+      "name": "Shadow Essence",
+      "description": "Concentrated essence of captured shadows. Resets the day's shadow extraction limit, allowing a new extraction.",
+      "lore": "\"Darkness has a price. And sometimes, it pays you back.\""
+    },
+    "blood_fallen": {
+      "name": "Blood of the Fallen",
+      "description": "Collected from hunters who fell in battle. Activates buff: +25% Gold on all quests for 3 hours.",
+      "lore": "\"The blood of the weak fertilizes the path of the strong.\""
+    },
+    "viper_venom": {
+      "name": "Viper Venom",
+      "description": "Extracted from the Venomous Serpent. Activates buff: +15% XP on all quests for 2 hours.",
+      "lore": "\"The viper's poison does not kill — it transforms.\""
+    },
+    "crimson_knight_shard": {
+      "name": "Crimson Knight Shard",
+      "description": "A fragment of the Crimson Knight's armor. Activates buff: +20% XP on all quests for 1 hour.",
+      "lore": "\"The Crimson Knight served in silence. His fragment still serves.\""
+    },
+    "cerberus_fang": {
+      "name": "Cerberus Fang",
+      "description": "Tooth of the abyss guardian. Activates buff: +20% Gold on all quests for 2 hours.",
+      "lore": "\"Three heads, one fate: to serve the Monarch.\""
+    },
+    "iron_will_crystal": {
+      "name": "Iron Will Crystal",
+      "description": "Crystallization of pure determination. Activates buff: +50% XP on all quests for 30 minutes.",
+      "lore": "\"The warrior's will, made stone.\""
+    },
+    "lich_eye": {
+      "name": "Lich Eye",
+      "description": "The eye that sees beyond death. Activates buff: +100% XP (double) on all quests for 1 hour.",
+      "lore": "\"He who stares death in the face grows stronger.\""
+    },
+    "dragon_scale": {
+      "name": "Dragon Scale",
+      "description": "Natural armor of the king of monsters. Activates buff: +30% XP on all quests for 4 hours.",
+      "lore": "\"Not even fire melts what was forged in fire.\""
+    },
+    "crimson_knight_soul": {
+      "name": "Crimson Knight Soul",
+      "description": "Remnant of the Crimson Knight's essence. Activates buff: +25% XP for 2 hours.",
+      "lore": "\"The Crimson Knight died on his knees. His soul serves standing.\""
+    },
+    "cerberus_tooth": {
+      "name": "Cerberus Tooth",
+      "description": "Torn from the three-headed abyss guardian. Activates buff: +25% Gold for 2 hours.",
+      "lore": "\"Three heads, one end. Its teeth guard the secret of the Abyss.\""
+    }
+  },
+  "ui": {
+    "sold_out": "SOLD OUT",
+    "per_week": "{{count}}/week",
+    "no_gold": "NO GOLD",
+    "buy": "KAUFEN",
+    "shop_title": "SYSTEM SHOP",
+    "shop_subtitle": "Spend gold to power up your journey, Hunter.",
+    "gold_available": "{{amount}} Gold available",
+    "daily_bonus": "DAILY BONUS",
+    "ad_gold_desc": "Watch a voluntary ad and receive 500 Gold.",
+    "limit_reached": "LIMIT REACHED",
+    "loading": "LOADING...",
+    "watch_ad_gold": "WATCH AD → +500 GOLD",
+    "watch_ad_item": "WATCH AD → RANDOM ITEM ({{count}}/{{max}})",
+    "item_added_inventory": "{{itemName}} added to inventory!",
+    "item_added_success": "Item added to inventory!",
+    "army_available": "AVAILABLE ARMY",
+    "shadow_recruitment": "SHADOW RECRUITMENT",
+    "shadow_recruitment_subtitle": "Unleash the power of darkness for a Gold price.",
+    "locked_level": "Unlocked after reaching Level 10",
+    "confirm_purchase": "CONFIRM PURCHASE",
+    "confirm_purchase_msg": "Buy \"{{name}}\" for {{cost}} Gold?\n\n{{description}}",
+    "confirm_purchase_msg_bulk": "Buy {{quantity}}x \"{{name}}\" for {{cost}} Gold?\n\n{{description}}",
+    "recruit_shadow": "RECRUIT SHADOW",
+    "evolve_shadow": "EVOLVE SHADOW",
+    "confirm_recruit_msg": "Confirm recruitment of \"{{name}}\" for {{cost}} Gold?\n\n{{effect}}",
+    "confirm_evolve_msg": "Confirm evolution of \"{{name}}\" for {{cost}} Gold?\n\n{{effect}}",
+    "confirm": "CONFIRM",
+    "inventory_title": "INVENTAR",
+    "items_count": "{{count}} items",
+    "key_vault": "KEY VAULT",
+    "keys_count_one": "{{count}} key stored",
+    "keys_count_other": "{{count}} keys stored",
+    "no_keys": "No keys",
+    "items_section": "ITEMS",
+    "inventory_empty_title": "EMPTY INVENTORY",
+    "inventory_empty_desc": "Visit the System Shop to acquire items.",
+    "use": "VERWENDEN",
+    "use_item_title": "USE ITEM",
+    "use_item_msg": "Use \"{{name}}\"?\n\n{{description}}",
+    "cancel": "CANCEL",
+    "quest_picker_title": "CHOOSE A QUEST",
+    "quest_picker_sub": "The System Pass will complete this quest automatically.",
+    "quests_all_done": "All quests are already completed!",
+    "upgrade_material_hint": "Use in Shadows to evolve",
+    "feedback_upgrade_material": "Evolution material — use in the Shadows screen to evolve",
+    "feedback_xp": "+{{xp}} XP absorbed!",
+    "feedback_xp_gold": "+{{xp}} XP and +{{gold}} Gold absorbed!",
+    "feedback_level_up": "+{{xp}} XP — LEVEL UP!",
+    "feedback_level_up_gold": "+{{xp}} XP and +{{gold}} Gold — LEVEL UP!",
+    "feedback_reduce_penalty": "Scroll activated! Tomorrow's penalty reduced by 50%.",
+    "feedback_remove_penalty": "Penalty removed! The System purified your record.",
+    "feedback_xp_boost": "Hourglass activated! Next quest grants double XP.",
+    "feedback_loot_box": "Chest opened! Check your reward...",
+    "feedback_no_loot_box": "No chest available!",
+    "feedback_no_hardcore": "No Hardcore Mode active to break.",
+    "feedback_break_hardcore": "Oath broken! You can stop Focus Mode freely.",
+    "feedback_shadow_essence": "The System yielded! A new shadow has been summoned.",
+    "feedback_buff": "Buff active: +{{pct}}% {{stat}} for {{duration}}!",
+    "feedback_item_used": "Consumable activated!",
+    "feedback_generic_used": "Item used successfully!",
+    "feedback_quest_done": "Quest completed by the System!",
+    "stat_xp": "XP",
+    "stat_gold": "Gold",
+    "weekly_stock": "Wöchentlicher Vorrat: {{count}}",
+    "out_of_stock": "NICHT VERFÜGBAR",
+    "owned": "BESESSEN",
+    "empty_inventory": "Inventar leer.",
+    "item_used": "Gegenstand verwendet!",
+    "purchase_confirm": "{{name}} kaufen für {{cost}} Gold?",
+    "insufficient_gold": "Nicht genug Gold.",
+    "weekly_limit": "Wöchentliches Limit erreicht."
+  }
+}

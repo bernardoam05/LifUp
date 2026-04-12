@@ -4,6 +4,7 @@ import {
   Animated, Pressable,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme, FONT, SPACING } from '../theme';
 import { playSound } from '../utils/audioService';
 import { SHOP_CATALOG } from '../data/shopItems';
@@ -16,13 +17,9 @@ interface Props {
 }
 
 const ITEM_NAMES: Record<string, string> = Object.fromEntries(SHOP_CATALOG.map(i => [i.id, i.name]));
-const EXTRA_NAMES: Record<string, string> = {
-  shadow_essence: 'Essência das Sombras',
-  blood_fallen: 'Sangue dos Caídos',
-  loot_box: 'Cofre Misterioso',
-};
 
 export default function LevelUpModal({ level, items, onDismiss }: Props) {
+  const { t } = useTranslation('common');
   const C = useTheme();
   const st = React.useMemo(() => getStyles(C), [C]);
 
@@ -99,7 +96,7 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
           {/* ── Cabeçalho RPG ─────────────────────────────────────────────── */}
           <View style={st.topBar}>
             <View style={st.topLine} />
-            <Text style={st.topLabel}>◈ SISTEMA ◈</Text>
+            <Text style={st.topLabel}>{t('level_up.system_label')}</Text>
             <View style={st.topLine} />
           </View>
 
@@ -111,10 +108,10 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
               </View>
             </Animated.View>
 
-            <Text style={st.title}>LEVEL UP!</Text>
+            <Text style={st.title}>{t('level_up.title')}</Text>
 
             <View style={st.levelBadge}>
-              <Text style={st.levelSmall}>NÍVEL</Text>
+              <Text style={st.levelSmall}>{t('level_up.level_label')}</Text>
               <Text style={st.levelNum}>{level}</Text>
             </View>
           </View>
@@ -124,7 +121,7 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
             <View style={st.rewardsBox}>
               <View style={st.sectionDivider}>
                 <View style={st.dividerLine} />
-                <Text style={st.dividerLabel}>RECOMPENSAS</Text>
+                <Text style={st.dividerLabel}>{t('level_up.rewards_label')}</Text>
                 <View style={st.dividerLine} />
               </View>
 
@@ -138,7 +135,9 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
                   const isKey = !!keyData;
                   const iconName = isKey ? 'key-variant' : 'gift-outline';
                   const iconColor = isKey ? (keyData.color ?? C.gold) : C.gold;
-                  const displayName = ITEM_NAMES[item] ?? EXTRA_NAMES[item] ?? keyData?.name ?? item;
+                  const shopName = ITEM_NAMES[item];
+                  const displayName = shopName
+                    ?? t(`items.${item}.name`, { ns: 'shop', defaultValue: keyData?.name ?? item })
                   return (
                     <View key={idx} style={st.itemRow}>
                       <View style={[st.itemIcon, isKey && { backgroundColor: iconColor + '14' }]}>
@@ -161,7 +160,7 @@ export default function LevelUpModal({ level, items, onDismiss }: Props) {
             ]}
           >
             <Icon name="arrow-right-circle-outline" size={18} color={C.bg} />
-            <Text style={st.continueTxt}>CONTINUAR</Text>
+            <Text style={st.continueTxt}>{t('level_up.continue')}</Text>
           </Pressable>
         </Animated.View>
       </Animated.View>

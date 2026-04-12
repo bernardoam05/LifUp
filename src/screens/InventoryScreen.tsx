@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, FlatList }
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Vibration } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/useGameStore';
 import { CATALOG_MAP } from '../data/shopItems';
 import KeyVaultModal from '../components/KeyVaultModal';
@@ -17,6 +18,7 @@ function QuestPickerModal({ onPick, onCancel, C }: {
   onCancel: () => void
   C: any
 }) {
+  const { t } = useTranslation('screens');
   const qp = getQPStyles(C);
 
   const quests = useGameStore(s => s.quests).filter(q => !q.done);
@@ -26,11 +28,11 @@ function QuestPickerModal({ onPick, onCancel, C }: {
       <View style={qp.overlay}>
         <View style={qp.card}>
           <Icon name="ticket-confirmation-outline" size={28} color={C.gold} style={{ marginBottom: 8 }} />
-          <Text style={qp.title}>ESCOLHE A MISSÃO</Text>
-          <Text style={qp.sub}>O Passe do Sistema completará esta missão automaticamente.</Text>
+          <Text style={qp.title}>{t('inventory.pick_quest_title')}</Text>
+          <Text style={qp.sub}>{t('inventory.pick_quest_sub')}</Text>
 
           {quests.length === 0 ? (
-            <Text style={qp.empty}>Todas as missões já estão concluídas!</Text>
+            <Text style={qp.empty}>{t('inventory.pick_quest_empty')}</Text>
           ) : (
             <FlatList
               data={quests}
@@ -53,7 +55,7 @@ function QuestPickerModal({ onPick, onCancel, C }: {
 
           <TouchableOpacity style={qp.cancelBtn} onPress={onCancel}>
             <Icon name="close-circle-outline" size={14} color={C.muted} />
-            <Text style={qp.cancelTxt}> CANCELAR</Text>
+            <Text style={qp.cancelTxt}> {t('inventory.cancel')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -64,6 +66,7 @@ function QuestPickerModal({ onPick, onCancel, C }: {
 // ── Inventory item card ────────────────────────────────────────────────────────
 
 function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: number; C: any }) {
+  const { t } = useTranslation('screens');
   const ic = getICStyles(C);
 
   const item            = CATALOG_MAP[itemId];
@@ -91,7 +94,7 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
 
   function handleUse() {
     if (isUpgradeMaterial) {
-      setFeedback('Material de evolução — usa no ecrã de Sombras para evoluir');
+      setFeedback(t('inventory.fb_upgrade_material'));
       setTimeout(() => setFeedback(null), 3500);
       return;
     }
@@ -115,68 +118,68 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
         }
         const goldText = item.effectGold ? ` e +${item.effectGold} Gold` : '';
         setFeedback(leveledUp
-          ? `+${item.effectValue} XP${goldText} — LEVEL UP!`
-          : `+${item.effectValue} XP${goldText} absorvido!`
+          ? t('inventory.fb_level_up', { xp: item.effectValue, gold: goldText })
+          : t('inventory.fb_xp_absorbed', { xp: item.effectValue, gold: goldText })
         );
         break;
       }
       case 'reduce_penalty': {
         consumeItem(itemId);
         setPenRed(true);
-        setFeedback('Pergaminho ativado! Penalização de amanhã reduzida em 50%.');
+        setFeedback(t('inventory.fb_scroll'));
         break;
       }
       case 'remove_penalty': {
         consumeItem(itemId);
         triggerEvent('lagrima_used_during_penalty');
         removePenalty();
-        setFeedback('Penalização removida! O Sistema purificou o teu registo.');
+        setFeedback(t('inventory.fb_tear'));
         break;
       }
       case 'xp_boost_next': {
         consumeItem(itemId);
         setXpBoostNext(true);
-        setFeedback('Ampulheta ativada! Próxima missão com XP dobrado.');
+        setFeedback(t('inventory.fb_hourglass'));
         break;
       }
       case 'open_loot_box': {
         const success = openLootBox();
         if (success) {
-          setFeedback('Cofre aberto! Verifica a recompensa...');
+          setFeedback(t('inventory.fb_loot_opened'));
         } else {
-          setFeedback('Nenhum cofre disponível!');
+          setFeedback(t('inventory.fb_no_loot'));
         }
         break;
       }
       case 'break_hardcore': {
         if (!hardcoreActive) {
-          setFeedback('Nenhum Modo Hardcore ativo para quebrar.');
+          setFeedback(t('inventory.fb_no_hardcore'));
         } else {
           consumeItem(itemId);
           setHardcoreMode(false);
-          setFeedback('Juramento quebrado! Podes parar o Focus Mode livremente.');
+          setFeedback(t('inventory.fb_oath_broken'));
         }
         break;
       }
       case 'material': {
         consumeItem(itemId);
         if (itemId === 'shadow_essence') {
-          setFeedback('O Sistema cedeu! Uma nova sombra foi invocada.');
+          setFeedback(t('inventory.fb_shadow_essence'));
         } else if (item.buffStat && item.buffMult && item.buffDuration) {
           const pct = Math.round((item.buffMult - 1) * 100);
           const stat = item.buffStat === 'xp' ? 'XP' : 'Gold';
           const mins = item.buffDuration / 60_000;
           const timeLabel = mins >= 60 ? `${mins / 60}h` : `${mins}min`;
           // Buff is applied by the store's useInventoryItem — no duplicate needed here
-          setFeedback(`Buff ativo: +${pct}% ${stat} por ${timeLabel}!`);
+          setFeedback(t('inventory.fb_buff_active', { pct, stat, time: timeLabel }));
         } else {
-          setFeedback('Consumível ativado!');
+          setFeedback(t('inventory.fb_consumed'));
         }
         break;
       }
       default: {
         consumeItem(itemId);
-        setFeedback('Item utilizado com sucesso!');
+        setFeedback(t('inventory.fb_item_used'));
       }
     }
     setConfirmUse(false);
@@ -188,7 +191,7 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
     consumeItem(itemId);
     Vibration.vibrate([0, 80, 40, 120]);
     setShowPicker(false);
-    setFeedback('Missão completada pelo Sistema!');
+    setFeedback(t('inventory.fb_quest_done'));
     setTimeout(() => setFeedback(null), 3000);
   }
 
@@ -206,12 +209,12 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
       </View>
 
       <View style={ic.info}>
-        <Text style={[ic.name, { color: item.color }]}>{item.name.toUpperCase()}</Text>
-        <Text style={[ic.desc, { color: C.text.secondary }]} numberOfLines={2}>{item.description}</Text>
+        <Text style={[ic.name, { color: item.color }]}>{t(`items.${itemId}.name`, { ns: 'shop', defaultValue: item.name }).toUpperCase()}</Text>
+        <Text style={[ic.desc, { color: C.text.secondary }]} numberOfLines={2}>{t(`items.${itemId}.description`, { ns: 'shop', defaultValue: item.description })}</Text>
         {isUpgradeMaterial && !feedback && (
           <View style={ic.upgradeBadge}>
             <Icon name="sword-cross" size={8} color={C.neonBlue} />
-            <Text style={ic.upgradeTxt}> Usa em Sombras para evoluir</Text>
+            <Text style={ic.upgradeTxt}> {t('inventory.upgrade_hint')}</Text>
           </View>
         )}
         {feedback && (
@@ -226,15 +229,15 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
       >
         {isUpgradeMaterial
           ? <Icon name="ghost" size={14} color={C.neonBlue} />
-          : <Text style={[ic.useTxt, { color: breakHardcoreDisabled ? C.dimmed : item.color }]}>USAR</Text>
+          : <Text style={[ic.useTxt, { color: breakHardcoreDisabled ? C.dimmed : item.color }]}>{t('inventory.use_btn')}</Text>
         }
       </TouchableOpacity>
 
       {/* Confirm use */}
       <CustomModal
         visible={confirmUse}
-        title="USAR ITEM"
-        message={`Usar "${item.name}"?\n\n${item.description}`}
+        title={t('inventory.use_item_title')}
+        message={t('inventory.use_item_msg', { name: t(`items.${itemId}.name`, { ns: 'shop', defaultValue: item.name }), desc: t(`items.${itemId}.description`, { ns: 'shop', defaultValue: item.description }) })}
         confirmLabel="USAR"
         confirmIcon="play-circle-outline"
         confirmColor={item.color}
@@ -260,6 +263,7 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function InventoryScreen() {
+  const { t } = useTranslation('screens');
   const C = useTheme();
   const s = React.useMemo(() => getStyles(C), [C]);
   const inventory = useGameStore(st => st.player.inventory);
@@ -277,13 +281,13 @@ export default function InventoryScreen() {
 
         <View style={s.titleRow}>
           <Icon name="bag-personal" size={16} color={C.neonBlue} />
-          <Text style={s.title}> INVENTÁRIO</Text>
+          <Text style={s.title}> {t('inventory.title')}</Text>
         </View>
 
         <View style={s.statsRow}>
           <View style={s.statChip}>
             <Icon name="cube-outline" size={12} color={C.muted} />
-            <Text style={s.statTxt}> {total} itens</Text>
+            <Text style={s.statTxt}> {t('inventory.stat_items', { count: total })}</Text>
           </View>
           <View style={s.statChip}>
             <Icon name="rhombus" size={12} color={C.gold} />
@@ -301,11 +305,11 @@ export default function InventoryScreen() {
             <Icon name="safe" size={32} color={C.neonBlue} />
           </View>
           <View style={s.vaultInfo}>
-            <Text style={s.vaultTitle}>COFRE DE CHAVES</Text>
+            <Text style={s.vaultTitle}>{t('inventory.vault_title')}</Text>
             <Text style={s.vaultCount}>
               {dungeonKeys && dungeonKeys.length > 0
-                ? `${dungeonKeys.length} chave${dungeonKeys.length !== 1 ? 's' : ''} guardada${dungeonKeys.length !== 1 ? 's' : ''}`
-                : 'Nenhuma chave'}
+                ? t(dungeonKeys.length === 1 ? 'inventory.vault_keys_one' : 'inventory.vault_keys_other', { count: dungeonKeys.length })
+                : t('inventory.vault_no_keys')}
             </Text>
           </View>
           <Icon name="chevron-right" size={24} color={C.neonBlue} />
@@ -313,14 +317,14 @@ export default function InventoryScreen() {
 
         <View style={[s.sectionHeader, { marginTop: SPACING.lg }]}>
           <Icon name="bag-personal-outline" size={14} color={C.neonBlue} />
-          <Text style={s.sectionTitle}> ITENS</Text>
+          <Text style={s.sectionTitle}> {t('inventory.items_section')}</Text>
         </View>
 
         {activeInventory.length === 0 ? (
           <View style={s.emptyWrap}>
             <Icon name="bag-personal-outline" size={48} color={C.dimmed} />
-            <Text style={s.emptyTitle}>INVENTÁRIO VAZIO</Text>
-            <Text style={s.emptyDesc}>Visita a Loja do Sistema para adquirir itens.</Text>
+            <Text style={s.emptyTitle}>{t('inventory.empty_title')}</Text>
+            <Text style={s.emptyDesc}>{t('inventory.empty_desc')}</Text>
           </View>
         ) : (
           activeInventory.map(entry => (

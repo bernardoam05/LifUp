@@ -1,0 +1,496 @@
+{
+  "items": {
+    "core_pushups": {
+      "name": "Physical Training: Strength",
+      "description": "Perform {target} push-ups."
+    },
+    "core_squats": {
+      "name": "Physical Training: Legs",
+      "description": "Perform {target} squats."
+    },
+    "core_reading": {
+      "name": "Mental Training: Reading",
+      "description": "Read {target} pages of a useful book."
+    },
+    "core_water": {
+      "name": "Survival: Hydration",
+      "description": "Drink {target} glasses of water."
+    },
+    "pool_run": {
+      "name": "Hunter Mission: Run",
+      "description": "Run {target} km."
+    },
+    "pool_plank": {
+      "name": "Muscular Endurance",
+      "description": "Hold a plank for {target} s."
+    },
+    "pool_meditate": {
+      "name": "Mana Training",
+      "description": "Meditate in silence for {target} min."
+    },
+    "pool_social": {
+      "name": "Test of Will",
+      "description": "Zero social media for {target} h."
+    },
+    "pool_sugar": {
+      "name": "Clean Body",
+      "description": "No sugar today."
+    },
+    "pool_pullups": {
+      "name": "Pull-ups",
+      "description": "Perform {target} pull-ups."
+    },
+    "pool_screentime": {
+      "name": "Digital Detox",
+      "description": "Limit screen time (leisure) to {target} h."
+    },
+    "pool_stretching": {
+      "name": "Flexibility",
+      "description": "Stretching session for {target} min."
+    },
+    "pool_deepwork": {
+      "name": "Deep Work",
+      "description": "Work focused for {target} min without breaks."
+    },
+    "pool_coldshower": {
+      "name": "Cold Shower",
+      "description": "Take a cold water shower."
+    },
+    "pool_walking": {
+      "name": "Light Patrol",
+      "description": "Walk {target} km today."
+    },
+    "pool_language": {
+      "name": "Arcane Knowledge",
+      "description": "Study a language for 15 min."
+    },
+    "pool_burpees": {
+      "name": "Extreme Conditioning",
+      "description": "Perform {target} burpees."
+    },
+    "pool_cook": {
+      "name": "Hunter's Meal",
+      "description": "Cook your own healthy meal."
+    },
+    "pool_journal": {
+      "name": "Clear Mind",
+      "description": "Write a journal/reflection for 10 min."
+    },
+    "pool_pomodoro_basic": {
+      "name": "Hunter Technique: Cyclic Focus",
+      "description": "Complete {target} Pomodoro cycles today."
+    },
+    "pool_pomodoro_adv": {
+      "name": "Hunter Technique: Temporal Mastery",
+      "description": "Complete {target} Pomodoro cycles today. Concentration is a weapon."
+    },
+    "boss_pomodoro_marathon": {
+      "name": "Pomodoro Marathon: Eternal Flow (A-Rank)",
+      "description": "Complete {target} Pomodoro cycles in a single day. Time bends for those who master focus."
+    },
+    "boss_focus": {
+      "name": "The Time King (S-Rank)",
+      "description": "Strict Focus Mode for {target} hours, without failure."
+    },
+    "boss_gps": {
+      "name": "Ice Wolf Lycaon (A-Rank)",
+      "description": "Run a half-marathon or long distance: {target} km."
+    },
+    "normal_boss_viper": {
+      "name": "Viper's Venom",
+      "description": "Run 5km or cycle 15km non-stop. The serpent awaits at the end."
+    },
+    "normal_boss_crimson_knight": {
+      "name": "The Crimson Knight's Vow",
+      "description": "90 min of absolute focus. The Crimson Knight watches. No distractions."
+    },
+    "normal_boss_cerberus": {
+      "name": "Cerberus's Roar",
+      "description": "100 push-ups + 100 squats + 30 burpees. Pay with sweat."
+    },
+    "alpha_wolf": {
+      "name": "Alpha Thunder Wolf",
+      "description": "Cover {target} km at an accelerated pace. The pack leader is watching."
+    },
+    "sea_king": {
+      "name": "King of the Deep Tides",
+      "description": "70 min of deep focus. Feel the pressure of the abyss."
+    },
+    "dungeon_queen": {
+      "name": "Queen of the Forgotten Dungeon",
+      "description": "150 reps of strength exercise. Prove your resilience."
+    },
+    "king_of_the_dead": {
+      "name": "Monarch of the Undead",
+      "description": "120 min of absolute focus. The silence of the tomb is your ally."
+    },
+    "boss_training": {
+      "name": "Cerberus Guardian (A-Rank)",
+      "description": "Body battle: {target} Push-ups + {target} Squats + {target}s Plank."
+    },
+    "boss_crypt_omega": {
+      "name": "Omega Crypt Spider (S-Rank)",
+      "description": "Complex fight: {target} reps of an exercise of your choice every 10 mins for 1 hour."
+    },
+    "boss_astral_eclipse": {
+      "name": "Astral Eclipse Specter (S-Rank)",
+      "description": "Night run: cover {target} km after 20:00."
+    },
+    "boss_seraphim": {
+      "name": "Fallen Seraphim (S-Rank)",
+      "description": "Purified mind: {target} min of continuous reading (fiction or philosophy)."
+    },
+    "boss_kargal": {
+      "name": "Kargal, the Mind Devourer (A-Rank)",
+      "description": "Eliminate noise: Stay away from screens/useless apps for {target} consecutive min before sleep."
+    },
+    "boss_ignis": {
+      "name": "Ignis Ice Titan (S-Rank)",
+      "description": "Thermal contrast breaks limits. Run {target} km outdoors and finish with a 1 min cold shower."
+    },
+    "boss_abyss_mage": {
+      "name": "Abyss Archmage (A-Rank)",
+      "description": "Challenge the mind: solve 3 logic/math challenges in {target} min."
+    },
+    "boss_blood_knight": {
+      "name": "Sangreal Blood Knight (S-Rank)",
+      "description": "Pure close combat. {target} repetitions of weightlifting (Deadlift/Squats)."
+    },
+    "boss_hollow_king": {
+      "name": "The Hollow King (S-Rank)",
+      "description": "Intermittent fasting: {target} min of total focus on work or study with Focus mode active, no snacking. Hydration only."
+    },
+    "boss_cerberus_prime": {
+      "name": "Primordial Cerberus (A-Rank)",
+      "description": "Control the 3-headed beast by completing {target} km of morning running."
+    },
+    "boss_wind_walker": {
+      "name": "Silent Wind Walker (A-Rank)",
+      "description": "Perform {target} min of continuous dynamic stretching (leg swings, shoulder rotations, hip circles) without pauses exceeding 30s. Focus Mode active."
+    },
+    "boss_poison_monarch": {
+      "name": "Chimera Poison Monarch (S-Rank)",
+      "description": "The poison is in the body. {target} burpees to sweat and burn the poison once and for all."
+    },
+    "boss_goliath": {
+      "name": "Goliath of the Black Rocks (A-Rank)",
+      "description": "Heavy isometrics: {target} min of wall-sit or plank (accumulated time). Focus Mode active during effort."
+    },
+    "boss_shadow_blade": {
+      "name": "Frightening Black Blade (A-Rank)",
+      "description": "Shadow tactic: read {target} pages of strategy (without interruptions)."
+    },
+    "boss_iron_jaw": {
+      "name": "The Jaw Crusher (A-Rank)",
+      "description": "Shadowboxing: {target} rounds of 2 min each, with 30–45s rest between rounds."
+    },
+    "boss_astral_drake": {
+      "name": "Astral Dragon (S-Rank)",
+      "description": "Activate Focus mode for {target} min: perform Wim Hof breathing cycles (30 deep breaths + breath retention) and finish with 5 min of silent meditation."
+    },
+    "boss_lich_king": {
+      "name": "Forgotten Lich King (S-Rank)",
+      "description": "Resistant focus: {target} min sitting still, without distractions."
+    },
+    "boss_tarantula": {
+      "name": "Imperial Tarantula (A-Rank)",
+      "description": "Controlled march: cover {target} km on a predetermined route (avoid deviations), without music or phone."
+    },
+    "boss_fallen_monk": {
+      "name": "Fallen Monk (A-Rank)",
+      "description": "Stimulus fast: activate Focus mode for {target} min without accessing social media, videos or streaming — keep attention on a single productive task."
+    },
+    "boss_swamp_wraith": {
+      "name": "Swamp Specter (A-Rank)",
+      "description": "Written self-analysis: activate Focus mode for {target} min and write freely about a current personal challenge — what is happening, why you haven't solved it yet, and one concrete thing you can do today."
+    },
+    "boss_titan_ape": {
+      "name": "Titanic Primate (A-Rank)",
+      "description": "Total brute force: {target} alternating reps of push-ups + squats."
+    },
+    "boss_astral_seer": {
+      "name": "Astral Oracle (A-Rank)",
+      "description": "Deep knowledge: read {target} pages of technical content without long pauses."
+    },
+    "boss_astral_hound": {
+      "name": "Wandering Cosmic Hound (A-Rank)",
+      "description": "Endurance in open terrain: cover {target} km at a constant pace."
+    },
+    "boss_archlich_prime": {
+      "name": "Primordial Archlich (S-Rank)",
+      "description": "Project with deliverable: define a concrete result before starting (prototype, sketch, detailed plan or short article). Activate Focus mode for {target} min and finish with something tangible to show."
+    },
+    "boss_soul_reaper": {
+      "name": "Soul Reaper (S-Rank)",
+      "description": "Mental resilience: {target} min of creative work (light writing, drawing or project plan)."
+    },
+    "boss_astral_nebula": {
+      "name": "Nebula King (S-Rank)",
+      "description": "Cosmic crossing: cover {target} km in a long, focused march."
+    },
+    "boss_goblin_warlord": {
+      "name": "Goblin Warlord (A-Rank)",
+      "description": "Tabata: complete {target} rounds of 20s maximum effort + 10s rest. Define a single exercise before starting (burpees, jumps or sprints) and maintain maximum intensity in each round."
+    },
+    "boss_cave_spider_matriarch": {
+      "name": "Cave Matriarch (A-Rank)",
+      "description": "Feynman Technique: activate Focus mode for {target} min and explain in writing (or recorded out loud) a concept you are learning, as if teaching a beginner — without consulting sources during the explanation."
+    },
+    "boss_ant_worker_prime": {
+      "name": "Primordial Worker (A-Rank)",
+      "description": "Exploration route: cover {target} km on a path you have never taken before, choosing the way in the moment (no pre-defined route). Note 3 new things you discovered along the way."
+    },
+    "boss_stone_golem_shard": {
+      "name": "Golem Fragment (A-Rank)",
+      "description": "Try a new physical practice (yoga, capoeira, calisthenics, tai chi or one you've never tried): follow a tutorial and practice {target} min without interruption with Focus Mode active. Repeat the movements at the end without guidance."
+    },
+    "boss_stringsinger": {
+      "name": "The String Singer (A-Rank)",
+      "description": "Guitar: {target} min of practice with metronome (3 chords + 1 basic rhythm)."
+    },
+    "boss_polyglot_trial": {
+      "name": "Polyglot Trial (A-Rank)",
+      "description": "Language: learn {target} words + write 5 sentences using them."
+    },
+    "boss_culinary_ritual": {
+      "name": "Culinary Ritual (A-Rank)",
+      "description": "Cook: prepare 1 healthy meal + 1 side dish (from scratch)."
+    },
+    "boss_memory_labyrinth": {
+      "name": "Memory Labyrinth (A-Rank)",
+      "description": "Memory: {target} min of focus to create a mental palace with 12 locations and review the associations 2 times in silence."
+    },
+    "boss_new_frontier": {
+      "name": "New Frontier (A-Rank)",
+      "description": "Try something new: 1 short class (20–30 min) + 3 notes on what you learned."
+    },
+    "boss_artisan_trial": {
+      "name": "Artisan Trial (A-Rank)",
+      "description": "Build something small: 1 useful object (e.g.: stand, organizer, patch)."
+    },
+    "boss_storm_bringer": {
+      "name": "Storm Bringer (S-Rank)",
+      "description": "Skill sprint: define a specific micro-skill you want to learn. Study it in Focus mode for {target} min and practice it immediately for an additional 15 min — without moving on to another topic before finishing."
+    },
+    "boss_chrono_master": {
+      "name": "Time Master (S-Rank)",
+      "description": "Timeboxing: {target} min of focus (equivalent to 3 Pomodoro blocks of 25 min). Execute with 5-min breaks between blocks."
+    },
+    "boss_star_breaker": {
+      "name": "Star Breaker (S-Rank)",
+      "description": "Documented exploration: cover {target} km on foot on a never-before-done route. During the march, identify and record (in writing or photo) at least 3 new elements you had never noticed."
+    },
+    "boss_cold_philosopher": {
+      "name": "The Mountain Philosopher (A-Rank)",
+      "description": "Real problem analysis: define a concrete personal problem you are postponing. Research context and opposing opinions for {target} min (Focus Mode active) and finish with a written decision."
+    },
+    "boss_digital_craftsman": {
+      "name": "The Digital Craftsman (A-Rank)",
+      "description": "Build something digital from scratch in {target} min: a simple web page, a useful script, a structured presentation or a prototype. The result must be functional or presentable at the end."
+    },
+    "boss_stoic_challenge": {
+      "name": "The Stoic's Trial (A-Rank)",
+      "description": "Voluntary discomfort: {target} min of physical training in a real cold environment (outdoors in the cold, or open windows). Focus Mode active. Record how you felt before and after."
+    },
+    "p_cardio": {
+      "name": "Penalty: Cardio",
+      "description": "20 min of continuous running"
+    },
+    "p_squat": {
+      "name": "Penalty: Squats",
+      "description": "50 consecutive squats"
+    },
+    "p_focus": {
+      "name": "Penalty: Forced Focus",
+      "description": "30 min of focus without interruptions"
+    },
+    "p_reading": {
+      "name": "Penalty: Disciplinary Reading",
+      "description": "15 pages (non-fiction book)"
+    },
+    "p_plank": {
+      "name": "Penalty: System Plank",
+      "description": "3 min of plank (accumulated)"
+    },
+    "p_pushups": {
+      "name": "Penalty: Push-ups",
+      "description": "30 slow-execution push-ups"
+    }
+  },
+  "ui": {
+    "now": "NOW",
+    "quick_panel": "QUICK PANEL",
+    "mission_in_focus": "Mission in focus: {{label}}",
+    "no_active_mission": "No active mission right now.",
+    "dynamic_portal_active": "Dynamic portal active - {{countdown}}",
+    "no_dynamic_portal": "No dynamic portal active.",
+    "event_available": "Event {{name}} available ({{completed}}/{{required}})",
+    "no_active_event": "No active event at this time.",
+    "today": "TODAY",
+    "forge_btn": "FORGE",
+    "forge_subtitle": "Create custom missions",
+    "rest_active": "ACTIVE REST",
+    "rest": "REST",
+    "rest_active_sub": "Active — no penalties",
+    "rest_sub": "Break without penalties",
+    "daily_missions_title": "DAILY MISSIONS",
+    "rest_badge": "REST",
+    "today_progress": "TODAY'S PROGRESS",
+    "portals_today": "PORTALS TODAY: {{count}}/3",
+    "mission_in_progress": "IN PROGRESS — Complete the mission to close the portal.",
+    "press_to_open": "Press to open the mission.",
+    "daily_missions_section": "DAILY MISSIONS",
+    "streak_shield_active": "STREAK SHIELD ACTIVE — your streak is protected",
+    "ad_streak_shield": "WATCH AD → PROTECT STREAK (1×/week)",
+    "xp_boost_active": "HOURGLASS ACTIVE — next mission with XP x2",
+    "ad_xp_boost": "WATCH AD → XP ×2 NEXT MISSION (1×/day)",
+    "penalties_active": "Active penalties",
+    "ad_penalty_reduce": "WATCH AD → REMOVE 1 PENALTY (1×/week)",
+    "missions_not_generated": "MISSIONS NOT GENERATED",
+    "missions_generated_next_day": "The System will generate your missions at the start of the next day.",
+    "extras": "EXTRAS",
+    "extras_section": "EXTRA MISSIONS",
+    "extras_info": "All daily missions completed. The System offers extra challenges with 1.5× rewards.",
+    "generate_extra": "GENERATE EXTRA MISSION",
+    "generate_more_extra": "GENERATE ONE MORE EXTRA MISSION",
+    "extras_remaining": "({{count}} remaining today)",
+    "dungeons": "DUNGEONS",
+    "raid_boss_label": "GLOBAL RAID BOSS · RANK {{rank}}",
+    "hp_remaining": "HP REMAINING",
+    "ad_boss_hp": "WATCH AD → -20% BOSS HP",
+    "boss_dungeon": "Boss Dungeon",
+    "boss_defeated_this_week": "Boss defeated this week · Returns next week.",
+    "defeat_boss_to_extract": "Defeat the boss to extract its Shadow.",
+    "event_dungeon_available": "Event dungeon available",
+    "event_label": "Event: {{name}} · Trials: {{completed}}/{{required}}",
+    "event_ended": "Event ended",
+    "no_active_event_dungeons": "NO ACTIVE EVENT",
+    "dynamic_portal_detected": "DYNAMIC PORTAL DETECTED",
+    "portal_anomaly": "Dimensional anomaly active. Tap to investigate.",
+    "portal_remaining": "{{countdown}} REMAINING — TAP TO ENTER",
+    "portal_dynamic_label": "Dynamic Portal: {{title}}",
+    "portal_modal_title": "DYNAMIC PORTAL",
+    "portal_enter": "ENTER",
+    "portal_entry_hint": "Enter to see the details and start the mission.",
+    "event_progress_message": "Event {{name}} — {{completed}}/{{required}} trials completed.",
+    "key_confirm_weekly": "OPEN GATE",
+    "key_confirm_use": "USE KEY",
+    "key_confirm_message": "Do you wish to use the {{keyName}} to enter the Dungeon?\nThe key will be consumed.",
+    "key_enter": "ENTER",
+    "key_cancel": "CANCEL",
+    "timer_ends_in": "Ends in {{time}}",
+    "timer_ends_in_0": "Ends in 0m",
+    "forge_screen_title": "MISSION FORGE",
+    "restore_btn": "RESTORE",
+    "core_section_title": "CORE — FIXED DAILIES",
+    "core_section_sub": "Appear every day (or on configured days).",
+    "core_empty": "No core mission. Add at least one.",
+    "pool_section_title": "POOL — ROTATING HABITS",
+    "pool_section_sub": "Drawn daily: 1 (Lvl 1–4) · 2 (Lvl 5–9) · 3 (Lvl 10+).",
+    "pool_empty": "Pool empty. The System will not generate rotating habits.",
+    "boss_section_title": "BOSS — EPIC CHALLENGES",
+    "boss_section_sub": "High-risk missions. Activated manually by the Forge.",
+    "boss_empty": "No Boss created. The System awaits a courageous Monarch.",
+    "create_directive": "CREATE NEW DIRECTIVE",
+    "restore_defaults_title": "RESTORE DEFAULTS",
+    "restore_defaults_message": "Restores the System's original dictionary.\n\nAll customization will be permanently lost.",
+    "restore_confirm": "RESTORE",
+    "delete_directive_title": "Delete Directive",
+    "delete_directive_message": "Remove \"{{title}}\" from the System? Today's missions will not be affected.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "form_new_directive": "NEW DIRECTIVE",
+    "form_edit_directive": "EDIT DIRECTIVE",
+    "form_mission_type": "MISSION TYPE",
+    "form_locked": "LOCKED",
+    "form_core_chip": "CORE · Fixed daily",
+    "form_pool_chip": "POOL · Rotating habit",
+    "form_boss_chip": "BOSS · Epic challenge",
+    "form_category": "CATEGORY",
+    "form_difficulty": "DIFFICULTY",
+    "form_difficulty_hint": "leave empty to calculate by XP",
+    "form_boss_class": "BOSS CLASS",
+    "form_title": "TITLE",
+    "form_title_placeholder": "e.g.: Brute Force",
+    "form_description": "DESCRIPTION",
+    "form_description_hint": "use {target} and {unit} as variables",
+    "form_description_placeholder": "e.g.: Complete {target} {unit} today",
+    "form_base_value": "BASE VALUE",
+    "form_xp_gold": "XP · GOLD",
+    "form_unit": "UNIT",
+    "form_unit_other_placeholder": "Other unit (e.g.: steps)...",
+    "form_scaling": "SCALING",
+    "form_scaling_increases": "Increases",
+    "form_scaling_every": "Every",
+    "form_scaling_levels": "levels",
+    "form_scaling_preview": "↗ +{{amount}} {{unit}} every {{interval}} level{{plural}}",
+    "form_days_of_week": "DAYS OF THE WEEK",
+    "form_days_hint": "empty = every day",
+    "form_shadow_extraction": "SHADOW EXTRACTION",
+    "form_shadow_hint": "Optional. If filled, defeating this Boss extracts a Shadow to your army.",
+    "form_shadow_name": "SHADOW NAME",
+    "form_shadow_name_placeholder": "e.g.: Obsidian Golem",
+    "form_icon": "ICON",
+    "form_icon_grid": "VIEW ICON GRID",
+    "form_icon_placeholder": "e.g.: ghost, sword-cross, skull...",
+    "form_save": "SAVE CHANGES",
+    "form_create": "CREATE DIRECTIVE",
+    "form_title_required": "Title required",
+    "form_title_required_msg": "The directive needs a name.",
+    "icon_library": "ICON LIBRARY",
+    "icon_library_hint": "Tap to select. The name fills automatically.",
+    "quest_type_training": "Training",
+    "quest_type_focus": "Focus",
+    "quest_type_knowledge": "Knowledge",
+    "quest_type_gps": "GPS",
+    "boss_class_event": "Event",
+    "boss_class_raid": "Raid",
+    "day_sun": "Sun",
+    "day_mon": "Mon",
+    "day_tue": "Tue",
+    "day_wed": "Wed",
+    "day_thu": "Thu",
+    "day_fri": "Fri",
+    "day_sat": "Sat",
+    "card_done": "Done",
+    "card_failed": "Failed",
+    "card_undo": "Undo",
+    "card_fail_btn": "I Failed",
+    "card_in_force": "In force",
+    "card_running": "RUNNING",
+    "card_tap_to_start": "Tap to start",
+    "card_open_focus": "Open Focus Mode",
+    "card_tap_focus_hint": "Tap to open Focus Mode and count automatically",
+    "card_complete_manual": "Complete Manually",
+    "card_pomodoro_cycles": "{{current}}/{{target}} cycles",
+    "card_ad_reroll": "WATCH AD → SWAP MISSION",
+    "undo_mission_title": "UNDO MISSION",
+    "undo_mission_message": "Revert the completion of \"{{label}}\"?\nXP and Gold earned will be deducted.",
+    "undo_confirm": "UNDO",
+    "regen_confirm_title": "SWAP MISSION",
+    "regen_confirm_message": "Do you want to swap this mission for another random one?\nYou have {{remaining}} of 7 weekly swaps remaining.",
+    "regen_confirm_btn": "SWAP",
+    "regen_cancel": "CANCEL",
+    "extra_regen_title": "REPLACE EXTRA MISSION",
+    "extra_regen_message": "Do you want to replace this extra mission with another from the pool?\nEach extra can only be replaced once per day.",
+    "extra_regen_confirm": "REPLACE",
+    "extra_regen_cancel": "CANCEL",
+    "weekly_regen_limit": "You have used your 7 swaps this week.",
+    "side_tasks_title": "TODAY'S TASKS",
+    "side_tasks_sub": "Daily notepad. Tasks are deleted at midnight.",
+    "side_tasks_sub_penalty": " Unfinished tasks penalize.",
+    "side_tasks_placeholder": "New task for today...",
+    "side_tasks_empty": "No tasks for today. Add one above.",
+    "side_note_title": "TASK NOTE",
+    "side_note_placeholder": "Write here...",
+    "side_note_save": "SAVE",
+    "side_note_cancel": "CANCEL",
+    "side_complete_title": "TASK COMPLETED",
+    "side_complete_message": "Mark as done:\n\"{{title}}\"?",
+    "side_complete_confirm": "YES, DONE",
+    "side_delete_title": "DELETE TASK",
+    "side_delete_message": "Permanently delete:\n\"{{title}}\"?",
+    "side_delete_confirm": "DELETE",
+    "dungeon_break_label": "Dungeon Break: {{name}}"
+  }
+}

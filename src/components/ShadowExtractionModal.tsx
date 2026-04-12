@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { FONT, SPACING } from '../theme';
 import { SHADOW_DATABASE, getBossDropPreview } from '../data/shadows';
 import useGameStore from '../store/useGameStore';
@@ -15,6 +16,7 @@ type Props = {
 }
 
 export default function ShadowExtractionModal({ visible, shadowId, category, onClose, C }: Props) {
+  const { t } = useTranslation('shadows');
   const s = React.useMemo(() => getStyles(C), [C]);
   const { player, customShadows, activeBuffs } = useGameStore();
   const playerLevel = player?.level || 1;
@@ -112,7 +114,7 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
       <View style={s.overlay}>
         <Animated.View style={[s.card, { opacity: fadeAnim, transform: [{ translateX: shakeAnim }] }]}>
 
-          <Text style={s.header}>EXTRAÇÃO DE SOMBRA</Text>
+          <Text style={s.header}>{t('ui.extraction_title')}</Text>
 
           <View style={[s.shadowPreview, { borderColor: shadow.color + '44' }]}>
             <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
@@ -139,14 +141,14 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
                 ]}
               />
             ))}
-            <Text style={s.attemptsTxt}>{attempts}/{maxAttempts} TENTATIVAS</Text>
+            <Text style={s.attemptsTxt}>{attempts}/{maxAttempts} {t('ui.extraction_attempts')}</Text>
           </View>
 
           <Text style={s.message}>
-            {status === 'idle' && 'A alma do boss resiste. Deseja tentar a extração?'}
-            {status === 'extracting' && 'A extrair... O Sistema está a processar a tua vontade.'}
-            {status === 'success' && 'SUCESSO! A sombra foi adicionada ao teu exército.'}
-            {status === 'failed' && 'FALHA. A alma dissipou-se no vazio.'}
+            {status === 'idle' && t('ui.extraction_idle')}
+            {status === 'extracting' && t('ui.extraction_processing')}
+            {status === 'success' && t('ui.extraction_success')}
+            {status === 'failed' && t('ui.extraction_failed')}
           </Text>
 
           <View style={s.btnContainer}>
@@ -156,7 +158,7 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
                 onPress={handleArise}
                 disabled={status === 'extracting'}
               >
-                <Text style={s.ariseBtnTxt}>{status === 'extracting' ? 'A PROCESSAR...' : 'SURJA (ARISE)'}</Text>
+                <Text style={s.ariseBtnTxt}>{status === 'extracting' ? t('ui.processing') : t('ui.arise_btn')}</Text>
               </TouchableOpacity>
             )}
 
@@ -166,7 +168,7 @@ export default function ShadowExtractionModal({ visible, shadowId, category, onC
                 onPress={() => onClose(status === 'success')}
               >
                 <Text style={[s.closeBtnTxt, { color: status === 'success' ? C.text.primary : C.text.secondary }]}>
-                  {status === 'success' ? 'ACEITAR' : 'FECHAR'}
+                  {status === 'success' ? t('ui.accept') : t('ui.close')}
                 </Text>
               </TouchableOpacity>
             )}

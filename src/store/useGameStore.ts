@@ -23,6 +23,7 @@ import {
   pickExtractionRank, getShadowReleaseGold, getShadowUpgradeCost, computePunishment,
   getQuestTier, TIER_MULT, hadJobClassChange,
 } from './helpers';
+import i18n from '../i18n';
 
 import {
   createDailyQuests, defToQuest, INITIAL_QUEST_DICTIONARY,
@@ -361,7 +362,7 @@ const useGameStore = create<GameState & GameActions>()(
                 system: {
                   ...s.system,
                   usedShadowSkills: { ...usedSkills, ['penalty_immunity']: now },
-                  shadowSkillFiredMsg: `${immunityShadow?.name ?? 'Sombra'} absorveu a penalização!`,
+                  shadowSkillFiredMsg: i18n.t('shadows.immunity_absorbed', { ns: 'store', name: immunityShadow?.name ?? 'Sombra' }),
                 },
               }));
               // Bypass penalty logic — mark immunity so main set() doesn't re-apply hasPenalty
@@ -437,14 +438,14 @@ const useGameStore = create<GameState & GameActions>()(
                   system: {
                     ...s.system,
                     usedShadowSkills: { ...(s.system.usedShadowSkills ?? {}), ['streak_protect']: now },
-                    shadowSkillFiredMsg: `${protectShadow?.name ?? 'Sombra'} protegeu o teu streak!`,
+                    shadowSkillFiredMsg: i18n.t('shadows.streak_protected', { ns: 'store', name: protectShadow?.name ?? 'Sombra' }),
                   },
                 }));
               } else if (system.adStreakShieldActive) {
                 // Ad shield fallback — only fires if shadow not available
                 newStreak = player.currentStreak;
                 set((s: GameState & GameActions) => ({
-                  system: { ...s.system, adStreakShieldActive: false, shadowSkillFiredMsg: 'Escudo de Streak (anúncio) consumido — streak protegido!' },
+                  system: { ...s.system, adStreakShieldActive: false, shadowSkillFiredMsg: i18n.t('shadows.ad_shield_consumed', { ns: 'store' }) },
                 }));
               } else {
                 newStreak = 0;
@@ -1161,19 +1162,19 @@ const useGameStore = create<GameState & GameActions>()(
 
           // Apply timed buffs AFTER inventory deduction so applyBuff's own set() is not overwritten
           if (itemId === 'viper_venom') {
-            get().applyBuff({ id: 'viper_xp', label: 'Veneno da Víbora', multiplier: 1.15, stat: 'xp' }, 2 * 3600_000);
+            get().applyBuff({ id: 'viper_xp', label: i18n.t('buffs.viper_venom', { ns: 'store' }), multiplier: 1.15, stat: 'xp' }, 2 * 3600_000);
           } else if (itemId === 'crimson_knight_shard') {
-            get().applyBuff({ id: 'crimson_xp', label: 'Fragmento do Cavaleiro Carmesim', multiplier: 1.20, stat: 'xp' }, 3600_000);
+            get().applyBuff({ id: 'crimson_xp', label: i18n.t('buffs.crimson_knight_shard', { ns: 'store' }), multiplier: 1.20, stat: 'xp' }, 3600_000);
           } else if (itemId === 'cerberus_fang') {
-            get().applyBuff({ id: 'cerberus_gold', label: 'Presa de Cerberus', multiplier: 1.20, stat: 'gold' }, 2 * 3600_000);
+            get().applyBuff({ id: 'cerberus_gold', label: i18n.t('buffs.cerberus_fang', { ns: 'store' }), multiplier: 1.20, stat: 'gold' }, 2 * 3600_000);
           } else if (itemId === 'iron_will_crystal') {
-            get().applyBuff({ id: 'iron_will_xp', label: 'Vontade de Ferro', multiplier: 1.50, stat: 'xp' }, 30 * 60_000);
+            get().applyBuff({ id: 'iron_will_xp', label: i18n.t('buffs.iron_will_crystal', { ns: 'store' }), multiplier: 1.50, stat: 'xp' }, 30 * 60_000);
           } else if (itemId === 'blood_fallen') {
-            get().applyBuff({ id: 'blood_gold', label: 'Sangue dos Caídos', multiplier: 1.25, stat: 'gold' }, 3 * 3600_000);
+            get().applyBuff({ id: 'blood_gold', label: i18n.t('buffs.blood_fallen', { ns: 'store' }), multiplier: 1.25, stat: 'gold' }, 3 * 3600_000);
           } else if (itemId === 'dragon_scale') {
-            get().applyBuff({ id: 'dragon_xp', label: 'Escama de Dragão', multiplier: 1.30, stat: 'xp' }, 4 * 3600_000);
+            get().applyBuff({ id: 'dragon_xp', label: i18n.t('buffs.dragon_scale', { ns: 'store' }), multiplier: 1.30, stat: 'xp' }, 4 * 3600_000);
           } else if (itemId === 'lich_eye') {
-            get().applyBuff({ id: 'lich_eye_xp', label: 'Olho do Lich', multiplier: 2.0, stat: 'xp' }, 3600_000);
+            get().applyBuff({ id: 'lich_eye_xp', label: i18n.t('buffs.lich_eye', { ns: 'store' }), multiplier: 2.0, stat: 'xp' }, 3600_000);
           }
         },
 
@@ -1190,11 +1191,11 @@ const useGameStore = create<GameState & GameActions>()(
             let g = 0, x = 0, k: string | null = null;
             if (roll < (0.7 / lootMult)) {
               g = Math.round((100 + Math.floor(Math.random() * 201)) * lootMult);
-              reward = { type: 'gold', title: 'TESOURO DE OURO', gold: g, xp: 0, items: [] };
+              reward = { type: 'gold', title: i18n.t('loot.gold_title', { ns: 'store' }), gold: g, xp: 0, items: [] };
             }
             else if (roll < 0.9) {
               x = Math.round((50 + Math.floor(Math.random() * 51)) * lootMult);
-              reward = { type: 'xp', title: 'ESSÊNCIA ABSORVIDA', gold: 0, xp: x, items: [] };
+              reward = { type: 'xp', title: i18n.t('loot.xp_title', { ns: 'store' }), gold: 0, xp: x, items: [] };
             }
             else {
               const receivedKeyIds = s.system.receivedKeyIds ?? [];
@@ -1202,11 +1203,11 @@ const useGameStore = create<GameState & GameActions>()(
               if (available.length > 0) {
                 const keyEntry = available[Math.floor(Math.random() * available.length)];
                 k = keyEntry.id;
-                reward = { type: 'key', title: 'CHAVE RARA DESCOBERTA', gold: 0, xp: 0, items: [k] };
+                reward = { type: 'key', title: i18n.t('loot.key_title', { ns: 'store' }), gold: 0, xp: 0, items: [k] };
               }
               else {
                 g = Math.round(500 * lootMult);
-                reward = { type: 'gold', title: 'OURO ABUNDANTE', gold: g, xp: 0, items: [] };
+                reward = { type: 'gold', title: i18n.t('loot.gold_abundant_title', { ns: 'store' }), gold: g, xp: 0, items: [] };
               }
             }
 

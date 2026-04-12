@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, Vibration, Animated, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/useGameStore';
 import { useTheme, FONT, SPACING } from '../theme';
 
@@ -22,14 +23,15 @@ const getStyles = (C: any) => StyleSheet.create({
 });
 
 const INTENSITY_FLAVOR = (C: any) => ({
-  light: { title: 'ZONA DE PENALIDADE', icon: 'shield-alert-outline', color: C.green },
-  medium: { title: 'ZONA DE PENALIDADE', icon: 'alert-octagon', color: C.gold },
-  hardcore: { title: 'PUNIÇÃO DO MONARCA', icon: 'skull-crossbones', color: C.neonRed },
-  custom: { title: 'ZONA DE PENALIDADE', icon: 'alert-octagon', color: C.gold },
+  light: { icon: 'shield-alert-outline', color: C.green },
+  medium: { icon: 'alert-octagon', color: C.gold },
+  hardcore: { icon: 'skull-crossbones', color: C.neonRed },
+  custom: { icon: 'alert-octagon', color: C.gold },
 });
 
 export default function PenaltyModal({ visible, onDismiss }: { visible: boolean; onDismiss: () => void }) {
   const C = useTheme();
+  const { t } = useTranslation('modals');
   const s = getStyles(C);
   const lastPenaltyInfo = useGameStore(st => st.system.lastPenaltyInfo);
   const intensityFlavors = INTENSITY_FLAVOR(C);
@@ -70,16 +72,20 @@ export default function PenaltyModal({ visible, onDismiss }: { visible: boolean;
   const flavor = intensityFlavors[intensity] ?? intensityFlavors.medium;
 
   const failLine = info
-    ? `${info.failedCount} de ${info.totalCount} missões falhadas.`
-    : 'Missões diárias não concluídas.';
+    ? t('penalty.fail_line', { failedCount: info.failedCount, totalCount: info.totalCount })
+    : t('penalty.fail_line_default');
 
   const xpLine = info
-    ? `${info.xpLost} XP` + (info.goldLost ? ` e ◈${info.goldLost}` : '') + ' deduzidos.'
-    : 'XP e Ouro deduzidos conforme perfil ativo.';
+    ? t('penalty.xp_line', { xpLost: info.xpLost, goldPart: info.goldLost ? t('penalty.xp_line_gold_part', { goldLost: info.goldLost }) : '' })
+    : t('penalty.xp_line_default');
 
   const intensityLabels: Record<string, string> = {
-    light: 'LEVE', medium: 'MÉDIO', hardcore: 'HARDCORE',
+    light: t('penalty.intensity_light'),
+    medium: t('penalty.intensity_medium'),
+    hardcore: t('penalty.intensity_hardcore'),
   };
+
+  const flavorTitle = t(`penalty.title_${intensity}`, { defaultValue: t('penalty.title_medium') });
 
   return (
     <Modal transparent animationType="none" visible={visible} onRequestClose={onDismiss}>
@@ -93,18 +99,18 @@ export default function PenaltyModal({ visible, onDismiss }: { visible: boolean;
           {/* ── Top bar RPG ──────────────────────────────────────────────── */}
           <View style={s.topBar}>
             <View style={[s.topLine, { backgroundColor: flavor.color + '55' }]} />
-            <Text style={[s.topLabel, { color: flavor.color }]}>◈ SISTEMA ◈</Text>
+            <Text style={[s.topLabel, { color: flavor.color }]}>{t('penalty.system_label')}</Text>
             <View style={[s.topLine, { backgroundColor: flavor.color + '55' }]} />
           </View>
 
-          <Text style={s.warning}>{flavor.title}</Text>
+          <Text style={s.warning}>{flavorTitle}</Text>
 
           {/* ── Ícone com ring colorido ───────────────────────────────────── */}
           <View style={[s.iconWrap, { backgroundColor: flavor.color + '14', borderColor: flavor.color + '44' }]}>
             <Icon name={flavor.icon} size={44} color={flavor.color} />
           </View>
 
-          <Text style={s.title}>FALHA DETETADA</Text>
+          <Text style={s.title}>{t('penalty.detected')}</Text>
 
           <View style={[s.badge, { borderColor: flavor.color, backgroundColor: flavor.color + '15' }]}>
             <Text style={[s.badgeTxt, { color: flavor.color }]}>
@@ -114,7 +120,7 @@ export default function PenaltyModal({ visible, onDismiss }: { visible: boolean;
 
           <Text style={s.message}>
             {failLine}{'\n'}{xpLine}
-            {'\n\nCompleta as missões de penalização para escapar.'}
+            {'\n\n'}{t('penalty.escape_message')}
           </Text>
 
           <Pressable
@@ -124,7 +130,7 @@ export default function PenaltyModal({ visible, onDismiss }: { visible: boolean;
             ]}
             onPress={onDismiss}
           >
-            <Text style={[s.btnTxt, { color: flavor.color }]}>ENTENDIDO, HUNTER</Text>
+            <Text style={[s.btnTxt, { color: flavor.color }]}>{t('penalty.dismiss_btn')}</Text>
           </Pressable>
         </Animated.View>
       </Animated.View>

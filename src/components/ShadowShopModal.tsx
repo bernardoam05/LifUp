@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { Shadow, ShadowRank, SHADOW_RANK_COLOR } from '../data/shadows_types';
 import { SHADOWS_SHOP } from '../data/shadows_shop';
 import { FONT, SPACING } from '../theme';
@@ -18,6 +19,7 @@ interface ShadowShopModalProps {
 const RANKS: ShadowRank[] = ['Normal', 'Elite', 'Knight', 'Commander', 'Marshal'];
 
 export default function ShadowShopModal({ visible, onClose, playerGold, ownedShadowIds, onBuy, C }: ShadowShopModalProps) {
+  const { t } = useTranslation('shadows');
   const [selectedRank, setSelectedRank] = useState<ShadowRank>('Normal');
   const s = getStyles(C);
 
@@ -30,7 +32,7 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
     >
       <View style={s.container}>
         <View style={s.header}>
-           <Text style={s.title}>RECRUTAMENTO DE SOMBRAS</Text>
+           <Text style={s.title}>{t('ui.shop_title')}</Text>
            <TouchableOpacity onPress={onClose}>
               <Icon name="close" size={24} color={C.dimmed} />
            </TouchableOpacity>
@@ -58,7 +60,7 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
           {filteredShadows.length === 0 ? (
             <View style={s.empty}>
               <Icon name="ghost-off" size={32} color={C.dimmed} />
-              <Text style={s.emptyText}>Nenhuma sombra deste rank disponível na loja.</Text>
+              <Text style={s.emptyText}>{t('ui.shop_empty')}</Text>
             </View>
           ) : (
             filteredShadows.map(sh => {
@@ -76,7 +78,7 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
                   <View style={s.info}>
                     <Text style={[s.name, { color }]}>{sh.name}</Text>
                     <Text style={s.type}>{sh.type} • {sh.passiveEffect.description}</Text>
-                    {owned && <Text style={s.ownedBadge}>ADQUIRIDO</Text>}
+                    {owned && <Text style={s.ownedBadge}>{t('ui.shop_owned')}</Text>}
                   </View>
 
                   <View style={s.buyCol}>
@@ -91,7 +93,7 @@ export default function ShadowShopModal({ visible, onClose, playerGold, ownedSha
                       style={[s.buyBtn, { borderColor: color }, !canAfford && { opacity: 0.3 }]}
                     >
                       <Text style={[s.buyBtnText, { color }]}>
-                        {owned ? 'UPGRADE' : 'RECRUTAR'}
+                        {owned ? t('ui.shop_upgrade') : t('ui.shop_buy')}
                       </Text>
                     </TouchableOpacity>
                   </View>

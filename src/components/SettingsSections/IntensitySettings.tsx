@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme, SPACING, FONT } from '../../theme';
 import { getIntensityOptions } from '../../data/settingsConfig';
 import { PunishmentIntensity } from '../../store/useGameStore';
@@ -24,6 +25,7 @@ const IntensitySettings = ({
 }: IntensitySettingsProps) => {
   const C = useTheme();
   const s = React.useMemo(() => getStyles(C), [C]);
+  const { t } = useTranslation('settings');
   const INTENSITY_OPTIONS = React.useMemo(() => getIntensityOptions(C), [C]);
   const clampStart = (v: number) => Math.min(Math.max(v, 0), customPenaltyEndHour - 1);
   const clampEnd = (v: number) => Math.min(Math.max(v, customPenaltyStartHour + 1), 24);
@@ -34,14 +36,13 @@ const IntensitySettings = ({
     <View>
       <View style={s.sectionHeader}>
         <View style={[s.sectionDot, { backgroundColor: C.neonRed }]} />
-        <Text style={s.sectionTitle}>INTENSIDADE DA PUNIÇÃO</Text>
+        <Text style={s.sectionTitle}>{t('intensity.sectionTitle')}</Text>
       </View>
 
       <View style={s.intensityInfo}>
         <Icon name="information-outline" size={12} color={C.muted} />
         <Text style={s.intensityInfoTxt}>
-          {' '}Define o rigor das penalizações ao falhar missões diárias.
-          A punição é calculada com base no número de missões falhadas.
+          {' '}{t('intensity.infoText')}
         </Text>
       </View>
 
@@ -60,9 +61,11 @@ const IntensitySettings = ({
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={[s.intensityLabel, { color: active ? opt.color : C.muted }]}>
-                  {opt.label}
+                  {t(`intensity.${opt.value}.label`, { defaultValue: opt.label })}
                 </Text>
-                <Text style={s.intensitySublabel}>{opt.sublabel}</Text>
+                <Text style={s.intensitySublabel}>
+                  {t(`intensity.${opt.value}.sublabel`, { defaultValue: opt.sublabel })}
+                </Text>
               </View>
               {active ? (
                 <Icon name="radiobox-marked" size={20} color={opt.color} />
@@ -72,16 +75,16 @@ const IntensitySettings = ({
             </View>
 
             <View style={s.intensityDesc}>
-              {opt.description.map((line: string, i: number) => (
+              {opt.description.map((_line: string, i: number) => (
                 <Text key={i} style={[s.intensityDescLine, active && { color: C.muted }]}>
-                  {line}
+                  {t(`intensity.${opt.value}.desc${i}`, { defaultValue: _line })}
                 </Text>
               ))}
             </View>
             {opt.value === 'custom' && active && (
               <View style={[s.customRow, { flexDirection: 'column', alignItems: 'stretch' }]}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8}}>
-                  <Text style={s.customLabel}>Hora Início Bloqueio</Text>
+                  <Text style={s.customLabel}>{t('intensity.blockStart')}</Text>
                   <View style={s.customStepper}>
                     <TouchableOpacity style={s.stepBtn} onPress={() => onCustomPenaltyStartHourChange(clampStart(customPenaltyStartHour - 1))}>
                       <Icon name="minus" size={16} color={C.neonBlue} />
@@ -93,7 +96,7 @@ const IntensitySettings = ({
                   </View>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                  <Text style={s.customLabel}>Hora Fim Bloqueio</Text>
+                  <Text style={s.customLabel}>{t('intensity.blockEnd')}</Text>
                   <View style={s.customStepper}>
                     <TouchableOpacity style={s.stepBtn} onPress={() => onCustomPenaltyEndHourChange(clampEnd(customPenaltyEndHour - 1))}>
                       <Icon name="minus" size={16} color={C.neonBlue} />
@@ -113,7 +116,10 @@ const IntensitySettings = ({
       <View style={[s.activeSummary, { borderColor: current.color + '44' }]}>
         <Icon name="check-decagram" size={12} color={current.color} />
         <Text style={[s.activeSummaryTxt, { color: current.color }]}>
-          {' '}Perfil ativo: <Text style={{ fontWeight: '900' }}>{current.label}</Text> — {current.sublabel}
+          {' '}{t('intensity.activeProfile', {
+            label: t(`intensity.${current.value}.label`, { defaultValue: current.label }),
+            sublabel: t(`intensity.${current.value}.sublabel`, { defaultValue: current.sublabel }),
+          })}
         </Text>
       </View>
     </View>

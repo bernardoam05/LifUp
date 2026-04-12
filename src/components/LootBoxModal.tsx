@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Modal, StyleSheet, Text, View, Animated, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
 
 import { CATALOG_MAP } from '../data/shopItems';
@@ -13,6 +14,7 @@ interface Props {
 
 export function LootBoxModal({ reward, onClose }: Props) {
   const C = useTheme();
+  const { t } = useTranslation('modals');
   const st = React.useMemo(() => getStyles(C), [C]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -44,7 +46,7 @@ export function LootBoxModal({ reward, onClose }: Props) {
           <Icon name="treasure-chest" size={56} color={C.gold} style={st.icon} />
 
           <Text style={st.title}>{reward.title}</Text>
-          <Text style={st.subTitle}>RECOMPENSAS ABERTAS</Text>
+          <Text style={st.subTitle}>{t('loot_box.sub_title')}</Text>
 
           <View style={st.rewardsContainer}>
             {reward.gold > 0 && (
@@ -62,7 +64,7 @@ export function LootBoxModal({ reward, onClose }: Props) {
 
             {reward.items && reward.items.length > 0 && (
               <View style={st.itemsContainer}>
-                <Text style={st.itemsTitle}>ITENS ADQUIRIDOS:</Text>
+                <Text style={st.itemsTitle}>{t('loot_box.items_title')}</Text>
                 {reward.items.map((itemId, i) => {
                   const item = CATALOG_MAP[itemId];
                   const key = !item ? ALL_DUNGEON_KEYS.find(k => k.id === itemId) : null;
@@ -81,7 +83,7 @@ export function LootBoxModal({ reward, onClose }: Props) {
           </View>
 
           <TouchableOpacity style={st.confirmButton} onPress={onClose}>
-            <Text style={st.confirmText}>ACEITAR</Text>
+            <Text style={st.confirmText}>{t('loot_box.confirm')}</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>

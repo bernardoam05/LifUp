@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Switch, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme, SPACING, FONT } from '../../theme';
 
 interface NotificationsSettingsProps {
@@ -18,19 +19,20 @@ const NotificationsSettings = ({
 }: NotificationsSettingsProps) => {
   const C = useTheme();
   const s = React.useMemo(() => getStyles(C), [C]);
+  const { t } = useTranslation('settings');
 
   return (
     <View>
       <View style={s.sectionHeader}>
         <View style={[s.sectionDot, { backgroundColor: C.neonBlue }]} />
-        <Text style={s.sectionTitle}>SISTEMA</Text>
+        <Text style={s.sectionTitle}>{t('notifications.sectionTitle')}</Text>
       </View>
 
       <View style={s.row}>
         <Icon name="bell-outline" size={18} color={C.neonBlue} />
         <View style={s.rowInfo}>
-          <Text style={s.rowLabel}>Notificações</Text>
-          <Text style={s.rowSub}>Alertas diários e avisos do Sistema</Text>
+          <Text style={s.rowLabel}>{t('notifications.notificationsLabel')}</Text>
+          <Text style={s.rowSub}>{t('notifications.notificationsSub')}</Text>
         </View>
         <Switch
           value={notifications}
@@ -43,8 +45,8 @@ const NotificationsSettings = ({
       <View style={[s.row, { borderBottomWidth: 0 }]}>
         <Icon name="volume-high" size={18} color={C.neonBlue} />
         <View style={s.rowInfo}>
-          <Text style={s.rowLabel}>Som</Text>
-          <Text style={s.rowSub}>Efeitos sonoros e feedback de áudio</Text>
+          <Text style={s.rowLabel}>{t('notifications.soundLabel')}</Text>
+          <Text style={s.rowSub}>{t('notifications.soundSub')}</Text>
         </View>
         <Switch
           value={sound}

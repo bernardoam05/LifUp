@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { ACHIEVEMENTS_MAP } from '../data/achievements';
 import { useTheme, FONT, SPACING } from '../theme';
 import { playSound } from '../utils/audioService';
@@ -23,6 +24,7 @@ const getStyles = (C: any) => StyleSheet.create({
 
 export default function AchievementModal({ achievementId, onDismiss }: { achievementId: string; onDismiss: () => void }) {
   const C = useTheme();
+  const { t } = useTranslation('achievements');
   const s = getStyles(C);
   const achievement = ACHIEVEMENTS_MAP[achievementId];
 
@@ -39,21 +41,21 @@ export default function AchievementModal({ achievementId, onDismiss }: { achieve
         <View style={[s.card, { borderColor: achievement.color + '88' }]}>
           <View style={s.systemRow}>
             <Icon name="lightning-bolt" size={10} color={C.text.secondary} />
-            <Text style={s.system}>SISTEMA</Text>
+            <Text style={s.system}>{t('ui.system_label')}</Text>
             <Icon name="lightning-bolt" size={10} color={C.text.secondary} />
           </View>
-          <Text style={s.header}>ACHIEVEMENT DESBLOQUEADO</Text>
+          <Text style={s.header}>{t('ui.header')}</Text>
           <View style={[s.iconWrap, { backgroundColor: achievement.color + '18', borderColor: achievement.color + '44' }]}>
             <Icon name={achievement.icon} size={52} color={achievement.color} />
           </View>
-          <Text style={[s.title, { color: achievement.color }]}>{achievement.title}</Text>
-          <Text style={s.desc}>{achievement.description}</Text>
+          <Text style={[s.title, { color: achievement.color }]}>{t(`items.${achievementId}.title`, { defaultValue: achievement.title })}</Text>
+          <Text style={s.desc}>{t(`items.${achievementId}.description`, { defaultValue: achievement.description })}</Text>
           <View style={s.rewardRow}>
             <Icon name="rhombus" size={16} color={C.gold} />
-            <Text style={s.reward}> +{achievement.rewardGold} Gold</Text>
+            <Text style={s.reward}> {t('ui.gold_reward', { amount: achievement.rewardGold })}</Text>
           </View>
           <TouchableOpacity style={[s.btn, { borderColor: achievement.color }]} onPress={onDismiss}>
-            <Text style={[s.btnTxt, { color: achievement.color }]}>GLÓRIA AO CAÇADOR</Text>
+            <Text style={[s.btnTxt, { color: achievement.color }]}>{t('ui.dismiss_btn')}</Text>
           </TouchableOpacity>
         </View>
       </View>

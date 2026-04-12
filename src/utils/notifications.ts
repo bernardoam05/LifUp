@@ -7,6 +7,7 @@ import notifee, {
   TriggerType,
   TimestampTrigger,
 } from '@notifee/react-native';
+import i18n from '../i18n';
 
 const CHANNEL_ID = 'lifup';
 
@@ -32,8 +33,8 @@ export async function requestNotificationPermission(): Promise<boolean> {
 
 export async function notifyFocusComplete(questLabel: string): Promise<void> {
   await notifee.displayNotification({
-    title: 'Foco Concluído',
-    body:  `O foco na missão "${questLabel}" foi concluído. Recolhe as tuas recompensas.`,
+    title: i18n.t('notifications.focus_complete_title', { ns: 'store' }),
+    body:  i18n.t('notifications.focus_complete_body', { ns: 'store', questLabel }),
     android: {
       channelId:   CHANNEL_ID,
       smallIcon:   'ic_launcher',
@@ -44,8 +45,8 @@ export async function notifyFocusComplete(questLabel: string): Promise<void> {
 
 export async function notifyLevelUp(newLevel: number): Promise<void> {
   await notifee.displayNotification({
-    title: `EVOLUÇÃO — Nível ${newLevel}`,
-    body:  'Os teus atributos foram atualizados pelo Sistema.',
+    title: i18n.t('notifications.level_up_title', { ns: 'store', newLevel }),
+    body:  i18n.t('notifications.level_up_body', { ns: 'store' }),
     android: {
       channelId: CHANNEL_ID,
       smallIcon: 'ic_launcher',
@@ -60,7 +61,7 @@ const ONGOING_NOTIF_ID = 'ongoing_mission';
 export async function showOngoingMissionNotification(questLabel: string, startedAtMs: number): Promise<void> {
   await notifee.displayNotification({
     id: ONGOING_NOTIF_ID,
-    title: ' Missão a Decorrer',
+    title: i18n.t('notifications.ongoing_mission_title', { ns: 'store' }),
     body: questLabel,
     android: {
       channelId: CHANNEL_ID,
@@ -97,8 +98,8 @@ export async function scheduleFocusCompletionNotification(
 
   pendingTriggerNotifId = await notifee.createTriggerNotification(
     {
-      title: 'Foco Concluído',
-      body:  `O foco na missão "${questLabel}" foi concluído. Recolhe as tuas recompensas.`,
+      title: i18n.t('notifications.focus_complete_title', { ns: 'store' }),
+      body:  i18n.t('notifications.focus_complete_body', { ns: 'store', questLabel }),
       android: {
         channelId:   CHANNEL_ID,
         smallIcon:   'ic_launcher',
@@ -123,8 +124,8 @@ const POMODORO_BREAK_END_ID = 'pomodoro_break_end';
 /** Immediate notification when a work cycle ends and break starts. */
 export async function notifyPomodoroBreakStarted(cycle: number, breakMins: number): Promise<void> {
   await notifee.displayNotification({
-    title: `CICLO ${cycle} CONCLUÍDO — PAUSA`,
-    body: `Pausa de ${breakMins} min iniciada. Descansa e volta ao trabalho.`,
+    title: i18n.t('notifications.pomodoro_break_title', { ns: 'store', cycle }),
+    body: i18n.t('notifications.pomodoro_break_body', { ns: 'store', breakMins }),
     android: {
       channelId: CHANNEL_ID,
       smallIcon: 'ic_launcher',
@@ -146,8 +147,8 @@ export async function schedulePomodoroBreakEndNotification(
   await notifee.createTriggerNotification(
     {
       id: POMODORO_BREAK_END_ID,
-      title: `CICLO ${nextCycle} — HORA DE TRABALHAR`,
-      body: 'A pausa terminou. O próximo ciclo Pomodoro está pronto.',
+      title: i18n.t('notifications.pomodoro_work_title', { ns: 'store', nextCycle }),
+      body: i18n.t('notifications.pomodoro_work_body', { ns: 'store' }),
       android: {
         channelId: CHANNEL_ID,
         smallIcon: 'ic_launcher',
@@ -175,8 +176,8 @@ export async function scheduleSideQuestNotification(
   await notifee.createTriggerNotification(
     {
       id,
-      title: 'Lembrete de Missão',
-      body:  `A missão "${title}" ainda aguarda conclusão.`,
+      title: i18n.t('notifications.side_quest_reminder_title', { ns: 'store' }),
+      body:  i18n.t('notifications.side_quest_reminder_body', { ns: 'store', title }),
       android: {
         channelId:   CHANNEL_ID,
         smallIcon:   'ic_launcher',
@@ -200,7 +201,6 @@ const WARNING_SLOTS = [
   {
     id:   'warning-final',
     hour: 21, minute: 0,
-    body: 'Aviso Final: Completa as missões diárias antes da reativação do Sistema à meia-noite.',
   },
 ] as const;
 
@@ -224,8 +224,8 @@ export async function scheduleSystemWarnings(): Promise<void> {
     await notifee.createTriggerNotification(
       {
         id:    slot.id,
-        title: 'Aviso do Sistema',
-        body:  slot.body,
+        title: i18n.t('notifications.system_warning_title', { ns: 'store' }),
+        body:  i18n.t('notifications.system_warning_final_body', { ns: 'store' }),
         android: {
           channelId:   CHANNEL_ID,
           smallIcon:   'ic_launcher',

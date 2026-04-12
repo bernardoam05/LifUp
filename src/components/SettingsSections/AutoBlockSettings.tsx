@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Switch } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme, SPACING, FONT } from '../../theme';
 
 interface AutoBlockSettingsProps {
@@ -13,34 +14,33 @@ const AutoBlockSettings = ({
   onToggle,
 }: AutoBlockSettingsProps) => {
   const C = useTheme();
+  const { t } = useTranslation('settings');
   const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View style={s.container}>
       <View style={s.sectionHeader}>
         <View style={[s.sectionDot, { backgroundColor: C.neonRed }]} />
-        <Text style={[s.sectionTitle, { color: C.neonRed }]}>PUNIÇÃO: BLOQUEIO AUTOMÁTICO</Text>
+        <Text style={[s.sectionTitle, { color: C.neonRed }]}>{t('autoBlock.sectionTitle')}</Text>
       </View>
 
       <View style={s.infoCard}>
         <Icon name="shield-lock" size={24} color={C.neonRed} style={s.infoIcon} />
         <View style={s.infoTextContent}>
-          <Text style={s.infoTitle}>Bloqueio de Apps</Text>
-          <Text style={s.infoDesc}>
-            Se ativado, falhar missões diárias irá bloquear as tuas apps selecionadas automaticamente. O tempo varia com a dificuldade:
-          </Text>
+          <Text style={s.infoTitle}>{t('autoBlock.cardTitle')}</Text>
+          <Text style={s.infoDesc}>{t('autoBlock.cardDesc')}</Text>
           <View style={s.bulletPoints}>
-            <Text style={s.bulletPoint}>• <Text style={s.highlightLight}>EASY:</Text> 6 Horas (13:00 às 19:00)</Text>
-            <Text style={s.bulletPoint}>• <Text style={s.highlightNormal}>NORMAL:</Text> 12 Horas (10:00 às 22:00)</Text>
-            <Text style={s.bulletPoint}>• <Text style={s.highlightHard}>HARDCORE:</Text> 24 Horas (Tempo inteiro)</Text>
+            <Text style={s.bulletPoint}>• <Text style={s.highlightLight}>{t('autoBlock.bulletEasy')}</Text> {t('autoBlock.bulletEasyDetail')}</Text>
+            <Text style={s.bulletPoint}>• <Text style={s.highlightNormal}>{t('autoBlock.bulletNormal')}</Text> {t('autoBlock.bulletNormalDetail')}</Text>
+            <Text style={s.bulletPoint}>• <Text style={s.highlightHard}>{t('autoBlock.bulletHardcore')}</Text> {t('autoBlock.bulletHardcoreDetail')}</Text>
           </View>
         </View>
       </View>
 
       <View style={s.toggleRow}>
         <View style={s.toggleLabelContainer}>
-          <Text style={s.toggleTitle}>Ativar Bloqueio Automático</Text>
-          <Text style={s.toggleSub}>Caso contrário, apenas XP e Ouro serão deduzidos.</Text>
+          <Text style={s.toggleTitle}>{t('autoBlock.toggleTitle')}</Text>
+          <Text style={s.toggleSub}>{t('autoBlock.toggleSub')}</Text>
         </View>
         <Switch
           trackColor={{ false: C.surface.elevated, true: C.neonRed }}

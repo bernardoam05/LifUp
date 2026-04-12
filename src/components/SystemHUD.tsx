@@ -2,12 +2,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore, { getRank, xpForLevel, CLASS_REQUIREMENTS } from '../store/useGameStore';
 import { getJobClass } from '../store/helpers';
 import { useTheme, FONT, SPACING } from '../theme';
 
 export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () => void; onRankPress: () => void }) {
   const C = useTheme();
+  const { t } = useTranslation('common');
   const player = useGameStore(s => s.player);
   const stats = useGameStore(s => s.statistics);
   const bosses = useGameStore(s => s.system.bossesDefeated);
@@ -92,7 +94,7 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
             {focusOn && (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Icon name="lightning-bolt" size={9} color={C.neonBlue} />
-                <Text style={hud.focusTag}> FOCO</Text>
+                <Text style={hud.focusTag}> {t('hud.focus_tag')}</Text>
               </View>
             )}
           </View>

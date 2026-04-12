@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Switch, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme, SPACING, FONT } from '../../theme';
 
 interface RestDaySettingsProps {
@@ -13,28 +14,27 @@ const RestDaySettings = ({
   onRestDayChange,
 }: RestDaySettingsProps) => {
   const C = useTheme();
+  const { t } = useTranslation('settings');
   const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View>
       <View style={s.sectionHeader}>
         <View style={[s.sectionDot, { backgroundColor: '#22c55e' }]} />
-        <Text style={s.sectionTitle}>REPOUSO DO MONARCA</Text>
+        <Text style={s.sectionTitle}>{t('restDay.sectionTitle')}</Text>
       </View>
 
       <View style={s.restDayInfo}>
         <Icon name="information-outline" size={12} color={C.muted} />
-        <Text style={s.restDayInfoTxt}>
-          {' '}Ativa para declarar hoje como Dia de Descanso. As missões ficam com opacidade reduzida e não haverá punições no reset de amanhã. Desativa automaticamente ao fim do dia.
-        </Text>
+        <Text style={s.restDayInfoTxt}>{' '}{t('restDay.infoText')}</Text>
       </View>
 
       <View style={[s.row, { borderBottomWidth: 0, borderRadius: 4, borderWidth: 1, borderColor: restDay ? '#22c55e44' : C.border, backgroundColor: restDay ? '#22c55e0a' : C.panel }]}>
         <Icon name="bed" size={18} color={restDay ? '#22c55e' : C.dimmed} />
         <View style={s.rowInfo}>
-          <Text style={[s.rowLabel, { color: restDay ? '#22c55e' : C.muted }]}>Dia de Descanso</Text>
+          <Text style={[s.rowLabel, { color: restDay ? '#22c55e' : C.muted }]}>{t('restDay.rowLabel')}</Text>
           <Text style={s.rowSub}>
-            {restDay ? '[ REPOUSO ATIVO — sem punições hoje ]' : 'Inativo — missões normais'}
+            {restDay ? t('restDay.rowSubActive') : t('restDay.rowSubInactive')}
           </Text>
         </View>
         <Switch

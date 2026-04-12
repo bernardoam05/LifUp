@@ -1,0 +1,189 @@
+{
+  "items": {
+    "system_pass": {
+      "name": "Pase del Sistema",
+      "description": "Completa automáticamente una Misión Diaria a tu elección.",
+      "lore": "\"El Sistema concede dispensa. Pero el cuerpo no olvida.\""
+    },
+    "xp_crystal": {
+      "name": "Cristal de XP",
+      "description": "Absorbes la energía del cristal. +100 XP inmediato.",
+      "lore": "\"Vestigio de un dungeon olvidado. Brilla con poder latente.\""
+    },
+    "health_potion": {
+      "name": "Poción de Recuperación",
+      "description": "Restaura la motivación. Concede +30 XP y +10 Gold inmediatamente.",
+      "lore": "\"Sabe a determinación. Bébela cuando las fuerzas te fallen.\""
+    },
+    "rest_scroll": {
+      "name": "Pergamino de Descanso",
+      "description": "Reduce la penalización del día siguiente en un 50%.",
+      "lore": "\"Hasta los grandes Hunters necesitan descanso estratégico.\""
+    },
+    "lagrima_purificacao": {
+      "name": "Lágrima de Purificación",
+      "description": "Elimina inmediatamente el debuff de penalización activo.",
+      "lore": "\"Destilada del dolor y la redención. Una segunda oportunidad que el Sistema raramente concede.\""
+    },
+    "relogio_ampulheta": {
+      "name": "Reloj de Arena",
+      "description": "La próxima Misión completada otorga el doble de XP.",
+      "lore": "\"El tiempo se dobla para quien es digno. Pero solo una vez.\""
+    },
+    "quebra_feiticos": {
+      "name": "Rompe-Hechizos",
+      "description": "Permite abandonar el Hardcore Focus Mode sin coste adicional.",
+      "lore": "\"Forjado en las profundidades del dungeon más sombrío. Rompe cualquier juramento... por un precio ya pagado.\""
+    },
+    "loot_box": {
+      "name": "Cofre Misterioso",
+      "description": "Un cofre sellado por magia del Sistema. Puede contener Gold, XP o Llaves Raras.",
+      "lore": "\"¿Qué hay dentro? Solo el Sistema decide.\""
+    },
+    "theme_monarch": {
+      "name": "Tema: Monarca de las Sombras",
+      "description": "Una UI negra y púrpura profunda que refleja el poder absoluto.",
+      "lore": "\"Álzate con la corona que gobierna a los muertos.\""
+    },
+    "theme_blood": {
+      "name": "Tema: Noche de Sangre",
+      "description": "Una UI de escarlata oscuro para los cazadores implacables.",
+      "lore": "\"Sediento. Despiadado. Carnicero.\""
+    },
+    "evolution_shard_common": {
+      "name": "Fragmento de Evolución",
+      "description": "Material básico para evolucionar cualquier unidad. Necesario en todas las mejoras.",
+      "lore": "\"La materia prima del crecimiento. Cada fragmento lleva el eco de una batalla.\""
+    },
+    "void_crystal": {
+      "name": "Cristal del Vacío",
+      "description": "Cristal raro de las fisuras dimensionales. Necesario para evolucionar unidades Knight+ o en hitos de nivel (×10).",
+      "lore": "\"Existe entre dimensiones. El Vacío te mira a través de él.\""
+    },
+    "beast_core": {
+      "name": "Núcleo de Bestia",
+      "description": "Núcleo extraído de criaturas bestiales. Amplifica unidades de tipo Bestia o Insecto.",
+      "lore": "\"La esencia bruta del depredador. Palpita con un instinto imposible de domar.\""
+    },
+    "phantom_essence": {
+      "name": "Esencia Fantasma",
+      "description": "Destilada de almas del dungeon. Necesaria para evolucionar sombras No-Muerto, Fantasma o Demonio.",
+      "lore": "\"No es la muerte lo que asusta — es lo que queda después de ella.\""
+    },
+    "shadow_essence": {
+      "name": "Esencia de las Sombras",
+      "description": "Esencia concentrada de sombras capturadas. Restablece el límite de extracción de sombras del día, permitiendo una nueva extracción.",
+      "lore": "\"La oscuridad tiene un precio. Y a veces, ella te lo devuelve.\""
+    },
+    "blood_fallen": {
+      "name": "Sangre de los Caídos",
+      "description": "Recogida de los cazadores que cayeron en batalla. Activa buff: +25% Gold en todas las misiones durante 3 horas.",
+      "lore": "\"La sangre de los débiles fertiliza el camino de los fuertes.\""
+    },
+    "viper_venom": {
+      "name": "Veneno de Víbora",
+      "description": "Extraído de la Serpiente Venenosa. Activa buff: +15% XP en todas las misiones durante 2 horas.",
+      "lore": "\"El veneno de la víbora no mata — transforma.\""
+    },
+    "crimson_knight_shard": {
+      "name": "Fragmento del Caballero Carmesí",
+      "description": "Un fragmento de la armadura del Caballero Carmesí. Activa buff: +20% XP en todas las misiones durante 1 hora.",
+      "lore": "\"El Caballero Carmesí sirvió en silencio. Su fragmento aún sirve.\""
+    },
+    "cerberus_fang": {
+      "name": "Colmillo de Cerbero",
+      "description": "Diente del guardián del abismo. Activa buff: +20% Gold en todas las misiones durante 2 horas.",
+      "lore": "\"Tres cabezas, un destino: servir al Monarca.\""
+    },
+    "iron_will_crystal": {
+      "name": "Cristal Voluntad de Hierro",
+      "description": "Cristalización de determinación pura. Activa buff: +50% XP en todas las misiones durante 30 minutos.",
+      "lore": "\"La voluntad del guerrero, hecha piedra.\""
+    },
+    "lich_eye": {
+      "name": "Ojo del Lich",
+      "description": "El ojo que ve más allá de la muerte. Activa buff: +100% XP (doble) en todas las misiones durante 1 hora.",
+      "lore": "\"Quien mira a la muerte de frente se vuelve más fuerte.\""
+    },
+    "dragon_scale": {
+      "name": "Escama de Dragón",
+      "description": "Armadura natural del rey de los monstruos. Activa buff: +30% XP en todas las misiones durante 4 horas.",
+      "lore": "\"Ni el fuego derrite lo que fue forjado en el fuego.\""
+    },
+    "crimson_knight_soul": {
+      "name": "Alma del Caballero Carmesí",
+      "description": "Vestigio de la esencia del Caballero Carmesí. Activa buff: +25% XP durante 2 horas.",
+      "lore": "\"El Caballero Carmesí murió de rodillas. Su alma sirve de pie.\""
+    },
+    "cerberus_tooth": {
+      "name": "Diente de Cerbero",
+      "description": "Arrancado del guardián del abismo de tres cabezas. Activa buff: +25% Gold durante 2 horas.",
+      "lore": "\"Tres cabezas, un fin. Sus dientes guardan el secreto del Averno.\""
+    }
+  },
+  "ui": {
+    "sold_out": "AGOTADO",
+    "per_week": "{{count}}/semana",
+    "no_gold": "SIN GOLD",
+    "buy": "COMPRAR",
+    "shop_title": "TIENDA DEL SISTEMA",
+    "shop_subtitle": "Gasta oro para potenciar tu travesía, Hunter.",
+    "gold_available": "{{amount}} Gold disponible",
+    "daily_bonus": "BONO DIARIO",
+    "ad_gold_desc": "Mira un anuncio voluntario y recibe 500 Gold.",
+    "limit_reached": "LÍMITE ALCANZADO",
+    "loading": "CARGANDO...",
+    "watch_ad_gold": "VER ANUNCIO → +500 GOLD",
+    "watch_ad_item": "VER ANUNCIO → ITEM ALEATORIO ({{count}}/{{max}})",
+    "item_added_inventory": "{{itemName}} añadido al inventario!",
+    "item_added_success": "¡Item añadido al inventario!",
+    "army_available": "EJÉRCITO DISPONIBLE",
+    "shadow_recruitment": "RECLUTAMIENTO DE SOMBRAS",
+    "shadow_recruitment_subtitle": "Libera el poder de la oscuridad por un precio en Gold.",
+    "locked_level": "Desbloqueado tras alcanzar el Nivel 10",
+    "confirm_purchase": "CONFIRMAR COMPRA",
+    "confirm_purchase_msg": "¿Comprar \"{{name}}\" por {{cost}} Gold?\n\n{{description}}",
+    "confirm_purchase_msg_bulk": "¿Comprar {{quantity}}x \"{{name}}\" por {{cost}} Gold?\n\n{{description}}",
+    "recruit_shadow": "RECLUTAR SOMBRA",
+    "evolve_shadow": "EVOLUCIONAR SOMBRA",
+    "confirm_recruit_msg": "Confirmar reclutamiento de \"{{name}}\" por {{cost}} Gold?\n\n{{effect}}",
+    "confirm_evolve_msg": "Confirmar evolución de \"{{name}}\" por {{cost}} Gold?\n\n{{effect}}",
+    "confirm": "CONFIRMAR",
+    "inventory_title": "INVENTARIO",
+    "items_count": "{{count}} objetos",
+    "key_vault": "BÓVEDA DE LLAVES",
+    "keys_count_one": "{{count}} llave guardada",
+    "keys_count_other": "{{count}} llaves guardadas",
+    "no_keys": "Sin llaves",
+    "items_section": "OBJETOS",
+    "inventory_empty_title": "INVENTARIO VACÍO",
+    "inventory_empty_desc": "Visita la Tienda del Sistema para adquirir objetos.",
+    "use": "USAR",
+    "use_item_title": "USAR OBJETO",
+    "use_item_msg": "¿Usar \"{{name}}\"?\n\n{{description}}",
+    "cancel": "CANCELAR",
+    "quest_picker_title": "ELIGE LA MISIÓN",
+    "quest_picker_sub": "El Pase del Sistema completará esta misión automáticamente.",
+    "quests_all_done": "¡Todas las misiones ya están completadas!",
+    "upgrade_material_hint": "Úsalo en Sombras para evolucionar",
+    "feedback_upgrade_material": "Material de evolución — úsalo en la pantalla de Sombras para evolucionar",
+    "feedback_xp": "+{{xp}} XP absorbido!",
+    "feedback_xp_gold": "+{{xp}} XP y +{{gold}} Gold absorbido!",
+    "feedback_level_up": "+{{xp}} XP — ¡LEVEL UP!",
+    "feedback_level_up_gold": "+{{xp}} XP y +{{gold}} Gold — ¡LEVEL UP!",
+    "feedback_reduce_penalty": "¡Pergamino activado! Penalización de mañana reducida en 50%.",
+    "feedback_remove_penalty": "¡Penalización eliminada! El Sistema purificó tu registro.",
+    "feedback_xp_boost": "¡Reloj de arena activado! La próxima misión otorga XP doble.",
+    "feedback_loot_box": "¡Cofre abierto! Comprueba tu recompensa...",
+    "feedback_no_loot_box": "¡No hay cofre disponible!",
+    "feedback_no_hardcore": "No hay Modo Hardcore activo para romper.",
+    "feedback_break_hardcore": "¡Juramento roto! Puedes detener el Focus Mode libremente.",
+    "feedback_shadow_essence": "¡El Sistema cedió! Una nueva sombra ha sido invocada.",
+    "feedback_buff": "Buff activo: +{{pct}}% {{stat}} por {{duration}}!",
+    "feedback_item_used": "¡Consumible activado!",
+    "feedback_generic_used": "¡Objeto utilizado con éxito!",
+    "feedback_quest_done": "¡Misión completada por el Sistema!",
+    "stat_xp": "XP",
+    "stat_gold": "Gold"
+  }
+}

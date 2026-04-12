@@ -1,0 +1,152 @@
+{
+  "header": "[ DEFINIÇÕES DO SISTEMA ]",
+  "sections": {
+    "missions": "MISSÕES",
+    "penalties": "PENALIDADES & BLOQUEIO",
+    "visual": "VISUAL",
+    "system": "SISTEMA",
+    "data": "DADOS",
+    "about": "SOBRE"
+  },
+  "alerts": {
+    "backupDone": "BACKUP CONCLUÍDO",
+    "backupDoneMsg": "Código de Backup copiado para a área de transferência! Guarda este código num local seguro.",
+    "restoreDone": "RESTAURO CONCLUÍDO",
+    "restoreDoneMsg": "Alma importada com sucesso! Podes precisar de reiniciar se houver bugs visuais.",
+    "error": "ERRO",
+    "exportError": "Falha ao exportar backup. Tenta novamente.",
+    "importError": "Código inválido ou corrompido. Verifica se copiaste bem.",
+    "understood": "ENTENDIDO"
+  },
+  "difficulty": {
+    "sectionTitle": "RIGOR DO SISTEMA (MISSÕES DIÁRIAS)",
+    "infoText": "Controla quantas missões são geradas por dia. Tem efeito no próximo reset diário ou regeneração.",
+    "customLabel": "Missões por dia",
+    "easy": {
+      "label": "FÁCIL",
+      "sublabel": "Protocolo de Treino Leve",
+      "desc0": "· Máximo de 3 missões por dia",
+      "desc1": "· Ideal para começar ou dias difíceis",
+      "desc2": "· Recompensas base sem escalonamento"
+    },
+    "normal": {
+      "label": "NORMAL",
+      "sublabel": "Protocolo Padrão do Sistema",
+      "desc0": "· 3 missões base + 1 por cada 10 níveis (máx 5)",
+      "desc1": "· Recompensas escalonadas com o nível",
+      "desc2": "· Dificuldade recomendada"
+    },
+    "hard": {
+      "label": "DIFÍCIL",
+      "sublabel": "Protocolo do Monarca Sombrio",
+      "desc0": "· 4 missões base + 1 por cada 5 níveis (máx 8)",
+      "desc1": "· Para caçadores de elite",
+      "desc2": "· Recompensas e penalizações amplificadas"
+    },
+    "custom": {
+      "label": "PERSONALIZADO",
+      "sublabel": "Define o teu próprio ritmo",
+      "desc0": "· Escolhe quantas missões diárias queres",
+      "desc1": "· Ideal para ajustar o volume ao teu horário",
+      "desc2": "· Mantém a progressão normal"
+    }
+  },
+  "intensity": {
+    "sectionTitle": "INTENSIDADE DA PUNIÇÃO",
+    "infoText": "Define o rigor das penalizações ao falhar missões diárias. A punição é calculada com base no número de missões falhadas.",
+    "activeProfile": "Perfil ativo: {{label}} — {{sublabel}}",
+    "blockStart": "Hora Início Bloqueio",
+    "blockEnd": "Hora Fim Bloqueio",
+    "light": {
+      "label": "LEVE",
+      "sublabel": "Protocolo Brando",
+      "desc0": "· Perda de XP: ~3% por missão falhada",
+      "desc1": "· 1 missão de penalização",
+      "desc2": "· Streak mantida (excepto falha total)",
+      "desc3": "· Sem bloqueio de apps"
+    },
+    "medium": {
+      "label": "MÉDIO",
+      "sublabel": "Protocolo Padrão",
+      "desc0": "· Perda de XP: 10% + 1% por falha",
+      "desc1": "· 1–3 missões de penalização",
+      "desc2": "· Streak reposta a zero",
+      "desc3": "· Bloqueio de apps se ≥50% falhado"
+    },
+    "hardcore": {
+      "label": "HARDCORE",
+      "sublabel": "Protocolo do Monarca",
+      "desc0": "· Perda de XP: 20% total",
+      "desc1": "· 2–4 missões de penalização",
+      "desc2": "· Streak reposta a zero",
+      "desc3": "· Bloqueio de apps sempre ativo"
+    },
+    "custom": {
+      "label": "PERSONALIZADO",
+      "sublabel": "Escolhe o tempo de bloqueio",
+      "desc0": "· Define quantas horas de bloqueio queres",
+      "desc1": "· Restante lógica mantém-se equilibrada",
+      "desc2": "· Útil para horários irregulares"
+    }
+  },
+  "autoBlock": {
+    "sectionTitle": "PUNIÇÃO: BLOQUEIO AUTOMÁTICO",
+    "cardTitle": "Bloqueio de Apps",
+    "cardDesc": "Se ativado, falhar missões diárias irá bloquear as tuas apps selecionadas automaticamente. O tempo varia com a dificuldade:",
+    "bulletEasy": "EASY:",
+    "bulletEasyDetail": "6 Horas (13:00 às 19:00)",
+    "bulletNormal": "NORMAL:",
+    "bulletNormalDetail": "12 Horas (10:00 às 22:00)",
+    "bulletHardcore": "HARDCORE:",
+    "bulletHardcoreDetail": "24 Horas (Tempo inteiro)",
+    "toggleTitle": "Ativar Bloqueio Automático",
+    "toggleSub": "Caso contrário, apenas XP e Ouro serão deduzidos."
+  },
+  "sideQuestPenalty": {
+    "sectionTitle": "TAREFAS SECUNDÁRIAS",
+    "infoText": "As tarefas do dia são um bloco de notas pessoal — sem recompensas, apagam-se à meia-noite. Ativa esta opção para que tarefas não concluídas contem como falhas na penalização diária.",
+    "rowLabel": "Secundárias penalizam",
+    "rowSubActive": "[ ATIVO — tarefas por fazer somam às falhas ]",
+    "rowSubInactive": "Inativo — tarefas sem impacto em punições"
+  },
+  "theme": {
+    "sectionTitle": "ASPETO DO SISTEMA",
+    "infoText": "Seleciona o tema visual do teu Sistema de Monarca. Novos temas são desbloqueados ao subir de Classe ou na Loja."
+  },
+  "notifications": {
+    "sectionTitle": "SISTEMA",
+    "notificationsLabel": "Notificações",
+    "notificationsSub": "Alertas diários e avisos do Sistema",
+    "soundLabel": "Som",
+    "soundSub": "Efeitos sonoros e feedback de áudio"
+  },
+  "backup": {
+    "sectionTitle": "BASE DE DADOS DO SISTEMA",
+    "infoText": "Exporta ou restaura a tua jornada como Monarca das Sombras copiando um código inviolável.",
+    "exportBtn": "EXPORTAR ALMA (BACKUP)",
+    "importBtn": "IMPORTAR ALMA (RESTORE)"
+  },
+  "importModal": {
+    "title": "IMPORTAR ALMA",
+    "subtitle": "Cola abaixo o teu código Base64 para sobrescrever a base de dados atual.",
+    "placeholder": "Código de Backup...",
+    "cancel": "CANCELAR",
+    "restore": "RESTAURAR"
+  },
+  "about": {
+    "sectionTitle": "SOBRE",
+    "version": "Versão",
+    "versionVal": "LifUp OS v3",
+    "missionEngine": "Motor de Missões",
+    "missionEngineVal": "Dinâmico · Pool Semanal · Boss Raid",
+    "persistence": "Persistência",
+    "persistenceVal": "AsyncStorage · lifup-v3"
+  },
+  "restDay": {
+    "sectionTitle": "REPOUSO DO MONARCA",
+    "infoText": "Ativa para declarar hoje como Dia de Descanso. As missões ficam com opacidade reduzida e não haverá punições no reset de amanhã. Desativa automaticamente ao fim do dia.",
+    "rowLabel": "Dia de Descanso",
+    "rowSubActive": "[ REPOUSO ATIVO — sem punições hoje ]",
+    "rowSubInactive": "Inativo — missões normais"
+  }
+}

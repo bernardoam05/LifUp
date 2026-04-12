@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { FONT, SPACING } from '../theme';
 import { ALL_DUNGEON_KEYS, DungeonKey } from '../data/dungeonKeys';
 import DungeonKeyModal from './DungeonKeyModal';
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
+  const { t } = useTranslation('dungeons');
   const insets = useSafeAreaInsets();
   const st = React.useMemo(() => getStyles(C), [C]);
   const [selectedKey, setSelectedKey] = React.useState<DungeonKey | null>(null);
@@ -34,7 +36,7 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
             {/* Header */}
             <View style={st.header}>
               <Icon name="safe" size={24} color={C.gold} />
-              <Text style={st.title}> COFRE DE CHAVES</Text>
+              <Text style={st.title}> {t('ui.keyVaultTitle')}</Text>
               <TouchableOpacity onPress={onClose} style={st.closeBtn}>
                 <Icon name="close" size={20} color={C.muted} />
               </TouchableOpacity>
@@ -70,9 +72,9 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
                           color={C.muted}
                         />
                         <Text style={st.keyType} numberOfLines={1}>
-                          {key.missionType === 'focus' && 'FOCO'}
-                          {key.missionType === 'training' && 'TREINO'}
-                          {key.missionType === 'gps' && 'PASSEIO'}
+                          {key.missionType === 'focus' && t('ui.missionTypeFocus')}
+                          {key.missionType === 'training' && t('ui.missionTypeTraining')}
+                          {key.missionType === 'gps' && t('ui.missionTypeGpsLabel')}
                         </Text>
                       </View>
                       <Text style={st.keyDesc} numberOfLines={2}>
@@ -86,8 +88,8 @@ export default function KeyVaultModal({ visible, onClose, keys, C }: Props) {
             ) : (
               <View style={st.emptyState}>
                 <Icon name="shield-lock-outline" size={48} color={C.dimmed} />
-                <Text style={st.emptyTitle}>Cofre Vazio</Text>
-                <Text style={st.emptySub}>Sobe de nível ou abre Cofres para encontrar chaves raras.</Text>
+                <Text style={st.emptyTitle}>{t('ui.emptyVaultTitle')}</Text>
+                <Text style={st.emptySub}>{t('ui.emptyVaultSub')}</Text>
               </View>
             )}
           </View>

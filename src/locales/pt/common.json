@@ -1,0 +1,127 @@
+{
+  "buttons": {
+    "continue": "CONTINUAR",
+    "close": "FECHAR",
+    "confirm": "CONFIRMAR",
+    "cancel": "CANCELAR",
+    "yes": "SIM",
+    "no": "NÃO",
+    "ok": "OK",
+    "back": "VOLTAR"
+  },
+  "extraction": {
+    "protocol": "SISTEMA — PROTOCOLO DE EXTRAÇÃO",
+    "arise_subtitle": "PROTOCOLO DE EXTRAÇÃO ATIVADO",
+    "dungeon_cleared": "A MASMORRA FOI LIMPA.",
+    "achievement_unlocked": "CONQUISTA DESBLOQUEADA.",
+    "extraction_started": "EXTRAÇÃO DE SOMBRA INICIADA...",
+    "shadow_granted": "SOMBRA CONCEDIDA PELO SISTEMA...",
+    "origin_label": "ORIGEM",
+    "copy_registered": "CÓPIA REGISTADA",
+    "copies_accumulated_one": "{{count}} CÓPIA ACUMULADA",
+    "copies_accumulated_other": "{{count}} CÓPIAS ACUMULADAS",
+    "throne_room_tip": "Usa as cópias para evoluir na Sala do Trono.",
+    "new_soul": "NOVA SOMBRA ADQUIRIDA",
+    "equip_tip": "Reporta-te à Sala do Trono para equipar.",
+    "collect_soul": "RECOLHER ALMA",
+    "rank_labels": {
+      "Normal": "NORMAL",
+      "Elite": "ELITE",
+      "Knight": "CAVALEIRO",
+      "Commander": "COMANDANTE",
+      "Marshal": "MARECHAL"
+    },
+    "origin": {
+      "forge": "CRIADA NA FORJA",
+      "achievement": "CONQUISTA DESBLOQUEADA",
+      "boss_drop": "QUEDA DE BOSS",
+      "shop": "COMPRA NA LOJA",
+      "daily": "EXTRAÇÃO DIÁRIA"
+    }
+  },
+  "level_up": {
+    "system_label": "◈ SISTEMA ◈",
+    "title": "LEVEL UP!",
+    "level_label": "NÍVEL",
+    "rewards_label": "RECOMPENSAS",
+    "continue": "CONTINUAR"
+  },
+  "hud": {
+    "focus_tag": "FOCO",
+    "xp_display": "{{current}} / {{max}} XP",
+    "level_display": "LVL {{level}}"
+  },
+  "alert": {
+    "ok": "OK"
+  },
+  "tutorial": {
+    "system_label": "SISTEMA — PROTOCOLO DE TUTORIAL",
+    "skip": "SALTAR",
+    "next": "PRÓXIMO",
+    "start": "COMEÇAR",
+    "phase1": [
+      {
+        "title": "BEM-VINDO, HUNTER",
+        "body": "O Sistema acordou. Existe um único caminho à tua frente: ficar mais forte.\n\nEste guia vai mostrar-te como funciona o mundo do Sistema."
+      },
+      {
+        "title": "MISSÕES DIÁRIAS",
+        "body": "Aqui encontras as tuas tarefas de hoje. Completa-as para ganhar XP, subir de nível e acumular Gold.\n\nSe completares todas as diárias recebes uma recompensa especial."
+      },
+      {
+        "title": "FORJA DE MISSÕES",
+        "body": "Podes adaptar as missões à tua vida real! No topo encontras a FORJA para editares as rotinas.\n\n· MISSÕES CORE (Fixas): Ocorrem diariamente sem excepção.\n· MISSÕES POOL (Extra): O Sistema sorteia diariamente, do teu baralho, um número aleatório (surpresas)."
+      },
+      {
+        "title": "O TEU PERFIL E CONFIGS",
+        "body": "Aqui vês os teus atributos, o teu Rank de Caçador (que sobe automaticamente) e os teus títulos.\n\nNo canto superior direito, na Roda Dentada, podes ajustar a DIFICULDADE do jogo, afectando o XP ganho e perdido."
+      },
+      {
+        "title": "A TUA TROPA DE SOMBRAS",
+        "body": "As Sombras são guerreiros que extrais ao derrotar bosses ou ao completar todas as missões diárias.\n\nCada uma tem um efeito passivo único que te fortalece passivamente."
+      },
+      {
+        "title": "A LOJA DO SISTEMA",
+        "body": "Usa Gold para comprar Poções de XP, regenerações e outros consumíveis.\n\nAo atingires o Nível 10, sombras únicas ficam disponíveis para recrutamento."
+      },
+      {
+        "title": "MODO FOCO & PENALIZAÇÕES",
+        "body": "Activa o Modo Foco para bloquear distracções.\n\nSe falhares missões diárias entras na PENALTY ZONE e perdes XP. No modo Focus Hardcore, se falhares o timer, o Sistema bloqueia-te o telemóvel temporariamente!"
+      },
+      {
+        "title": "PRONTO PARA COMEÇAR",
+        "body": "A tua primeira missão é simples: completa as Missões Diárias de hoje.\n\nQuanto mais consistente fores, mais o teu Rank vai subir. Vai em frente, Hunter."
+      }
+    ],
+    "phase2": [
+      {
+        "title": "NÍVEL 10 — AS SOMBRAS DESPERTAM",
+        "body": "Chegaste a um marco importante. A partir de agora, as Sombras começam a revelar-se com mais frequência.\n\nVou mostrar-te como gerir o teu exército."
+      },
+      {
+        "title": "A TUA SOMBRA",
+        "body": "Cada sombra tem um EFEITO PASSIVO ÚNICO — bónus automáticos que se aplicam às tuas missões.\n\nRanks mais altos (Commander, Marshal) têm efeitos muito mais poderosos."
+      },
+      {
+        "title": "ADICIONAR A FAVORITOS",
+        "body": "Carrega no ícone ⭐ para favoritar.\n\nAs tuas 3 sombras favoritas aplicam os seus efeitos passivos globais: desde proteger-te de perder XP na Zona de Penalidade, a dar bónus de atributos."
+      },
+      {
+        "title": "EFEITOS PASSIVOS ACTIVOS",
+        "body": "Com sombras favoritas activadas, os seus bónus aplicam-se automaticamente: mais XP por missão, mais Gold por quest, regeneração de penalidade, etc.\n\nPodes ver os bónus activos no teu Perfil."
+      },
+      {
+        "title": "O MONARCA DESPERTA",
+        "body": "Continua a conquistar, Hunter. As sombras mais poderosas ainda estão por vir — bosses de Rank S aguardam-te.\n\nForja o teu exército. Torna-te imparável."
+      }
+    ]
+  },
+  "toast": {
+    "level_up_title": "LEVEL UP!",
+    "level_up_desc": "Atingiste o Nível {{level}}"
+  },
+  "modal": {
+    "confirm": "CONFIRMAR",
+    "cancel": "CANCELAR"
+  }
+}

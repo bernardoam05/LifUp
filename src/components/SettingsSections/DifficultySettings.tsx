@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme, SPACING, FONT } from '../../theme';
 import { getDifficultyOptions } from '../../data/settingsConfig';
 import { MissionDifficulty } from '../../store/useGameStore';
@@ -20,6 +21,7 @@ const DifficultySettings = ({
 }: DifficultySettingsProps) => {
   const C = useTheme();
   const s = React.useMemo(() => getStyles(C), [C]);
+  const { t } = useTranslation('settings');
   const DIFFICULTY_OPTIONS = React.useMemo(() => getDifficultyOptions(C), [C]);
   const clampCustom = (v: number) => Math.min(Math.max(v, 1), 10);
 
@@ -27,14 +29,13 @@ const DifficultySettings = ({
     <View>
       <View style={s.sectionHeader}>
         <View style={[s.sectionDot, { backgroundColor: C.neonBlue }]} />
-        <Text style={s.sectionTitle}>RIGOR DO SISTEMA (MISSÕES DIÁRIAS)</Text>
+        <Text style={s.sectionTitle}>{t('difficulty.sectionTitle')}</Text>
       </View>
 
       <View style={s.intensityInfo}>
         <Icon name="information-outline" size={12} color={C.muted} />
         <Text style={s.intensityInfoTxt}>
-          {' '}Controla quantas missões são geradas por dia.
-          Tem efeito no próximo reset diário ou regeneração.
+          {' '}{t('difficulty.infoText')}
         </Text>
       </View>
 
@@ -53,22 +54,26 @@ const DifficultySettings = ({
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={[s.intensityLabel, { color: active ? opt.color : C.muted }]}>
-                  {opt.label}
+                  {t(`difficulty.${opt.value}.label`, { defaultValue: opt.label })}
                 </Text>
-                <Text style={s.intensitySublabel}>{opt.sublabel}</Text>
+                <Text style={s.intensitySublabel}>
+                  {t(`difficulty.${opt.value}.sublabel`, { defaultValue: opt.sublabel })}
+                </Text>
               </View>
               {active
                 ? <Icon name="radiobox-marked" size={20} color={opt.color} />
                 : <Icon name="radiobox-blank"  size={20} color={C.border} />}
             </View>
             <View style={s.intensityDesc}>
-              {opt.description.map((line: string, i: number) => (
-                <Text key={i} style={[s.intensityDescLine, active && { color: C.muted }]}>{line}</Text>
+              {opt.description.map((_line: string, i: number) => (
+                <Text key={i} style={[s.intensityDescLine, active && { color: C.muted }]}>
+                  {t(`difficulty.${opt.value}.desc${i}`, { defaultValue: _line })}
+                </Text>
               ))}
             </View>
             {opt.value === 'custom' && active && (
               <View style={s.customRow}>
-                <Text style={s.customLabel}>Missões por dia</Text>
+                <Text style={s.customLabel}>{t('difficulty.customLabel')}</Text>
                 <View style={s.customStepper}>
                   <TouchableOpacity
                     style={s.stepBtn}

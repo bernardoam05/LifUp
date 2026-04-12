@@ -1,0 +1,104 @@
+{
+  "boss_victory": {
+    "header": "BOSS BESIEGT!",
+    "sub": "Der Dungeon wurde gesäubert. Das System erkennt deine Stärke an.",
+    "shadow_leveled_up": "{{name}} hat einen Level aufgestiegen!",
+    "shadow_obtained": "Schatten erhalten: {{name}}",
+    "loot_header": "— BEUTE —",
+    "shadow_hint": "Erreiche Level 10, um Schatten aus Boss-Raids zu erhalten.",
+    "continue": "WEITER"
+  },
+  "rank": {
+    "header": "[ JÄGER-KLASSIFIZIERUNG ]",
+    "rank_up_title": "RANG AUFGESTIEGEN!",
+    "rank_up_text": "Du hast Klasse {{label}} erreicht",
+    "req_level": "Level {{level}}",
+    "req_missions": "Missionen gesamt",
+    "req_bosses": "Bosse",
+    "req_rank_missions": "{{rank}}-Rang-Missionen",
+    "initial_rank": "Startrang",
+    "current_tag": "AKTUELL",
+    "warning_rank_up": "ALLGEMEINE WARNUNG: Ein Klassenaufstieg erhöht die Schwierigkeit der vorgeschlagenen Missionen.",
+    "rank_up_btn": "ZU RANG {{rank}} AUFSTEIGEN",
+    "keep_training": "Trainiere weiter, um die nächste Klasse zu erreichen.",
+    "rank_labels": {
+      "E": "Neuling",
+      "D": "Basis-Jäger",
+      "C": "Willensmeister",
+      "B": "Schattenritter",
+      "A": "Kommandant",
+      "S": "Monarch",
+      "National": "Nationaler Jäger"
+    },
+    "labels": {
+      "E": "Anfänger",
+      "D": "Einfacher Jäger",
+      "C": "Meister des Willens",
+      "B": "Schattenritter",
+      "A": "Kommandant",
+      "S": "Monarch",
+      "National": "Nationaler Jäger"
+    }
+  },
+  "event_dungeon": {
+    "warning_text": "BEGRENZTES EVENT",
+    "title": "[ SPEZIELLER EVENT-DUNGEON ]",
+    "available": "Verfügbar {{start}} bis {{end}}",
+    "trials_header": "EVENT-PRÜFUNGEN",
+    "progress": "Fortschritt: {{completed}}/{{required}} Prüfungen abgeschlossen",
+    "trial_complete": "[ PRÜFUNG ABGESCHLOSSEN ]",
+    "event_boss_header": "EVENT-ENDBOSS",
+    "event_concluded": "[ EVENT ABGESCHLOSSEN ]",
+    "shadow_label": "Schatten: {{name}}",
+    "shadow_unknown": "Unbekannt",
+    "boss_locked": "Schließe die obigen Prüfungen ab, um den Event-Boss freizuschalten.",
+    "back": "ZURÜCK"
+  },
+  "daily_boss": {
+    "portal_badge": "TÄGLICHES BOSS-PORTAL",
+    "daily_portal": "[ TÄGLICHES PORTAL ]",
+    "sub": "Schließe die Tägliche Boss-Mission ab, um XP, Gold zu verdienen und seinen Schatten zu extrahieren.",
+    "boss_defeated": "[ BOSS BESIEGT ]",
+    "shadow_label": "Schatten: {{name}}",
+    "key_missing": "SCHLÜSSEL FEHLT",
+    "master_key_ready": "MASTER KEY BEREIT",
+    "back": "ZURÜCK"
+  },
+  "loot_box": {
+    "sub_title": "BELOHNUNGEN GEÖFFNET",
+    "items_title": "ERHALTENE GEGENSTÄNDE:",
+    "confirm": "ANNEHMEN"
+  },
+  "gps_tracker": {
+    "title": "GPS-TRACKER",
+    "moving": "in Bewegung…",
+    "paused": "pausiert",
+    "pause_btn": "PAUSE",
+    "resume_btn": "FORTSETZEN",
+    "start_btn": "STARTEN",
+    "acquiring_gps": "GPS-Signal wird empfangen...",
+    "high_speed_warning": "Hohe Geschwindigkeit! Distanz pausiert.",
+    "field_notes_label": "FELDNOTIZEN",
+    "field_notes_placeholder": "Notiere deinen Fortschritt...",
+    "finish_mission": "MISSION BEENDEN"
+  },
+  "penalty": {
+    "system_label": "◈ SYSTEM ◈",
+    "title_light": "STRAFZONE",
+    "title_medium": "STRAFZONE",
+    "title_hardcore": "STRAFE DES MONARCHEN",
+    "title_custom": "STRAFZONE",
+    "detected": "FEHLER ERKANNT",
+    "intensity_light": "LEICHT",
+    "intensity_medium": "MITTEL",
+    "intensity_hardcore": "HARDCORE",
+    "fail_line": "{{failedCount}} von {{totalCount}} Missionen gescheitert.",
+    "fail_line_default": "Tägliche Missionen nicht abgeschlossen.",
+    "xp_line": "{{xpLost}} XP{{goldPart}} abgezogen.",
+    "xp_line_gold_part": " und ◈{{goldLost}}",
+    "xp_line_default": "XP und Gold gemäß aktivem Profil abgezogen.",
+    "escape_message": "Schließe die Strahmissionen ab, um zu entkommen.",
+    "dismiss_btn": "VERSTANDEN, JÄGER"
+  },
+  "bottom_sheet": {}
+}

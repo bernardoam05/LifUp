@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import SystemModal from './SystemModal';
 import { FONT, SPACING } from '../theme';
 import { playSound } from '../utils/audioService';
@@ -46,6 +47,7 @@ export default function BossVictoryModal({
   C,
 }: BossVictoryModalProps) {
   const bv = getBVStyles(C);
+  const { t } = useTranslation('modals');
 
   useEffect(() => {
     if (visible) {
@@ -105,7 +107,7 @@ export default function BossVictoryModal({
         )}
 
         {!info.shadowName && (
-          <Text style={bv.shadowHint}>Atinge o nível 10 para receber Sombras de boss raids.</Text>
+          <Text style={bv.shadowHint}>{t('boss_victory.shadow_hint')}</Text>
         )}
 
         <TouchableOpacity style={bv.btn} onPress={onClose}>

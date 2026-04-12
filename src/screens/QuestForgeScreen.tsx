@@ -6,6 +6,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SystemModal from '../components/SystemModal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore, { QuestDefinition, INITIAL_QUEST_DICTIONARY, RankKey } from '../store/useGameStore';
 import CustomModal from '../components/CustomModal';
 import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal';
@@ -15,17 +16,20 @@ import { useTheme, FONT, SPACING } from '../theme';
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 
-const getQuestTypeOpts = (C: any) => [
-  { value: 'training', label: 'Treino', icon: 'arm-flex', color: C.neonRed },
-  { value: 'focus', label: 'Foco', icon: 'timer-sand', color: C.purple },
-  { value: 'knowledge', label: 'Conhecimento', icon: 'book-open-variant', color: C.neonBlue },
-  { value: 'gps', label: 'GPS', icon: 'run-fast', color: C.green },
+const getQuestTypeOpts = (C: any, t: (k: string) => string) => [
+  { value: 'training', label: t('ui.quest_type_training'), icon: 'arm-flex', color: C.neonRed },
+  { value: 'focus', label: t('ui.quest_type_focus'), icon: 'timer-sand', color: C.purple },
+  { value: 'knowledge', label: t('ui.quest_type_knowledge'), icon: 'book-open-variant', color: C.neonBlue },
+  { value: 'gps', label: t('ui.quest_type_gps'), icon: 'run-fast', color: C.green },
 ];
 
 
 const UNIT_CHIPS = ['reps', 'min', 'km', 'páginas', 'séries', 'horas', 'litros'];
 
-const DAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const getDayLabels = (t: (k: string) => string) => [
+  t('ui.day_sun'), t('ui.day_mon'), t('ui.day_tue'), t('ui.day_wed'),
+  t('ui.day_thu'), t('ui.day_fri'), t('ui.day_sat'),
+];
 
 // Popular MaterialCommunityIcons for the icon picker
 const ICON_GRID = [
@@ -44,11 +48,11 @@ const getRankOpts = (C: any): { value: RankKey; color: string }[] => [
   { value: 'S', color: C.neonRed },
 ];
 
-const getBossClassOpts = (C: any): { value: QuestDefinition['bossClass']; label: string; color: string }[] => [
+const getBossClassOpts = (C: any, t: (k: string) => string): { value: QuestDefinition['bossClass']; label: string; color: string }[] => [
   { value: 'A', label: 'A-Rank', color: C.gold },
   { value: 'S', label: 'S-Rank', color: C.neonRed },
-  { value: 'Event', label: 'Evento', color: C.neonBlue },
-  { value: 'Raid', label: 'Raid', color: C.purple },
+  { value: 'Event', label: t('ui.boss_class_event'), color: C.neonBlue },
+  { value: 'Raid', label: t('ui.boss_class_raid'), color: C.purple },
 ];
 
 const BLANK_DEF: Omit<QuestDefinition, 'id'> = {
@@ -152,9 +156,11 @@ function FormModal({
 }) {
   const fm = getFMStyles(C);
   const ip = getIPStyles(C);
-  const QUEST_TYPE_OPTS = getQuestTypeOpts(C);
+  const { t } = useTranslation('quests');
+  const QUEST_TYPE_OPTS = getQuestTypeOpts(C, t);
   const RANK_OPTS = getRankOpts(C);
-  const BOSS_CLASS_OPTS = getBossClassOpts(C);
+  const BOSS_CLASS_OPTS = getBossClassOpts(C, t);
+  const DAY_LABELS = getDayLabels(t);
 
   const insets = useSafeAreaInsets();
   const [form, setForm] = useState<FormState>(() => toFormState(initial));
@@ -180,7 +186,7 @@ function FormModal({
 
   function handleSave() {
     if (!form.title.trim()) {
-      setAlertCfg({ title: 'Título obrigatório', message: 'A diretiva precisa de um nome.' });
+      setAlertCfg({ title: t('ui.form_title_required'), message: t('ui.form_title_required_msg') });
       return;
     }
     const def: Omit<QuestDefinition, 'id'> = {
@@ -213,7 +219,7 @@ function FormModal({
           {/* ── Header ── */}
           <View style={fm.header}>
             <Icon name="hammer" size={15} color={C.gold} />
-            <Text style={fm.headerTxt}>{initial ? ' EDITAR DIRETIVA' : ' NOVA DIRETIVA'}</Text>
+            <Text style={fm.headerTxt}>{initial ? ` ${t('ui.form_edit_directive')}` : ` ${t('ui.form_new_directive')}`}</Text>
             <TouchableOpacity onPress={onClose} style={fm.closeBtn}>
               <Icon name="close" size={20} color={C.muted} />
             </TouchableOpacity>
@@ -223,17 +229,17 @@ function FormModal({
           <ScrollView contentContainerStyle={fm.body} keyboardShouldPersistTaps="handled">
             {/* ── TIPO (Core / Pool / Boss) — locked when editing ── */}
             <View style={fm.labelRow}>
-              <Text style={fm.label}>TIPO DE MISSÃO</Text>
+              <Text style={fm.label}>{t('ui.form_mission_type')}</Text>
               {isEditing && (
                 <View style={fm.lockBadge}>
                   <Icon name="lock-outline" size={10} color={C.dimmed} />
-                  <Text style={fm.lockTxt}> BLOQUEADO</Text>
+                  <Text style={fm.lockTxt}> {t('ui.form_locked')}</Text>
                 </View>
               )}
             </View>
             <View style={[fm.chipRow, isEditing && fm.chipRowLocked]}>
               <Chip
-                label="CORE · Diária fixa"
+                label={t('ui.form_core_chip')}
                 active={form.type === 'core'}
                 color={C.neonBlue}
                 onPress={() => !isEditing && field('type', 'core')}
@@ -241,14 +247,14 @@ function FormModal({
               />
 
               <Chip
-                label="POOL · Hábito rotativo"
+                label={t('ui.form_pool_chip')}
                 active={form.type === 'pool'}
                 color={C.purple}
                 onPress={() => !isEditing && field('type', 'pool')}
                 C={C}
               />
               <Chip
-                label="BOSS · Desafio épico"
+                label={t('ui.form_boss_chip')}
                 active={form.type === 'boss'}
                 color={C.neonRed}
                 onPress={() => !isEditing && field('type', 'boss')}
@@ -258,7 +264,7 @@ function FormModal({
             </View>
 
             {/* ── CATEGORIA ── */}
-            <Text style={fm.label}>CATEGORIA</Text>
+            <Text style={fm.label}>{t('ui.form_category')}</Text>
             <View style={fm.chipRow}>
               {QUEST_TYPE_OPTS.map(opt => (
                 <CategoryChip
@@ -275,8 +281,8 @@ function FormModal({
 
             {/* ── DIFICULDADE ── */}
             <Text style={fm.label}>
-              DIFICULDADE{'  '}
-              <Text style={fm.hint}>deixa vazio para calcular pelo XP</Text>
+              {t('ui.form_difficulty')}{'  '}
+              <Text style={fm.hint}>{t('ui.form_difficulty_hint')}</Text>
             </Text>
             <View style={fm.chipRow}>
               <Chip
@@ -302,7 +308,7 @@ function FormModal({
             {/* ── BOSS CLASS (Boss only) ── */}
             {isBoss && (
               <>
-                <Text style={fm.label}>CLASSE DE BOSS</Text>
+                <Text style={fm.label}>{t('ui.form_boss_class')}</Text>
                 <View style={fm.chipRow}>
                   {BOSS_CLASS_OPTS.map(bc => (
                     <Chip
@@ -319,26 +325,26 @@ function FormModal({
             )}
 
             {/* ── TÍTULO ── */}
-            <Text style={fm.label}>TÍTULO</Text>
+            <Text style={fm.label}>{t('ui.form_title')}</Text>
             <TextInput
               style={fm.input}
               value={form.title}
               onChangeText={v => field('title', v)}
-              placeholder="ex: Força Bruta"
+              placeholder={t('ui.form_title_placeholder')}
               placeholderTextColor={C.muted}
             />
 
 
             {/* ── DESCRIÇÃO ── */}
             <Text style={fm.label}>
-              DESCRIÇÃO{'  '}
-              <Text style={fm.hint}>usa {'{target}'} e {'{unit}'} como variáveis</Text>
+              {t('ui.form_description')}{'  '}
+              <Text style={fm.hint}>{t('ui.form_description_hint')}</Text>
             </Text>
             <TextInput
               style={[fm.input, fm.inputMulti]}
               value={form.description}
               onChangeText={v => field('description', v)}
-              placeholder="ex: Completa {target} {unit} hoje"
+              placeholder={t('ui.form_description_placeholder')}
               placeholderTextColor={C.muted}
               multiline
 
@@ -348,7 +354,7 @@ function FormModal({
             {/* ── VALOR BASE + UNIDADE ── */}
             <View style={fm.row2}>
               <View style={fm.col}>
-                <Text style={fm.label}>VALOR BASE</Text>
+                <Text style={fm.label}>{t('ui.form_base_value')}</Text>
                 <TextInput
                   style={fm.input}
                   value={String(form.baseTarget)}
@@ -360,7 +366,7 @@ function FormModal({
 
               </View>
               <View style={fm.col}>
-                <Text style={fm.label}>XP · GOLD</Text>
+                <Text style={fm.label}>{t('ui.form_xp_gold')}</Text>
                 <View style={fm.row2}>
                   <TextInput
                     style={[fm.input, { flex: 1 }]}
@@ -385,7 +391,7 @@ function FormModal({
             </View>
 
             {/* ── UNIDADE (Chips) ── */}
-            <Text style={fm.label}>UNIDADE</Text>
+            <Text style={fm.label}>{t('ui.form_unit')}</Text>
             <View style={fm.chipRow}>
               {UNIT_CHIPS.map(u => (
                 <Chip
@@ -403,17 +409,17 @@ function FormModal({
               style={[fm.input, { marginTop: 6 }]}
                value={UNIT_CHIPS.includes(form.unit) ? '' : form.unit}
                onChangeText={v => { if (v) {field('unit', v);} }}
-               placeholder="Outra unidade (ex: passadas)..."
+               placeholder={t('ui.form_unit_other_placeholder')}
                placeholderTextColor={C.muted}
                autoCapitalize="none"
 
             />
 
             {/* ── ESCALAMENTO ── */}
-            <Text style={fm.label}>ESCALAMENTO</Text>
+            <Text style={fm.label}>{t('ui.form_scaling')}</Text>
             <View style={fm.row2}>
               <View style={fm.col}>
-                <Text style={fm.scalingHint}>Aumenta</Text>
+                <Text style={fm.scalingHint}>{t('ui.form_scaling_increases')}</Text>
                 <View style={fm.scalingRow}>
                   <TextInput
                     style={[fm.input, fm.scalingInput]}
@@ -428,7 +434,7 @@ function FormModal({
                 </View>
               </View>
               <View style={fm.col}>
-                <Text style={fm.scalingHint}>A cada</Text>
+                <Text style={fm.scalingHint}>{t('ui.form_scaling_every')}</Text>
                 <View style={fm.scalingRow}>
                   <TextInput
                     style={[fm.input, fm.scalingInput]}
@@ -439,13 +445,13 @@ function FormModal({
                      placeholderTextColor={C.muted}
                    />
 
-                  <Text style={fm.scalingUnit}>níveis</Text>
+                  <Text style={fm.scalingUnit}>{t('ui.form_scaling_levels')}</Text>
                 </View>
               </View>
             </View>
             {(form.scalingAmount > 0) && (
               <Text style={fm.scalingPreview}>
-                ↗ +{form.scalingAmount} {form.unit || 'unid.'} a cada {form.scalingInterval} nível{form.scalingInterval > 1 ? 's' : ''}
+                {t('ui.form_scaling_preview', { amount: form.scalingAmount, unit: form.unit || 'unid.', interval: form.scalingInterval, plural: form.scalingInterval > 1 ? 's' : '' })}
               </Text>
             )}
 
@@ -453,8 +459,8 @@ function FormModal({
             {isCore && (
               <>
                 <Text style={fm.label}>
-                  DIAS DA SEMANA{'  '}
-                  <Text style={fm.hint}>vazio = todos os dias</Text>
+                  {t('ui.form_days_of_week')}{'  '}
+                  <Text style={fm.hint}>{t('ui.form_days_hint')}</Text>
                 </Text>
                 <View style={fm.chipRow}>
                   {DAY_LABELS.map((label, i) => (
@@ -477,33 +483,31 @@ function FormModal({
                 <View style={fm.shadowDivider}>
                   <View style={fm.shadowDividerLine} />
                   <Icon name="ghost" size={12} color={C.purple + 'aa'} />
-                  <Text style={fm.shadowDividerTxt}>EXTRAÇÃO DE SOMBRA</Text>
+                  <Text style={fm.shadowDividerTxt}>{t('ui.form_shadow_extraction')}</Text>
                   <View style={fm.shadowDividerLine} />
                 </View>
-                <Text style={fm.shadowHint}>
-                  Opcional. Se preenchido, derrotar este Boss extrai uma Sombra para o teu exército.
-                </Text>
-                <Text style={fm.label}>NOME DA SOMBRA</Text>
+                <Text style={fm.shadowHint}>{t('ui.form_shadow_hint')}</Text>
+                <Text style={fm.label}>{t('ui.form_shadow_name')}</Text>
                 <TextInput
                   style={fm.input}
                    value={form.shadowName}
                    onChangeText={v => field('shadowName', v)}
-                   placeholder="ex: Golem de Obsidiana"
+                   placeholder={t('ui.form_shadow_name_placeholder')}
                    placeholderTextColor={C.muted}
                  />
 
                 <View style={fm.iconLabelRow}>
-                  <Text style={fm.label}>ÍCONE</Text>
+                  <Text style={fm.label}>{t('ui.form_icon')}</Text>
                   <TouchableOpacity style={fm.iconPickerBtn} onPress={() => setShowIconPicker(true)}>
                     <Icon name="grid" size={11} color={C.purple} />
-                    <Text style={fm.iconPickerBtnTxt}> VER GRELHA DE ÍCONES</Text>
+                    <Text style={fm.iconPickerBtnTxt}> {t('ui.form_icon_grid')}</Text>
                   </TouchableOpacity>
                 </View>
                 <TextInput
                   style={fm.input}
                    value={form.shadowIcon}
                    onChangeText={v => field('shadowIcon', v)}
-                   placeholder="ex: ghost, sword-cross, skull..."
+                   placeholder={t('ui.form_icon_placeholder')}
                    placeholderTextColor={C.muted}
                    autoCapitalize="none"
 
@@ -523,7 +527,7 @@ function FormModal({
             {/* ── SAVE ── */}
             <TouchableOpacity style={fm.saveBtn} onPress={handleSave} activeOpacity={0.85}>
               <Icon name="check-bold" size={18} color={C.text.inverse} />
-              <Text style={fm.saveTxt}>{initial ? ' GUARDAR ALTERAÇÕES' : ' CRIAR DIRETIVA'}</Text>
+              <Text style={fm.saveTxt}>{initial ? ` ${t('ui.form_save')}` : ` ${t('ui.form_create')}`}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
@@ -534,12 +538,12 @@ function FormModal({
         <SystemModal visible onRequestClose={() => setShowIconPicker(false)} useNativeModal={false}>
           <View style={ip.card}>
             <View style={ip.header}>
-              <Text style={ip.headerTxt}> BIBLIOTECA DE ÍCONES</Text>
+              <Text style={ip.headerTxt}> {t('ui.icon_library')}</Text>
               <TouchableOpacity onPress={() => setShowIconPicker(false)}>
                 <Icon name="close" size={18} color={C.muted} />
               </TouchableOpacity>
             </View>
-            <Text style={ip.hint}>Toca para selecionar. O nome preenche automaticamente.</Text>
+            <Text style={ip.hint}>{t('ui.icon_library_hint')}</Text>
             <FlatList
               data={ICON_GRID}
               keyExtractor={item => item}
@@ -593,7 +597,8 @@ function DefRow({
   C: any
 }) {
   const dr = getDRStyles(C);
-  const QUEST_TYPE_OPTS = getQuestTypeOpts(C);
+  const { t } = useTranslation('quests');
+  const QUEST_TYPE_OPTS = getQuestTypeOpts(C, t);
 
   const qtCfg = QUEST_TYPE_OPTS.find(o => o.value === def.questType) ?? QUEST_TYPE_OPTS[0];
 
@@ -629,6 +634,7 @@ function DefRow({
 
 export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
   const C = useTheme();
+  const { t } = useTranslation('quests');
   const s = getSStyles(C);
 
   const questDictionary = useGameStore(st => st.questDictionary);
@@ -674,7 +680,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
         {/* Header */}
         <View style={s.header}>
           <Icon name="hammer-wrench" size={16} color={C.gold} />
-          <Text style={s.headerTxt}> FORJA DE MISSÕES</Text>
+          <Text style={s.headerTxt}> {t('ui.forge_screen_title')}</Text>
            <TouchableOpacity onPress={onClose} style={s.closeBtn}>
              <Icon name="close" size={22} color={C.muted} />
            </TouchableOpacity>
@@ -687,7 +693,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
           <View style={s.actionRow}>
              <TouchableOpacity style={[s.actionBtn, s.resetBtn]} onPress={() => setShowReset(true)}>
                <Icon name="restore" size={14} color={C.muted} />
-               <Text style={[s.actionTxt, { color: C.muted }]}> RESTAURAR</Text>
+               <Text style={[s.actionTxt, { color: C.muted }]}> {t('ui.restore_btn')}</Text>
              </TouchableOpacity>
 
           </View>
@@ -699,15 +705,15 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
             activeOpacity={0.7}
           >
             <View style={[s.sectionDot, { backgroundColor: C.neonBlue }]} />
-            <Text style={s.sectionTitle}>CORE — DIÁRIAS FIXAS</Text>
+            <Text style={s.sectionTitle}>{t('ui.core_section_title')}</Text>
             <Text style={s.sectionCount}>{coreDefs.length}</Text>
             <Icon name={expandedSections.core ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} style={{ marginLeft: 'auto' }} />
           </TouchableOpacity>
-          <Text style={s.sectionSub}>Aparecem todos os dias (ou nos dias configurados).</Text>
+          <Text style={s.sectionSub}>{t('ui.core_section_sub')}</Text>
           {expandedSections.core && (
             <>
               {coreDefs.length === 0 && (
-                <Text style={s.empty}>Nenhuma missão core. Adiciona pelo menos uma.</Text>
+                <Text style={s.empty}>{t('ui.core_empty')}</Text>
               )}
               {coreDefs.map(def => (
                 <DefRow
@@ -727,17 +733,15 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
             activeOpacity={0.7}
           >
             <View style={[s.sectionDot, { backgroundColor: C.purple }]} />
-            <Text style={s.sectionTitle}>POOL — HÁBITOS ROTATIVOS</Text>
+            <Text style={s.sectionTitle}>{t('ui.pool_section_title')}</Text>
             <Text style={s.sectionCount}>{poolDefs.length}</Text>
             <Icon name={expandedSections.pool ? 'chevron-up' : 'chevron-down'} size={18} color={C.purple} style={{ marginLeft: 'auto' }} />
           </TouchableOpacity>
-          <Text style={s.sectionSub}>
-            Sorteados diariamente: 1 (Nvl 1–4) · 2 (Nvl 5–9) · 3 (Nvl 10+).
-          </Text>
+          <Text style={s.sectionSub}>{t('ui.pool_section_sub')}</Text>
           {expandedSections.pool && (
             <>
               {poolDefs.length === 0 && (
-                <Text style={s.empty}>Pool vazia. O Sistema não gerará hábitos rotativos.</Text>
+                <Text style={s.empty}>{t('ui.pool_empty')}</Text>
               )}
               {poolDefs.map(def => (
                 <DefRow
@@ -757,17 +761,15 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
             activeOpacity={0.7}
           >
             <View style={[s.sectionDot, { backgroundColor: C.neonRed }]} />
-            <Text style={s.sectionTitle}>BOSS — DESAFIOS ÉPICOS</Text>
+            <Text style={s.sectionTitle}>{t('ui.boss_section_title')}</Text>
             <Text style={s.sectionCount}>{bossDefs.length}</Text>
             <Icon name={expandedSections.boss ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonRed} style={{ marginLeft: 'auto' }} />
           </TouchableOpacity>
-          <Text style={s.sectionSub}>
-            Missões de alto risco. Ativadas manualmente pela Forja.
-          </Text>
+          <Text style={s.sectionSub}>{t('ui.boss_section_sub')}</Text>
           {expandedSections.boss && (
             <>
               {bossDefs.length === 0 && (
-                <Text style={s.empty}>Nenhum Boss criado. O Sistema aguarda um Monarca corajoso.</Text>
+                <Text style={s.empty}>{t('ui.boss_empty')}</Text>
               )}
               {bossDefs.map(def => (
                 <DefRow
@@ -785,7 +787,7 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
         {/* FAB */}
         <TouchableOpacity style={s.fab} onPress={() => setFormTarget('new')} activeOpacity={0.85}>
           <Icon name="plus" size={20} color={C.bg} />
-          <Text style={s.fabTxt}> CRIAR NOVA DIRETIVA</Text>
+          <Text style={s.fabTxt}> {t('ui.create_directive')}</Text>
         </TouchableOpacity>
 
       </View>
@@ -803,11 +805,9 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
       {/* ── Reset confirm modal ──────────────────────────────────────────── */}
       <CustomModal
         visible={showReset}
-        title="RESTAURAR PADRÕES"
-        message={
-          'Repõe o dicionário original do Sistema.\n\nToda a personalização será perdida permanentemente.'
-        }
-        confirmLabel="RESTAURAR"
+        title={t('ui.restore_defaults_title')}
+        message={t('ui.restore_defaults_message')}
+        confirmLabel={t('ui.restore_confirm')}
         confirmIcon="restore"
         confirmColor={C.neonRed}
         onConfirm={confirmReset}
@@ -820,11 +820,11 @@ export default function QuestForgeScreen({ onClose }: { onClose: () => void }) {
       {/* ── Delete directive confirm ──────────────────────────────────────── */}
       <SystemAlertModal
         visible={!!deleteTarget}
-        title="Apagar Diretiva"
-        message={`Remover "${deleteTarget?.title || ''}" do Sistema? As missões de hoje não serão afetadas.`}
+        title={t('ui.delete_directive_title')}
+        message={t('ui.delete_directive_message', { title: deleteTarget?.title || '' })}
         buttons={[
-          { text: 'Cancelar', style: 'cancel' },
-          { text: 'Apagar', style: 'destructive', onPress: () => { if (deleteTarget) {deleteQuestDefinition(deleteTarget.id);} } },
+          { text: t('ui.cancel'), style: 'cancel' },
+          { text: t('ui.delete'), style: 'destructive', onPress: () => { if (deleteTarget) {deleteQuestDefinition(deleteTarget.id);} } },
         ]}
         onClose={() => setDeleteTarget(null)}
         useNativeModal={false}

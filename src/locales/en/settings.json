@@ -1,0 +1,152 @@
+{
+  "header": "[ SYSTEM SETTINGS ]",
+  "sections": {
+    "missions": "MISSIONS",
+    "penalties": "PENALTIES & BLOCK",
+    "visual": "VISUAL",
+    "system": "SYSTEM",
+    "data": "DATA",
+    "about": "ABOUT"
+  },
+  "alerts": {
+    "backupDone": "BACKUP COMPLETE",
+    "backupDoneMsg": "Backup code copied to clipboard! Keep this code somewhere safe.",
+    "restoreDone": "RESTORE COMPLETE",
+    "restoreDoneMsg": "Soul imported successfully! You may need to restart if there are visual bugs.",
+    "error": "ERROR",
+    "exportError": "Failed to export backup. Try again.",
+    "importError": "Invalid or corrupted code. Make sure you copied it correctly.",
+    "understood": "UNDERSTOOD"
+  },
+  "difficulty": {
+    "sectionTitle": "SYSTEM RIGOR (DAILY MISSIONS)",
+    "infoText": "Controls how many missions are generated per day. Takes effect at the next daily reset or regeneration.",
+    "customLabel": "Missions per day",
+    "easy": {
+      "label": "EASY",
+      "sublabel": "Light Training Protocol",
+      "desc0": "· Maximum 3 missions per day",
+      "desc1": "· Ideal for starting out or tough days",
+      "desc2": "· Base rewards without scaling"
+    },
+    "normal": {
+      "label": "NORMAL",
+      "sublabel": "Standard System Protocol",
+      "desc0": "· 3 base missions + 1 per 10 levels (max 5)",
+      "desc1": "· Rewards scale with level",
+      "desc2": "· Recommended difficulty"
+    },
+    "hard": {
+      "label": "HARD",
+      "sublabel": "Shadow Monarch Protocol",
+      "desc0": "· 4 base missions + 1 per 5 levels (max 8)",
+      "desc1": "· For elite hunters",
+      "desc2": "· Amplified rewards and penalties"
+    },
+    "custom": {
+      "label": "CUSTOM",
+      "sublabel": "Set your own pace",
+      "desc0": "· Choose how many daily missions you want",
+      "desc1": "· Ideal for adjusting volume to your schedule",
+      "desc2": "· Maintains normal progression"
+    }
+  },
+  "intensity": {
+    "sectionTitle": "PUNISHMENT INTENSITY",
+    "infoText": "Sets the severity of penalties when failing daily missions. Punishment is calculated based on the number of failed missions.",
+    "activeProfile": "Active profile: {{label}} — {{sublabel}}",
+    "blockStart": "Block Start Hour",
+    "blockEnd": "Block End Hour",
+    "light": {
+      "label": "LIGHT",
+      "sublabel": "Lenient Protocol",
+      "desc0": "· XP Loss: ~3% per failed mission",
+      "desc1": "· 1 penalty mission",
+      "desc2": "· Streak kept (except full failure)",
+      "desc3": "· No app blocking"
+    },
+    "medium": {
+      "label": "MEDIUM",
+      "sublabel": "Standard Protocol",
+      "desc0": "· XP Loss: 10% + 1% per failure",
+      "desc1": "· 1–3 penalty missions",
+      "desc2": "· Streak reset to zero",
+      "desc3": "· App block if ≥50% failed"
+    },
+    "hardcore": {
+      "label": "HARDCORE",
+      "sublabel": "Monarch Protocol",
+      "desc0": "· XP Loss: 20% total",
+      "desc1": "· 2–4 penalty missions",
+      "desc2": "· Streak reset to zero",
+      "desc3": "· App blocking always active"
+    },
+    "custom": {
+      "label": "CUSTOM",
+      "sublabel": "Choose block duration",
+      "desc0": "· Set how many hours of blocking you want",
+      "desc1": "· Remaining logic stays balanced",
+      "desc2": "· Useful for irregular schedules"
+    }
+  },
+  "autoBlock": {
+    "sectionTitle": "PUNISHMENT: AUTO BLOCK",
+    "cardTitle": "App Blocking",
+    "cardDesc": "If enabled, failing daily missions will automatically block your selected apps. Time varies with difficulty:",
+    "bulletEasy": "EASY:",
+    "bulletEasyDetail": "6 Hours (1:00pm to 7:00pm)",
+    "bulletNormal": "NORMAL:",
+    "bulletNormalDetail": "12 Hours (10:00am to 10:00pm)",
+    "bulletHardcore": "HARDCORE:",
+    "bulletHardcoreDetail": "24 Hours (Full day)",
+    "toggleTitle": "Enable Auto Block",
+    "toggleSub": "Otherwise, only XP and Gold will be deducted."
+  },
+  "sideQuestPenalty": {
+    "sectionTitle": "SIDE QUESTS",
+    "infoText": "Daily tasks are a personal notepad — no rewards, cleared at midnight. Enable this option so incomplete tasks count as failures in the daily penalty.",
+    "rowLabel": "Side Quests penalize",
+    "rowSubActive": "[ ACTIVE — pending tasks add to failures ]",
+    "rowSubInactive": "Inactive — tasks have no impact on punishments"
+  },
+  "theme": {
+    "sectionTitle": "SYSTEM APPEARANCE",
+    "infoText": "Select the visual theme for your Monarch System. New themes are unlocked by ranking up or in the Shop."
+  },
+  "notifications": {
+    "sectionTitle": "SYSTEM",
+    "notificationsLabel": "Notifications",
+    "notificationsSub": "Daily alerts and System warnings",
+    "soundLabel": "Sound",
+    "soundSub": "Sound effects and audio feedback"
+  },
+  "backup": {
+    "sectionTitle": "SYSTEM DATABASE",
+    "infoText": "Export or restore your Shadow Monarch journey by copying an inviolable code.",
+    "exportBtn": "EXPORT SOUL (BACKUP)",
+    "importBtn": "IMPORT SOUL (RESTORE)"
+  },
+  "importModal": {
+    "title": "IMPORT SOUL",
+    "subtitle": "Paste your Base64 code below to overwrite the current database.",
+    "placeholder": "Backup Code...",
+    "cancel": "CANCEL",
+    "restore": "RESTORE"
+  },
+  "about": {
+    "sectionTitle": "ABOUT",
+    "version": "Version",
+    "versionVal": "LifUp OS v3",
+    "missionEngine": "Mission Engine",
+    "missionEngineVal": "Dynamic · Weekly Pool · Boss Raid",
+    "persistence": "Persistence",
+    "persistenceVal": "AsyncStorage · lifup-v3"
+  },
+  "restDay": {
+    "sectionTitle": "MONARCH'S REST",
+    "infoText": "Enable to declare today as a Rest Day. Missions appear dimmed and there will be no punishments at tomorrow's reset. Automatically disables at end of day.",
+    "rowLabel": "Rest Day",
+    "rowSubActive": "[ REST ACTIVE — no punishments today ]",
+    "rowSubInactive": "Inactive — normal missions"
+  }
+}

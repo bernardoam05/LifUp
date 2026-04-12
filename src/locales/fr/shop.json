@@ -1,0 +1,189 @@
+{
+  "items": {
+    "system_pass": {
+      "name": "Laissez-Passer du Système",
+      "description": "Complète automatiquement une Quête Quotidienne de ton choix.",
+      "lore": "\"Le Système accorde une dispense. Mais le corps n'oublie pas.\""
+    },
+    "xp_crystal": {
+      "name": "Cristal d'XP",
+      "description": "Tu absorbes l'énergie du cristal. +100 XP immédiat.",
+      "lore": "\"Vestige d'un donjon oublié. Il brille d'un pouvoir latent.\""
+    },
+    "health_potion": {
+      "name": "Potion de Récupération",
+      "description": "Restaure la motivation. Accorde +30 XP et +10 Gold immédiatement.",
+      "lore": "\"Elle a le goût de la détermination. Bois-la quand tes forces te font défaut.\""
+    },
+    "rest_scroll": {
+      "name": "Parchemin de Repos",
+      "description": "Réduit la pénalité du lendemain de 50%.",
+      "lore": "\"Même les plus grands Hunters ont besoin de repos stratégique.\""
+    },
+    "lagrima_purificacao": {
+      "name": "Larme de Purification",
+      "description": "Supprime immédiatement le debuff de pénalité actif.",
+      "lore": "\"Distillée de la douleur et de la rédemption. Une seconde chance que le Système accorde rarement.\""
+    },
+    "relogio_ampulheta": {
+      "name": "Sablier",
+      "description": "La prochaine Quête accomplie accorde le double d'XP.",
+      "lore": "\"Le temps se plie pour qui en est digne. Mais une seule fois.\""
+    },
+    "quebra_feiticos": {
+      "name": "Brise-Sorts",
+      "description": "Permet d'abandonner le Hardcore Focus Mode sans coût supplémentaire.",
+      "lore": "\"Forgé dans les profondeurs du donjon le plus sombre. Brise tout serment... à un prix déjà payé.\""
+    },
+    "loot_box": {
+      "name": "Coffre Mystérieux",
+      "description": "Un coffre scellé par la magie du Système. Peut contenir du Gold, de l'XP ou des Clés Rares.",
+      "lore": "\"Qu'y a-t-il à l'intérieur ? Seul le Système décide.\""
+    },
+    "theme_monarch": {
+      "name": "Thème : Monarque des Ombres",
+      "description": "Une interface noire et violet profond qui reflète le pouvoir absolu.",
+      "lore": "\"Lève-toi avec la couronne qui gouverne les morts.\""
+    },
+    "theme_blood": {
+      "name": "Thème : Nuit de Sang",
+      "description": "Une interface écarlate sombre pour les chasseurs implacables.",
+      "lore": "\"Assoiffé. Impitoyable. Prédateur.\""
+    },
+    "evolution_shard_common": {
+      "name": "Fragment d'Évolution",
+      "description": "Matériau de base pour faire évoluer n'importe quelle unité. Nécessaire dans toutes les améliorations.",
+      "lore": "\"La matière première de la croissance. Chaque fragment porte l'écho d'une bataille.\""
+    },
+    "void_crystal": {
+      "name": "Cristal du Vide",
+      "description": "Cristal rare des fissures dimensionnelles. Nécessaire pour faire évoluer des unités Knight+ ou aux jalons de niveau (×10).",
+      "lore": "\"Il existe entre les dimensions. Le Vide te regarde à travers lui.\""
+    },
+    "beast_core": {
+      "name": "Noyau de Bête",
+      "description": "Noyau extrait de créatures bestiales. Amplifie les unités de type Bête ou Insecte.",
+      "lore": "\"L'essence brute du prédateur. Il pulse d'un instinct impossible à apprivoiser.\""
+    },
+    "phantom_essence": {
+      "name": "Essence Fantôme",
+      "description": "Distillée des âmes du donjon. Nécessaire pour faire évoluer les ombres Mort-Vivant, Fantôme ou Démon.",
+      "lore": "\"Ce n'est pas la mort qui fait peur — c'est ce qui reste après elle.\""
+    },
+    "shadow_essence": {
+      "name": "Essence des Ombres",
+      "description": "Essence concentrée d'ombres capturées. Réinitialise la limite d'extraction d'ombres du jour, permettant une nouvelle extraction.",
+      "lore": "\"Les ténèbres ont un prix. Et parfois, elles te le rendent.\""
+    },
+    "blood_fallen": {
+      "name": "Sang des Tombés",
+      "description": "Collecté auprès des chasseurs tombés au combat. Active le buff : +25% Gold sur toutes les quêtes pendant 3 heures.",
+      "lore": "\"Le sang des faibles fertilise le chemin des forts.\""
+    },
+    "viper_venom": {
+      "name": "Venin de Vipère",
+      "description": "Extrait du Serpent Venimeux. Active le buff : +15% XP sur toutes les quêtes pendant 2 heures.",
+      "lore": "\"Le venin de la vipère ne tue pas — il transforme.\""
+    },
+    "crimson_knight_shard": {
+      "name": "Fragment du Chevalier Cramoisi",
+      "description": "Un fragment de l'armure du Chevalier Cramoisi. Active le buff : +20% XP sur toutes les quêtes pendant 1 heure.",
+      "lore": "\"Le Chevalier Cramoisi a servi en silence. Son fragment sert encore.\""
+    },
+    "cerberus_fang": {
+      "name": "Croc de Cerbère",
+      "description": "Dent du gardien de l'abîsse. Active le buff : +20% Gold sur toutes les quêtes pendant 2 heures.",
+      "lore": "\"Trois têtes, un destin : servir le Monarque.\""
+    },
+    "iron_will_crystal": {
+      "name": "Cristal de Volonté de Fer",
+      "description": "Cristallisation de détermination pure. Active le buff : +50% XP sur toutes les quêtes pendant 30 minutes.",
+      "lore": "\"La volonté du guerrier, transformée en pierre.\""
+    },
+    "lich_eye": {
+      "name": "Œil du Liche",
+      "description": "L'œil qui voit au-delà de la mort. Active le buff : +100% XP (double) sur toutes les quêtes pendant 1 heure.",
+      "lore": "\"Celui qui regarde la mort en face devient plus fort.\""
+    },
+    "dragon_scale": {
+      "name": "Écaille de Dragon",
+      "description": "Armure naturelle du roi des monstres. Active le buff : +30% XP sur toutes les quêtes pendant 4 heures.",
+      "lore": "\"Même le feu ne fond pas ce qui a été forgé dans le feu.\""
+    },
+    "crimson_knight_soul": {
+      "name": "Âme du Chevalier Cramoisi",
+      "description": "Vestige de l'essence du Chevalier Cramoisi. Active le buff : +25% XP pendant 2 heures.",
+      "lore": "\"Le Chevalier Cramoisi est mort à genoux. Son âme sert debout.\""
+    },
+    "cerberus_tooth": {
+      "name": "Dent de Cerbère",
+      "description": "Arrachée au gardien de l'abîsse à trois têtes. Active le buff : +25% Gold pendant 2 heures.",
+      "lore": "\"Trois têtes, une fin. Ses dents gardent le secret de l'Abîsse.\""
+    }
+  },
+  "ui": {
+    "sold_out": "ÉPUISÉ",
+    "per_week": "{{count}}/semaine",
+    "no_gold": "PAS DE GOLD",
+    "buy": "ACHETER",
+    "shop_title": "BOUTIQUE DU SYSTÈME",
+    "shop_subtitle": "Dépense de l'or pour booster ton voyage, Hunter.",
+    "gold_available": "{{amount}} Gold disponible",
+    "daily_bonus": "BONUS QUOTIDIEN",
+    "ad_gold_desc": "Regarde une publicité volontaire et reçois 500 Gold.",
+    "limit_reached": "LIMITE ATTEINTE",
+    "loading": "CHARGEMENT...",
+    "watch_ad_gold": "VOIR PUB → +500 GOLD",
+    "watch_ad_item": "VOIR PUB → ITEM ALÉATOIRE ({{count}}/{{max}})",
+    "item_added_inventory": "{{itemName}} ajouté à l'inventaire !",
+    "item_added_success": "Item ajouté à l'inventaire !",
+    "army_available": "ARMÉE DISPONIBLE",
+    "shadow_recruitment": "RECRUTEMENT D'OMBRES",
+    "shadow_recruitment_subtitle": "Libère le pouvoir des ténèbres pour un prix en Gold.",
+    "locked_level": "Débloqué après avoir atteint le Niveau 10",
+    "confirm_purchase": "CONFIRMER L'ACHAT",
+    "confirm_purchase_msg": "Acheter \"{{name}}\" pour {{cost}} Gold ?\n\n{{description}}",
+    "confirm_purchase_msg_bulk": "Acheter {{quantity}}x \"{{name}}\" pour {{cost}} Gold ?\n\n{{description}}",
+    "recruit_shadow": "RECRUTER UNE OMBRE",
+    "evolve_shadow": "FAIRE ÉVOLUER L'OMBRE",
+    "confirm_recruit_msg": "Confirmer le recrutement de \"{{name}}\" pour {{cost}} Gold ?\n\n{{effect}}",
+    "confirm_evolve_msg": "Confirmer l'évolution de \"{{name}}\" pour {{cost}} Gold ?\n\n{{effect}}",
+    "confirm": "CONFIRMER",
+    "inventory_title": "INVENTAIRE",
+    "items_count": "{{count}} objets",
+    "key_vault": "COFFRE DES CLÉS",
+    "keys_count_one": "{{count}} clé conservée",
+    "keys_count_other": "{{count}} clés conservées",
+    "no_keys": "Aucune clé",
+    "items_section": "OBJETS",
+    "inventory_empty_title": "INVENTAIRE VIDE",
+    "inventory_empty_desc": "Visite la Boutique du Système pour acquérir des objets.",
+    "use": "UTILISER",
+    "use_item_title": "UTILISER L'OBJET",
+    "use_item_msg": "Utiliser \"{{name}}\" ?\n\n{{description}}",
+    "cancel": "ANNULER",
+    "quest_picker_title": "CHOISIR LA QUÊTE",
+    "quest_picker_sub": "Le Laissez-Passer du Système complétera cette quête automatiquement.",
+    "quests_all_done": "Toutes les quêtes sont déjà terminées !",
+    "upgrade_material_hint": "Utilise dans Ombres pour évoluer",
+    "feedback_upgrade_material": "Matériau d'évolution — utilise sur l'écran des Ombres pour évoluer",
+    "feedback_xp": "+{{xp}} XP absorbé !",
+    "feedback_xp_gold": "+{{xp}} XP et +{{gold}} Gold absorbé !",
+    "feedback_level_up": "+{{xp}} XP — LEVEL UP !",
+    "feedback_level_up_gold": "+{{xp}} XP et +{{gold}} Gold — LEVEL UP !",
+    "feedback_reduce_penalty": "Parchemin activé ! Pénalité de demain réduite de 50%.",
+    "feedback_remove_penalty": "Pénalité supprimée ! Le Système a purifié ton registre.",
+    "feedback_xp_boost": "Sablier activé ! La prochaine quête accorde le double d'XP.",
+    "feedback_loot_box": "Coffre ouvert ! Vérifie ta récompense...",
+    "feedback_no_loot_box": "Aucun coffre disponible !",
+    "feedback_no_hardcore": "Aucun Mode Hardcore actif à briser.",
+    "feedback_break_hardcore": "Serment brisé ! Tu peux arrêter le Focus Mode librement.",
+    "feedback_shadow_essence": "Le Système a cédé ! Une nouvelle ombre a été invoquée.",
+    "feedback_buff": "Buff actif : +{{pct}}% {{stat}} pendant {{duration}} !",
+    "feedback_item_used": "Consommable activé !",
+    "feedback_generic_used": "Objet utilisé avec succès !",
+    "feedback_quest_done": "Quête complétée par le Système !",
+    "stat_xp": "XP",
+    "stat_gold": "Gold"
+  }
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Switch, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme, SPACING, FONT } from '../../theme';
 
 interface SideQuestPenaltySettingsProps {
@@ -13,33 +14,31 @@ const SideQuestPenaltySettings = ({
   onToggle,
 }: SideQuestPenaltySettingsProps) => {
   const C = useTheme();
+  const { t } = useTranslation('settings');
   const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View>
       <View style={s.sectionHeader}>
         <View style={[s.sectionDot, { backgroundColor: C.purple }]} />
-        <Text style={s.sectionTitle}>TAREFAS SECUNDÁRIAS</Text>
+        <Text style={s.sectionTitle}>{t('sideQuestPenalty.sectionTitle')}</Text>
       </View>
 
       <View style={s.infoBox}>
         <Icon name="information-outline" size={12} color={C.muted} />
-        <Text style={s.infoTxt}>
-          {' '}As tarefas do dia são um bloco de notas pessoal — sem recompensas, apagam-se à meia-noite.
-          Ativa esta opção para que tarefas não concluídas contem como falhas na penalização diária.
-        </Text>
+        <Text style={s.infoTxt}>{' '}{t('sideQuestPenalty.infoText')}</Text>
       </View>
 
       <View style={[s.row, { borderColor: sideQuestPenalize ? C.neonRed + '44' : C.border, backgroundColor: sideQuestPenalize ? C.neonRed + '08' : C.panel }]}>
         <Icon name="format-list-checks" size={18} color={sideQuestPenalize ? C.neonRed : C.dimmed} />
         <View style={s.rowInfo}>
           <Text style={[s.rowLabel, { color: sideQuestPenalize ? C.neonRed : C.muted }]}>
-            Secundárias penalizam
+            {t('sideQuestPenalty.rowLabel')}
           </Text>
           <Text style={s.rowSub}>
             {sideQuestPenalize
-              ? '[ ATIVO — tarefas por fazer somam às falhas ]'
-              : 'Inativo — tarefas sem impacto em punições'}
+              ? t('sideQuestPenalty.rowSubActive')
+              : t('sideQuestPenalty.rowSubInactive')}
           </Text>
         </View>
         <Switch

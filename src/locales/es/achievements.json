@@ -1,0 +1,286 @@
+{
+  "items": {
+    "streak_chain": {
+      "title": "Llama del Cazador",
+      "description": "Mantén el streak de misiones diarias. La llama del Monarca no debe apagarse."
+    },
+    "streak_phoenix": {
+      "title": "Fénix de las Cenizas",
+      "description": "Perdiste un streak de más de 10 días y volviste a alcanzar 3 días de nuevo."
+    },
+    "streak_scroll_save": {
+      "title": "Estratega",
+      "description": "Usa el Pergamino de Descanso para proteger un streak de 7+ días."
+    },
+    "focus_hours": {
+      "title": "Fortaleza Mental",
+      "description": "Acumula horas en modo de foco. La mente del Monarca no conoce límites."
+    },
+    "focus_sessions": {
+      "title": "Disciplina de Hierro",
+      "description": "Completa sesiones de Focus Mode. El Monarca entrena la mente sin parar."
+    },
+    "focus_night_owl": {
+      "title": "Búho Nocturno",
+      "description": "Inicia el Focus Mode después de la 01:00 de la madrugada."
+    },
+    "focus_hardcore_surrender": {
+      "title": "Arrepentimiento Frío",
+      "description": "Intentaste salir del Hardcore Focus Mode pero volviste atrás en el modal de confirmación."
+    },
+    "focus_crimson_knight": {
+      "title": "Trono Conquistado",
+      "description": "Completa el desafío Boss \"El Voto del Caballero\" (90 min de foco)."
+    },
+    "focus_long_session": {
+      "title": "Ultra Foco",
+      "description": "Completa una sesión de Focus Mode con 2 o más horas de duración."
+    },
+    "boss_slayer": {
+      "title": "Terror de las Mazmorras",
+      "description": "Derrota Boss Raids. La leyenda del Monarca de las Sombras se extiende por todo el reino."
+    },
+    "boss_runner": {
+      "title": "El Veneno No Me Alcanza",
+      "description": "Completa el Boss \"Veneno de la Víbora\" (5km GPS run)."
+    },
+    "boss_cerberus": {
+      "title": "Más Fuerte que Tres",
+      "description": "Completa el Boss \"Rugido de Cerbero\" (100+100+30 físico)."
+    },
+    "boss_omega_slayer": {
+      "title": "Cortocircuito",
+      "description": "Completa el Boss \"Arma Omega (S-Rank)\" demostrando tu resistencia insana."
+    },
+    "boss_eclipse_survivor": {
+      "title": "Superviviente del Vacío",
+      "description": "Completa el Boss \"Eclipse Cósmico (S-Rank)\". Absorbiste conocimiento puro bajo presión."
+    },
+    "boss_seraph_fall": {
+      "title": "Ángel Dorado Roto",
+      "description": "Completa el Boss \"Hoja Serafín Caído (S-Rank)\". Doblaste la luz sagrada con tu Sombra."
+    },
+    "boss_archlich_prime": {
+      "title": "Corona del Archlich",
+      "description": "Completa el Boss \"Archlich Primordial (S-Rank)\". El ritual antiguo ahora obedece al Monarca."
+    },
+    "boss_soul_reaper": {
+      "title": "Segador del Vacío",
+      "description": "Completa el Boss \"Segador de Almas (S-Rank)\". Ninguna esencia te escapa."
+    },
+    "boss_astral_nebula": {
+      "title": "Rey de las Nebulosas",
+      "description": "Completa el Boss \"Rey Nebulosa (S-Rank)\". Caminaste entre estrellas sin vacilar."
+    },
+    "dungeon_break_hunter": {
+      "title": "Defensor de Portales",
+      "description": "Detén los Dungeon Breaks. El caos no tiene lugar donde pisa el Monarca."
+    },
+    "event_halloween_reaper": {
+      "title": "Segador de Otoño",
+      "description": "Derrota al Boss del evento de Halloween. La niebla abre camino para el Monarca."
+    },
+    "event_winter_lich": {
+      "title": "Corona del Solsticio",
+      "description": "Derrota al Boss del evento de Invierno. La noche más larga se doblegó."
+    },
+    "event_summer_titan": {
+      "title": "Furia del Sol",
+      "description": "Derrota al Boss del evento de Verano. El calor extremo fortaleció tu voluntad."
+    },
+    "event_new_year_ashen": {
+      "title": "Renacimiento de las Cenizas",
+      "description": "Derrota al Boss de Año Nuevo. El nuevo comienzo fue sellado por tu sombra."
+    },
+    "event_valentine_oath": {
+      "title": "Juramento Carmesí",
+      "description": "Derrota al Boss de San Valentín. La promesa fue grabada en el Sistema."
+    },
+    "event_carnival_mask": {
+      "title": "Máscara del Caos",
+      "description": "Derrota al Boss de Carnaval. El caos bailó a tu favor."
+    },
+    "event_equinox_guardian": {
+      "title": "Guardián del Equilibrio",
+      "description": "Derrota al Boss del Equinoccio. Mantuviste el equilibrio perfecto."
+    },
+    "event_easter_hare": {
+      "title": "Salto de Pascua",
+      "description": "Derrota al Boss de Pascua. El salto de la luz fue tuyo."
+    },
+    "event_spring_bloom": {
+      "title": "Flor del Renacimiento",
+      "description": "Derrota al Boss de Primavera. La vida floreció en tu sendero."
+    },
+    "event_harvest_king": {
+      "title": "Rey de la Cosecha",
+      "description": "Derrota al Boss de la Cosecha. La abundancia pertenece al Monarca."
+    },
+    "event_black_friday_merchant": {
+      "title": "Mercader de la Sombra",
+      "description": "Derrota al Boss de Black Friday. El oro obedece."
+    },
+    "event_yule_seraph": {
+      "title": "Serafín del Yule",
+      "description": "Derrota al Boss del Yule. La noche sagrada cedió."
+    },
+    "event_midnight_wraith": {
+      "title": "Wraith de Medianoche",
+      "description": "Derrota al Boss de las Noches Largas. La oscuridad ya no te domina."
+    },
+    "event_festival_drake": {
+      "title": "Drake del Festival",
+      "description": "Derrota al Boss del Festival. La llama celebró contigo."
+    },
+    "level_chain": {
+      "title": "Ascensión del Cazador",
+      "description": "Aumenta tu nivel. El poder del Monarca de las Sombras no conoce techo."
+    },
+    "secret_monarch": {
+      "title": "Monarca de las Sombras",
+      "description": "Alcanza el Nivel 20. El título de Monarca de las Sombras es oficialmente otorgado por el Sistema."
+    },
+    "shadow_army": {
+      "title": "Ejército de las Sombras",
+      "description": "Recoge sombras para tu ejército. El Monarca los comanda a todos."
+    },
+    "shadow_elite": {
+      "title": "Vanguardia de las Sombras",
+      "description": "Ten 3 o más sombras activas simultáneamente en el campo de batalla."
+    },
+    "quests_perfect": {
+      "title": "Sin Fallos",
+      "description": "Completa todos los días sin fallar una misión. El Sistema observa tu disciplina."
+    },
+    "quests_total": {
+      "title": "Guerrero Imparable",
+      "description": "Completa misiones diarias en total. Cada misión forja al Monarca."
+    },
+    "quests_perfect_week": {
+      "title": "Semana Perfecta",
+      "description": "Completa todas las misiones durante una semana entera."
+    },
+    "extra_quest_first": {
+      "title": "Iniciativa Propia",
+      "description": "Completa tu primera Misión Extra."
+    },
+    "extra_quest_chain": {
+      "title": "Agente de Campo",
+      "description": "Completa Misiones Extra en total. El Monarca no se limita al Sistema."
+    },
+    "extra_quest_daily_all": {
+      "title": "La Agenda del Cazador",
+      "description": "Completa TODAS las Misiones Extra disponibles en un solo día."
+    },
+    "login_chain": {
+      "title": "Presencia del Monarca",
+      "description": "Abre la app diariamente. El Sistema registra tu constancia a lo largo del tiempo."
+    },
+    "economy_first_purchase": {
+      "title": "Cazador Consumidor",
+      "description": "Compra tu primer artículo en la Tienda del Sistema."
+    },
+    "economy_system_pass": {
+      "title": "Privilegio Caro",
+      "description": "Usa el Pase del Sistema para saltar una misión diaria."
+    },
+    "economy_lagrima_clutch": {
+      "title": "Resurrección",
+      "description": "Usa la Lágrima de Purificación mientras la penalidad está activa."
+    },
+    "economy_reloj": {
+      "title": "El Tiempo es Oro",
+      "description": "Usa el Reloj de Arena durante una Boss Raid."
+    },
+    "economy_hoarder": {
+      "title": "El Avaro del Sistema",
+      "description": "Acumula 5000 Gold sin gastar. El Sistema nota tu paciencia infinita."
+    },
+    "economy_spender": {
+      "title": "Invierte en el Sistema",
+      "description": "Gasta 3000 Gold total en la Tienda a lo largo del tiempo."
+    },
+    "economy_big_spender": {
+      "title": "Mecenas del Sistema",
+      "description": "Gasta oro en la tienda en total. El Sistema prospera con tu dedicación."
+    },
+    "clutch_last_minute": {
+      "title": "Al Borde de la Muerte",
+      "description": "Completa la última misión diaria con menos de 30 minutos para la medianoche."
+    },
+    "clutch_late_night": {
+      "title": "Ignorando el Sistema",
+      "description": "Completa la última misión diaria entre las 23:30 y las 23:59."
+    },
+    "clutch_undo_redo": {
+      "title": "Comprometido con la Exactitud",
+      "description": "Deshaz una misión y vuelve a completarla el mismo día."
+    },
+    "rebellion_spam": {
+      "title": "Rebelión",
+      "description": "Intentaste abrir una app bloqueada 5 veces en menos de 1 minuto. El Sistema nota tu debilidad."
+    },
+    "rebellion_resist": {
+      "title": "Tentación Resistida",
+      "description": "Intentaste abrir una app bloqueada y desististe. El Sistema aprueba."
+    },
+    "rebellion_c_rank": {
+      "title": "Suerte de Rank S",
+      "description": "La ruleta asigna Rank C a tu primera Side Quest."
+    },
+    "penalty_first": {
+      "title": "Castigado por el Sistema",
+      "description": "Entras en la Zona de Penalidad por primera vez. El Sistema esperaba más."
+    },
+    "penalty_cleared": {
+      "title": "Redención",
+      "description": "Elimina una penalidad activa (por cualquier medio)."
+    },
+    "penalty_comeback": {
+      "title": "Resurgimiento",
+      "description": "Completa todas las misiones al día siguiente de una penalidad activa."
+    },
+    "penalty_veteran": {
+      "title": "Veterano del Vacío",
+      "description": "Sobreviviste 5 penalidades y volviste más fuerte. El vacío no te consume."
+    },
+    "dawn_warrior": {
+      "title": "Guerrero del Amanecer",
+      "description": "Completa una misión antes de las 07:00 de la mañana."
+    },
+    "secret_first_day": {
+      "title": "El Viaje Comienza",
+      "description": "Completa todas las misiones en tu primer día como cazador."
+    },
+    "secret_all_bosses": {
+      "title": "Cazador Completo",
+      "description": "Completa un boss de cada tipo: GPS (Víbora), Foco (Caballero) y Entrenamiento (Cerbero)."
+    },
+    "shadow_collector_10": {
+      "title": "Señor del Ejército",
+      "description": "Adquiere 10 Sombras Diferentes."
+    },
+    "perfect_week_1": {
+      "title": "Semana Dorada",
+      "description": "Una semana entera de misiones completadas sin fallos."
+    },
+    "level_50_milestone": {
+      "title": "A Mitad de Camino",
+      "description": "Alcanza el Nivel 50 como Cazador."
+    },
+    "boss_slayer_20": {
+      "title": "Terror de los Bosses",
+      "description": "Derrota 20 Bosses en total."
+    },
+    "dungeon_master_50": {
+      "title": "Maestro de la Mazmorra",
+      "description": "Derrota 50 Bosses en total."
+    }
+  },
+  "ui": {
+    "system_label": "SISTEMA",
+    "header": "ACHIEVEMENT DESBLOQUEADO",
+    "gold_reward": "+{{amount}} Gold",
+    "dismiss_btn": "GLORIA AL CAZADOR"
+  }
+}

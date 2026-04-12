@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { DungeonMission, getDailyBossMissions, RAID_BOSSES } from '../data/bosses';
 import { getKeyByBossId } from '../data/dungeonKeys';
 import { SHADOW_MAP, getBossDropPreview } from '../data/shadows';
@@ -63,6 +64,7 @@ export default function DailyBossDungeonModal({
   playerKeys,
   C,
 }: DailyBossDungeonModalProps) {
+  const { t } = useTranslation('modals');
   const insets = useSafeAreaInsets();
   const dm = getDMStyles(C);
   const dailyMissions = customMissions.length > 0 ? [...customMissions] : getDailyBossMissions(C);
@@ -75,14 +77,12 @@ export default function DailyBossDungeonModal({
             <Icon name="gate" size={32} color={C.neonRed} />
           </View>
           <View style={dm.headerBadge}>
-            <Text style={dm.headerBadgeTxt}>PORTAL DIÁRIO DE BOSS</Text>
+            <Text style={dm.headerBadgeTxt}>{t('daily_boss.portal_badge')}</Text>
           </View>
           <Text style={dm.title} numberOfLines={2}>
-            {dailyMissions.length > 0 ? `[ ${dailyMissions[0].label.toUpperCase()} ]` : '[ PORTAL DIÁRIO ]'}
+            {dailyMissions.length > 0 ? `[ ${dailyMissions[0].label.toUpperCase()} ]` : t('daily_boss.daily_portal')}
           </Text>
-          <Text style={dm.sub}>
-            Completa a Missão do Boss Diário para ganhares XP, Gold e extraíres a sua Sombra.
-          </Text>
+          <Text style={dm.sub}>{t('daily_boss.sub')}</Text>
         </View>
 
         <ScrollView style={{ width: '100%', maxHeight: 400 }} contentContainerStyle={{ alignItems: 'center' }} showsVerticalScrollIndicator={false}>
@@ -104,7 +104,7 @@ export default function DailyBossDungeonModal({
                 </View>
                 <View style={dm.missionInfo}>
                   <Text style={[dm.missionLabel, { color: m.color }]}>
-                    {isDefeated ? '[ BOSS DERROTADO ]' : m.label}
+                    {isDefeated ? t('daily_boss.boss_defeated') : m.label}
                   </Text>
                   <Text style={dm.missionDetail}>{m.detail}</Text>
                   {!isDefeated && (
@@ -112,19 +112,19 @@ export default function DailyBossDungeonModal({
                       <View style={dm.shadowExtractTag}>
                         <Icon name="ghost" size={9} color={C.purple} />
                         <Text style={dm.shadowExtractTxt}>
-                          {' '}Sombra: {m.customShadow?.name ?? (getBossDropPreview(m.shadowHint)?.name ?? getBossName(m.shadowHint))}
+                          {' '}{t('daily_boss.shadow_label', { name: m.customShadow?.name ?? (getBossDropPreview(m.shadowHint)?.name ?? getBossName(m.shadowHint)) })}
                         </Text>
                       </View>
                       {!hasKey && key && (
                         <View style={[dm.shadowExtractTag, { borderColor: C.neonRed + '66' }]}>
                           <Icon name="key-remove" size={9} color={C.neonRed} />
-                          <Text style={[dm.shadowExtractTxt, { color: C.neonRed }]}> CHAVE EM FALTA</Text>
+                          <Text style={[dm.shadowExtractTxt, { color: C.neonRed }]}> {t('daily_boss.key_missing')}</Text>
                         </View>
                       )}
                       {hasKey && key && !isDefeated && (
                         <View style={[dm.shadowExtractTag, { borderColor: C.gold + '66' }]}>
                           <Icon name="key-check" size={9} color={C.gold} />
-                          <Text style={[dm.shadowExtractTxt, { color: C.gold }]}> MASTER KEY PRONTA</Text>
+                          <Text style={[dm.shadowExtractTxt, { color: C.gold }]}> {t('daily_boss.master_key_ready')}</Text>
                         </View>
                       )}
                     </View>
@@ -136,7 +136,7 @@ export default function DailyBossDungeonModal({
         </ScrollView>
 
         <TouchableOpacity style={dm.cancelBtn} onPress={onClose}>
-          <Text style={dm.cancelTxt}>RECUAR</Text>
+          <Text style={dm.cancelTxt}>{t('daily_boss.back')}</Text>
         </TouchableOpacity>
       </View>
     </BottomSheetModal>

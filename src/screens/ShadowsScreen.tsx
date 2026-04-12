@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SystemModal from '../components/SystemModal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore, { ShadowEntry, getShadowReleaseGold } from '../store/useGameStore';
 import { getShadowUpgradeCost } from '../store/helpers';
 import {
@@ -18,41 +19,26 @@ import { useTheme, FONT, SPACING } from '../theme';
 const MAX_ACTIVE = 3;
 const RANK_ORDER: ShadowRank[] = ['Marshal', 'Commander', 'Knight', 'Elite', 'Normal'];
 
-const RANK_LABELS: Record<ShadowRank, string> = {
-  Marshal:   'MARECHAL',
-  Commander: 'COMANDANTE',
-  Knight:    'CAVALEIRO',
-  Elite:     'ELITE',
-  Normal:    'NORMAL',
+const RANK_LABEL_KEYS: Record<ShadowRank, string> = {
+  Marshal:   'rank_marshal',
+  Commander: 'rank_commander',
+  Knight:    'rank_knight',
+  Elite:     'rank_elite',
+  Normal:    'rank_normal',
 };
 
-const RANK_SHORT: Record<ShadowRank, string> = {
-  Marshal:   'MAR',
-  Commander: 'COM',
-  Knight:    'CAV',
-  Elite:     'ELI',
-  Normal:    'NOR',
-};
-
-const PASSIVE_LABELS: Record<PassiveEffectType, string> = {
-  gold_boost:        'Bónus de Gold',
-  xp_boost:         'Bónus de XP',
-  penalty_immunity: 'Imunidade a Penalidade',
-  penalty_reduce:   'Redução de Penalidade',
-  streak_protect:   'Proteção de Streak',
-  shop_discount:    'Desconto na Loja',
-  focus_mastery:    'Maestria de Focus',
-  boss_bonus_xp:    'Bónus XP de Boss',
-  arise_resonance:  'Ressonância de Arise',
-  loot_perception:  'Percepção de Loot',
-  daily_bonus:      'XP Diário Grátis',
-  all_stats_boost:  'Bónus Global (XP/Gold)',
+const RANK_SHORT_KEYS: Record<ShadowRank, string> = {
+  Marshal:   'rank_mar',
+  Commander: 'rank_com',
+  Knight:    'rank_cav',
+  Elite:     'rank_eli',
+  Normal:    'rank_nor',
 };
 
 type SortKey = 'rank' | 'level' | 'favorite';
 type FilterKey = 'all' | 'favorite' | ShadowRank;
 
-function formatPassiveValue(type: PassiveEffectType, value: number): string {
+function formatPassiveValue(type: PassiveEffectType, value: number, t?: (k: string) => string): string {
   switch (type) {
     case 'gold_boost':
     case 'xp_boost':
@@ -63,17 +49,17 @@ function formatPassiveValue(type: PassiveEffectType, value: number): string {
       return `-${Math.round(value * 100)}%`;
     case 'penalty_immunity':
     case 'streak_protect':
-      return `${value}× / semana`;
+      return `${value} ${t ? t('ui.per_week') : '× / semana'}`;
     case 'focus_mastery':
-      return `-${Math.round(value * 100)}% tempo`;
+      return `-${Math.round(value * 100)}% ${t ? t('ui.focus_time') : 'tempo'}`;
     case 'arise_resonance':
-      return `+${Math.round(value * 100)}% extração`;
+      return `+${Math.round(value * 100)}% ${t ? t('ui.extraction_rate') : 'extração'}`;
     case 'loot_perception':
-      return `+${Math.round(value * 100)}% loot`;
+      return `+${Math.round(value * 100)}% ${t ? t('ui.loot_bonus') : 'loot'}`;
     case 'daily_bonus':
       return `+${value} XP / dia`;
     case 'all_stats_boost':
-      return `+${Math.round(value * 100)}% Global`;
+      return `+${Math.round(value * 100)}% ${t ? t('ui.global_bonus') : 'Global'}`;
     default:
       return String(value);
   }
@@ -86,17 +72,16 @@ function scaledValue(base: number, level: number): number {
 // ── Locked screen ─────────────────────────────────────────────────────────────
 
 function LockedScreen({ currentLevel, C }: { currentLevel: number; C: any }) {
+  const { t } = useTranslation('shadows');
   const lk = getLKStyles(C);
   return (
     <View style={lk.container}>
       <View style={lk.glowWrap}>
         <Icon name="skull-crossbones" size={72} color="#ef4444" style={lk.icon} />
       </View>
-      <Text style={lk.title}>SALA DO TRONO</Text>
+      <Text style={lk.title}>{t('ui.locked_title')}</Text>
       <View style={lk.divider} />
-      <Text style={lk.body}>
-        {'O teu corpo ainda é demasiado\nfraco para suportar a Morte.\n\nAtinge o Nível 10 para o\nDespertar.'}
-      </Text>
+      <Text style={lk.body}>{t('ui.locked_body')}</Text>
       <View style={lk.progressRow}>
         <View style={lk.progressTrack}>
           <View style={[lk.progressFill, { width: `${(currentLevel / 10) * 100}%` as any }]} />
@@ -105,7 +90,7 @@ function LockedScreen({ currentLevel, C }: { currentLevel: number; C: any }) {
       </View>
       <View style={lk.sealRow}>
         <Icon name="lock" size={11} color="#ef444466" />
-        <Text style={lk.sealTxt}> DESPERTAR BLOQUEADO</Text>
+        <Text style={lk.sealTxt}> {t('ui.locked_seal')}</Text>
       </View>
     </View>
   );
@@ -126,6 +111,7 @@ function PassiveSummaryCard({
   onVanguardPress: (shadowId: string) => void
   C: any
 }) {
+  const { t } = useTranslation('shadows');
   const ps = getPSStyles(C);
   const activeEntries = entries.filter(e => activeShadowIds.includes(e.id));
 
@@ -133,7 +119,7 @@ function PassiveSummaryCard({
     return (
       <View style={ps.emptyContainer}>
         <Icon name="sword-off" size={14} color={C.dimmed} />
-        <Text style={ps.emptyTxt}> Nenhuma unidade na Vanguarda — passivas inativas</Text>
+        <Text style={ps.emptyTxt}> {t('ui.no_vanguard')}</Text>
       </View>
     );
   }
@@ -151,7 +137,7 @@ function PassiveSummaryCard({
     <View style={ps.container}>
       <View style={ps.header}>
         <Icon name="shield-sword" size={12} color={C.gold} />
-        <Text style={ps.title}> VANGUARDA ({activeEntries.length}/{MAX_ACTIVE})</Text>
+        <Text style={ps.title}> {t('ui.vanguard')} ({activeEntries.length}/{MAX_ACTIVE})</Text>
       </View>
 
       {/* Clickable vanguard slots */}
@@ -188,14 +174,14 @@ function PassiveSummaryCard({
         <View style={ps.grid}>
           {rows.map(([type, value]) => (
             <View key={type} style={ps.row}>
-              <Text style={ps.label}>{PASSIVE_LABELS[type]}</Text>
-              <Text style={ps.value}>{formatPassiveValue(type, value)}</Text>
+              <Text style={ps.label}>{t(`passive_types.${type}`)}</Text>
+              <Text style={ps.value}>{formatPassiveValue(type, value, t)}</Text>
             </View>
           ))}
         </View>
       )}
 
-      <Text style={ps.note}>{entries.length} unidades na coleção</Text>
+      <Text style={ps.note}>{entries.length} {t('ui.units_in_collection')}</Text>
     </View>
   );
 }
@@ -208,6 +194,7 @@ function ReleaseConfirmModal({
   shadow: Shadow; gold: number; onConfirm: () => void; onCancel: () => void; C: any
 }) {
   const rel = getRELStyles(C);
+  const { t } = useTranslation('shadows');
   const isCustom  = (shadow as any).type === 'Custom';
   const rankColor = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank];
 
@@ -215,23 +202,23 @@ function ReleaseConfirmModal({
     <SystemModal visible onRequestClose={onCancel}>
       <View style={rel.card}>
         <Icon name="alert-circle-outline" size={36} color={C.neonRed} style={{ marginBottom: SPACING.sm }} />
-        <Text style={rel.title}>LIBERTAR UNIDADE</Text>
+        <Text style={rel.title}>{t('ui.release_unit')}</Text>
         <View style={[rel.shadowRow, { borderColor: rankColor + '44', backgroundColor: rankColor + '0d' }]}>
           <Icon name={shadow.icon} size={20} color={rankColor} />
           <Text style={[rel.shadowName, { color: rankColor }]}>{shadow.name}</Text>
         </View>
         <Text style={rel.warning}>
           {gold > 0
-            ? `Recebes ${gold}G mas a unidade é libertada permanentemente.\nSe a recuperares, voltará ao Nível 1.`
-            : 'Unidades custom não têm valor. Será libertada permanentemente.\nSe a recuperares, voltará ao Nível 1.'}
+            ? t('ui.release_warning_gold', { gold })
+            : t('ui.release_warning_no_gold')}
         </Text>
         <View style={rel.btnRow}>
           <TouchableOpacity style={rel.cancelBtn} onPress={onCancel}>
-            <Text style={rel.cancelTxt}>CANCELAR</Text>
+            <Text style={rel.cancelTxt}>{t('ui.cancel')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={rel.confirmBtn} onPress={onConfirm}>
             <Icon name="sword-cross" size={14} color={C.neonRed} />
-            <Text style={rel.confirmTxt}> LIBERTAR{gold > 0 ? ` +${gold}G` : ''}</Text>
+            <Text style={rel.confirmTxt}> {t('ui.release_unit_btn')}{gold > 0 ? ` +${gold}G` : ''}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -263,6 +250,7 @@ function ShadowDetailModal({
   C: any
 }) {
   const dm = getDMStyles(C);
+  const { t } = useTranslation('shadows');
   const level      = entry.level;
   const isFavorite = !!entry.isFavorite;
   const isCustom   = (shadow as any).type === 'Custom';
@@ -297,7 +285,7 @@ function ShadowDetailModal({
         {isActive && (
           <View style={[dm.activeBadge, { borderColor: '#facc15', backgroundColor: '#facc1518' }]}>
             <Icon name="shield-sword" size={10} color="#facc15" />
-            <Text style={dm.activeBadgeTxt}> VANGUARDA ATIVA</Text>
+            <Text style={dm.activeBadgeTxt}> {t('ui.vanguard_active_badge')}</Text>
           </View>
         )}
 
@@ -314,7 +302,7 @@ function ShadowDetailModal({
         {/* Rank badge */}
         <View style={[dm.rankBadge, { borderColor: rankColor }]}>
           <Text style={[dm.rankTxt, { color: rankColor }]}>
-            {isCustom ? 'CUSTOM' : RANK_LABELS[shadow.rank as ShadowRank]}
+            {isCustom ? t('ui.rank_custom') : t(`ui.${RANK_LABEL_KEYS[shadow.rank as ShadowRank]}`)}
           </Text>
         </View>
 
@@ -323,20 +311,20 @@ function ShadowDetailModal({
         {/* Stats grid */}
         <View style={dm.statsGrid}>
           <View style={dm.statCell}>
-            <Text style={dm.statLabel}>NÍVEL</Text>
+            <Text style={dm.statLabel}>{t('ui.stat_level')}</Text>
             <Text style={[dm.statValue, { color: rankColor }]}>{level}</Text>
           </View>
           <View style={dm.statCell}>
-            <Text style={dm.statLabel}>RANK</Text>
-            <Text style={[dm.statValue, { color: rankColor }]}>{isCustom ? 'CUSTOM' : RANK_SHORT[shadow.rank as ShadowRank]}</Text>
+            <Text style={dm.statLabel}>{t('ui.stat_rank')}</Text>
+            <Text style={[dm.statValue, { color: rankColor }]}>{isCustom ? t('ui.rank_custom') : t(`ui.${RANK_SHORT_KEYS[shadow.rank as ShadowRank]}`)}</Text>
           </View>
           <View style={dm.statCell}>
-            <Text style={dm.statLabel}>CÓPIAS</Text>
+            <Text style={dm.statLabel}>{t('ui.stat_copies')}</Text>
             <Text style={[dm.statValue, { color: currentCopies > 0 ? '#22c55e' : rankColor }]}>{currentCopies}</Text>
           </View>
           <View style={dm.statCell}>
-            <Text style={dm.statLabel}>PASSIVO</Text>
-            <Text style={[dm.statValue, { color: rankColor }]}>{formatPassiveValue(shadow.passiveEffect.type, scaledVal)}</Text>
+            <Text style={dm.statLabel}>{t('ui.stat_passive')}</Text>
+            <Text style={[dm.statValue, { color: rankColor }]}>{formatPassiveValue(shadow.passiveEffect.type, scaledVal, t)}</Text>
           </View>
         </View>
 
@@ -363,7 +351,7 @@ function ShadowDetailModal({
             return (
               <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#22c55e18', borderWidth: 1, borderColor: '#22c55e44', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4, marginTop: 6, alignSelf: 'flex-start' }}>
                 <Icon name="shield-check" size={11} color="#22c55e" />
-                <Text style={{ color: '#22c55e', fontFamily: 'Orbitron-Regular', fontSize: 9, marginLeft: 4, letterSpacing: 1 }}>DISPONÍVEL</Text>
+                <Text style={{ color: '#22c55e', fontFamily: 'Orbitron-Regular', fontSize: 9, marginLeft: 4, letterSpacing: 1 }}>{t('ui.available')}</Text>
               </View>
             );
           }
@@ -373,7 +361,7 @@ function ShadowDetailModal({
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#ef444418', borderWidth: 1, borderColor: '#ef444444', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4, marginTop: 6, alignSelf: 'flex-start' }}>
               <Icon name="timer-sand" size={11} color="#ef4444" />
               <Text style={{ color: '#ef4444', fontFamily: 'Orbitron-Regular', fontSize: 9, marginLeft: 4, letterSpacing: 1 }}>
-                COOLDOWN — {daysLeft} {daysLeft === 1 ? 'DIA' : 'DIAS'}
+                {t('ui.cooldown')} — {daysLeft} {daysLeft === 1 ? t('ui.day') : t('ui.days')}
               </Text>
             </View>
           );
@@ -381,9 +369,9 @@ function ShadowDetailModal({
 
         {level > 1 && (
           <Text style={dm.scaledHint}>
-            {formatPassiveValue(shadow.passiveEffect.type, baseValue)}
+            {formatPassiveValue(shadow.passiveEffect.type, baseValue, t)}
             {' → '}
-            {formatPassiveValue(shadow.passiveEffect.type, scaledVal)}
+            {formatPassiveValue(shadow.passiveEffect.type, scaledVal, t)}
           </Text>
         )}
 
@@ -393,7 +381,7 @@ function ShadowDetailModal({
             <View style={dm.upgradeHeader}>
               <Icon name="arrow-up-circle-outline" size={13} color={canUpgrade ? rankColor : C.dimmed} />
               <Text style={[dm.upgradeTitle, { color: canUpgrade ? rankColor : C.dimmed }]}>
-                {atCap ? ` NÍVEL CAP (NV. JOGADOR ${playerLevel})` : ' EVOLUÇÃO → NV.' + (level + 1)}
+                {atCap ? ` ${t('ui.level_cap', { level: playerLevel })}` : ` ${t('ui.evolution_to', { level: level + 1 })}`}
               </Text>
             </View>
 
@@ -404,7 +392,7 @@ function ShadowDetailModal({
                   <Icon name="gold" size={11} color={hasGold ? '#facc15' : C.neonRed} />
                   <Text style={[dm.reqTxt, { color: hasGold ? C.text : C.neonRed }]}>
                     {' '}{upgradeCost.gold}G
-                    {!hasGold && `  (tens ${gold}G)`}
+                    {!hasGold && `  (${t('ui.you_have', { count: gold })}G)`}
                   </Text>
                   {hasGold && <Icon name="check-circle" size={11} color="#22c55e" style={{ marginLeft: 4 }} />}
                 </View>
@@ -413,8 +401,8 @@ function ShadowDetailModal({
                   <View style={dm.reqRow}>
                     <Icon name="ghost-outline" size={11} color={copiasOk ? rankColor : C.neonRed} />
                     <Text style={[dm.reqTxt, { color: copiasOk ? C.text : C.neonRed }]}>
-                      {' '}Cópias ×{upgradeCost.copies}
-                      {!copiasOk && `  (tens ${currentCopies})`}
+                      {' '}{t('ui.copies_x', { count: upgradeCost.copies })}
+                      {!copiasOk && `  (${t('ui.you_have', { count: currentCopies })})`}
                     </Text>
                     {copiasOk && <Icon name="check-circle" size={11} color="#22c55e" style={{ marginLeft: 4 }} />}
                   </View>
@@ -429,7 +417,7 @@ function ShadowDetailModal({
                       <Icon name={itemDef?.icon ?? 'rhombus-split'} size={11} color={ok ? (itemDef?.color ?? C.muted) : C.neonRed} />
                       <Text style={[dm.reqTxt, { color: ok ? C.text : C.neonRed }]}>
                         {' '}{itemDef?.name ?? req.itemId} ×{req.quantity}
-                        {!ok && `  (tens ${owned})`}
+                        {!ok && `  (${t('ui.you_have', { count: owned })})`}
                       </Text>
                       {ok && <Icon name="check-circle" size={11} color="#22c55e" style={{ marginLeft: 4 }} />}
                     </View>
@@ -450,7 +438,7 @@ function ShadowDetailModal({
             >
               <Icon name="arrow-up-bold" size={13} color={canUpgrade ? rankColor : C.dimmed} />
               <Text style={[dm.upgradeTxt, { color: canUpgrade ? rankColor : C.dimmed }]}>
-                {atCap ? ' NÍVEL MÁXIMO' : canUpgrade ? ' EVOLUIR' : ' RECURSOS INSUFICIENTES'}
+                {atCap ? ` ${t('ui.max_level')}` : canUpgrade ? ` ${t('ui.evolve')}` : ` ${t('ui.insufficient_resources')}`}
               </Text>
             </TouchableOpacity>
           </View>
@@ -471,7 +459,7 @@ function ShadowDetailModal({
         >
           <Icon name={isActive ? 'shield-off-outline' : 'shield-sword'} size={14} color={isActive ? '#facc15' : C.neonBlue} />
           <Text style={[dm.equipTxt, { color: isActive ? '#facc15' : C.neonBlue }]}>
-            {isActive ? ' RETIRAR DA VANGUARDA' : canEquipMore ? ' EQUIPAR VANGUARDA' : ` VANGUARDA CHEIA (${MAX_ACTIVE}/${MAX_ACTIVE})`}
+            {isActive ? ` ${t('ui.remove_vanguard')}` : canEquipMore ? ` ${t('ui.equip_vanguard')}` : ` ${t('ui.vanguard_full', { max: MAX_ACTIVE })}`}
           </Text>
         </TouchableOpacity>
 
@@ -482,7 +470,7 @@ function ShadowDetailModal({
         <TouchableOpacity style={dm.releaseBtn} onPress={onRelease}>
           <Icon name="sword-cross" size={12} color={C.neonRed} />
           <Text style={dm.releaseTxt}>
-            {' LIBERTAR UNIDADE'}
+            {` ${t('ui.release_unit_btn')}`}
             {releaseGold > 0 ? ` · +${releaseGold}G` : ''}
           </Text>
         </TouchableOpacity>
@@ -502,15 +490,16 @@ function FilterBar({
   onSort:   (s: SortKey) => void
   C: any
 }) {
+  const { t } = useTranslation('shadows');
   const fb = getFBStyles(C);
   const filters: { key: FilterKey; label: string; icon?: string }[] = [
-    { key: 'all',       label: 'TODOS' },
-    { key: 'favorite',  label: 'FAV', icon: 'star' },
-    { key: 'Marshal',   label: 'MAR' },
-    { key: 'Commander', label: 'COM' },
-    { key: 'Knight',    label: 'CAV' },
-    { key: 'Elite',     label: 'ELI' },
-    { key: 'Normal',    label: 'NOR' },
+    { key: 'all',       label: t('ui.filter_all') },
+    { key: 'favorite',  label: t('ui.filter_fav'), icon: 'star' },
+    { key: 'Marshal',   label: t('ui.rank_mar') },
+    { key: 'Commander', label: t('ui.rank_com') },
+    { key: 'Knight',    label: t('ui.rank_cav') },
+    { key: 'Elite',     label: t('ui.rank_eli') },
+    { key: 'Normal',    label: t('ui.rank_nor') },
   ];
   const sorts: { key: SortKey; icon: string }[] = [
     { key: 'rank',     icon: 'crown' },
@@ -562,6 +551,7 @@ function ShadowCard({
 }: {
   shadow: Shadow; level: number; isActive: boolean; isFavorite: boolean; onPress: () => void; C: any
 }) {
+  const { t } = useTranslation('shadows');
   const sc = getSCStyles(C);
   const isCustom  = (shadow as any).type === 'Custom';
   const rankColor = isCustom ? '#a855f7' : SHADOW_RANK_COLOR[shadow.rank as ShadowRank];
@@ -583,20 +573,20 @@ function ShadowCard({
           <Text style={[sc.name, { color: rankColor }]} numberOfLines={1}>{shadow.name.toUpperCase()}</Text>
         </View>
         <Text style={sc.effect} numberOfLines={2}>
-          {shadow.passiveEffect.description.replace('{val}', formatPassiveValue(shadow.passiveEffect.type, scaledVal))}
+          {shadow.passiveEffect.description.replace('{val}', formatPassiveValue(shadow.passiveEffect.type, scaledVal, t))}
         </Text>
       </View>
 
       <View style={sc.rightSide}>
         <View style={[sc.rankBadge, { borderColor: rankColor + '66', backgroundColor: rankColor + '12' }]}>
           <Text style={[sc.rankTxt, { color: rankColor }]}>
-            {isCustom ? 'CUSTOM' : RANK_LABELS[shadow.rank as ShadowRank].toUpperCase()}
+            {isCustom ? t('ui.rank_custom') : t(`ui.${RANK_LABEL_KEYS[shadow.rank as ShadowRank]}`).toUpperCase()}
           </Text>
         </View>
         {isActive ? (
           <View style={sc.activeIndicator}>
             <Icon name="shield-sword" size={10} color={C.gold} />
-            <Text style={{ color: C.gold, fontSize: 8, fontWeight: 'bold', fontFamily: FONT.orbitron }}>VANGUARDA</Text>
+            <Text style={{ color: C.gold, fontSize: 8, fontWeight: 'bold', fontFamily: FONT.orbitron }}>{t('ui.vanguard')}</Text>
           </View>
         ) : (
           <Text style={[sc.lvlTxt, { color: C.dimmed }]}>NV.{level}</Text>
@@ -611,6 +601,7 @@ function ShadowCard({
 export default function ShadowsScreen() {
   const C = useTheme();
   const s = getStyles(C);
+  const { t } = useTranslation('shadows');
 
   const playerLevel    = useGameStore(st => st.player.level);
   const playerGold     = useGameStore(st => st.player.gold);
@@ -690,15 +681,15 @@ export default function ShadowsScreen() {
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
       <ScrollView contentContainerStyle={s.content}>
-        <Text style={s.pageTitle}>SALA DO TRONO</Text>
-        <Text style={s.pageSub}>EXÉRCITO — {totalCount} UNIDADE{totalCount !== 1 ? 'S' : ''}</Text>
+        <Text style={s.pageTitle}>{t('ui.page_title')}</Text>
+        <Text style={s.pageSub}>{t('ui.page_sub')} — {totalCount} {totalCount !== 1 ? t('ui.units') : t('ui.unit')}</Text>
 
         {totalCount === 0 ? (
           <View style={s.emptyWrap}>
             <Icon name="ghost-outline" size={52} color="#a855f733" />
-            <Text style={s.emptyTitle}>EXÉRCITO VAZIO</Text>
+            <Text style={s.emptyTitle}>{t('ui.empty_army_title')}</Text>
             <Text style={s.emptyDesc}>
-              {'Derrota Bosses nos Portais Dinâmicos e Raids para\nconquistar unidades para o teu exército.'}
+              {t('ui.empty_army_desc')}
             </Text>
           </View>
         ) : (
@@ -716,7 +707,7 @@ export default function ShadowsScreen() {
             {filtered.length === 0 ? (
               <View style={s.emptyWrap}>
                 <Icon name="filter-off-outline" size={36} color={C.dimmed} />
-                <Text style={s.emptyDesc}>Nenhuma unidade neste filtro.</Text>
+                <Text style={s.emptyDesc}>{t('ui.no_units_filter')}</Text>
               </View>
             ) : (
               filtered.map(({ shadow, entry }) => (

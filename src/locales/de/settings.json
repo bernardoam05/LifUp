@@ -1,0 +1,152 @@
+{
+  "header": "[ SYSTEMEINSTELLUNGEN ]",
+  "sections": {
+    "missions": "MISSIONEN",
+    "penalties": "STRAFEN & SPERRE",
+    "visual": "VISUELL",
+    "system": "SYSTEM",
+    "data": "DATEN",
+    "about": "ÜBER"
+  },
+  "alerts": {
+    "backupDone": "BACKUP ABGESCHLOSSEN",
+    "backupDoneMsg": "Backup-Code in die Zwischenablage kopiert! Bewahre diesen Code an einem sicheren Ort auf.",
+    "restoreDone": "WIEDERHERSTELLUNG ABGESCHLOSSEN",
+    "restoreDoneMsg": "Seele erfolgreich importiert! Möglicherweise musst du neu starten, wenn es visuelle Fehler gibt.",
+    "error": "FEHLER",
+    "exportError": "Backup-Export fehlgeschlagen. Versuche es erneut.",
+    "importError": "Ungültiger oder beschädigter Code. Überprüfe, ob du ihn richtig kopiert hast.",
+    "understood": "VERSTANDEN"
+  },
+  "difficulty": {
+    "sectionTitle": "SYSTEMSTRENGE (TÄGLICHE MISSIONEN)",
+    "infoText": "Kontrolliert, wie viele Missionen pro Tag generiert werden. Wirkt beim nächsten täglichen Reset oder Regeneration.",
+    "customLabel": "Missionen pro Tag",
+    "easy": {
+      "label": "EINFACH",
+      "sublabel": "Leichtes Trainingsprotokoll",
+      "desc0": "· Maximal 3 Missionen pro Tag",
+      "desc1": "· Ideal für den Einstieg oder schwere Tage",
+      "desc2": "· Basisbelohnungen ohne Skalierung"
+    },
+    "normal": {
+      "label": "NORMAL",
+      "sublabel": "Standard-Systemprotokoll",
+      "desc0": "· 3 Basismissionen + 1 pro 10 Level (max 5)",
+      "desc1": "· Belohnungen skalieren mit dem Level",
+      "desc2": "· Empfohlener Schwierigkeitsgrad"
+    },
+    "hard": {
+      "label": "SCHWER",
+      "sublabel": "Schattenmonarchen-Protokoll",
+      "desc0": "· 4 Basismissionen + 1 pro 5 Level (max 8)",
+      "desc1": "· Für Elite-Jäger",
+      "desc2": "· Verstärkte Belohnungen und Strafen"
+    },
+    "custom": {
+      "label": "BENUTZERDEFINIERT",
+      "sublabel": "Lege dein eigenes Tempo fest",
+      "desc0": "· Wähle, wie viele tägliche Missionen du möchtest",
+      "desc1": "· Ideal zur Anpassung an deinen Zeitplan",
+      "desc2": "· Behält normale Progression bei"
+    }
+  },
+  "intensity": {
+    "sectionTitle": "STRAFINTENSITÄT",
+    "infoText": "Legt die Strenge der Strafen beim Scheitern täglicher Missionen fest. Die Strafe wird basierend auf der Anzahl der gescheiterten Missionen berechnet.",
+    "activeProfile": "Aktives Profil: {{label}} — {{sublabel}}",
+    "blockStart": "Sperrstunde Beginn",
+    "blockEnd": "Sperrstunde Ende",
+    "light": {
+      "label": "LEICHT",
+      "sublabel": "Nachsichtiges Protokoll",
+      "desc0": "· XP-Verlust: ~3% pro fehlgeschlagener Mission",
+      "desc1": "· 1 Strafmission",
+      "desc2": "· Serie beibehalten (außer bei Totalausfall)",
+      "desc3": "· Keine App-Sperre"
+    },
+    "medium": {
+      "label": "MITTEL",
+      "sublabel": "Standard-Protokoll",
+      "desc0": "· XP-Verlust: 10% + 1% pro Fehler",
+      "desc1": "· 1–3 Strafmissionen",
+      "desc2": "· Serie auf null zurückgesetzt",
+      "desc3": "· App-Sperre wenn ≥50% gescheitert"
+    },
+    "hardcore": {
+      "label": "HARDCORE",
+      "sublabel": "Monarchen-Protokoll",
+      "desc0": "· XP-Verlust: 20% gesamt",
+      "desc1": "· 2–4 Strafmissionen",
+      "desc2": "· Serie auf null zurückgesetzt",
+      "desc3": "· App-Sperre immer aktiv"
+    },
+    "custom": {
+      "label": "BENUTZERDEFINIERT",
+      "sublabel": "Wähle die Sperrdauer",
+      "desc0": "· Lege fest, wie viele Stunden Sperre du möchtest",
+      "desc1": "· Restliche Logik bleibt ausgewogen",
+      "desc2": "· Nützlich für unregelmäßige Zeitpläne"
+    }
+  },
+  "autoBlock": {
+    "sectionTitle": "STRAFE: AUTOMATISCHE SPERRE",
+    "cardTitle": "App-Sperre",
+    "cardDesc": "Wenn aktiviert, werden bei Scheitern täglicher Missionen deine ausgewählten Apps automatisch gesperrt. Die Zeit variiert je nach Schwierigkeitsgrad:",
+    "bulletEasy": "EASY:",
+    "bulletEasyDetail": "6 Stunden (13:00 bis 19:00)",
+    "bulletNormal": "NORMAL:",
+    "bulletNormalDetail": "12 Stunden (10:00 bis 22:00)",
+    "bulletHardcore": "HARDCORE:",
+    "bulletHardcoreDetail": "24 Stunden (Den ganzen Tag)",
+    "toggleTitle": "Automatische Sperre aktivieren",
+    "toggleSub": "Andernfalls werden nur XP und Gold abgezogen."
+  },
+  "sideQuestPenalty": {
+    "sectionTitle": "NEBENQUESTS",
+    "infoText": "Die Tagesaufgaben sind ein persönliches Notizbuch — keine Belohnungen, werden um Mitternacht gelöscht. Aktiviere diese Option, damit unerledigte Aufgaben als Fehler bei der täglichen Strafe zählen.",
+    "rowLabel": "Nebenquests bestrafen",
+    "rowSubActive": "[ AKTIV — ausstehende Aufgaben addieren sich zu Fehlern ]",
+    "rowSubInactive": "Inaktiv — Aufgaben ohne Auswirkung auf Strafen"
+  },
+  "theme": {
+    "sectionTitle": "SYSTEMDARSTELLUNG",
+    "infoText": "Wähle das visuelle Thema deines Monarchen-Systems. Neue Themen werden durch Rang-Aufstieg oder im Shop freigeschaltet."
+  },
+  "notifications": {
+    "sectionTitle": "SYSTEM",
+    "notificationsLabel": "Benachrichtigungen",
+    "notificationsSub": "Tägliche Warnungen und Systemmeldungen",
+    "soundLabel": "Ton",
+    "soundSub": "Soundeffekte und Audio-Feedback"
+  },
+  "backup": {
+    "sectionTitle": "SYSTEMDATENBANK",
+    "infoText": "Exportiere oder stelle deine Reise als Schattenmonarch wieder her, indem du einen unverletzlichen Code kopierst.",
+    "exportBtn": "SEELE EXPORTIEREN (BACKUP)",
+    "importBtn": "SEELE IMPORTIEREN (RESTORE)"
+  },
+  "importModal": {
+    "title": "SEELE IMPORTIEREN",
+    "subtitle": "Füge deinen Base64-Code unten ein, um die aktuelle Datenbank zu überschreiben.",
+    "placeholder": "Backup-Code...",
+    "cancel": "ABBRECHEN",
+    "restore": "WIEDERHERSTELLEN"
+  },
+  "about": {
+    "sectionTitle": "ÜBER",
+    "version": "Version",
+    "versionVal": "LifUp OS v3",
+    "missionEngine": "Missions-Engine",
+    "missionEngineVal": "Dynamisch · Wöchentlicher Pool · Boss Raid",
+    "persistence": "Persistenz",
+    "persistenceVal": "AsyncStorage · lifup-v3"
+  },
+  "restDay": {
+    "sectionTitle": "RUHE DES MONARCHEN",
+    "infoText": "Aktiviere, um heute als Ruhetag zu erklären. Missionen erscheinen abgedunkelt und es gibt beim morgigen Reset keine Strafen. Deaktiviert sich automatisch am Ende des Tages.",
+    "rowLabel": "Ruhetag",
+    "rowSubActive": "[ RUHE AKTIV — heute keine Strafen ]",
+    "rowSubInactive": "Inaktiv — normale Missionen"
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "buttons": {
+    "continue": "CONTINUER",
+    "close": "FERMER",
+    "confirm": "CONFIRMER",
+    "cancel": "ANNULER",
+    "yes": "OUI",
+    "no": "NON",
+    "ok": "OK",
+    "back": "RETOUR"
+  },
+  "extraction": {
+    "protocol": "SYSTÈME — PROTOCOLE D'EXTRACTION",
+    "arise_subtitle": "PROTOCOLE D'EXTRACTION ACTIVÉ",
+    "dungeon_cleared": "LE DONJON A ÉTÉ NETTOYÉ.",
+    "achievement_unlocked": "SUCCÈS DÉBLOQUÉ.",
+    "extraction_started": "EXTRACTION D'OMBRE INITIÉE...",
+    "shadow_granted": "OMBRE ACCORDÉE PAR LE SYSTÈME...",
+    "origin_label": "ORIGINE",
+    "copy_registered": "COPIE ENREGISTRÉE",
+    "copies_accumulated_one": "{{count}} COPIE ACCUMULÉE",
+    "copies_accumulated_other": "{{count}} COPIES ACCUMULÉES",
+    "throne_room_tip": "Utilisez les copies pour évoluer dans la Salle du Trône.",
+    "new_soul": "NOUVELLE OMBRE ACQUISE",
+    "equip_tip": "Rejoignez la Salle du Trône pour équiper.",
+    "collect_soul": "RECUEILLIR L'ÂME",
+    "rank_labels": {
+      "Normal": "NORMAL",
+      "Elite": "ÉLITE",
+      "Knight": "CHEVALIER",
+      "Commander": "COMMANDANT",
+      "Marshal": "MARÉCHAL"
+    },
+    "origin": {
+      "forge": "CRÉÉE À LA FORGE",
+      "achievement": "SUCCÈS DÉBLOQUÉ",
+      "boss_drop": "CHUTE DE BOSS",
+      "shop": "ACHAT EN BOUTIQUE",
+      "daily": "EXTRACTION QUOTIDIENNE"
+    }
+  },
+  "level_up": {
+    "system_label": "◈ SYSTÈME ◈",
+    "title": "NIVEAU SUPÉRIEUR !",
+    "level_label": "NIVEAU",
+    "rewards_label": "RÉCOMPENSES",
+    "continue": "CONTINUER"
+  },
+  "hud": {
+    "focus_tag": "FOCUS",
+    "xp_display": "{{current}} / {{max}} XP",
+    "level_display": "NIV {{level}}"
+  },
+  "alert": {
+    "ok": "OK"
+  },
+  "tutorial": {
+    "system_label": "SYSTÈME — PROTOCOLE TUTORIEL",
+    "skip": "PASSER",
+    "next": "SUIVANT",
+    "start": "COMMENCER",
+    "phase1": [
+      {
+        "title": "BIENVENUE, CHASSEUR",
+        "body": "Le Système s'est réveillé. Il n'y a qu'un seul chemin : devenir plus fort.\n\nCe guide vous montrera comment fonctionne le monde du Système."
+      },
+      {
+        "title": "MISSIONS QUOTIDIENNES",
+        "body": "Ici vous trouvez vos tâches d'aujourd'hui. Complétez-les pour gagner des XP, monter de niveau et accumuler de l'Or.\n\nCompléter toutes les missions quotidiennes vous rapporte une récompense spéciale."
+      },
+      {
+        "title": "FORGE DE MISSIONS",
+        "body": "Vous pouvez adapter les missions à votre vraie vie ! En haut se trouve la FORGE pour modifier vos routines.\n\n· MISSIONS CORE (Fixes): Surviennent quotidiennement.\n· MISSIONS POOL (Extra): Le Système tire au sort chaque jour."
+      },
+      {
+        "title": "VOTRE PROFIL & PARAMÈTRES",
+        "body": "Ici vous voyez vos attributs, votre Rang de Chasseur et vos titres.\n\nEn haut à droite, l'icône Engrenage ajuste la DIFFICULTÉ."
+      },
+      {
+        "title": "VOTRE ARMÉE D'OMBRES",
+        "body": "Les Ombres sont des guerriers que vous extrayez en battant des boss ou en complétant toutes les missions quotidiennes.\n\nChacune a un effet passif unique."
+      },
+      {
+        "title": "LA BOUTIQUE DU SYSTÈME",
+        "body": "Utilisez l'Or pour acheter des Potions XP et des consommables.\n\nEn atteignant le Niveau 10, des ombres uniques deviennent disponibles."
+      },
+      {
+        "title": "MODE FOCUS & PÉNALITÉS",
+        "body": "Activez le Mode Focus pour bloquer les distractions.\n\nRater des missions quotidiennes vous place dans la ZONE DE PÉNALITÉ et vous perdez des XP."
+      },
+      {
+        "title": "PRÊT À COMMENCER",
+        "body": "Votre première mission est simple : complétez les Missions Quotidiennes d'aujourd'hui.\n\nPlus vous serez constant, plus votre Rang montera. En avant, Chasseur !"
+      }
+    ],
+    "phase2": [
+      {
+        "title": "NIVEAU 10 — LES OMBRES S'ÉVEILLENT",
+        "body": "Vous avez atteint une étape importante. Les Ombres commencent à se révéler plus fréquemment.\n\nJe vais vous montrer comment gérer votre armée."
+      },
+      {
+        "title": "VOTRE OMBRE",
+        "body": "Chaque ombre a un EFFET PASSIF UNIQUE — des bonus automatiques qui s'appliquent à vos missions.\n\nLes rangs plus élevés ont des effets beaucoup plus puissants."
+      },
+      {
+        "title": "AJOUTER AUX FAVORIS",
+        "body": "Appuyez sur l'icône ⭐ pour mettre en favori.\n\nVos 3 ombres favorites appliquent leurs effets passifs globaux."
+      },
+      {
+        "title": "EFFETS PASSIFS ACTIFS",
+        "body": "Avec des ombres favorites activées, leurs bonus s'appliquent automatiquement.\n\nVous pouvez voir les bonus actifs dans votre Profil."
+      },
+      {
+        "title": "LE MONARQUE S'ÉVEILLE",
+        "body": "Continuez à conquérir, Chasseur. Les ombres les plus puissantes restent à venir.\n\nForgez votre armée. Devenez inarrêtable."
+      }
+    ]
+  },
+  "toast": {
+    "level_up_title": "NIVEAU SUPÉRIEUR !",
+    "level_up_desc": "Tu as atteint le Niveau {{level}}"
+  },
+  "modal": {
+    "confirm": "CONFIRMER",
+    "cancel": "ANNULER"
+  }
+}

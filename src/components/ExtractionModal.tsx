@@ -4,6 +4,7 @@ import {
   Animated, Easing,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { SHADOW_RANK_COLOR } from '../data/shadows';
 import type { ExtractionResult } from '../store/useGameStore';
 import { useTheme, FONT, SPACING } from '../theme';
@@ -11,21 +12,13 @@ import { playSound } from '../utils/audioService';
 
 import SystemModal from './SystemModal';
 
-// Rank labels
-const RANK_LABELS: Record<string, string> = {
-  Normal: 'NORMAL',
-  Elite: 'ELITE',
-  Knight: 'CAVALEIRO',
-  Commander: 'COMANDANTE',
-  Marshal: 'MARECHAL',
-};
-
 interface Props {
   result: ExtractionResult
   onDismiss: () => void
 }
 
 export default function ExtractionModal({ result, onDismiss }: Props) {
+  const { t } = useTranslation('common');
   const C = useTheme();
   const st = React.useMemo(() => getStyles(C), [C]);
   const shadow = result?.shadow;
@@ -84,16 +77,15 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
   const isCustom = (shadow as any).type === 'Custom';
   const isAchievement = shadow?.unlockMethod?.type === 'achievement';
   const rankColor = isCustom ? C.purple : (SHADOW_RANK_COLOR[shadow?.rank as keyof typeof SHADOW_RANK_COLOR] ?? C.text.secondary);
-  const rankLabel = RANK_LABELS[shadow?.rank] ?? shadow?.rank?.toUpperCase() ?? '';
+  const rankLabel = t(`extraction.rank_labels.${shadow?.rank}`, { defaultValue: shadow?.rank?.toUpperCase() ?? '' });
 
   // Determine friendly origin label
   const originLabel = (() => {
-    if (isCustom) {return 'CRIADA NA FORJA';}
-    if (shadow.unlockMethod?.type === 'achievement') {return 'CONQUISTA DESBLOQUEADA';}
-    if (shadow.unlockMethod?.type === 'boss_drop') {return 'QUEDA DE BOSS';}
-    if (shadow.unlockMethod?.type === 'shop') {return 'COMPRA NA LOJA';}
-    // Default: standard extraction from completing all daily quests
-    return 'EXTRAÇÃO DIÁRIA';
+    if (isCustom) {return t('extraction.origin.forge');}
+    if (shadow.unlockMethod?.type === 'achievement') {return t('extraction.origin.achievement');}
+    if (shadow.unlockMethod?.type === 'boss_drop') {return t('extraction.origin.boss_drop');}
+    if (shadow.unlockMethod?.type === 'shop') {return t('extraction.origin.shop');}
+    return t('extraction.origin.daily');
   })();
 
   const glowOpacity = glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] });
@@ -106,7 +98,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
         <Animated.View pointerEvents="none" style={[st.ariseLayer, { opacity: ariseAnim, transform: [{ scale: ariseScale }] }]}>
           <Text style={[st.ariseTxt, { color: rankColor }]}>ARISE</Text>
           <View style={[st.ariseSubLine, { backgroundColor: rankColor }]} />
-          <Text style={st.ariseSubTxt}>PROTOCOLO DE EXTRAÇÃO ATIVADO</Text>
+          <Text style={st.ariseSubTxt}>{t('extraction.arise_subtitle')}</Text>
         </Animated.View>
       )}
 
@@ -122,12 +114,12 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
         {/* Top label */}
         <View style={st.systemRow}>
           <View style={[st.systemDot, { backgroundColor: C.neonBlue }]} />
-          <Text style={st.systemTxt}>SISTEMA — PROTOCOLO DE EXTRAÇÃO</Text>
+          <Text style={st.systemTxt}>{t('extraction.protocol')}</Text>
           <View style={[st.systemDot, { backgroundColor: C.neonBlue }]} />
         </View>
 
-        <Text style={st.intro}>{isAchievement ? 'CONQUISTA DESBLOQUEADA.' : 'A MASMORRA FOI LIMPA.'}</Text>
-        <Text style={st.intro2}>{isAchievement ? 'SOMBRA CONCEDIDA PELO SISTEMA...' : 'EXTRAÇÃO DE SOMBRA INICIADA...'}</Text>
+        <Text style={st.intro}>{isAchievement ? t('extraction.achievement_unlocked') : t('extraction.dungeon_cleared')}</Text>
+        <Text style={st.intro2}>{isAchievement ? t('extraction.shadow_granted') : t('extraction.extraction_started')}</Text>
 
         {/* Divider */}
         <Animated.View style={[st.divider, { borderColor: rankColor, opacity: glowOpacity }]} />
@@ -163,7 +155,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
         {/* Origin chip */}
         <View style={[st.originChip, { borderColor: rankColor + '44' }]}>
           <Icon name="information-outline" size={10} color={rankColor} />
-          <Text style={[st.originTxt, { color: rankColor }]}> ORIGEM: {originLabel}</Text>
+          <Text style={[st.originTxt, { color: rankColor }]}> {t('extraction.origin_label')}: {originLabel}</Text>
         </View>
 
         {/* Passive effect */}
@@ -176,18 +168,20 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
         {isLevelUp ? (
           <View style={st.awakenBox}>
             <Icon name="content-copy" size={20} color={C.gold} style={{ marginBottom: 6 }} />
-            <Text style={st.awakenTitle}>CÓPIA REGISTADA</Text>
+            <Text style={st.awakenTitle}>{t('extraction.copy_registered')}</Text>
             <Text style={st.awakenSub}>
               {shadow.name.toUpperCase()}{'\n'}
-              <Text style={st.awakenLevel}>{newLevel} CÓPIA{newLevel !== 1 ? 'S' : ''} ACUMULADA{newLevel !== 1 ? 'S' : ''}</Text>
+              <Text style={st.awakenLevel}>
+                {t('extraction.copies_accumulated', { count: newLevel })}
+              </Text>
             </Text>
-            <Text style={st.newSoulSub}>Usa as cópias para evoluir na Sala do Trono.</Text>
+            <Text style={st.newSoulSub}>{t('extraction.throne_room_tip')}</Text>
           </View>
         ) : (
           <View style={st.newSoulBox}>
             <Icon name="ghost" size={16} color={C.neonBlue} style={{ marginBottom: 4 }} />
-            <Text style={st.newSoulTxt}>NOVA SOMBRA ADQUIRIDA</Text>
-            <Text style={st.newSoulSub}>Reporta-te à Sala do Trono para equipar.</Text>
+            <Text style={st.newSoulTxt}>{t('extraction.new_soul')}</Text>
+            <Text style={st.newSoulSub}>{t('extraction.equip_tip')}</Text>
           </View>
         )}
 
@@ -200,7 +194,7 @@ export default function ExtractionModal({ result, onDismiss }: Props) {
           <Animated.View style={{ opacity: glowOpacity }}>
             <Icon name="ghost" size={16} color={rankColor} />
           </Animated.View>
-          <Text style={[st.collectTxt, { color: rankColor }]}> RECOLHER ALMA</Text>
+          <Text style={[st.collectTxt, { color: rankColor }]}> {t('extraction.collect_soul')}</Text>
         </TouchableOpacity>
       </Animated.View>
       </View>

@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, BackHandler,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useGameStore, { Quest, getDailyMissionTarget } from '../store/useGameStore';
 import { RAID_BOSSES, DungeonMission, getActiveEventBossMissions, buildEventTrials, EVENT_BOSS_DEFS } from '../data/bosses';
@@ -207,13 +208,13 @@ function getRaidBossBreakDetail(rank: string, minutes: number, bossId: string): 
   return template.replace(/{min}/g, String(minutes));
 }
 
-function formatCountdown(ms: number): string {
-  if (ms <= 0) {return 'Termina em 0m';}
+function formatCountdown(ms: number, t: (key: string, opts?: any) => string): string {
+  if (ms <= 0) {return t('ui.timer_ends_in_0');}
   const totalMinutes = Math.floor(ms / 60_000);
   const h = Math.floor(totalMinutes / 60);
   const m = totalMinutes % 60;
-  if (h > 0) {return `Termina em ${h}h ${m}m`;}
-  return `Termina em ${m}m`;
+  const time = h > 0 ? `${h}h ${m}m` : `${m}m`;
+  return t('ui.timer_ends_in', { time });
 }
 
 function getEventCountdownMs(endDate: string): number {
@@ -235,6 +236,7 @@ function getEventCountdownMs(endDate: string): number {
 export default function QuestScreen() {
   const C = useTheme();
   const s = getStyles(C);
+  const { t } = useTranslation('quests');
 
   const quests = useGameStore(st => st.quests);
   const hasPenalty = useGameStore(st => st.system.hasPenalty);
@@ -529,33 +531,33 @@ export default function QuestScreen() {
 
 
         <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('now')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.now = e.nativeEvent.layout.y; }}>
-          <Text style={s.collapsibleTitle}>AGORA</Text>
+          <Text style={s.collapsibleTitle}>{t('ui.now')}</Text>
           <Icon name={sectionsOpen.now ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
         {sectionsOpen.now && (
           <View style={s.nowPanel}>
-            <Text style={s.nowHeader}>PAINEL RÁPIDO</Text>
+            <Text style={s.nowHeader}>{t('ui.quick_panel')}</Text>
             <TouchableOpacity style={s.nowRow} onPress={handleNowPanelQuest} activeOpacity={0.7}>
               <Icon name="clipboard-play-outline" size={14} color={C.neonBlue} />
-              <Text style={s.nowTxt}>{activeDailyQuest ? `Missão em foco: ${activeDailyQuest.label}` : 'Nenhuma missão ativa agora.'}</Text>
+              <Text style={s.nowTxt}>{activeDailyQuest ? t('ui.mission_in_focus', { label: activeDailyQuest.label }) : t('ui.no_active_mission')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={s.nowRow} onPress={handleNowPanelDungeonBreak} activeOpacity={0.7}>
               <Icon name="gate" size={14} color={C.neonRed} />
               <Text style={s.nowTxt}>
-                {system.activeDungeonBreak ? `Portal dinâmico ativo - ${formatCountdown(portalCountdownMs)}` : 'Nenhum portal dinâmico ativo.'}
+                {system.activeDungeonBreak ? t('ui.dynamic_portal_active', { countdown: formatCountdown(portalCountdownMs, t) }) : t('ui.no_dynamic_portal')}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style={s.nowRow} onPress={handleNowPanelEvent} activeOpacity={0.7}>
               <Icon name="calendar-star" size={14} color={C.gold} />
               <Text style={s.nowTxt}>
-                {activeEventDef ? `Evento ${activeEventDef.event.name} disponível (${eventCompleted.length}/${eventRequired})` : 'Nenhum evento ativo neste momento.'}
+                {activeEventDef ? t('ui.event_available', { name: activeEventDef.event.name, completed: eventCompleted.length, required: eventRequired }) : t('ui.no_active_event')}
               </Text>
             </TouchableOpacity>
           </View>
         )}
 
         <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('today')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.today = e.nativeEvent.layout.y; }}>
-          <Text style={s.collapsibleTitle}>HOJE</Text>
+          <Text style={s.collapsibleTitle}>{t('ui.today')}</Text>
           <Icon name={sectionsOpen.today ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
         {sectionsOpen.today && (
@@ -565,8 +567,8 @@ export default function QuestScreen() {
           <TouchableOpacity style={s.actionBtn} onPress={() => setShowForge(true)} activeOpacity={0.75}>
             <Icon name="hammer-wrench" size={13} color={C.neonBlue} />
             <View>
-              <Text style={s.actionBtnTxt}> FORJA</Text>
-              <Text style={s.actionBtnSub}>  Cria missões personalizadas</Text>
+              <Text style={s.actionBtnTxt}> {t('ui.forge_btn')}</Text>
+              <Text style={s.actionBtnSub}>  {t('ui.forge_subtitle')}</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -577,10 +579,10 @@ export default function QuestScreen() {
             <Icon name="bed" size={13} color={isRestDay ? C.neonBlue : C.muted} />
             <View>
               <Text style={[s.actionBtnTxt, { color: isRestDay ? C.neonBlue : C.muted }]}>
-                {isRestDay ? ' REPOUSO ATIVO' : ' REPOUSO'}
+                {isRestDay ? ` ${t('ui.rest_active')}` : ` ${t('ui.rest')}`}
               </Text>
               <Text style={s.actionBtnSub}>
-                {isRestDay ? '  Ativo — sem penalidades' : '  Pausa sem penalidades'}
+                {isRestDay ? `  ${t('ui.rest_active_sub')}` : `  ${t('ui.rest_sub')}`}
               </Text>
             </View>
           </TouchableOpacity>
@@ -588,11 +590,11 @@ export default function QuestScreen() {
 
         <View style={s.titleRow}>
           <Icon name="clipboard-list-outline" size={16} color={C.neonBlue} />
-          <Text style={s.title}> MISSÕES DO DIA</Text>
+          <Text style={s.title}> {t('ui.daily_missions_title')}</Text>
           {isRestDay && (
             <View style={s.restBadge}>
               <Icon name="bed" size={10} color={C.green} />
-              <Text style={s.restTxt}> DESCANSO</Text>
+              <Text style={s.restTxt}> {t('ui.rest_badge')}</Text>
             </View>
           )}
         </View>
@@ -601,7 +603,7 @@ export default function QuestScreen() {
         {/* Unified daily status bar */}
         <View style={[s.systemCard, s.cardNormal, s.statusBar]}>
           <View style={s.statusBarRow}>
-            <Text style={s.statusBarLabel}>PROGRESSO DE HOJE</Text>
+            <Text style={s.statusBarLabel}>{t('ui.today_progress')}</Text>
             <Text style={[s.statusBarCounter, done === total && total > 0 ? { color: C.green } : {}]}>
               {done}<Text style={s.statusBarSlash}> / </Text>{total}
             </Text>
@@ -615,7 +617,7 @@ export default function QuestScreen() {
           <View style={s.statusBarBossRow}>
               <Icon name="gate" size={9} color={(system.portalDailyCount ?? 0) > 0 ? C.neonBlue : C.dimmed} />
               <Text style={[s.statusBarBossLabel, { color: C.dimmed }]}>
-                {' '}PORTAIS HOJE: {system.portalDailyCount ?? 0}/3
+                {' '}{t('ui.portals_today', { count: system.portalDailyCount ?? 0 })}
               </Text>
             </View>
         </View>
@@ -630,7 +632,7 @@ export default function QuestScreen() {
             <Icon name={activeMission ? 'sword-cross' : (acceptedPortal.icon || 'gate')} size={24} color={acceptedPortal.color || C.neonRed} />
             <Text style={s.dungeonBreakTxt}>{acceptedPortal.label?.toUpperCase()}</Text>
             <Text style={s.dungeonBreakSub}>
-              {activeMission ? 'EM PROGRESSO — Conclui a missão para fechar o portal.' : (acceptedPortal.detail || 'Pressiona para abrir a missão.')}
+              {activeMission ? t('ui.mission_in_progress') : (acceptedPortal.detail || t('ui.press_to_open'))}
             </Text>
           </TouchableOpacity>
         )}
@@ -658,7 +660,7 @@ export default function QuestScreen() {
                     if (!qDef) {return;}
                     const mission: DungeonMission = {
                       id: `portal_${qDef.id}`,
-                      label: `Portal Dinâmico: ${qDef.title}`,
+                      label: t('ui.portal_dynamic_label', { title: qDef.title }),
                       detail: qDef.description.replace(/{target}/g, String(qDef.baseTarget)).replace(/{unit}/g, qDef.unit),
                       type: qDef.questType,
                       shadowHint: qDef.id,
@@ -675,7 +677,7 @@ export default function QuestScreen() {
                   const breakMinutes = Math.round(targetFocus / 60_000);
                   const mission: DungeonMission = {
                     id: `break_${rBoss.id}`,
-                    label: `Dungeon Break: ${rBoss.name}`,
+                    label: t('ui.dungeon_break_label', { name: rBoss.name }),
                     detail: getRaidBossBreakDetail(rBoss.rank, breakMinutes, rBoss.id),
                     type: 'focus',
                     shadowHint: rBoss.id,
@@ -691,15 +693,15 @@ export default function QuestScreen() {
                   <Icon name="alert-octagram" size={22} color={displayColor} />
                   <View style={{ flex: 1 }}>
                     <Text style={[s.dungeonBreakTxt, { color: displayColor }]} numberOfLines={1}>
-                      PORTAL DINÂMICO DETECTADO
+                      {t('ui.dynamic_portal_detected')}
                     </Text>
-                    <Text style={s.dungeonBreakSub} numberOfLines={2}>Anomalia dimensional activa. Toca para investigar.</Text>
+                    <Text style={s.dungeonBreakSub} numberOfLines={2}>{t('ui.portal_anomaly')}</Text>
                   </View>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 4 }}>
                   <Icon name="timer-alert-outline" size={10} color={displayColor + 'cc'} />
                   <Text style={[s.dungeonBreakSub, { color: displayColor }]}>
-                    {formatCountdown(portalCountdownMs)} RESTANTES — TOCA PARA ENTRAR
+                    {t('ui.portal_remaining', { countdown: formatCountdown(portalCountdownMs, t) })}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -712,7 +714,7 @@ export default function QuestScreen() {
         <View style={s.sectionHeaderRow}>
           <View style={[s.sectionDivider, { marginBottom: 0, flex: 1 }]}>
             <View style={s.sectionLine} />
-            <Text style={s.sectionLabel}>MISSÕES DIÁRIAS</Text>
+            <Text style={s.sectionLabel}>{t('ui.daily_missions_section')}</Text>
             <View style={s.sectionLine} />
           </View>
         </View>
@@ -721,7 +723,7 @@ export default function QuestScreen() {
         {system.adStreakShieldActive && (
           <View style={s.adShieldActive}>
             <Icon name="shield-check" size={12} color="#22d3ee" />
-            <Text style={s.adShieldActiveTxt}> ESCUDO DE STREAK ATIVO — o teu streak está protegido</Text>
+            <Text style={s.adShieldActiveTxt}> {t('ui.streak_shield_active')}</Text>
           </View>
         )}
 
@@ -734,7 +736,7 @@ export default function QuestScreen() {
             activeOpacity={0.75}
           >
             <Icon name="play-circle-outline" size={13} color="#22d3ee" />
-            <Text style={s.adShieldTxt}>VER ANÚNCIO → PROTEGER STREAK (1×/semana)</Text>
+            <Text style={s.adShieldTxt}>{t('ui.ad_streak_shield')}</Text>
           </TouchableOpacity>
         )}
 
@@ -742,7 +744,7 @@ export default function QuestScreen() {
         {xpBoostNext && (
           <View style={s.boostBanner}>
             <Icon name="timer-sand-complete" size={12} color={C.gold} />
-            <Text style={s.boostTxt}> AMPULHETA ATIVA — próxima missão com XP x2</Text>
+            <Text style={s.boostTxt}> {t('ui.xp_boost_active')}</Text>
           </View>
         )}
 
@@ -755,7 +757,7 @@ export default function QuestScreen() {
             activeOpacity={0.75}
           >
             <Icon name="play-circle-outline" size={13} color="#f59e0b" />
-            <Text style={s.adRowTxt}>VER ANÚNCIO → XP ×2 PRÓXIMA MISSÃO (1×/dia)</Text>
+            <Text style={s.adRowTxt}>{t('ui.ad_xp_boost')}</Text>
           </TouchableOpacity>
         )}
 
@@ -763,7 +765,7 @@ export default function QuestScreen() {
           <View style={s.penalSection}>
             <View style={s.penalHeader}>
               <Icon name="alert-circle" size={12} color={C.neonRed} />
-              <Text style={[s.penalTitle, { flex: 1 }]}>Penalizações ativas</Text>
+              <Text style={[s.penalTitle, { flex: 1 }]}>{t('ui.penalties_active')}</Text>
             </View>
             {!system.adPenaltyUsedWeek && penaltyQ.length > 0 && (
               <TouchableOpacity
@@ -773,7 +775,7 @@ export default function QuestScreen() {
                 activeOpacity={0.75}
               >
                 <Icon name="play-circle-outline" size={13} color={C.neonRed} />
-                <Text style={[s.adRowTxt, { color: C.neonRed }]}>VER ANÚNCIO → REMOVER 1 PENALIZAÇÃO (1×/semana)</Text>
+                <Text style={[s.adRowTxt, { color: C.neonRed }]}>{t('ui.ad_penalty_reduce')}</Text>
               </TouchableOpacity>
             )}
             {penaltyQ.map(q => <QuestCard key={q.id} quest={q} isPenalty C={C} />)}
@@ -789,10 +791,10 @@ export default function QuestScreen() {
             }}>
               <Icon name="clock-outline" size={40} color={C.dimmed} style={{ marginBottom: SPACING.md }} />
               <Text style={{ color: C.muted, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, marginBottom: SPACING.sm }}>
-                MISSÕES NÃO GERADAS
+                {t('ui.missions_not_generated')}
               </Text>
               <Text style={{ color: C.dimmed, fontSize: 12, textAlign: 'center', paddingHorizontal: SPACING.lg }}>
-                O Sistema irá gerar as tuas missões ao iniciar o próximo dia.
+                {t('ui.missions_generated_next_day')}
               </Text>
             </View>
           ) : (
@@ -809,21 +811,21 @@ export default function QuestScreen() {
         {allDailyDone && (
           <>
             <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('extras')} activeOpacity={0.8}>
-              <Text style={s.collapsibleTitle}>EXTRAS</Text>
+              <Text style={s.collapsibleTitle}>{t('ui.extras')}</Text>
               <Icon name={sectionsOpen.extras ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
             </TouchableOpacity>
             {sectionsOpen.extras && (
               <>
             <View style={[s.sectionDivider, { marginTop: SPACING.sm }]}>
               <View style={[s.sectionLine, { backgroundColor: C.gold + '55' }]} />
-              <Text style={[s.sectionLabel, { color: C.gold }]}>MISSÕES EXTRA</Text>
+              <Text style={[s.sectionLabel, { color: C.gold }]}>{t('ui.extras_section')}</Text>
               <View style={[s.sectionLine, { backgroundColor: C.gold + '55' }]} />
             </View>
 
             <View style={s.extraInfoBox}>
               <Icon name="star-four-points" size={11} color={C.gold} />
               <Text style={s.extraInfoTxt}>
-                {' '}Todas as missões diárias concluídas. O Sistema oferece desafios extras com recompensas 1.5×.
+                {' '}{t('ui.extras_info')}
               </Text>
             </View>
 
@@ -838,10 +840,10 @@ export default function QuestScreen() {
                 <Icon name="plus-circle-outline" size={14} color={C.gold} />
                 <Text style={s.generateExtraTxt}>
                   {extraQuests.length === 0
-                    ? ' GERAR MISSÃO EXTRA'
-                    : ' GERAR MAIS UMA MISSÃO EXTRA'}
+                    ? ` ${t('ui.generate_extra')}`
+                    : ` ${t('ui.generate_more_extra')}`}
                 </Text>
-                <Text style={s.generateExtraSub}> ({Math.max(0, 3 - extraQuests.length)} restante{3 - extraQuests.length === 1 ? '' : 's'} hoje)</Text>
+                <Text style={s.generateExtraSub}> {t('ui.extras_remaining', { count: Math.max(0, 3 - extraQuests.length), plural: 3 - extraQuests.length === 1 ? '' : 's' })}</Text>
               </TouchableOpacity>
             )}
               </>
@@ -850,7 +852,7 @@ export default function QuestScreen() {
         )}
 
         <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('events')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.events = e.nativeEvent.layout.y; }}>
-          <Text style={s.collapsibleTitle}>MASMORRAS</Text>
+          <Text style={s.collapsibleTitle}>{t('ui.dungeons')}</Text>
           <Icon name={sectionsOpen.events ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
         </TouchableOpacity>
         {sectionsOpen.events && (
@@ -866,19 +868,19 @@ export default function QuestScreen() {
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
                     <Icon name={def.icon} size={22} color={def.color} style={{ marginRight: 10 }} />
                     <View style={{ flex: 1 }}>
-                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: def.color, letterSpacing: 1 }}>RAID BOSS GLOBAL · RANK {def.rank}</Text>
+                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: def.color, letterSpacing: 1 }}>{t('ui.raid_boss_label', { rank: def.rank })}</Text>
                       <Text style={{ fontFamily: FONT.orbitron, fontSize: 13, color: '#fff', fontWeight: 'bold', marginTop: 2 }}>{def.name}</Text>
                     </View>
                     <View style={{ alignItems: 'flex-end' }}>
                       <Icon name="timer-sand" size={11} color={C.dimmed} />
-                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed, marginTop: 2 }}>{formatCountdown(timeLeftMs)}</Text>
+                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed, marginTop: 2 }}>{formatCountdown(timeLeftMs, t)}</Text>
                     </View>
                   </View>
                   <View style={{ height: 5, backgroundColor: C.bg, borderRadius: 3, overflow: 'hidden', marginBottom: 4, borderWidth: 1, borderColor: C.border }}>
                     <View style={{ width: `${progress * 100}%`, height: '100%', backgroundColor: def.color }} />
                   </View>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed }}>HP RESTANTE</Text>
+                    <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed }}>{t('ui.hp_remaining')}</Text>
                     <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.muted }}>{Math.floor(activeRaidBoss.currentHp)} <Text style={{ color: C.dimmed }}>/ {activeRaidBoss.maxHp}</Text></Text>
                   </View>
                   {system.adBossUsedForId !== activeRaidBoss.defId && (
@@ -889,7 +891,7 @@ export default function QuestScreen() {
                       activeOpacity={0.75}
                     >
                       <Icon name="play-circle-outline" size={12} color={def.color} />
-                      <Text style={{ color: def.color, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginLeft: 6 }}>VER ANÚNCIO → -20% HP DO BOSS</Text>
+                      <Text style={{ color: def.color, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginLeft: 6 }}>{t('ui.ad_boss_hp')}</Text>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -905,9 +907,9 @@ export default function QuestScreen() {
               <View style={s.bossBannerLeft}>
                 <Icon name="gate" size={20} color={C.neonRed} />
                 <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
-                  <Text style={s.bossTitle}>Masmorra de Boss</Text>
+                  <Text style={s.bossTitle}>{t('ui.boss_dungeon')}</Text>
                   <Text style={s.bossSub}>
-                    {weeklyDefeatedBossId ? 'Boss derrotado esta semana · Volta na próxima.' : 'Derrota o boss para extrair a sua Sombra.'}
+                    {weeklyDefeatedBossId ? t('ui.boss_defeated_this_week') : t('ui.defeat_boss_to_extract')}
                   </Text>
                 </View>
               </View>
@@ -924,10 +926,10 @@ export default function QuestScreen() {
                 <View style={s.bossBannerLeft}>
                   <Icon name="calendar-star" size={20} color={C.gold} />
                   <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
-                    <Text style={[s.bossTitle, { color: C.gold }]}>Masmorra de evento disponível</Text>
-                    <Text style={s.bossSub}>Evento: {activeEventDef.event.name} · Provas: {eventCompleted.length}/{eventRequired}</Text>
+                    <Text style={[s.bossTitle, { color: C.gold }]}>{t('ui.event_dungeon_available')}</Text>
+                    <Text style={s.bossSub}>{t('ui.event_label', { name: activeEventDef.event.name, completed: eventCompleted.length, required: eventRequired })}</Text>
                     <Text style={[s.bossSub, { fontSize: 10, marginTop: 2, color: C.gold }]}>
-                      {eventCountdownMs > 0 ? formatCountdown(eventCountdownMs) : 'Evento terminado'}
+                      {eventCountdownMs > 0 ? formatCountdown(eventCountdownMs, t) : t('ui.event_ended')}
                     </Text>
                   </View>
                 </View>
@@ -940,7 +942,7 @@ export default function QuestScreen() {
               <View style={{ alignItems: 'center', paddingVertical: SPACING.lg }}>
                 <Icon name="gate" size={28} color={C.dimmed} />
                 <Text style={{ color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: SPACING.sm }}>
-                  NENHUM EVENTO ATIVO
+                  {t('ui.no_active_event_dungeons')}
                 </Text>
               </View>
             )}
@@ -1022,9 +1024,9 @@ export default function QuestScreen() {
       {portalConfirm && (
         <CustomModal
           visible={!!portalConfirm}
-          title={'PORTAL DINÂMICO'}
-          message={`${portalConfirm.label ?? 'Portal detectado'}\nEntra para veres os detalhes e iniciares a missão.`}
-          confirmLabel="ENTRAR"
+          title={t('ui.portal_modal_title')}
+          message={`${portalConfirm.label ?? t('ui.dynamic_portal_detected')}\n${t('ui.portal_entry_hint')}`}
+          confirmLabel={t('ui.portal_enter')}
           confirmIcon="play"
           confirmColor={portalConfirm.color || C.neonRed}
           onConfirm={() => {
@@ -1040,7 +1042,7 @@ export default function QuestScreen() {
         <CustomModal
           visible={!!eventProgressInfo}
           title={eventProgressInfo.name}
-          message={`Evento ${eventProgressInfo.name} — ${eventProgressInfo.completed}/${eventProgressInfo.required} provas concluídas.`}
+          message={t('ui.event_progress_message', { name: eventProgressInfo.name, completed: eventProgressInfo.completed, required: eventProgressInfo.required })}
           confirmLabel="OK"
           confirmIcon="check"
           confirmColor={C.neonBlue}
@@ -1054,9 +1056,9 @@ export default function QuestScreen() {
       {keyConfirm && (
         <CustomModal
           visible={!!keyConfirm}
-          title={keyConfirm.type === 'weekly' ? 'ABRIR PORTÃO' : 'USAR CHAVE'}
-          message={`Desejas usar a ${keyConfirm.key.name} para entrar na Masmorra?\nA chave será consumida.`}
-          confirmLabel="ENTRAR"
+          title={keyConfirm.type === 'weekly' ? t('ui.key_confirm_weekly') : t('ui.key_confirm_use')}
+          message={t('ui.key_confirm_message', { keyName: keyConfirm.key.name })}
+          confirmLabel={t('ui.key_enter')}
           confirmIcon="key-variant"
           confirmColor={keyConfirm.key.color || C.neonBlue}
           onConfirm={() => {
@@ -1065,7 +1067,7 @@ export default function QuestScreen() {
             }
             setKeyConfirm(null);
           }}
-          cancelLabel="CANCELAR"
+          cancelLabel={t('ui.key_cancel')}
           onCancel={() => setKeyConfirm(null)}
           C={C}
         />

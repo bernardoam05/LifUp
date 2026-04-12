@@ -1,0 +1,62 @@
+{
+  "alerts": {
+    "quest_invalid": "Ungültige Quest.",
+    "no_quests_available": "Keine Quests verfügbar.",
+    "weekly_limit_reached": "Wochenlimit erreicht (7/7).",
+    "no_other_quests": "Keine weiteren Quests verfügbar.",
+    "already_replaced": "Heute bereits ersetzt.",
+    "invalid": "Ungültig.",
+    "pool_empty": "Pool ist leer.",
+    "limit_reached": "Limit erreicht."
+  },
+  "shadows": {
+    "immunity_absorbed": "{{name}} hat die Strafe absorbiert!",
+    "streak_protected": "{{name}} hat deine Serie geschützt!",
+    "ad_shield_consumed": "Serien-Schild (Werbung) verbraucht — Serie geschützt!"
+  },
+  "buffs": {
+    "viper_venom": "Vipergift",
+    "crimson_knight_shard": "Scherbsplitter des Karmesinritters",
+    "cerberus_fang": "Cerberus-Reißzahn",
+    "iron_will_crystal": "Eiserner Wille",
+    "blood_fallen": "Blut der Gefallenen",
+    "dragon_scale": "Drachenschuppe",
+    "lich_eye": "Lich-Auge"
+  },
+  "items": {
+    "health_potion": "Heiltrank",
+    "xp_crystal": "XP-Kristall",
+    "rest_scroll": "Ruheschriftrolle",
+    "evolution_shard_common": "Evolutionssplitter"
+  },
+  "loot": {
+    "gold_title": "GOLDSCHATZ",
+    "xp_title": "ESSENZ ABSORBIERT",
+    "key_title": "SELTENER SCHLÜSSEL ENTDECKT",
+    "gold_abundant_title": "REICHLICH GOLD"
+  },
+  "helpers": {
+    "rank_e_label": "Neuling",
+    "rank_d_label": "Basis-Jäger",
+    "rank_c_label": "Meister des Willens",
+    "rank_b_label": "Schattenritter",
+    "rank_a_label": "Kommandant",
+    "rank_s_label": "Monarch",
+    "rank_national_label": "Jäger auf Nationalem Niveau"
+  },
+  "notifications": {
+    "focus_complete_title": "Fokus Abgeschlossen",
+    "focus_complete_body": "Fokus auf Mission \"{{questLabel}}\" abgeschlossen. Sammle deine Belohnungen.",
+    "level_up_title": "EVOLUTION — Stufe {{newLevel}}",
+    "level_up_body": "Deine Attribute wurden vom System aktualisiert.",
+    "ongoing_mission_title": "Mission läuft",
+    "pomodoro_break_title": "ZYKLUS {{cycle}} ABGESCHLOSSEN — PAUSE",
+    "pomodoro_break_body": "{{breakMins}} Min. Pause gestartet. Ruh dich aus und kehre zur Arbeit zurück.",
+    "pomodoro_work_title": "ZYKLUS {{nextCycle}} — ZEIT ZU ARBEITEN",
+    "pomodoro_work_body": "Pause ist vorbei. Der nächste Pomodoro-Zyklus ist bereit.",
+    "side_quest_reminder_title": "Missionserinnerung",
+    "side_quest_reminder_body": "Mission \"{{title}}\" wartet noch auf Abschluss.",
+    "system_warning_final_body": "Letzte Warnung: Schließe die täglichen Missionen vor der Systemreaktivierung um Mitternacht ab.",
+    "system_warning_title": "Systemwarnung"
+  }
+}

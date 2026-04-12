@@ -1,0 +1,286 @@
+{
+  "items": {
+    "streak_chain": {
+      "title": "Hunter's Flame",
+      "description": "Maintain your daily quest streak. The Monarch's flame must never go out."
+    },
+    "streak_phoenix": {
+      "title": "Phoenix from the Ashes",
+      "description": "Lost a streak of over 10 days and returned to 3 days again."
+    },
+    "streak_scroll_save": {
+      "title": "Strategist",
+      "description": "Use the Rest Scroll to protect a streak of 7+ days."
+    },
+    "focus_hours": {
+      "title": "Mental Fortress",
+      "description": "Accumulate hours in Focus Mode. The Monarch's mind knows no limits."
+    },
+    "focus_sessions": {
+      "title": "Iron Discipline",
+      "description": "Complete Focus Mode sessions. The Monarch trains the mind without stopping."
+    },
+    "focus_night_owl": {
+      "title": "Night Owl",
+      "description": "Start Focus Mode after 1:00 AM."
+    },
+    "focus_hardcore_surrender": {
+      "title": "Cold Regret",
+      "description": "You tried to exit Hardcore Focus Mode but went back in the confirmation modal."
+    },
+    "focus_crimson_knight": {
+      "title": "Throne Conquered",
+      "description": "Complete the Boss challenge \"The Knight's Vow\" (90 min focus)."
+    },
+    "focus_long_session": {
+      "title": "Ultra Focus",
+      "description": "Complete a Focus Mode session lasting 2 or more hours."
+    },
+    "boss_slayer": {
+      "title": "Dungeon Terror",
+      "description": "Defeat Boss Raids. The legend of the Shadow Monarch spreads across the realm."
+    },
+    "boss_runner": {
+      "title": "The Venom Can't Catch Me",
+      "description": "Complete the Boss \"Viper's Venom\" (5km GPS run)."
+    },
+    "boss_cerberus": {
+      "title": "Stronger Than Three",
+      "description": "Complete the Boss \"Cerberus Roar\" (100+100+30 physical)."
+    },
+    "boss_omega_slayer": {
+      "title": "Short Circuit",
+      "description": "Complete the Boss \"Omega Weapon (S-Rank)\" proving your insane resilience."
+    },
+    "boss_eclipse_survivor": {
+      "title": "Void Survivor",
+      "description": "Complete the Boss \"Cosmic Eclipse (S-Rank)\". You absorbed pure knowledge under pressure."
+    },
+    "boss_seraph_fall": {
+      "title": "Broken Golden Angel",
+      "description": "Complete the Boss \"Fallen Seraph Blade (S-Rank)\". You bent sacred light with your Shadow."
+    },
+    "boss_archlich_prime": {
+      "title": "Archlich's Crown",
+      "description": "Complete the Boss \"Primordial Archlich (S-Rank)\". The ancient ritual now obeys the Monarch."
+    },
+    "boss_soul_reaper": {
+      "title": "Void Reaper",
+      "description": "Complete the Boss \"Soul Reaper (S-Rank)\". No essence escapes you."
+    },
+    "boss_astral_nebula": {
+      "title": "King of Nebulae",
+      "description": "Complete the Boss \"Nebula King (S-Rank)\". You walked among stars without faltering."
+    },
+    "dungeon_break_hunter": {
+      "title": "Portal Defender",
+      "description": "Stop Dungeon Breaks. Chaos has no place where the Monarch treads."
+    },
+    "event_halloween_reaper": {
+      "title": "Autumn Reaper",
+      "description": "Defeat the Halloween event Boss. The mist parts for the Monarch."
+    },
+    "event_winter_lich": {
+      "title": "Solstice Crown",
+      "description": "Defeat the Winter event Boss. The longest night bowed."
+    },
+    "event_summer_titan": {
+      "title": "Solar Fury",
+      "description": "Defeat the Summer event Boss. The extreme heat strengthened your will."
+    },
+    "event_new_year_ashen": {
+      "title": "Reborn from Ashes",
+      "description": "Defeat the New Year Boss. The new beginning was sealed by your shadow."
+    },
+    "event_valentine_oath": {
+      "title": "Crimson Oath",
+      "description": "Defeat the Valentine Boss. The promise was engraved in the System."
+    },
+    "event_carnival_mask": {
+      "title": "Mask of Chaos",
+      "description": "Defeat the Carnival Boss. Chaos danced in your favor."
+    },
+    "event_equinox_guardian": {
+      "title": "Guardian of Balance",
+      "description": "Defeat the Equinox Boss. You maintained perfect balance."
+    },
+    "event_easter_hare": {
+      "title": "Easter Leap",
+      "description": "Defeat the Easter Boss. The leap of light was yours."
+    },
+    "event_spring_bloom": {
+      "title": "Flower of Rebirth",
+      "description": "Defeat the Spring Boss. Life bloomed in your path."
+    },
+    "event_harvest_king": {
+      "title": "King of the Harvest",
+      "description": "Defeat the Harvest Boss. Abundance belongs to the Monarch."
+    },
+    "event_black_friday_merchant": {
+      "title": "Shadow Merchant",
+      "description": "Defeat the Black Friday Boss. The gold obeys."
+    },
+    "event_yule_seraph": {
+      "title": "Yule Seraph",
+      "description": "Defeat the Yule Boss. The sacred night yielded."
+    },
+    "event_midnight_wraith": {
+      "title": "Midnight Wraith",
+      "description": "Defeat the Long Nights Boss. The darkness no longer controls you."
+    },
+    "event_festival_drake": {
+      "title": "Festival Drake",
+      "description": "Defeat the Festival Boss. The flame celebrated with you."
+    },
+    "level_chain": {
+      "title": "Hunter's Ascension",
+      "description": "Increase your level. The Shadow Monarch's power knows no ceiling."
+    },
+    "secret_monarch": {
+      "title": "Shadow Monarch",
+      "description": "Reach Level 20. The title of Shadow Monarch is officially granted by the System."
+    },
+    "shadow_army": {
+      "title": "Shadow Army",
+      "description": "Collect shadows for your army. The Monarch commands them all."
+    },
+    "shadow_elite": {
+      "title": "Shadow Vanguard",
+      "description": "Have 3 or more shadows simultaneously active on the battlefield."
+    },
+    "quests_perfect": {
+      "title": "Flawless",
+      "description": "Complete every day without failing a quest. The System observes your discipline."
+    },
+    "quests_total": {
+      "title": "Unstoppable Warrior",
+      "description": "Complete daily quests in total. Each quest forges the Monarch."
+    },
+    "quests_perfect_week": {
+      "title": "Perfect Week",
+      "description": "Complete all quests for an entire week."
+    },
+    "extra_quest_first": {
+      "title": "Own Initiative",
+      "description": "Complete your first Extra Quest."
+    },
+    "extra_quest_chain": {
+      "title": "Field Agent",
+      "description": "Complete Extra Quests in total. The Monarch is not limited by the System."
+    },
+    "extra_quest_daily_all": {
+      "title": "The Hunter's Agenda",
+      "description": "Complete ALL available Extra Quests in a single day."
+    },
+    "login_chain": {
+      "title": "Monarch's Presence",
+      "description": "Open the app daily. The System records your consistency over time."
+    },
+    "economy_first_purchase": {
+      "title": "Consumer Hunter",
+      "description": "Buy your first item at the System Shop."
+    },
+    "economy_system_pass": {
+      "title": "Expensive Privilege",
+      "description": "Use the System Pass to skip a daily quest."
+    },
+    "economy_lagrima_clutch": {
+      "title": "Resurrection",
+      "description": "Use the Tear of Purification while a penalty is active."
+    },
+    "economy_reloj": {
+      "title": "Time is Gold",
+      "description": "Use the Hourglass Watch during a Boss Raid."
+    },
+    "economy_hoarder": {
+      "title": "The System Miser",
+      "description": "Accumulate 5000 Gold without spending. The System notes your infinite patience."
+    },
+    "economy_spender": {
+      "title": "Invest in the System",
+      "description": "Spend 3000 Gold total at the Shop over time."
+    },
+    "economy_big_spender": {
+      "title": "System Patron",
+      "description": "Spend gold at the shop in total. The System thrives with your dedication."
+    },
+    "clutch_last_minute": {
+      "title": "On the Brink of Death",
+      "description": "Complete the last daily quest with less than 30 minutes to midnight."
+    },
+    "clutch_late_night": {
+      "title": "Ignoring the System",
+      "description": "Complete the last daily quest between 23:30 and 23:59."
+    },
+    "clutch_undo_redo": {
+      "title": "Committed to Precision",
+      "description": "Undo a quest and complete it again on the same day."
+    },
+    "rebellion_spam": {
+      "title": "Rebellion",
+      "description": "You tried to open a blocked app 5 times in less than 1 minute. The System notes your weakness."
+    },
+    "rebellion_resist": {
+      "title": "Temptation Resisted",
+      "description": "You tried to open a blocked app and gave up. The System approves."
+    },
+    "rebellion_c_rank": {
+      "title": "S-Rank Luck",
+      "description": "The roulette assigns Rank C to your first Side Quest."
+    },
+    "penalty_first": {
+      "title": "Punished by the System",
+      "description": "You enter the Penalty Zone for the first time. The System expected more."
+    },
+    "penalty_cleared": {
+      "title": "Redemption",
+      "description": "Clear an active penalty (by any means)."
+    },
+    "penalty_comeback": {
+      "title": "Resurgence",
+      "description": "Complete all quests the day after an active penalty."
+    },
+    "penalty_veteran": {
+      "title": "Void Veteran",
+      "description": "You survived 5 penalties and came back stronger. The void does not consume you."
+    },
+    "dawn_warrior": {
+      "title": "Dawn Warrior",
+      "description": "Complete a quest before 7:00 AM."
+    },
+    "secret_first_day": {
+      "title": "The Journey Begins",
+      "description": "Complete all quests on your first day as a hunter."
+    },
+    "secret_all_bosses": {
+      "title": "Complete Hunter",
+      "description": "Complete one boss of each type: GPS (Viper), Focus (Knight) and Training (Cerberus)."
+    },
+    "shadow_collector_10": {
+      "title": "Army Lord",
+      "description": "Acquire 10 Different Shadows."
+    },
+    "perfect_week_1": {
+      "title": "Golden Week",
+      "description": "An entire week of completed quests without failures."
+    },
+    "level_50_milestone": {
+      "title": "Halfway There",
+      "description": "Reach Level 50 as a Hunter."
+    },
+    "boss_slayer_20": {
+      "title": "Boss Terror",
+      "description": "Defeat 20 Bosses in total."
+    },
+    "dungeon_master_50": {
+      "title": "Dungeon Master",
+      "description": "Defeat 50 Bosses in total."
+    }
+  },
+  "ui": {
+    "system_label": "SYSTEM",
+    "header": "ACHIEVEMENT UNLOCKED",
+    "gold_reward": "+{{amount}} Gold",
+    "dismiss_btn": "GLORY TO THE HUNTER"
+  }
+}

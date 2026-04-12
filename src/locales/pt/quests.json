@@ -1,0 +1,496 @@
+{
+  "items": {
+    "core_pushups": {
+      "name": "Preparação Física: Força",
+      "description": "Realiza {target} flexões."
+    },
+    "core_squats": {
+      "name": "Preparação Física: Pernas",
+      "description": "Realiza {target} agachamentos."
+    },
+    "core_reading": {
+      "name": "Treino Mental: Leitura",
+      "description": "Lê {target} páginas de um livro útil."
+    },
+    "core_water": {
+      "name": "Sobrevivência: Hidratação",
+      "description": "Bebe {target} copos de água."
+    },
+    "pool_run": {
+      "name": "Missão de Caçador: Corrida",
+      "description": "Corre {target} km."
+    },
+    "pool_plank": {
+      "name": "Resistência Muscular",
+      "description": "Mantém uma prancha por {target} s."
+    },
+    "pool_meditate": {
+      "name": "Treino de Mana",
+      "description": "Medita em silêncio por {target} min."
+    },
+    "pool_social": {
+      "name": "Prova de Vontade",
+      "description": "Zero redes sociais por {target} h."
+    },
+    "pool_sugar": {
+      "name": "Corpo Limpo",
+      "description": "Não comer açúcar hoje."
+    },
+    "pool_pullups": {
+      "name": "Elevações",
+      "description": "Realiza {target} elevações."
+    },
+    "pool_screentime": {
+      "name": "Desintoxicação Digital",
+      "description": "Limita o tempo de ecrã (lazer) a {target} h."
+    },
+    "pool_stretching": {
+      "name": "Flexibilidade",
+      "description": "Sessão de alongamentos por {target} min."
+    },
+    "pool_deepwork": {
+      "name": "Trabalho Profundo",
+      "description": "Trabalha focado por {target} min sem pausas."
+    },
+    "pool_coldshower": {
+      "name": "Banho Gelado",
+      "description": "Toma um banho de água fria."
+    },
+    "pool_walking": {
+      "name": "Patrulha Ligeira",
+      "description": "Caminha {target} km hoje."
+    },
+    "pool_language": {
+      "name": "Conhecimento Arcano",
+      "description": "Estuda um idioma 15 min."
+    },
+    "pool_burpees": {
+      "name": "Condicionamento Extremo",
+      "description": "Realiza {target} burpees."
+    },
+    "pool_cook": {
+      "name": "Refeição de Caçador",
+      "description": "Cozinha a tua própria refeição saudável."
+    },
+    "pool_journal": {
+      "name": "Mente Clara",
+      "description": "Escreve um diário/reflexão por 10 min."
+    },
+    "pool_pomodoro_basic": {
+      "name": "Técnica de Caçador: Foco Cíclico",
+      "description": "Completa {target} ciclos Pomodoro hoje."
+    },
+    "pool_pomodoro_adv": {
+      "name": "Técnica de Caçador: Maestria Temporal",
+      "description": "Completa {target} ciclos Pomodoro hoje. A concentração é uma arma."
+    },
+    "boss_pomodoro_marathon": {
+      "name": "Maratona Pomodoro: O Fluxo Eterno (A-Rank)",
+      "description": "Completa {target} ciclos Pomodoro num único dia. O tempo curva-se para os que dominam o foco."
+    },
+    "boss_focus": {
+      "name": "O Rei do Tempo (S-Rank)",
+      "description": "Modo Foco estrito durante {target} horas, sem falhas."
+    },
+    "boss_gps": {
+      "name": "Lobo de Gelo Lycaon (A-Rank)",
+      "description": "Corre uma meia-maratona ou distância longa: {target} km."
+    },
+    "normal_boss_viper": {
+      "name": "Veneno da Víbora",
+      "description": "Corre 5km ou pedala 15km sem parar. A serpente aguarda no final."
+    },
+    "normal_boss_crimson_knight": {
+      "name": "O Voto do Cavaleiro Carmesim",
+      "description": "90 min de foco absoluto. O Cavaleiro Carmesim observa. Sem distrações."
+    },
+    "normal_boss_cerberus": {
+      "name": "Rugido de Cerberus",
+      "description": "100 push-ups + 100 squats + 30 burpees. Paga com suor."
+    },
+    "alpha_wolf": {
+      "name": "Lobo do Trovão Alfa",
+      "description": "Percorre {target} km em ritmo acelerado. O líder da matilha observa."
+    },
+    "sea_king": {
+      "name": "Rei das Marés Profundas",
+      "description": "70 min de foco profundo. Sente a pressão do abismo."
+    },
+    "dungeon_queen": {
+      "name": "Rainha da Masmorra Esquecida",
+      "description": "150 reps de exercício de força. Prova a tua resiliência."
+    },
+    "king_of_the_dead": {
+      "name": "Monarca dos Mortos-Vivos",
+      "description": "120 min de foco absoluto. O silêncio do túmulo é o teu aliado."
+    },
+    "boss_training": {
+      "name": "Guardião Cerberus (A-Rank)",
+      "description": "Batalha do corpo: {target} Flexões + {target} Agachamentos + {target}s Prancha."
+    },
+    "boss_crypt_omega": {
+      "name": "Aranha Ômega da Cripta (S-Rank)",
+      "description": "Luta complexa: {target} reps de um exercício à escolha a cada 10 mins durante 1 hora."
+    },
+    "boss_astral_eclipse": {
+      "name": "Espectro do Eclipse Astral (S-Rank)",
+      "description": "Corrida noturna: percorre {target} km depois das 20:00."
+    },
+    "boss_seraphim": {
+      "name": "Serafim Caído (S-Rank)",
+      "description": "Mente purificada: {target} min de leitura contínua (ficção ou filosofia)."
+    },
+    "boss_kargal": {
+      "name": "Kargal, o Devorador de Mentes (A-Rank)",
+      "description": "Elimina ruído: Fica longe de écrans/apps inúteis por {target} min seguidos antes de dormir."
+    },
+    "boss_ignis": {
+      "name": "Titã de Gelo Ignis (S-Rank)",
+      "description": "O contraste térmico quebra limites. Corre {target} km ao ar livre e termina com um banho frio de 1 min."
+    },
+    "boss_abyss_mage": {
+      "name": "Arquimago do Abismo (A-Rank)",
+      "description": "Desafia a mente: resolve 3 desafios de lógica/matemática em {target} min."
+    },
+    "boss_blood_knight": {
+      "name": "Cavaleiro de Sangue Sangreal (S-Rank)",
+      "description": "Luta corpo a corpo pura. {target} repetições de levantamento de peso (Deadlift/Squats)."
+    },
+    "boss_hollow_king": {
+      "name": "O Rei Vazio (S-Rank)",
+      "description": "Jejum intermitente: {target} min de foco total em trabalho ou estudo com o modo Foco ativo, sem beliscar. Hidratação apenas."
+    },
+    "boss_cerberus_prime": {
+      "name": "Cerberus Primordial (A-Rank)",
+      "description": "Controla a besta de 3 cabeças completando {target} km de corrida matinal."
+    },
+    "boss_wind_walker": {
+      "name": "Caminhante do Vento Silencioso (A-Rank)",
+      "description": "Realiza {target} min de alongamentos dinâmicos contínuos (balanços de pernas, rotações de ombros, hip circles) sem pausas superiores a 30s. Modo Foco ativo."
+    },
+    "boss_poison_monarch": {
+      "name": "Monarca do Veneno Quimera (S-Rank)",
+      "description": "O veneno está no corpo. {target} burpees para suar e queimar o veneno de uma vez."
+    },
+    "boss_goliath": {
+      "name": "Golias das Rochas Negras (A-Rank)",
+      "description": "Isometria pesada: {target} min de wall-sit ou prancha (tempo acumulado). Modo Foco ativo durante o esforço."
+    },
+    "boss_shadow_blade": {
+      "name": "Lâmina Negra Assustadora (A-Rank)",
+      "description": "Tática sombria: lê {target} páginas de estratégia (sem interrupções)."
+    },
+    "boss_iron_jaw": {
+      "name": "O Quebra-Mandíbulas (A-Rank)",
+      "description": "Shadowboxing: {target} rounds de 2 min cada, com descanso de 30–45s entre rounds."
+    },
+    "boss_astral_drake": {
+      "name": "Dragão Astral (S-Rank)",
+      "description": "Ativa o modo Foco por {target} min: realiza ciclos de respiração Wim Hof (30 respirações profundas + retenção do ar) e finaliza com 5 min de meditação silenciosa."
+    },
+    "boss_lich_king": {
+      "name": "Rei Lich Esquecido (S-Rank)",
+      "description": "Foco resistente: {target} min sentado e imóvel, sem distrações."
+    },
+    "boss_tarantula": {
+      "name": "Tarântula Imperial (A-Rank)",
+      "description": "Marcha controlada: percorre {target} km num percurso definido à partida (evita desvios), sem música nem telemóvel."
+    },
+    "boss_fallen_monk": {
+      "name": "Monge Caído (A-Rank)",
+      "description": "Jejum de estímulos: ativa o modo Foco por {target} min sem aceder a redes sociais, vídeos ou streaming — mantém a atenção numa única tarefa produtiva."
+    },
+    "boss_swamp_wraith": {
+      "name": "Espectro do Pântano (A-Rank)",
+      "description": "Autoanálise escrita: ativa o modo Foco por {target} min e escreve livremente sobre um desafio pessoal atual — o que está a acontecer, por que ainda não resolveste, e uma coisa concreta que podes fazer hoje."
+    },
+    "boss_titan_ape": {
+      "name": "Primata Titânico (A-Rank)",
+      "description": "Força bruta total: {target} reps alternadas de push-ups + squats."
+    },
+    "boss_astral_seer": {
+      "name": "Oráculo Astral (A-Rank)",
+      "description": "Conhecimento profundo: lê {target} páginas de conteúdo técnico sem pausas longas."
+    },
+    "boss_astral_hound": {
+      "name": "Cão Cósmico Errante (A-Rank)",
+      "description": "Resistência em campo aberto: percorre {target} km em ritmo constante."
+    },
+    "boss_archlich_prime": {
+      "name": "Arquilich Primordial (S-Rank)",
+      "description": "Projeto com entregável: define um resultado concreto antes de começar (protótipo, esboço, plano detalhado ou artigo curto). Ativa o modo Foco por {target} min e termina com algo tangível para mostrar."
+    },
+    "boss_soul_reaper": {
+      "name": "Ceifeiro de Almas (S-Rank)",
+      "description": "Resiliência mental: {target} min de trabalho criativo (escrita leve, desenho ou plano de projeto)."
+    },
+    "boss_astral_nebula": {
+      "name": "Rei Nebulosa (S-Rank)",
+      "description": "Travessia cósmica: percorre {target} km em marcha longa e focada."
+    },
+    "boss_goblin_warlord": {
+      "name": "Senhor Goblin (A-Rank)",
+      "description": "Tabata: completa {target} rounds de 20s de esforço máximo + 10s de repouso. Define um único exercício antes de começar (burpees, saltos ou sprints) e mantém a intensidade máxima em cada round."
+    },
+    "boss_cave_spider_matriarch": {
+      "name": "Matriarca da Caverna (A-Rank)",
+      "description": "Técnica Feynman: ativa o modo Foco por {target} min e explica por escrito (ou em voz alta gravada) um conceito que estás a aprender, como se ensinasses a um iniciante — sem consultar fontes durante a explicação."
+    },
+    "boss_ant_worker_prime": {
+      "name": "Operária Primordial (A-Rank)",
+      "description": "Rota de exploração: percorre {target} km num trajeto que nunca fizeste antes, escolhendo o caminho no momento (sem rota pré-definida). Nota 3 coisas novas que descobriste ao longo do percurso."
+    },
+    "boss_stone_golem_shard": {
+      "name": "Fragmento do Golem (A-Rank)",
+      "description": "Experimenta uma prática física nova (yoga, capoeira, calistenia, tai chi ou outra que nunca tentaste): segue um tutorial e pratica {target} min sem interrupção com modo Foco ativo. Repete os movimentos no final sem guia."
+    },
+    "boss_stringsinger": {
+      "name": "O Cantor das Cordas (A-Rank)",
+      "description": "Guitarra: {target} min de prática com metrónomo (3 acordes + 1 ritmo básico)."
+    },
+    "boss_polyglot_trial": {
+      "name": "Provação do Poliglota (A-Rank)",
+      "description": "Idioma: aprende {target} palavras + escreve 5 frases usando-as."
+    },
+    "boss_culinary_ritual": {
+      "name": "Ritual Culinário (A-Rank)",
+      "description": "Cozinha: prepara 1 refeição saudável + 1 acompanhamento (do zero)."
+    },
+    "boss_memory_labyrinth": {
+      "name": "Labirinto da Memória (A-Rank)",
+      "description": "Memória: {target} min de foco para criar um palácio mental com 12 locais e rever as associações 2 vezes em silêncio."
+    },
+    "boss_new_frontier": {
+      "name": "Fronteira Inédita (A-Rank)",
+      "description": "Experimenta algo novo: 1 aula curta (20–30 min) + 3 notas do que aprendeste."
+    },
+    "boss_artisan_trial": {
+      "name": "Prova do Artesão (A-Rank)",
+      "description": "Constrói algo pequeno: 1 objeto útil (ex.: suporte, organizador, remendo)."
+    },
+    "boss_storm_bringer": {
+      "name": "Invocador de Tempestades (S-Rank)",
+      "description": "Skill sprint: define uma micro-skill específica que queres aprender. Estuda-a em modo Foco por {target} min e pratica-a imediatamente durante 15 min adicionais — sem avançar para outro tema antes de terminar."
+    },
+    "boss_chrono_master": {
+      "name": "Senhor do Tempo (S-Rank)",
+      "description": "Timeboxing: {target} min de foco (equivale a 3 blocos Pomodoro de 25 min). Executa com pausas de 5 min entre blocos."
+    },
+    "boss_star_breaker": {
+      "name": "Quebrador de Estrelas (S-Rank)",
+      "description": "Exploração documentada: percorre {target} km a pé num percurso nunca feito antes. Durante a marcha, identifica e regista (por escrito ou foto) pelo menos 3 elementos novos que nunca tinhas reparado."
+    },
+    "boss_cold_philosopher": {
+      "name": "O Filósofo da Montanha (A-Rank)",
+      "description": "Análise de problema real: define um problema pessoal concreto que estás a adiar. Pesquisa contexto e opiniões opostas durante {target} min (modo Foco ativo) e termina com uma decisão escrita."
+    },
+    "boss_digital_craftsman": {
+      "name": "O Artesão Digital (A-Rank)",
+      "description": "Constrói algo digital do zero em {target} min: uma página web simples, um script útil, uma apresentação estruturada ou um protótipo. O resultado tem de ser funcional ou apresentável no final."
+    },
+    "boss_stoic_challenge": {
+      "name": "A Prova do Estoico (A-Rank)",
+      "description": "Desconforto voluntário: {target} min de treino físico num ambiente frio real (ao ar livre no frio, ou janelas abertas). Modo Foco ativo. Regista como te sentiste antes e depois."
+    },
+    "p_cardio": {
+      "name": "Penalização: Cardio",
+      "description": "20 min de corrida contínua"
+    },
+    "p_squat": {
+      "name": "Penalização: Agachamentos",
+      "description": "50 agachamentos consecutivos"
+    },
+    "p_focus": {
+      "name": "Penalização: Foco Forçado",
+      "description": "30 min de foco sem interrupções"
+    },
+    "p_reading": {
+      "name": "Penalização: Leitura Disciplinar",
+      "description": "15 páginas (livro não-ficção)"
+    },
+    "p_plank": {
+      "name": "Penalização: Prancha do Sistema",
+      "description": "3 min de prancha (acumulados)"
+    },
+    "p_pushups": {
+      "name": "Penalização: Flexões",
+      "description": "30 flexões de execução lenta"
+    }
+  },
+  "ui": {
+    "now": "AGORA",
+    "quick_panel": "PAINEL RÁPIDO",
+    "mission_in_focus": "Missão em foco: {{label}}",
+    "no_active_mission": "Nenhuma missão ativa agora.",
+    "dynamic_portal_active": "Portal dinâmico ativo - {{countdown}}",
+    "no_dynamic_portal": "Nenhum portal dinâmico ativo.",
+    "event_available": "Evento {{name}} disponível ({{completed}}/{{required}})",
+    "no_active_event": "Nenhum evento ativo neste momento.",
+    "today": "HOJE",
+    "forge_btn": "FORJA",
+    "forge_subtitle": "Cria missões personalizadas",
+    "rest_active": "REPOUSO ATIVO",
+    "rest": "REPOUSO",
+    "rest_active_sub": "Ativo — sem penalidades",
+    "rest_sub": "Pausa sem penalidades",
+    "daily_missions_title": "MISSÕES DO DIA",
+    "rest_badge": "DESCANSO",
+    "today_progress": "PROGRESSO DE HOJE",
+    "portals_today": "PORTAIS HOJE: {{count}}/3",
+    "mission_in_progress": "EM PROGRESSO — Conclui a missão para fechar o portal.",
+    "press_to_open": "Pressiona para abrir a missão.",
+    "daily_missions_section": "MISSÕES DIÁRIAS",
+    "streak_shield_active": "ESCUDO DE STREAK ATIVO — o teu streak está protegido",
+    "ad_streak_shield": "VER ANÚNCIO → PROTEGER STREAK (1×/semana)",
+    "xp_boost_active": "AMPULHETA ATIVA — próxima missão com XP x2",
+    "ad_xp_boost": "VER ANÚNCIO → XP ×2 PRÓXIMA MISSÃO (1×/dia)",
+    "penalties_active": "Penalizações ativas",
+    "ad_penalty_reduce": "VER ANÚNCIO → REMOVER 1 PENALIZAÇÃO (1×/semana)",
+    "missions_not_generated": "MISSÕES NÃO GERADAS",
+    "missions_generated_next_day": "O Sistema irá gerar as tuas missões ao iniciar o próximo dia.",
+    "extras": "EXTRAS",
+    "extras_section": "MISSÕES EXTRA",
+    "extras_info": "Todas as missões diárias concluídas. O Sistema oferece desafios extras com recompensas 1.5×.",
+    "generate_extra": "GERAR MISSÃO EXTRA",
+    "generate_more_extra": "GERAR MAIS UMA MISSÃO EXTRA",
+    "extras_remaining": "({{count}} restante{{plural}} hoje)",
+    "dungeons": "MASMORRAS",
+    "raid_boss_label": "RAID BOSS GLOBAL · RANK {{rank}}",
+    "hp_remaining": "HP RESTANTE",
+    "ad_boss_hp": "VER ANÚNCIO → -20% HP DO BOSS",
+    "boss_dungeon": "Masmorra de Boss",
+    "boss_defeated_this_week": "Boss derrotado esta semana · Volta na próxima.",
+    "defeat_boss_to_extract": "Derrota o boss para extrair a sua Sombra.",
+    "event_dungeon_available": "Masmorra de evento disponível",
+    "event_label": "Evento: {{name}} · Provas: {{completed}}/{{required}}",
+    "event_ended": "Evento terminado",
+    "no_active_event_dungeons": "NENHUM EVENTO ATIVO",
+    "dynamic_portal_detected": "PORTAL DINÂMICO DETECTADO",
+    "portal_anomaly": "Anomalia dimensional activa. Toca para investigar.",
+    "portal_remaining": "{{countdown}} RESTANTES — TOCA PARA ENTRAR",
+    "portal_dynamic_label": "Portal Dinâmico: {{title}}",
+    "portal_modal_title": "PORTAL DINÂMICO",
+    "portal_enter": "ENTRAR",
+    "portal_entry_hint": "Entra para veres os detalhes e iniciares a missão.",
+    "event_progress_message": "Evento {{name}} — {{completed}}/{{required}} provas concluídas.",
+    "key_confirm_weekly": "ABRIR PORTÃO",
+    "key_confirm_use": "USAR CHAVE",
+    "key_confirm_message": "Desejas usar a {{keyName}} para entrar na Masmorra?\nA chave será consumida.",
+    "key_enter": "ENTRAR",
+    "key_cancel": "CANCELAR",
+    "timer_ends_in": "Termina em {{time}}",
+    "timer_ends_in_0": "Termina em 0m",
+    "forge_screen_title": "FORJA DE MISSÕES",
+    "restore_btn": "RESTAURAR",
+    "core_section_title": "CORE — DIÁRIAS FIXAS",
+    "core_section_sub": "Aparecem todos os dias (ou nos dias configurados).",
+    "core_empty": "Nenhuma missão core. Adiciona pelo menos uma.",
+    "pool_section_title": "POOL — HÁBITOS ROTATIVOS",
+    "pool_section_sub": "Sorteados diariamente: 1 (Nvl 1–4) · 2 (Nvl 5–9) · 3 (Nvl 10+).",
+    "pool_empty": "Pool vazia. O Sistema não gerará hábitos rotativos.",
+    "boss_section_title": "BOSS — DESAFIOS ÉPICOS",
+    "boss_section_sub": "Missões de alto risco. Ativadas manualmente pela Forja.",
+    "boss_empty": "Nenhum Boss criado. O Sistema aguarda um Monarca corajoso.",
+    "create_directive": "CRIAR NOVA DIRETIVA",
+    "restore_defaults_title": "RESTAURAR PADRÕES",
+    "restore_defaults_message": "Repõe o dicionário original do Sistema.\n\nToda a personalização será perdida permanentemente.",
+    "restore_confirm": "RESTAURAR",
+    "delete_directive_title": "Apagar Diretiva",
+    "delete_directive_message": "Remover \"{{title}}\" do Sistema? As missões de hoje não serão afetadas.",
+    "cancel": "Cancelar",
+    "delete": "Apagar",
+    "form_new_directive": "NOVA DIRETIVA",
+    "form_edit_directive": "EDITAR DIRETIVA",
+    "form_mission_type": "TIPO DE MISSÃO",
+    "form_locked": "BLOQUEADO",
+    "form_core_chip": "CORE · Diária fixa",
+    "form_pool_chip": "POOL · Hábito rotativo",
+    "form_boss_chip": "BOSS · Desafio épico",
+    "form_category": "CATEGORIA",
+    "form_difficulty": "DIFICULDADE",
+    "form_difficulty_hint": "deixa vazio para calcular pelo XP",
+    "form_boss_class": "CLASSE DE BOSS",
+    "form_title": "TÍTULO",
+    "form_title_placeholder": "ex: Força Bruta",
+    "form_description": "DESCRIÇÃO",
+    "form_description_hint": "usa {target} e {unit} como variáveis",
+    "form_description_placeholder": "ex: Completa {target} {unit} hoje",
+    "form_base_value": "VALOR BASE",
+    "form_xp_gold": "XP · GOLD",
+    "form_unit": "UNIDADE",
+    "form_unit_other_placeholder": "Outra unidade (ex: passadas)...",
+    "form_scaling": "ESCALAMENTO",
+    "form_scaling_increases": "Aumenta",
+    "form_scaling_every": "A cada",
+    "form_scaling_levels": "níveis",
+    "form_scaling_preview": "↗ +{{amount}} {{unit}} a cada {{interval}} nível{{plural}}",
+    "form_days_of_week": "DIAS DA SEMANA",
+    "form_days_hint": "vazio = todos os dias",
+    "form_shadow_extraction": "EXTRAÇÃO DE SOMBRA",
+    "form_shadow_hint": "Opcional. Se preenchido, derrotar este Boss extrai uma Sombra para o teu exército.",
+    "form_shadow_name": "NOME DA SOMBRA",
+    "form_shadow_name_placeholder": "ex: Golem de Obsidiana",
+    "form_icon": "ÍCONE",
+    "form_icon_grid": "VER GRELHA DE ÍCONES",
+    "form_icon_placeholder": "ex: ghost, sword-cross, skull...",
+    "form_save": "GUARDAR ALTERAÇÕES",
+    "form_create": "CRIAR DIRETIVA",
+    "form_title_required": "Título obrigatório",
+    "form_title_required_msg": "A diretiva precisa de um nome.",
+    "icon_library": "BIBLIOTECA DE ÍCONES",
+    "icon_library_hint": "Toca para selecionar. O nome preenche automaticamente.",
+    "quest_type_training": "Treino",
+    "quest_type_focus": "Foco",
+    "quest_type_knowledge": "Conhecimento",
+    "quest_type_gps": "GPS",
+    "boss_class_event": "Evento",
+    "boss_class_raid": "Raid",
+    "day_sun": "Dom",
+    "day_mon": "Seg",
+    "day_tue": "Ter",
+    "day_wed": "Qua",
+    "day_thu": "Qui",
+    "day_fri": "Sex",
+    "day_sat": "Sáb",
+    "card_done": "Concluída",
+    "card_failed": "Falhada",
+    "card_undo": "Desfazer",
+    "card_fail_btn": "Falhei",
+    "card_in_force": "Em vigor",
+    "card_running": "A DECORRER",
+    "card_tap_to_start": "Toca para iniciar",
+    "card_open_focus": "Abrir Focus Mode",
+    "card_tap_focus_hint": "Toca para abrir Focus Mode e contar automaticamente",
+    "card_complete_manual": "Completar Manualmente",
+    "card_pomodoro_cycles": "{{current}}/{{target}} ciclos",
+    "card_ad_reroll": "VER ANÚNCIO → TROCAR MISSÃO",
+    "undo_mission_title": "DESFAZER MISSÃO",
+    "undo_mission_message": "Reverter a conclusão de \"{{label}}\"?\nO XP e Gold ganhos serão deduzidos.",
+    "undo_confirm": "DESFAZER",
+    "regen_confirm_title": "TROCAR MISSÃO",
+    "regen_confirm_message": "Queres trocar esta missão por outra aleatória?\nRestam-te {{remaining}} de 7 trocas semanais.",
+    "regen_confirm_btn": "TROCAR",
+    "regen_cancel": "CANCELAR",
+    "extra_regen_title": "SUBSTITUIR MISSÃO EXTRA",
+    "extra_regen_message": "Queres substituir esta missão extra por outra da pool?\nCada extra só pode ser substituída uma vez por dia.",
+    "extra_regen_confirm": "SUBSTITUIR",
+    "extra_regen_cancel": "CANCELAR",
+    "weekly_regen_limit": "Já usaste as tuas 7 trocas desta semana.",
+    "side_tasks_title": "TAREFAS DE HOJE",
+    "side_tasks_sub": "Bloco de notas diário. As tarefas são apagadas à meia-noite.",
+    "side_tasks_sub_penalty": " Tarefas por fazer penalizam.",
+    "side_tasks_placeholder": "Nova tarefa para hoje...",
+    "side_tasks_empty": "Sem tarefas para hoje. Adiciona uma acima.",
+    "side_note_title": "NOTA DA TAREFA",
+    "side_note_placeholder": "Escreve aqui...",
+    "side_note_save": "GUARDAR",
+    "side_note_cancel": "CANCELAR",
+    "side_complete_title": "TAREFA CONCLUÍDA",
+    "side_complete_message": "Marcas como feita:\n\"{{title}}\"?",
+    "side_complete_confirm": "SIM, FIZ",
+    "side_delete_title": "APAGAR TAREFA",
+    "side_delete_message": "Apagar permanentemente:\n\"{{title}}\"?",
+    "side_delete_confirm": "APAGAR",
+    "dungeon_break_label": "Dungeon Break: {{name}}"
+  }
+}

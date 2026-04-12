@@ -1,0 +1,127 @@
+{
+  "buttons": {
+    "continue": "CONTINUE",
+    "close": "CLOSE",
+    "confirm": "CONFIRM",
+    "cancel": "CANCEL",
+    "yes": "YES",
+    "no": "NO",
+    "ok": "OK",
+    "back": "BACK"
+  },
+  "extraction": {
+    "protocol": "SYSTEM — EXTRACTION PROTOCOL",
+    "arise_subtitle": "EXTRACTION PROTOCOL ACTIVATED",
+    "dungeon_cleared": "DUNGEON CLEARED.",
+    "achievement_unlocked": "ACHIEVEMENT UNLOCKED.",
+    "extraction_started": "SHADOW EXTRACTION INITIATED...",
+    "shadow_granted": "SHADOW GRANTED BY THE SYSTEM...",
+    "origin_label": "ORIGIN",
+    "copy_registered": "COPY REGISTERED",
+    "copies_accumulated_one": "{{count}} COPY ACCUMULATED",
+    "copies_accumulated_other": "{{count}} COPIES ACCUMULATED",
+    "throne_room_tip": "Use copies to evolve in the Throne Room.",
+    "new_soul": "NEW SHADOW ACQUIRED",
+    "equip_tip": "Report to the Throne Room to equip.",
+    "collect_soul": "COLLECT SOUL",
+    "rank_labels": {
+      "Normal": "NORMAL",
+      "Elite": "ELITE",
+      "Knight": "KNIGHT",
+      "Commander": "COMMANDER",
+      "Marshal": "MARSHAL"
+    },
+    "origin": {
+      "forge": "CREATED AT THE FORGE",
+      "achievement": "ACHIEVEMENT UNLOCKED",
+      "boss_drop": "BOSS DROP",
+      "shop": "SHOP PURCHASE",
+      "daily": "DAILY EXTRACTION"
+    }
+  },
+  "level_up": {
+    "system_label": "◈ SYSTEM ◈",
+    "title": "LEVEL UP!",
+    "level_label": "LEVEL",
+    "rewards_label": "REWARDS",
+    "continue": "CONTINUE"
+  },
+  "hud": {
+    "focus_tag": "FOCUS",
+    "xp_display": "{{current}} / {{max}} XP",
+    "level_display": "LVL {{level}}"
+  },
+  "alert": {
+    "ok": "OK"
+  },
+  "tutorial": {
+    "system_label": "SYSTEM — TUTORIAL PROTOCOL",
+    "skip": "SKIP",
+    "next": "NEXT",
+    "start": "START",
+    "phase1": [
+      {
+        "title": "WELCOME, HUNTER",
+        "body": "The System has awakened. There is only one path ahead: get stronger.\n\nThis guide will show you how the System world works."
+      },
+      {
+        "title": "DAILY MISSIONS",
+        "body": "Here you find your tasks for today. Complete them to earn XP, level up, and accumulate Gold.\n\nIf you complete all dailies, you receive a special reward."
+      },
+      {
+        "title": "MISSION FORGE",
+        "body": "You can adapt missions to your real life! At the top you find the FORGE to edit your routines.\n\n· CORE MISSIONS (Fixed): Occur daily without exception.\n· POOL MISSIONS (Extra): The System draws randomly from your deck each day."
+      },
+      {
+        "title": "YOUR PROFILE & SETTINGS",
+        "body": "Here you see your attributes, your Hunter Rank (which rises automatically), and your titles.\n\nIn the top-right corner, the Gear icon lets you adjust DIFFICULTY, affecting XP gained and lost."
+      },
+      {
+        "title": "YOUR SHADOW ARMY",
+        "body": "Shadows are warriors you extract by defeating bosses or completing all daily missions.\n\nEach has a unique passive effect that strengthens you automatically."
+      },
+      {
+        "title": "THE SYSTEM SHOP",
+        "body": "Use Gold to buy XP Potions, rerolls, and other consumables.\n\nOnce you reach Level 10, unique shadows become available for recruitment."
+      },
+      {
+        "title": "FOCUS MODE & PENALTIES",
+        "body": "Activate Focus Mode to block distractions.\n\nFailing daily missions puts you in the PENALTY ZONE and you lose XP. In Focus Hardcore mode, failing the timer temporarily blocks your phone!"
+      },
+      {
+        "title": "READY TO BEGIN",
+        "body": "Your first mission is simple: complete today's Daily Missions.\n\nThe more consistent you are, the higher your Rank will rise. Go forward, Hunter."
+      }
+    ],
+    "phase2": [
+      {
+        "title": "LEVEL 10 — SHADOWS AWAKEN",
+        "body": "You've reached an important milestone. From now on, Shadows begin to reveal themselves more frequently.\n\nLet me show you how to manage your army."
+      },
+      {
+        "title": "YOUR SHADOW",
+        "body": "Each shadow has a UNIQUE PASSIVE EFFECT — automatic bonuses that apply to your missions.\n\nHigher ranks (Commander, Marshal) have much more powerful effects."
+      },
+      {
+        "title": "ADD TO FAVORITES",
+        "body": "Tap the ⭐ icon to favorite.\n\nYour 3 favorite shadows apply their global passive effects: from protecting you from losing XP in the Penalty Zone, to granting attribute bonuses."
+      },
+      {
+        "title": "ACTIVE PASSIVE EFFECTS",
+        "body": "With favorite shadows activated, their bonuses apply automatically: more XP per mission, more Gold per quest, penalty regeneration, etc.\n\nYou can see active bonuses in your Profile."
+      },
+      {
+        "title": "THE MONARCH AWAKENS",
+        "body": "Keep conquering, Hunter. The most powerful shadows are yet to come — Rank S bosses await you.\n\nForge your army. Become unstoppable."
+      }
+    ]
+  },
+  "toast": {
+    "level_up_title": "LEVEL UP!",
+    "level_up_desc": "You reached Level {{level}}"
+  },
+  "modal": {
+    "confirm": "CONFIRM",
+    "cancel": "CANCEL"
+  }
+}

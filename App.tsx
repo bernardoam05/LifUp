@@ -1,3 +1,4 @@
+import './src/i18n';
 import React, { useEffect, useState, useCallback, Fragment } from 'react';
 import { View, Text, StyleSheet, StatusBar, NativeModules, TouchableOpacity, Vibration, Animated } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';

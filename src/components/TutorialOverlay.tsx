@@ -12,6 +12,7 @@ import {
   Animated, Easing, PanResponder,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme, FONT, SPACING } from '../theme';
 
 
@@ -46,20 +47,20 @@ const TAB_W       = SW / TAB_COUNT;
 // Approximate center X of each tab (0-indexed)
 const tabX = (i: number) => TAB_W * i + TAB_W / 2 - SW / 2;   // offset from center of screen
 
-const getPhase1Steps = (C: any): TutorialStep[] => [
+const getPhase1Steps = (C: any, t: (k: string) => string): TutorialStep[] => [
   {
     splash: true,
     icon:   'sword-cross',
     color:  C.neonBlue,
-    title:  'BEM-VINDO, HUNTER',
-    body:   'O Sistema acordou. Existe um único caminho à tua frente: ficar mais forte.\n\nEste guia vai mostrar-te como funciona o mundo do Sistema.',
+    title:  t('tutorial.phase1.0.title'),
+    body:   t('tutorial.phase1.0.body'),
     targetTab: 'Missões',
   },
   {
     icon:  'clipboard-list-outline',
     color: C.neonBlue,
-    title: 'MISSÕES DIÁRIAS',
-    body:  'Aqui encontras as tuas tarefas de hoje. Completa-as para ganhar XP, subir de nível e acumular Gold.\n\nSe completares todas as diárias recebes uma recompensa especial.',
+    title: t('tutorial.phase1.1.title'),
+    body:  t('tutorial.phase1.1.body'),
     arrow: { side: 'bottom', offsetX: tabX(1) },
     targetTab: 'Missões',
   },
@@ -67,39 +68,39 @@ const getPhase1Steps = (C: any): TutorialStep[] => [
     splash: true,
     icon:   'anvil',
     color:  '#f97316',
-    title:  'FORJA DE MISSÕES',
-    body:   'Podes adaptar as missões à tua vida real! No topo encontras a FORJA para editares as rotinas.\n\n· MISSÕES CORE (Fixas): Ocorrem diariamente sem excepção.\n· MISSÕES POOL (Extra): O Sistema sorteia diariamente, do teu baralho, um número aleatório (surpresas).',
+    title:  t('tutorial.phase1.2.title'),
+    body:   t('tutorial.phase1.2.body'),
     targetTab: 'Missões',
   },
   {
     icon:  'sword-cross',
     color: '#f59e0b',
-    title: 'O TEU PERFIL E CONFIGS',
-    body:  'Aqui vês os teus atributos, o teu Rank de Caçador (que sobe automaticamente) e os teus títulos.\n\nNo canto superior direito, na Roda Dentada, podes ajustar a DIFICULDADE do jogo, afectando o XP ganho e perdido.',
+    title: t('tutorial.phase1.3.title'),
+    body:  t('tutorial.phase1.3.body'),
     arrow: { side: 'bottom', offsetX: tabX(0) },
     targetTab: 'Status',
   },
   {
     icon:  'account-group-outline',
     color: C.purple,
-    title: 'A TUA TROPA DE SOMBRAS',
-    body:  'As Sombras são guerreiros que extrais ao derrotar bosses ou ao completar todas as missões diárias.\n\nCada uma tem um efeito passivo único que te fortalece passivamente.',
+    title: t('tutorial.phase1.4.title'),
+    body:  t('tutorial.phase1.4.body'),
     arrow: { side: 'bottom', offsetX: tabX(5) },
     targetTab: 'Sombras',
   },
   {
     icon:  'shopping-outline',
     color: C.gold,
-    title: 'A LOJA DO SISTEMA',
-    body:  'Usa Gold para comprar Poções de XP, regenerações e outros consumíveis.\n\nAo atingires o Nível 10, sombras únicas ficam disponíveis para recrutamento.',
+    title: t('tutorial.phase1.5.title'),
+    body:  t('tutorial.phase1.5.body'),
     arrow: { side: 'bottom', offsetX: tabX(2) },
     targetTab: 'Loja',
   },
   {
     icon:  'brain',
     color: '#22c55e',
-    title: 'MODO FOCO & PENALIZAÇÕES',
-    body:  'Activa o Modo Foco para bloquear distracções.\n\nSe falhares missões diárias entras na PENALTY ZONE e perdes XP. No modo Focus Hardcore, se falhares o timer, o Sistema bloqueia-te o telemóvel temporariamente!',
+    title: t('tutorial.phase1.6.title'),
+    body:  t('tutorial.phase1.6.body'),
     arrow: { side: 'bottom', offsetX: tabX(4) },
     targetTab: 'Focus Mode',
   },
@@ -107,42 +108,42 @@ const getPhase1Steps = (C: any): TutorialStep[] => [
     splash: true,
     icon:   'check-circle-outline',
     color:  C.neonBlue,
-    title:  'PRONTO PARA COMEÇAR',
-    body:   'A tua primeira missão é simples: completa as Missões Diárias de hoje.\n\nQuanto mais consistente fores, mais o teu Rank vai subir. Vai em frente, Hunter.',
+    title:  t('tutorial.phase1.7.title'),
+    body:   t('tutorial.phase1.7.body'),
     targetTab: 'Missões',
   },
 ];
 
-const getPhase2Steps = (C: any): TutorialStep[] => [
+const getPhase2Steps = (C: any, t: (k: string) => string): TutorialStep[] => [
   {
     splash: true,
     icon:   'ghost',
     color:  C.purple,
-    title:  'NÍVEL 10 — AS SOMBRAS DESPERTAM',
-    body:   'Chegaste a um marco importante. A partir de agora, as Sombras começam a revelar-se com mais frequência.\n\nVou mostrar-te como gerir o teu exército.',
+    title:  t('tutorial.phase2.0.title'),
+    body:   t('tutorial.phase2.0.body'),
     targetTab: 'Sombras',
   },
   {
     icon:  'account-group-outline',
     color: C.purple,
-    title: 'A TUA SOMBRA',
-    body:  'Cada sombra tem um EFEITO PASSIVO ÚNICO — bónus automáticos que se aplicam às tuas missões.\n\nRanks mais altos (Commander, Marshal) têm efeitos muito mais poderosos.',
+    title: t('tutorial.phase2.1.title'),
+    body:  t('tutorial.phase2.1.body'),
     arrow: { side: 'bottom', offsetX: tabX(5) },
     targetTab: 'Sombras',
   },
   {
     icon:  'star-outline',
     color: '#facc15',
-    title: 'ADICIONAR A FAVORITOS',
-    body:  'Carrega no ícone ⭐ para favoritar.\n\nAs tuas 3 sombras favoritas aplicam os seus efeitos passivos globais: desde proteger-te de perder XP na Zona de Penalidade, a dar bónus de atributos.',
+    title: t('tutorial.phase2.2.title'),
+    body:  t('tutorial.phase2.2.body'),
     arrow: { side: 'bottom', offsetX: tabX(5) },
     targetTab: 'Sombras',
   },
   {
     icon:  'lightning-bolt',
     color: '#f59e0b',
-    title: 'EFEITOS PASSIVOS ACTIVOS',
-    body:  'Com sombras favoritas activadas, os seus bónus aplicam-se automaticamente: mais XP por missão, mais Gold por quest, regeneração de penalidade, etc.\n\nPodes ver os bónus activos no teu Perfil.',
+    title: t('tutorial.phase2.3.title'),
+    body:  t('tutorial.phase2.3.body'),
     arrow: { side: 'bottom', offsetX: tabX(0) },
     targetTab: 'Status',
   },
@@ -150,8 +151,8 @@ const getPhase2Steps = (C: any): TutorialStep[] => [
     splash: true,
     icon:   'crown',
     color:  '#facc15',
-    title:  'O MONARCA DESPERTA',
-    body:   'Continua a conquistar, Hunter. As sombras mais poderosas ainda estão por vir — bosses de Rank S aguardam-te.\n\nForja o teu exército. Torna-te imparável.',
+    title:  t('tutorial.phase2.4.title'),
+    body:   t('tutorial.phase2.4.body'),
     targetTab: 'Missões',
   },
 ];
@@ -167,8 +168,9 @@ interface Props {
 
 export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
   const C = useTheme();
+  const { t } = useTranslation('common');
   const st = React.useMemo(() => getStyles(), []);
-  const steps = React.useMemo(() => (phase === 1 ? getPhase1Steps(C) : getPhase2Steps(C)), [phase, C]);
+  const steps = React.useMemo(() => (phase === 1 ? getPhase1Steps(C, t) : getPhase2Steps(C, t)), [phase, C, t]);
   const [step, setStep] = useState(0);
 
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -265,7 +267,7 @@ export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
               {/* System header */}
               <View style={st.sysRow}>
                 <View style={[st.sysDot, { backgroundColor: current.color }]} />
-                <Text style={[st.sysTxt, { color: current.color }]}>SISTEMA — PROTOCOLO DE TUTORIAL</Text>
+                <Text style={[st.sysTxt, { color: current.color }]}>{t('tutorial.system_label')}</Text>
                 <View style={[st.sysDot, { backgroundColor: current.color }]} />
               </View>
 
@@ -288,7 +290,7 @@ export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
               <View style={st.btnRow}>
                 {!isLast && (
                   <TouchableOpacity onPress={handleSkip} style={st.skipBtn}>
-                    <Text style={st.skipTxt}>SALTAR</Text>
+                    <Text style={st.skipTxt}>{t('tutorial.skip')}</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
@@ -297,7 +299,7 @@ export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
                   activeOpacity={0.8}
                 >
                   <Text style={[st.nextTxt, { color: current.color }]}>
-                    {isLast ? 'COMEÇAR' : 'PRÓXIMO'}
+                    {isLast ? t('tutorial.start') : t('tutorial.next')}
                   </Text>
                   <Icon name={isLast ? 'sword-cross' : 'arrow-right'} size={14} color={current.color} />
                 </TouchableOpacity>
@@ -332,14 +334,14 @@ export default function TutorialOverlay({ phase, onDone, onChangeTab }: Props) {
                 {/* Buttons */}
                 <View style={st.btnRow}>
                   <TouchableOpacity onPress={handleSkip} style={st.skipBtn}>
-                    <Text style={st.skipTxt}>SALTAR</Text>
+                    <Text style={st.skipTxt}>{t('tutorial.skip')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleNext}
                     style={[st.nextBtn, { borderColor: current.color, backgroundColor: current.color + '15' }]}
                     activeOpacity={0.8}
                   >
-                    <Text style={[st.nextTxt, { color: current.color }]}>PRÓXIMO</Text>
+                    <Text style={[st.nextTxt, { color: current.color }]}>{t('tutorial.next')}</Text>
                     <Icon name="arrow-right" size={14} color={current.color} />
                   </TouchableOpacity>
                 </View>

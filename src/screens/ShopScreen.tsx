@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/useGameStore';
 import { SHOP_CATALOG, ShopItem } from '../data/shopItems';
 import CustomModal from '../components/CustomModal';
@@ -28,6 +29,7 @@ function ItemCard({
 }) {
 
   const ic = getICStyles(C);
+  const { t } = useTranslation('shop');
 
   const soldOut = stockRemaining !== undefined && stockRemaining <= 0;
   const canAfford = gold >= item.cost && !soldOut;
@@ -42,18 +44,18 @@ function ItemCard({
       {/* Info */}
       <View style={ic.info}>
         <View style={ic.nameRow}>
-          <Text style={[ic.name, { color: soldOut ? C.dimmed : item.color }]}>{item.name}</Text>
+          <Text style={[ic.name, { color: soldOut ? C.dimmed : item.color }]}>{t(`items.${item.id}.name`, { defaultValue: item.name })}</Text>
           {item.weeklyStock !== undefined && (
             <View style={[ic.stockBadge, { borderColor: soldOut ? '#374151' : item.color + '55' }]}>
               <Icon name="refresh-circle" size={9} color={soldOut ? '#374151' : item.color} />
               <Text style={[ic.stockTxt, { color: soldOut ? '#374151' : item.color }]}>
-                {' '}{soldOut ? 'ESGOTADO' : `${stockRemaining}/semana`}
+                {' '}{soldOut ? t('ui.sold_out') : t('ui.per_week', { count: stockRemaining })}
               </Text>
             </View>
           )}
         </View>
-        <Text style={ic.desc}>{item.description}</Text>
-        <Text style={ic.lore}>{item.lore}</Text>
+        <Text style={ic.desc}>{t(`items.${item.id}.description`, { defaultValue: item.description })}</Text>
+        <Text style={ic.lore}>{t(`items.${item.id}.lore`, { defaultValue: item.lore ?? '' })}</Text>
       </View>
 
       {/* Buy */}
@@ -68,7 +70,7 @@ function ItemCard({
           disabled={!canAfford}
         >
           <Text style={[ic.buyTxt, { color: canAfford ? item.color : C.dimmed }]}>
-            {soldOut ? 'ESGOTADO' : canAfford ? 'COMPRAR' : 'SEM GOLD'}
+            {soldOut ? t('ui.sold_out') : canAfford ? t('ui.buy') : t('ui.no_gold')}
           </Text>
         </TouchableOpacity>
         {onBuyBulk && !soldOut && gold >= item.cost * 10 && (
@@ -90,14 +92,15 @@ function ItemCard({
 
 function ShadowRecruitmentGate({ onPress, C }: { onPress: () => void; C: any }) {
   const s = getGateStyles(C);
+  const { t } = useTranslation('shop');
   return (
     <TouchableOpacity style={s.gate} onPress={onPress}>
       <View style={s.iconWrap}>
         <Icon name="ghost" size={32} color="#a855f7" />
       </View>
       <View style={s.info}>
-        <Text style={s.title}>RECRUTAMENTO DE SOMBRAS</Text>
-        <Text style={s.subtitle}>Liberta o poder das trevas por um preço em Gold.</Text>
+        <Text style={s.title}>{t('ui.shadow_recruitment')}</Text>
+        <Text style={s.subtitle}>{t('ui.shadow_recruitment_subtitle')}</Text>
       </View>
       <Icon name="chevron-right" size={24} color={C.dimmed} />
     </TouchableOpacity>
@@ -109,6 +112,7 @@ function ShadowRecruitmentGate({ onPress, C }: { onPress: () => void; C: any }) 
 export default function ShopScreen() {
   const C = useTheme();
   const s = getStyles(C);
+  const { t } = useTranslation('shop');
 
   const player = useGameStore(st => st.player);
   const shopStocks = useGameStore(st => st.system.shopStocks);
@@ -166,22 +170,22 @@ export default function ShopScreen() {
           <Icon name="shopping-outline" size={16} color={C.neonBlue} />
           <Text style={s.title}> LOJA DO SISTEMA</Text>
         </View>
-        <Text style={s.subtitle}>Gasta ouro para potenciar a tua jornada, Hunter.</Text>
+        <Text style={s.subtitle}>{t('ui.shop_subtitle')}</Text>
 
         {/* Gold balance */}
         <View style={s.goldBar}>
           <Icon name="rhombus" size={18} color={C.gold} />
-          <Text style={s.goldTxt}> {player.gold.toLocaleString()} Gold disponível</Text>
+          <Text style={s.goldTxt}> {t('ui.gold_available', { amount: player.gold.toLocaleString() })}</Text>
         </View>
 
         {/* Ad Rewards */}
         <View style={s.adCard}>
           <View style={s.adCardHeader}>
             <Icon name="television-play" size={14} color={C.gold} />
-            <Text style={s.adCardTitle}> BÓNUS DIÁRIO</Text>
+            <Text style={s.adCardTitle}> {t('ui.daily_bonus')}</Text>
             <Text style={s.adCardCount}>{goldAdsCount}/{MAX_GOLD_ADS}</Text>
           </View>
-          <Text style={s.adCardDesc}>Vê um anúncio voluntário e recebe 500 Gold.</Text>
+          <Text style={s.adCardDesc}>{t('ui.ad_gold_desc')}</Text>
           <TouchableOpacity
             style={[s.adBtn, (goldAdsCount >= MAX_GOLD_ADS || !adLoaded) && s.adBtnDisabled]}
             disabled={goldAdsCount >= MAX_GOLD_ADS || !adLoaded}
@@ -189,7 +193,7 @@ export default function ShopScreen() {
           >
             <Icon name={goldAdsCount >= MAX_GOLD_ADS ? 'check-circle' : 'play-circle'} size={14} color={goldAdsCount >= MAX_GOLD_ADS ? C.green : C.gold} />
             <Text style={[s.adBtnTxt, goldAdsCount >= MAX_GOLD_ADS && { color: C.green }]}>
-              {goldAdsCount >= MAX_GOLD_ADS ? ' LIMITE ATINGIDO' : !adLoaded ? ' A CARREGAR...' : ' VER ANÚNCIO → +500 GOLD'}
+              {goldAdsCount >= MAX_GOLD_ADS ? ` ${t('ui.limit_reached')}` : !adLoaded ? ` ${t('ui.loading')}` : ` ${t('ui.watch_ad_gold')}`}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -202,13 +206,13 @@ export default function ShopScreen() {
           >
             <Icon name={itemAdsCount >= MAX_ITEM_ADS ? 'check-circle' : 'play-circle'} size={14} color={itemAdsCount >= MAX_ITEM_ADS ? C.green : C.neonBlue} />
             <Text style={[s.adBtnTxt, { color: itemAdsCount >= MAX_ITEM_ADS ? C.green : C.neonBlue }]}>
-              {itemAdsCount >= MAX_ITEM_ADS ? ' LIMITE ATINGIDO' : !adItemLoaded ? ' A CARREGAR...' : ` VER ANÚNCIO → ITEM ALEATÓRIO (${itemAdsCount}/${MAX_ITEM_ADS})`}
+              {itemAdsCount >= MAX_ITEM_ADS ? ` ${t('ui.limit_reached')}` : !adItemLoaded ? ` ${t('ui.loading')}` : ` ${t('ui.watch_ad_item', { count: itemAdsCount, max: MAX_ITEM_ADS })}`}
             </Text>
           </TouchableOpacity>
           {lastItemWon && (
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
               <Icon name="gift-outline" size={12} color={C.green} />
-              <Text style={{ color: C.green, fontSize: 11, marginLeft: 4 }}> {lastItemWon} adicionado ao inventário!</Text>
+              <Text style={{ color: C.green, fontSize: 11, marginLeft: 4 }}> {t('ui.item_added_inventory', { itemName: lastItemWon })}</Text>
             </View>
           )}
         </View>
@@ -217,7 +221,7 @@ export default function ShopScreen() {
         {lastBought && (
           <View style={s.successBanner}>
             <Icon name="check-circle" size={14} color={C.green} />
-            <Text style={s.successTxt}> Item adicionado ao inventário!</Text>
+            <Text style={s.successTxt}> {t('ui.item_added_success')}</Text>
             <TouchableOpacity onPress={() => setLastBought(null)}>
               <Icon name="close" size={14} color={C.muted} />
             </TouchableOpacity>
@@ -246,13 +250,13 @@ export default function ShopScreen() {
         {/* ── Shadow Section ── */}
         <View style={s.sectionHeader}>
           <Icon name="ghost" size={14} color="#a855f7" />
-          <Text style={[s.sectionTitle, { color: '#a855f7' }]}> EXÉRCITO DISPONÍVEL</Text>
+          <Text style={[s.sectionTitle, { color: '#a855f7' }]}> {t('ui.army_available')}</Text>
         </View>
 
         {player.level < 10 ? (
           <View style={s.lockedBanner}>
             <Icon name="lock-outline" size={14} color={C.dimmed} />
-            <Text style={s.lockedTxt}>  Desbloqueado após atingir Nível 10</Text>
+            <Text style={s.lockedTxt}>  {t('ui.locked_level')}</Text>
           </View>
         ) : (
           <ShadowRecruitmentGate
@@ -266,13 +270,15 @@ export default function ShopScreen() {
       {/* Confirm modal */}
       <CustomModal
         visible={!!pending}
-        title="CONFIRMAR COMPRA"
+        title={t('ui.confirm_purchase')}
         message={
           pending
-            ? `Comprar ${pending.amount && pending.amount > 1 ? `${pending.amount}x ` : ''}"${pending.name}" por ${(pending.cost * (pending.amount ?? 1))} Gold?\n\n${pending.description}`
+            ? (pending.amount && pending.amount > 1
+                ? t('ui.confirm_purchase_msg_bulk', { quantity: pending.amount, name: t(`items.${pending.id}.name`, { defaultValue: pending.name }), cost: pending.cost * pending.amount, description: t(`items.${pending.id}.description`, { defaultValue: pending.description }) })
+                : t('ui.confirm_purchase_msg', { quantity: '', name: t(`items.${pending.id}.name`, { defaultValue: pending.name }), cost: pending.cost, description: t(`items.${pending.id}.description`, { defaultValue: pending.description }) }))
             : ''
         }
-        confirmLabel="COMPRAR"
+        confirmLabel={t('ui.buy')}
         confirmIcon="cart-check"
         confirmColor={pending?.color ?? C.gold}
         onConfirm={confirmBuy}
@@ -284,13 +290,15 @@ export default function ShopScreen() {
       {/* Shadow purchase modal */}
       <CustomModal
         visible={!!pendingShadow}
-        title={player.shadows.some(e => e.id === pendingShadow?.id) ? 'EVOLUIR SOMBRA' : 'RECRUTAR SOMBRA'}
+        title={player.shadows.some(e => e.id === pendingShadow?.id) ? t('ui.evolve_shadow') : t('ui.recruit_shadow')}
         message={
           pendingShadow
-            ? `Confirmar ${player.shadows.some(e => e.id === pendingShadow?.id) ? 'evolução' : 'recrutamento'} de "${pendingShadow.name}" por ${pendingShadow.unlockMethod.price} Gold?\n\n${pendingShadow.passiveEffect?.description ?? ''}`
+            ? (player.shadows.some(e => e.id === pendingShadow?.id)
+                ? t('ui.confirm_evolve_msg', { name: pendingShadow.name, cost: pendingShadow.unlockMethod.price, effect: pendingShadow.passiveEffect?.description ?? '' })
+                : t('ui.confirm_recruit_msg', { name: pendingShadow.name, cost: pendingShadow.unlockMethod.price, effect: pendingShadow.passiveEffect?.description ?? '' }))
             : ''
         }
-        confirmLabel="CONFIRMAR"
+        confirmLabel={t('ui.confirm')}
         confirmIcon="ghost"
         confirmColor="#a855f7"
         onConfirm={confirmBuyShadow}

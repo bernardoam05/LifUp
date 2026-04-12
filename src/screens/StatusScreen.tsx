@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import MissionHistoryModal from './MissionHistoryModal';
 import { CATALOG_MAP } from '../data/shopItems';
 
@@ -89,6 +90,7 @@ function SectionHeader({ icon, label, C }: { icon: string; label: string; C: any
 // ── Statistics panel ───────────────────────────────────────────────────────────
 
 function StatisticsPanel({ C }: { C: any }) {
+  const { t } = useTranslation('screens');
   const sp = getSPStyles(C); // Assuming getSPStyles is defined later
   const stats = useGameStore(st => st.statistics);
 
@@ -117,14 +119,14 @@ function StatisticsPanel({ C }: { C: any }) {
   return (
     <View style={sp.container}>
       <View style={sp.kpiRow}>
-        <KPICard icon="trophy" color={C.gold}     label="Missões"       value={String(stats.totalCompleted)} C={C} />
-        <KPICard icon="calendar-star" color={C.purple} label="Dias Perfeitos" value={String(stats.perfectDays)} C={C} />
-        <KPICard icon="timer-outline" color={C.neonBlue} label="Foco"
+        <KPICard icon="trophy" color={C.gold}     label={t('status.stats_kpi_missions')}       value={String(stats.totalCompleted)} C={C} />
+        <KPICard icon="calendar-star" color={C.purple} label={t('status.stats_kpi_perfect_days')} value={String(stats.perfectDays)} C={C} />
+        <KPICard icon="timer-outline" color={C.neonBlue} label={t('status.stats_kpi_focus')}
           value={hours > 0 ? `${hours}h${minutes}m` : `${minutes}m`} C={C} />
       </View>
 
       <View style={sp.rankSection}>
-        <Text style={sp.rankTitle}>DETALHE DE OPERAÇÕES</Text>
+        <Text style={sp.rankTitle}>{t('status.stats_ops_detail')}</Text>
         <View style={sp.rankGrid}>
           {categories.map(cat => {
             const pct = grandTotal > 0 ? (cat.count / grandTotal) * 100 : 0;
@@ -162,6 +164,7 @@ function KPICard({ icon, color, label, value, C }: { icon: string; color: string
 function AchievementDetailModal({
   achievement: a, prog, done, onClose, C,
 }: { achievement: Achievement; prog: AchievementProg | undefined; done: boolean; onClose: () => void; C: any }) {
+  const { t } = useTranslation('screens');
   const am = getAMStyles(C); // Assuming getAMStyles is defined later
   const secret    = a.isSecret && !done && !a.tiers;
   const maxed     = a.tiers ? isAchievementMaxed(a, prog) : done;
@@ -187,7 +190,7 @@ function AchievementDetailModal({
 
           {/* Header */}
           <View style={am.headerRow}>
-            <Text style={am.headerLabel}>[ CONQUISTA ]</Text>
+            <Text style={am.headerLabel}>{t('status.achievement_label')}</Text>
             <TouchableOpacity onPress={onClose} style={am.closeBtn}>
               <Icon name="close" size={16} color={C.muted} />
             </TouchableOpacity>
@@ -219,19 +222,19 @@ function AchievementDetailModal({
             </View>
             {a.isSecret && (
               <View style={[am.categoryBadge, { borderColor: C.purple + '44' }]}>
-                <Text style={[am.categoryTxt, { color: C.purple }]}>SECRETO</Text>
+                <Text style={[am.categoryTxt, { color: C.purple }]}>{t('status.achievement_secret')}</Text>
               </View>
             )}
             {maxed && (
               <View style={[am.categoryBadge, { borderColor: C.gold + '66' }]}>
                 <Icon name="check-circle" size={9} color={C.gold} />
-                <Text style={[am.categoryTxt, { color: C.gold }]}> MAX</Text>
+                <Text style={[am.categoryTxt, { color: C.gold }]}> {t('status.achievement_maxed')}</Text>
               </View>
             )}
             {!a.tiers && done && (
               <View style={[am.categoryBadge, { borderColor: C.green + '44' }]}>
                 <Icon name="check-circle" size={9} color={C.green} />
-                <Text style={[am.categoryTxt, { color: C.green }]}> DESBLOQUEADO</Text>
+                <Text style={[am.categoryTxt, { color: C.green }]}> {t('status.achievement_unlocked')}</Text>
               </View>
             )}
           </View>
@@ -272,7 +275,7 @@ function AchievementDetailModal({
           {a.tiers && !secret && !maxed && activeTier && (
             <View style={am.progSection}>
               <View style={am.progHeader}>
-                <Text style={am.progLabel}>PROGRESSO ATUAL</Text>
+                <Text style={am.progLabel}>{t('status.achievement_progress_label')}</Text>
                 <Text style={am.progNums}>
                   {fmtVal(a, currentVal)} / {fmtVal(a, activeTier.targetValue)}
                 </Text>
@@ -287,7 +290,7 @@ function AchievementDetailModal({
               <View style={am.progTrack}>
                 <View style={[am.progFill, { width: '100%' as any, backgroundColor: C.gold }]} />
               </View>
-              <Text style={am.maxLabel}>[ MAX ]</Text>
+              <Text style={am.maxLabel}>{t('status.achievement_max_label')}</Text>
             </View>
           )}
 
@@ -311,6 +314,7 @@ function AchievementDetailModal({
 // ── Achievements panel (compact summary — tap to open full modal) ───────────────
 
 function AchievementsPanel({ onOpen, C }: { onOpen: () => void; C: any }) {
+  const { t } = useTranslation('screens');
   const ac = getACStyles(C);
   const unlockedIds         = useGameStore(s => s.unlockedAchievements);
   const achievementProgress = useGameStore(s => s.achievementProgress);
@@ -328,7 +332,7 @@ function AchievementsPanel({ onOpen, C }: { onOpen: () => void; C: any }) {
     <TouchableOpacity style={ac.summaryBtn} onPress={onOpen} activeOpacity={0.75}>
       <View style={ac.summaryRow}>
         <Icon name="trophy-outline" size={12} color={C.gold} />
-        <Text style={ac.headerTxt}> CONQUISTAS</Text>
+        <Text style={ac.headerTxt}> {t('status.achievements_title')}</Text>
         <View style={[ac.badge, { marginLeft: SPACING.sm }]}>
           <Text style={ac.badgeTxt}>{unlocked}/{total}</Text>
         </View>
@@ -340,7 +344,7 @@ function AchievementsPanel({ onOpen, C }: { onOpen: () => void; C: any }) {
             <SafeIcon name={a.icon} size={14} color={a.color ?? C.gold} />
           </View>
         )) : (
-          <Text style={ac.previewEmpty}>Nenhuma conquista desbloqueada ainda</Text>
+          <Text style={ac.previewEmpty}>{t('status.achievements_empty')}</Text>
         )}
         {unlocked > 5 && (
           <View style={[ac.previewDot, { backgroundColor: C.border, borderColor: C.border }]}>
@@ -449,19 +453,20 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
 // ── Level Up Reward Modal ──────────────────────────────────────────────────────
 
 export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { visible?: boolean; reward: LevelUpReward; onClose: () => void; C: any }) {
+  const { t } = useTranslation('screens');
   const lm = getLMStyles(C); // Assuming getLMStyles is defined later
   return (
     <SystemModal visible={visible} onRequestClose={onClose}>
       <View style={lm.card}>
 
-          <Text style={lm.title}>[ LEVEL UP ]</Text>
-          <Text style={lm.levelTxt}>NÍVEL {reward.level}</Text>
+          <Text style={lm.title}>{t('status.levelup_title')}</Text>
+          <Text style={lm.levelTxt}>{t('status.levelup_level', { level: reward.level })}</Text>
 
           <View style={lm.divider} />
 
           {reward.items.length > 0 ? (
             <>
-              <Text style={lm.rewardLabel}>RECOMPENSA AUTOMÁTICA</Text>
+              <Text style={lm.rewardLabel}>{t('status.levelup_reward_label')}</Text>
               {reward.items.map((id, i) => {
                 const item = CATALOG_MAP[id];
                 if (!item) {return null;}
@@ -479,11 +484,11 @@ export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { vis
               })}
             </>
           ) : (
-            <Text style={lm.noReward}>Continua a subir de nível para receber recompensas.</Text>
+            <Text style={lm.noReward}>{t('status.levelup_no_reward')}</Text>
           )}
 
           <TouchableOpacity style={lm.btn} onPress={onClose}>
-            <Text style={lm.btnTxt}>[ CONTINUAR ]</Text>
+            <Text style={lm.btnTxt}>{t('status.levelup_continue')}</Text>
           </TouchableOpacity>
 
       </View>
@@ -493,19 +498,20 @@ export function LevelUpRewardModal({ visible = true, reward, onClose, C }: { vis
 
 // ── Job Change Modal ───────────────────────────────────────────────────────────
 export function JobChangeModal({ visible = true, job, onClose, C }: { visible?: boolean; job: any; onClose: () => void; C: any }) {
+  const { t } = useTranslation('screens');
   const lm = getLMStyles(C);
   return (
     <SystemModal visible={visible} onRequestClose={onClose}>
       <View style={[lm.card, { borderColor: job.color + 'aa' }]}>
-        <Text style={[lm.title, { color: job.color }]}>[ CLASSE ALTERADA ]</Text>
+        <Text style={[lm.title, { color: job.color }]}>{t('status.job_change_title')}</Text>
         <Icon name="medal" size={60} color={job.color} style={{ marginVertical: SPACING.md }} />
-        <Text style={lm.rewardLabel}>NOVO TÍTULO CONQUISTADO</Text>
+        <Text style={lm.rewardLabel}>{t('status.job_change_new_title')}</Text>
         <Text style={[lm.levelTxt, { color: job.color, fontSize: 24, marginTop: 4 }]}>{job.name}</Text>
         <Text style={[lm.itemDesc, { textAlign: 'center', marginTop: SPACING.md }]}>
-          O Sistema reconhece a tua evolução.{'\n'}A tua lenda começa a ganhar forma.
+          {t('status.job_change_system_msg')}
         </Text>
         <TouchableOpacity style={[lm.btn, { backgroundColor: job.color + '22', borderColor: job.color }]} onPress={onClose}>
-          <Text style={[lm.btnTxt, { color: job.color }]}>[ ACEITAR PODER ]</Text>
+          <Text style={[lm.btnTxt, { color: job.color }]}>{t('status.job_change_accept')}</Text>
         </TouchableOpacity>
       </View>
     </SystemModal>
@@ -538,6 +544,7 @@ function calRewardLabel(r: CalendarReward) {
 // ── Calendar full modal ────────────────────────────────────────────────────────
 
 function CalendarModal({ visible, onClose, C }: { visible: boolean; onClose: () => void; C: any }) {
+  const { t } = useTranslation('screens');
   const cp = getCalStyles(C);
   const calendarState = useGameStore(st => st.calendarState);
   const claimCalendarDay = useGameStore(st => st.claimCalendarDay);
@@ -555,11 +562,11 @@ function CalendarModal({ visible, onClose, C }: { visible: boolean; onClose: () 
         {/* Header */}
         <View style={cp.modalHeader}>
           <Icon name="calendar-star" size={14} color={C.gold} />
-          <Text style={[cp.title, { flex: 1 }]}> CALENDÁRIO DE LOGIN</Text>
+          <Text style={[cp.title, { flex: 1 }]}> {t('status.calendar_title')}</Text>
           <View style={cp.progressBadge}>
             <Text style={cp.progressTxt}>{claimedCount}/30</Text>
           </View>
-          {page > 0 && <Text style={[cp.month, { marginLeft: SPACING.sm }]}>PÁG.{page + 1}</Text>}
+          {page > 0 && <Text style={[cp.month, { marginLeft: SPACING.sm }]}>{t('status.calendar_page', { page: page + 1 })}</Text>}
           <TouchableOpacity onPress={onClose} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={{ marginLeft: SPACING.sm }}>
             <Icon name="close" size={16} color={C.dimmed} />
           </TouchableOpacity>
@@ -570,13 +577,13 @@ function CalendarModal({ visible, onClose, C }: { visible: boolean; onClose: () 
         {!extractionDone && (
           <View style={cp.frozenBanner}>
             <Icon name="ghost" size={11} color={C.neonBlue} />
-            <Text style={cp.frozenText}> Faz a Extração diária primeiro para recolher a recompensa</Text>
+            <Text style={cp.frozenText}>{t('status.calendar_frozen_banner')}</Text>
           </View>
         )}
         {extractionDone && claimedToday && (
           <View style={[cp.frozenBanner, { borderColor: C.green + '44' }]}>
             <Icon name="check-circle" size={11} color={C.green} />
-            <Text style={[cp.frozenText, { color: C.green }]}> Recompensa recolhida hoje!</Text>
+            <Text style={[cp.frozenText, { color: C.green }]}>{t('status.calendar_claimed_today')}</Text>
           </View>
         )}
 
@@ -622,12 +629,12 @@ function CalendarModal({ visible, onClose, C }: { visible: boolean; onClose: () 
             activeOpacity={0.8}
           >
             <Icon name="gift-outline" size={14} color={C.gold} />
-            <Text style={[cp.claimBtnTxt, { color: C.gold }]}> RECOLHER DIA {claimableDay}</Text>
+            <Text style={[cp.claimBtnTxt, { color: C.gold }]}> {t('status.calendar_claim_day', { day: claimableDay })}</Text>
           </TouchableOpacity>
         ) : claimedCount === 30 ? (
           <View style={[cp.claimBtn, { borderColor: C.green + '66', backgroundColor: C.green + '10' }]}>
             <Icon name="check-circle" size={14} color={C.green} />
-            <Text style={[cp.claimBtnTxt, { color: C.green }]}> CICLO COMPLETO!</Text>
+            <Text style={[cp.claimBtnTxt, { color: C.green }]}> {t('status.calendar_cycle_complete_badge')}</Text>
           </View>
         ) : null}
       </View>
@@ -638,6 +645,7 @@ function CalendarModal({ visible, onClose, C }: { visible: boolean; onClose: () 
 // ── Calendar summary button (compact, opens modal) ────────────────────────────
 
 function CalendarSummaryButton({ onOpen, C }: { onOpen: () => void; C: any }) {
+  const { t } = useTranslation('screens');
   const cp = getCalStyles(C);
   const calendarState = useGameStore(st => st.calendarState);
   const extractionDone = useGameStore(st => st.system.extractionDoneToday);
@@ -652,7 +660,7 @@ function CalendarSummaryButton({ onOpen, C }: { onOpen: () => void; C: any }) {
     <TouchableOpacity style={cp.summaryBtn} onPress={onOpen} activeOpacity={0.75}>
       <View style={cp.summaryRow}>
         <Icon name="calendar-star" size={12} color={C.gold} />
-        <Text style={cp.title}> CALENDÁRIO DE LOGIN</Text>
+        <Text style={cp.title}> {t('status.calendar_title')}</Text>
         <View style={cp.progressBadge}>
           <Text style={cp.progressTxt}>{claimedCount}/30</Text>
         </View>
@@ -664,22 +672,22 @@ function CalendarSummaryButton({ onOpen, C }: { onOpen: () => void; C: any }) {
         {nextReward ? (
           <View style={cp.nextRewardRow}>
             <Icon name="gift-outline" size={11} color={C.gold} />
-            <Text style={cp.nextRewardTxt}> Próximo (dia {firstUnclaimed!.day}): </Text>
+            <Text style={cp.nextRewardTxt}>{t('status.calendar_next_reward', { day: firstUnclaimed!.day })}</Text>
             <Icon name={calRewardIcon(nextReward)} size={11} color={calRewardColor(nextReward, C)} />
             <Text style={[cp.nextRewardTxt, { color: calRewardColor(nextReward, C) }]}> {calRewardLabel(nextReward)}</Text>
             {canClaim && (
               <View style={cp.claimBadge}>
-                <Text style={cp.claimBadgeTxt}>DISPONÍVEL</Text>
+                <Text style={cp.claimBadgeTxt}>{t('status.calendar_available')}</Text>
               </View>
             )}
             {!extractionDone && (
               <View style={[cp.claimBadge, { backgroundColor: C.neonBlue + '22', borderColor: C.neonBlue + '55' }]}>
-                <Text style={[cp.claimBadgeTxt, { color: C.neonBlue }]}>EXTRAÇÃO 1ª</Text>
+                <Text style={[cp.claimBadgeTxt, { color: C.neonBlue }]}>{t('status.calendar_extract_first')}</Text>
               </View>
             )}
           </View>
         ) : (
-          <Text style={[cp.nextRewardTxt, { color: C.green }]}>Ciclo completo! Novo ciclo amanhã.</Text>
+          <Text style={[cp.nextRewardTxt, { color: C.green }]}>{t('status.calendar_cycle_complete')}</Text>
         )}
       </View>
     </TouchableOpacity>
@@ -689,6 +697,7 @@ function CalendarSummaryButton({ onOpen, C }: { onOpen: () => void; C: any }) {
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function StatusScreen() {
+  const { t } = useTranslation('screens');
   const C = useTheme();
   const s = React.useMemo(() => getStyles(C), [C]);
 
@@ -723,7 +732,7 @@ export default function StatusScreen() {
       <ScrollView contentContainerStyle={s.content}>
 
         <View style={s.titleRow}>
-          <Text style={s.pageTitle}>STATUS WINDOW</Text>
+          <Text style={s.pageTitle}>{t('status.title')}</Text>
         </View>
 
         {/* Rank card */}
@@ -743,7 +752,7 @@ export default function StatusScreen() {
           <View style={s.rankInfo}>
             <Text style={[s.playerName, { maxWidth: '85%' }]} numberOfLines={1} ellipsizeMode="tail">{jobClass.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
-              <Text style={s.lvlText}>NÍVEL {player.level}</Text>
+              <Text style={s.lvlText}>{t('status.level', { level: player.level })}</Text>
             </View>
           </View>
           <View style={s.goldBlock}>
@@ -768,17 +777,17 @@ export default function StatusScreen() {
         {/* XP bar */}
         <View style={s.xpSection}>
           <View style={s.xpHeader}>
-            <Text style={s.xpLabel}>EXPERIÊNCIA</Text>
+            <Text style={s.xpLabel}>{t('status.xp_label')}</Text>
             <Text style={s.xpNumbers}>{player.xp} / {xpNeeded} XP</Text>
           </View>
           <View style={s.xpTrack}>
             <View style={[s.xpFill, { width: `${xpPct}%` as any }]} />
           </View>
-          <Text style={s.xpSub}>Próximo nível: {xpNeeded - player.xp} XP em falta</Text>
+          <Text style={s.xpSub}>{t('status.xp_next', { xp: xpNeeded - player.xp })}</Text>
         </View>
 
         {/* Attributes */}
-        <SectionHeader icon="trending-up" label="ATRIBUTOS" C={C} />
+        <SectionHeader icon="trending-up" label={t('status.section_attributes')} C={C} />
         <View style={s.statsBlock}>
           <StatBar label="STR" level={player.str} C={C} />
           <StatBar label="AGI" level={player.agi} C={C} />
@@ -787,9 +796,9 @@ export default function StatusScreen() {
         </View>
 
         {/* History */}
-        <SectionHeader icon="history" label="HISTÓRICO DE MISSÕES" C={C} />
+        <SectionHeader icon="history" label={t('status.section_history')} C={C} />
         <TouchableOpacity style={s.historyBtn} onPress={() => setShowHistory(true)}>
-          <Text style={s.historyBtnTxt}>VER HISTÓRICO COMPLETO</Text>
+          <Text style={s.historyBtnTxt}>{t('status.history_btn')}</Text>
           <Icon name="chevron-right" size={18} color={C.neonBlue} />
         </TouchableOpacity>
 
@@ -803,10 +812,10 @@ export default function StatusScreen() {
         <AchievementsPanel onOpen={() => setShowAchievements(true)} C={C} />
 
         {/* Shadows Panel — compact vanguard summary */}
-        <SectionHeader icon="ghost" label="EXÉRCITO DE SOMBRAS" C={C} />
+        <SectionHeader icon="ghost" label={t('status.section_shadows')} C={C} />
         <View style={s.shadowsBlock}>
           {player.shadows.length === 0 ? (
-            <Text style={s.empty}>Nenhuma sombra recrutada ainda.</Text>
+            <Text style={s.empty}>{t('status.shadows_empty')}</Text>
           ) : (
             <>
               {/* Active vanguard icons */}
@@ -830,11 +839,11 @@ export default function StatusScreen() {
                   })}
                 </View>
               ) : (
-                <Text style={s.shadowHint}>Sem sombras ativas na vanguarda</Text>
+                <Text style={s.shadowHint}>{t('status.shadows_no_vanguard')}</Text>
               )}
               {/* Army count + hint */}
               <Text style={s.shadowCount}>
-                {player.shadows.length} sombra{player.shadows.length !== 1 ? 's' : ''} recrutada{player.shadows.length !== 1 ? 's' : ''}  ·  {activeShadowIds.length}/3 na vanguarda  ·  Gerir em SOMBRAS
+                {player.shadows.length === 1 ? t('status.shadows_count_singular', { count: 1 }) : t('status.shadows_count_plural', { count: player.shadows.length })}{t('status.shadows_vanguard_count', { active: activeShadowIds.length })}
               </Text>
             </>
           )}

@@ -1,0 +1,104 @@
+{
+  "boss_victory": {
+    "header": "BOSS VAINCU !",
+    "sub": "Le donjon a été nettoyé. Le Système reconnaît ta force.",
+    "shadow_leveled_up": "{{name}} a monté de niveau !",
+    "shadow_obtained": "Ombre obtenue : {{name}}",
+    "loot_header": "— BUTIN —",
+    "shadow_hint": "Atteins le niveau 10 pour recevoir des Ombres des raids de boss.",
+    "continue": "CONTINUER"
+  },
+  "rank": {
+    "header": "[ CLASSIFICATION DU CHASSEUR ]",
+    "rank_up_title": "MONTÉE EN RANG !",
+    "rank_up_text": "Tu as atteint la Classe {{label}}",
+    "req_level": "Niveau {{level}}",
+    "req_missions": "Missions totales",
+    "req_bosses": "Boss",
+    "req_rank_missions": "Missions de rang {{rank}}",
+    "initial_rank": "Rang initial",
+    "current_tag": "ACTUEL",
+    "warning_rank_up": "AVERTISSEMENT GÉNÉRAL : Monter en classe va augmenter la difficulté des missions suggérées.",
+    "rank_up_btn": "MONTER AU RANG {{rank}}",
+    "keep_training": "Continue à t'entraîner pour atteindre la prochaine classe.",
+    "rank_labels": {
+      "E": "Novice",
+      "D": "Chasseur Basique",
+      "C": "Maître de la Volonté",
+      "B": "Chevalier des Ombres",
+      "A": "Commandant",
+      "S": "Monarque",
+      "National": "Chasseur de Niveau National"
+    },
+    "labels": {
+      "E": "Débutant",
+      "D": "Chasseur Basique",
+      "C": "Maître de la Volonté",
+      "B": "Chevalier des Ombres",
+      "A": "Commandant",
+      "S": "Monarque",
+      "National": "Chasseur de Niveau National"
+    }
+  },
+  "event_dungeon": {
+    "warning_text": "ÉVÉNEMENT LIMITÉ",
+    "title": "[ DONJON SPÉCIAL D'ÉVÉNEMENT ]",
+    "available": "Disponible du {{start}} au {{end}}",
+    "trials_header": "ÉPREUVES DE L'ÉVÉNEMENT",
+    "progress": "Progression : {{completed}}/{{required}} épreuves terminées",
+    "trial_complete": "[ ÉPREUVE TERMINÉE ]",
+    "event_boss_header": "BOSS FINAL DE L'ÉVÉNEMENT",
+    "event_concluded": "[ ÉVÉNEMENT TERMINÉ ]",
+    "shadow_label": "Ombre : {{name}}",
+    "shadow_unknown": "Inconnue",
+    "boss_locked": "Complète les épreuves ci-dessus pour débloquer le Boss de l'événement.",
+    "back": "RETOUR"
+  },
+  "daily_boss": {
+    "portal_badge": "PORTAIL BOSS QUOTIDIEN",
+    "daily_portal": "[ PORTAIL QUOTIDIEN ]",
+    "sub": "Complète la Mission du Boss Quotidien pour gagner XP, Or et extraire son Ombre.",
+    "boss_defeated": "[ BOSS VAINCU ]",
+    "shadow_label": "Ombre : {{name}}",
+    "key_missing": "CLÉ MANQUANTE",
+    "master_key_ready": "MASTER KEY PRÊTE",
+    "back": "RETOUR"
+  },
+  "loot_box": {
+    "sub_title": "RÉCOMPENSES OUVERTES",
+    "items_title": "OBJETS ACQUIS :",
+    "confirm": "ACCEPTER"
+  },
+  "gps_tracker": {
+    "title": "TRACKER GPS",
+    "moving": "en mouvement…",
+    "paused": "en pause",
+    "pause_btn": "PAUSE",
+    "resume_btn": "REPRENDRE",
+    "start_btn": "DÉMARRER",
+    "acquiring_gps": "Acquisition du signal GPS...",
+    "high_speed_warning": "Vitesse élevée ! Distance en pause.",
+    "field_notes_label": "NOTES DE TERRAIN",
+    "field_notes_placeholder": "Enregistre ta progression...",
+    "finish_mission": "TERMINER LA MISSION"
+  },
+  "penalty": {
+    "system_label": "◈ SYSTÈME ◈",
+    "title_light": "ZONE DE PÉNALITÉ",
+    "title_medium": "ZONE DE PÉNALITÉ",
+    "title_hardcore": "PUNITION DU MONARQUE",
+    "title_custom": "ZONE DE PÉNALITÉ",
+    "detected": "ÉCHEC DÉTECTÉ",
+    "intensity_light": "LÉGER",
+    "intensity_medium": "MOYEN",
+    "intensity_hardcore": "HARDCORE",
+    "fail_line": "{{failedCount}} sur {{totalCount}} missions échouées.",
+    "fail_line_default": "Missions quotidiennes non complétées.",
+    "xp_line": "{{xpLost}} XP{{goldPart}} déduits.",
+    "xp_line_gold_part": " et ◈{{goldLost}}",
+    "xp_line_default": "XP et Or déduits selon le profil actif.",
+    "escape_message": "Complète les missions de pénalité pour t'échapper.",
+    "dismiss_btn": "COMPRIS, CHASSEUR"
+  },
+  "bottom_sheet": {}
+}

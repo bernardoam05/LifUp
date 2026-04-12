@@ -6,6 +6,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/useGameStore';
 import SystemAlertModal from '../components/SystemAlertModal';
 import { useTheme, FONT, SPACING } from '../theme';
@@ -28,6 +29,7 @@ import { btoa, atob } from '../utils/backup';
 
 export default function SettingsScreen({ onClose }: { onClose: () => void }) {
   const C = useTheme();
+  const { t } = useTranslation('settings');
   const s = React.useMemo(() => getStyles(C), [C]);
 
   const player         = useGameStore(st => st.player);
@@ -76,12 +78,12 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
       const b64 = btoa(json);
       Clipboard.setString(b64);
       setAlertConfig({
-        title: 'BACKUP CONCLUÍDO',
-        message: 'Código de Backup copiado para a área de transferência! Guarda este código num local seguro.',
+        title: t('alerts.backupDone'),
+        message: t('alerts.backupDoneMsg'),
       });
     } catch (err) {
       console.error('Backup export error:', err);
-      setAlertConfig({ title: 'ERRO', message: 'Falha ao exportar backup. Tenta novamente.' });
+      setAlertConfig({ title: t('alerts.error'), message: t('alerts.exportError') });
     }
   };
 
@@ -96,12 +98,12 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
       setImportVisible(false);
       setImportText('');
       setAlertConfig({
-        title: 'RESTAURO CONCLUÍDO',
-        message: 'Alma importada com sucesso! Podes precisar de reiniciar se houver bugs visuais.',
+        title: t('alerts.restoreDone'),
+        message: t('alerts.restoreDoneMsg'),
       });
     } catch (err) {
       console.error('Backup import error:', err);
-      setAlertConfig({ title: 'ERRO', message: 'Código inválido ou corrompido. Verifica se copiaste bem.' });
+      setAlertConfig({ title: t('alerts.error'), message: t('alerts.importError') });
     }
   };
 
@@ -112,7 +114,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
         {/* Header */}
         <View style={s.header}>
           <Icon name="cog" size={16} color={C.neonBlue} />
-          <Text style={s.headerTxt}> [ DEFINIÇÕES DO SISTEMA ]</Text>
+          <Text style={s.headerTxt}> {t('header')}</Text>
           <TouchableOpacity onPress={onClose} style={s.closeBtn}>
             <Icon name="close" size={20} color={C.muted} />
           </TouchableOpacity>
@@ -129,7 +131,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
             >
               <View style={s.groupHeaderLeft}>
                 <Icon name="clipboard-list-outline" size={13} color={C.neonBlue} />
-                <Text style={[s.groupTitle, { color: C.neonBlue }]}>MISSÕES</Text>
+                <Text style={[s.groupTitle, { color: C.neonBlue }]}>{t('sections.missions')}</Text>
               </View>
               <Icon
                 name={openSections.missions ? 'chevron-down' : 'chevron-right'}
@@ -162,7 +164,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
             >
               <View style={s.groupHeaderLeft}>
                 <Icon name="shield-alert-outline" size={13} color={C.neonRed} />
-                <Text style={[s.groupTitle, { color: C.neonRed }]}>PENALIDADES & BLOQUEIO</Text>
+                <Text style={[s.groupTitle, { color: C.neonRed }]}>{t('sections.penalties')}</Text>
               </View>
               <Icon
                 name={openSections.penalties ? 'chevron-down' : 'chevron-right'}
@@ -214,7 +216,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
             >
               <View style={s.groupHeaderLeft}>
                 <Icon name="palette-outline" size={13} color={C.purple} />
-                <Text style={[s.groupTitle, { color: C.purple }]}>VISUAL</Text>
+                <Text style={[s.groupTitle, { color: C.purple }]}>{t('sections.visual')}</Text>
               </View>
               <Icon
                 name={openSections.visual ? 'chevron-down' : 'chevron-right'}
@@ -245,7 +247,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
             >
               <View style={s.groupHeaderLeft}>
                 <Icon name="bell-outline" size={13} color={C.neonBlue} />
-                <Text style={[s.groupTitle, { color: C.neonBlue }]}>SISTEMA</Text>
+                <Text style={[s.groupTitle, { color: C.neonBlue }]}>{t('sections.system')}</Text>
               </View>
               <Icon
                 name={openSections.system ? 'chevron-down' : 'chevron-right'}
@@ -277,7 +279,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
             >
               <View style={s.groupHeaderLeft}>
                 <Icon name="database-outline" size={13} color={C.gold} />
-                <Text style={[s.groupTitle, { color: C.gold }]}>DADOS</Text>
+                <Text style={[s.groupTitle, { color: C.gold }]}>{t('sections.data')}</Text>
               </View>
               <Icon
                 name={openSections.data ? 'chevron-down' : 'chevron-right'}
@@ -307,7 +309,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
             >
               <View style={s.groupHeaderLeft}>
                 <Icon name="information-outline" size={13} color={C.muted} />
-                <Text style={[s.groupTitle, { color: C.muted }]}>SOBRE</Text>
+                <Text style={[s.groupTitle, { color: C.muted }]}>{t('sections.about')}</Text>
               </View>
               <Icon
                 name={openSections.about ? 'chevron-down' : 'chevron-right'}
@@ -334,7 +336,7 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
           title={alertConfig.title}
           message={alertConfig.message}
           onClose={() => setAlertConfig(null)}
-          buttons={[{ text: 'ENTENDIDO', style: 'default' }]}
+          buttons={[{ text: t('alerts.understood'), style: 'default' }]}
           C={C}
         />
       )}

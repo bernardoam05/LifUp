@@ -1,0 +1,104 @@
+{
+  "boss_victory": {
+    "header": "¡JEFE DERROTADO!",
+    "sub": "La mazmorra ha sido limpiada. El Sistema reconoce tu fuerza.",
+    "shadow_leveled_up": "¡{{name}} subió de nivel!",
+    "shadow_obtained": "Sombra obtenida: {{name}}",
+    "loot_header": "— BOTÍN —",
+    "shadow_hint": "Alcanza el nivel 10 para recibir Sombras de incursiones de jefes.",
+    "continue": "CONTINUAR"
+  },
+  "rank": {
+    "header": "[ CLASIFICACIÓN DEL CAZADOR ]",
+    "rank_up_title": "¡SUBIDA DE RANGO!",
+    "rank_up_text": "Has alcanzado la Clase {{label}}",
+    "req_level": "Nivel {{level}}",
+    "req_missions": "Misiones totales",
+    "req_bosses": "Jefes",
+    "req_rank_missions": "Misiones de rango {{rank}}",
+    "initial_rank": "Rango inicial",
+    "current_tag": "ACTUAL",
+    "warning_rank_up": "AVISO GENERAL: Subir de clase aumentará la dificultad de las misiones sugeridas.",
+    "rank_up_btn": "ASCENDER AL RANGO {{rank}}",
+    "keep_training": "Sigue entrenando para alcanzar la siguiente clase.",
+    "rank_labels": {
+      "E": "Novato",
+      "D": "Cazador Básico",
+      "C": "Maestro de la Voluntad",
+      "B": "Caballero de las Sombras",
+      "A": "Comandante",
+      "S": "Monarca",
+      "National": "Cazador de Nivel Nacional"
+    },
+    "labels": {
+      "E": "Novato",
+      "D": "Cazador Básico",
+      "C": "Maestro de la Voluntad",
+      "B": "Caballero de las Sombras",
+      "A": "Comandante",
+      "S": "Monarca",
+      "National": "Cazador de Nivel Nacional"
+    }
+  },
+  "event_dungeon": {
+    "warning_text": "EVENTO LIMITADO",
+    "title": "[ MAZMORRA ESPECIAL DE EVENTO ]",
+    "available": "Disponible {{start}} a {{end}}",
+    "trials_header": "PRUEBAS DEL EVENTO",
+    "progress": "Progreso: {{completed}}/{{required}} pruebas completadas",
+    "trial_complete": "[ PRUEBA COMPLETADA ]",
+    "event_boss_header": "JEFE FINAL DEL EVENTO",
+    "event_concluded": "[ EVENTO CONCLUIDO ]",
+    "shadow_label": "Sombra: {{name}}",
+    "shadow_unknown": "Desconocida",
+    "boss_locked": "Completa las pruebas anteriores para desbloquear al jefe del evento.",
+    "back": "VOLVER"
+  },
+  "daily_boss": {
+    "portal_badge": "PORTAL DIARIO DE JEFE",
+    "daily_portal": "[ PORTAL DIARIO ]",
+    "sub": "Completa la Misión del Jefe Diario para ganar XP, Gold y extraer su Sombra.",
+    "boss_defeated": "[ JEFE DERROTADO ]",
+    "shadow_label": "Sombra: {{name}}",
+    "key_missing": "CLAVE FALTANTE",
+    "master_key_ready": "MASTER KEY LISTA",
+    "back": "VOLVER"
+  },
+  "loot_box": {
+    "sub_title": "RECOMPENSAS ABIERTAS",
+    "items_title": "OBJETOS ADQUIRIDOS:",
+    "confirm": "ACEPTAR"
+  },
+  "gps_tracker": {
+    "title": "RASTREADOR GPS",
+    "moving": "en movimiento…",
+    "paused": "pausado",
+    "pause_btn": "PAUSAR",
+    "resume_btn": "REANUDAR",
+    "start_btn": "INICIAR",
+    "acquiring_gps": "Obteniendo señal GPS...",
+    "high_speed_warning": "¡Velocidad elevada! Distancia pausada.",
+    "field_notes_label": "NOTAS DE CAMPO",
+    "field_notes_placeholder": "Registra tu progreso...",
+    "finish_mission": "TERMINAR MISIÓN"
+  },
+  "penalty": {
+    "system_label": "◈ SISTEMA ◈",
+    "title_light": "ZONA DE PENALIDAD",
+    "title_medium": "ZONA DE PENALIDAD",
+    "title_hardcore": "CASTIGO DEL MONARCA",
+    "title_custom": "ZONA DE PENALIDAD",
+    "detected": "FALLO DETECTADO",
+    "intensity_light": "LEVE",
+    "intensity_medium": "MEDIO",
+    "intensity_hardcore": "HARDCORE",
+    "fail_line": "{{failedCount}} de {{totalCount}} misiones fallidas.",
+    "fail_line_default": "Misiones diarias no completadas.",
+    "xp_line": "{{xpLost}} XP{{goldPart}} deducidos.",
+    "xp_line_gold_part": " y ◈{{goldLost}}",
+    "xp_line_default": "XP y Oro deducidos según el perfil activo.",
+    "escape_message": "Completa las misiones de penalización para escapar.",
+    "dismiss_btn": "ENTENDIDO, CAZADOR"
+  },
+  "bottom_sheet": {}
+}

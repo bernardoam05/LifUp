@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Pressable, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore, { Quest } from '../store/useGameStore';
 import { getQuestConfig } from '../store/questDictionary';
 import CustomModal from './CustomModal';
@@ -103,6 +104,7 @@ const getExtraStyles = (C: any) => StyleSheet.create({
 
 
 export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Quest; isExtra?: boolean; isPenalty?: boolean; C: any }) {
+  const { t } = useTranslation('quests');
   const qc = getQCStyles(C);
   const ex = getExtraStyles(C);
   const limitDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -219,7 +221,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
                 style={{ padding: 2, marginRight: SPACING.sm }}
                 onPress={() => {
                   if (weeklyRegenCount >= 7) {
-                    setExtraRegenMsg('Já usaste as tuas 7 trocas desta semana.');
+                    setExtraRegenMsg(t('ui.weekly_regen_limit'));
                     setShowExtraRegenConfirm(true);
                   } else {
                     setShowRegenConfirm(true);
@@ -244,7 +246,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
               <Icon name="timer-outline" size={11} color={quest.done ? C.dimmed : C.neonBlue} />
               <Text style={{ color: quest.done ? C.dimmed : C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, marginLeft: 4 }}>
-                {quest.currentValue ?? 0}/{quest.pomodoroTarget} ciclos
+                {t('ui.card_pomodoro_cycles', { current: quest.currentValue ?? 0, target: quest.pomodoroTarget })}
               </Text>
             </View>
             <View style={{ height: 6, backgroundColor: C.neonBlue + '22', borderRadius: 3, overflow: 'hidden' }}>
@@ -291,12 +293,12 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
         {quest.done ? (
           <View style={[qc.doneRow, { paddingRight: 50 }]}>
             <Icon name={quest.failed ? 'close-circle' : 'check-circle'} size={14} color={quest.failed ? C.neonRed : C.green} />
-            <Text style={[qc.doneTag, quest.failed && { color: C.neonRed }]}>{quest.failed ? ' Falhada' : ' Concluída'}</Text>
+            <Text style={[qc.doneTag, quest.failed && { color: C.neonRed }]}>{quest.failed ? ` ${t('ui.card_failed')}` : ` ${t('ui.card_done')}`}</Text>
             <View style={{ flex: 1 }} />
             {!isExtra && !isPenalty && (
               <TouchableOpacity style={qc.undoBtn} onPress={() => setConfirmUndo(true)}>
                 <Icon name="undo-variant" size={13} color={C.muted} />
-                <Text style={qc.undoTxt}> Desfazer</Text>
+                <Text style={qc.undoTxt}> {t('ui.card_undo')}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -304,10 +306,10 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
           <View style={[qc.forbiddenRow, { paddingRight: 50 }]}>
             <TouchableOpacity style={qc.failBtn} onPress={() => failQuest(quest.id)}>
               <Icon name="close-circle-outline" size={14} color={C.neonRed} />
-              <Text style={qc.failBtnTxt}> Falhei</Text>
+              <Text style={qc.failBtnTxt}> {t('ui.card_fail_btn')}</Text>
             </TouchableOpacity>
             <View style={{ flex: 1 }} />
-            <Text style={qc.forbiddenStatus}>Em vigor</Text>
+            <Text style={qc.forbiddenStatus}>{t('ui.card_in_force')}</Text>
           </View>
         ) : quest.type === 'limit' ? (
           <View style={[qc.limitRow, { paddingRight: 50 }]}>
@@ -361,7 +363,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
               activeOpacity={0.75}
             >
               <Icon name="check" size={13} color={C.green} />
-              <Text style={[qc.actionTxt, { color: C.green, marginLeft: 4 }]}>Completar Manualmente</Text>
+              <Text style={[qc.actionTxt, { color: C.green, marginLeft: 4 }]}>{t('ui.card_complete_manual')}</Text>
             </TouchableOpacity>
           </View>
         ) : (

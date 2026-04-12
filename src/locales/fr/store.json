@@ -1,0 +1,62 @@
+{
+  "alerts": {
+    "quest_invalid": "Quête invalide.",
+    "no_quests_available": "Aucune quête disponible.",
+    "weekly_limit_reached": "Limite hebdomadaire atteinte (7/7).",
+    "no_other_quests": "Aucune autre quête disponible.",
+    "already_replaced": "Déjà remplacée aujourd'hui.",
+    "invalid": "Invalide.",
+    "pool_empty": "Réserve vide.",
+    "limit_reached": "Limite atteinte."
+  },
+  "shadows": {
+    "immunity_absorbed": "{{name}} a absorbé la pénalité !",
+    "streak_protected": "{{name}} a protégé ta série !",
+    "ad_shield_consumed": "Bouclier de Série (publicité) consommé — série protégée !"
+  },
+  "buffs": {
+    "viper_venom": "Venin de Vipère",
+    "crimson_knight_shard": "Éclat du Chevalier Cramoisi",
+    "cerberus_fang": "Croc de Cerbère",
+    "iron_will_crystal": "Volonté de Fer",
+    "blood_fallen": "Sang des Déchus",
+    "dragon_scale": "Écaille de Dragon",
+    "lich_eye": "Œil du Liche"
+  },
+  "items": {
+    "health_potion": "Potion de Vie",
+    "xp_crystal": "Cristal d'XP",
+    "rest_scroll": "Parchemin de Repos",
+    "evolution_shard_common": "Éclat d'Évolution"
+  },
+  "loot": {
+    "gold_title": "TRÉSOR D'OR",
+    "xp_title": "ESSENCE ABSORBÉE",
+    "key_title": "CLÉ RARE DÉCOUVERTE",
+    "gold_abundant_title": "OR ABONDANT"
+  },
+  "helpers": {
+    "rank_e_label": "Novice",
+    "rank_d_label": "Chasseur Basique",
+    "rank_c_label": "Maître de la Volonté",
+    "rank_b_label": "Chevalier des Ombres",
+    "rank_a_label": "Commandant",
+    "rank_s_label": "Monarque",
+    "rank_national_label": "Chasseur de Niveau National"
+  },
+  "notifications": {
+    "focus_complete_title": "Focus Terminé",
+    "focus_complete_body": "Le focus sur la mission \"{{questLabel}}\" est terminé. Récupère tes récompenses.",
+    "level_up_title": "ÉVOLUTION — Niveau {{newLevel}}",
+    "level_up_body": "Tes attributs ont été mis à jour par le Système.",
+    "ongoing_mission_title": "Mission en Cours",
+    "pomodoro_break_title": "CYCLE {{cycle}} TERMINÉ — PAUSE",
+    "pomodoro_break_body": "Pause de {{breakMins}} min démarrée. Repose-toi et reprends le travail.",
+    "pomodoro_work_title": "CYCLE {{nextCycle}} — TEMPS DE TRAVAILLER",
+    "pomodoro_work_body": "La pause est terminée. Le prochain cycle Pomodoro est prêt.",
+    "side_quest_reminder_title": "Rappel de Mission",
+    "side_quest_reminder_body": "La mission \"{{title}}\" attend toujours d'être terminée.",
+    "system_warning_final_body": "Avertissement Final : Termine les missions quotidiennes avant la réactivation du Système à minuit.",
+    "system_warning_title": "Avertissement du Système"
+  }
+}

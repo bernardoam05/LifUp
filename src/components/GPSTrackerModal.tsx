@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore, { Quest } from '../store/useGameStore';
 import { useLocationTracker } from '../hooks/useLocationTracker';
 import { formatTime } from '../utils/time';
@@ -100,6 +101,7 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
     onComplete();
   }
 
+  const { t } = useTranslation('modals');
   const gm = getGMStyles(C);
 
   return (
@@ -113,7 +115,7 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
           <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.sm }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Icon name="run-fast" size={16} color={C.green} />
-              <Text style={gm.title}> GPS TRACKER</Text>
+              <Text style={gm.title}> {t('gps_tracker.title')}</Text>
             </View>
             <TouchableOpacity onPress={onClose}>
               <Icon name="close" size={20} color={C.dimmed} />
@@ -124,7 +126,7 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
 
           <View style={gm.timerBox}>
             <Text style={gm.timerText}>{formatTime(elapsed)}</Text>
-            <Text style={gm.timerSub}>{running ? 'em movimento…' : 'pausado'}</Text>
+            <Text style={gm.timerSub}>{running ? t('gps_tracker.moving') : t('gps_tracker.paused')}</Text>
           </View>
 
           {tracker.error ? (
@@ -146,7 +148,7 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
                 >
                   <Icon name={running ? 'pause' : 'play'} size={16} color={running ? C.gold : C.green} />
                   <Text style={{ color: running ? C.gold : C.green, fontFamily: FONT.orbitron, fontSize: 10, marginLeft: 8 }}>
-                    {running ? 'PAUSAR' : (elapsed > 1000 ? 'RETOMAR' : 'INICIAR')}
+                    {running ? t('gps_tracker.pause_btn') : (elapsed > 1000 ? t('gps_tracker.resume_btn') : t('gps_tracker.start_btn'))}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -160,23 +162,23 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
               {!tracker.isTracking && running && (
                 <View style={gm.warnRow}>
                   <Icon name="satellite-variant" size={12} color={C.muted} />
-                  <Text style={[gm.warn, { color: C.muted }]}> A obter sinal GPS...</Text>
+                  <Text style={[gm.warn, { color: C.muted }]}> {t('gps_tracker.acquiring_gps')}</Text>
                 </View>
               )}
               {tracker.cheating && (
                 <View style={gm.warnRow}>
                   <Icon name="speedometer" size={12} color={C.neonRed} />
-                  <Text style={gm.warn}> Velocidade elevada! Distância pausada.</Text>
+                  <Text style={gm.warn}> {t('gps_tracker.high_speed_warning')}</Text>
                 </View>
               )}
             </>
           )}
 
           <View style={{ width: '100%', marginBottom: 20 }}>
-            <Text style={{ color: C.dimmed, fontSize: 9, fontFamily: FONT.orbitron, marginBottom: 6 }}>NOTAS DE CAMPO</Text>
+            <Text style={{ color: C.dimmed, fontSize: 9, fontFamily: FONT.orbitron, marginBottom: 6 }}>{t('gps_tracker.field_notes_label')}</Text>
             <TextInput
               style={{ backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 4, padding: 8, color: C.muted, fontSize: 12, minHeight: 60 }}
-              placeholder="Regista o teu progresso..."
+              placeholder={t('gps_tracker.field_notes_placeholder')}
               placeholderTextColor={C.dimmed}
               multiline
               value={note}
@@ -186,7 +188,7 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
 
           <TouchableOpacity style={[gm.completeBtn, { width: '100%', backgroundColor: C.green, paddingVertical: 14 }]} onPress={handleFinalize}>
             <Icon name="check-bold" size={16} color={C.bg} />
-            <Text style={{ color: C.bg, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900', marginLeft: 8 }}>TERMINAR MISSÃO</Text>
+            <Text style={{ color: C.bg, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900', marginLeft: 8 }}>{t('gps_tracker.finish_mission')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

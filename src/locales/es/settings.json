@@ -1,0 +1,152 @@
+{
+  "header": "[ CONFIGURACIÓN DEL SISTEMA ]",
+  "sections": {
+    "missions": "MISIONES",
+    "penalties": "PENALIZACIONES & BLOQUEO",
+    "visual": "VISUAL",
+    "system": "SISTEMA",
+    "data": "DATOS",
+    "about": "ACERCA DE"
+  },
+  "alerts": {
+    "backupDone": "COPIA DE SEGURIDAD COMPLETADA",
+    "backupDoneMsg": "¡Código de copia de seguridad copiado al portapapeles! Guarda este código en un lugar seguro.",
+    "restoreDone": "RESTAURACIÓN COMPLETADA",
+    "restoreDoneMsg": "¡Alma importada con éxito! Es posible que necesites reiniciar si hay errores visuales.",
+    "error": "ERROR",
+    "exportError": "Error al exportar la copia de seguridad. Inténtalo de nuevo.",
+    "importError": "Código inválido o corrupto. Verifica que lo hayas copiado correctamente.",
+    "understood": "ENTENDIDO"
+  },
+  "difficulty": {
+    "sectionTitle": "RIGOR DEL SISTEMA (MISIONES DIARIAS)",
+    "infoText": "Controla cuántas misiones se generan por día. Tiene efecto en el próximo reinicio diario o regeneración.",
+    "customLabel": "Misiones por día",
+    "easy": {
+      "label": "FÁCIL",
+      "sublabel": "Protocolo de Entrenamiento Ligero",
+      "desc0": "· Máximo 3 misiones por día",
+      "desc1": "· Ideal para empezar o días difíciles",
+      "desc2": "· Recompensas base sin escalado"
+    },
+    "normal": {
+      "label": "NORMAL",
+      "sublabel": "Protocolo Estándar del Sistema",
+      "desc0": "· 3 misiones base + 1 por cada 10 niveles (máx 5)",
+      "desc1": "· Recompensas escaladas con el nivel",
+      "desc2": "· Dificultad recomendada"
+    },
+    "hard": {
+      "label": "DIFÍCIL",
+      "sublabel": "Protocolo del Monarca Oscuro",
+      "desc0": "· 4 misiones base + 1 por cada 5 niveles (máx 8)",
+      "desc1": "· Para cazadores de élite",
+      "desc2": "· Recompensas y penalizaciones amplificadas"
+    },
+    "custom": {
+      "label": "PERSONALIZADO",
+      "sublabel": "Define tu propio ritmo",
+      "desc0": "· Elige cuántas misiones diarias quieres",
+      "desc1": "· Ideal para ajustar el volumen a tu horario",
+      "desc2": "· Mantiene la progresión normal"
+    }
+  },
+  "intensity": {
+    "sectionTitle": "INTENSIDAD DEL CASTIGO",
+    "infoText": "Define el rigor de las penalizaciones al fallar misiones diarias. El castigo se calcula en función del número de misiones fallidas.",
+    "activeProfile": "Perfil activo: {{label}} — {{sublabel}}",
+    "blockStart": "Hora de inicio del bloqueo",
+    "blockEnd": "Hora de fin del bloqueo",
+    "light": {
+      "label": "LEVE",
+      "sublabel": "Protocolo Suave",
+      "desc0": "· Pérdida de XP: ~3% por misión fallida",
+      "desc1": "· 1 misión de penalización",
+      "desc2": "· Racha mantenida (excepto fallo total)",
+      "desc3": "· Sin bloqueo de apps"
+    },
+    "medium": {
+      "label": "MEDIO",
+      "sublabel": "Protocolo Estándar",
+      "desc0": "· Pérdida de XP: 10% + 1% por fallo",
+      "desc1": "· 1–3 misiones de penalización",
+      "desc2": "· Racha reiniciada a cero",
+      "desc3": "· Bloqueo de apps si ≥50% fallido"
+    },
+    "hardcore": {
+      "label": "HARDCORE",
+      "sublabel": "Protocolo del Monarca",
+      "desc0": "· Pérdida de XP: 20% total",
+      "desc1": "· 2–4 misiones de penalización",
+      "desc2": "· Racha reiniciada a cero",
+      "desc3": "· Bloqueo de apps siempre activo"
+    },
+    "custom": {
+      "label": "PERSONALIZADO",
+      "sublabel": "Elige la duración del bloqueo",
+      "desc0": "· Define cuántas horas de bloqueo quieres",
+      "desc1": "· El resto de la lógica se mantiene equilibrada",
+      "desc2": "· Útil para horarios irregulares"
+    }
+  },
+  "autoBlock": {
+    "sectionTitle": "CASTIGO: BLOQUEO AUTOMÁTICO",
+    "cardTitle": "Bloqueo de Apps",
+    "cardDesc": "Si está activado, fallar misiones diarias bloqueará automáticamente tus apps seleccionadas. El tiempo varía con la dificultad:",
+    "bulletEasy": "EASY:",
+    "bulletEasyDetail": "6 Horas (13:00 a 19:00)",
+    "bulletNormal": "NORMAL:",
+    "bulletNormalDetail": "12 Horas (10:00 a 22:00)",
+    "bulletHardcore": "HARDCORE:",
+    "bulletHardcoreDetail": "24 Horas (Todo el día)",
+    "toggleTitle": "Activar Bloqueo Automático",
+    "toggleSub": "De lo contrario, solo se deducirán XP y Oro."
+  },
+  "sideQuestPenalty": {
+    "sectionTitle": "TAREAS SECUNDARIAS",
+    "infoText": "Las tareas del día son un bloc de notas personal — sin recompensas, se borran a medianoche. Activa esta opción para que las tareas incompletas cuenten como fallos en la penalización diaria.",
+    "rowLabel": "Secundarias penalizan",
+    "rowSubActive": "[ ACTIVO — tareas pendientes suman a los fallos ]",
+    "rowSubInactive": "Inactivo — tareas sin impacto en castigos"
+  },
+  "theme": {
+    "sectionTitle": "APARIENCIA DEL SISTEMA",
+    "infoText": "Selecciona el tema visual de tu Sistema de Monarca. Los nuevos temas se desbloquean al subir de Clase o en la Tienda."
+  },
+  "notifications": {
+    "sectionTitle": "SISTEMA",
+    "notificationsLabel": "Notificaciones",
+    "notificationsSub": "Alertas diarias y avisos del Sistema",
+    "soundLabel": "Sonido",
+    "soundSub": "Efectos de sonido y retroalimentación de audio"
+  },
+  "backup": {
+    "sectionTitle": "BASE DE DATOS DEL SISTEMA",
+    "infoText": "Exporta o restaura tu jornada como Monarca de las Sombras copiando un código inviolable.",
+    "exportBtn": "EXPORTAR ALMA (BACKUP)",
+    "importBtn": "IMPORTAR ALMA (RESTORE)"
+  },
+  "importModal": {
+    "title": "IMPORTAR ALMA",
+    "subtitle": "Pega tu código Base64 abajo para sobrescribir la base de datos actual.",
+    "placeholder": "Código de copia de seguridad...",
+    "cancel": "CANCELAR",
+    "restore": "RESTAURAR"
+  },
+  "about": {
+    "sectionTitle": "ACERCA DE",
+    "version": "Versión",
+    "versionVal": "LifUp OS v3",
+    "missionEngine": "Motor de Misiones",
+    "missionEngineVal": "Dinámico · Pool Semanal · Boss Raid",
+    "persistence": "Persistencia",
+    "persistenceVal": "AsyncStorage · lifup-v3"
+  },
+  "restDay": {
+    "sectionTitle": "DESCANSO DEL MONARCA",
+    "infoText": "Activa para declarar hoy como Día de Descanso. Las misiones aparecen atenuadas y no habrá castigos en el reinicio de mañana. Se desactiva automáticamente al final del día.",
+    "rowLabel": "Día de Descanso",
+    "rowSubActive": "[ DESCANSO ACTIVO — sin castigos hoy ]",
+    "rowSubInactive": "Inactivo — misiones normales"
+  }
+}

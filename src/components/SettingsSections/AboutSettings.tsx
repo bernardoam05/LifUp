@@ -1,30 +1,32 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme, SPACING, FONT } from '../../theme';
 
 const AboutSettings = () => {
   const C = useTheme();
+  const { t } = useTranslation('settings');
   const s = React.useMemo(() => getStyles(C), [C]);
 
   return (
     <View>
       <View style={s.sectionHeader}>
         <View style={[s.sectionDot, { backgroundColor: C.dimmed }]} />
-        <Text style={s.sectionTitle}>SOBRE</Text>
+        <Text style={s.sectionTitle}>{t('about.sectionTitle')}</Text>
       </View>
 
       <View style={s.aboutCard}>
         <Text style={s.aboutLine}>
-          <Text style={s.aboutKey}>Versão </Text>
-          <Text style={s.aboutVal}>LifUp OS v3</Text>
+          <Text style={s.aboutKey}>{t('about.version')} </Text>
+          <Text style={s.aboutVal}>{t('about.versionVal')}</Text>
         </Text>
         <Text style={s.aboutLine}>
-          <Text style={s.aboutKey}>Motor de Missões </Text>
-          <Text style={s.aboutVal}>Dinâmico · Pool Semanal · Boss Raid</Text>
+          <Text style={s.aboutKey}>{t('about.missionEngine')} </Text>
+          <Text style={s.aboutVal}>{t('about.missionEngineVal')}</Text>
         </Text>
         <Text style={s.aboutLine}>
-          <Text style={s.aboutKey}>Persistência </Text>
-          <Text style={s.aboutVal}>AsyncStorage · lifup-v3</Text>
+          <Text style={s.aboutKey}>{t('about.persistence')} </Text>
+          <Text style={s.aboutVal}>{t('about.persistenceVal')}</Text>
         </Text>
       </View>
     </View>

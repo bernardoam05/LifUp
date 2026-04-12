@@ -1,0 +1,127 @@
+{
+  "buttons": {
+    "continue": "WEITER",
+    "close": "SCHLIESSEN",
+    "confirm": "BESTÄTIGEN",
+    "cancel": "ABBRECHEN",
+    "yes": "JA",
+    "no": "NEIN",
+    "ok": "OK",
+    "back": "ZURÜCK"
+  },
+  "extraction": {
+    "protocol": "SYSTEM — EXTRAKTIONSPROTOKOLL",
+    "arise_subtitle": "EXTRAKTIONSPROTOKOLL AKTIVIERT",
+    "dungeon_cleared": "DER DUNGEON WURDE GELEERT.",
+    "achievement_unlocked": "ERFOLG FREIGESCHALTET.",
+    "extraction_started": "SCHATTENEXTRAKTION INITIIERT...",
+    "shadow_granted": "SCHATTEN VOM SYSTEM GEWÄHRT...",
+    "origin_label": "URSPRUNG",
+    "copy_registered": "KOPIE REGISTRIERT",
+    "copies_accumulated_one": "{{count}} KOPIE ANGESAMMELT",
+    "copies_accumulated_other": "{{count}} KOPIEN ANGESAMMELT",
+    "throne_room_tip": "Verwende Kopien, um im Thronsaal zu evolvieren.",
+    "new_soul": "NEUER SCHATTEN ERWORBEN",
+    "equip_tip": "Begib dich in den Thronsaal zum Ausrüsten.",
+    "collect_soul": "SEELE EINSAMMELN",
+    "rank_labels": {
+      "Normal": "NORMAL",
+      "Elite": "ELITE",
+      "Knight": "RITTER",
+      "Commander": "KOMMANDANT",
+      "Marshal": "MARSCHALL"
+    },
+    "origin": {
+      "forge": "IN DER SCHMIEDE ERSCHAFFEN",
+      "achievement": "ERFOLG FREIGESCHALTET",
+      "boss_drop": "BOSS-DROP",
+      "shop": "LADENKAUF",
+      "daily": "TÄGLICHE EXTRAKTION"
+    }
+  },
+  "level_up": {
+    "system_label": "◈ SYSTEM ◈",
+    "title": "LEVELAUFSTIEG!",
+    "level_label": "STUFE",
+    "rewards_label": "BELOHNUNGEN",
+    "continue": "WEITER"
+  },
+  "hud": {
+    "focus_tag": "FOKUS",
+    "xp_display": "{{current}} / {{max}} XP",
+    "level_display": "STF {{level}}"
+  },
+  "alert": {
+    "ok": "OK"
+  },
+  "tutorial": {
+    "system_label": "SYSTEM — TUTORIAL-PROTOKOLL",
+    "skip": "ÜBERSPRINGEN",
+    "next": "WEITER",
+    "start": "STARTEN",
+    "phase1": [
+      {
+        "title": "WILLKOMMEN, JÄGER",
+        "body": "Das System ist erwacht. Es gibt nur einen Weg: stärker werden.\n\nDieser Leitfaden zeigt dir, wie die Welt des Systems funktioniert."
+      },
+      {
+        "title": "TÄGLICHE MISSIONEN",
+        "body": "Hier findest du deine heutigen Aufgaben. Schließe sie ab, um XP zu verdienen, aufzusteigen und Gold zu sammeln.\n\nWenn du alle Tagesmissionen abschließt, erhältst du eine Sonderbelohnung."
+      },
+      {
+        "title": "MISSIONSSCHMIEDE",
+        "body": "Du kannst Missionen an dein echtes Leben anpassen! Oben findest du die SCHMIEDE zum Bearbeiten deiner Routinen.\n\n· KERN-MISSIONEN (Fest): Täglich ohne Ausnahme.\n· POOL-MISSIONEN (Extra): Das System zieht täglich zufällig."
+      },
+      {
+        "title": "DEIN PROFIL & EINSTELLUNGEN",
+        "body": "Hier siehst du deine Attribute, deinen Jäger-Rang und deine Titel.\n\nOben rechts passt das Zahnrad-Symbol die SCHWIERIGKEIT an."
+      },
+      {
+        "title": "DEINE SCHATTENARMEE",
+        "body": "Schatten sind Krieger, die du durch das Besiegen von Bossen oder das Abschließen aller Tagesmissionen extrahierst.\n\nJeder hat einen einzigartigen passiven Effekt."
+      },
+      {
+        "title": "DER SYSTEM-LADEN",
+        "body": "Verwende Gold, um XP-Tränke und Verbrauchsgüter zu kaufen.\n\nAb Level 10 werden einzigartige Schatten zum Rekrutieren verfügbar."
+      },
+      {
+        "title": "FOKUS-MODUS & STRAFEN",
+        "body": "Aktiviere den Fokus-Modus, um Ablenkungen zu blockieren.\n\nDas Scheitern von Tagesmissionen bringt dich in die STRAFZONE und du verlierst XP."
+      },
+      {
+        "title": "BEREIT ZUM STARTEN",
+        "body": "Deine erste Mission ist einfach: Schließe heute die Tagesmissionen ab.\n\nJe konsequenter du bist, desto höher steigt dein Rang. Vorwärts, Jäger!"
+      }
+    ],
+    "phase2": [
+      {
+        "title": "LEVEL 10 — SCHATTEN ERWACHEN",
+        "body": "Du hast einen wichtigen Meilenstein erreicht. Ab jetzt offenbaren sich Schatten häufiger.\n\nIch zeige dir, wie du deine Armee verwaltest."
+      },
+      {
+        "title": "DEIN SCHATTEN",
+        "body": "Jeder Schatten hat einen EINZIGARTIGEN PASSIVEN EFFEKT — automatische Boni für deine Missionen.\n\nHöhere Ränge haben viel mächtigere Effekte."
+      },
+      {
+        "title": "ZU FAVORITEN HINZUFÜGEN",
+        "body": "Tippe auf das ⭐-Symbol zum Favorisieren.\n\nDeine 3 Lieblingsschatten wenden ihre globalen passiven Effekte an."
+      },
+      {
+        "title": "AKTIVE PASSIVE EFFEKTE",
+        "body": "Mit aktivierten Lieblingsschatten werden ihre Boni automatisch angewendet.\n\nDu kannst aktive Boni in deinem Profil sehen."
+      },
+      {
+        "title": "DER MONARCH ERWACHT",
+        "body": "Erobere weiter, Jäger. Die mächtigsten Schatten kommen noch — Rang S-Bosse warten auf dich.\n\nSchmiede deine Armee. Werde unaufhaltsam."
+      }
+    ]
+  },
+  "toast": {
+    "level_up_title": "LEVELAUFSTIEG!",
+    "level_up_desc": "Du hast Stufe {{level}} erreicht"
+  },
+  "modal": {
+    "confirm": "BESTÄTIGEN",
+    "cancel": "ABBRECHEN"
+  }
+}

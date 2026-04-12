@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/useGameStore';
 import { FONT, SPACING } from '../theme';
 import SideQuestCard from './SideQuestCard';
@@ -23,6 +24,7 @@ interface SideQuestSectionProps {
 }
 
 export default function SideQuestSection({ C }: SideQuestSectionProps) {
+  const { t } = useTranslation('quests');
   const side = getSideStyles(C);
   const list = useGameStore(s => s.sideQuests);
   const sideQuestPenalize = useGameStore(s => s.settings.sideQuestPenalize ?? false);
@@ -44,7 +46,7 @@ export default function SideQuestSection({ C }: SideQuestSectionProps) {
     <View style={side.container}>
       <TouchableOpacity style={side.header} onPress={() => setCollapsed(v => !v)} activeOpacity={0.7}>
         <Icon name="format-list-checks" size={14} color={C.purple} />
-        <Text style={side.title}> TAREFAS DE HOJE</Text>
+        <Text style={side.title}> {t('ui.side_tasks_title')}</Text>
         <View style={side.badge}>
           <Text style={side.badgeTxt}>{done}/{total}</Text>
         </View>
@@ -59,13 +61,13 @@ export default function SideQuestSection({ C }: SideQuestSectionProps) {
       {!collapsed && (
         <>
           <Text style={side.sub}>
-            Bloco de notas diário. As tarefas são apagadas à meia-noite.{sideQuestPenalize ? ' Tarefas por fazer penalizam.' : ''}
+            {t('ui.side_tasks_sub')}{sideQuestPenalize ? t('ui.side_tasks_sub_penalty') : ''}
           </Text>
 
           <View style={side.inputRow}>
             <TextInput
               style={side.input}
-              placeholder="Nova tarefa para hoje..."
+              placeholder={t('ui.side_tasks_placeholder')}
               placeholderTextColor={C.dimmed}
               value={input}
               onChangeText={t => setInput(t.slice(0, 100))}
@@ -80,7 +82,7 @@ export default function SideQuestSection({ C }: SideQuestSectionProps) {
 
           <View>
             {list.length === 0 ? (
-              <Text style={side.empty}>Sem tarefas para hoje. Adiciona uma acima.</Text>
+              <Text style={side.empty}>{t('ui.side_tasks_empty')}</Text>
             ) : (
               list.map(sq => <SideQuestCard key={sq.id} sq={sq} C={C} />)
             )}

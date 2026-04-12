@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { DungeonKey } from '../data/dungeonKeys';
 import MissionModalBase from './MissionModalBase';
 import { FONT, SPACING } from '../theme';
@@ -59,6 +60,7 @@ export default function DungeonKeyModal({
   keyLastUsedAt = 0,
   C,
 }: DungeonKeyModalProps) {
+  const { t } = useTranslation('dungeons');
   const dm = getDKMStyles(C);
   const [cooldownMs, setCooldownMs] = useState(0);
 
@@ -78,15 +80,15 @@ export default function DungeonKeyModal({
 
   const onCooldown = cooldownMs > 0;
 
-  const lore = key.lore || `Um poderoso inimigo aguarda-te neste portal. ${key.description}`;
-  const environment = key.environment || 'Um local perigoso e desafiante, repleto de obstáculos mortais.';
+  const lore = key.lore || t('ui.defaultLore', { description: key.description });
+  const environment = key.environment || t('ui.defaultEnvironment');
   const difficulty = key.difficulty || 3;
 
   const renderDifficulty = () => {
     if (difficulty === '???') {
       return (
         <View style={dm.difficultyRow}>
-          <Text style={dm.difficultyLabel}>DIFICULDADE:</Text>
+          <Text style={dm.difficultyLabel}>{t('ui.difficulty')}</Text>
           <Text style={[dm.difficultyLabel, { fontSize: 12, fontWeight: '900' }]}>???</Text>
         </View>
       );
@@ -101,7 +103,7 @@ export default function DungeonKeyModal({
     ));
     return (
       <View style={dm.difficultyRow}>
-        <Text style={dm.difficultyLabel}>DIFICULDADE:</Text>
+        <Text style={dm.difficultyLabel}>{t('ui.difficulty')}</Text>
         <View style={dm.difficultyStars}>{stars}</View>
       </View>
     );
@@ -117,7 +119,7 @@ export default function DungeonKeyModal({
   };
 
   const missionColor = getMissionTypeColor();
-  const missionTypeLabel = key.missionType === 'focus' ? 'FOCO' : key.missionType === 'training' ? 'TREINO' : 'GPS';
+  const missionTypeLabel = key.missionType === 'focus' ? t('ui.missionTypeFocus') : key.missionType === 'training' ? t('ui.missionTypeTraining') : t('ui.missionTypeGps');
 
   return (
     <MissionModalBase
@@ -126,26 +128,26 @@ export default function DungeonKeyModal({
       onRequestClose={onRequestClose}
       iconName="key-alert"
       iconColor={key.color}
-      warningText="PORTAL PERIGOSO"
+      warningText={t('ui.dangerousPortal')}
       title={key.name}
       titleColor={key.color}
       borderColor={C.neonRed + '88'}
       C={C}
     >
         <View style={dm.section}>
-          <Text style={dm.sectionTitle}>LENDA</Text>
+          <Text style={dm.sectionTitle}>{t('ui.legend')}</Text>
           <Text style={dm.sectionContent}>{lore}</Text>
         </View>
 
         <View style={dm.section}>
-          <Text style={dm.sectionTitle}>AMBIENTE</Text>
+          <Text style={dm.sectionTitle}>{t('ui.environment')}</Text>
           <Text style={dm.sectionContent}>{environment}</Text>
         </View>
 
         <View style={dm.section}>
           {renderDifficulty()}
           <View style={[dm.missionTypeRow, { marginTop: SPACING.sm }]}>
-            <Text style={dm.missionTypeLabel}>TIPO DE MISSÃO:</Text>
+            <Text style={dm.missionTypeLabel}>{t('ui.missionType')}</Text>
             <View style={[dm.missionTypeBadge, { backgroundColor: missionColor.bg + '22', borderColor: missionColor.bg }]}>
               <Text style={[dm.missionTypeText, { color: missionColor.text }]}>{missionTypeLabel}</Text>
             </View>
@@ -154,9 +156,9 @@ export default function DungeonKeyModal({
 
         {onCooldown ? (
           <View style={[dm.alertBox, { borderColor: C.gold + '66', backgroundColor: C.gold + '10' }]}>
-            <Text style={[dm.alertTitle, { color: C.gold }]}>COOLDOWN ATIVO</Text>
+            <Text style={[dm.alertTitle, { color: C.gold }]}>{t('ui.cooldownActive')}</Text>
             <Text style={dm.alertText}>
-              Este portal já foi usado recentemente. Podes entrar novamente em:{'\n\n'}
+              {t('ui.cooldownText')}{'\n\n'}
               <Text style={{ color: C.gold, fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '900' }}>
                 {formatCooldown(cooldownMs)}
               </Text>
@@ -164,11 +166,8 @@ export default function DungeonKeyModal({
           </View>
         ) : (
           <View style={dm.alertBox}>
-            <Text style={dm.alertTitle}>AVISO CRÍTICO</Text>
-            <Text style={dm.alertText}>
-              Uma missão perigosa e desafiante te aguarda. {'\n\n'}
-              As recompensas são grandes, mas as penalizações também são severas. Tens a certeza de que estás pronto?
-            </Text>
+            <Text style={dm.alertTitle}>{t('ui.criticalWarning')}</Text>
+            <Text style={dm.alertText}>{t('ui.criticalWarningText')}</Text>
           </View>
         )}
 
@@ -178,12 +177,12 @@ export default function DungeonKeyModal({
         disabled={onCooldown}
       >
         <Text style={[dm.startBtnTxt, onCooldown && { color: C.gold }]}>
-          {onCooldown ? `COOLDOWN: ${formatCooldown(cooldownMs)}` : 'ACEITAR DESAFIO'}
+          {onCooldown ? t('ui.cooldownBtn', { time: formatCooldown(cooldownMs) }) : t('ui.acceptChallenge')}
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={dm.cancelBtn} onPress={onClose}>
-        <Text style={dm.cancelTxt}>RECUAR</Text>
+        <Text style={dm.cancelTxt}>{t('ui.retreat')}</Text>
       </TouchableOpacity>
     </MissionModalBase>
   );

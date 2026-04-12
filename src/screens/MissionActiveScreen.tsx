@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import BottomSheetModal from '../components/BottomSheetModal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore, { Quest } from '../store/useGameStore';
 import CustomModal from '../components/CustomModal';
 import { showOngoingMissionNotification, clearOngoingMissionNotification } from '../utils/notifications';
@@ -37,6 +38,7 @@ function formatTime(ms: number): string {
 }
 
 export default function MissionActiveScreen({ quest, onClose, onComplete, initialElapsed = 0, initialPaused, targetSeconds, C }: Props) {
+  const { t } = useTranslation('dungeons');
   const s = getStyles(C);
   const insets = useSafeAreaInsets();
 
@@ -152,7 +154,7 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
           {/* Header */}
           <View style={s.header}>
             <Icon name="sword" size={14} color={C.neonBlue} />
-            <Text style={s.headerTxt}> EXECUÇÃO DE MISSÃO</Text>
+            <Text style={s.headerTxt}> {t('ui.missionExecution')}</Text>
             <TouchableOpacity onPress={onClose} style={s.closeBtn}>
               <Icon name="close" size={18} color={C.muted} />
             </TouchableOpacity>
@@ -167,11 +169,11 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
             <View style={s.recordRow}>
               <Icon name="trophy-outline" size={12} color={C.gold} />
               <Text style={s.recordTxt}>
-                {' '}Recorde Pessoal: <Text style={s.recordVal}>{formatTime(bestSecs * 1000)}</Text>
+                {' '}{t('ui.personalRecord')} <Text style={s.recordVal}>{formatTime(bestSecs * 1000)}</Text>
               </Text>
               {isNewRecord && (
                 <View style={s.newRecordBadge}>
-                  <Text style={s.newRecordTxt}>NOVO!</Text>
+                  <Text style={s.newRecordTxt}>{t('ui.newRecord')}</Text>
                 </View>
               )}
             </View>
@@ -180,7 +182,7 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
           {/* Neon Stopwatch */}
           <View style={s.timerBox}>
             <Text style={s.timerText}>{formatTime(displayMs)}</Text>
-            <Text style={s.timerSub}>{running ? 'a decorrer…' : elapsed > 0 ? 'pausado' : 'parado'}</Text>
+            <Text style={s.timerSub}>{running ? t('ui.timerRunning') : elapsed > 0 ? t('ui.timerPaused') : t('ui.timerStopped')}</Text>
           </View>
 
           {/* Timer controls */}
@@ -188,17 +190,17 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
             {!running ? (
               <TouchableOpacity style={[s.ctrlBtn, s.ctrlStart]} onPress={startTimer}>
                 <Icon name="play" size={16} color={C.neonBlue} />
-                <Text style={[s.ctrlTxt, { color: C.neonBlue }]}> {elapsed > 0 ? 'RETOMAR' : 'INICIAR'}</Text>
+                <Text style={[s.ctrlTxt, { color: C.neonBlue }]}> {elapsed > 0 ? t('ui.resume') : t('ui.start')}</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity style={[s.ctrlBtn, s.ctrlPause]} onPress={pauseTimer}>
                 <Icon name="pause" size={16} color={C.gold} />
-                <Text style={[s.ctrlTxt, { color: C.gold }]}> PAUSAR</Text>
+                <Text style={[s.ctrlTxt, { color: C.gold }]}> {t('ui.pause')}</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity style={[s.ctrlBtn, s.ctrlReset]} onPress={resetTimer}>
               <Icon name="refresh" size={16} color={C.muted} />
-              <Text style={[s.ctrlTxt, { color: C.muted }]}> REINICIAR</Text>
+              <Text style={[s.ctrlTxt, { color: C.muted }]}> {t('ui.reset')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -206,13 +208,13 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
           <View style={s.notesSection}>
             <View style={s.notesHeader}>
               <Icon name="notebook-outline" size={12} color={C.dimmed} />
-              <Text style={s.notesLabel}> DIÁRIO DE COMBATE</Text>
+              <Text style={s.notesLabel}> {t('ui.combatDiary')}</Text>
             </View>
             <TextInput
               style={s.notesInput}
               value={note}
               onChangeText={setNote}
-              placeholder="Ex: 52 Flexões • 3 séries • sensação boa"
+              placeholder={t('ui.notesPlaceholder')}
               placeholderTextColor={C.dimmed}
               multiline
               numberOfLines={3}
@@ -223,13 +225,13 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
           {/* Complete button */}
           <TouchableOpacity style={s.completeBtn} onPress={handleComplete} activeOpacity={0.8}>
             <Icon name="check-circle-outline" size={18} color={C.bg} />
-            <Text style={s.completeTxt}> CONCLUIR MISSÃO</Text>
+            <Text style={s.completeTxt}> {t('ui.completeMission')}</Text>
           </TouchableOpacity>
 
           {/* Complete without timer */}
           <TouchableOpacity style={s.skipTimerBtn} onPress={() => finalize(0)}>
             <Icon name="pencil-outline" size={13} color={C.muted} />
-            <Text style={s.skipTimerTxt}> CONCLUIR SEM TIMER (REGISTO MANUAL)</Text>
+            <Text style={s.skipTimerTxt}> {t('ui.completeWithoutTimer')}</Text>
           </TouchableOpacity>
 
         </View>
@@ -238,9 +240,9 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
       {/* Confirm: short timer */}
       <CustomModal
         visible={showNoTime}
-        title="TEMPO INSUFICIENTE"
-        message={`Apenas ${formatTime(elapsed)} registado.\nGuardar apenas as notas sem atualizar recorde?`}
-        confirmLabel="GUARDAR NOTAS"
+        title={t('ui.insufficientTime')}
+        message={t('ui.insufficientTimeMsg', { time: formatTime(elapsed) })}
+        confirmLabel={t('ui.saveNotes')}
         confirmIcon="notebook-outline"
         confirmColor={C.neonBlue}
         onConfirm={() => { setShowNoTime(false); finalize(0); }}

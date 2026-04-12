@@ -1,0 +1,286 @@
+{
+  "items": {
+    "streak_chain": {
+      "title": "Flamme des Jägers",
+      "description": "Halte deinen täglichen Quest-Streak aufrecht. Die Flamme des Monarchen darf niemals erlöschen."
+    },
+    "streak_phoenix": {
+      "title": "Phönix aus der Asche",
+      "description": "Einen Streak von mehr als 10 Tagen verloren und wieder auf 3 Tage zurückgekehrt."
+    },
+    "streak_scroll_save": {
+      "title": "Stratege",
+      "description": "Benutze die Ruheschriftrolle, um einen Streak von 7+ Tagen zu schützen."
+    },
+    "focus_hours": {
+      "title": "Mentale Festung",
+      "description": "Sammle Stunden im Focus Mode. Der Geist des Monarchen kennt keine Grenzen."
+    },
+    "focus_sessions": {
+      "title": "Eiserne Disziplin",
+      "description": "Schließe Focus Mode-Sitzungen ab. Der Monarch trainiert den Geist unaufhörlich."
+    },
+    "focus_night_owl": {
+      "title": "Nachteule",
+      "description": "Starte den Focus Mode nach 01:00 Uhr nachts."
+    },
+    "focus_hardcore_surrender": {
+      "title": "Kalte Reue",
+      "description": "Du hast versucht, den Hardcore Focus Mode zu verlassen, bist aber im Bestätigungsmodal umgekehrt."
+    },
+    "focus_crimson_knight": {
+      "title": "Thron Erobert",
+      "description": "Schließe die Boss-Herausforderung \"Der Schwur des Ritters\" ab (90 Min. Focus)."
+    },
+    "focus_long_session": {
+      "title": "Ultra-Fokus",
+      "description": "Schließe eine Focus Mode-Sitzung von 2 oder mehr Stunden ab."
+    },
+    "boss_slayer": {
+      "title": "Schrecken der Dungeons",
+      "description": "Besiege Boss Raids. Die Legende des Schatten-Monarchen verbreitet sich im ganzen Reich."
+    },
+    "boss_runner": {
+      "title": "Das Gift Erreicht Mich Nicht",
+      "description": "Schließe den Boss \"Vipern-Gift\" ab (5 km GPS-Lauf)."
+    },
+    "boss_cerberus": {
+      "title": "Stärker als Drei",
+      "description": "Schließe den Boss \"Cerberus-Gebrüll\" ab (100+100+30 körperlich)."
+    },
+    "boss_omega_slayer": {
+      "title": "Kurzschluss",
+      "description": "Schließe den Boss \"Omega-Waffe (S-Rank)\" ab und beweise deinen wahnsinnigen Widerstand."
+    },
+    "boss_eclipse_survivor": {
+      "title": "Überlebender des Void",
+      "description": "Schließe den Boss \"Kosmische Finsternis (S-Rank)\" ab. Du hast reines Wissen unter Druck absorbiert."
+    },
+    "boss_seraph_fall": {
+      "title": "Gebrochener Goldener Engel",
+      "description": "Schließe den Boss \"Klinge des Gefallenen Seraphs (S-Rank)\" ab. Du hast heiliges Licht mit deinem Schatten gebogen."
+    },
+    "boss_archlich_prime": {
+      "title": "Krone des Erz-Liches",
+      "description": "Schließe den Boss \"Urzeitlicher Erz-Lich (S-Rank)\" ab. Das antike Ritual gehorcht nun dem Monarchen."
+    },
+    "boss_soul_reaper": {
+      "title": "Sensenmann des Void",
+      "description": "Schließe den Boss \"Seelen-Sensenmann (S-Rank)\" ab. Keine Essenz entgeht dir."
+    },
+    "boss_astral_nebula": {
+      "title": "König der Nebel",
+      "description": "Schließe den Boss \"Nebel-König (S-Rank)\" ab. Du bist zwischen Sternen gewandelt, ohne zu schwanken."
+    },
+    "dungeon_break_hunter": {
+      "title": "Verteidiger der Portale",
+      "description": "Verhindere Dungeon Breaks. Chaos hat keinen Platz, wo der Monarch seinen Fuß hinsetzt."
+    },
+    "event_halloween_reaper": {
+      "title": "Herbst-Sensenmann",
+      "description": "Besiege den Halloween-Event-Boss. Der Nebel öffnet sich für den Monarchen."
+    },
+    "event_winter_lich": {
+      "title": "Krone der Sonnenwende",
+      "description": "Besiege den Winter-Event-Boss. Die längste Nacht hat sich gebeugt."
+    },
+    "event_summer_titan": {
+      "title": "Zorn der Sonne",
+      "description": "Besiege den Sommer-Event-Boss. Extreme Hitze hat deinen Willen gestärkt."
+    },
+    "event_new_year_ashen": {
+      "title": "Wiedergeburt aus der Asche",
+      "description": "Besiege den Neujahrs-Boss. Der Neuanfang wurde von deinem Schatten besiegelt."
+    },
+    "event_valentine_oath": {
+      "title": "Karmesinroter Schwur",
+      "description": "Besiege den Valentinstags-Boss. Das Versprechen wurde im System eingraviert."
+    },
+    "event_carnival_mask": {
+      "title": "Maske des Chaos",
+      "description": "Besiege den Karnevals-Boss. Das Chaos hat zu deinen Gunsten getanzt."
+    },
+    "event_equinox_guardian": {
+      "title": "Hüter des Gleichgewichts",
+      "description": "Besiege den Äquinoktiums-Boss. Du hast das perfekte Gleichgewicht gehalten."
+    },
+    "event_easter_hare": {
+      "title": "Ostersprung",
+      "description": "Besiege den Oster-Boss. Der Sprung des Lichts gehört dir."
+    },
+    "event_spring_bloom": {
+      "title": "Blüte der Wiedergeburt",
+      "description": "Besiege den Frühlings-Boss. Das Leben erblühte auf deinem Weg."
+    },
+    "event_harvest_king": {
+      "title": "König der Ernte",
+      "description": "Besiege den Ernte-Boss. Der Überfluss gehört dem Monarchen."
+    },
+    "event_black_friday_merchant": {
+      "title": "Schatten-Händler",
+      "description": "Besiege den Black-Friday-Boss. Das Gold gehorcht."
+    },
+    "event_yule_seraph": {
+      "title": "Yule-Seraph",
+      "description": "Besiege den Yule-Boss. Die heilige Nacht hat nachgegeben."
+    },
+    "event_midnight_wraith": {
+      "title": "Mitternachts-Wraith",
+      "description": "Besiege den Boss der Langen Nächte. Die Dunkelheit beherrscht dich nicht mehr."
+    },
+    "event_festival_drake": {
+      "title": "Festival-Drake",
+      "description": "Besiege den Festival-Boss. Die Flamme hat mit dir gefeiert."
+    },
+    "level_chain": {
+      "title": "Aufstieg des Jägers",
+      "description": "Erhöhe dein Level. Die Macht des Schatten-Monarchen kennt keine Obergrenze."
+    },
+    "secret_monarch": {
+      "title": "Schatten-Monarch",
+      "description": "Erreiche Level 20. Der Titel des Schatten-Monarchen wird offiziell vom System verliehen."
+    },
+    "shadow_army": {
+      "title": "Armee der Schatten",
+      "description": "Sammle Schatten für deine Armee. Der Monarch befiehlt allen."
+    },
+    "shadow_elite": {
+      "title": "Vorhut der Schatten",
+      "description": "Habe 3 oder mehr Schatten gleichzeitig auf dem Schlachtfeld aktiv."
+    },
+    "quests_perfect": {
+      "title": "Fehlerlos",
+      "description": "Schließe jeden Tag ab, ohne eine Quest zu verpassen. Das System beobachtet deine Disziplin."
+    },
+    "quests_total": {
+      "title": "Unaufhaltsamer Krieger",
+      "description": "Schließe tägliche Quests kumuliert ab. Jede Quest formt den Monarchen."
+    },
+    "quests_perfect_week": {
+      "title": "Perfekte Woche",
+      "description": "Schließe alle Quests eine ganze Woche lang ab."
+    },
+    "extra_quest_first": {
+      "title": "Eigene Initiative",
+      "description": "Schließe deine erste Extra-Quest ab."
+    },
+    "extra_quest_chain": {
+      "title": "Feldbote",
+      "description": "Schließe Extra-Quests kumuliert ab. Der Monarch beschränkt sich nicht auf das System."
+    },
+    "extra_quest_daily_all": {
+      "title": "Der Terminkalender des Jägers",
+      "description": "Schließe ALLE verfügbaren Extra-Quests an einem einzigen Tag ab."
+    },
+    "login_chain": {
+      "title": "Anwesenheit des Monarchen",
+      "description": "Öffne die App täglich. Das System registriert deine Beständigkeit über die Zeit."
+    },
+    "economy_first_purchase": {
+      "title": "Käufer-Jäger",
+      "description": "Kauf deinen ersten Artikel im System-Shop."
+    },
+    "economy_system_pass": {
+      "title": "Kostspieliges Privileg",
+      "description": "Benutze den System-Pass, um eine tägliche Quest zu überspringen."
+    },
+    "economy_lagrima_clutch": {
+      "title": "Auferstehung",
+      "description": "Benutze die Träne der Reinigung, während eine Strafe aktiv ist."
+    },
+    "economy_reloj": {
+      "title": "Zeit ist Gold",
+      "description": "Benutze die Sanduhr während eines Boss Raids."
+    },
+    "economy_hoarder": {
+      "title": "Der Geizhals des Systems",
+      "description": "Sammle 5000 Gold, ohne es auszugeben. Das System bemerkt deine unendliche Geduld."
+    },
+    "economy_spender": {
+      "title": "Investiert ins System",
+      "description": "Gib im Laufe der Zeit insgesamt 3000 Gold im Shop aus."
+    },
+    "economy_big_spender": {
+      "title": "Mäzen des Systems",
+      "description": "Gib kumuliert Gold im Shop aus. Das System gedeiht durch deine Hingabe."
+    },
+    "clutch_last_minute": {
+      "title": "Am Rande des Todes",
+      "description": "Schließe die letzte tägliche Quest mit weniger als 30 Minuten bis Mitternacht ab."
+    },
+    "clutch_late_night": {
+      "title": "Das System Ignorieren",
+      "description": "Schließe die letzte tägliche Quest zwischen 23:30 und 23:59 ab."
+    },
+    "clutch_undo_redo": {
+      "title": "Der Genauigkeit Verpflichtet",
+      "description": "Mache eine Quest rückgängig und schließe sie am selben Tag wieder ab."
+    },
+    "rebellion_spam": {
+      "title": "Rebellion",
+      "description": "Du hast versucht, eine gesperrte App 5 Mal in weniger als 1 Minute zu öffnen. Das System bemerkt deine Schwäche."
+    },
+    "rebellion_resist": {
+      "title": "Versuchung Widerstanden",
+      "description": "Du hast versucht, eine gesperrte App zu öffnen und aufgegeben. Das System billigt dies."
+    },
+    "rebellion_c_rank": {
+      "title": "S-Rank-Glück",
+      "description": "Das Rad weist deiner ersten Nebenquest Rank C zu."
+    },
+    "penalty_first": {
+      "title": "Vom System Bestraft",
+      "description": "Du betrittst die Strafzone zum ersten Mal. Das System hatte mehr erwartet."
+    },
+    "penalty_cleared": {
+      "title": "Erlösung",
+      "description": "Beseitige eine aktive Strafe (durch beliebiges Mittel)."
+    },
+    "penalty_comeback": {
+      "title": "Wiederaufleben",
+      "description": "Schließe alle Quests am Tag nach einer aktiven Strafe ab."
+    },
+    "penalty_veteran": {
+      "title": "Veteran des Void",
+      "description": "Du hast 5 Strafen überlebt und bist stärker zurückgekehrt. Der Void konsumiert dich nicht."
+    },
+    "dawn_warrior": {
+      "title": "Morgenkrieger",
+      "description": "Schließe eine Quest vor 07:00 Uhr morgens ab."
+    },
+    "secret_first_day": {
+      "title": "Die Reise Beginnt",
+      "description": "Du schließt alle Quests an deinem ersten Tag als Jäger ab."
+    },
+    "secret_all_bosses": {
+      "title": "Vollständiger Jäger",
+      "description": "Schließe einen Boss jedes Typs ab: GPS (Viper), Focus (Ritter) und Training (Cerberus)."
+    },
+    "shadow_collector_10": {
+      "title": "Herr der Armee",
+      "description": "Erwerbe 10 verschiedene Schatten."
+    },
+    "perfect_week_1": {
+      "title": "Goldene Woche",
+      "description": "Eine ganze Woche abgeschlossener Quests ohne Fehler."
+    },
+    "level_50_milestone": {
+      "title": "Halbweg Erreicht",
+      "description": "Erreiche Level 50 als Jäger."
+    },
+    "boss_slayer_20": {
+      "title": "Schrecken der Bosse",
+      "description": "Besiege insgesamt 20 Bosse."
+    },
+    "dungeon_master_50": {
+      "title": "Dungeon-Meister",
+      "description": "Besiege insgesamt 50 Bosse."
+    }
+  },
+  "ui": {
+    "system_label": "SYSTEM",
+    "header": "ACHIEVEMENT FREIGESCHALTET",
+    "gold_reward": "+{{amount}} Gold",
+    "dismiss_btn": "RUHM DEM JÄGER"
+  }
+}

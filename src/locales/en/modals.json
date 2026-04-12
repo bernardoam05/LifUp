@@ -1,0 +1,104 @@
+{
+  "boss_victory": {
+    "header": "BOSS DEFEATED!",
+    "sub": "The dungeon has been cleared. The System acknowledges your strength.",
+    "shadow_leveled_up": "{{name}} leveled up!",
+    "shadow_obtained": "Shadow obtained: {{name}}",
+    "loot_header": "— LOOT —",
+    "shadow_hint": "Reach level 10 to receive Shadows from boss raids.",
+    "continue": "CONTINUE"
+  },
+  "rank": {
+    "header": "[ HUNTER CLASSIFICATION ]",
+    "rank_up_title": "RANK UP!",
+    "rank_up_text": "You have reached Class {{label}}",
+    "req_level": "Level {{level}}",
+    "req_missions": "Total missions",
+    "req_bosses": "Bosses",
+    "req_rank_missions": "{{rank}}-Rank missions",
+    "initial_rank": "Starting rank",
+    "current_tag": "CURRENT",
+    "warning_rank_up": "GENERAL WARNING: Ranking up will increase the difficulty of suggested missions.",
+    "rank_up_btn": "ADVANCE TO RANK {{rank}}",
+    "keep_training": "Keep training to reach the next class.",
+    "rank_labels": {
+      "E": "Novice",
+      "D": "Basic Hunter",
+      "C": "Will Master",
+      "B": "Shadow Knight",
+      "A": "Commander",
+      "S": "Monarch",
+      "National": "National Level Hunter"
+    },
+    "labels": {
+      "E": "Beginner",
+      "D": "Basic Hunter",
+      "C": "Iron Will Master",
+      "B": "Shadow Knight",
+      "A": "Commander",
+      "S": "Monarch",
+      "National": "National-Level Hunter"
+    }
+  },
+  "event_dungeon": {
+    "warning_text": "LIMITED EVENT",
+    "title": "[ SPECIAL EVENT DUNGEON ]",
+    "available": "Available {{start}} to {{end}}",
+    "trials_header": "EVENT TRIALS",
+    "progress": "Progress: {{completed}}/{{required}} trials complete",
+    "trial_complete": "[ TRIAL COMPLETE ]",
+    "event_boss_header": "EVENT FINAL BOSS",
+    "event_concluded": "[ EVENT CONCLUDED ]",
+    "shadow_label": "Shadow: {{name}}",
+    "shadow_unknown": "Unknown",
+    "boss_locked": "Complete the trials above to unlock the event Boss.",
+    "back": "BACK"
+  },
+  "daily_boss": {
+    "portal_badge": "DAILY BOSS PORTAL",
+    "daily_portal": "[ DAILY PORTAL ]",
+    "sub": "Complete the Daily Boss Mission to earn XP, Gold and extract its Shadow.",
+    "boss_defeated": "[ BOSS DEFEATED ]",
+    "shadow_label": "Shadow: {{name}}",
+    "key_missing": "KEY MISSING",
+    "master_key_ready": "MASTER KEY READY",
+    "back": "BACK"
+  },
+  "loot_box": {
+    "sub_title": "REWARDS OPENED",
+    "items_title": "ITEMS ACQUIRED:",
+    "confirm": "CLAIM"
+  },
+  "gps_tracker": {
+    "title": "GPS TRACKER",
+    "moving": "moving…",
+    "paused": "paused",
+    "pause_btn": "PAUSE",
+    "resume_btn": "RESUME",
+    "start_btn": "START",
+    "acquiring_gps": "Acquiring GPS signal...",
+    "high_speed_warning": "High speed detected! Distance paused.",
+    "field_notes_label": "FIELD NOTES",
+    "field_notes_placeholder": "Log your progress...",
+    "finish_mission": "FINISH MISSION"
+  },
+  "penalty": {
+    "system_label": "◈ SYSTEM ◈",
+    "title_light": "PENALTY ZONE",
+    "title_medium": "PENALTY ZONE",
+    "title_hardcore": "MONARCH'S PUNISHMENT",
+    "title_custom": "PENALTY ZONE",
+    "detected": "FAILURE DETECTED",
+    "intensity_light": "LIGHT",
+    "intensity_medium": "MEDIUM",
+    "intensity_hardcore": "HARDCORE",
+    "fail_line": "{{failedCount}} of {{totalCount}} missions failed.",
+    "fail_line_default": "Daily missions not completed.",
+    "xp_line": "{{xpLost}} XP{{goldPart}} deducted.",
+    "xp_line_gold_part": " and ◈{{goldLost}}",
+    "xp_line_default": "XP and Gold deducted according to active profile.",
+    "escape_message": "Complete the penalty missions to escape.",
+    "dismiss_btn": "UNDERSTOOD, HUNTER"
+  },
+  "bottom_sheet": {}
+}

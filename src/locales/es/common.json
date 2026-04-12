@@ -1,0 +1,127 @@
+{
+  "buttons": {
+    "continue": "CONTINUAR",
+    "close": "CERRAR",
+    "confirm": "CONFIRMAR",
+    "cancel": "CANCELAR",
+    "yes": "SÍ",
+    "no": "NO",
+    "ok": "OK",
+    "back": "VOLVER"
+  },
+  "extraction": {
+    "protocol": "SISTEMA — PROTOCOLO DE EXTRACCIÓN",
+    "arise_subtitle": "PROTOCOLO DE EXTRACCIÓN ACTIVADO",
+    "dungeon_cleared": "LA MAZMORRA HA SIDO DESPEJADA.",
+    "achievement_unlocked": "LOGRO DESBLOQUEADO.",
+    "extraction_started": "EXTRACCIÓN DE SOMBRA INICIADA...",
+    "shadow_granted": "SOMBRA CONCEDIDA POR EL SISTEMA...",
+    "origin_label": "ORIGEN",
+    "copy_registered": "COPIA REGISTRADA",
+    "copies_accumulated_one": "{{count}} COPIA ACUMULADA",
+    "copies_accumulated_other": "{{count}} COPIAS ACUMULADAS",
+    "throne_room_tip": "Usa las copias para evolucionar en la Sala del Trono.",
+    "new_soul": "NUEVA SOMBRA ADQUIRIDA",
+    "equip_tip": "Repórtate a la Sala del Trono para equipar.",
+    "collect_soul": "RECOGER ALMA",
+    "rank_labels": {
+      "Normal": "NORMAL",
+      "Elite": "ÉLITE",
+      "Knight": "CABALLERO",
+      "Commander": "COMANDANTE",
+      "Marshal": "MARISCAL"
+    },
+    "origin": {
+      "forge": "CREADA EN LA FORJA",
+      "achievement": "LOGRO DESBLOQUEADO",
+      "boss_drop": "CAÍDA DE BOSS",
+      "shop": "COMPRA EN TIENDA",
+      "daily": "EXTRACCIÓN DIARIA"
+    }
+  },
+  "level_up": {
+    "system_label": "◈ SISTEMA ◈",
+    "title": "¡SUBIDA DE NIVEL!",
+    "level_label": "NIVEL",
+    "rewards_label": "RECOMPENSAS",
+    "continue": "CONTINUAR"
+  },
+  "hud": {
+    "focus_tag": "FOCO",
+    "xp_display": "{{current}} / {{max}} XP",
+    "level_display": "NIV {{level}}"
+  },
+  "alert": {
+    "ok": "OK"
+  },
+  "tutorial": {
+    "system_label": "SISTEMA — PROTOCOLO DE TUTORIAL",
+    "skip": "SALTAR",
+    "next": "SIGUIENTE",
+    "start": "EMPEZAR",
+    "phase1": [
+      {
+        "title": "BIENVENIDO, CAZADOR",
+        "body": "El Sistema ha despertado. Solo hay un camino: hacerse más fuerte.\n\nEsta guía te mostrará cómo funciona el mundo del Sistema."
+      },
+      {
+        "title": "MISIONES DIARIAS",
+        "body": "Aquí encuentras tus tareas de hoy. Complétalas para ganar XP, subir de nivel y acumular Gold.\n\nSi completas todas las diarias recibirás una recompensa especial."
+      },
+      {
+        "title": "FORJA DE MISIONES",
+        "body": "¡Puedes adaptar las misiones a tu vida real! En la parte superior encuentras la FORJA para editar tus rutinas.\n\n· MISIONES CORE (Fijas): Ocurren diariamente.\n· MISIONES POOL (Extra): El Sistema sortea aleatoriamente cada día."
+      },
+      {
+        "title": "TU PERFIL Y CONFIGURACIÓN",
+        "body": "Aquí ves tus atributos, tu Rango de Cazador y tus títulos.\n\nEn la esquina superior derecha, el ícono de Engranaje ajusta la DIFICULTAD."
+      },
+      {
+        "title": "TU EJÉRCITO DE SOMBRAS",
+        "body": "Las Sombras son guerreros que extraes al derrotar jefes o completar todas las misiones diarias.\n\nCada una tiene un efecto pasivo único."
+      },
+      {
+        "title": "LA TIENDA DEL SISTEMA",
+        "body": "Usa Gold para comprar Pociones de XP y consumibles.\n\nAl alcanzar el Nivel 10, sombras únicas estarán disponibles para reclutamiento."
+      },
+      {
+        "title": "MODO FOCO Y PENALIZACIONES",
+        "body": "Activa el Modo Foco para bloquear distracciones.\n\nFallar misiones diarias te pone en la ZONA DE PENALIZACIÓN y pierdes XP."
+      },
+      {
+        "title": "LISTO PARA EMPEZAR",
+        "body": "Tu primera misión es simple: completa las Misiones Diarias de hoy.\n\nCuanto más consistente seas, más subirá tu Rango. ¡Adelante, Cazador!"
+      }
+    ],
+    "phase2": [
+      {
+        "title": "NIVEL 10 — LAS SOMBRAS DESPIERTAN",
+        "body": "Has alcanzado un hito importante. Desde ahora, las Sombras comienzan a revelarse con más frecuencia.\n\nTe mostraré cómo gestionar tu ejército."
+      },
+      {
+        "title": "TU SOMBRA",
+        "body": "Cada sombra tiene un EFECTO PASIVO ÚNICO — bonificaciones automáticas que se aplican a tus misiones.\n\nRangos más altos tienen efectos mucho más poderosos."
+      },
+      {
+        "title": "AÑADIR A FAVORITOS",
+        "body": "Toca el ícono ⭐ para marcar como favorito.\n\nTus 3 sombras favoritas aplican sus efectos pasivos globales."
+      },
+      {
+        "title": "EFECTOS PASIVOS ACTIVOS",
+        "body": "Con sombras favoritas activadas, sus bonificaciones se aplican automáticamente.\n\nPuedes ver las bonificaciones activas en tu Perfil."
+      },
+      {
+        "title": "EL MONARCA DESPIERTA",
+        "body": "Sigue conquistando, Cazador. Las sombras más poderosas aún están por venir.\n\nForja tu ejército. Vuélvete imparable."
+      }
+    ]
+  },
+  "toast": {
+    "level_up_title": "¡SUBIDA DE NIVEL!",
+    "level_up_desc": "Alcanzaste el Nivel {{level}}"
+  },
+  "modal": {
+    "confirm": "CONFIRMAR",
+    "cancel": "CANCELAR"
+  }
+}

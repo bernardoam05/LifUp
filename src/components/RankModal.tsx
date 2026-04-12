@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Easing, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import SystemModal from './SystemModal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import useGameStore, { getRank, CLASS_REQUIREMENTS } from '../store/useGameStore';
@@ -19,6 +20,7 @@ type Props = {
 
 export default function RankModal({ visible = true, level, totalCompleted, bossesDefeated, questsByRank, onClose, C }: Props) {
   const s = getStyles(C);
+  const { t } = useTranslation('modals');
 
   const playerRankLetter = useGameStore(st => st.player.rank) || 'E';
   const rankUpAction = useGameStore(st => st.rankUp);
@@ -65,7 +67,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
       <Animated.View style={[s.card, { borderColor: displayRank.color + '55', transform: [{ scale: scaleAnim }] }]}>
         <View style={s.headerRow}>
           <Icon name="shield-star-outline" size={12} color={displayRank.color} />
-          <Text style={[s.headerTxt, { color: displayRank.color }]}> [ CLASSIFICAÇÃO DO CAÇADOR ]</Text>
+          <Text style={[s.headerTxt, { color: displayRank.color }]}> {t('rank.header')}</Text>
           {!isRankingUp && (
             <TouchableOpacity onPress={onClose} style={s.closeBtn}>
               <Icon name="close" size={16} color={C.dimmed} />
@@ -78,8 +80,8 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
         {isRankingUp ? (
           <View style={s.rankUpContainer}>
             <Icon name="chevron-double-up" size={48} color={displayRank.color} style={{ marginBottom: 12 }} />
-            <Text style={[s.rankUpTitle, { color: displayRank.color }]}>RANK UP!</Text>
-            <Text style={s.rankUpText}>Alcançaste a Classe {displayRank.label}</Text>
+            <Text style={[s.rankUpTitle, { color: displayRank.color }]}>{t('rank.rank_up_title')}</Text>
+            <Text style={s.rankUpText}>{t('rank.rank_up_text', { label: t(`rank.labels.${displayRank.rank}`, { defaultValue: displayRank.label }) })}</Text>
           </View>
         ) : (
           <>
@@ -99,23 +101,23 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
                     <Text style={[s.badgeTxt, { color: r.color }]}>{r.rank === 'National' ? 'N' : r.rank}</Text>
                   </View>
                   <View style={s.rowInfo}>
-                    <Text style={[s.rowLabel, { color: isCurrent ? r.color : (met ? C.muted : C.dimmed) }]}>{r.label}</Text>
+                    <Text style={[s.rowLabel, { color: isCurrent ? r.color : (met ? C.muted : C.dimmed) }]}>{t(`rank.labels.${r.rank}`, { defaultValue: r.label })}</Text>
                     {r.minMissions > 0 ? (
                       <>
                         <View style={s.reqRow}>
-                          <Text style={[s.reqLabel, lvlOk && s.reqMet]}>Nível {r.minLevel}</Text>
+                          <Text style={[s.reqLabel, lvlOk && s.reqMet]}>{t('rank.req_level', { level: r.minLevel })}</Text>
                           <Text style={[s.reqVal, lvlOk ? s.reqMet : s.reqFail]}>
                             {Math.min(level, r.minLevel)}/{r.minLevel}
                           </Text>
                         </View>
                         <View style={s.reqRow}>
-                          <Text style={[s.reqLabel, misOk && s.reqMet]}>Missões totais</Text>
+                          <Text style={[s.reqLabel, misOk && s.reqMet]}>{t('rank.req_missions')}</Text>
                           <Text style={[s.reqVal, misOk ? s.reqMet : s.reqFail]}>
                             {Math.min(totalCompleted, r.minMissions)}/{r.minMissions}
                           </Text>
                         </View>
                         <View style={s.reqRow}>
-                          <Text style={[s.reqLabel, bossOk && s.reqMet]}>Bosses</Text>
+                          <Text style={[s.reqLabel, bossOk && s.reqMet]}>{t('rank.req_bosses')}</Text>
                           <Text style={[s.reqVal, bossOk ? s.reqMet : s.reqFail]}>
                             {Math.min(bossesDefeated, r.minBosses)}/{r.minBosses}
                           </Text>
@@ -123,7 +125,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
                         {r.minRankMissions > 0 && r.prevRank && (
                           <View style={s.reqRow}>
                             <Text style={[s.reqLabel, rankMisOk && s.reqMet]}>
-                              Missões {r.prevRank}-Rank
+                              {t('rank.req_rank_missions', { rank: r.prevRank })}
                             </Text>
                             <Text style={[s.reqVal, rankMisOk ? s.reqMet : s.reqFail]}>
                               {Math.min(prevRankCount, r.minRankMissions)}/{r.minRankMissions}
@@ -132,12 +134,12 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
                         )}
                       </>
                     ) : (
-                      <Text style={s.rowSub}>Rank inicial</Text>
+                      <Text style={s.rowSub}>{t('rank.initial_rank')}</Text>
                     )}
                   </View>
                   {isCurrent && (
                     <View style={[s.currentTag, { borderColor: r.color + '55' }]}>
-                      <Text style={[s.currentTagTxt, { color: r.color }]}>ATUAL</Text>
+                      <Text style={[s.currentTagTxt, { color: r.color }]}>{t('rank.current_tag')}</Text>
                     </View>
                   )}
                   {!isCurrent && met && <Icon name="check-circle" size={14} color={r.color + 'aa'} />}
@@ -149,7 +151,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
               <View style={[s.rankUpAction, { borderColor: qualifiedRankInfo.color }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 5, marginBottom: 12 }}>
                   <Icon name="alert-outline" size={11} color={C.neonRed} style={{ marginTop: 1 }} />
-                  <Text style={[s.warningText, { marginBottom: 0, flex: 1, textAlign: 'left' }]}>AVISO GERAL: Subir de classe vai aumentar a dificuldade das missões sugeridas.</Text>
+                  <Text style={[s.warningText, { marginBottom: 0, flex: 1, textAlign: 'left' }]}>{t('rank.warning_rank_up')}</Text>
                 </View>
                 <Animated.View style={{
                   shadowColor: qualifiedRankInfo.color,
@@ -159,7 +161,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
                   elevation: glowAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 10] }),
                 }}>
                   <TouchableOpacity style={[s.rankUpBtn, { backgroundColor: qualifiedRankInfo.color }]} onPress={handleRankUp}>
-                    <Text style={[s.rankUpBtnTxt, { color: C.bg }]}>SUBIR PARA O RANK {qualifiedRankInfo.rank}</Text>
+                    <Text style={[s.rankUpBtnTxt, { color: C.bg }]}>{t('rank.rank_up_btn', { rank: qualifiedRankInfo.rank })}</Text>
                   </TouchableOpacity>
                 </Animated.View>
               </View>
@@ -167,7 +169,7 @@ export default function RankModal({ visible = true, level, totalCompleted, bosse
               <View style={s.nextSection}>
                 <Icon name="arrow-up-bold" size={11} color="#475569" />
                 <View style={{ flex: 1, marginLeft: 4 }}>
-                  <Text style={[s.nextTxt, { color: C.dimmed }]}>Continua a treinar para alcançar a próxima classe.</Text>
+                  <Text style={[s.nextTxt, { color: C.dimmed }]}>{t('rank.keep_training')}</Text>
                 </View>
               </View>
             )}

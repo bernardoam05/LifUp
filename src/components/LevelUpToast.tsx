@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme';
 import { playSound } from '../utils/audioService';
 
@@ -20,6 +21,7 @@ interface Props {
 
 export default function LevelUpToast({ reward, onDismiss, blocked = false }: Props) {
   const C = useTheme();
+  const { t } = useTranslation('common');
   const st = React.useMemo(() => getStyles(C), [C]);
   const slideAnim = useRef(new Animated.Value(-150)).current;
 
@@ -67,8 +69,8 @@ export default function LevelUpToast({ reward, onDismiss, blocked = false }: Pro
           <Icon name="chevron-double-up" size={32} color={C.gold} />
         </View>
         <View style={st.textCol}>
-          <Text style={st.title}>LEVEL UP!</Text>
-          <Text style={st.desc}>Atingiste o Nível {reward.level}</Text>
+          <Text style={st.title}>{t('toast.level_up_title')}</Text>
+          <Text style={st.desc}>{t('toast.level_up_desc', { level: reward.level })}</Text>
         </View>
         <View style={st.closeWrap}>
           <Icon name="close" size={20} color="#fff8" />

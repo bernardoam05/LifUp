@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { DungeonMission, EventWindow } from '../data/bosses';
 import { SHADOW_MAP } from '../data/shadows';
@@ -31,6 +32,7 @@ export default function EventDungeonModal({
 }: EventDungeonModalProps) {
   if (!eventProgress) {return null;}
   const ed = getEDStyles(C);
+  const { t } = useTranslation('modals');
 
   return (
     <MissionModalBase
@@ -39,8 +41,8 @@ export default function EventDungeonModal({
       onRequestClose={onRequestClose}
       iconName="calendar-star"
       iconColor={C.gold}
-      warningText="EVENTO LIMITADO"
-      title="[ MASMORRA ESPECIAL DE EVENTO ]"
+      warningText={t('event_dungeon.warning_text')}
+      title={t('event_dungeon.title')}
       titleColor={C.gold}
       borderColor={C.gold + '88'}
       C={C}
@@ -48,16 +50,16 @@ export default function EventDungeonModal({
       {eventWindow && (
         <View style={[ed.eventWindowTag, { borderColor: C.gold + '66' }]}>
           <Text style={ed.eventWindowTxt}>
-            Disponível {eventWindow.start} a {eventWindow.end}
+            {t('event_dungeon.available', { start: eventWindow.start, end: eventWindow.end })}
           </Text>
         </View>
       )}
 
       <View style={ed.eventHeader}>
-        <Text style={ed.eventHeaderTxt}>PROVAS DO EVENTO</Text>
+        <Text style={ed.eventHeaderTxt}>{t('event_dungeon.trials_header')}</Text>
       </View>
       <Text style={ed.eventProgressTxt}>
-        Progresso: {eventProgress.completedIds.length}/{eventProgress.required} provas completas
+        {t('event_dungeon.progress', { completed: eventProgress.completedIds.length, required: eventProgress.required })}
       </Text>
 
       <View style={{ width: '100%' }}>
@@ -75,7 +77,7 @@ export default function EventDungeonModal({
               </View>
               <View style={ed.missionInfo}>
                 <Text style={[ed.missionLabel, { color: m.color }]}>
-                  {completed ? '[ PROVA COMPLETA ]' : m.label}
+                  {completed ? t('event_dungeon.trial_complete') : m.label}
                 </Text>
                 <Text style={ed.missionDetail}>{m.detail}</Text>
               </View>
@@ -85,7 +87,7 @@ export default function EventDungeonModal({
         })}
 
         <View style={[ed.eventHeader, { marginTop: SPACING.md }]}>
-          <Text style={ed.eventHeaderTxt}>BOSS FINAL DO EVENTO</Text>
+          <Text style={ed.eventHeaderTxt}>{t('event_dungeon.event_boss_header')}</Text>
         </View>
 
         {eventBossMission ? (
@@ -99,14 +101,18 @@ export default function EventDungeonModal({
             </View>
             <View style={ed.missionInfo}>
               <Text style={[ed.missionLabel, { color: eventBossMission.color }]}>
-                {eventProgress.defeated ? '[ EVENTO CONCLUÍDO ]' : eventBossMission.label}
+                {eventProgress.defeated ? t('event_dungeon.event_concluded') : eventBossMission.label}
               </Text>
               <Text style={ed.missionDetail}>{eventBossMission.detail}</Text>
               {!eventProgress.defeated && (
                 <View style={ed.shadowExtractTag}>
                   <Icon name="ghost" size={9} color={C.purple} />
                   <Text style={ed.shadowExtractTxt}>
-                    {' '}Sombra: {SHADOW_MAP[eventBossMission.shadowHint as keyof typeof SHADOW_MAP]?.name ?? eventBossMission.shadowHint ?? 'Desconhecida'}
+                    {' '}{t('event_dungeon.shadow_label', {
+                      name: SHADOW_MAP[eventBossMission.shadowHint as keyof typeof SHADOW_MAP]?.name
+                        ?? eventBossMission.shadowHint
+                        ?? t('event_dungeon.shadow_unknown'),
+                    })}
                   </Text>
                 </View>
               )}
@@ -115,13 +121,13 @@ export default function EventDungeonModal({
           </TouchableOpacity>
         ) : (
           <Text style={ed.eventLockedTxt}>
-            Completa as provas acima para desbloquear o Boss do evento.
+            {t('event_dungeon.boss_locked')}
           </Text>
         )}
       </View>
 
       <TouchableOpacity style={ed.cancelBtn} onPress={onClose}>
-        <Text style={ed.cancelTxt}>RECUAR</Text>
+        <Text style={ed.cancelTxt}>{t('event_dungeon.back')}</Text>
       </TouchableOpacity>
     </MissionModalBase>
   );

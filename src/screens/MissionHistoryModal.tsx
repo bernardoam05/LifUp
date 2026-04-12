@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/useGameStore';
 import SystemModal from '../components/SystemModal';
 import { FONT, SPACING } from '../theme';
@@ -33,6 +34,7 @@ function formatSeconds(secs: number): string {
 // ── MissionHistoryModal ────────────────────────────────────────────────────────
 
 export default function MissionHistoryModal({ visible = true, onClose, C }: { visible?: boolean; onClose: () => void; C: any }) {
+  const { t } = useTranslation('dungeons');
   const s = getStyles(C);
   const QUEST_TYPE_COLOR = getQuestTypeColor(C);
 
@@ -63,7 +65,7 @@ export default function MissionHistoryModal({ visible = true, onClose, C }: { vi
 
         <View style={s.header}>
           <Icon name="database-outline" size={14} color={C.neonBlue} />
-          <Text style={s.headerTxt}> [ REGISTOS DO SISTEMA ]</Text>
+          <Text style={s.headerTxt}> {t('ui.systemRecords')}</Text>
           <TouchableOpacity onPress={onClose} style={s.closeBtn}>
             <Icon name="close" size={20} color={C.muted} />
           </TouchableOpacity>
@@ -71,16 +73,14 @@ export default function MissionHistoryModal({ visible = true, onClose, C }: { vi
 
         <View style={s.subHeader}>
           <Icon name="information-outline" size={11} color={C.dimmed} />
-          <Text style={s.subHeaderTxt}>
-            {' '}Missões completadas pelo menos uma vez · Ordenadas por frequência
-          </Text>
+          <Text style={s.subHeaderTxt}> {t('ui.systemRecordsSub')}</Text>
         </View>
 
         {entries.length === 0 ? (
           <View style={s.empty}>
             <Icon name="ghost" size={40} color={C.border} />
-            <Text style={s.emptyTxt}>Nenhum registo ainda.</Text>
-            <Text style={s.emptySub}>Completa missões para ver o teu historial aqui.</Text>
+            <Text style={s.emptyTxt}>{t('ui.noRecords')}</Text>
+            <Text style={s.emptySub}>{t('ui.noRecordsSub')}</Text>
           </View>
         ) : (
           <ScrollView contentContainerStyle={s.list}>
@@ -138,7 +138,7 @@ export default function MissionHistoryModal({ visible = true, onClose, C }: { vi
                           {h.note ? <Text style={s.historyNote}>"{h.note}"</Text> : null}
                         </View>
                       )) : (
-                        <Text style={s.emptyHistory}>Sem eventos passados.</Text>
+                        <Text style={s.emptyHistory}>{t('ui.noHistory')}</Text>
                       )}
                     </View>
                   )}

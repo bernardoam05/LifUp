@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import useGameStore, { SideQuest } from '../store/useGameStore';
 import BottomSheetModal from './BottomSheetModal';
 import CustomModal from './CustomModal';
@@ -43,6 +44,7 @@ interface SideQuestCardProps {
 }
 
 export default function SideQuestCard({ sq, C }: SideQuestCardProps) {
+  const { t } = useTranslation('quests');
   const sq_s = getSQSStyles(C);
   const insets = useSafeAreaInsets();
   const completeSQ = useGameStore(s => s.completeSideQuest);
@@ -92,13 +94,13 @@ export default function SideQuestCard({ sq, C }: SideQuestCardProps) {
       {/* Note Input */}
       <BottomSheetModal visible={showNoteInput} onClose={() => setShowNoteInput(false)} contentStyle={{ backgroundColor: 'transparent' }}>
         <View style={{ backgroundColor: C.panel, padding: 20, paddingBottom: Math.max(20, insets.bottom + SPACING.sm), borderTopLeftRadius: 16, borderTopRightRadius: 16, width: '100%' }}>
-          <Text style={{ color: C.purple, fontFamily: FONT.orbitron, marginBottom: 10 }}>NOTA DA TAREFA</Text>
+          <Text style={{ color: C.purple, fontFamily: FONT.orbitron, marginBottom: 10 }}>{t('ui.side_note_title')}</Text>
           <TextInput
             style={{ backgroundColor: C.bg, color: '#fff', padding: 12, borderRadius: 8, textAlignVertical: 'top', height: 90 }}
             multiline
             value={noteText}
             onChangeText={setNoteText}
-            placeholder="Escreve aqui..."
+            placeholder={t('ui.side_note_placeholder')}
             placeholderTextColor={C.dimmed}
             autoFocus
           />
@@ -107,13 +109,13 @@ export default function SideQuestCard({ sq, C }: SideQuestCardProps) {
               style={{ flex: 1, backgroundColor: C.purple, padding: 12, borderRadius: 8, alignItems: 'center' }}
               onPress={() => { updateNote(sq.id, noteText); setShowNoteInput(false); }}
             >
-              <Text style={{ color: '#fff', fontWeight: '700' }}>GUARDAR</Text>
+              <Text style={{ color: '#fff', fontWeight: '700' }}>{t('ui.side_note_save')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{ flex: 1, borderWidth: 1, borderColor: C.dimmed, padding: 12, borderRadius: 8, alignItems: 'center' }}
               onPress={() => setShowNoteInput(false)}
             >
-              <Text style={{ color: C.dimmed }}>CANCELAR</Text>
+              <Text style={{ color: C.dimmed }}>{t('ui.side_note_cancel')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -121,9 +123,9 @@ export default function SideQuestCard({ sq, C }: SideQuestCardProps) {
 
       <CustomModal
         visible={confirm}
-        title="TAREFA CONCLUÍDA"
-        message={`Marcas como feita:\n"${sq.title}"?`}
-        confirmLabel="SIM, FIZ"
+        title={t('ui.side_complete_title')}
+        message={t('ui.side_complete_message', { title: sq.title })}
+        confirmLabel={t('ui.side_complete_confirm')}
         confirmIcon="check-circle-outline"
         confirmColor={C.purple}
         onConfirm={() => { setConfirm(false); completeSQ(sq.id); }}
@@ -133,9 +135,9 @@ export default function SideQuestCard({ sq, C }: SideQuestCardProps) {
 
       <CustomModal
         visible={confirmDelete}
-        title="APAGAR TAREFA"
-        message={`Apagar permanentemente:\n"${sq.title}"?`}
-        confirmLabel="APAGAR"
+        title={t('ui.side_delete_title')}
+        message={t('ui.side_delete_message', { title: sq.title })}
+        confirmLabel={t('ui.side_delete_confirm')}
         confirmIcon="trash-can-outline"
         confirmColor={C.neonRed}
         onConfirm={() => { setConfirmDelete(false); removeSQ(sq.id); }}

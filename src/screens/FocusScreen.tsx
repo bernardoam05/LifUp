@@ -6,6 +6,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeModules } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import useGameStore from '../store/useGameStore';
 import CustomModal from '../components/CustomModal';
 import SystemAlertModal, { AlertButton } from '../components/SystemAlertModal';
@@ -69,6 +70,7 @@ function AppSelectorOverlay({
   onClose:     () => void
   C: any
 }) {
+  const { t } = useTranslation('screens');
   const ov = getOVStyles(C);
 
   const [displayApps, setDisplayApps] = useState<AppEntry[]>(PRESET_APPS);
@@ -136,11 +138,11 @@ function AppSelectorOverlay({
 
         <View style={ov.headerCenter}>
           <Icon name="shield-lock-outline" size={14} color={C.neonBlue} />
-          <Text style={ov.headerTitle}> OLHO DO MONARCA</Text>
+          <Text style={ov.headerTitle}> {t('focus.overlay_title')}</Text>
         </View>
 
         <TouchableOpacity style={[ov.headerBtn, ov.saveBtn]} onPress={onClose}>
-          <Text style={ov.headerBtnTxtSave}>GUARDAR</Text>
+          <Text style={ov.headerBtnTxtSave}>{t('focus.overlay_save')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -151,7 +153,7 @@ function AppSelectorOverlay({
           style={ov.searchInput}
           value={search}
           onChangeText={setSearch}
-          placeholder="Pesquisar app..."
+          placeholder={t('focus.overlay_search_placeholder')}
           placeholderTextColor={C.dimmed}
           autoCapitalize="none"
 
@@ -175,10 +177,12 @@ function AppSelectorOverlay({
       {/* ── Status bar ────────────────────────────────────────────────────── */}
       <View style={ov.statusBar}>
         {loading ? (
-          <Text style={ov.statusTxt}>A varrer o território...</Text>
+          <Text style={ov.statusTxt}>{t('focus.overlay_scanning')}</Text>
         ) : (
           <Text style={ov.statusTxt}>
-            {filtered.length} apps  ·  {blockedApps.length} selecionada{blockedApps.length !== 1 ? 's' : ''}
+            {blockedApps.length !== 1
+              ? t('focus.overlay_status_plural', { apps: filtered.length, selected: blockedApps.length })
+              : t('focus.overlay_status', { apps: filtered.length, selected: blockedApps.length })}
           </Text>
         )}
       </View>
@@ -187,8 +191,8 @@ function AppSelectorOverlay({
       {loading ? (
         <View style={ov.loadingBlock}>
           <Icon name="eye-outline" size={32} color={C.purple} />
-          <Text style={ov.loadingTxt}>A varrer o território...</Text>
-          <Text style={ov.loadingSub}>A enumerar {PRESET_APPS.length}+ apps instaladas</Text>
+          <Text style={ov.loadingTxt}>{t('focus.overlay_scanning')}</Text>
+          <Text style={ov.loadingSub}>{t('focus.overlay_loading_sub', { count: PRESET_APPS.length })}</Text>
         </View>
       ) : (
 
@@ -203,10 +207,10 @@ function AppSelectorOverlay({
           {filtered.length === 0 && !loading && (
             <View style={ov.emptyBlock}>
               <Icon name="eye-off-outline" size={32} color="#334155" />
-              <Text style={ov.emptyTxt}>Nenhuma app encontrada.</Text>
+              <Text style={ov.emptyTxt}>{t('focus.overlay_empty')}</Text>
               <TouchableOpacity style={ov.forceScanBtn} onPress={loadApps}>
                 <Icon name="radar" size={18} color={C.muted} />
-                <Text style={ov.forceScanTxt}> FORÇAR VARRAGEM DE TERRITÓRIO</Text>
+                <Text style={ov.forceScanTxt}> {t('focus.overlay_force_scan')}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -258,7 +262,7 @@ function AppSelectorOverlay({
                 <Text numberOfLines={1} style={[ov.rowLabel, ov.rowLabelActive]}>
                   {pkg}
                 </Text>
-                <Text style={ov.rowPkg}>personalizado</Text>
+                <Text style={ov.rowPkg}>{t('focus.overlay_custom_label')}</Text>
               </View>
               <Icon name="check-circle" size={24} color={C.purple} />
             </TouchableOpacity>
@@ -278,7 +282,7 @@ function AppSelectorOverlay({
               onSubmitEditing={addCustom}
             />
             <TouchableOpacity style={ov.addBtn} onPress={addCustom}>
-              <Text style={ov.addBtnTxt}>ADICIONAR</Text>
+              <Text style={ov.addBtnTxt}>{t('focus.overlay_add_btn')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -309,6 +313,7 @@ function formatElapsed(ms: number) {
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
 export default function FocusScreen() {
+  const { t } = useTranslation('screens');
   const C = useTheme();
   const s = React.useMemo(() => getStyles(C), [C]);
 
@@ -412,9 +417,9 @@ export default function FocusScreen() {
           notifyPomodoroBreakStarted(cycle, pomodoroBreakMins).catch(() => {});
           schedulePomodoroBreakEndNotification(breakEndMs, cycle + 1).catch(() => {});
           setAlertCfg({
-            title: `CICLO ${cycle} CONCLUÍDO`,
-            message: `Pausa de ${pomodoroBreakMins} min iniciada. O próximo ciclo começa automaticamente.`,
-            buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
+            title: t('focus.alert_cycle_done_title', { cycle }),
+            message: t('focus.alert_cycle_done_msg', { break: pomodoroBreakMins }),
+            buttons: [{ text: t('focus.alert_btn_understood'), style: 'destructive' }],
           });
         } else {
           const isPenaltySession =
@@ -431,15 +436,15 @@ export default function FocusScreen() {
 
           if (isPenaltySession) {
             setAlertCfg({
-              title: 'PENITÊNCIA CONCLUÍDA',
-              message: 'O tempo de foco obrigatório terminou. Podes voltar às batalhas e redimir as tuas falhas.',
-              buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
+              title: t('focus.alert_penalty_done_title'),
+              message: t('focus.alert_penalty_done_msg'),
+              buttons: [{ text: t('focus.alert_btn_understood'), style: 'destructive' }],
             });
           } else {
             setAlertCfg({
-              title: 'FOCO CONCLUÍDO',
-              message: 'O tempo de foco terminou. Regressa ao campo de batalha e reclama as tuas recompensas.',
-              buttons: [{ text: 'ENTENDIDO', style: 'destructive' }],
+              title: t('focus.alert_focus_done_title'),
+              message: t('focus.alert_focus_done_msg'),
+              buttons: [{ text: t('focus.alert_btn_understood'), style: 'destructive' }],
             });
           }
         }
@@ -502,7 +507,7 @@ export default function FocusScreen() {
         dur = (hours * 60 + minutes) * 60_000;
       }
       if (!hardcoreToggle && !hardcorePunished && dur < 60_000) {
-        setAlertCfg({ title: 'Duração inválida', message: 'Define pelo menos 1 minuto de duração.' });
+        setAlertCfg({ title: t('focus.alert_invalid_duration_title'), message: t('focus.alert_invalid_duration_msg') });
         return;
       }
       if (!hardcoreToggle && !hardcorePunished && !pomodoroMode) {
@@ -516,39 +521,39 @@ export default function FocusScreen() {
     }
     if (!hasUsage) {
       setAlertCfg({
-        title: 'Permissão necessária',
-        message: 'Ativa o acesso a estatísticas de uso nas Definições.',
+        title: t('focus.alert_perm_usage_title'),
+        message: t('focus.alert_perm_usage_msg'),
         buttons: [
-          { text: 'Abrir',    onPress: () => FocusBlocker.requestUsagePermission().then(checkPerms) },
-          { text: 'Cancelar', style: 'cancel' },
+          { text: t('focus.alert_btn_open'),    onPress: () => FocusBlocker.requestUsagePermission().then(checkPerms) },
+          { text: t('focus.alert_btn_cancel'), style: 'cancel' },
         ],
       });
       return;
     }
     if (!hasOverlay) {
       setAlertCfg({
-        title: 'Permissão necessária',
-        message: 'Permite que esta app apareça sobre outras apps.',
+        title: t('focus.alert_perm_usage_title'),
+        message: t('focus.alert_perm_overlay_msg'),
         buttons: [
-          { text: 'Abrir',    onPress: () => FocusBlocker.requestOverlayPermission().then(checkPerms) },
-          { text: 'Cancelar', style: 'cancel' },
+          { text: t('focus.alert_btn_open'),    onPress: () => FocusBlocker.requestOverlayPermission().then(checkPerms) },
+          { text: t('focus.alert_btn_cancel'), style: 'cancel' },
         ],
       });
       return;
     }
     if (!hasAccessibility) {
       setAlertCfg({
-        title: 'Permissão necessária',
-        message: 'Ativa o serviço de acessibilidade desta app para que o bloqueio funcione.',
+        title: t('focus.alert_perm_usage_title'),
+        message: t('focus.alert_perm_accessibility_msg'),
         buttons: [
-          { text: 'Abrir', onPress: () => FocusBlocker.requestAccessibilityPermission().then(checkPerms) },
-          { text: 'Cancelar', style: 'cancel' },
+          { text: t('focus.alert_btn_open'), onPress: () => FocusBlocker.requestAccessibilityPermission().then(checkPerms) },
+          { text: t('focus.alert_btn_cancel'), style: 'cancel' },
         ],
       });
       return;
     }
     if (blockedApps.length === 0) {
-      setAlertCfg({ title: 'Nenhuma app selecionada', message: 'Seleciona pelo menos uma app para bloquear.' });
+      setAlertCfg({ title: t('focus.alert_no_apps_title'), message: t('focus.alert_no_apps_msg') });
       return;
     }
     // When punished, the block must end at the actual penalty deadline — NOT at +1 year.
@@ -568,7 +573,7 @@ export default function FocusScreen() {
       dur = (hours * 60 + minutes) * 60_000;
     }
     if (!hardcoreToggle && !hardcorePunished && dur < 60_000) {
-      setAlertCfg({ title: 'Duração inválida', message: 'Define pelo menos 1 minuto de duração.' });
+      setAlertCfg({ title: t('focus.alert_invalid_duration_title'), message: t('focus.alert_invalid_duration_msg') });
       return;
     }
     if (!hardcoreToggle && !hardcorePunished && !pomodoroMode) {
@@ -580,13 +585,13 @@ export default function FocusScreen() {
     try {
       await FocusBlocker.startFocusMode(blockedApps, start, end, hardcorePunished);
     } catch (err: any) {
-      const msg = err?.message || 'Erro desconhecido ao ativar o bloqueio nativo.';
+      const msg = err?.message || t('focus.err_native_unknown', { defaultValue: 'Unknown error activating native blocker.' });
       setAlertCfg({
-        title: 'Falha ao ativar Focus Mode',
-        message: `O módulo nativo não conseguiu iniciar o bloqueio.\n\nMotivo: ${msg}\n\nVerifica que todas as permissões estão ativas nas Definições do sistema.`,
+        title: t('focus.alert_native_fail_title'),
+        message: t('focus.alert_native_fail_msg', { reason: msg }),
         buttons: [
-          { text: 'Abrir Permissões', onPress: () => checkPerms() },
-          { text: 'Fechar', style: 'cancel' },
+          { text: t('focus.alert_btn_open_perms'), onPress: () => checkPerms() },
+          { text: t('focus.alert_btn_close'), style: 'cancel' },
         ],
       });
       return;
@@ -644,9 +649,9 @@ export default function FocusScreen() {
         // Session complete
         setPomodoroState('idle', 0, 0);
         setAlertCfg({
-          title: 'SESSÃO POMODORO COMPLETA',
-          message: `Completaste ${pomodoroCycle} ciclos. Excelente trabalho!`,
-          buttons: [{ text: 'FECHAR', style: 'destructive' }],
+          title: t('focus.alert_session_complete_title'),
+          message: t('focus.alert_session_complete_msg', { cycles: pomodoroCycle }),
+          buttons: [{ text: t('focus.alert_btn_close_caps'), style: 'destructive' }],
         });
       }
     }
@@ -788,10 +793,10 @@ export default function FocusScreen() {
     if (isPenaltyBlocking) {
       const hoursRemaining = penaltyRemainingH;
       setAlertCfg({
-        title: 'FOCO TRAVADO PELA PENALIDADE',
-        message: `Você está sob penalidade! Só pode sair do modo foco daqui a ${hoursRemaining}h.\nComplete as missões de penalização para se livrar mais rápido.`,
+        title: t('focus.alert_penalty_focus_locked_title'),
+        message: t('focus.alert_penalty_focus_locked_msg', { hours: hoursRemaining }),
         buttons: [
-          { text: 'Entendi', style: 'destructive' },
+          { text: t('focus.alert_btn_understood_low'), style: 'destructive' },
         ],
       });
       return;
@@ -854,9 +859,9 @@ export default function FocusScreen() {
             <Icon name="skull-crossbones" size={14} color={C.neonRed} />
             <View style={{ marginLeft: 8 }}>
               <Text style={s.penaltyBannerTxt}>
-                PENITÊNCIA ATIVA: {penaltyRemainingH} {penaltyRemainingH === 1 ? 'HORA' : 'HORAS'} RESTANTES
+                {t('focus.penalty_banner', { hours: penaltyRemainingH, unit: penaltyRemainingH === 1 ? t('focus.penalty_banner_hour') : t('focus.penalty_banner_hours') })}
               </Text>
-              <Text style={s.penaltyBannerSub}>Completa sessões Focus para reduzir o bloqueio</Text>
+              <Text style={s.penaltyBannerSub}>{t('focus.penalty_banner_sub')}</Text>
             </View>
           </View>
         )}
@@ -926,8 +931,8 @@ export default function FocusScreen() {
             </Text>
             <Text style={{ color: C.gold + '88', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginTop: 6 }}>
               {pomodoroRounds === 0 || pomodoroCycle < pomodoroRounds
-                ? `CICLO ${pomodoroCycle + 1} INICIA AUTOMATICAMENTE`
-                : 'ÚLTIMO CICLO — SESSÃO TERMINA'}
+                ? t('focus.pomodoro_next_auto', { next: pomodoroCycle + 1 })
+                : t('focus.pomodoro_last_cycle')}
             </Text>
             <View style={{ flexDirection: 'row', gap: 8, marginTop: 12 }}>
               <TouchableOpacity style={s.pomodoroSkipBtn} onPress={() => {
@@ -1160,12 +1165,12 @@ export default function FocusScreen() {
             />
             <View style={s.hardcoreInfo}>
               <Text style={[s.hardcoreLabel, (hardcoreToggle || hardcorePunished) && { color: C.neonRed }]}>
-                {hardcorePunished ? 'MODO HARDCORE (PUNIÇÃO ATIVA)' : 'MODO HARDCORE'}
+                {hardcorePunished ? t('focus.hardcore_label_punished') : t('focus.hardcore_label')}
               </Text>
               <Text style={s.hardcoreSub}>
                 {hardcorePunished
-                  ? 'Ativo por punição. Não pode ser desligado manualmente.'
-                  : 'Sem limite de tempo. O contador sobe até quebrares o juramento.'}
+                  ? t('focus.hardcore_sub_punished')
+                  : t('focus.hardcore_sub')}
               </Text>
             </View>
             {!hardcorePunished && (
@@ -1249,10 +1254,10 @@ export default function FocusScreen() {
             <Text style={[s.appSelectorTxt, selectedCount > 0 && { color: C.muted }]}>
               {selectedCount > 0
                 ? `${selectedCount} app${selectedCount !== 1 ? 's' : ''} configurada${selectedCount !== 1 ? 's' : ''}`
-                : 'Nenhuma app configurada'}
+                : t('focus.apps_none')}
             </Text>
             {focusActive && (
-              <Text style={s.appSelectorSub}>Podes remover apps durante o Focus Mode</Text>
+              <Text style={s.appSelectorSub}>{t('focus.apps_remove_hint')}</Text>
             )}
           </View>
           <Icon name="chevron-right" size={16} color={C.muted} />
@@ -1266,7 +1271,7 @@ export default function FocusScreen() {
               <Icon name="lightning-bolt" size={14} color={C.neonBlue} />
               <View style={{ flex: 1 }}>
                 <Text style={[s.modeLabel, { color: C.neonBlue }]}>MODO LIVRE</Text>
-                <Text style={s.modeDesc}>Bloqueia apps por tempo definido. Podes parar a qualquer momento.</Text>
+                <Text style={s.modeDesc}>{t('focus.mode_free_desc')}</Text>
               </View>
             </View>
           </View>
@@ -1275,7 +1280,7 @@ export default function FocusScreen() {
               <Icon name="timer-sand" size={14} color={C.gold} />
               <View style={{ flex: 1 }}>
                 <Text style={[s.modeLabel, { color: C.gold }]}>MODO POMODORO</Text>
-                <Text style={s.modeDesc}>Ciclos de trabalho + pausa. Define a duração de cada fase. Apps bloqueadas durante o trabalho, desbloqueadas na pausa.</Text>
+                <Text style={s.modeDesc}>{t('focus.mode_pomodoro_desc')}</Text>
               </View>
             </View>
           </View>
@@ -1283,7 +1288,7 @@ export default function FocusScreen() {
             <Icon name="skull" size={14} color={C.neonRed} />
             <View style={{ flex: 1 }}>
               <Text style={[s.modeLabel, { color: C.neonRed }]}>MODO HARDCORE</Text>
-              <Text style={s.modeDesc}>Sem limite de tempo. O contador sobe eternamente. Só termina quando quebrares o juramento.</Text>
+              <Text style={s.modeDesc}>{t('focus.mode_hardcore_desc')}</Text>
             </View>
           </View>
         </View>
@@ -1292,19 +1297,19 @@ export default function FocusScreen() {
         <Text style={s.section}>PERMISSÕES</Text>
         <View style={s.permBlock}>
           <PermRow
-            label="Acesso a Uso de Apps"
+            label={t('focus.perm_usage')}
             ok={hasUsage}
             onFix={() => FocusBlocker?.requestUsagePermission().then(checkPerms)}
             C={C}
           />
           <PermRow
-            label="Overlay (Desenhar por cima)"
+            label={t('focus.perm_overlay')}
             ok={hasOverlay}
             onFix={() => FocusBlocker?.requestOverlayPermission().then(checkPerms)}
             C={C}
           />
           <PermRow
-            label="Serviço de Acessibilidade (bloqueio fiável)"
+            label={t('focus.perm_accessibility')}
             ok={hasAccessibility}
             onFix={() => FocusBlocker?.requestAccessibilityPermission().then(checkPerms)}
             C={C}
@@ -1323,11 +1328,11 @@ export default function FocusScreen() {
           </Text>
           <View style={s.batterySteps}>
             <Text style={s.batteryStep}>1. Definições → Apps → Gerir Apps</Text>
-            <Text style={s.batteryStep}>2. Procura "Arise" (ou LifUp)</Text>
+            <Text style={s.batteryStep}>{t('focus.battery_step2')}</Text>
             <Text style={s.batteryStep}>3. Bateria → Sem restrições</Text>
           </View>
           <Text style={s.batteryNote}>
-            Em MIUI: toca em "Bateria" e seleciona "Sem restrições de poupança de energia".
+            {t('focus.battery_note')}
           </Text>
         </View>
 
@@ -1347,13 +1352,9 @@ export default function FocusScreen() {
       {/* ── Hardcore break confirmation modal ──────────────────────────────── */}
       <CustomModal
         visible={showBreakModal}
-        title="QUEBRAR JURAMENTO"
-        message={
-          'Tens a certeza que queres quebrar o teu juramento de Caçador?\n\n' +
-          'O Hardcore Mode será desativado.\n\n' +
-          'O Sistema lembra tudo.'
-        }
-        confirmLabel="QUEBRAR JURAMENTO"
+        title={t('focus.break_modal_title')}
+        message={t('focus.break_modal_message')}
+        confirmLabel={t('focus.break_modal_confirm')}
         confirmIcon="shield-off-outline"
         confirmColor={C.neonRed}
         onConfirm={confirmHardcoreBreak}

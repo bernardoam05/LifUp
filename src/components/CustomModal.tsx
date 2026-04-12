@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { FONT, SPACING } from '../theme';
 
 
@@ -21,15 +22,18 @@ type Props = {
 
 export default function CustomModal({
   visible, title, message,
-  confirmLabel = 'CONFIRMAR',
-  cancelLabel  = 'CANCELAR',
+  confirmLabel,
+  cancelLabel,
   confirmColor,
   confirmIcon  = 'check-circle-outline',
   onConfirm, onCancel,
   useNativeModal = true,
   C,
 }: Props) {
+  const { t } = useTranslation('common');
   const s = getStyles(C);
+  const resolvedConfirmLabel = confirmLabel ?? t('buttons.confirm');
+  const resolvedCancelLabel = cancelLabel ?? t('buttons.cancel');
   const finalConfirmColor = confirmColor || C.neonBlue;
 
   const content = (
@@ -55,7 +59,7 @@ export default function CustomModal({
         <View style={s.btnRow}>
           <TouchableOpacity style={s.cancelBtn} onPress={onCancel}>
             <Icon name="close-circle-outline" size={15} color={C.muted} />
-            <Text style={s.cancelTxt}> {cancelLabel}</Text>
+            <Text style={s.cancelTxt}> {resolvedCancelLabel}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -63,7 +67,7 @@ export default function CustomModal({
             onPress={onConfirm}
           >
             <Icon name={confirmIcon} size={15} color={finalConfirmColor} />
-            <Text style={[s.confirmTxt, { color: finalConfirmColor }]}> {confirmLabel}</Text>
+            <Text style={[s.confirmTxt, { color: finalConfirmColor }]}> {resolvedConfirmLabel}</Text>
           </TouchableOpacity>
 
         </View>

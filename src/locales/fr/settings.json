@@ -1,0 +1,152 @@
+{
+  "header": "[ PARAMÈTRES DU SYSTÈME ]",
+  "sections": {
+    "missions": "MISSIONS",
+    "penalties": "PÉNALITÉS & BLOCAGE",
+    "visual": "VISUEL",
+    "system": "SYSTÈME",
+    "data": "DONNÉES",
+    "about": "À PROPOS"
+  },
+  "alerts": {
+    "backupDone": "SAUVEGARDE TERMINÉE",
+    "backupDoneMsg": "Code de sauvegarde copié dans le presse-papiers ! Gardez ce code dans un endroit sûr.",
+    "restoreDone": "RESTAURATION TERMINÉE",
+    "restoreDoneMsg": "Âme importée avec succès ! Vous devrez peut-être redémarrer en cas de bugs visuels.",
+    "error": "ERREUR",
+    "exportError": "Échec de l'exportation de la sauvegarde. Réessayez.",
+    "importError": "Code invalide ou corrompu. Vérifiez que vous l'avez bien copié.",
+    "understood": "COMPRIS"
+  },
+  "difficulty": {
+    "sectionTitle": "RIGUEUR DU SYSTÈME (MISSIONS QUOTIDIENNES)",
+    "infoText": "Contrôle combien de missions sont générées par jour. Prend effet à la prochaine réinitialisation quotidienne ou régénération.",
+    "customLabel": "Missions par jour",
+    "easy": {
+      "label": "FACILE",
+      "sublabel": "Protocole d'Entraînement Léger",
+      "desc0": "· Maximum 3 missions par jour",
+      "desc1": "· Idéal pour commencer ou les jours difficiles",
+      "desc2": "· Récompenses de base sans mise à l'échelle"
+    },
+    "normal": {
+      "label": "NORMAL",
+      "sublabel": "Protocole Standard du Système",
+      "desc0": "· 3 missions de base + 1 par 10 niveaux (max 5)",
+      "desc1": "· Récompenses mises à l'échelle avec le niveau",
+      "desc2": "· Difficulté recommandée"
+    },
+    "hard": {
+      "label": "DIFFICILE",
+      "sublabel": "Protocole du Monarque Sombre",
+      "desc0": "· 4 missions de base + 1 par 5 niveaux (max 8)",
+      "desc1": "· Pour les chasseurs d'élite",
+      "desc2": "· Récompenses et pénalités amplifiées"
+    },
+    "custom": {
+      "label": "PERSONNALISÉ",
+      "sublabel": "Définissez votre propre rythme",
+      "desc0": "· Choisissez combien de missions quotidiennes vous voulez",
+      "desc1": "· Idéal pour ajuster le volume à votre emploi du temps",
+      "desc2": "· Maintient la progression normale"
+    }
+  },
+  "intensity": {
+    "sectionTitle": "INTENSITÉ DE LA PUNITION",
+    "infoText": "Définit la sévérité des pénalités lors de l'échec des missions quotidiennes. La punition est calculée en fonction du nombre de missions échouées.",
+    "activeProfile": "Profil actif : {{label}} — {{sublabel}}",
+    "blockStart": "Heure de début du blocage",
+    "blockEnd": "Heure de fin du blocage",
+    "light": {
+      "label": "LÉGER",
+      "sublabel": "Protocole Indulgent",
+      "desc0": "· Perte de XP : ~3% par mission échouée",
+      "desc1": "· 1 mission de pénalisation",
+      "desc2": "· Série maintenue (sauf échec total)",
+      "desc3": "· Pas de blocage d'apps"
+    },
+    "medium": {
+      "label": "MOYEN",
+      "sublabel": "Protocole Standard",
+      "desc0": "· Perte de XP : 10% + 1% par échec",
+      "desc1": "· 1–3 missions de pénalisation",
+      "desc2": "· Série remise à zéro",
+      "desc3": "· Blocage d'apps si ≥50% échoué"
+    },
+    "hardcore": {
+      "label": "HARDCORE",
+      "sublabel": "Protocole du Monarque",
+      "desc0": "· Perte de XP : 20% total",
+      "desc1": "· 2–4 missions de pénalisation",
+      "desc2": "· Série remise à zéro",
+      "desc3": "· Blocage d'apps toujours actif"
+    },
+    "custom": {
+      "label": "PERSONNALISÉ",
+      "sublabel": "Choisissez la durée du blocage",
+      "desc0": "· Définissez combien d'heures de blocage vous voulez",
+      "desc1": "· Le reste de la logique reste équilibré",
+      "desc2": "· Utile pour les horaires irréguliers"
+    }
+  },
+  "autoBlock": {
+    "sectionTitle": "PUNITION : BLOCAGE AUTOMATIQUE",
+    "cardTitle": "Blocage d'Apps",
+    "cardDesc": "Si activé, échouer des missions quotidiennes bloquera automatiquement vos apps sélectionnées. Le temps varie selon la difficulté :",
+    "bulletEasy": "EASY :",
+    "bulletEasyDetail": "6 Heures (13h00 à 19h00)",
+    "bulletNormal": "NORMAL :",
+    "bulletNormalDetail": "12 Heures (10h00 à 22h00)",
+    "bulletHardcore": "HARDCORE :",
+    "bulletHardcoreDetail": "24 Heures (Toute la journée)",
+    "toggleTitle": "Activer le Blocage Automatique",
+    "toggleSub": "Sinon, seuls XP et Or seront déduits."
+  },
+  "sideQuestPenalty": {
+    "sectionTitle": "QUÊTES SECONDAIRES",
+    "infoText": "Les tâches du jour sont un bloc-notes personnel — sans récompenses, effacées à minuit. Activez cette option pour que les tâches incomplètes comptent comme des échecs dans la pénalité quotidienne.",
+    "rowLabel": "Secondaires pénalisent",
+    "rowSubActive": "[ ACTIF — tâches en attente s'ajoutent aux échecs ]",
+    "rowSubInactive": "Inactif — tâches sans impact sur les punitions"
+  },
+  "theme": {
+    "sectionTitle": "APPARENCE DU SYSTÈME",
+    "infoText": "Sélectionnez le thème visuel de votre Système de Monarque. De nouveaux thèmes sont débloqués en montant de Classe ou dans la Boutique."
+  },
+  "notifications": {
+    "sectionTitle": "SYSTÈME",
+    "notificationsLabel": "Notifications",
+    "notificationsSub": "Alertes quotidiennes et avertissements du Système",
+    "soundLabel": "Son",
+    "soundSub": "Effets sonores et retour audio"
+  },
+  "backup": {
+    "sectionTitle": "BASE DE DONNÉES DU SYSTÈME",
+    "infoText": "Exportez ou restaurez votre parcours en tant que Monarque des Ombres en copiant un code inviolable.",
+    "exportBtn": "EXPORTER L'ÂME (BACKUP)",
+    "importBtn": "IMPORTER L'ÂME (RESTORE)"
+  },
+  "importModal": {
+    "title": "IMPORTER L'ÂME",
+    "subtitle": "Collez votre code Base64 ci-dessous pour écraser la base de données actuelle.",
+    "placeholder": "Code de sauvegarde...",
+    "cancel": "ANNULER",
+    "restore": "RESTAURER"
+  },
+  "about": {
+    "sectionTitle": "À PROPOS",
+    "version": "Version",
+    "versionVal": "LifUp OS v3",
+    "missionEngine": "Moteur de Missions",
+    "missionEngineVal": "Dynamique · Pool Hebdomadaire · Boss Raid",
+    "persistence": "Persistance",
+    "persistenceVal": "AsyncStorage · lifup-v3"
+  },
+  "restDay": {
+    "sectionTitle": "REPOS DU MONARQUE",
+    "infoText": "Activez pour déclarer aujourd'hui comme Jour de Repos. Les missions apparaissent estompées et il n'y aura pas de punitions lors de la réinitialisation de demain. Se désactive automatiquement en fin de journée.",
+    "rowLabel": "Jour de Repos",
+    "rowSubActive": "[ REPOS ACTIF — pas de punitions aujourd'hui ]",
+    "rowSubInactive": "Inactif — missions normales"
+  }
+}

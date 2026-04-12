@@ -1,0 +1,62 @@
+{
+  "alerts": {
+    "quest_invalid": "Invalid quest.",
+    "no_quests_available": "No quests available.",
+    "weekly_limit_reached": "Weekly limit reached (7/7).",
+    "no_other_quests": "No other quests available.",
+    "already_replaced": "Already replaced today.",
+    "invalid": "Invalid.",
+    "pool_empty": "Pool is empty.",
+    "limit_reached": "Limit reached."
+  },
+  "shadows": {
+    "immunity_absorbed": "{{name}} absorbed the penalty!",
+    "streak_protected": "{{name}} protected your streak!",
+    "ad_shield_consumed": "Streak Shield (ad) consumed — streak protected!"
+  },
+  "buffs": {
+    "viper_venom": "Viper Venom",
+    "crimson_knight_shard": "Crimson Knight Shard",
+    "cerberus_fang": "Cerberus Fang",
+    "iron_will_crystal": "Iron Will",
+    "blood_fallen": "Blood of the Fallen",
+    "dragon_scale": "Dragon Scale",
+    "lich_eye": "Lich Eye"
+  },
+  "items": {
+    "health_potion": "Health Potion",
+    "xp_crystal": "XP Crystal",
+    "rest_scroll": "Rest Scroll",
+    "evolution_shard_common": "Evolution Shard"
+  },
+  "loot": {
+    "gold_title": "GOLD TREASURE",
+    "xp_title": "ESSENCE ABSORBED",
+    "key_title": "RARE KEY DISCOVERED",
+    "gold_abundant_title": "ABUNDANT GOLD"
+  },
+  "helpers": {
+    "rank_e_label": "Novice",
+    "rank_d_label": "Basic Hunter",
+    "rank_c_label": "Will Master",
+    "rank_b_label": "Shadow Knight",
+    "rank_a_label": "Commander",
+    "rank_s_label": "Monarch",
+    "rank_national_label": "National Level Hunter"
+  },
+  "notifications": {
+    "focus_complete_title": "Focus Complete",
+    "focus_complete_body": "Focus on mission \"{{questLabel}}\" complete. Collect your rewards.",
+    "level_up_title": "EVOLUTION — Level {{newLevel}}",
+    "level_up_body": "Your attributes have been updated by the System.",
+    "ongoing_mission_title": "Mission in Progress",
+    "pomodoro_break_title": "CYCLE {{cycle}} DONE — BREAK",
+    "pomodoro_break_body": "{{breakMins}} min break started. Rest and get back to work.",
+    "pomodoro_work_title": "CYCLE {{nextCycle}} — TIME TO WORK",
+    "pomodoro_work_body": "Break is over. The next Pomodoro cycle is ready.",
+    "side_quest_reminder_title": "Mission Reminder",
+    "side_quest_reminder_body": "Mission \"{{title}}\" is still awaiting completion.",
+    "system_warning_final_body": "Final Warning: Complete daily missions before System reactivation at midnight.",
+    "system_warning_title": "System Warning"
+  }
+}

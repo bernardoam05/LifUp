@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTranslation } from 'react-i18next';
 import { useTheme, SPACING, FONT } from '../../theme';
 import { APP_THEMES } from '../../data/themes';
 
@@ -17,19 +18,19 @@ const ThemeSettings = ({
 }: ThemeSettingsProps) => {
   const C = useTheme();
   const s = React.useMemo(() => getStyles(C), [C]);
+  const { t } = useTranslation('settings');
 
   return (
     <View>
       <View style={s.sectionHeader}>
         <View style={[s.sectionDot, { backgroundColor: C.purple }]} />
-        <Text style={s.sectionTitle}>ASPETO DO SISTEMA</Text>
+        <Text style={s.sectionTitle}>{t('theme.sectionTitle')}</Text>
       </View>
 
       <View style={s.intensityInfo}>
         <Icon name="palette-outline" size={12} color={C.muted} />
         <Text style={s.intensityInfoTxt}>
-          {' '}Seleciona o tema visual do teu Sistema de Monarca.
-          Novos temas são desbloqueados ao subir de Classe ou na Loja.
+          {' '}{t('theme.infoText')}
         </Text>
       </View>
 
