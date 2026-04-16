@@ -152,5 +152,17 @@
                 android:resource="@xml/widget_status_info" />
         </receiver>
 
+        <!-- Focus Mode Quick Settings Tile (Android 7+) -->
+        <service
+            android:name=".focusblocker.FocusTileService"
+            android:icon="@drawable/ic_focus_tile"
+            android:label="Focus Mode"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
     </application>
 </manifest>

@@ -33,6 +33,7 @@ const { FocusBlocker } = NativeModules as {
     isFocusModeActive:  () => Promise<boolean>
     updateBlockedApps:  (pkgs: string[]) => Promise<boolean>
     getInstalledApps:   () => Promise<Array<{ pkg: string; label: string }>>
+    getFocusNativeState: () => Promise<{ isRunning: boolean; endTimeMs: number; isHardcoreMode: boolean; blockedPackages: string[] }>
   }
 };
 

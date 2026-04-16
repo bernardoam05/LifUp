@@ -42,7 +42,7 @@ type TutorialStep = {
 
 // ─── Phase 1 steps ────────────────────────────────────────────────────────────
 
-const TAB_COUNT   = 6;
+const TAB_COUNT   = 5;
 const TAB_W       = SW / TAB_COUNT;
 // Approximate center X of each tab (0-indexed)
 const tabX = (i: number) => TAB_W * i + TAB_W / 2 - SW / 2;   // offset from center of screen
@@ -61,7 +61,7 @@ const getPhase1Steps = (C: any, t: (k: string) => string): TutorialStep[] => [
     color: C.neonBlue,
     title: t('tutorial.phase1.1.title'),
     body:  t('tutorial.phase1.1.body'),
-    arrow: { side: 'bottom', offsetX: tabX(1) },
+    arrow: { side: 'bottom', offsetX: tabX(0) },
     targetTab: 'Missões',
   },
   {
@@ -77,7 +77,7 @@ const getPhase1Steps = (C: any, t: (k: string) => string): TutorialStep[] => [
     color: '#f59e0b',
     title: t('tutorial.phase1.3.title'),
     body:  t('tutorial.phase1.3.body'),
-    arrow: { side: 'bottom', offsetX: tabX(0) },
+    arrow: { side: 'bottom', offsetX: tabX(1) },
     targetTab: 'Status',
   },
   {
@@ -85,8 +85,8 @@ const getPhase1Steps = (C: any, t: (k: string) => string): TutorialStep[] => [
     color: C.purple,
     title: t('tutorial.phase1.4.title'),
     body:  t('tutorial.phase1.4.body'),
-    arrow: { side: 'bottom', offsetX: tabX(5) },
-    targetTab: 'Sombras',
+    arrow: { side: 'bottom', offsetX: tabX(1) },
+    targetTab: 'Status',
   },
   {
     icon:  'shopping-outline',
@@ -102,7 +102,7 @@ const getPhase1Steps = (C: any, t: (k: string) => string): TutorialStep[] => [
     title: t('tutorial.phase1.6.title'),
     body:  t('tutorial.phase1.6.body'),
     arrow: { side: 'bottom', offsetX: tabX(4) },
-    targetTab: 'Focus Mode',
+    targetTab: 'Focus',
   },
   {
     splash: true,
@@ -121,30 +121,30 @@ const getPhase2Steps = (C: any, t: (k: string) => string): TutorialStep[] => [
     color:  C.purple,
     title:  t('tutorial.phase2.0.title'),
     body:   t('tutorial.phase2.0.body'),
-    targetTab: 'Sombras',
+    targetTab: 'Status',
   },
   {
     icon:  'account-group-outline',
     color: C.purple,
     title: t('tutorial.phase2.1.title'),
     body:  t('tutorial.phase2.1.body'),
-    arrow: { side: 'bottom', offsetX: tabX(5) },
-    targetTab: 'Sombras',
+    arrow: { side: 'bottom', offsetX: tabX(1) },
+    targetTab: 'Status',
   },
   {
     icon:  'star-outline',
     color: '#facc15',
     title: t('tutorial.phase2.2.title'),
     body:  t('tutorial.phase2.2.body'),
-    arrow: { side: 'bottom', offsetX: tabX(5) },
-    targetTab: 'Sombras',
+    arrow: { side: 'bottom', offsetX: tabX(1) },
+    targetTab: 'Status',
   },
   {
     icon:  'lightning-bolt',
     color: '#f59e0b',
     title: t('tutorial.phase2.3.title'),
     body:  t('tutorial.phase2.3.body'),
-    arrow: { side: 'bottom', offsetX: tabX(0) },
+    arrow: { side: 'bottom', offsetX: tabX(1) },
     targetTab: 'Status',
   },
   {

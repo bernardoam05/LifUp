@@ -317,6 +317,36 @@ class FocusBlockerModule(reactContext: ReactApplicationContext) :
         }
     }
 
+    // ── Native focus state (for tile→app sync) ────────────────────────────────
+    // Returns the persisted FocusBlockerPrefs so the RN store can sync when the
+    // Quick Settings Tile toggled focus mode while the app was closed.
+
+    @ReactMethod
+    fun getFocusNativeState(promise: Promise) {
+        try {
+            val prefs = reactApplicationContext.getSharedPreferences("FocusBlockerPrefs", android.content.Context.MODE_PRIVATE)
+            val endTimeMs   = prefs.getLong("endTimeMs", 0L)
+            val isHardcore  = prefs.getBoolean("isHardcoreMode", false)
+            val pkgsStr     = prefs.getString("blockedPackages", "[]") ?: "[]"
+
+            val result = com.facebook.react.bridge.Arguments.createMap()
+            result.putBoolean("isRunning",     FocusBlockerService.isRunning)
+            result.putDouble("endTimeMs",      endTimeMs.toDouble())
+            result.putBoolean("isHardcoreMode", isHardcore)
+
+            val pkgsArr = com.facebook.react.bridge.Arguments.createArray()
+            try {
+                val jsonArr = org.json.JSONArray(pkgsStr)
+                for (i in 0 until jsonArr.length()) pkgsArr.pushString(jsonArr.getString(i))
+            } catch (_: Exception) {}
+            result.putArray("blockedPackages", pkgsArr)
+
+            promise.resolve(result)
+        } catch (e: Exception) {
+            promise.reject("ERR_NATIVE_STATE", e.message)
+        }
+    }
+
     // ── Hot-reload blocked apps ────────────────────────────────────────────────
 
     @ReactMethod

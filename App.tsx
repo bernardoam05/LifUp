@@ -22,7 +22,6 @@ import QuestScreen from './src/screens/QuestScreen';
 import ShopScreen from './src/screens/ShopScreen';
 import InventoryScreen from './src/screens/InventoryScreen';
 import FocusScreen from './src/screens/FocusScreen';
-import ShadowsScreen from './src/screens/ShadowsScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import { C, FONT, SPACING } from './src/theme';
 import { useDayWatcher } from './src/hooks/useDayWatcher';
@@ -39,12 +38,11 @@ import { LootBoxModal } from './src/components/LootBoxModal';
 const Tab = createMaterialTopTabNavigator();
 
 const TAB_ICONS: Record<string, string> = {
-  'Status': 'sword-cross',
   'Missões': 'clipboard-list-outline',
+  'Status': 'sword-cross',
   'Loja': 'shopping-outline',
   'Inventário': 'bag-personal',
-  'Focus Mode': 'brain',
-  'Sombras': 'account-group-outline',
+  'Focus': 'brain',
 };
 
 const navigationRef = createNavigationContainerRef<any>();
@@ -158,6 +156,22 @@ export default function App() {
     setupNotifications()
       .then(() => requestNotificationPermission())
       .catch((err: any) => { console.warn('[App] Notifications setup failed:', err?.message ?? err); });
+
+    // Sync RN store with native focus state — handles Quick Settings Tile toggles
+    // made while the app was closed (tile writes to FocusBlockerPrefs directly).
+    FocusBlocker?.getFocusNativeState?.()
+      .then((native: any) => {
+        const { system, settings: cfg } = useGameStore.getState();
+        const nativeActive = native?.isRunning && native?.endTimeMs > Date.now();
+        if (nativeActive && !system.focusModeActive) {
+          useGameStore.getState().setFocusModeActive(true, native.endTimeMs);
+          useGameStore.getState().setHardcoreFocusMode(native.isHardcoreMode ?? true);
+        } else if (!nativeActive && system.focusModeActive && !system.hasPenalty) {
+          useGameStore.getState().setFocusModeActive(false, 0);
+          useGameStore.getState().setHardcoreFocusMode(false);
+        }
+      })
+      .catch(() => {});
   }, [bootSystem]);
 
 
@@ -240,12 +254,11 @@ export default function App() {
             prefixes: ['sololeveling://'],
             config: {
               screens: {
-                'Status': 'status',
                 'Missões': 'missions',
-                'Focus Mode': 'focus',
+                'Status': 'status',
                 'Loja': 'shop',
                 'Inventário': 'inventory',
-                'Sombras': 'shadows',
+                'Focus': 'focus',
               },
             },
           }}
@@ -267,7 +280,6 @@ export default function App() {
               },
             })}
           >
-            <Tab.Screen name="Status" component={StatusScreen} />
             <Tab.Screen
               name="Missões"
               component={QuestScreen}
@@ -275,6 +287,7 @@ export default function App() {
                 tabBarBadge: hasPenalty ? PenaltyBadge : undefined,
               }}
             />
+            <Tab.Screen name="Status" component={StatusScreen} />
             <Tab.Screen name="Loja" component={ShopScreen} />
             <Tab.Screen
               name="Inventário"
@@ -283,14 +296,7 @@ export default function App() {
                 tabBarBadge: invTotal > 0 ? () => <InventoryBadge count={invTotal} /> : undefined,
               }}
             />
-            <Tab.Screen name="Focus Mode" component={FocusScreen} />
-            <Tab.Screen
-              name="Sombras"
-              component={ShadowsScreen}
-              options={{
-                tabBarActiveTintColor: C.purple,
-              }}
-            />
+            <Tab.Screen name="Focus" component={FocusScreen} />
           </Tab.Navigator>
         </NavigationContainer>
 
@@ -438,10 +444,9 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontFamily: FONT.orbitron,
-    fontSize: 8,
-    letterSpacing: 0.5,
+    fontSize: 10,
+    letterSpacing: 0,
     margin: 0,
-    marginTop: -4,
   },
   penalBanner: {
     flexDirection: 'row',

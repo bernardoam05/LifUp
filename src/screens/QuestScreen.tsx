@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, BackHandler,
@@ -95,13 +95,6 @@ const getStyles = (C: any) => StyleSheet.create({
   statusBarSlash: { color: C.dimmed, fontSize: 14, fontWeight: '400' },
   statusBarBossRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6, borderTopWidth: 1, borderTopColor: C.border, paddingTop: 5 },
   statusBarBossLabel: { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
-  nowPanel: { backgroundColor: C.panel, borderWidth: 1, borderColor: C.neonBlue + '33', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.md, gap: 6 },
-  nowHeader: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
-  nowRow: { flexDirection: 'row', alignItems: 'center' },
-  nowTxt: { color: C.muted, fontSize: 11, marginLeft: 6, flex: 1 },
-  collapsibleHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingHorizontal: SPACING.sm, paddingVertical: 10, marginBottom: SPACING.sm },
-  collapsibleTitle: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 1 },
-
   extraInfoBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   extraInfoTxt: { flex: 1, color: C.gold, fontSize: 11, lineHeight: 16 },
 
@@ -363,45 +356,6 @@ export default function QuestScreen() {
   const [keyConfirm, setKeyConfirm] = useState<{ type: 'normal' | 'weekly', mission: DungeonMission, key: any } | null>(null);
   const [eventCountdownMs, setEventCountdownMs] = useState(0);
   const [portalCountdownMs, setPortalCountdownMs] = useState(0);
-  const [sectionsOpen, setSectionsOpen] = useState({
-    now: true,
-    today: true,
-    events: true,
-    extras: true,
-  });
-  const scrollViewRef = useRef<ScrollView>(null);
-  const sectionPositions = useRef<Record<string, number>>({});
-
-  const scrollToSection = (sectionKey: string) => {
-    // Open the section first
-    setSectionsOpen(prev => ({ ...prev, [sectionKey]: true }));
-
-    // Scroll to the section after a short delay to allow re-render
-    setTimeout(() => {
-      const yOffset = sectionPositions.current[sectionKey] ?? 0;
-      scrollViewRef.current?.scrollTo({ y: Math.max(0, yOffset - 100), animated: true });
-    }, 100);
-  };
-
-  const toggleSection = (key: keyof typeof sectionsOpen) => {
-    setSectionsOpen(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const handleNowPanelQuest = () => {
-    // Click handler for "Missão em foco" - could scroll to HOJE section
-    scrollToSection('today');
-  };
-
-  const handleNowPanelDungeonBreak = () => {
-    // Dynamic portal alert is now shown directly above, no need to scroll
-  };
-
-  const handleNowPanelEvent = () => {
-    // Click handler for event alert
-    scrollToSection('events');
-  };
-
-  const activeDailyQuest = quests.find(q => !q.done && q.type !== 'limit' && q.type !== 'forbidden');
 
   useEffect(() => {
     if (!activeEventDef || !activeEventKey) {return;}
@@ -527,42 +481,42 @@ export default function QuestScreen() {
 
   return (
     <View style={s.safeArea}>
-      <ScrollView ref={scrollViewRef} contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
 
+        {/* ── HEADER: Title + Progress ── */}
+        <View style={s.titleRow}>
+          <Icon name="clipboard-list-outline" size={16} color={C.neonBlue} />
+          <Text style={s.title}> {t('ui.daily_missions_title')}</Text>
+          {isRestDay && (
+            <View style={s.restBadge}>
+              <Icon name="bed" size={10} color={C.green} />
+              <Text style={s.restTxt}> {t('ui.rest_badge')}</Text>
+            </View>
+          )}
+        </View>
 
-        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('now')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.now = e.nativeEvent.layout.y; }}>
-          <Text style={s.collapsibleTitle}>{t('ui.now')}</Text>
-          <Icon name={sectionsOpen.now ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
-        </TouchableOpacity>
-        {sectionsOpen.now && (
-          <View style={s.nowPanel}>
-            <Text style={s.nowHeader}>{t('ui.quick_panel')}</Text>
-            <TouchableOpacity style={s.nowRow} onPress={handleNowPanelQuest} activeOpacity={0.7}>
-              <Icon name="clipboard-play-outline" size={14} color={C.neonBlue} />
-              <Text style={s.nowTxt}>{activeDailyQuest ? t('ui.mission_in_focus', { label: activeDailyQuest.label }) : t('ui.no_active_mission')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.nowRow} onPress={handleNowPanelDungeonBreak} activeOpacity={0.7}>
-              <Icon name="gate" size={14} color={C.neonRed} />
-              <Text style={s.nowTxt}>
-                {system.activeDungeonBreak ? t('ui.dynamic_portal_active', { countdown: formatCountdown(portalCountdownMs, t) }) : t('ui.no_dynamic_portal')}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.nowRow} onPress={handleNowPanelEvent} activeOpacity={0.7}>
-              <Icon name="calendar-star" size={14} color={C.gold} />
-              <Text style={s.nowTxt}>
-                {activeEventDef ? t('ui.event_available', { name: activeEventDef.event.name, completed: eventCompleted.length, required: eventRequired }) : t('ui.no_active_event')}
-              </Text>
-            </TouchableOpacity>
+        <View style={[s.systemCard, s.cardNormal, s.statusBar]}>
+          <View style={s.statusBarRow}>
+            <Text style={s.statusBarLabel}>{t('ui.today_progress')}</Text>
+            <Text style={[s.statusBarCounter, done === total && total > 0 ? { color: C.green } : {}]}>
+              {done}<Text style={s.statusBarSlash}> / </Text>{total}
+            </Text>
           </View>
-        )}
+          <View style={s.progressTrack}>
+            <View style={[s.progressFill, {
+              width: `${total > 0 ? (done / total) * 100 : 0}%` as any,
+              backgroundColor: done === total && total > 0 ? C.green : C.neonBlue,
+            }]} />
+          </View>
+          <View style={s.statusBarBossRow}>
+            <Icon name="gate" size={9} color={(system.portalDailyCount ?? 0) > 0 ? C.neonBlue : C.dimmed} />
+            <Text style={[s.statusBarBossLabel, { color: C.dimmed }]}>
+              {' '}{t('ui.portals_today', { count: system.portalDailyCount ?? 0 })}
+            </Text>
+          </View>
+        </View>
 
-        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('today')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.today = e.nativeEvent.layout.y; }}>
-          <Text style={s.collapsibleTitle}>{t('ui.today')}</Text>
-          <Icon name={sectionsOpen.today ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
-        </TouchableOpacity>
-        {sectionsOpen.today && (
-          <>
-        {/* Compact tactical action row */}
+        {/* Forge + Rest Day */}
         <View style={s.actionRow}>
           <TouchableOpacity style={s.actionBtn} onPress={() => setShowForge(true)} activeOpacity={0.75}>
             <Icon name="hammer-wrench" size={13} color={C.neonBlue} />
@@ -588,45 +542,11 @@ export default function QuestScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={s.titleRow}>
-          <Icon name="clipboard-list-outline" size={16} color={C.neonBlue} />
-          <Text style={s.title}> {t('ui.daily_missions_title')}</Text>
-          {isRestDay && (
-            <View style={s.restBadge}>
-              <Icon name="bed" size={10} color={C.green} />
-              <Text style={s.restTxt}> {t('ui.rest_badge')}</Text>
-            </View>
-          )}
-        </View>
-
-
-        {/* Unified daily status bar */}
-        <View style={[s.systemCard, s.cardNormal, s.statusBar]}>
-          <View style={s.statusBarRow}>
-            <Text style={s.statusBarLabel}>{t('ui.today_progress')}</Text>
-            <Text style={[s.statusBarCounter, done === total && total > 0 ? { color: C.green } : {}]}>
-              {done}<Text style={s.statusBarSlash}> / </Text>{total}
-            </Text>
-          </View>
-          <View style={s.progressTrack}>
-            <View style={[s.progressFill, {
-              width: `${total > 0 ? (done / total) * 100 : 0}%` as any,
-              backgroundColor: done === total && total > 0 ? C.green : C.neonBlue,
-            }]} />
-          </View>
-          <View style={s.statusBarBossRow}>
-              <Icon name="gate" size={9} color={(system.portalDailyCount ?? 0) > 0 ? C.neonBlue : C.dimmed} />
-              <Text style={[s.statusBarBossLabel, { color: C.dimmed }]}>
-                {' '}{t('ui.portals_today', { count: system.portalDailyCount ?? 0 })}
-              </Text>
-            </View>
-        </View>
-
-        {/* Accepted Portal Card - Persists as active Boss Card until mission completes */}
+        {/* Accepted Portal Card */}
         {acceptedPortal && (
           <TouchableOpacity
             style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: acceptedPortal.color || C.neonRed, opacity: activeMission ? 0.85 : 1 }]}
-            onPress={() => { if (!activeMission) {handleMissionSelect(acceptedPortal);} }}
+            onPress={() => { if (!activeMission) { handleMissionSelect(acceptedPortal); } }}
             disabled={!!activeMission}
           >
             <Icon name={activeMission ? 'sword-cross' : (acceptedPortal.icon || 'gate')} size={24} color={acceptedPortal.color || C.neonRed} />
@@ -655,9 +575,9 @@ export default function QuestScreen() {
               <TouchableOpacity
                 style={[s.systemCard, s.cardWarning, s.dungeonBreakBanner, { borderWidth: 2, borderColor: displayColor }]}
                 onPress={() => {
-                  if (!db) {return;}
+                  if (!db) { return; }
                   if (db.source === 'quest') {
-                    if (!qDef) {return;}
+                    if (!qDef) { return; }
                     const mission: DungeonMission = {
                       id: `portal_${qDef.id}`,
                       label: t('ui.portal_dynamic_label', { title: qDef.title }),
@@ -671,7 +591,7 @@ export default function QuestScreen() {
                     setPortalConfirm(mission);
                     return;
                   }
-                  if (!rBoss) {return;}
+                  if (!rBoss) { return; }
                   const remainingMs = Math.max(0, db.expiresAt - Date.now());
                   const targetFocus = Math.max(10 * 60_000, Math.min(25 * 60_000, Math.floor(remainingMs * 0.5)));
                   const breakMinutes = Math.round(targetFocus / 60_000);
@@ -709,8 +629,7 @@ export default function QuestScreen() {
           })()
         }
 
-
-        {/* ── SECTION: MISSÕES DIÁRIAS ── */}
+        {/* ── MISSÕES DIÁRIAS ── */}
         <View style={s.sectionHeaderRow}>
           <View style={[s.sectionDivider, { marginBottom: 0, flex: 1 }]}>
             <View style={s.sectionLine} />
@@ -719,15 +638,12 @@ export default function QuestScreen() {
           </View>
         </View>
 
-        {/* Streak shield active indicator */}
         {system.adStreakShieldActive && (
           <View style={s.adShieldActive}>
             <Icon name="shield-check" size={12} color="#22d3ee" />
             <Text style={s.adShieldActiveTxt}> {t('ui.streak_shield_active')}</Text>
           </View>
         )}
-
-        {/* Streak shield ad button — only when shadow protect not available */}
         {showStreakShieldAd && (
           <TouchableOpacity
             style={[s.adShieldRow, !adStreakLoaded && { opacity: 0.45 }]}
@@ -739,16 +655,12 @@ export default function QuestScreen() {
             <Text style={s.adShieldTxt}>{t('ui.ad_streak_shield')}</Text>
           </TouchableOpacity>
         )}
-
-        {/* XP Boost active indicator */}
         {xpBoostNext && (
           <View style={s.boostBanner}>
             <Icon name="timer-sand-complete" size={12} color={C.gold} />
             <Text style={s.boostTxt}> {t('ui.xp_boost_active')}</Text>
           </View>
         )}
-
-        {/* XP Boost ad — when no boost active and not used today */}
         {!xpBoostNext && !system.adXpBoostToday && (
           <TouchableOpacity
             style={[s.adRow, !adXpLoaded && { opacity: 0.45 }]}
@@ -802,20 +714,104 @@ export default function QuestScreen() {
           )}
         </View>
 
-        {/* ── SECTION: MISSÕES SECUNDÁRIAS ── */}
         <SideQuestSection C={C} />
-          </>
+
+        {/* ── DUNGEONS ── */}
+        <View style={[s.sectionDivider, { marginTop: SPACING.sm }]}>
+          <View style={s.sectionLine} />
+          <Text style={s.sectionLabel}>{t('ui.dungeons')}</Text>
+          <View style={s.sectionLine} />
+        </View>
+
+        {activeRaidBoss && (() => {
+          const def = RAID_BOSSES.find(b => b.id === activeRaidBoss.defId);
+          if (!def) { return null; }
+          const progress = activeRaidBoss.currentHp / activeRaidBoss.maxHp;
+          const timeLeftMs = activeRaidBoss.endDate - Date.now();
+          return (
+            <View style={[s.systemCard, s.cardWarning, { marginBottom: SPACING.sm, padding: 12, backgroundColor: def.color + '15', borderColor: def.color + '50', borderRadius: 8 }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                <Icon name={def.icon} size={22} color={def.color} style={{ marginRight: 10 }} />
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: def.color, letterSpacing: 1 }}>{t('ui.raid_boss_label', { rank: def.rank })}</Text>
+                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 13, color: '#fff', fontWeight: 'bold', marginTop: 2 }}>{def.name}</Text>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Icon name="timer-sand" size={11} color={C.dimmed} />
+                  <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed, marginTop: 2 }}>{formatCountdown(timeLeftMs, t)}</Text>
+                </View>
+              </View>
+              <View style={{ height: 5, backgroundColor: C.bg, borderRadius: 3, overflow: 'hidden', marginBottom: 4, borderWidth: 1, borderColor: C.border }}>
+                <View style={{ width: `${progress * 100}%`, height: '100%', backgroundColor: def.color }} />
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+                <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed }}>{t('ui.hp_remaining')}</Text>
+                <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.muted }}>{Math.floor(activeRaidBoss.currentHp)} <Text style={{ color: C.dimmed }}>/ {activeRaidBoss.maxHp}</Text></Text>
+              </View>
+              {system.adBossUsedForId !== activeRaidBoss.defId && (
+                <TouchableOpacity
+                  style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 6, borderWidth: 1, borderColor: def.color + '66', borderRadius: 4, paddingVertical: 7, backgroundColor: def.color + '12' }, !adBossLoaded && { opacity: 0.45 }]}
+                  disabled={!adBossLoaded}
+                  onPress={() => showBossAd(() => { claimAdBossHp(); })}
+                  activeOpacity={0.75}
+                >
+                  <Icon name="play-circle-outline" size={12} color={def.color} />
+                  <Text style={{ color: def.color, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginLeft: 6 }}>{t('ui.ad_boss_hp')}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          );
+        })()}
+
+        <TouchableOpacity
+          style={[s.systemCard, s.bossBanner, { borderColor: C.neonRed + '66', backgroundColor: C.neonRed + '08' }]}
+          onPress={() => setShowWeeklyDungeon(true)}
+          activeOpacity={0.8}
+        >
+          <View style={s.bossBannerLeft}>
+            <Icon name="gate" size={20} color={C.neonRed} />
+            <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
+              <Text style={s.bossTitle}>{t('ui.boss_dungeon')}</Text>
+              <Text style={s.bossSub}>
+                {weeklyDefeatedBossId ? t('ui.boss_defeated_this_week') : t('ui.defeat_boss_to_extract')}
+              </Text>
+            </View>
+          </View>
+          <Icon name="chevron-right" size={18} color={C.neonRed} />
+        </TouchableOpacity>
+
+        {activeEventDef && eventCountdownMs > 0 && (
+          <TouchableOpacity
+            style={[s.systemCard, s.cardWarning, s.bossBanner, { borderColor: C.gold + '88', backgroundColor: C.gold + '08' }]}
+            onPress={() => setShowEventDungeon(true)}
+            activeOpacity={0.8}
+          >
+            <View style={s.bossBannerLeft}>
+              <Icon name="calendar-star" size={20} color={C.gold} />
+              <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
+                <Text style={[s.bossTitle, { color: C.gold }]}>{t('ui.event_dungeon_available')}</Text>
+                <Text style={s.bossSub}>{t('ui.event_label', { name: activeEventDef.event.name, completed: eventCompleted.length, required: eventRequired })}</Text>
+                <Text style={[s.bossSub, { fontSize: 10, marginTop: 2, color: C.gold }]}>
+                  {eventCountdownMs > 0 ? formatCountdown(eventCountdownMs, t) : t('ui.event_ended')}
+                </Text>
+              </View>
+            </View>
+            <Icon name="chevron-right" size={18} color={C.gold} />
+          </TouchableOpacity>
         )}
 
+        {!activeRaidBoss && !activeEventDef && (
+          <View style={{ alignItems: 'center', paddingVertical: SPACING.lg }}>
+            <Icon name="gate" size={28} color={C.dimmed} />
+            <Text style={{ color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: SPACING.sm }}>
+              {t('ui.no_active_event_dungeons')}
+            </Text>
+          </View>
+        )}
 
+        {/* ── EXTRAS (only when all daily missions done) ── */}
         {allDailyDone && (
           <>
-            <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('extras')} activeOpacity={0.8}>
-              <Text style={s.collapsibleTitle}>{t('ui.extras')}</Text>
-              <Icon name={sectionsOpen.extras ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
-            </TouchableOpacity>
-            {sectionsOpen.extras && (
-              <>
             <View style={[s.sectionDivider, { marginTop: SPACING.sm }]}>
               <View style={[s.sectionLine, { backgroundColor: C.gold + '55' }]} />
               <Text style={[s.sectionLabel, { color: C.gold }]}>{t('ui.extras_section')}</Text>
@@ -846,111 +842,8 @@ export default function QuestScreen() {
                 <Text style={s.generateExtraSub}> {t('ui.extras_remaining', { count: Math.max(0, 3 - extraQuests.length), plural: 3 - extraQuests.length === 1 ? '' : 's' })}</Text>
               </TouchableOpacity>
             )}
-              </>
-            )}
           </>
         )}
-
-        <TouchableOpacity style={s.collapsibleHeader} onPress={() => toggleSection('events')} activeOpacity={0.8} onLayout={(e) => { sectionPositions.current.events = e.nativeEvent.layout.y; }}>
-          <Text style={s.collapsibleTitle}>{t('ui.dungeons')}</Text>
-          <Icon name={sectionsOpen.events ? 'chevron-up' : 'chevron-down'} size={18} color={C.neonBlue} />
-        </TouchableOpacity>
-        {sectionsOpen.events && (
-          <>
-            {/* Raid Boss Global */}
-            {activeRaidBoss && (() => {
-              const def = RAID_BOSSES.find(b => b.id === activeRaidBoss.defId);
-              if (!def) {return null;}
-              const progress = activeRaidBoss.currentHp / activeRaidBoss.maxHp;
-              const timeLeftMs = activeRaidBoss.endDate - Date.now();
-              return (
-                <View style={[s.systemCard, s.cardWarning, { marginBottom: SPACING.sm, padding: 12, backgroundColor: def.color + '15', borderColor: def.color + '50', borderRadius: 8 }]}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                    <Icon name={def.icon} size={22} color={def.color} style={{ marginRight: 10 }} />
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: def.color, letterSpacing: 1 }}>{t('ui.raid_boss_label', { rank: def.rank })}</Text>
-                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 13, color: '#fff', fontWeight: 'bold', marginTop: 2 }}>{def.name}</Text>
-                    </View>
-                    <View style={{ alignItems: 'flex-end' }}>
-                      <Icon name="timer-sand" size={11} color={C.dimmed} />
-                      <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed, marginTop: 2 }}>{formatCountdown(timeLeftMs, t)}</Text>
-                    </View>
-                  </View>
-                  <View style={{ height: 5, backgroundColor: C.bg, borderRadius: 3, overflow: 'hidden', marginBottom: 4, borderWidth: 1, borderColor: C.border }}>
-                    <View style={{ width: `${progress * 100}%`, height: '100%', backgroundColor: def.color }} />
-                  </View>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed }}>{t('ui.hp_remaining')}</Text>
-                    <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.muted }}>{Math.floor(activeRaidBoss.currentHp)} <Text style={{ color: C.dimmed }}>/ {activeRaidBoss.maxHp}</Text></Text>
-                  </View>
-                  {system.adBossUsedForId !== activeRaidBoss.defId && (
-                    <TouchableOpacity
-                      style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 6, borderWidth: 1, borderColor: def.color + '66', borderRadius: 4, paddingVertical: 7, backgroundColor: def.color + '12' }, !adBossLoaded && { opacity: 0.45 }]}
-                      disabled={!adBossLoaded}
-                      onPress={() => showBossAd(() => { claimAdBossHp(); })}
-                      activeOpacity={0.75}
-                    >
-                      <Icon name="play-circle-outline" size={12} color={def.color} />
-                      <Text style={{ color: def.color, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginLeft: 6 }}>{t('ui.ad_boss_hp')}</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              );
-            })()}
-
-            {/* Boss Dungeon */}
-            <TouchableOpacity
-              style={[s.systemCard, s.bossBanner, { borderColor: C.neonRed + '66', backgroundColor: C.neonRed + '08' }]}
-              onPress={() => setShowWeeklyDungeon(true)}
-              activeOpacity={0.8}
-            >
-              <View style={s.bossBannerLeft}>
-                <Icon name="gate" size={20} color={C.neonRed} />
-                <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
-                  <Text style={s.bossTitle}>{t('ui.boss_dungeon')}</Text>
-                  <Text style={s.bossSub}>
-                    {weeklyDefeatedBossId ? t('ui.boss_defeated_this_week') : t('ui.defeat_boss_to_extract')}
-                  </Text>
-                </View>
-              </View>
-              <Icon name="chevron-right" size={18} color={C.neonRed} />
-            </TouchableOpacity>
-
-            {/* Event Dungeon */}
-            {activeEventDef && eventCountdownMs > 0 && (
-              <TouchableOpacity
-                style={[s.systemCard, s.cardWarning, s.bossBanner, { borderColor: C.gold + '88', backgroundColor: C.gold + '08' }]}
-                onPress={() => setShowEventDungeon(true)}
-                activeOpacity={0.8}
-              >
-                <View style={s.bossBannerLeft}>
-                  <Icon name="calendar-star" size={20} color={C.gold} />
-                  <View style={{ marginLeft: SPACING.sm, flex: 1 }}>
-                    <Text style={[s.bossTitle, { color: C.gold }]}>{t('ui.event_dungeon_available')}</Text>
-                    <Text style={s.bossSub}>{t('ui.event_label', { name: activeEventDef.event.name, completed: eventCompleted.length, required: eventRequired })}</Text>
-                    <Text style={[s.bossSub, { fontSize: 10, marginTop: 2, color: C.gold }]}>
-                      {eventCountdownMs > 0 ? formatCountdown(eventCountdownMs, t) : t('ui.event_ended')}
-                    </Text>
-                  </View>
-                </View>
-                <Icon name="chevron-right" size={18} color={C.gold} />
-              </TouchableOpacity>
-            )}
-
-            {/* Empty state */}
-            {!activeRaidBoss && !activeEventDef && (
-              <View style={{ alignItems: 'center', paddingVertical: SPACING.lg }}>
-                <Icon name="gate" size={28} color={C.dimmed} />
-                <Text style={{ color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: SPACING.sm }}>
-                  {t('ui.no_active_event_dungeons')}
-                </Text>
-              </View>
-            )}
-          </>
-        )}
-
-
-
 
 
       </ScrollView>

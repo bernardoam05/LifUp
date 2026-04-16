@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 import MissionHistoryModal from './MissionHistoryModal';
+import ShadowsScreen from './ShadowsScreen';
 import { CATALOG_MAP } from '../data/shopItems';
 
 // Renders a MCI icon with 'help-circle' as fallback for unknown icon names
@@ -26,9 +27,8 @@ function SafeIcon({ name, size, color, style }: { name: string; size: number; co
   const safeName = KNOWN_SAFE.has(name) ? name : 'help-circle';
   return <Icon name={safeName} size={size} color={color} style={style} />;
 }
-import useGameStore, { getRank, xpForLevel, RankKey, LevelUpReward, CLASS_REQUIREMENTS } from '../store/useGameStore';
+import useGameStore, { xpForLevel, RankKey, LevelUpReward } from '../store/useGameStore';
 import type { CalendarReward } from '../store/types';
-import { getJobClass } from '../store/helpers';
 import {
   ACHIEVEMENTS_CATALOG, Achievement, AchievementProg,
   TIER_COLORS, getActiveTier, getCompletedTier, isAchievementMaxed, getTierIndex,
@@ -36,7 +36,6 @@ import {
 import { SHADOW_MAP, SHADOW_RANK_COLOR } from '../data/shadows';
 import SystemModal from '../components/SystemModal';
 import { useTheme, FONT, SPACING, RANK_COLORS as THEME_RANK_COLORS } from '../theme';
-import RankModal from '../components/RankModal';
 
 // Format minutes into "Xh Ym" for focus achievements
 function formatMinutes(min: number): string {
@@ -52,7 +51,7 @@ function fmtVal(a: Achievement, val: number): string {
 
 // ── Stat bar ───────────────────────────────────────────────────────────────────
 
-function StatBar({ label, level, C }: { label: string; level: number; C: any }) {
+function StatBar({ label, level, playerLevel, C }: { label: string; level: number; playerLevel: number; C: any }) {
   const ATTR_ICONS: Record<string, { icon: string; color: string }> = {
     STR: { icon: 'arm-flex',    color: C.neonRed },
     AGI: { icon: 'run-fast',    color: C.green },
@@ -61,6 +60,8 @@ function StatBar({ label, level, C }: { label: string; level: number; C: any }) 
   };
   const { icon, color } = ATTR_ICONS[label as keyof typeof ATTR_ICONS] ?? { icon: 'help-circle', color: C.muted };
   const s = getStyles(C);
+  const cap = Math.max(100, playerLevel * 3);
+  const pct = Math.min(100, (level / cap) * 100);
 
   return (
     <View style={s.statRow}>
@@ -69,6 +70,9 @@ function StatBar({ label, level, C }: { label: string; level: number; C: any }) 
         <View style={s.statHeader}>
           <Text style={[s.statLabel, { color }]}>{label}</Text>
           <Text style={s.statVal}>{level}</Text>
+        </View>
+        <View style={s.track}>
+          <View style={[s.fill, { width: `${pct}%` as any, backgroundColor: color }]} />
         </View>
       </View>
     </View>
@@ -708,24 +712,14 @@ export default function StatusScreen() {
   const activeShadowIds    = useGameStore(st => st.player.activeShadowIds);
   const activeBuffs         = useGameStore(st => st.activeBuffs);
 
-  const qualifiedRankInfo = getRank(player.level, statistics.totalCompleted, system.bossesDefeated, statistics.questsByRank);
-  const playerRankLetter = player.rank || 'E';
-  const currentRankInfo = CLASS_REQUIREMENTS.find(r => r.rank === playerRankLetter) || CLASS_REQUIREMENTS[0];
-
-  const currentIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === currentRankInfo.rank);
-  const qualifiedIdx = CLASS_REQUIREMENTS.findIndex(r => r.rank === qualifiedRankInfo.rank);
-  const canRankUp = qualifiedIdx > currentIdx;
-  const rank = currentRankInfo;
-  const jobClass = getJobClass(player.level);
-
   const xpNeeded = xpForLevel(player.level);
   const xpPct    = Math.min((player.xp / xpNeeded) * 100, 100);
 
   const [selectedAch, setSelectedAch] = useState<{ a: Achievement; prog: AchievementProg | undefined; done: boolean } | null>(null);
-  const [showRankInfo, setShowRankInfo] = useState(false);
   const [showHistory,  setShowHistory]  = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showShadows, setShowShadows] = useState(false);
 
   return (
     <SafeAreaView style={s.safeArea} edges={['bottom']}>
@@ -733,32 +727,6 @@ export default function StatusScreen() {
 
         <View style={s.titleRow}>
           <Text style={s.pageTitle}>{t('status.title')}</Text>
-        </View>
-
-        {/* Rank card */}
-        <View style={[s.rankCard, { borderColor: rank.color + '66' }]}>
-          <TouchableOpacity
-            style={[s.rankBadge, { borderColor: C.neonBlue }]}
-            onPress={() => setShowRankInfo(true)}
-            activeOpacity={0.75}
-          >
-            <Text style={[s.rankBig, { color: rank.color }]}>{rank.rank}</Text>
-            {canRankUp && (
-              <View style={s.rankUpIndicator}>
-                <Text style={s.rankUpIndicatorText}>!</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-          <View style={s.rankInfo}>
-            <Text style={[s.playerName, { maxWidth: '85%' }]} numberOfLines={1} ellipsizeMode="tail">{jobClass.name}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
-              <Text style={s.lvlText}>{t('status.level', { level: player.level })}</Text>
-            </View>
-          </View>
-          <View style={s.goldBlock}>
-            <Icon name="rhombus" size={22} color={C.gold} />
-            <Text style={s.goldAmt}>{player.gold.toLocaleString()}</Text>
-          </View>
         </View>
 
         {/* Active Buffs Bar */}
@@ -789,10 +757,10 @@ export default function StatusScreen() {
         {/* Attributes */}
         <SectionHeader icon="trending-up" label={t('status.section_attributes')} C={C} />
         <View style={s.statsBlock}>
-          <StatBar label="STR" level={player.str} C={C} />
-          <StatBar label="AGI" level={player.agi} C={C} />
-          <StatBar label="INT" level={player.int} C={C} />
-          <StatBar label="VIT" level={player.vit} C={C} />
+          <StatBar label="STR" level={player.str} playerLevel={player.level} C={C} />
+          <StatBar label="AGI" level={player.agi} playerLevel={player.level} C={C} />
+          <StatBar label="INT" level={player.int} playerLevel={player.level} C={C} />
+          <StatBar label="VIT" level={player.vit} playerLevel={player.level} C={C} />
         </View>
 
         {/* History */}
@@ -841,13 +809,18 @@ export default function StatusScreen() {
               ) : (
                 <Text style={s.shadowHint}>{t('status.shadows_no_vanguard')}</Text>
               )}
-              {/* Army count + hint */}
+              {/* Army count */}
               <Text style={s.shadowCount}>
                 {player.shadows.length === 1 ? t('status.shadows_count_singular', { count: 1 }) : t('status.shadows_count_plural', { count: player.shadows.length })}{t('status.shadows_vanguard_count', { active: activeShadowIds.length })}
               </Text>
             </>
           )}
         </View>
+        <TouchableOpacity style={s.shadowsBtn} onPress={() => setShowShadows(true)} activeOpacity={0.75}>
+          <Icon name="account-group-outline" size={14} color={C.purple} />
+          <Text style={s.shadowsBtnTxt}>{t('status.shadows_army_btn')}</Text>
+          <Icon name="chevron-right" size={18} color={C.purple} />
+        </TouchableOpacity>
 
       </ScrollView>
 
@@ -869,21 +842,11 @@ export default function StatusScreen() {
         />
       )}
 
-      <RankModal
-        visible={showRankInfo}
-        level={player.level}
-        totalCompleted={statistics.totalCompleted}
-        bossesDefeated={system.bossesDefeated}
-        questsByRank={statistics.questsByRank}
-        onClose={() => setShowRankInfo(false)}
-        C={C}
-      />
-
-
-
       <MissionHistoryModal visible={showHistory} onClose={() => setShowHistory(false)} C={C} />
 
       <CalendarModal visible={showCalendar} onClose={() => setShowCalendar(false)} C={C} />
+
+      {showShadows && <ShadowsScreen onClose={() => setShowShadows(false)} />}
 
       {/* Modals are now handled globally in App.tsx rewardsQueue */}
 
@@ -898,21 +861,10 @@ const getStyles = (C: any) => StyleSheet.create({
   content:    { padding: SPACING.md, paddingBottom: SPACING.xl },
   titleRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },
   pageTitle:  { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, letterSpacing: 3 },
-  rankCard:   { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderRadius: 4, padding: SPACING.md, gap: 12, marginBottom: 12 },
-  rankBadge:  { width: 52, height: 52, borderRadius: 4, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  rankBig:    { fontSize: 28, fontFamily: FONT.orbitron, fontWeight: '900' },
-  rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonRed, borderRadius: 12, minWidth: 20, height: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.muted },
-  rankUpIndicatorText: { color: C.muted, fontSize: 13, fontFamily: FONT.orbitron, fontWeight: '900' },
-  rankInfo:   { flex: 1 },
-  playerName: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 14, fontWeight: '700' },
-  rankLabel:  { fontSize: 13, fontFamily: FONT.orbitron, fontWeight: '700', letterSpacing: 1 },
-  buffsBar: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12, paddingHorizontal: 4 },
+  buffsBar: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12, paddingHorizontal: 4 },
   buffChip: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.panel, borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
   buffLabel: { color: C.muted, fontSize: 10, fontFamily: FONT.orbitron },
   buffValue: { color: C.neonBlue, fontSize: 10, fontWeight: '700', fontFamily: FONT.orbitron },
-  lvlText:    { color: C.muted, fontSize: 11, marginTop: 2 },
-  goldBlock:  { alignItems: 'center', gap: 2 },
-  goldAmt:    { color: C.gold, fontWeight: '700', fontSize: 14 },
 
   xpSection:  { marginBottom: SPACING.lg },
   xpHeader:   { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
@@ -938,16 +890,18 @@ const getStyles = (C: any) => StyleSheet.create({
   shadowsBlock:           { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.purple + '33', marginBottom: SPACING.lg, gap: SPACING.sm },
   shadowVanguardRow:      { flexDirection: 'row', gap: SPACING.sm },
   shadowVanguardCard:     { flex: 1, backgroundColor: C.bg, borderWidth: 1, borderRadius: 4, padding: SPACING.sm, alignItems: 'center', gap: 6 },
-  shadowVanguardName:     { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 0.5, textAlign: 'center', lineHeight: 13 },
+  shadowVanguardName:     { fontFamily: FONT.orbitron, fontSize: 10, textAlign: 'center', lineHeight: 14 },
   shadowVanguardEffect:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 4, paddingVertical: 3, width: '100%' },
-  shadowVanguardEffectTxt:{ fontFamily: FONT.orbitron, fontSize: 7, textAlign: 'center', lineHeight: 11 },
-  shadowHint:             { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9 },
-  shadowCount:            { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5, marginTop: 4 },
+  shadowVanguardEffectTxt:{ fontFamily: FONT.orbitron, fontSize: 9, textAlign: 'center', lineHeight: 13 },
+  shadowHint:             { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10 },
+  shadowCount:            { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10, marginTop: 4 },
 
   empty:  { color: C.dimmed, fontSize: 12, fontStyle: 'italic', marginBottom: SPACING.lg },
 
   historyBtn:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 10, marginBottom: SPACING.lg },
   historyBtnTxt: { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
+  shadowsBtn:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.purple + '44', borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 10, marginBottom: SPACING.lg },
+  shadowsBtnTxt: { flex: 1, color: C.purple, fontFamily: FONT.orbitron, fontSize: 10, marginLeft: SPACING.sm },
 });
 
 const getKPIStyles = (C: any) => StyleSheet.create({
@@ -961,7 +915,7 @@ const getSPStyles = (C: any) => StyleSheet.create({
   container:    { marginBottom: SPACING.lg },
   kpiRow:       { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.sm },
   rankSection:  { backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.md },
-  rankTitle:    { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginBottom: SPACING.md },
+  rankTitle:    { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, marginBottom: SPACING.md },
   rankGrid:     { gap: SPACING.sm },
   rankItem:     { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
   rankBadge:    { width: 28, height: 28, borderRadius: 2, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
@@ -974,7 +928,7 @@ const getSPStyles = (C: any) => StyleSheet.create({
 const getACStyles = (C: any) => StyleSheet.create({
   container: { marginBottom: SPACING.lg },
   header:    { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm },
-  headerTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  headerTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10 },
   badge:     { backgroundColor: C.neonBlue + '22', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: C.neonBlue + '44' },
   badgeTxt:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9 },
   grid:      { gap: SPACING.sm, paddingBottom: 4, paddingRight: 4 },
@@ -983,13 +937,13 @@ const getACStyles = (C: any) => StyleSheet.create({
     padding: SPACING.sm, alignItems: 'center', gap: 6,
   },
   iconWrap:  { width: 44, height: 44, borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
-  cardTitle:  { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5, textAlign: 'center', lineHeight: 11 },
-  cardGold:   { fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '700' },
+  cardTitle:  { fontFamily: FONT.orbitron, fontSize: 9, textAlign: 'center', lineHeight: 12 },
+  cardGold:   { fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '700' },
   miniTrack:  { width: '100%', height: 3, backgroundColor: C.bg, borderRadius: 0, overflow: 'hidden', marginTop: 2 },
   miniFill:   { height: '100%', backgroundColor: C.neonBlue, borderRadius: 0 },
   tierChip:   { borderWidth: 1, borderRadius: 2, paddingHorizontal: 4, paddingVertical: 1 },
-  tierChipTxt:{ fontFamily: FONT.orbitron, fontSize: 6, letterSpacing: 0.5, fontWeight: '700' },
-  maxTag:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
+  tierChipTxt:{ fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '700' },
+  maxTag:     { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9 },
 
   // Compact summary panel
   summaryBtn:   { backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, borderColor: C.border, padding: SPACING.md, marginBottom: SPACING.lg },
@@ -1008,22 +962,22 @@ const getACStyles = (C: any) => StyleSheet.create({
 const getAMStyles = (C: any) => StyleSheet.create({
   card:          { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg, alignItems: 'center' },
   headerRow:     { flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: SPACING.md },
-  headerLabel:   { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
+  headerLabel:   { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10 },
   closeBtn:      { padding: 4 },
   iconWrap:      { width: 72, height: 72, borderRadius: 4, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.sm },
   title:         { fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', letterSpacing: 1, textAlign: 'center', flex: 1 },
   badgesRow:     { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.md, flexWrap: 'wrap', justifyContent: 'center' },
   categoryBadge: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
-  categoryTxt:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
+  categoryTxt:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9 },
   divider:       { width: '100%', height: 1, backgroundColor: C.border, marginBottom: SPACING.md },
   desc:          { color: C.muted, fontSize: 12, textAlign: 'center', lineHeight: 18, marginBottom: SPACING.md },
   titleRow:      { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm },
   tierBadge:     { borderWidth: 1, borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 },
-  tierTxt:       { fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1 },
+  tierTxt:       { fontFamily: FONT.orbitron, fontSize: 9 },
   progSection:   { width: '100%', marginBottom: SPACING.md },
   progHeader:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  progLabel:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 2 },
-  progNums:      { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9 },
+  progLabel:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10 },
+  progNums:      { color: C.muted, fontFamily: FONT.orbitron, fontSize: 10 },
   progTrack:     { height: 6, backgroundColor: C.bg, borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: C.neonBlue + '30' },
   progFill:      { height: '100%', borderRadius: 0 },
   rewardRow:     { flexDirection: 'row', alignItems: 'center' },
@@ -1033,25 +987,25 @@ const getAMStyles = (C: any) => StyleSheet.create({
   tiersSection:  { width: '100%', marginBottom: SPACING.md },
   tierRow:       { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, paddingVertical: 5, paddingHorizontal: SPACING.sm, borderRadius: 3, marginBottom: 2 },
   tierDot:       { width: 16, height: 16, borderRadius: 8, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
-  tierRowRank:   { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, fontWeight: '700', width: 56 },
-  tierRowTarget: { flex: 1, fontFamily: FONT.orbitron, fontSize: 9 },
-  tierRowReward: { fontFamily: FONT.orbitron, fontSize: 8 },
-  maxLabel:      { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center', marginTop: 4 },
+  tierRowRank:   { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', width: 56 },
+  tierRowTarget: { flex: 1, fontFamily: FONT.orbitron, fontSize: 10 },
+  tierRowReward: { fontFamily: FONT.orbitron, fontSize: 9 },
+  maxLabel:      { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, textAlign: 'center', marginTop: 4 },
 });
 
 const getCalStyles = (C: any) => StyleSheet.create({
   // Shared
   title:        { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
-  month:        { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8 },
+  month:        { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9 },
   progressBadge:{ backgroundColor: C.gold + '22', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: C.gold + '44' },
   progressTxt:  { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9 },
   frozenBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.neonBlue + '12', borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
-  frozenText:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 8, flex: 1 },
+  frozenText:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, flex: 1 },
   grid:         { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: SPACING.sm },
   cell:         { width: '18%', backgroundColor: C.bg, borderRadius: 4, borderWidth: 1, borderColor: C.border, alignItems: 'center', justifyContent: 'center', paddingVertical: 6, paddingHorizontal: 2, position: 'relative', minHeight: 56 },
   cellClaimed:  { borderColor: C.green + '33', backgroundColor: C.green + '08', opacity: 0.55 },
-  dayNum:       { color: C.muted, fontFamily: FONT.orbitron, fontSize: 8, fontWeight: '900', marginBottom: 2 },
-  rewardLabel:  { fontFamily: FONT.orbitron, fontSize: 6, marginTop: 2, textAlign: 'center' },
+  dayNum:       { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '900', marginBottom: 2 },
+  rewardLabel:  { fontFamily: FONT.orbitron, fontSize: 8, marginTop: 2, textAlign: 'center' },
   lockWrap:     { position: 'absolute', bottom: 2, right: 3 },
   claimBtn:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderRadius: 4, paddingVertical: 10, gap: SPACING.sm, backgroundColor: C.gold + '10' },
   claimBtnTxt:  { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', letterSpacing: 1 },
@@ -1063,7 +1017,7 @@ const getCalStyles = (C: any) => StyleSheet.create({
   nextRewardRow:  { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 2 },
   nextRewardTxt:  { color: C.muted, fontFamily: FONT.orbitron, fontSize: 9 },
   claimBadge:     { backgroundColor: C.gold + '22', borderRadius: 3, paddingHorizontal: 5, paddingVertical: 2, borderWidth: 1, borderColor: C.gold + '55', marginLeft: SPACING.sm },
-  claimBadgeTxt:  { color: C.gold, fontFamily: FONT.orbitron, fontSize: 7, fontWeight: '900' },
+  claimBadgeTxt:  { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, fontWeight: '900' },
 
   // Full modal
   modalCard:      { width: '100%', backgroundColor: C.panel, borderRadius: 4, borderWidth: 1, padding: SPACING.lg },
@@ -1077,7 +1031,7 @@ const getLMStyles = (C: any) => StyleSheet.create({
   title:     { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 4 },
   levelTxt:  { color: C.muted, fontFamily: FONT.orbitron, fontSize: 28, fontWeight: '900' },
   divider:   { width: '100%', height: 1, backgroundColor: C.border },
-  rewardLabel: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, textAlign: 'center', alignSelf: 'center' },
+  rewardLabel: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, textAlign: 'center', alignSelf: 'center' },
   itemRow:   { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 4, padding: SPACING.sm, gap: SPACING.sm, width: '100%' },
   itemIcon:  { width: 40, height: 40, borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
   itemInfo:  { flex: 1 },

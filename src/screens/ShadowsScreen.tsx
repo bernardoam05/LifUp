@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SystemModal from '../components/SystemModal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -598,7 +598,7 @@ function ShadowCard({
 
 // ── Screen ─────────────────────────────────────────────────────────────────────
 
-export default function ShadowsScreen() {
+export default function ShadowsScreen({ onClose }: { onClose: () => void }) {
   const C = useTheme();
   const s = getStyles(C);
   const { t } = useTranslation('shadows');
@@ -654,9 +654,17 @@ export default function ShadowsScreen() {
 
   if (playerLevel < 10) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['bottom']}>
-        <LockedScreen currentLevel={playerLevel} C={C} />
-      </SafeAreaView>
+      <Modal visible animationType="slide" onRequestClose={onClose}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }} edges={['top', 'bottom']}>
+          <View style={s.header}>
+            <TouchableOpacity onPress={onClose} style={s.closeBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Icon name="arrow-left" size={20} color={C.purple} />
+            </TouchableOpacity>
+            <Text style={s.headerTitle}>{t('ui.page_title')}</Text>
+          </View>
+          <LockedScreen currentLevel={playerLevel} C={C} />
+        </SafeAreaView>
+      </Modal>
     );
   }
 
@@ -679,10 +687,17 @@ export default function ShadowsScreen() {
   }
 
   return (
-    <SafeAreaView style={s.safeArea} edges={['bottom']}>
+    <Modal visible animationType="slide" onRequestClose={onClose}>
+    <SafeAreaView style={s.safeArea} edges={['top', 'bottom']}>
+      <View style={s.header}>
+        <TouchableOpacity onPress={onClose} style={s.closeBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Icon name="arrow-left" size={20} color={C.purple} />
+        </TouchableOpacity>
+        <Text style={s.headerTitle}>{t('ui.page_title')}</Text>
+        <Text style={s.headerSub}>{totalCount} {totalCount !== 1 ? t('ui.units') : t('ui.unit')}</Text>
+      </View>
       <ScrollView contentContainerStyle={s.content}>
-        <Text style={s.pageTitle}>{t('ui.page_title')}</Text>
-        <Text style={s.pageSub}>{t('ui.page_sub')} — {totalCount} {totalCount !== 1 ? t('ui.units') : t('ui.unit')}</Text>
+        <Text style={s.pageSub}>{t('ui.page_sub')}</Text>
 
         {totalCount === 0 ? (
           <View style={s.emptyWrap}>
@@ -755,16 +770,20 @@ export default function ShadowsScreen() {
         />
       )}
     </SafeAreaView>
+    </Modal>
   );
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
 
 const getStyles = (C: any) => StyleSheet.create({
-  safeArea:  { flex: 1, backgroundColor: C.bg },
-  content:   { padding: SPACING.md, paddingBottom: SPACING.xl },
-  pageTitle: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 4, marginBottom: 2 },
-  pageSub:   { color: C.muted, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 2, marginBottom: SPACING.lg },
+  safeArea:    { flex: 1, backgroundColor: C.bg },
+  header:      { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, borderBottomWidth: 1, borderBottomColor: C.purple + '33', backgroundColor: C.bg, gap: SPACING.sm },
+  closeBtn:    { padding: 4 },
+  headerTitle: { color: C.purple, fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 3, flex: 1 },
+  headerSub:   { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9 },
+  content:     { padding: SPACING.md, paddingBottom: SPACING.xl },
+  pageSub:     { color: C.muted, fontFamily: FONT.orbitron, fontSize: 10, marginBottom: SPACING.lg },
   emptyWrap:  { alignItems: 'center', paddingTop: 40, gap: SPACING.md },
   emptyTitle: { color: C.purple + '66', fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2 },
   emptyDesc:  { color: C.dimmed, fontSize: 12, textAlign: 'center', lineHeight: 18 },
