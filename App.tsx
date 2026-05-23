@@ -1,6 +1,6 @@
 import './src/i18n';
 import React, { useEffect, useState, useCallback, Fragment } from 'react';
-import { View, Text, StyleSheet, StatusBar, NativeModules, TouchableOpacity, Vibration, Animated } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, NativeModules, TouchableOpacity, Vibration, Animated, AppState } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer, DarkTheme, createNavigationContainerRef } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -122,6 +122,26 @@ export default function App() {
 
   const [showSettings, setShowSettings] = useState(false);
   const [showRankInfo, setShowRankInfo] = useState(false);
+  const [penaltyCountdown, setPenaltyCountdown] = useState('');
+
+  useEffect(() => {
+    if (!hasPenalty || !penaltyBlockEnd || penaltyBlockEnd <= Date.now()) {
+      setPenaltyCountdown('');
+      return;
+    }
+    let id: ReturnType<typeof setInterval>;
+    const update = () => {
+      const ms = penaltyBlockEnd - Date.now();
+      if (ms <= 0) { setPenaltyCountdown(''); clearInterval(id); return; }
+      const h = Math.floor(ms / 3_600_000);
+      const m = Math.floor((ms % 3_600_000) / 60_000);
+      setPenaltyCountdown(h > 0 ? `${h}h ${m}m` : `${m}m`);
+    };
+    update();
+    id = setInterval(update, 30_000);
+    const sub = AppState.addEventListener('change', state => { if (state === 'active') update(); });
+    return () => { clearInterval(id); sub.remove(); };
+  }, [hasPenalty, penaltyBlockEnd]);
   const statistics = useGameStore(s => s.statistics);
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated);
   const playerLevel = useGameStore(s => s.player.level);
@@ -245,6 +265,9 @@ export default function App() {
             <Text style={styles.penalBannerText}>
               ZONA DE PENALIDADE ATIVA — Completa as missões de penalização!
             </Text>
+            {!!penaltyCountdown && (
+              <Text style={styles.penalCountdownText}>{penaltyCountdown}</Text>
+            )}
           </View>
         )}
 
@@ -465,6 +488,13 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 0.5,
+  },
+  penalCountdownText: {
+    color: C.neonRed,
+    fontFamily: FONT.orbitron,
+    fontSize: 9,
+    opacity: 0.75,
+    marginLeft: 6,
   },
   penaltyBadge: {
     backgroundColor: C.neonRed,

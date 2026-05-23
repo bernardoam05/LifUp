@@ -75,7 +75,11 @@ export default function SideQuestSection({ C }: SideQuestSectionProps) {
               returnKeyType="done"
               maxLength={100}
             />
-            <TouchableOpacity style={side.addBtn} onPress={handleAdd}>
+            <TouchableOpacity
+              style={[side.addBtn, !input.trim() && { opacity: 0.35 }]}
+              onPress={handleAdd}
+              disabled={!input.trim()}
+            >
               <Icon name="plus" size={20} color={C.purple} />
             </TouchableOpacity>
           </View>

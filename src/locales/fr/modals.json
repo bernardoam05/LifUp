@@ -80,7 +80,8 @@
     "high_speed_warning": "Vitesse élevée ! Distance en pause.",
     "field_notes_label": "NOTES DE TERRAIN",
     "field_notes_placeholder": "Enregistre ta progression...",
-    "finish_mission": "TERMINER LA MISSION"
+    "finish_mission": "TERMINER LA MISSION",
+    "open_settings": "OUVRIR PARAMÈTRES"
   },
   "penalty": {
     "system_label": "◈ SYSTÈME ◈",

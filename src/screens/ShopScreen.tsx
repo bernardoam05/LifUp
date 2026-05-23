@@ -54,6 +54,11 @@ function ItemCard({
             </View>
           )}
         </View>
+        {item.weeklyStock !== undefined && soldOut && (
+          <Text style={{ color: '#4b5563', fontFamily: FONT.orbitron, fontSize: 8, marginBottom: 2 }}>
+            ↻ {t('ui.restocks_next_week')}
+          </Text>
+        )}
         <Text style={ic.desc}>{t(`items.${item.id}.description`, { defaultValue: item.description })}</Text>
         <Text style={ic.lore}>{t(`items.${item.id}.lore`, { defaultValue: item.lore ?? '' })}</Text>
       </View>

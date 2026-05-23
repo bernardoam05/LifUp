@@ -80,7 +80,8 @@
     "high_speed_warning": "High speed detected! Distance paused.",
     "field_notes_label": "FIELD NOTES",
     "field_notes_placeholder": "Log your progress...",
-    "finish_mission": "FINISH MISSION"
+    "finish_mission": "FINISH MISSION",
+    "open_settings": "OPEN SETTINGS"
   },
   "penalty": {
     "system_label": "◈ SYSTEM ◈",

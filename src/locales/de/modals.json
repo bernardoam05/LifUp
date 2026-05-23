@@ -80,7 +80,8 @@
     "high_speed_warning": "Hohe Geschwindigkeit! Distanz pausiert.",
     "field_notes_label": "FELDNOTIZEN",
     "field_notes_placeholder": "Notiere deinen Fortschritt...",
-    "finish_mission": "MISSION BEENDEN"
+    "finish_mission": "MISSION BEENDEN",
+    "open_settings": "EINSTELLUNGEN ÖFFNEN"
   },
   "penalty": {
     "system_label": "◈ SYSTEM ◈",

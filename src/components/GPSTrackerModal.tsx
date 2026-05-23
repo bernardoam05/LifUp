@@ -1,6 +1,6 @@
 // src/components/GPSTrackerModal.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Linking, AppState } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
@@ -74,8 +74,15 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
     return () => { clearInterval(interval); };
   }, [running]);
 
-  // NO AUTO-START: Timer will only start when user clicks the play button
-  // Persistent store sync happens via tracker state changes
+  // When returning from OS Settings after granting location permission, auto-retry tracking
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', state => {
+      if (state === 'active' && tracker.hasPermission === false) {
+        tracker.retryTracking();
+      }
+    });
+    return () => sub.remove();
+  }, [tracker.hasPermission, tracker.retryTracking]);
 
   function togglePause() {
     if (running) {
@@ -130,7 +137,19 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
           </View>
 
           {tracker.error ? (
-            <Text style={gm.error}>{tracker.error}</Text>
+            <View style={{ alignItems: 'center', marginBottom: SPACING.md }}>
+              <Text style={gm.error}>{tracker.error}</Text>
+              {tracker.hasPermission === false && (
+                <TouchableOpacity
+                  style={{ marginTop: SPACING.sm, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.green + '66', borderRadius: 4, paddingHorizontal: 12, paddingVertical: 8 }}
+                  onPress={() => Linking.openSettings()}
+                  activeOpacity={0.75}
+                >
+                  <Icon name="cog-outline" size={13} color={C.green} />
+                  <Text style={{ color: C.green, fontFamily: FONT.orbitron, fontSize: 9, marginLeft: 6, letterSpacing: 1 }}>{t('gps_tracker.open_settings')}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           ) : (
             <>
               <Text style={gm.dist}>

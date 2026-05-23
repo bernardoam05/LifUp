@@ -145,5 +145,10 @@ export function useLocationTracker(targetKm: number, onComplete: () => void) {
     setState(p => ({ ...p, distKm: 0, pct: 0, cheating: false, error: null }));
   }, [stopTracking]);
 
-  return { ...state, startTracking, stopTracking, reset };
+  const retryTracking = useCallback(() => {
+    reset();
+    startTracking();
+  }, [reset, startTracking]);
+
+  return { ...state, startTracking, stopTracking, reset, retryTracking };
 }

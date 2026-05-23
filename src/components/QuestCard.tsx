@@ -190,7 +190,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
         style={[
           qc.card,
           isWarningQuest && qc.cardWarning,
-          quest.done && qc.cardSuccess,
+          quest.done && !quest.failed && qc.cardSuccess,
           quest.done && qc.cardDone,
           isTimerActive && qc.cardActive,
           { transform: [{ scale: pressScale }] },
@@ -321,7 +321,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
               }}>
                 <Icon name="minus-box-outline" size={20} color={C.dimmed} />
               </TouchableOpacity>
-              <Text style={qc.limitValue}>{(quest.currentValue ?? 0).toString()}</Text>
+              <Text style={qc.limitValue}>{Math.max(0, quest.currentValue ?? 0).toString()}</Text>
               <TouchableOpacity onPress={() => {
                 if (limitDebounceRef.current) { return; }
                 updateQuestValue(quest.id, (quest.currentValue ?? 0) + 10);

@@ -192,6 +192,7 @@
     "item_used": "Gegenstand verwendet!",
     "purchase_confirm": "{{name}} kaufen für {{cost}} Gold?",
     "insufficient_gold": "Nicht genug Gold.",
-    "weekly_limit": "Wöchentliches Limit erreicht."
+    "weekly_limit": "Wöchentliches Limit erreicht.",
+    "restocks_next_week": "nächste Woche wieder verfügbar"
   }
 }

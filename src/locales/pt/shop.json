@@ -184,6 +184,7 @@
     "feedback_generic_used": "Item utilizado com sucesso!",
     "feedback_quest_done": "Missão completada pelo Sistema!",
     "stat_xp": "XP",
-    "stat_gold": "Gold"
+    "stat_gold": "Gold",
+    "restocks_next_week": "volta na próxima semana"
   }
 }
