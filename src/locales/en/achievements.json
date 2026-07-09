@@ -2,7 +2,7 @@
   "items": {
     "streak_chain": {
       "title": "Hunter's Flame",
-      "description": "Maintain your daily quest streak. The Monarch's flame must never go out."
+      "description": "Maintain your daily quest streak. The Sovereign's flame must never go out."
     },
     "streak_phoenix": {
       "title": "Phoenix from the Ashes",
@@ -14,11 +14,11 @@
     },
     "focus_hours": {
       "title": "Mental Fortress",
-      "description": "Accumulate hours in Focus Mode. The Monarch's mind knows no limits."
+      "description": "Accumulate hours in Focus Mode. The Sovereign's mind knows no limits."
     },
     "focus_sessions": {
       "title": "Iron Discipline",
-      "description": "Complete Focus Mode sessions. The Monarch trains the mind without stopping."
+      "description": "Complete Focus Mode sessions. The Sovereign trains the mind without stopping."
     },
     "focus_night_owl": {
       "title": "Night Owl",
@@ -38,7 +38,7 @@
     },
     "boss_slayer": {
       "title": "Dungeon Terror",
-      "description": "Defeat Boss Raids. The legend of the Shadow Monarch spreads across the realm."
+      "description": "Defeat Boss Raids. The legend of the Shadow Sovereign spreads across the realm."
     },
     "boss_runner": {
       "title": "The Venom Can't Catch Me",
@@ -62,7 +62,7 @@
     },
     "boss_archlich_prime": {
       "title": "Archlich's Crown",
-      "description": "Complete the Boss \"Primordial Archlich (S-Rank)\". The ancient ritual now obeys the Monarch."
+      "description": "Complete the Boss \"Primordial Archlich (S-Rank)\". The ancient ritual now obeys the Sovereign."
     },
     "boss_soul_reaper": {
       "title": "Void Reaper",
@@ -74,11 +74,11 @@
     },
     "dungeon_break_hunter": {
       "title": "Portal Defender",
-      "description": "Stop Dungeon Breaks. Chaos has no place where the Monarch treads."
+      "description": "Stop Dungeon Breaks. Chaos has no place where the Sovereign treads."
     },
     "event_halloween_reaper": {
       "title": "Autumn Reaper",
-      "description": "Defeat the Halloween event Boss. The mist parts for the Monarch."
+      "description": "Defeat the Halloween event Boss. The mist parts for the Sovereign."
     },
     "event_winter_lich": {
       "title": "Solstice Crown",
@@ -114,7 +114,7 @@
     },
     "event_harvest_king": {
       "title": "King of the Harvest",
-      "description": "Defeat the Harvest Boss. Abundance belongs to the Monarch."
+      "description": "Defeat the Harvest Boss. Abundance belongs to the Sovereign."
     },
     "event_black_friday_merchant": {
       "title": "Shadow Merchant",
@@ -134,15 +134,15 @@
     },
     "level_chain": {
       "title": "Hunter's Ascension",
-      "description": "Increase your level. The Shadow Monarch's power knows no ceiling."
+      "description": "Increase your level. The Shadow Sovereign's power knows no ceiling."
     },
     "secret_monarch": {
-      "title": "Shadow Monarch",
-      "description": "Reach Level 20. The title of Shadow Monarch is officially granted by the System."
+      "title": "Shadow Sovereign",
+      "description": "Reach Level 20. The title of Shadow Sovereign is officially granted by the System."
     },
     "shadow_army": {
       "title": "Shadow Army",
-      "description": "Collect shadows for your army. The Monarch commands them all."
+      "description": "Collect shadows for your army. The Sovereign commands them all."
     },
     "shadow_elite": {
       "title": "Shadow Vanguard",
@@ -154,7 +154,7 @@
     },
     "quests_total": {
       "title": "Unstoppable Warrior",
-      "description": "Complete daily quests in total. Each quest forges the Monarch."
+      "description": "Complete daily quests in total. Each quest forges the Sovereign."
     },
     "quests_perfect_week": {
       "title": "Perfect Week",
@@ -166,14 +166,14 @@
     },
     "extra_quest_chain": {
       "title": "Field Agent",
-      "description": "Complete Extra Quests in total. The Monarch is not limited by the System."
+      "description": "Complete Extra Quests in total. The Sovereign is not limited by the System."
     },
     "extra_quest_daily_all": {
       "title": "The Hunter's Agenda",
       "description": "Complete ALL available Extra Quests in a single day."
     },
     "login_chain": {
-      "title": "Monarch's Presence",
+      "title": "Sovereign's Presence",
       "description": "Open the app daily. The System records your consistency over time."
     },
     "economy_first_purchase": {

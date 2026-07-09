@@ -37,7 +37,8 @@
       "boss_drop": "CAÍDA DE BOSS",
       "shop": "COMPRA EN TIENDA",
       "daily": "EXTRACCIÓN DIARIA"
-    }
+    },
+    "summon_word": "DESPIERTA"
   },
   "level_up": {
     "system_label": "◈ SISTEMA ◈",
@@ -123,5 +124,21 @@
   "modal": {
     "confirm": "CONFIRMAR",
     "cancel": "CANCELAR"
+  },
+  "app": {
+    "penalty_banner": "ZONA DE PENALIZACIÓN ACTIVA — ¡Completa las misiones de penalización!",
+    "shadow_miss": {
+      "title": "¡LA SOMBRA HUYÓ!",
+      "drop_chance": "Probabilidad de drop: {{pct}}%",
+      "lore": "\"La oscuridad retrocede... pero la sombra espera su próxima oportunidad.\"",
+      "btn": "ENTENDIDO"
+    }
+  },
+  "tabs": {
+    "missions": "Misiones",
+    "status": "Estado",
+    "shop": "Tienda",
+    "inventory": "Inventario",
+    "focus": "Focus"
   }
 }

@@ -77,3 +77,21 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+# Web / PWA
+
+A app também compila para a web como PWA (react-native-web + webpack). Módulos nativos (notifee, ads, GPS, som, clipboard, localize) têm shims web em `web/shims/`; o bloqueio de apps (FocusBlocker) não existe na web e degrada graciosamente.
+
+```bash
+# dev server (http://localhost:8080)
+npm run web
+
+# build de produção → dist/
+npm run build:web
+```
+
+## Deploy (GitHub Pages)
+
+Ativa Pages com source "GitHub Actions" nas settings do repo; o workflow `.github/workflows/deploy-pages.yml` faz build e deploy a cada push no `main`. O build usa paths relativos, por isso funciona em sub-path (`/repo/`).
+
+PWA: `web/manifest.webmanifest` (ícones em `web/icons/`, gerados de `logo-512.png`) + `web/service-worker.js` (shell offline + cache stale-while-revalidate). Para invalidar caches num deploy, incrementa `CACHE_VERSION` no service worker.

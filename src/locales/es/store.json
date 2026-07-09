@@ -41,7 +41,7 @@
     "rank_c_label": "Maestro de la Voluntad",
     "rank_b_label": "Caballero de las Sombras",
     "rank_a_label": "Comandante",
-    "rank_s_label": "Monarca",
+    "rank_s_label": "Soberano",
     "rank_national_label": "Cazador de Nivel Nacional"
   },
   "notifications": {
@@ -58,5 +58,13 @@
     "side_quest_reminder_body": "La misión \"{{title}}\" sigue esperando ser completada.",
     "system_warning_final_body": "Aviso Final: Completa las misiones diarias antes de la reactivación del Sistema a medianoche.",
     "system_warning_title": "Aviso del Sistema"
+  },
+  "reroll": {
+    "invalid": "Misión inválida.",
+    "none_available": "No hay misiones disponibles.",
+    "weekly_limit": "Límite semanal alcanzado (7/7).",
+    "already_today": "Ya sustituida hoy.",
+    "pool_empty": "Pool vacía.",
+    "limit_reached": "Límite alcanzado."
   }
 }

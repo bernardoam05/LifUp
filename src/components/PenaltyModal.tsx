@@ -8,7 +8,7 @@ import { useTheme, FONT, SPACING } from '../theme';
 
 const getStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.88)', justifyContent: 'center', alignItems: 'center' },
-  card: { width: '88%', backgroundColor: C.surface.elevated, borderWidth: 1.5, borderRadius: 12, padding: SPACING.xl, alignItems: 'center' },
+  card: { width: '88%', backgroundColor: C.surface.elevated, borderWidth: 1.5, borderRadius: 10, padding: SPACING.xl, alignItems: 'center' },
   topBar: { flexDirection: 'row', alignItems: 'center', width: '100%', gap: SPACING.sm, marginBottom: SPACING.lg },
   topLine: { flex: 1, height: 1 },
   topLabel: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 3 },

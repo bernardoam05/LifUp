@@ -121,7 +121,7 @@
       "description": "150 reps de exercício de força. Prova a tua resiliência."
     },
     "king_of_the_dead": {
-      "name": "Monarca dos Mortos-Vivos",
+      "name": "Soberano dos Mortos-Vivos",
       "description": "120 min de foco absoluto. O silêncio do túmulo é o teu aliado."
     },
     "boss_training": {
@@ -169,7 +169,7 @@
       "description": "Realiza {target} min de alongamentos dinâmicos contínuos (balanços de pernas, rotações de ombros, hip circles) sem pausas superiores a 30s. Modo Foco ativo."
     },
     "boss_poison_monarch": {
-      "name": "Monarca do Veneno Quimera (S-Rank)",
+      "name": "Soberano do Veneno Quimera (S-Rank)",
       "description": "O veneno está no corpo. {target} burpees para suar e queimar o veneno de uma vez."
     },
     "boss_goliath": {
@@ -390,7 +390,7 @@
     "pool_empty": "Pool vazia. O Sistema não gerará hábitos rotativos.",
     "boss_section_title": "BOSS — DESAFIOS ÉPICOS",
     "boss_section_sub": "Missões de alto risco. Ativadas manualmente pela Forja.",
-    "boss_empty": "Nenhum Boss criado. O Sistema aguarda um Monarca corajoso.",
+    "boss_empty": "Nenhum Boss criado. O Sistema aguarda um Soberano corajoso.",
     "create_directive": "CRIAR NOVA DIRETIVA",
     "restore_defaults_title": "RESTAURAR PADRÕES",
     "restore_defaults_message": "Repõe o dicionário original do Sistema.\n\nToda a personalização será perdida permanentemente.",

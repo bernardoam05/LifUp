@@ -2,7 +2,7 @@
   "items": {
     "streak_chain": {
       "title": "Flamme du Chasseur",
-      "description": "Maintiens ton streak de quêtes quotidiennes. La flamme du Monarque ne doit jamais s'éteindre."
+      "description": "Maintiens ton streak de quêtes quotidiennes. La flamme du Souverain ne doit jamais s'éteindre."
     },
     "streak_phoenix": {
       "title": "Phénix des Cendres",
@@ -14,11 +14,11 @@
     },
     "focus_hours": {
       "title": "Forteresse Mentale",
-      "description": "Accumule des heures en Focus Mode. L'esprit du Monarque ne connaît aucune limite."
+      "description": "Accumule des heures en Focus Mode. L'esprit du Souverain ne connaît aucune limite."
     },
     "focus_sessions": {
       "title": "Discipline de Fer",
-      "description": "Complète des sessions de Focus Mode. Le Monarque entraîne l'esprit sans cesse."
+      "description": "Complète des sessions de Focus Mode. Le Souverain entraîne l'esprit sans cesse."
     },
     "focus_night_owl": {
       "title": "Hibou de la Nuit",
@@ -38,7 +38,7 @@
     },
     "boss_slayer": {
       "title": "Terreur des Donjons",
-      "description": "Défais des Boss Raids. La légende du Monarque des Ombres se répand dans tout le royaume."
+      "description": "Défais des Boss Raids. La légende du Souverain des Ombres se répand dans tout le royaume."
     },
     "boss_runner": {
       "title": "Le Venin Ne M'Atteint Pas",
@@ -62,7 +62,7 @@
     },
     "boss_archlich_prime": {
       "title": "Couronne de l'Archi-Liche",
-      "description": "Complète le Boss \"Archi-Liche Primordiale (S-Rank)\". Le rituel antique obéit maintenant au Monarque."
+      "description": "Complète le Boss \"Archi-Liche Primordiale (S-Rank)\". Le rituel antique obéit maintenant au Souverain."
     },
     "boss_soul_reaper": {
       "title": "Faucheur du Vide",
@@ -74,11 +74,11 @@
     },
     "dungeon_break_hunter": {
       "title": "Défenseur des Portails",
-      "description": "Empêche les Dungeon Breaks. Le chaos n'a pas sa place là où le Monarque pose le pied."
+      "description": "Empêche les Dungeon Breaks. Le chaos n'a pas sa place là où le Souverain pose le pied."
     },
     "event_halloween_reaper": {
       "title": "Faucheur d'Automne",
-      "description": "Défais le Boss d'événement d'Halloween. La brume s'ouvre pour le Monarque."
+      "description": "Défais le Boss d'événement d'Halloween. La brume s'ouvre pour le Souverain."
     },
     "event_winter_lich": {
       "title": "Couronne du Solstice",
@@ -114,7 +114,7 @@
     },
     "event_harvest_king": {
       "title": "Roi de la Récolte",
-      "description": "Défais le Boss de la Récolte. L'abondance appartient au Monarque."
+      "description": "Défais le Boss de la Récolte. L'abondance appartient au Souverain."
     },
     "event_black_friday_merchant": {
       "title": "Marchand de l'Ombre",
@@ -134,15 +134,15 @@
     },
     "level_chain": {
       "title": "Ascension du Chasseur",
-      "description": "Augmente ton niveau. Le pouvoir du Monarque des Ombres ne connaît pas de plafond."
+      "description": "Augmente ton niveau. Le pouvoir du Souverain des Ombres ne connaît pas de plafond."
     },
     "secret_monarch": {
-      "title": "Monarque des Ombres",
-      "description": "Atteins le Niveau 20. Le titre de Monarque des Ombres est officiellement accordé par le System."
+      "title": "Souverain des Ombres",
+      "description": "Atteins le Niveau 20. Le titre de Souverain des Ombres est officiellement accordé par le System."
     },
     "shadow_army": {
       "title": "Armée des Ombres",
-      "description": "Collecte des ombres pour ton armée. Le Monarque commande tout le monde."
+      "description": "Collecte des ombres pour ton armée. Le Souverain commande tout le monde."
     },
     "shadow_elite": {
       "title": "Avant-garde des Ombres",
@@ -154,7 +154,7 @@
     },
     "quests_total": {
       "title": "Guerrier Inarrêtable",
-      "description": "Complète des quêtes quotidiennes en cumulé. Chaque quête forge le Monarque."
+      "description": "Complète des quêtes quotidiennes en cumulé. Chaque quête forge le Souverain."
     },
     "quests_perfect_week": {
       "title": "Semaine Parfaite",
@@ -166,14 +166,14 @@
     },
     "extra_quest_chain": {
       "title": "Agent de Terrain",
-      "description": "Complète des Quêtes Extra en cumulé. Le Monarque ne se limite pas au System."
+      "description": "Complète des Quêtes Extra en cumulé. Le Souverain ne se limite pas au System."
     },
     "extra_quest_daily_all": {
       "title": "L'Agenda du Chasseur",
       "description": "Complète TOUTES les Quêtes Extra disponibles en un seul jour."
     },
     "login_chain": {
-      "title": "Présence du Monarque",
+      "title": "Présence du Souverain",
       "description": "Ouvre l'appli quotidiennement. Le System enregistre ta constance au fil du temps."
     },
     "economy_first_purchase": {

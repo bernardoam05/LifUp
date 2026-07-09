@@ -70,7 +70,7 @@ export default function SideQuestSection({ C }: SideQuestSectionProps) {
               placeholder={t('ui.side_tasks_placeholder')}
               placeholderTextColor={C.dimmed}
               value={input}
-              onChangeText={t => setInput(t.slice(0, 100))}
+              onChangeText={v => setInput(v.slice(0, 100))}
               onSubmitEditing={handleAdd}
               returnKeyType="done"
               maxLength={100}

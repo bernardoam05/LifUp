@@ -41,7 +41,7 @@
     "rank_c_label": "Meister des Willens",
     "rank_b_label": "Schattenritter",
     "rank_a_label": "Kommandant",
-    "rank_s_label": "Monarch",
+    "rank_s_label": "Souverän",
     "rank_national_label": "Jäger auf Nationalem Niveau"
   },
   "notifications": {
@@ -58,5 +58,13 @@
     "side_quest_reminder_body": "Mission \"{{title}}\" wartet noch auf Abschluss.",
     "system_warning_final_body": "Letzte Warnung: Schließe die täglichen Missionen vor der Systemreaktivierung um Mitternacht ab.",
     "system_warning_title": "Systemwarnung"
+  },
+  "reroll": {
+    "invalid": "Ungültige Mission.",
+    "none_available": "Keine Missionen verfügbar.",
+    "weekly_limit": "Wochenlimit erreicht (7/7).",
+    "already_today": "Heute bereits ersetzt.",
+    "pool_empty": "Pool ist leer.",
+    "limit_reached": "Limit erreicht."
   }
 }

@@ -72,7 +72,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
   // ── RANK S ────────────────────────────────────────────────────────────────
   {
     id: 'infernal_monarch',
-    name: 'Monarca Infernal',
+    name: 'Soberano Infernal',
     rank: 'S',
     baseHp: 18000,
     durationDays: 5,
@@ -298,7 +298,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
   },
   {
     id: 'monarch_of_beginnings',
-    name: 'Monarca dos Primórdios',
+    name: 'Soberano dos Primórdios',
     rank: 'National', baseHp: 500000, durationDays: 30, icon: 'infinity', color: '#000000',
   },
   // ── NEW KEY-GATED BOSSES (BATCH 2) ─────────────────────────────────────────
@@ -450,7 +450,7 @@ export const RAID_BOSSES: RaidBossDef[] = [
   },
   {
     id: 'break_boss_monarch_shadow_clone_sim',
-    name: 'Clone Sombrio do Monarca (Simulação)',
+    name: 'Clone Sombrio do Soberano (Simulação)',
     rank: 'National', baseHp: 300000, durationDays: 20, icon: 'account-question', color: '#000000',
   },
 ];
@@ -506,7 +506,7 @@ export const getDailyBossMissions = (C: any, now: Date = new Date()): DungeonMis
     ],
     National: [
       `${duration} min de foco de Nível Nacional. ${boss.name} representa a mais alta ameaça — o teu melhor é o mínimo aceite.`,
-      `Imersão de ${duration} min: define o objetivo, elimina tudo o resto. O Monarca não perdoa distrações.`,
+      `Imersão de ${duration} min: define o objetivo, elimina tudo o resto. O Soberano não perdoa distrações.`,
       `${duration} min de deep work de elite. ${boss.name} aguarda — apenas uma mente inabalável fecha este portal.`,
     ],
   };

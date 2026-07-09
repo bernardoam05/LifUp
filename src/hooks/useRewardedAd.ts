@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { Platform } from 'react-native';
 import { RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
+
+/** Rewarded ads only exist in the native mobile builds — on web the buttons
+ *  would sit disabled forever, so callers hide ad UI when this is false. */
+export const adsAvailable = Platform.OS === 'android' || Platform.OS === 'ios';
 
 export const AD_UNIT_GOLD     = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-9715313780417793/1817448502';
 export const AD_UNIT_REROLL   = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-9715313780417793/7229345259';

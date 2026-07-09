@@ -41,7 +41,7 @@
     "rank_c_label": "Maître de la Volonté",
     "rank_b_label": "Chevalier des Ombres",
     "rank_a_label": "Commandant",
-    "rank_s_label": "Monarque",
+    "rank_s_label": "Souverain",
     "rank_national_label": "Chasseur de Niveau National"
   },
   "notifications": {
@@ -58,5 +58,13 @@
     "side_quest_reminder_body": "La mission \"{{title}}\" attend toujours d'être terminée.",
     "system_warning_final_body": "Avertissement Final : Termine les missions quotidiennes avant la réactivation du Système à minuit.",
     "system_warning_title": "Avertissement du Système"
+  },
+  "reroll": {
+    "invalid": "Mission invalide.",
+    "none_available": "Aucune mission disponible.",
+    "weekly_limit": "Limite hebdomadaire atteinte (7/7).",
+    "already_today": "Déjà remplacée aujourd'hui.",
+    "pool_empty": "Pool vide.",
+    "limit_reached": "Limite atteinte."
   }
 }

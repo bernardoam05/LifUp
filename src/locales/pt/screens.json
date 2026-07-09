@@ -90,7 +90,7 @@
     "break_modal_title": "QUEBRAR JURAMENTO",
     "break_modal_message": "Tens a certeza que queres quebrar o teu juramento de Caçador?\n\nO Hardcore Mode será desativado.\n\nO Sistema lembra tudo.",
     "break_modal_confirm": "QUEBRAR JURAMENTO",
-    "overlay_title": "OLHO DO MONARCA",
+    "overlay_title": "OLHO DO SISTEMA",
     "overlay_save": "GUARDAR",
     "overlay_search_placeholder": "Pesquisar app...",
     "overlay_scanning": "A varrer o território...",
@@ -100,7 +100,12 @@
     "overlay_empty": "Nenhuma app encontrada.",
     "overlay_force_scan": "FORÇAR VARRAGEM DE TERRITÓRIO",
     "overlay_custom_label": "personalizado",
-    "overlay_add_btn": "ADICIONAR"
+    "overlay_add_btn": "ADICIONAR",
+    "warn_no_native_web": "Bloqueio de apps disponível apenas na app Android.",
+    "ambient_lofi": "Lofi",
+    "ambient_rain": "Chuva",
+    "ambient_fire": "Fogueira",
+    "perm_fix": "FIX"
   },
   "status": {
     "title": "STATUS WINDOW",
@@ -147,7 +152,8 @@
     "job_change_title": "[ CLASSE ALTERADA ]",
     "job_change_new_title": "NOVO TÍTULO CONQUISTADO",
     "job_change_system_msg": "O Sistema reconhece a tua evolução.\nA tua lenda começa a ganhar forma.",
-    "job_change_accept": "[ ACEITAR PODER ]"
+    "job_change_accept": "[ ACEITAR PODER ]",
+    "stats_ops_empty": "Sem operações registadas ainda. Completa missões para veres o detalhe por rank."
   },
   "inventory": {
     "title": "INVENTÁRIO",
@@ -181,6 +187,18 @@
     "fb_buff_active": "Buff ativo: +{{pct}}% {{stat}} por {{time}}!",
     "fb_consumed": "Consumível ativado!",
     "fb_item_used": "Item utilizado com sucesso!",
-    "fb_quest_done": "Missão completada pelo Sistema!"
+    "fb_quest_done": "Missão completada pelo Sistema!",
+    "fb_gold_suffix": " e +{{gold}} Gold",
+    "empty_cta": "IR À LOJA"
+  },
+  "gps_tracker_hook": {
+    "perm_title": "Permissão de Localização",
+    "perm_message": "A missão de corrida precisa da tua localização em tempo real.",
+    "perm_positive": "PERMITIR",
+    "perm_negative": "CANCELAR",
+    "err_denied": "Permissão GPS negada.",
+    "err_denied_short": "Permissão negada.",
+    "err_unavailable": "Posição indisponível. Estás em interior?",
+    "err_timeout": "GPS timeout. Tenta em espaço aberto."
   }
 }

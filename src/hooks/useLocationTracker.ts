@@ -6,7 +6,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import i18n from '../i18n';
 import { processGPSPoint, GPSPoint } from '../utils/gps';
+
+const tGps = (key: string) => i18n.t(`gps_tracker_hook.${key}`, { ns: 'screens' });
 
 export type TrackerState = {
   distKm:     number
@@ -43,10 +46,10 @@ export function useLocationTracker(targetKm: number, onComplete: () => void) {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title:         'Permissão de Localização',
-        message:       'A missão de corrida precisa da tua localização em tempo real.',
-        buttonPositive: 'PERMITIR',
-        buttonNegative: 'CANCELAR',
+        title:         tGps('perm_title'),
+        message:       tGps('perm_message'),
+        buttonPositive: tGps('perm_positive'),
+        buttonNegative: tGps('perm_negative'),
       }
     );
     const ok = granted === PermissionsAndroid.RESULTS.GRANTED;
@@ -54,8 +57,12 @@ export function useLocationTracker(targetKm: number, onComplete: () => void) {
     return ok;
   }, []);
 
-  // Check permission on mount (non-blocking)
+  // Check permission on mount (non-blocking). PermissionsAndroid only exists on Android.
   useEffect(() => {
+    if (Platform.OS !== 'android') {
+      setState(p => ({ ...p, hasPermission: true }));
+      return;
+    }
     PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
       .then(ok => setState(p => ({ ...p, hasPermission: ok })));
   }, []);
@@ -66,7 +73,7 @@ export function useLocationTracker(targetKm: number, onComplete: () => void) {
     if (watchId.current !== null) {return;}
     const ok = await requestPermission();
     if (!ok) {
-      setState(p => ({ ...p, error: 'Permissão GPS negada.' }));
+      setState(p => ({ ...p, error: tGps('err_denied') }));
       return;
     }
 
@@ -105,9 +112,9 @@ export function useLocationTracker(targetKm: number, onComplete: () => void) {
       },
       err => {
         const messages: Record<number, string> = {
-          1: 'Permissão negada.',
-          2: 'Posição indisponível. Estás em interior?',
-          3: 'GPS timeout. Tenta em espaço aberto.',
+          1: tGps('err_denied_short'),
+          2: tGps('err_unavailable'),
+          3: tGps('err_timeout'),
         };
         setState(p => ({ ...p, error: messages[err.code] ?? err.message, isTracking: false }));
       },

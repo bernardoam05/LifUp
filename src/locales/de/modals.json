@@ -27,7 +27,7 @@
       "C": "Willensmeister",
       "B": "Schattenritter",
       "A": "Kommandant",
-      "S": "Monarch",
+      "S": "Souverän",
       "National": "Nationaler Jäger"
     },
     "labels": {
@@ -36,7 +36,7 @@
       "C": "Meister des Willens",
       "B": "Schattenritter",
       "A": "Kommandant",
-      "S": "Monarch",
+      "S": "Souverän",
       "National": "Nationaler Jäger"
     }
   },
@@ -81,7 +81,10 @@
     "field_notes_label": "FELDNOTIZEN",
     "field_notes_placeholder": "Notiere deinen Fortschritt...",
     "finish_mission": "MISSION BEENDEN",
-    "open_settings": "EINSTELLUNGEN ÖFFNEN"
+    "open_settings": "EINSTELLUNGEN ÖFFNEN",
+    "confirm_early_title": "VOR DEM ZIEL BEENDEN?",
+    "confirm_early_message": "Du hast erst {{dist}} km von {{target}} km zurückgelegt.\nMission wirklich beenden?",
+    "confirm_early_btn": "BEENDEN"
   },
   "penalty": {
     "system_label": "◈ SYSTEM ◈",

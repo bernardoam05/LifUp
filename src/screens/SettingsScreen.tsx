@@ -73,6 +73,8 @@ export default function SettingsScreen({ onClose }: { onClose: () => void }) {
         extraQuestUsedPoolIds: state.extraQuestUsedPoolIds,
         lastResetDate: state.lastResetDate,
         activeMissionTimers: state.activeMissionTimers,
+        settings: state.settings,
+        calendarState: state.calendarState,
       };
       const json = JSON.stringify(payload);
       const b64 = btoa(json);
@@ -373,7 +375,7 @@ const getStyles = (C: any) => StyleSheet.create({
   group: {
     borderWidth: 1,
     borderColor: C.border + '55',
-    borderRadius: 14,
+    borderRadius: 10,
     overflow: 'hidden',
     backgroundColor: C.panel + '22',
   },

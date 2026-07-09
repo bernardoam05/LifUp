@@ -132,7 +132,7 @@ export const LEVEL_GATED_KEYS: DungeonKey[] = [
   {
     id: 'key_void_monarch',
     bossId: 'void_monarch',
-    name: 'Essência do Monarca Sombrio',
+    name: 'Essência do Soberano Sombrio',
     description: 'A prova final. O Soberano do Vazio testa o teu valor.',
     unlockLevel: 100,
     color: '#000000',

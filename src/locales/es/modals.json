@@ -27,7 +27,7 @@
       "C": "Maestro de la Voluntad",
       "B": "Caballero de las Sombras",
       "A": "Comandante",
-      "S": "Monarca",
+      "S": "Soberano",
       "National": "Cazador de Nivel Nacional"
     },
     "labels": {
@@ -36,7 +36,7 @@
       "C": "Maestro de la Voluntad",
       "B": "Caballero de las Sombras",
       "A": "Comandante",
-      "S": "Monarca",
+      "S": "Soberano",
       "National": "Cazador de Nivel Nacional"
     }
   },
@@ -81,7 +81,10 @@
     "field_notes_label": "NOTAS DE CAMPO",
     "field_notes_placeholder": "Registra tu progreso...",
     "finish_mission": "TERMINAR MISIÓN",
-    "open_settings": "ABRIR AJUSTES"
+    "open_settings": "ABRIR AJUSTES",
+    "confirm_early_title": "¿TERMINAR SIN OBJETIVO?",
+    "confirm_early_message": "Solo has recorrido {{dist}} km de {{target}} km.\n¿Seguro que quieres terminar la misión?",
+    "confirm_early_btn": "TERMINAR"
   },
   "penalty": {
     "system_label": "◈ SISTEMA ◈",

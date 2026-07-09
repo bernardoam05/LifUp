@@ -41,7 +41,7 @@
       "lore": "\"¿Qué hay dentro? Solo el Sistema decide.\""
     },
     "theme_monarch": {
-      "name": "Tema: Monarca de las Sombras",
+      "name": "Tema: Soberano de las Sombras",
       "description": "Una UI negra y púrpura profunda que refleja el poder absoluto.",
       "lore": "\"Álzate con la corona que gobierna a los muertos.\""
     },
@@ -93,7 +93,7 @@
     "cerberus_fang": {
       "name": "Colmillo de Cerbero",
       "description": "Diente del guardián del abismo. Activa buff: +20% Gold en todas las misiones durante 2 horas.",
-      "lore": "\"Tres cabezas, un destino: servir al Monarca.\""
+      "lore": "\"Tres cabezas, un destino: servir al Soberano.\""
     },
     "iron_will_crystal": {
       "name": "Cristal Voluntad de Hierro",
@@ -185,6 +185,7 @@
     "feedback_quest_done": "¡Misión completada por el Sistema!",
     "stat_xp": "XP",
     "stat_gold": "Gold",
-    "restocks_next_week": "repone la próxima semana"
+    "restocks_next_week": "repone la próxima semana",
+    "owned": "ADQUIRIDO"
   }
 }

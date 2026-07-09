@@ -105,7 +105,7 @@ const getStyles = (C: any) => StyleSheet.create({
   card: {
     width: '100%',
     backgroundColor: C.panel,
-    borderRadius: 4,
+    borderRadius: 10,
     borderWidth: 1,
     padding: SPACING.lg,
     alignItems: 'center',

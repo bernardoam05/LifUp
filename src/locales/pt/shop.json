@@ -41,7 +41,7 @@
       "lore": "\"O que está lá dentro? Apenas o Sistema decide.\""
     },
     "theme_monarch": {
-      "name": "Tema: Monarca das Sombras",
+      "name": "Tema: Soberano das Sombras",
       "description": "Um visual UI negro e roxo profundo que reflete o poder absoluto.",
       "lore": "\"Ergue-te com a coroa que governa os mortos.\""
     },
@@ -93,7 +93,7 @@
     "cerberus_fang": {
       "name": "Presa de Cerberus",
       "description": "Dente do guardião do abismo. Ativa buff: +20% Gold em todas as missões durante 2 horas.",
-      "lore": "\"Três cabeças, um destino: servir o Monarca.\""
+      "lore": "\"Três cabeças, um destino: servir o Soberano.\""
     },
     "iron_will_crystal": {
       "name": "Cristal Vontade de Ferro",
@@ -185,6 +185,7 @@
     "feedback_quest_done": "Missão completada pelo Sistema!",
     "stat_xp": "XP",
     "stat_gold": "Gold",
-    "restocks_next_week": "volta na próxima semana"
+    "restocks_next_week": "volta na próxima semana",
+    "owned": "ADQUIRIDO"
   }
 }

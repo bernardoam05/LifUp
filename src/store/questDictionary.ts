@@ -265,7 +265,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
     dynamicScaling: true,
   },
   {
-    id: 'king_of_the_dead', title: 'Monarca dos Mortos-Vivos',
+    id: 'king_of_the_dead', title: 'Soberano dos Mortos-Vivos',
     description: '120 min de foco absoluto. O silêncio do túmulo é o teu aliado.',
     type: 'boss', questType: 'focus',
     baseTarget: 120, scalingAmount: 0, scalingInterval: 1, unit: 'min',
@@ -351,7 +351,7 @@ export const INITIAL_QUEST_DICTIONARY: QuestDefinition[] = [
     baseXP: 680, baseGold: 210,
   },
   {
-    id: 'boss_poison_monarch', title: 'Monarca do Veneno Quimera (S-Rank)',
+    id: 'boss_poison_monarch', title: 'Soberano do Veneno Quimera (S-Rank)',
     description: 'O veneno está no corpo. {target} burpees para suar e queimar o veneno de uma vez.',
     type: 'boss', questType: 'training',
     baseTarget: 80, scalingAmount: 0, scalingInterval: 1, unit: 'reps',

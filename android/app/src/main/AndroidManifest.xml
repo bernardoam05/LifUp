@@ -57,6 +57,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="lifup" />
                 <data android:scheme="sololeveling" />
             </intent-filter>
         </activity>
@@ -74,7 +75,7 @@
             android:exported="false">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Focus mode blocker for Solo Leveling productivity app" />
+                android:value="Focus mode blocker for the LifUp productivity app" />
         </service>
 
         <!-- Focus Blocker Accessibility Service — real-time foreground app detection -->

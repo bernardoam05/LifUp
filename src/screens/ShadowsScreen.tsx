@@ -351,7 +351,7 @@ function ShadowDetailModal({
             return (
               <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#22c55e18', borderWidth: 1, borderColor: '#22c55e44', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4, marginTop: 6, alignSelf: 'flex-start' }}>
                 <Icon name="shield-check" size={11} color="#22c55e" />
-                <Text style={{ color: '#22c55e', fontFamily: 'Orbitron-Regular', fontSize: 9, marginLeft: 4, letterSpacing: 1 }}>{t('ui.available')}</Text>
+                <Text style={{ color: '#22c55e', fontFamily: FONT.orbitron, fontSize: 9, marginLeft: 4, letterSpacing: 1 }}>{t('ui.available')}</Text>
               </View>
             );
           }
@@ -360,7 +360,7 @@ function ShadowDetailModal({
           return (
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#ef444418', borderWidth: 1, borderColor: '#ef444444', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4, marginTop: 6, alignSelf: 'flex-start' }}>
               <Icon name="timer-sand" size={11} color="#ef4444" />
-              <Text style={{ color: '#ef4444', fontFamily: 'Orbitron-Regular', fontSize: 9, marginLeft: 4, letterSpacing: 1 }}>
+              <Text style={{ color: '#ef4444', fontFamily: FONT.orbitron, fontSize: 9, marginLeft: 4, letterSpacing: 1 }}>
                 {t('ui.cooldown')} — {daysLeft} {daysLeft === 1 ? t('ui.day') : t('ui.days')}
               </Text>
             </View>
@@ -805,7 +805,7 @@ const getLKStyles = (C: any) => StyleSheet.create({
 });
 
 const getPSStyles = (C: any) => StyleSheet.create({
-  container:      { backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: C.gold + '44', padding: SPACING.md, marginBottom: SPACING.sm },
+  container:      { backgroundColor: C.panel, borderRadius: 10, borderWidth: 1, borderColor: C.gold + '44', padding: SPACING.md, marginBottom: SPACING.sm },
   emptyContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 8, borderWidth: 1, borderColor: C.border, padding: SPACING.sm, marginBottom: SPACING.md },
   emptyTxt:       { color: C.dimmed, fontSize: 11, fontStyle: 'italic' },
   header:         { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },

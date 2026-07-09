@@ -2,7 +2,7 @@
   "items": {
     "streak_chain": {
       "title": "Chama do Caçador",
-      "description": "Mantém o streak de missões diárias. A chama do Monarca não deve apagar-se."
+      "description": "Mantém o streak de missões diárias. A chama do Soberano não deve apagar-se."
     },
     "streak_phoenix": {
       "title": "Fénix das Cinzas",
@@ -14,11 +14,11 @@
     },
     "focus_hours": {
       "title": "Fortaleza Mental",
-      "description": "Acumula horas em modo de foco. A mente do Monarca não conhece limites."
+      "description": "Acumula horas em modo de foco. A mente do Soberano não conhece limites."
     },
     "focus_sessions": {
       "title": "Disciplina de Ferro",
-      "description": "Completa sessões de Focus Mode. O Monarca treina a mente sem parar."
+      "description": "Completa sessões de Focus Mode. O Soberano treina a mente sem parar."
     },
     "focus_night_owl": {
       "title": "Coruja da Noite",
@@ -38,7 +38,7 @@
     },
     "boss_slayer": {
       "title": "Terror das Masmorras",
-      "description": "Derrota Boss Raids. A lenda do Monarca das Sombras espalha-se por todo o reino."
+      "description": "Derrota Boss Raids. A lenda do Soberano das Sombras espalha-se por todo o reino."
     },
     "boss_runner": {
       "title": "O Veneno Não Me Alcança",
@@ -62,7 +62,7 @@
     },
     "boss_archlich_prime": {
       "title": "Coroa do Arquilich",
-      "description": "Completa o Boss \"Arquilich Primordial (S-Rank)\". O ritual antigo agora obedece ao Monarca."
+      "description": "Completa o Boss \"Arquilich Primordial (S-Rank)\". O ritual antigo agora obedece ao Soberano."
     },
     "boss_soul_reaper": {
       "title": "Ceifador do Vazio",
@@ -74,11 +74,11 @@
     },
     "dungeon_break_hunter": {
       "title": "Defensor de Portais",
-      "description": "Impede Dungeon Breaks. O caos não tem lugar onde o Monarca pisa."
+      "description": "Impede Dungeon Breaks. O caos não tem lugar onde o Soberano pisa."
     },
     "event_halloween_reaper": {
       "title": "Ceifador de Outono",
-      "description": "Derrota o Boss de evento do Halloween. A névoa abre caminho para o Monarca."
+      "description": "Derrota o Boss de evento do Halloween. A névoa abre caminho para o Soberano."
     },
     "event_winter_lich": {
       "title": "Coroa do Solstício",
@@ -114,7 +114,7 @@
     },
     "event_harvest_king": {
       "title": "Rei da Colheita",
-      "description": "Derrota o Boss da Colheita. A abundância pertence ao Monarca."
+      "description": "Derrota o Boss da Colheita. A abundância pertence ao Soberano."
     },
     "event_black_friday_merchant": {
       "title": "Mercador da Sombra",
@@ -134,15 +134,15 @@
     },
     "level_chain": {
       "title": "Ascensão do Caçador",
-      "description": "Aumenta o teu nível. O poder do Monarca das Sombras não conhece teto."
+      "description": "Aumenta o teu nível. O poder do Soberano das Sombras não conhece teto."
     },
     "secret_monarch": {
-      "title": "Monarca das Sombras",
-      "description": "Alcança o Nível 20. O título de Monarca das Sombras é oficialmente concedido pelo Sistema."
+      "title": "Soberano das Sombras",
+      "description": "Alcança o Nível 20. O título de Soberano das Sombras é oficialmente concedido pelo Sistema."
     },
     "shadow_army": {
       "title": "Exército das Sombras",
-      "description": "Recolhe sombras para o teu exército. O Monarca comanda a todos."
+      "description": "Recolhe sombras para o teu exército. O Soberano comanda a todos."
     },
     "shadow_elite": {
       "title": "Vanguarda das Sombras",
@@ -154,7 +154,7 @@
     },
     "quests_total": {
       "title": "Guerreiro Imparável",
-      "description": "Completa missões diárias em acumulado. Cada missão forja o Monarca."
+      "description": "Completa missões diárias em acumulado. Cada missão forja o Soberano."
     },
     "quests_perfect_week": {
       "title": "Semana Perfeita",
@@ -166,14 +166,14 @@
     },
     "extra_quest_chain": {
       "title": "Agente de Campo",
-      "description": "Completa Missões Extra em acumulado. O Monarca não se limita ao Sistema."
+      "description": "Completa Missões Extra em acumulado. O Soberano não se limita ao Sistema."
     },
     "extra_quest_daily_all": {
       "title": "A Agenda do Caçador",
       "description": "Completa TODAS as Missões Extra disponíveis num único dia."
     },
     "login_chain": {
-      "title": "Presença do Monarca",
+      "title": "Presença do Soberano",
       "description": "Abre a app diariamente. O Sistema regista a tua constância ao longo do tempo."
     },
     "economy_first_purchase": {

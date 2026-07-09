@@ -114,7 +114,7 @@ export const SHOP_CATALOG: ShopItem[] = [
   },
   {
     id:          'theme_monarch',
-    name:        'Tema: Monarca das Sombras',
+    name:        'Tema: Soberano das Sombras',
     description: 'Um visual UI negro e roxo profundo que reflete o poder absoluto.',
     lore:        '"Ergue-te com a coroa que governa os mortos."',
     cost:        8000,
@@ -262,7 +262,7 @@ export const BOSS_DROP_ITEMS: ShopItem[] = [
     id:           'cerberus_fang',
     name:         'Presa de Cerberus',
     description:  'Dente do guardião do abismo. Ativa buff: +20% Gold em todas as missões durante 2 horas.',
-    lore:         '"Três cabeças, um destino: servir o Monarca."',
+    lore:         '"Três cabeças, um destino: servir o Soberano."',
     cost:         0,
     icon:         'tooth-outline',
     color:        '#b45309',

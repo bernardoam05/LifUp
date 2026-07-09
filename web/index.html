@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>LifUp</title>
+    <meta name="description" content="LifUp — transforma a tua vida num RPG. Missões diárias, XP, ranks e sombras." />
+    <meta name="theme-color" content="#12121A" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="LifUp" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+    <style>
+      @font-face {
+        font-family: 'MaterialCommunityIcons';
+        src: url('./fonts/MaterialCommunityIcons.ttf') format('truetype');
+        font-display: block;
+      }
+      @font-face {
+        font-family: 'Rajdhani-Regular';
+        src: url('./fonts/Rajdhani-Regular.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Rajdhani-Medium';
+        src: url('./fonts/Rajdhani-Medium.ttf') format('truetype');
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Rajdhani-Bold';
+        src: url('./fonts/Rajdhani-Bold.ttf') format('truetype');
+        font-display: swap;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #12121A;
+        overscroll-behavior-y: none;
+      }
+      #root {
+        display: flex;
+        height: 100%;
+      }
+      /* react-native-web root fills the viewport */
+      #root > div {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

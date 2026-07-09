@@ -38,7 +38,7 @@
     },
     "hard": {
       "label": "DIFFICILE",
-      "sublabel": "Protocole du Monarque Sombre",
+      "sublabel": "Protocole du Souverain Sombre",
       "desc0": "· 4 missions de base + 1 par 5 niveaux (max 8)",
       "desc1": "· Pour les chasseurs d'élite",
       "desc2": "· Récompenses et pénalités amplifiées"
@@ -75,7 +75,7 @@
     },
     "hardcore": {
       "label": "HARDCORE",
-      "sublabel": "Protocole du Monarque",
+      "sublabel": "Protocole du Souverain",
       "desc0": "· Perte de XP : 20% total",
       "desc1": "· 2–4 missions de pénalisation",
       "desc2": "· Série remise à zéro",
@@ -111,7 +111,7 @@
   },
   "theme": {
     "sectionTitle": "APPARENCE DU SYSTÈME",
-    "infoText": "Sélectionnez le thème visuel de votre Système de Monarque. De nouveaux thèmes sont débloqués en montant de Classe ou dans la Boutique."
+    "infoText": "Sélectionnez le thème visuel de votre Système de Souverain. De nouveaux thèmes sont débloqués en montant de Classe ou dans la Boutique."
   },
   "notifications": {
     "sectionTitle": "SYSTÈME",
@@ -122,7 +122,7 @@
   },
   "backup": {
     "sectionTitle": "BASE DE DONNÉES DU SYSTÈME",
-    "infoText": "Exportez ou restaurez votre parcours en tant que Monarque des Ombres en copiant un code inviolable.",
+    "infoText": "Exportez ou restaurez votre parcours en tant que Souverain des Ombres en copiant un code inviolable.",
     "exportBtn": "EXPORTER L'ÂME (BACKUP)",
     "importBtn": "IMPORTER L'ÂME (RESTORE)"
   },

@@ -27,7 +27,7 @@
       "C": "Mestre da Vontade",
       "B": "Cavaleiro das Sombras",
       "A": "Comandante",
-      "S": "Monarca",
+      "S": "Soberano",
       "National": "Caçador Nível Nacional"
     },
     "labels": {
@@ -36,7 +36,7 @@
       "C": "Mestre da Vontade",
       "B": "Cavaleiro das Sombras",
       "A": "Comandante",
-      "S": "Monarca",
+      "S": "Soberano",
       "National": "Caçador Nível Nacional"
     }
   },
@@ -81,7 +81,10 @@
     "field_notes_label": "NOTAS DE CAMPO",
     "field_notes_placeholder": "Regista o teu progresso...",
     "finish_mission": "TERMINAR MISSÃO",
-    "open_settings": "ABRIR DEFINIÇÕES"
+    "open_settings": "ABRIR DEFINIÇÕES",
+    "confirm_early_title": "CONCLUIR SEM ALVO?",
+    "confirm_early_message": "Só percorreste {{dist}} km de {{target}} km.\nQueres mesmo concluir a missão?",
+    "confirm_early_btn": "CONCLUIR"
   },
   "penalty": {
     "system_label": "◈ SISTEMA ◈",

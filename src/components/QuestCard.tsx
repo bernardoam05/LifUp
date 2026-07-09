@@ -9,10 +9,10 @@ import CustomModal from './CustomModal';
 import GPSTrackerModal from './GPSTrackerModal';
 import MissionActiveScreen from '../screens/MissionActiveScreen';
 import { SPACING, FONT, RANK_COLORS } from '../theme';
-import { useRewardedAd, AD_UNIT_REROLL } from '../hooks/useRewardedAd';
+import { useRewardedAd, AD_UNIT_REROLL, adsAvailable } from '../hooks/useRewardedAd';
 
 const getQCStyles = (C: any) => StyleSheet.create({
-  card: { opacity: 1, backgroundColor: C.panel, borderRadius: 8, padding: SPACING.md, marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonBlue + '33' },
+  card: { opacity: 1, backgroundColor: C.panel, borderRadius: 10, padding: SPACING.md, marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonBlue + '33' },
   cardWarning: { backgroundColor: C.neonRed + '08', borderColor: C.neonRed + '44' },
   cardSuccess: { backgroundColor: C.green + '10', borderColor: C.green + '44' },
   cardDone: { opacity: 0.55 },
@@ -158,7 +158,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
     } else if (quest.type === 'forbidden' || quest.type === 'limit') {
       // handled inline
     } else if (quest.type === 'focus' || quest.type === 'pomodoro') {
-      Linking.openURL('sololeveling://focus');
+      Linking.openURL('lifup://focus');
     } else {
       setMissionModalOpen(true);
       setShowMission(true);
@@ -370,14 +370,14 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12, opacity: 1, paddingRight: 50 }}>
             <Icon name={quest.type === 'pomodoro' ? 'lightning-bolt' : 'gesture-tap'} size={14} color={C.neonBlue} style={{ opacity: 0.5 }} />
             <Text style={{ color: C.neonBlue, fontSize: 10, fontFamily: FONT.orbitron, marginLeft: 4, opacity: 0.5 }}>
-              {quest.type === 'pomodoro' ? 'Abrir Focus Mode' : 'Toca para iniciar'}
+              {t(quest.type === 'pomodoro' ? 'ui.card_open_focus' : 'ui.card_tap_to_start')}
             </Text>
             <View style={{ flex: 1 }} />
           </View>
         )}
 
         {/* Ad re-roll — appears when weekly regen limit is hit */}
-        {!isExtra && !isPenalty && !quest.done && weeklyRegenCount >= 7 && (
+        {adsAvailable && !isExtra && !isPenalty && !quest.done && weeklyRegenCount >= 7 && (
           <TouchableOpacity
             style={[qc.adRerollBtn, !adRerollLoaded && { opacity: 0.45 }]}
             disabled={!adRerollLoaded}
@@ -385,7 +385,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
             activeOpacity={0.75}
           >
             <Icon name="play-circle-outline" size={13} color="#f59e0b" />
-            <Text style={qc.adRerollTxt}> VER ANÚNCIO → TROCAR MISSÃO</Text>
+            <Text style={qc.adRerollTxt}> {t('ui.card_ad_reroll')}</Text>
           </TouchableOpacity>
         )}
 
@@ -414,9 +414,9 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
 
         <CustomModal
           visible={confirmUndo}
-          title="DESFAZER MISSÃO"
-          message={`Reverter a conclusão de "${quest.label}"?\nO XP e Gold ganhos serão deduzidos.`}
-          confirmLabel="DESFAZER"
+          title={t('ui.undo_mission_title')}
+          message={t('ui.undo_mission_message', { label: quest.label })}
+          confirmLabel={t('ui.undo_confirm')}
           confirmIcon="undo-variant"
           confirmColor={C.neonRed}
           onConfirm={() => { setConfirmUndo(false); undoQuest?.(quest.id); }}
@@ -440,9 +440,9 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
       {isExtra && replaceExtraQuest && (
         <CustomModal
           visible={showExtraRegenConfirm}
-          title="SUBSTITUIR MISSÃO EXTRA"
-          message={extraRegenMsg || 'Queres substituir esta missão extra por outra da pool?\nCada extra só pode ser substituída uma vez por dia.'}
-          confirmLabel={extraRegenMsg ? 'OK' : 'SUBSTITUIR'}
+          title={t('ui.extra_regen_title')}
+          message={extraRegenMsg || t('ui.extra_regen_message')}
+          confirmLabel={extraRegenMsg ? 'OK' : t('ui.extra_regen_confirm')}
           confirmIcon={extraRegenMsg ? 'check' : 'refresh'}
           confirmColor={extraRegenMsg ? C.neonRed : C.gold}
           onConfirm={() => {
@@ -458,7 +458,7 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
               setShowExtraRegenConfirm(false);
             }
           }}
-          cancelLabel={extraRegenMsg ? undefined : 'CANCELAR'}
+          cancelLabel={extraRegenMsg ? undefined : t('ui.regen_cancel')}
           onCancel={() => { setShowExtraRegenConfirm(false); setExtraRegenMsg(null); }}
           C={C}
         />
@@ -468,14 +468,14 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
       {!isExtra && regenerateSingleDailyQuest && (
         <CustomModal
           visible={showRegenConfirm}
-          title="TROCAR MISSÃO"
-          message={`Queres trocar esta missão por outra aleatória?\nRestam-te ${Math.max(0, 7 - weeklyRegenCount)} de 7 trocas semanais.`}
-          confirmLabel="TROCAR"
+          title={t('ui.regen_confirm_title')}
+          message={t('ui.regen_confirm_message', { remaining: Math.max(0, 7 - weeklyRegenCount) })}
+          confirmLabel={t('ui.regen_confirm_btn')}
           onConfirm={() => {
             setShowRegenConfirm(false);
             regenerateSingleDailyQuest(quest.id);
           }}
-          cancelLabel="CANCELAR"
+          cancelLabel={t('ui.regen_cancel')}
           onCancel={() => setShowRegenConfirm(false)}
           C={C}
         />

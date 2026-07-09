@@ -37,7 +37,8 @@
       "boss_drop": "BOSS-DROP",
       "shop": "LADENKAUF",
       "daily": "TÄGLICHE EXTRAKTION"
-    }
+    },
+    "summon_word": "ERWACHE"
   },
   "level_up": {
     "system_label": "◈ SYSTEM ◈",
@@ -123,5 +124,21 @@
   "modal": {
     "confirm": "BESTÄTIGEN",
     "cancel": "ABBRECHEN"
+  },
+  "app": {
+    "penalty_banner": "STRAFZONE AKTIV — Schließe die Strafmissionen ab!",
+    "shadow_miss": {
+      "title": "DER SCHATTEN IST ENTKOMMEN!",
+      "drop_chance": "Drop-Chance: {{pct}}%",
+      "lore": "„Die Dunkelheit weicht zurück... doch der Schatten wartet auf seine nächste Gelegenheit.\"",
+      "btn": "VERSTANDEN"
+    }
+  },
+  "tabs": {
+    "missions": "Missionen",
+    "status": "Status",
+    "shop": "Laden",
+    "inventory": "Inventar",
+    "focus": "Focus"
   }
 }

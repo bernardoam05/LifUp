@@ -2,7 +2,7 @@
   "items": {
     "streak_chain": {
       "title": "Flamme des Jägers",
-      "description": "Halte deinen täglichen Quest-Streak aufrecht. Die Flamme des Monarchen darf niemals erlöschen."
+      "description": "Halte deinen täglichen Quest-Streak aufrecht. Die Flamme des Souveräns darf niemals erlöschen."
     },
     "streak_phoenix": {
       "title": "Phönix aus der Asche",
@@ -14,11 +14,11 @@
     },
     "focus_hours": {
       "title": "Mentale Festung",
-      "description": "Sammle Stunden im Focus Mode. Der Geist des Monarchen kennt keine Grenzen."
+      "description": "Sammle Stunden im Focus Mode. Der Geist des Souveräns kennt keine Grenzen."
     },
     "focus_sessions": {
       "title": "Eiserne Disziplin",
-      "description": "Schließe Focus Mode-Sitzungen ab. Der Monarch trainiert den Geist unaufhörlich."
+      "description": "Schließe Focus Mode-Sitzungen ab. Der Souverän trainiert den Geist unaufhörlich."
     },
     "focus_night_owl": {
       "title": "Nachteule",
@@ -38,7 +38,7 @@
     },
     "boss_slayer": {
       "title": "Schrecken der Dungeons",
-      "description": "Besiege Boss Raids. Die Legende des Schatten-Monarchen verbreitet sich im ganzen Reich."
+      "description": "Besiege Boss Raids. Die Legende des Schatten-Souveräns verbreitet sich im ganzen Reich."
     },
     "boss_runner": {
       "title": "Das Gift Erreicht Mich Nicht",
@@ -62,7 +62,7 @@
     },
     "boss_archlich_prime": {
       "title": "Krone des Erz-Liches",
-      "description": "Schließe den Boss \"Urzeitlicher Erz-Lich (S-Rank)\" ab. Das antike Ritual gehorcht nun dem Monarchen."
+      "description": "Schließe den Boss \"Urzeitlicher Erz-Lich (S-Rank)\" ab. Das antike Ritual gehorcht nun dem Souveräns."
     },
     "boss_soul_reaper": {
       "title": "Sensenmann des Void",
@@ -74,11 +74,11 @@
     },
     "dungeon_break_hunter": {
       "title": "Verteidiger der Portale",
-      "description": "Verhindere Dungeon Breaks. Chaos hat keinen Platz, wo der Monarch seinen Fuß hinsetzt."
+      "description": "Verhindere Dungeon Breaks. Chaos hat keinen Platz, wo der Souverän seinen Fuß hinsetzt."
     },
     "event_halloween_reaper": {
       "title": "Herbst-Sensenmann",
-      "description": "Besiege den Halloween-Event-Boss. Der Nebel öffnet sich für den Monarchen."
+      "description": "Besiege den Halloween-Event-Boss. Der Nebel öffnet sich für den Souveräns."
     },
     "event_winter_lich": {
       "title": "Krone der Sonnenwende",
@@ -114,7 +114,7 @@
     },
     "event_harvest_king": {
       "title": "König der Ernte",
-      "description": "Besiege den Ernte-Boss. Der Überfluss gehört dem Monarchen."
+      "description": "Besiege den Ernte-Boss. Der Überfluss gehört dem Souveräns."
     },
     "event_black_friday_merchant": {
       "title": "Schatten-Händler",
@@ -134,15 +134,15 @@
     },
     "level_chain": {
       "title": "Aufstieg des Jägers",
-      "description": "Erhöhe dein Level. Die Macht des Schatten-Monarchen kennt keine Obergrenze."
+      "description": "Erhöhe dein Level. Die Macht des Schatten-Souveräns kennt keine Obergrenze."
     },
     "secret_monarch": {
-      "title": "Schatten-Monarch",
-      "description": "Erreiche Level 20. Der Titel des Schatten-Monarchen wird offiziell vom System verliehen."
+      "title": "Schatten-Souverän",
+      "description": "Erreiche Level 20. Der Titel des Schatten-Souveräns wird offiziell vom System verliehen."
     },
     "shadow_army": {
       "title": "Armee der Schatten",
-      "description": "Sammle Schatten für deine Armee. Der Monarch befiehlt allen."
+      "description": "Sammle Schatten für deine Armee. Der Souverän befiehlt allen."
     },
     "shadow_elite": {
       "title": "Vorhut der Schatten",
@@ -154,7 +154,7 @@
     },
     "quests_total": {
       "title": "Unaufhaltsamer Krieger",
-      "description": "Schließe tägliche Quests kumuliert ab. Jede Quest formt den Monarchen."
+      "description": "Schließe tägliche Quests kumuliert ab. Jede Quest formt den Souveräns."
     },
     "quests_perfect_week": {
       "title": "Perfekte Woche",
@@ -166,14 +166,14 @@
     },
     "extra_quest_chain": {
       "title": "Feldbote",
-      "description": "Schließe Extra-Quests kumuliert ab. Der Monarch beschränkt sich nicht auf das System."
+      "description": "Schließe Extra-Quests kumuliert ab. Der Souverän beschränkt sich nicht auf das System."
     },
     "extra_quest_daily_all": {
       "title": "Der Terminkalender des Jägers",
       "description": "Schließe ALLE verfügbaren Extra-Quests an einem einzigen Tag ab."
     },
     "login_chain": {
-      "title": "Anwesenheit des Monarchen",
+      "title": "Anwesenheit des Souveräns",
       "description": "Öffne die App täglich. Das System registriert deine Beständigkeit über die Zeit."
     },
     "economy_first_purchase": {

@@ -67,7 +67,7 @@ const getStyles = (C: any) => StyleSheet.create({
     backgroundColor: C.panel,
     borderWidth: 1,
     borderColor: C.border,
-    borderRadius: 12,
+    borderRadius: 10,
     padding: SPACING.lg,
   },
   importHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },

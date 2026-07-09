@@ -27,6 +27,26 @@ jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => 'Icon');
 
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
+jest.mock('react-native-google-mobile-ads', () => {
+  const listeners = {};
+  const mockAd = {
+    addAdEventListener: jest.fn(() => jest.fn()),
+    load: jest.fn(),
+    show: jest.fn(() => Promise.resolve()),
+  };
+  return {
+    RewardedAd: { createForAdRequest: jest.fn(() => mockAd) },
+    RewardedAdEventType: { LOADED: 'loaded', EARNED_REWARD: 'earned_reward' },
+    TestIds: { REWARDED: 'test-rewarded' },
+    __listeners: listeners,
+  };
+});
+
+jest.mock('react-native-localize', () => ({
+  findBestLanguageTag: jest.fn(() => ({ languageTag: 'pt', isRTL: false })),
+  getLocales: jest.fn(() => [{ languageCode: 'pt', languageTag: 'pt-PT', countryCode: 'PT', isRTL: false }]),
+}));
+
 jest.mock('react-native-geolocation-service', () => ({
   getCurrentPosition: jest.fn(),
   watchPosition: jest.fn(),

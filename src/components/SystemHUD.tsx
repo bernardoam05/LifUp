@@ -33,32 +33,7 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
   const isRecordStreak = player.currentStreak > 0 && maxStreakReached > 0 && player.currentStreak >= maxStreakReached;
   const fireColor = isRecordStreak ? '#facc15' : '#f97316';
 
-  const hud = StyleSheet.create({
-    container: {
-      paddingHorizontal: SPACING.md,
-      paddingTop: SPACING.sm,
-      paddingBottom: SPACING.md,
-      backgroundColor: C.bg,
-    },
-    row: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
-    badge: { width: 48, height: 48, borderRadius: 8, borderWidth: 2, alignItems: 'center', justifyContent: 'center', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.6, shadowRadius: 10, elevation: 6, backgroundColor: C.bg },
-    badgeText: { fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900' },
-    info: { flex: 1, gap: 4 },
-    nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-    name: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', maxWidth: 120 },
-    level: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
-    gold: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
-    xpTrack: { height: 6, backgroundColor: '#1e293b', borderRadius: 3, overflow: 'hidden' },
-    xpFill: { height: '100%', backgroundColor: C.neonBlue, borderRadius: 3 },
-    xpRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    xpText: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 8 },
-    focusTag: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 7, letterSpacing: 1, fontWeight: '700' },
-    gearBtn: { padding: 8, borderRadius: 4, backgroundColor: '#ffffff08' },
-    streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fbbf2415', borderWidth: 1, borderColor: '#fbbf2444', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, marginRight: 4, gap: 3 },
-    streakNum: { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '900' },
-    rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonBlue, width: 14, height: 14, borderRadius: 7, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.bg },
-    rankUpIndicatorText: { color: '#fff', fontSize: 9, fontWeight: '900' },
-  });
+  const hud = React.useMemo(() => getHudStyles(C), [C]);
 
   return (
     <View style={hud.container}>
@@ -106,3 +81,31 @@ export default function SystemHUD({ onSettings, onRankPress }: { onSettings: () 
     </View>
   );
 }
+
+const getHudStyles = (C: ReturnType<typeof useTheme>) =>
+  StyleSheet.create({
+    container: {
+      paddingHorizontal: SPACING.md,
+      paddingTop: SPACING.sm,
+      paddingBottom: SPACING.md,
+      backgroundColor: C.bg,
+    },
+    row: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },
+    badge: { width: 48, height: 48, borderRadius: 8, borderWidth: 2, alignItems: 'center', justifyContent: 'center', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.6, shadowRadius: 10, elevation: 6, backgroundColor: C.bg },
+    badgeText: { fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900' },
+    info: { flex: 1, gap: 4 },
+    nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+    name: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', maxWidth: 120 },
+    level: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+    gold: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
+    xpTrack: { height: 6, backgroundColor: '#1e293b', borderRadius: 3, overflow: 'hidden' },
+    xpFill: { height: '100%', backgroundColor: C.neonBlue, borderRadius: 3 },
+    xpRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    xpText: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10 },
+    focusTag: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, fontWeight: '700' },
+    gearBtn: { padding: 8, borderRadius: 4, backgroundColor: '#ffffff08' },
+    streakBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fbbf2415', borderWidth: 1, borderColor: '#fbbf2444', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, marginRight: 4, gap: 3 },
+    streakNum: { fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '900' },
+    rankUpIndicator: { position: 'absolute', top: -6, right: -6, backgroundColor: C.neonBlue, width: 14, height: 14, borderRadius: 7, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.bg },
+    rankUpIndicatorText: { color: '#fff', fontSize: 9, fontWeight: '900' },
+  });

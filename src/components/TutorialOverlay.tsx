@@ -382,7 +382,7 @@ const getStyles = () => StyleSheet.create({
   splashCard: {
     backgroundColor: '#0a0f1d',
     borderWidth: 2,
-    borderRadius: 12,
+    borderRadius: 10,
     padding: SPACING.xl,
     width: SW - SPACING.xl * 2,
     alignItems: 'center',
@@ -419,7 +419,7 @@ const getStyles = () => StyleSheet.create({
   tooltipCard: {
     backgroundColor: '#0a0f1d',
     borderWidth: 2,
-    borderRadius: 12,
+    borderRadius: 10,
     padding: SPACING.lg,
     shadowColor: '#00ffff',
     shadowOffset: { width: 0, height: 0 },

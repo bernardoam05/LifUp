@@ -41,7 +41,7 @@
       "lore": "\"Qu'y a-t-il à l'intérieur ? Seul le Système décide.\""
     },
     "theme_monarch": {
-      "name": "Thème : Monarque des Ombres",
+      "name": "Thème : Souverain des Ombres",
       "description": "Une interface noire et violet profond qui reflète le pouvoir absolu.",
       "lore": "\"Lève-toi avec la couronne qui gouverne les morts.\""
     },
@@ -93,7 +93,7 @@
     "cerberus_fang": {
       "name": "Croc de Cerbère",
       "description": "Dent du gardien de l'abîsse. Active le buff : +20% Gold sur toutes les quêtes pendant 2 heures.",
-      "lore": "\"Trois têtes, un destin : servir le Monarque.\""
+      "lore": "\"Trois têtes, un destin : servir le Souverain.\""
     },
     "iron_will_crystal": {
       "name": "Cristal de Volonté de Fer",
@@ -185,6 +185,7 @@
     "feedback_quest_done": "Quête complétée par le Système !",
     "stat_xp": "XP",
     "stat_gold": "Gold",
-    "restocks_next_week": "réapprovisionne la semaine prochaine"
+    "restocks_next_week": "réapprovisionne la semaine prochaine",
+    "owned": "ACQUIS"
   }
 }

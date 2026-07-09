@@ -27,7 +27,7 @@ export const getDMStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.bg + 'cc', justifyContent: 'flex-end' },
   card: { backgroundColor: C.panel, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: SPACING.lg, paddingBottom: 40, width: '100%', alignItems: 'center', borderWidth: 1, borderBottomWidth: 0, borderColor: C.neonRed + '88' },
   header: { width: '100%', alignItems: 'center', marginBottom: SPACING.lg },
-  headerIconWrap: { width: 56, height: 56, borderRadius: 12, backgroundColor: C.neonRed + '12', alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.sm, borderWidth: 1, borderColor: C.neonRed + '44' },
+  headerIconWrap: { width: 56, height: 56, borderRadius: 10, backgroundColor: C.neonRed + '12', alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.sm, borderWidth: 1, borderColor: C.neonRed + '44' },
   headerBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, borderWidth: 1, borderColor: C.neonRed + '55', backgroundColor: C.neonRed + '10', marginBottom: SPACING.sm },
   headerBadgeTxt: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 },
   title: { color: C.muted, fontFamily: FONT.orbitron, fontSize: 16, fontWeight: '900', letterSpacing: 2, marginBottom: SPACING.sm, textAlign: 'center' },

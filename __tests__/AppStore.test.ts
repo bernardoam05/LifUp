@@ -62,15 +62,15 @@ describe('AppStore - General Logic Verification', () => {
 
   test('Inventory and Buffs', () => {
     const state = useGameStore.getState();
-    state.addToInventory('kasaka_venom', 5);
+    state.addToInventory('viper_venom', 5);
 
     let inv = useGameStore.getState().player.inventory;
-    let item = inv.find(i => i.itemId === 'kasaka_venom');
+    let item = inv.find(i => i.itemId === 'viper_venom');
     expect(item?.quantity).toBe(5);
 
-    state.useInventoryItem('kasaka_venom');
+    state.useInventoryItem('viper_venom');
     inv = useGameStore.getState().player.inventory;
-    item = inv.find(i => i.itemId === 'kasaka_venom');
+    item = inv.find(i => i.itemId === 'viper_venom');
     expect(item?.quantity).toBe(4);
 
     expect(useGameStore.getState().activeBuffs.length).toBeGreaterThan(0);

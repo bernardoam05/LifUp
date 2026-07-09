@@ -37,7 +37,8 @@
       "boss_drop": "CHUTE DE BOSS",
       "shop": "ACHAT EN BOUTIQUE",
       "daily": "EXTRACTION QUOTIDIENNE"
-    }
+    },
+    "summon_word": "ÉVEILLE-TOI"
   },
   "level_up": {
     "system_label": "◈ SYSTÈME ◈",
@@ -123,5 +124,21 @@
   "modal": {
     "confirm": "CONFIRMER",
     "cancel": "ANNULER"
+  },
+  "app": {
+    "penalty_banner": "ZONE DE PÉNALITÉ ACTIVE — Termine les missions de pénalité !",
+    "shadow_miss": {
+      "title": "L'OMBRE S'EST ENFUIE !",
+      "drop_chance": "Chance de drop : {{pct}}%",
+      "lore": "« Les ténèbres reculent... mais l'ombre attend sa prochaine occasion. »",
+      "btn": "COMPRIS"
+    }
+  },
+  "tabs": {
+    "missions": "Missions",
+    "status": "Statut",
+    "shop": "Boutique",
+    "inventory": "Inventaire",
+    "focus": "Focus"
   }
 }

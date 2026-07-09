@@ -11,9 +11,9 @@ export function useTheme() {
 }
 
 export const FONT = {
-  // Place Orbitron-Bold.ttf in android/app/src/main/assets/fonts/ to enable
-  orbitron: 'monospace',
-  system:   'monospace',
+  // Rajdhani (SIL OFL) — bundled in android/app/src/main/assets/fonts/ and web/fonts/
+  orbitron: 'Rajdhani-Bold',
+  system:   'Rajdhani-Medium',
 } as const;
 
 export const SPACING = {
@@ -22,6 +22,13 @@ export const SPACING = {
   md:  16,
   lg:  24,
   xl:  32,
+} as const;
+
+// Border-radius scale: chip = badges/tags, card = panels/cards, sheet = bottom sheets
+export const RADIUS = {
+  chip:  4,
+  card:  10,
+  sheet: 24,
 } as const;
 
 export const RANK_COLORS: Record<string, string> = {

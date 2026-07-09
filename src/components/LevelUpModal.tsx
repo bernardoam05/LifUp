@@ -179,7 +179,7 @@ const getStyles = (C: any) => StyleSheet.create({
     width: '88%',
     backgroundColor: C.panel,
     borderWidth: 1.5,
-    borderRadius: 12,
+    borderRadius: 10,
     padding: SPACING.lg,
     alignItems: 'center',
     // iOS glow

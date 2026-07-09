@@ -38,7 +38,7 @@
     },
     "hard": {
       "label": "HARD",
-      "sublabel": "Shadow Monarch Protocol",
+      "sublabel": "Shadow Sovereign Protocol",
       "desc0": "· 4 base missions + 1 per 5 levels (max 8)",
       "desc1": "· For elite hunters",
       "desc2": "· Amplified rewards and penalties"
@@ -75,7 +75,7 @@
     },
     "hardcore": {
       "label": "HARDCORE",
-      "sublabel": "Monarch Protocol",
+      "sublabel": "Sovereign Protocol",
       "desc0": "· XP Loss: 20% total",
       "desc1": "· 2–4 penalty missions",
       "desc2": "· Streak reset to zero",
@@ -111,7 +111,7 @@
   },
   "theme": {
     "sectionTitle": "SYSTEM APPEARANCE",
-    "infoText": "Select the visual theme for your Monarch System. New themes are unlocked by ranking up or in the Shop."
+    "infoText": "Select the visual theme for your Sovereign System. New themes are unlocked by ranking up or in the Shop."
   },
   "notifications": {
     "sectionTitle": "SYSTEM",
@@ -122,7 +122,7 @@
   },
   "backup": {
     "sectionTitle": "SYSTEM DATABASE",
-    "infoText": "Export or restore your Shadow Monarch journey by copying an inviolable code.",
+    "infoText": "Export or restore your Shadow Sovereign journey by copying an inviolable code.",
     "exportBtn": "EXPORT SOUL (BACKUP)",
     "importBtn": "IMPORT SOUL (RESTORE)"
   },

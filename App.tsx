@@ -1,5 +1,6 @@
 import './src/i18n';
 import React, { useEffect, useState, useCallback, Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, StyleSheet, StatusBar, NativeModules, TouchableOpacity, Vibration, Animated, AppState } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer, DarkTheme, createNavigationContainerRef } from '@react-navigation/native';
@@ -56,23 +57,25 @@ function PenaltyBadge() {
   );
 }
 
-function ShadowSkillToast({ msg, onDismiss }: { msg: string | null; onDismiss: () => void }) {
+function ShadowSkillToast({ msg, blocked = false, onDismiss }: { msg: string | null; blocked?: boolean; onDismiss: () => void }) {
   const anim = React.useRef(new Animated.Value(120)).current;
   React.useEffect(() => {
-    if (!msg) { anim.setValue(120); return; }
+    // While blocked (a native Modal is covering the toast layer) keep the message
+    // queued and only animate/dismiss once unblocked, so it is never lost unseen.
+    if (!msg || blocked) { anim.setValue(120); return; }
     Animated.spring(anim, { toValue: 0, useNativeDriver: true, tension: 80, friction: 10 }).start();
     const t = setTimeout(() => {
-      Animated.timing(anim, { toValue: 120, duration: 300, useNativeDriver: true }).start(onDismiss);
+      Animated.timing(anim, { toValue: 120, duration: 300, useNativeDriver: true }).start(() => onDismiss());
     }, 4000);
     return () => clearTimeout(t);
-  }, [msg]);
+  }, [msg, blocked]);
 
-  if (!msg) { return null; }
+  if (!msg || blocked) { return null; }
   return (
     <Animated.View style={{ position: 'absolute', bottom: 90, left: 16, right: 16, transform: [{ translateY: anim }] }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#0f1a2e', borderWidth: 1, borderColor: '#a855f744', borderRadius: 8, padding: 12, gap: 10 }}>
         <Icon name="shield-star" size={18} color="#a855f7" />
-        <Text style={{ flex: 1, color: '#e2e8f0', fontSize: 12, fontFamily: 'Orbitron-Regular' }}>{msg}</Text>
+        <Text style={{ flex: 1, color: '#e2e8f0', fontSize: 12, fontFamily: FONT.orbitron }}>{msg}</Text>
         <TouchableOpacity onPress={onDismiss}>
           <Icon name="close" size={16} color="#64748b" />
         </TouchableOpacity>
@@ -92,6 +95,7 @@ function InventoryBadge({ count }: { count: number }) {
 // ── App Root ───────────────────────────────────────────────────────────────────
 
 export default function App() {
+  const { t } = useTranslation('common');
   const levelUpToastQueue = useGameStore(s => s.levelUpToastQueue);
   const dismissLevelUpToast = useGameStore(s => s.dismissLevelUpToast);
   const shadowSkillFiredMsg = useGameStore(s => s.system.shadowSkillFiredMsg);
@@ -145,9 +149,11 @@ export default function App() {
   const statistics = useGameStore(s => s.statistics);
   const bossesDefeated = useGameStore(s => s.system.bossesDefeated);
   const playerLevel = useGameStore(s => s.player.level);
-  // missionModalOpen excluded: reward shows on top of mission modals, not blocked by them
+  // missionModalOpen excluded from rewards: reward modals stack on top of mission modals.
   const rewardsBlocked = penaltyTriggered || showSettings || showRankInfo || !!currentLootReward;
-  const toastBlocked = rewardsBlocked || rewardsQueue.length > 0;
+  // Toasts are plain Views (not native Modals) so any open Modal hides them —
+  // defer them while a mission modal or reward is on screen instead of losing them.
+  const toastBlocked = rewardsBlocked || rewardsQueue.length > 0 || missionModalOpen;
 
   // Latch: once a reward starts showing, keep it until explicitly dismissed
   type RewardItem = typeof rewardsQueue[0];
@@ -181,7 +187,7 @@ export default function App() {
     // made while the app was closed (tile writes to FocusBlockerPrefs directly).
     FocusBlocker?.getFocusNativeState?.()
       .then((native: any) => {
-        const { system, settings: cfg } = useGameStore.getState();
+        const { system } = useGameStore.getState();
         const nativeActive = native?.isRunning && native?.endTimeMs > Date.now();
         if (nativeActive && !system.focusModeActive) {
           useGameStore.getState().setFocusModeActive(true, native.endTimeMs);
@@ -254,7 +260,9 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.safeArea} edges={['top']}>
+      {/* 'bottom' edge included: with targetSdk 35 (Android 15 edge-to-edge) the
+          system nav/gesture bar would otherwise overlap the tab bar */}
+      <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
         <StatusBar barStyle="light-content" backgroundColor={C.bg} />
 
         <SystemHUD onSettings={() => setShowSettings(true)} onRankPress={() => setShowRankInfo(true)} />
@@ -263,7 +271,7 @@ export default function App() {
           <View style={styles.penalBanner}>
             <Icon name="alert" size={13} color={C.neonRed} />
             <Text style={styles.penalBannerText}>
-              ZONA DE PENALIDADE ATIVA — Completa as missões de penalização!
+              {t('app.penalty_banner')}
             </Text>
             {!!penaltyCountdown && (
               <Text style={styles.penalCountdownText}>{penaltyCountdown}</Text>
@@ -274,7 +282,8 @@ export default function App() {
         <NavigationContainer
           ref={navigationRef}
           linking={{
-            prefixes: ['sololeveling://'],
+            // 'sololeveling://' kept for backwards-compat with old shortcuts/widgets
+            prefixes: ['lifup://', 'sololeveling://'],
             config: {
               screens: {
                 'Missões': 'missions',
@@ -307,19 +316,21 @@ export default function App() {
               name="Missões"
               component={QuestScreen}
               options={{
+                tabBarLabel: t('tabs.missions'),
                 tabBarBadge: hasPenalty ? PenaltyBadge : undefined,
               }}
             />
-            <Tab.Screen name="Status" component={StatusScreen} />
-            <Tab.Screen name="Loja" component={ShopScreen} />
+            <Tab.Screen name="Status" component={StatusScreen} options={{ tabBarLabel: t('tabs.status') }} />
+            <Tab.Screen name="Loja" component={ShopScreen} options={{ tabBarLabel: t('tabs.shop') }} />
             <Tab.Screen
               name="Inventário"
               component={InventoryScreen}
               options={{
+                tabBarLabel: t('tabs.inventory'),
                 tabBarBadge: invTotal > 0 ? () => <InventoryBadge count={invTotal} /> : undefined,
               }}
             />
-            <Tab.Screen name="Focus" component={FocusScreen} />
+            <Tab.Screen name="Focus" component={FocusScreen} options={{ tabBarLabel: t('tabs.focus') }} />
           </Tab.Navigator>
         </NavigationContainer>
 
@@ -369,20 +380,20 @@ export default function App() {
               {activeReward.type === 'shadow_miss' && activeReward.data && (
                 <View style={styles.shadowMissOverlay} pointerEvents="box-none">
                   <View style={styles.shadowMissCard}>
-                    <Text style={styles.shadowMissTitle}>A SOMBRA FUGIU!</Text>
+                    <Text style={styles.shadowMissTitle}>{t('app.shadow_miss.title')}</Text>
                     <Text style={styles.shadowMissName}>{(activeReward.data as any).shadowName}</Text>
                     <Text style={styles.shadowMissChance}>
-                      Chance de drop: {Math.round(((activeReward.data as any).dropChance ?? 0) * 100)}%
+                      {t('app.shadow_miss.drop_chance', { pct: Math.round(((activeReward.data as any).dropChance ?? 0) * 100) })}
                     </Text>
                     <Text style={styles.shadowMissLore}>
-                      "A escuridão recua... mas a sombra aguarda uma próxima oportunidade."
+                      {t('app.shadow_miss.lore')}
                     </Text>
                     <TouchableOpacity
                       style={styles.shadowMissBtn}
                       onPress={() => { Vibration.vibrate(30); handlePopReward(); }}
                       activeOpacity={0.8}
                     >
-                      <Text style={styles.shadowMissBtnTxt}>ENTENDIDO</Text>
+                      <Text style={styles.shadowMissBtnTxt}>{t('app.shadow_miss.btn')}</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -429,7 +440,7 @@ export default function App() {
             blocked={toastBlocked}
             onDismiss={dismissLevelUpToast}
           />
-          <ShadowSkillToast msg={shadowSkillFiredMsg} onDismiss={dismissShadowSkillMsg} />
+          <ShadowSkillToast msg={shadowSkillFiredMsg} blocked={toastBlocked} onDismiss={dismissShadowSkillMsg} />
         </View>
 
         {/* Tutorial Overlay */}
@@ -543,7 +554,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0d0d1a',
     borderWidth: 1,
     borderColor: '#7c3aed55',
-    borderRadius: 12,
+    borderRadius: 10,
     paddingVertical: SPACING.xl,
     paddingHorizontal: SPACING.xl,
     marginHorizontal: SPACING.xl,

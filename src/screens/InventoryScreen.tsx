@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Vibration } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 import useGameStore from '../store/useGameStore';
 import { CATALOG_MAP } from '../data/shopItems';
 import KeyVaultModal from '../components/KeyVaultModal';
@@ -116,7 +117,7 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
         if (item.effectGold && item.effectGold > 0) {
           addGold(item.effectGold);
         }
-        const goldText = item.effectGold ? ` e +${item.effectGold} Gold` : '';
+        const goldText = item.effectGold ? t('inventory.fb_gold_suffix', { gold: item.effectGold }) : '';
         setFeedback(leveledUp
           ? t('inventory.fb_level_up', { xp: item.effectValue, gold: goldText })
           : t('inventory.fb_xp_absorbed', { xp: item.effectValue, gold: goldText })
@@ -265,6 +266,7 @@ function InventoryCard({ itemId, quantity, C }: { itemId: string; quantity: numb
 export default function InventoryScreen() {
   const { t } = useTranslation('screens');
   const C = useTheme();
+  const navigation = useNavigation();
   const s = React.useMemo(() => getStyles(C), [C]);
   const inventory = useGameStore(st => st.player.inventory);
   const dungeonKeys = useGameStore(st => st.player.dungeonKeys);
@@ -281,7 +283,7 @@ export default function InventoryScreen() {
 
         <View style={s.titleRow}>
           <Icon name="bag-personal" size={16} color={C.neonBlue} />
-          <Text style={s.title}> {t('inventory.title')}</Text>
+          <Text style={s.title}> [ {t('inventory.title')} ]</Text>
         </View>
 
         <View style={s.statsRow}>
@@ -325,6 +327,14 @@ export default function InventoryScreen() {
             <Icon name="bag-personal-outline" size={48} color={C.dimmed} />
             <Text style={s.emptyTitle}>{t('inventory.empty_title')}</Text>
             <Text style={s.emptyDesc}>{t('inventory.empty_desc')}</Text>
+            <TouchableOpacity
+              style={s.emptyCta}
+              onPress={() => navigation.navigate('Loja' as never)}
+              activeOpacity={0.75}
+            >
+              <Icon name="shopping-outline" size={14} color={C.gold} />
+              <Text style={s.emptyCtaTxt}> {t('inventory.empty_cta')}</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           activeInventory.map(entry => (
@@ -360,6 +370,8 @@ const getStyles = (C: any) => StyleSheet.create({
   emptyWrap:  { alignItems: 'center', paddingTop: 60, gap: SPACING.md },
   emptyTitle: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 14, letterSpacing: 2 },
   emptyDesc:  { color: C.dimmed, fontSize: 12, textAlign: 'center' },
+  emptyCta:   { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: C.gold + '66', backgroundColor: C.gold + '10', borderRadius: 10, paddingHorizontal: SPACING.lg, paddingVertical: 10, marginTop: SPACING.sm },
+  emptyCtaTxt:{ color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md },
   sectionTitle:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, fontWeight: '700' },
   vaultBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 8, borderWidth: 1, padding: SPACING.md, gap: SPACING.md, marginBottom: SPACING.md },

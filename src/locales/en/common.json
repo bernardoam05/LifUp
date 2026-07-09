@@ -37,7 +37,8 @@
       "boss_drop": "BOSS DROP",
       "shop": "SHOP PURCHASE",
       "daily": "DAILY EXTRACTION"
-    }
+    },
+    "summon_word": "AWAKEN"
   },
   "level_up": {
     "system_label": "◈ SYSTEM ◈",
@@ -123,5 +124,21 @@
   "modal": {
     "confirm": "CONFIRM",
     "cancel": "CANCEL"
+  },
+  "app": {
+    "penalty_banner": "PENALTY ZONE ACTIVE — Complete the penalty missions!",
+    "shadow_miss": {
+      "title": "THE SHADOW ESCAPED!",
+      "drop_chance": "Drop chance: {{pct}}%",
+      "lore": "\"The darkness recedes... but the shadow awaits its next opportunity.\"",
+      "btn": "UNDERSTOOD"
+    }
+  },
+  "tabs": {
+    "missions": "Missions",
+    "status": "Status",
+    "shop": "Shop",
+    "inventory": "Inventory",
+    "focus": "Focus"
   }
 }

@@ -134,7 +134,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
 
   {
     id: 'streak_chain', title: 'Chama do Caçador',
-    description: 'Mantém o streak de missões diárias. A chama do Monarca não deve apagar-se.',
+    description: 'Mantém o streak de missões diárias. A chama do Soberano não deve apagar-se.',
     category: 'streak', conditionType: 'streak_updated',
     icon: 'fire', color: '#f97316', isSecret: false, rewardGold: 0,
     tiers: [
@@ -162,7 +162,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
 
   {
     id: 'focus_hours', title: 'Fortaleza Mental',
-    description: 'Acumula horas em modo de foco. A mente do Monarca não conhece limites.',
+    description: 'Acumula horas em modo de foco. A mente do Soberano não conhece limites.',
     category: 'focus', conditionType: 'focus_total_hours',
     icon: 'brain', color: '#a855f7', isSecret: false, rewardGold: 0,
     tiers: [
@@ -174,7 +174,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
   },
   {
     id: 'focus_sessions', title: 'Disciplina de Ferro',
-    description: 'Completa sessões de Focus Mode. O Monarca treina a mente sem parar.',
+    description: 'Completa sessões de Focus Mode. O Soberano treina a mente sem parar.',
     category: 'focus', conditionType: 'focus_session_completed',
     icon: 'timer-outline', color: '#3b82f6', isSecret: false, rewardGold: 0,
     tiers: [
@@ -212,7 +212,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
 
   {
     id: 'boss_slayer', title: 'Terror das Masmorras',
-    description: 'Derrota Boss Raids. A lenda do Monarca das Sombras espalha-se por todo o reino.',
+    description: 'Derrota Boss Raids. A lenda do Soberano das Sombras espalha-se por todo o reino.',
     category: 'boss', conditionType: 'boss_defeated',
     icon: 'castle', color: '#ef4444', isSecret: false, rewardGold: 0,
     tiers: [
@@ -254,7 +254,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
   },
   {
     id: 'boss_archlich_prime', title: 'Coroa do Arquilich',
-    description: 'Completa o Boss "Arquilich Primordial (S-Rank)". O ritual antigo agora obedece ao Monarca.',
+    description: 'Completa o Boss "Arquilich Primordial (S-Rank)". O ritual antigo agora obedece ao Soberano.',
     category: 'boss', conditionType: 'boss_focus_completed',
     icon: 'skull-crossbones', color: '#a855f7', isSecret: true, rewardGold: 500,
   },
@@ -272,7 +272,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
   },
   {
     id: 'dungeon_break_hunter', title: 'Defensor de Portais',
-    description: 'Impede Dungeon Breaks. O caos não tem lugar onde o Monarca pisa.',
+    description: 'Impede Dungeon Breaks. O caos não tem lugar onde o Soberano pisa.',
     category: 'boss', conditionType: 'dungeon_break_cleared',
     icon: 'gate', color: '#dc2626', isSecret: false, rewardGold: 0,
     tiers: [
@@ -285,7 +285,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
   // ── EVENT BOSSES ──────────────────────────────────────────────────────────────
   {
     id: 'event_halloween_reaper', title: 'Ceifador de Outono',
-    description: 'Derrota o Boss de evento do Halloween. A névoa abre caminho para o Monarca.',
+    description: 'Derrota o Boss de evento do Halloween. A névoa abre caminho para o Soberano.',
     category: 'secret', conditionType: 'boss_focus_completed',
     icon: 'ghost', color: '#f97316', isSecret: true, rewardGold: 400,
   },
@@ -339,7 +339,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
   },
   {
     id: 'event_harvest_king', title: 'Rei da Colheita',
-    description: 'Derrota o Boss da Colheita. A abundância pertence ao Monarca.',
+    description: 'Derrota o Boss da Colheita. A abundância pertence ao Soberano.',
     category: 'secret', conditionType: 'boss_training_completed',
     icon: 'trophy', color: '#f59e0b', isSecret: true, rewardGold: 380,
   },
@@ -373,7 +373,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
 
   {
     id: 'level_chain', title: 'Ascensão do Caçador',
-    description: 'Aumenta o teu nível. O poder do Monarca das Sombras não conhece teto.',
+    description: 'Aumenta o teu nível. O poder do Soberano das Sombras não conhece teto.',
     category: 'level', conditionType: 'level_up',
     icon: 'arrow-up-bold', color: '#22c55e', isSecret: false, rewardGold: 0,
     tiers: [
@@ -384,8 +384,8 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     ],
   },
   {
-    id: 'secret_monarch', title: 'Monarca das Sombras',
-    description: 'Alcança o Nível 20. O título de Monarca das Sombras é oficialmente concedido pelo Sistema.',
+    id: 'secret_monarch', title: 'Soberano das Sombras',
+    description: 'Alcança o Nível 20. O título de Soberano das Sombras é oficialmente concedido pelo Sistema.',
     category: 'secret', conditionType: 'level_up',
     icon: 'skull-crossbones', color: '#ef4444', isSecret: true, rewardGold: 500, rewardXP: 50,
   },
@@ -394,7 +394,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
 
   {
     id: 'shadow_army', title: 'Exército das Sombras',
-    description: 'Recolhe sombras para o teu exército. O Monarca comanda a todos.',
+    description: 'Recolhe sombras para o teu exército. O Soberano comanda a todos.',
     category: 'shadow', conditionType: 'shadow_collected',
     icon: 'ghost', color: '#a855f7', isSecret: false, rewardGold: 0,
     tiers: [
@@ -427,7 +427,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
   },
   {
     id: 'quests_total', title: 'Guerreiro Imparável',
-    description: 'Completa missões diárias em acumulado. Cada missão forja o Monarca.',
+    description: 'Completa missões diárias em acumulado. Cada missão forja o Soberano.',
     category: 'quests', conditionType: 'quest_completed',
     icon: 'sword-cross', color: '#3b82f6', isSecret: false, rewardGold: 0,
     tiers: [
@@ -451,7 +451,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
   },
   {
     id: 'extra_quest_chain', title: 'Agente de Campo',
-    description: 'Completa Missões Extra em acumulado. O Monarca não se limita ao Sistema.',
+    description: 'Completa Missões Extra em acumulado. O Soberano não se limita ao Sistema.',
     category: 'quests', conditionType: 'extra_quest_completed',
     icon: 'sword-cross', color: '#a855f7', isSecret: false, rewardGold: 0,
     tiers: [
@@ -467,7 +467,7 @@ export const ACHIEVEMENTS_CATALOG: Achievement[] = [
     icon: 'calendar-check', color: '#a855f7', isSecret: false, rewardGold: 65,
   },
   {
-    id: 'login_chain', title: 'Presença do Monarca',
+    id: 'login_chain', title: 'Presença do Soberano',
     description: 'Abre a app diariamente. O Sistema regista a tua constância ao longo do tempo.',
     category: 'streak', conditionType: 'daily_login',
     icon: 'calendar-check', color: '#3b82f6', isSecret: false, rewardGold: 0,

@@ -286,7 +286,7 @@ export const APP_THEMES: ThemeDef[] = [
   // PREMIUM THEMES
   {
     id: 'theme_monarch',
-    name: 'Monarca das Sombras (Premium)',
+    name: 'Soberano das Sombras (Premium)',
     description: 'Ergue-te com o poder negro e roxo do governante dos mortos.',
     isPremium: true,
     colors: {

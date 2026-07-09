@@ -38,7 +38,7 @@
     },
     "hard": {
       "label": "DIFÍCIL",
-      "sublabel": "Protocolo do Monarca Sombrio",
+      "sublabel": "Protocolo do Soberano Sombrio",
       "desc0": "· 4 missões base + 1 por cada 5 níveis (máx 8)",
       "desc1": "· Para caçadores de elite",
       "desc2": "· Recompensas e penalizações amplificadas"
@@ -75,7 +75,7 @@
     },
     "hardcore": {
       "label": "HARDCORE",
-      "sublabel": "Protocolo do Monarca",
+      "sublabel": "Protocolo do Soberano",
       "desc0": "· Perda de XP: 20% total",
       "desc1": "· 2–4 missões de penalização",
       "desc2": "· Streak reposta a zero",
@@ -111,7 +111,7 @@
   },
   "theme": {
     "sectionTitle": "ASPETO DO SISTEMA",
-    "infoText": "Seleciona o tema visual do teu Sistema de Monarca. Novos temas são desbloqueados ao subir de Classe ou na Loja."
+    "infoText": "Seleciona o tema visual do teu Sistema de Soberano. Novos temas são desbloqueados ao subir de Classe ou na Loja."
   },
   "notifications": {
     "sectionTitle": "SISTEMA",
@@ -122,7 +122,7 @@
   },
   "backup": {
     "sectionTitle": "BASE DE DADOS DO SISTEMA",
-    "infoText": "Exporta ou restaura a tua jornada como Monarca das Sombras copiando um código inviolável.",
+    "infoText": "Exporta ou restaura a tua jornada como Soberano das Sombras copiando um código inviolável.",
     "exportBtn": "EXPORTAR ALMA (BACKUP)",
     "importBtn": "IMPORTAR ALMA (RESTORE)"
   },

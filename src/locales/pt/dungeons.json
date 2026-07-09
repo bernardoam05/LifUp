@@ -57,7 +57,7 @@
       "missionDetail": "150 minutos a executar a tua tarefa mais importante em silêncio e imobilidade absoluta."
     },
     "key_void_monarch": {
-      "name": "Essência do Monarca Sombrio",
+      "name": "Essência do Soberano Sombrio",
       "description": "A prova final. O Soberano do Vazio testa o teu valor.",
       "lore": "O Soberano do Vazio. Lenda suprema. O último teste antes de se tornar imortal.",
       "environment": "Dimensão paralela de sombra pura, onde luz não existe. Poder absoluto concentrado num ponto.",
@@ -268,98 +268,282 @@
     }
   },
   "bosses": {
-    "steel_fanged_lycan": { "name": "Lobo de Presas de Aço" },
-    "hobgoblin_chieftain": { "name": "Chefe Hobgoblin" },
-    "twin_headed_ogre": { "name": "Ogre de Duas Cabeças" },
-    "giant_ice_bear": { "name": "Tank, o Urso de Gelo Gigante" },
-    "high_orc_guard": { "name": "Guarda Real de Elite High Orc" },
-    "naga_general": { "name": "General Naga do Abismo" },
-    "infernal_monarch": { "name": "Monarca Infernal" },
-    "plague_sovereign": { "name": "Soberana das Pragas" },
-    "frost_sovereign": { "name": "Soberano do Gelo Eterno" },
-    "architect_system": { "name": "O Arquiteto do Sistema" },
-    "beast_sovereign": { "name": "Soberano das Feras" },
-    "giant_sovereign": { "name": "Soberano dos Gigantes" },
-    "void_sovereign": { "name": "Soberano da Destruição Total" },
-    "rathalos_sky": { "name": "O Soberano dos Céus Escarlates" },
-    "primal_fox_deity": { "name": "Divindade do Ódio Primordial" },
-    "malenia_blade": { "name": "A Lâmina da Podridão Escarlate" },
-    "frozen_throne_king": { "name": "O Senhor do Trono Congelante" },
-    "dark_wing_herald": { "name": "O Arauto da Asa Negra" },
-    "void_dragon_chaos": { "name": "O Vórtice do Apocalipse Dracónico" },
-    "primordial_abyss_lord": { "name": "O Primeiro Senhor do Abismo" },
-    "undead_legionnaire": { "name": "Legionário Morto-Vivo" },
-    "mountain_troll_brute": { "name": "Troll da Montanha Enfurecido" },
-    "inferno_hound_alpha": { "name": "Cão Infernal Alfa" },
-    "cave_horror_spider": { "name": "Horror das Cavernas" },
-    "high_orc_raider": { "name": "Saqueador High Orc" },
-    "dark_elf_assassin_leader": { "name": "Líder Assassino Elfo Negro" },
-    "harpy_matriarch": { "name": "Matriarca Harpia" },
-    "chimera_of_waste": { "name": "Quimera do Ermo" },
-    "vampire_noble_valerius": { "name": "Nobre Vampiro Valerius" },
-    "archdemon_malphas": { "name": "Malphas, o Arquidemónio" },
-    "abyssal_kraken_tentacle": { "name": "Tentáculo do Kraken Abissal" },
-    "ancient_guardian_statue": { "name": "Estátua do Guardião Ancestral" },
-    "spectral_lich_king_shadow": { "name": "Rei Lich Espectral" },
-    "stone_giant_sovereign": { "name": "Soberano Ancestral dos Gigantes" },
-    "frost_sovereign_true": { "name": "Soberano do Gelo (Forma Verdadeira)" },
-    "titan_champion_sim": { "name": "Campeão Titã (Simulação)" },
-    "void_dragon_general": { "name": "General Draconiano do Vazio" },
-    "abyssal_void_walker": { "name": "Caminhante do Vazio Primordial" },
-    "seraphim_fallen_angel": { "name": "Serafim, o Anjo Caído" },
-    "monarch_of_beginnings": { "name": "Monarca dos Primórdios" },
-    "key_boss_basilisk": { "name": "Basilisco das Sombras" },
-    "key_boss_manticore": { "name": "Manticora do Abismo" },
-    "key_boss_phoenix_rebirth": { "name": "Fénix da Renascença Sombria" },
-    "key_boss_beholder_eye": { "name": "Observador do Caos" },
-    "key_boss_demon_prince_astaroth": { "name": "Príncipe Demónio Astaroth" },
-    "key_boss_undead_dragon_king": { "name": "Rei Dragão Morto-Vivo" },
-    "key_boss_titania_queen_dark": { "name": "Rainha das Fadas Corrompida" },
-    "key_boss_anubis_guardian_soul": { "name": "Anúbis, Guardião das Almas" },
-    "key_boss_cerberus_gate_final": { "name": "Cérbero, o Porteiro do Inferno" },
-    "key_boss_medusa_queen_gaze": { "name": "Medusa, a Rainha das Serpentes" },
-    "key_boss_hydra_ancient_world": { "name": "Hidra Ancestral Proibida" },
-    "key_boss_fenrir_wolf_star": { "name": "Fenrir, o Devorador de Estrelas" },
-    "key_boss_odin_simulation_valhalla": { "name": "Odin (Simulação do Sistema)" },
-    "key_boss_zeus_simulation_olympus": { "name": "Zeus (Simulação do Sistema)" },
-    "key_boss_cthulhu_spawn_outer": { "name": "Prole do Infinito (Spawn de Cthulhu)" },
-    "break_boss_lich_servant_vanguard": { "name": "Vanguarda do Rei Lich" },
-    "break_boss_giant_worm_abyss": { "name": "Verme Gigante do Abismo" },
-    "break_boss_dark_knight_traitor": { "name": "Cavaleiro Negro Traidor" },
-    "break_boss_succubus_scout_night": { "name": "Batedora Succubus da Noite" },
-    "break_boss_gargoyle_watcher_stone": { "name": "Gárgula Vigia de Pedra" },
-    "break_boss_orc_shaman_ritual_corrupt": { "name": "Xamã Orc Corrompido" },
-    "break_boss_ice_troll_frost_bite": { "name": "Troll de Gelo (Mordida Gélida)" },
-    "break_boss_fire_spirit_ember": { "name": "Espírito de Brasas Infernais" },
-    "break_boss_void_wraith_silent": { "name": "Wraith do Vazio Silencioso" },
-    "break_boss_corrupted_monk_temple": { "name": "Monge Corrompido do Templo" },
-    "break_boss_abyssal_beast_chimera": { "name": "Besta Abissal (Quimera Negra)" },
-    "break_boss_chaos_reaper_final": { "name": "Ceifador do Caos Final" },
-    "break_boss_ancient_machine_core": { "name": "Núcleo da Máquina Ancestral" },
-    "break_boss_star_spawn_void": { "name": "Prole das Estrelas (Vazio)" },
-    "break_boss_monarch_shadow_clone_sim": { "name": "Clone Sombrio do Monarca (Simulação)" },
-    "swamp_viper": { "name": "Serpente Venenosa do Pântano" },
-    "ice_elf_lord": { "name": "Senhor Gélido dos Elfos" },
-    "orc_high_shaman": { "name": "Xamã Orc Supremo" },
-    "vulcan_greed_demon": { "name": "Vulcan, Demónio da Ganância" },
-    "soul_guide_boss": { "name": "Guia das Almas" },
-    "swarm_sovereign": { "name": "Soberano do Enxame" },
-    "calamity_drake": { "name": "Dragão Calamidade" },
-    "ancient_trial_guardian": { "name": "Guardião Ancestral" },
-    "void_monarch": { "name": "Soberano do Vazio" },
-    "dracula_vampire_lord": { "name": "Drácula, o Vampiro Eterno" },
-    "cthulhu_mad_god": { "name": "Cthulhu, o Deus Adormecido" },
-    "sauron_dark_lord": { "name": "Sauron, Senhor Sombrio" },
-    "sun_wukong_celestial": { "name": "Sun Wukong, Rei Macaco Celestial" },
-    "sparta_warrior": { "name": "Guerreiro de Esparta" },
-    "alpha_wolf": { "name": "Lobo Alfa" },
-    "sea_king": { "name": "Rei do Mar Sombrio" },
-    "dungeon_queen": { "name": "Rainha do Dungeon Velado" },
-    "king_of_the_dead": { "name": "Rei dos Mortos" },
-    "boss_crypt_omega": { "name": "Aranha Ômega da Cripta" },
-    "boss_seraphim": { "name": "Serafim Caído" },
-    "key_boss_goblin_king": { "name": "Rei Goblin" },
-    "key_boss_dragon_wyvern": { "name": "Wyvern Negro" }
+    "steel_fanged_lycan": {
+      "name": "Lobo de Presas de Aço"
+    },
+    "hobgoblin_chieftain": {
+      "name": "Chefe Hobgoblin"
+    },
+    "twin_headed_ogre": {
+      "name": "Ogre de Duas Cabeças"
+    },
+    "giant_ice_bear": {
+      "name": "Tank, o Urso de Gelo Gigante"
+    },
+    "high_orc_guard": {
+      "name": "Guarda Real de Elite High Orc"
+    },
+    "naga_general": {
+      "name": "General Naga do Abismo"
+    },
+    "infernal_monarch": {
+      "name": "Soberano Infernal"
+    },
+    "plague_sovereign": {
+      "name": "Soberana das Pragas"
+    },
+    "frost_sovereign": {
+      "name": "Soberano do Gelo Eterno"
+    },
+    "architect_system": {
+      "name": "O Arquiteto do Sistema"
+    },
+    "beast_sovereign": {
+      "name": "Soberano das Feras"
+    },
+    "giant_sovereign": {
+      "name": "Soberano dos Gigantes"
+    },
+    "void_sovereign": {
+      "name": "Soberano da Destruição Total"
+    },
+    "rathalos_sky": {
+      "name": "O Soberano dos Céus Escarlates"
+    },
+    "primal_fox_deity": {
+      "name": "Divindade do Ódio Primordial"
+    },
+    "malenia_blade": {
+      "name": "A Lâmina da Podridão Escarlate"
+    },
+    "frozen_throne_king": {
+      "name": "O Senhor do Trono Congelante"
+    },
+    "dark_wing_herald": {
+      "name": "O Arauto da Asa Negra"
+    },
+    "void_dragon_chaos": {
+      "name": "O Vórtice do Apocalipse Dracónico"
+    },
+    "primordial_abyss_lord": {
+      "name": "O Primeiro Senhor do Abismo"
+    },
+    "undead_legionnaire": {
+      "name": "Legionário Morto-Vivo"
+    },
+    "mountain_troll_brute": {
+      "name": "Troll da Montanha Enfurecido"
+    },
+    "inferno_hound_alpha": {
+      "name": "Cão Infernal Alfa"
+    },
+    "cave_horror_spider": {
+      "name": "Horror das Cavernas"
+    },
+    "high_orc_raider": {
+      "name": "Saqueador High Orc"
+    },
+    "dark_elf_assassin_leader": {
+      "name": "Líder Assassino Elfo Negro"
+    },
+    "harpy_matriarch": {
+      "name": "Matriarca Harpia"
+    },
+    "chimera_of_waste": {
+      "name": "Quimera do Ermo"
+    },
+    "vampire_noble_valerius": {
+      "name": "Nobre Vampiro Valerius"
+    },
+    "archdemon_malphas": {
+      "name": "Malphas, o Arquidemónio"
+    },
+    "abyssal_kraken_tentacle": {
+      "name": "Tentáculo do Kraken Abissal"
+    },
+    "ancient_guardian_statue": {
+      "name": "Estátua do Guardião Ancestral"
+    },
+    "spectral_lich_king_shadow": {
+      "name": "Rei Lich Espectral"
+    },
+    "stone_giant_sovereign": {
+      "name": "Soberano Ancestral dos Gigantes"
+    },
+    "frost_sovereign_true": {
+      "name": "Soberano do Gelo (Forma Verdadeira)"
+    },
+    "titan_champion_sim": {
+      "name": "Campeão Titã (Simulação)"
+    },
+    "void_dragon_general": {
+      "name": "General Draconiano do Vazio"
+    },
+    "abyssal_void_walker": {
+      "name": "Caminhante do Vazio Primordial"
+    },
+    "seraphim_fallen_angel": {
+      "name": "Serafim, o Anjo Caído"
+    },
+    "monarch_of_beginnings": {
+      "name": "Soberano dos Primórdios"
+    },
+    "key_boss_basilisk": {
+      "name": "Basilisco das Sombras"
+    },
+    "key_boss_manticore": {
+      "name": "Manticora do Abismo"
+    },
+    "key_boss_phoenix_rebirth": {
+      "name": "Fénix da Renascença Sombria"
+    },
+    "key_boss_beholder_eye": {
+      "name": "Observador do Caos"
+    },
+    "key_boss_demon_prince_astaroth": {
+      "name": "Príncipe Demónio Astaroth"
+    },
+    "key_boss_undead_dragon_king": {
+      "name": "Rei Dragão Morto-Vivo"
+    },
+    "key_boss_titania_queen_dark": {
+      "name": "Rainha das Fadas Corrompida"
+    },
+    "key_boss_anubis_guardian_soul": {
+      "name": "Anúbis, Guardião das Almas"
+    },
+    "key_boss_cerberus_gate_final": {
+      "name": "Cérbero, o Porteiro do Inferno"
+    },
+    "key_boss_medusa_queen_gaze": {
+      "name": "Medusa, a Rainha das Serpentes"
+    },
+    "key_boss_hydra_ancient_world": {
+      "name": "Hidra Ancestral Proibida"
+    },
+    "key_boss_fenrir_wolf_star": {
+      "name": "Fenrir, o Devorador de Estrelas"
+    },
+    "key_boss_odin_simulation_valhalla": {
+      "name": "Odin (Simulação do Sistema)"
+    },
+    "key_boss_zeus_simulation_olympus": {
+      "name": "Zeus (Simulação do Sistema)"
+    },
+    "key_boss_cthulhu_spawn_outer": {
+      "name": "Prole do Infinito (Spawn de Cthulhu)"
+    },
+    "break_boss_lich_servant_vanguard": {
+      "name": "Vanguarda do Rei Lich"
+    },
+    "break_boss_giant_worm_abyss": {
+      "name": "Verme Gigante do Abismo"
+    },
+    "break_boss_dark_knight_traitor": {
+      "name": "Cavaleiro Negro Traidor"
+    },
+    "break_boss_succubus_scout_night": {
+      "name": "Batedora Succubus da Noite"
+    },
+    "break_boss_gargoyle_watcher_stone": {
+      "name": "Gárgula Vigia de Pedra"
+    },
+    "break_boss_orc_shaman_ritual_corrupt": {
+      "name": "Xamã Orc Corrompido"
+    },
+    "break_boss_ice_troll_frost_bite": {
+      "name": "Troll de Gelo (Mordida Gélida)"
+    },
+    "break_boss_fire_spirit_ember": {
+      "name": "Espírito de Brasas Infernais"
+    },
+    "break_boss_void_wraith_silent": {
+      "name": "Wraith do Vazio Silencioso"
+    },
+    "break_boss_corrupted_monk_temple": {
+      "name": "Monge Corrompido do Templo"
+    },
+    "break_boss_abyssal_beast_chimera": {
+      "name": "Besta Abissal (Quimera Negra)"
+    },
+    "break_boss_chaos_reaper_final": {
+      "name": "Ceifador do Caos Final"
+    },
+    "break_boss_ancient_machine_core": {
+      "name": "Núcleo da Máquina Ancestral"
+    },
+    "break_boss_star_spawn_void": {
+      "name": "Prole das Estrelas (Vazio)"
+    },
+    "break_boss_monarch_shadow_clone_sim": {
+      "name": "Clone Sombrio do Soberano (Simulação)"
+    },
+    "swamp_viper": {
+      "name": "Serpente Venenosa do Pântano"
+    },
+    "ice_elf_lord": {
+      "name": "Senhor Gélido dos Elfos"
+    },
+    "orc_high_shaman": {
+      "name": "Xamã Orc Supremo"
+    },
+    "vulcan_greed_demon": {
+      "name": "Vulcan, Demónio da Ganância"
+    },
+    "soul_guide_boss": {
+      "name": "Guia das Almas"
+    },
+    "swarm_sovereign": {
+      "name": "Soberano do Enxame"
+    },
+    "calamity_drake": {
+      "name": "Dragão Calamidade"
+    },
+    "ancient_trial_guardian": {
+      "name": "Guardião Ancestral"
+    },
+    "void_monarch": {
+      "name": "Soberano do Vazio"
+    },
+    "dracula_vampire_lord": {
+      "name": "Drácula, o Vampiro Eterno"
+    },
+    "cthulhu_mad_god": {
+      "name": "Cthulhu, o Deus Adormecido"
+    },
+    "sauron_dark_lord": {
+      "name": "Sauron, Senhor Sombrio"
+    },
+    "sun_wukong_celestial": {
+      "name": "Sun Wukong, Rei Macaco Celestial"
+    },
+    "sparta_warrior": {
+      "name": "Guerreiro de Esparta"
+    },
+    "alpha_wolf": {
+      "name": "Lobo Alfa"
+    },
+    "sea_king": {
+      "name": "Rei do Mar Sombrio"
+    },
+    "dungeon_queen": {
+      "name": "Rainha do Dungeon Velado"
+    },
+    "king_of_the_dead": {
+      "name": "Rei dos Mortos"
+    },
+    "boss_crypt_omega": {
+      "name": "Aranha Ômega da Cripta"
+    },
+    "boss_seraphim": {
+      "name": "Serafim Caído"
+    },
+    "key_boss_goblin_king": {
+      "name": "Rei Goblin"
+    },
+    "key_boss_dragon_wyvern": {
+      "name": "Wyvern Negro"
+    }
   },
   "ui": {
     "dangerousPortal": "PORTAL PERIGOSO",

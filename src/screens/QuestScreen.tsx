@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, BackHandler,
+  TouchableOpacity, BackHandler, Platform,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,7 +18,7 @@ import ShadowExtractionModal from '../components/ShadowExtractionModal';
 import SideQuestSection from '../components/SideQuestSection';
 import { useTheme, FONT, SPACING } from '../theme';
 import { ALL_DUNGEON_KEYS } from '../data/dungeonKeys';
-import { useRewardedAd, AD_UNIT_STREAK, AD_UNIT_PENALTY, AD_UNIT_XP_BOOST, AD_UNIT_BOSS_HP } from '../hooks/useRewardedAd';
+import { useRewardedAd, adsAvailable, AD_UNIT_STREAK, AD_UNIT_PENALTY, AD_UNIT_XP_BOOST, AD_UNIT_BOSS_HP } from '../hooks/useRewardedAd';
 import { computeActivePassives } from '../store/helpers'; // used for shadow streak_protect check
 
 // ── Styles ─────────────────────────────────────────────────────────────────────
@@ -28,16 +28,16 @@ const getStyles = (C: any) => StyleSheet.create({
   content: { padding: SPACING.md, paddingBottom: 96 },
   titleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
   title: { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, letterSpacing: 3 },
-  forgeBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1, borderColor: C.neonBlue, borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 16, marginBottom: 4 },
+  forgeBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1, borderColor: C.neonBlue, borderRadius: 10, paddingHorizontal: SPACING.md, paddingVertical: 16, marginBottom: 4 },
   forgeBtnTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 13, letterSpacing: 1, fontWeight: '700' },
   forgeSubtitle: { color: C.muted, fontSize: 12, textAlign: 'center', marginTop: 4, marginBottom: SPACING.md },
   restBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.green + '18', borderRadius: 2, paddingHorizontal: 6, paddingVertical: 3, borderWidth: 1, borderColor: C.green + '44' },
   restTxt: { color: C.green, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
   actionRow: { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.sm },
-  actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingVertical: 10, backgroundColor: C.panel },
+  actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border, borderRadius: 10, paddingVertical: 10, backgroundColor: C.panel },
   actionBtnTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
   actionBtnSub: { color: C.dimmed, fontSize: 9, marginTop: 2 },
-  systemCard: { borderRadius: 4, borderWidth: 1, padding: SPACING.sm, marginBottom: SPACING.sm },
+  systemCard: { borderRadius: 10, borderWidth: 1, padding: SPACING.sm, marginBottom: SPACING.sm },
   cardNormal: { backgroundColor: C.panel, borderColor: C.neonBlue + '33' },
   cardWarning: { backgroundColor: C.neonRed + '10', borderColor: C.neonRed + '66' },
   cardSuccess: { backgroundColor: C.green + '12', borderColor: C.green + '44' },
@@ -50,7 +50,7 @@ const getStyles = (C: any) => StyleSheet.create({
   bossSub: { color: C.muted, fontSize: 10, marginTop: 2 },
   bossDefeatedBanner: { flexDirection: 'row', alignItems: 'center', padding: SPACING.sm },
   bossDefeatedTxt: { color: C.green, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  eventCard: { backgroundColor: C.gold + '08', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  eventCard: { backgroundColor: C.gold + '08', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 10, padding: SPACING.sm, marginBottom: SPACING.sm },
   eventHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   eventHeaderTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
   eventSub: { color: C.dimmed, fontSize: 10, marginBottom: 6 },
@@ -62,39 +62,39 @@ const getStyles = (C: any) => StyleSheet.create({
   eventTrialDone: { color: C.green },
   eventHint: { color: C.muted, fontSize: 10 },
 
-  weeklyCard: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm, borderWidth: 1, borderColor: C.border },
+  weeklyCard: { backgroundColor: C.panel, borderRadius: 10, padding: SPACING.sm, marginBottom: SPACING.sm, borderWidth: 1, borderColor: C.border },
   weeklyHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
   weeklyTitle: { flex: 1, color: C.muted, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
   weeklyCount: { color: '#fff', fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700' },
   weeklyTrack: { height: 4, backgroundColor: C.border, borderRadius: 0, overflow: 'hidden', marginBottom: 4 },
   weeklyFill: { height: '100%', borderRadius: 0 },
   weeklyDone: { color: C.green, fontSize: 10, fontStyle: 'italic' },
-  boostBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.gold + '15', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  boostBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.gold + '15', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 10, padding: SPACING.sm, marginBottom: SPACING.sm },
   boostTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
-  penalSection: { marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm },
+  penalSection: { marginBottom: SPACING.md, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 10, padding: SPACING.sm },
   penalHeader: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm },
   penalTitle: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
 
   sectionDivider: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.md, marginTop: 4 },
   sectionLine: { flex: 1, height: 1, backgroundColor: C.neonBlue + '33' },
-  sectionLabel: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, fontWeight: '700' },
+  sectionLabel: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2, fontWeight: '700' },
   sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.md },
   regenBtnInline: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: C.neonBlue + '15', borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: 8, paddingVertical: 4 },
   regenBtnTxt: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700' },
-  adRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#f59e0b55', borderRadius: 4, paddingVertical: 8, marginBottom: SPACING.sm, backgroundColor: '#f59e0b10' },
+  adRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#f59e0b55', borderRadius: 10, paddingVertical: 8, marginBottom: SPACING.sm, backgroundColor: '#f59e0b10' },
   adRowTxt: { color: '#f59e0b', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginLeft: 6 },
-  adShieldRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#22d3ee55', borderRadius: 4, paddingVertical: 8, marginTop: 6, marginBottom: 2, backgroundColor: '#22d3ee10' },
+  adShieldRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#22d3ee55', borderRadius: 10, paddingVertical: 8, marginTop: 6, marginBottom: 2, backgroundColor: '#22d3ee10' },
   adShieldTxt: { color: '#22d3ee', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1, marginLeft: 6 },
-  adShieldActive: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#22d3ee15', borderWidth: 1, borderColor: '#22d3ee55', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
+  adShieldActive: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#22d3ee15', borderWidth: 1, borderColor: '#22d3ee55', borderRadius: 10, padding: SPACING.sm, marginBottom: SPACING.sm },
   adShieldActiveTxt: { color: '#22d3ee', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
 
   statusBar: { padding: SPACING.sm, marginBottom: SPACING.md },
   statusBarRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  statusBarLabel: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 2 },
+  statusBarLabel: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
   statusBarCounter: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 20, fontWeight: '900' },
   statusBarSlash: { color: C.dimmed, fontSize: 14, fontWeight: '400' },
   statusBarBossRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6, borderTopWidth: 1, borderTopColor: C.border, paddingTop: 5 },
-  statusBarBossLabel: { fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 1 },
+  statusBarBossLabel: { fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1 },
   extraInfoBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: C.gold + '10', borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.sm },
   extraInfoTxt: { flex: 1, color: C.gold, fontSize: 11, lineHeight: 16 },
 
@@ -102,7 +102,7 @@ const getStyles = (C: any) => StyleSheet.create({
   dungeonBreakTxt: { color: C.neonRed, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900', letterSpacing: 1 },
   dungeonBreakSub: { color: C.muted, fontSize: 10, textAlign: 'center' },
 
-  extraCard: { opacity: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.gold + '44', borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
+  extraCard: { opacity: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.gold + '44', borderRadius: 10, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm },
   extraCardDone: { opacity: 0.45 },
   extraCardLeft: { width: 32, alignItems: 'center' },
   extraCardLabel: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', letterSpacing: 0.5, marginBottom: 3 },
@@ -113,7 +113,7 @@ const getStyles = (C: any) => StyleSheet.create({
   extraBonusTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 8, letterSpacing: 0.5 },
   extraCompleteBtn: { width: 36, height: 36, borderRadius: 4, borderWidth: 1, borderColor: C.gold, backgroundColor: C.gold + '15', alignItems: 'center', justifyContent: 'center' },
 
-  generateExtraBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1, borderColor: C.gold + '66', borderRadius: 4, paddingVertical: 14, marginBottom: SPACING.sm },
+  generateExtraBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1, borderColor: C.gold + '66', borderRadius: 10, paddingVertical: 14, marginBottom: SPACING.sm },
   generateExtraTxt: { color: C.gold, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
   generateExtraSub: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9 },
 });
@@ -399,6 +399,8 @@ export default function QuestScreen() {
   }, [activeEventDef]);
 
   useEffect(() => {
+    // Hardware back button only exists on Android (BackHandler is unsupported on web)
+    if (Platform.OS !== 'android') { return; }
     const onBackPress = () => {
       if (activeMission) {
         setActiveMission(null);
@@ -418,8 +420,8 @@ export default function QuestScreen() {
       }
       return false;
     };
-    BackHandler.addEventListener('hardwareBackPress', onBackPress);
-    return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    const sub = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+    return () => sub.remove();
   }, [activeMission, showEventDungeon, showWeeklyDungeon, showForge]);
 
   function handleMissionSelect(m: DungeonMission) {
@@ -486,7 +488,7 @@ export default function QuestScreen() {
         {/* ── HEADER: Title + Progress ── */}
         <View style={s.titleRow}>
           <Icon name="clipboard-list-outline" size={16} color={C.neonBlue} />
-          <Text style={s.title}> {t('ui.daily_missions_title')}</Text>
+          <Text style={s.title}> [ {t('ui.daily_missions_title')} ]</Text>
           {isRestDay && (
             <View style={s.restBadge}>
               <Icon name="bed" size={10} color={C.green} />
@@ -644,7 +646,7 @@ export default function QuestScreen() {
             <Text style={s.adShieldActiveTxt}> {t('ui.streak_shield_active')}</Text>
           </View>
         )}
-        {showStreakShieldAd && (
+        {adsAvailable && showStreakShieldAd && (
           <TouchableOpacity
             style={[s.adShieldRow, !adStreakLoaded && { opacity: 0.45 }]}
             disabled={!adStreakLoaded}
@@ -661,7 +663,7 @@ export default function QuestScreen() {
             <Text style={s.boostTxt}> {t('ui.xp_boost_active')}</Text>
           </View>
         )}
-        {!xpBoostNext && !system.adXpBoostToday && (
+        {adsAvailable && !xpBoostNext && !system.adXpBoostToday && (
           <TouchableOpacity
             style={[s.adRow, !adXpLoaded && { opacity: 0.45 }]}
             disabled={!adXpLoaded}
@@ -679,7 +681,7 @@ export default function QuestScreen() {
               <Icon name="alert-circle" size={12} color={C.neonRed} />
               <Text style={[s.penalTitle, { flex: 1 }]}>{t('ui.penalties_active')}</Text>
             </View>
-            {!system.adPenaltyUsedWeek && penaltyQ.length > 0 && (
+            {adsAvailable && !system.adPenaltyUsedWeek && penaltyQ.length > 0 && (
               <TouchableOpacity
                 style={[s.adRow, { borderColor: C.neonRed + '55', backgroundColor: C.neonRed + '10', marginBottom: SPACING.sm }, !adPenaltyLoaded && { opacity: 0.45 }]}
                 disabled={!adPenaltyLoaded}
@@ -714,8 +716,6 @@ export default function QuestScreen() {
           )}
         </View>
 
-        <SideQuestSection C={C} />
-
         {/* ── DUNGEONS ── */}
         <View style={[s.sectionDivider, { marginTop: SPACING.sm }]}>
           <View style={s.sectionLine} />
@@ -748,7 +748,7 @@ export default function QuestScreen() {
                 <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.dimmed }}>{t('ui.hp_remaining')}</Text>
                 <Text style={{ fontFamily: FONT.orbitron, fontSize: 9, color: C.muted }}>{Math.floor(activeRaidBoss.currentHp)} <Text style={{ color: C.dimmed }}>/ {activeRaidBoss.maxHp}</Text></Text>
               </View>
-              {system.adBossUsedForId !== activeRaidBoss.defId && (
+              {adsAvailable && system.adBossUsedForId !== activeRaidBoss.defId && (
                 <TouchableOpacity
                   style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 6, borderWidth: 1, borderColor: def.color + '66', borderRadius: 4, paddingVertical: 7, backgroundColor: def.color + '12' }, !adBossLoaded && { opacity: 0.45 }]}
                   disabled={!adBossLoaded}
@@ -801,9 +801,9 @@ export default function QuestScreen() {
         )}
 
         {!activeRaidBoss && !activeEventDef && (
-          <View style={{ alignItems: 'center', paddingVertical: SPACING.lg }}>
-            <Icon name="gate" size={28} color={C.dimmed} />
-            <Text style={{ color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: SPACING.sm }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: SPACING.sm }}>
+            <Icon name="gate" size={14} color={C.dimmed} />
+            <Text style={{ color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2 }}>
               {t('ui.no_active_event_dungeons')}
             </Text>
           </View>
@@ -845,6 +845,8 @@ export default function QuestScreen() {
           </>
         )}
 
+        {/* Daily notes — utility block, intentionally last */}
+        <SideQuestSection C={C} />
 
       </ScrollView>
 

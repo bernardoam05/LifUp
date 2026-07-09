@@ -1,12 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native';
+import { Animated, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../theme';
+import { useTheme, FONT } from '../theme';
 import { playSound } from '../utils/audioService';
 
-
-const { width: SW } = Dimensions.get('window');
 
 interface LevelUpReward {
   level: number
@@ -84,7 +82,8 @@ const getStyles = (C: any) => StyleSheet.create({
   container: {
     position: 'absolute',
     top: 0,
-    width: SW,
+    left: 0,
+    right: 0,
     zIndex: 9999,
     paddingHorizontal: 16,
     alignItems: 'center',
@@ -120,7 +119,7 @@ const getStyles = (C: any) => StyleSheet.create({
     color: C.gold,
     fontSize: 16,
     fontWeight: '900',
-    fontFamily: 'monospace',
+    fontFamily: FONT.orbitron,
     letterSpacing: 3,
     marginBottom: 2,
   },

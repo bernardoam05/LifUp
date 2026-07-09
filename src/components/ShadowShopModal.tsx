@@ -118,7 +118,7 @@ const getStyles = (C: any) => StyleSheet.create({
   scrollContent: { paddingBottom: SPACING.xl },
   empty: { alignItems: 'center', justifyContent: 'center', paddingTop: 40, opacity: 0.5 },
   emptyText: { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10, marginTop: 12, textAlign: 'center' },
-  card: { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, alignItems: 'center', gap: SPACING.sm },
+  card: { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 10, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, alignItems: 'center', gap: SPACING.sm },
   iconWrap: { width: 44, height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   info: { flex: 1 },
   name: { fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', marginBottom: 2 },

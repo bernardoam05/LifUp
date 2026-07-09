@@ -51,7 +51,7 @@ function fmtVal(a: Achievement, val: number): string {
 
 // ── Stat bar ───────────────────────────────────────────────────────────────────
 
-function StatBar({ label, level, playerLevel, C }: { label: string; level: number; playerLevel: number; C: any }) {
+function StatBar({ label, level, maxAttr, C }: { label: string; level: number; maxAttr: number; C: any }) {
   const ATTR_ICONS: Record<string, { icon: string; color: string }> = {
     STR: { icon: 'arm-flex',    color: C.neonRed },
     AGI: { icon: 'run-fast',    color: C.green },
@@ -60,8 +60,8 @@ function StatBar({ label, level, playerLevel, C }: { label: string; level: numbe
   };
   const { icon, color } = ATTR_ICONS[label as keyof typeof ATTR_ICONS] ?? { icon: 'help-circle', color: C.muted };
   const s = getStyles(C);
-  const cap = Math.max(100, playerLevel * 3);
-  const pct = Math.min(100, (level / cap) * 100);
+  // Bars are relative to the strongest attribute so they stay meaningful early game
+  const pct = Math.min(100, (level / Math.max(1, maxAttr)) * 100);
 
   return (
     <View style={s.statRow}>
@@ -131,8 +131,13 @@ function StatisticsPanel({ C }: { C: any }) {
 
       <View style={sp.rankSection}>
         <Text style={sp.rankTitle}>{t('status.stats_ops_detail')}</Text>
+        {grandTotal === 0 && (
+          <Text style={{ color: C.dimmed, fontSize: 11, fontStyle: 'italic', paddingVertical: SPACING.sm }}>
+            {t('status.stats_ops_empty')}
+          </Text>
+        )}
         <View style={sp.rankGrid}>
-          {categories.map(cat => {
+          {categories.filter(cat => cat.count > 0).map(cat => {
             const pct = grandTotal > 0 ? (cat.count / grandTotal) * 100 : 0;
             return (
               <View key={cat.id} style={sp.rankItem}>
@@ -368,6 +373,7 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
   onSelect: (a: Achievement, prog: AchievementProg | undefined, done: boolean) => void
   C: any
 }) {
+  const { t } = useTranslation('screens');
   const ac = getACStyles(C);
   const unlockedIds         = useGameStore(s => s.unlockedAchievements);
   const achievementProgress = useGameStore(s => s.achievementProgress);
@@ -382,7 +388,7 @@ function AchievementsModal({ visible, onClose, onSelect, C }: {
       <View style={ac.modalCard}>
         <View style={ac.modalHeader}>
           <Icon name="trophy-outline" size={12} color={C.gold} />
-          <Text style={[ac.headerTxt, { flex: 1 }]}> CONQUISTAS</Text>
+          <Text style={[ac.headerTxt, { flex: 1 }]}> {t('status.achievements_title')}</Text>
           <View style={[ac.badge, { marginRight: SPACING.sm }]}>
             <Text style={ac.badgeTxt}>{unlocked}/{total}</Text>
           </View>
@@ -706,8 +712,6 @@ export default function StatusScreen() {
   const s = React.useMemo(() => getStyles(C), [C]);
 
   const player = useGameStore(st => st.player);
-  const statistics         = useGameStore(st => st.statistics);
-  const system             = useGameStore(st => st.system);
   const customShadows      = useGameStore(st => st.customShadows);
   const activeShadowIds    = useGameStore(st => st.player.activeShadowIds);
   const activeBuffs         = useGameStore(st => st.activeBuffs);
@@ -726,21 +730,25 @@ export default function StatusScreen() {
       <ScrollView contentContainerStyle={s.content}>
 
         <View style={s.titleRow}>
-          <Text style={s.pageTitle}>{t('status.title')}</Text>
+          <Text style={s.pageTitle}>[ {t('status.title')} ]</Text>
         </View>
 
-        {/* Active Buffs Bar */}
-        {activeBuffs.length > 0 && (
-          <View style={s.buffsBar}>
-            {activeBuffs.filter(b => Date.now() < b.expiresAt).map(buff => (
-              <View key={buff.id} style={s.buffChip}>
-                <Icon name={buff.stat === 'xp' ? 'chevron-double-up' : 'piggy-bank'} size={14} color={C.neonBlue} />
-                <Text style={s.buffLabel}>{buff.label}</Text>
-                <Text style={s.buffValue}>+{Math.round((buff.multiplier - 1) * 100)}% {buff.stat}</Text>
-              </View>
-            ))}
-          </View>
-        )}
+        {/* Active Buffs Bar — filter expired first so an empty bar never renders */}
+        {(() => {
+          const liveBuffs = activeBuffs.filter(b => Date.now() < b.expiresAt);
+          if (liveBuffs.length === 0) { return null; }
+          return (
+            <View style={s.buffsBar}>
+              {liveBuffs.map(buff => (
+                <View key={buff.id} style={s.buffChip}>
+                  <Icon name={buff.stat === 'xp' ? 'chevron-double-up' : 'piggy-bank'} size={14} color={C.neonBlue} />
+                  <Text style={s.buffLabel}>{buff.label}</Text>
+                  <Text style={s.buffValue}>+{Math.round((buff.multiplier - 1) * 100)}% {buff.stat}</Text>
+                </View>
+              ))}
+            </View>
+          );
+        })()}
 
         {/* XP bar */}
         <View style={s.xpSection}>
@@ -757,10 +765,17 @@ export default function StatusScreen() {
         {/* Attributes */}
         <SectionHeader icon="trending-up" label={t('status.section_attributes')} C={C} />
         <View style={s.statsBlock}>
-          <StatBar label="STR" level={player.str} playerLevel={player.level} C={C} />
-          <StatBar label="AGI" level={player.agi} playerLevel={player.level} C={C} />
-          <StatBar label="INT" level={player.int} playerLevel={player.level} C={C} />
-          <StatBar label="VIT" level={player.vit} playerLevel={player.level} C={C} />
+          {(() => {
+            const maxAttr = Math.max(player.str, player.agi, player.int, player.vit);
+            return (
+              <>
+                <StatBar label="STR" level={player.str} maxAttr={maxAttr} C={C} />
+                <StatBar label="AGI" level={player.agi} maxAttr={maxAttr} C={C} />
+                <StatBar label="INT" level={player.int} maxAttr={maxAttr} C={C} />
+                <StatBar label="VIT" level={player.vit} maxAttr={maxAttr} C={C} />
+              </>
+            );
+          })()}
         </View>
 
         {/* History */}
@@ -815,12 +830,12 @@ export default function StatusScreen() {
               </Text>
             </>
           )}
+          <TouchableOpacity style={s.shadowsBtn} onPress={() => setShowShadows(true)} activeOpacity={0.75}>
+            <Icon name="account-group-outline" size={14} color={C.purple} />
+            <Text style={s.shadowsBtnTxt}>{t('status.shadows_army_btn')}</Text>
+            <Icon name="chevron-right" size={18} color={C.purple} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={s.shadowsBtn} onPress={() => setShowShadows(true)} activeOpacity={0.75}>
-          <Icon name="account-group-outline" size={14} color={C.purple} />
-          <Text style={s.shadowsBtnTxt}>{t('status.shadows_army_btn')}</Text>
-          <Icon name="chevron-right" size={18} color={C.purple} />
-        </TouchableOpacity>
 
       </ScrollView>
 
@@ -887,7 +902,7 @@ const getStyles = (C: any) => StyleSheet.create({
   fill:       { height: '100%', borderRadius: 0 },
   statVal:    { color: C.muted, fontSize: 12, fontFamily: FONT.orbitron, fontWeight: '700' },
 
-  shadowsBlock:           { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.purple + '33', marginBottom: SPACING.lg, gap: SPACING.sm },
+  shadowsBlock:           { backgroundColor: C.panel, borderRadius: 10, padding: SPACING.md, borderWidth: 1, borderColor: C.purple + '33', marginBottom: SPACING.lg, gap: SPACING.sm },
   shadowVanguardRow:      { flexDirection: 'row', gap: SPACING.sm },
   shadowVanguardCard:     { flex: 1, backgroundColor: C.bg, borderWidth: 1, borderRadius: 4, padding: SPACING.sm, alignItems: 'center', gap: 6 },
   shadowVanguardName:     { fontFamily: FONT.orbitron, fontSize: 10, textAlign: 'center', lineHeight: 14 },
@@ -900,7 +915,7 @@ const getStyles = (C: any) => StyleSheet.create({
 
   historyBtn:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.neonBlue + '44', borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 10, marginBottom: SPACING.lg },
   historyBtnTxt: { flex: 1, color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
-  shadowsBtn:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.purple + '44', borderRadius: 4, paddingHorizontal: SPACING.md, paddingVertical: 10, marginBottom: SPACING.lg },
+  shadowsBtn:    { flexDirection: 'row', alignItems: 'center', backgroundColor: C.purple + '10', borderWidth: 1, borderColor: C.purple + '44', borderRadius: 10, paddingHorizontal: SPACING.md, paddingVertical: 10, marginTop: SPACING.xs },
   shadowsBtnTxt: { flex: 1, color: C.purple, fontFamily: FONT.orbitron, fontSize: 10, marginLeft: SPACING.sm },
 });
 

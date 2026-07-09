@@ -149,17 +149,21 @@ const useGameStore = create<GameState & GameActions>()(
 
         applyBuff: (buff: { id: string; label: string; multiplier: number; stat: 'xp' | 'gold'; }, duration: number) => {
           set(s => {
-            const existingBuffIdx = s.activeBuffs.findIndex(b => b.id === buff.id);
+            const now = Date.now();
+            // Drop expired buffs so the list doesn't grow unbounded during a session
+            const live = s.activeBuffs.filter(b => !b.expiresAt || b.expiresAt > now);
+            const existingBuffIdx = live.findIndex(b => b.id === buff.id);
             if (existingBuffIdx > -1) {
-              const existing = s.activeBuffs[existingBuffIdx];
-              const newActive = [...s.activeBuffs];
+              const existing = live[existingBuffIdx];
+              const newActive = [...live];
               newActive[existingBuffIdx] = {
                 ...existing,
-                expiresAt: existing.expiresAt + duration,
+                // Extend from now if the old window already lapsed
+                expiresAt: Math.max(existing.expiresAt, now) + duration,
               };
               return { activeBuffs: newActive };
             } else {
-              return { activeBuffs: [...s.activeBuffs, { ...buff, expiresAt: Date.now() + duration }] };
+              return { activeBuffs: [...live, { ...buff, expiresAt: now + duration }] };
             }
           });
         },
@@ -1495,7 +1499,7 @@ const useGameStore = create<GameState & GameActions>()(
         deductGold(amount) { if (get().player.gold < amount) {return false;} set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold - amount }, statistics: { ...s.statistics, totalGoldSpent: (s.statistics.totalGoldSpent ?? 0) + amount } })); return true; },
         addGold(amount) { set((s: GameState) => ({ player: { ...s.player, gold: s.player.gold + amount } })); },
         claimAdGoldReward() {
-          const today = new Date().toISOString().split('T')[0];
+          const today = new Date().toDateString();
           const { system } = get();
           const isNewDay = system.adLastDate !== today;
           const count = isNewDay ? 0 : (system.goldAdsToday ?? 0);
@@ -1533,7 +1537,7 @@ const useGameStore = create<GameState & GameActions>()(
           return true;
         },
         claimAdXpBoost() {
-          const today = new Date().toISOString().split('T')[0];
+          const today = new Date().toDateString();
           const { system } = get();
           const isNewDay = system.adLastDate !== today;
           if (!isNewDay && system.adXpBoostToday) { return false; }
@@ -1544,19 +1548,14 @@ const useGameStore = create<GameState & GameActions>()(
           return true;
         },
         claimAdRandomItem() {
-          const today = new Date().toISOString().split('T')[0];
+          const today = new Date().toDateString();
           const { system } = get();
           const isNewDay = system.adLastDate !== today;
           const count = isNewDay ? 0 : (system.adItemsToday ?? 0);
           if (count >= 2) { return false; }
           const ITEM_POOL = ['health_potion', 'xp_crystal', 'health_potion', 'rest_scroll', 'evolution_shard_common'];
           const itemId = ITEM_POOL[Math.floor(Math.random() * ITEM_POOL.length)];
-          const ITEM_NAMES: Record<string, string> = {
-            health_potion: 'Poção de Vida',
-            xp_crystal: 'Cristal de XP',
-            rest_scroll: 'Pergaminho de Descanso',
-            evolution_shard_common: 'Fragmento de Evolução',
-          };
+
           set((s: GameState) => {
             const inv = [...s.player.inventory];
             const idx = inv.findIndex(e => e.itemId === itemId);
@@ -1567,7 +1566,7 @@ const useGameStore = create<GameState & GameActions>()(
               system: { ...s.system, adItemsToday: count + 1, adLastDate: today },
             };
           });
-          return { itemId, itemName: ITEM_NAMES[itemId] ?? itemId };
+          return { itemId, itemName: i18n.t(`items.${itemId}.name`, { ns: 'shop', defaultValue: itemId }) };
         },
         claimAdBossHp() {
           const { system } = get();
@@ -1588,7 +1587,7 @@ const useGameStore = create<GameState & GameActions>()(
         rerollQuestViaAd(questId) {
           const { player, questDictionary, quests } = get();
           const targetQuest = quests.find(q => q.id === questId);
-          if (!targetQuest || targetQuest.done) { return { success: false, reason: 'Missão inválida.' }; }
+          if (!targetQuest || targetQuest.done) { return { success: false, reason: i18n.t('reroll.invalid', { ns: 'store' }) }; }
           const baseSeed = Date.now();
           let newQuest: Quest | undefined;
           const activeIds = quests.map(q => q.id);
@@ -1600,7 +1599,7 @@ const useGameStore = create<GameState & GameActions>()(
             newQuest = candidates.find(q => !activeIds.includes(q.id));
             if (newQuest) { break; }
           }
-          if (!newQuest) { return { success: false, reason: 'Sem missões disponíveis.' }; }
+          if (!newQuest) { return { success: false, reason: i18n.t('reroll.none_available', { ns: 'store' }) }; }
           set((s: GameState & GameActions) => ({ quests: s.quests.map(q => q.id === questId ? newQuest! : q) }));
           return { success: true };
         },
@@ -1741,9 +1740,9 @@ const useGameStore = create<GameState & GameActions>()(
 
         regenerateSingleDailyQuest(questId) {
           const { system, player, questDictionary, quests } = get();
-          if (system.weeklyRegenCount >= 7) {return { success: false, reason: 'Limite semanal atingido (7/7).' };}
+          if (system.weeklyRegenCount >= 7) {return { success: false, reason: i18n.t('reroll.weekly_limit', { ns: 'store' }) };}
           const targetQuest = quests.find(q => q.id === questId);
-          if (!targetQuest || targetQuest.done) {return { success: false, reason: 'Missão inválida.' };}
+          if (!targetQuest || targetQuest.done) {return { success: false, reason: i18n.t('reroll.invalid', { ns: 'store' }) };}
           const baseSeed = Date.now() + system.weeklyRegenCount;
           let newQuest: Quest | undefined;
           const activeIds = quests.map(q => q.id);
@@ -1758,7 +1757,7 @@ const useGameStore = create<GameState & GameActions>()(
             newQuest = candidates.find(q => !activeIds.includes(q.id));
             if (newQuest) {break;}
           }
-          if (!newQuest) {return { success: false, reason: 'Não há outras missões disponíveis.' };}
+          if (!newQuest) {return { success: false, reason: i18n.t('reroll.none_available', { ns: 'store' }) };}
           // #4 Fix: use s.quests from the set() callback to avoid stale closure
           set((s: GameState & GameActions) => ({ quests: s.quests.map(q => q.id === questId ? newQuest! : q), system: { ...s.system, weeklyRegenCount: s.system.weeklyRegenCount + 1 } }));
           return { success: true };
@@ -1766,12 +1765,12 @@ const useGameStore = create<GameState & GameActions>()(
 
         replaceExtraQuest(questId) {
           const { extraQuests, extraQuestRerolledIds, extraQuestUsedPoolIds, questDictionary, player } = get();
-          if (extraQuestRerolledIds.includes(questId)) {return { success: false, reason: 'Já substituída hoje.' };}
+          if (extraQuestRerolledIds.includes(questId)) {return { success: false, reason: i18n.t('reroll.already_today', { ns: 'store' }) };}
           const target = extraQuests.find(q => q.id === questId);
-          if (!target || target.done) {return { success: false, reason: 'Inválida.' };}
+          if (!target || target.done) {return { success: false, reason: i18n.t('reroll.invalid', { ns: 'store' }) };}
           const usedPoolIds = new Set([...extraQuestUsedPoolIds, ...extraQuests.filter(q => q.id !== questId).map(q => q.id.split('_').slice(1, -1).join('_')).filter(Boolean)]);
           const available = questDictionary.filter(def => def.type === 'pool' && !usedPoolIds.has(def.id));
-          if (available.length === 0) {return { success: false, reason: 'Pool vazia.' };}
+          if (available.length === 0) {return { success: false, reason: i18n.t('reroll.pool_empty', { ns: 'store' }) };}
           const chosen = available[Math.floor(Math.random() * available.length)];
           const base = defToQuest(chosen, player.level, getQuestTier(player.level));
           const newQ = { ...base, id: `extra_${chosen.id}_${Date.now()}`, xp: Math.round(base.xp * 1.5), gold: Math.round(base.gold * 1.5) };
@@ -1786,10 +1785,10 @@ const useGameStore = create<GameState & GameActions>()(
             settings.missionDifficulty,
             settings.customDailyMissions
           );
-          if (extraQuests.length >= Math.min(3, targetLimit)) {return { success: false, reason: 'Limite atingido.' };}
+          if (extraQuests.length >= Math.min(3, targetLimit)) {return { success: false, reason: i18n.t('reroll.limit_reached', { ns: 'store' }) };}
           const usedIds = new Set(extraQuests.map(q => q.id));
           const available = questDictionary.filter(def => def.type === 'pool' && !usedIds.has(def.id));
-          if (available.length === 0) {return { success: false, reason: 'Pool vazia.' };}
+          if (available.length === 0) {return { success: false, reason: i18n.t('reroll.pool_empty', { ns: 'store' }) };}
           const chosen = available[Math.floor(Math.random() * available.length)];
           const base = defToQuest(chosen, player.level, getQuestTier(player.level));
           const newQ = { ...base, id: `extra_${base.id}_${Date.now()}`, xp: Math.round(base.xp * 1.5), gold: Math.round(base.gold * 1.5) };
@@ -1830,7 +1829,7 @@ const useGameStore = create<GameState & GameActions>()(
         restoreBackup(data) {
           if (!data || typeof data !== 'object') {return;}
           const safe: Partial<GameState> = {};
-          const allowed: Array<keyof GameState> = ['player', 'quests', 'extraQuests', 'sideQuests', 'questDictionary', 'customShadows', 'settings', 'statistics', 'system', 'lastResetDate', 'unlockedAchievements', 'achievementProgress', 'questRecords', 'questCompletions', 'activeMissionTimers'];
+          const allowed: Array<keyof GameState> = ['player', 'quests', 'extraQuests', 'sideQuests', 'questDictionary', 'customShadows', 'settings', 'statistics', 'system', 'lastResetDate', 'unlockedAchievements', 'achievementProgress', 'questRecords', 'questCompletions', 'activeMissionTimers', 'extraQuestRerolledIds', 'extraQuestUsedPoolIds', 'calendarState'];
           for (const key of allowed) {if (key in data) {(safe as any)[key] = (data as any)[key];}}
           set((s: GameState & GameActions) => ({ ...s, ...safe } as Partial<GameState & GameActions>));
         },
@@ -1930,7 +1929,7 @@ const useGameStore = create<GameState & GameActions>()(
           })(),
         };
       },
-      partialize: s => ({ player: s.player, quests: s.quests, sideQuests: s.sideQuests, extraQuests: s.extraQuests, questDictionary: s.questDictionary, customShadows: s.customShadows, settings: s.settings, system: { ...s.system, penaltyTriggered: false, pendingKeyId: null }, statistics: s.statistics, lastResetDate: s.lastResetDate, unlockedAchievements: s.unlockedAchievements, achievementProgress: s.achievementProgress, questRecords: s.questRecords, questCompletions: s.questCompletions, activeMissionTimers: s.activeMissionTimers, extraQuestRerolledIds: s.extraQuestRerolledIds, extraQuestUsedPoolIds: s.extraQuestUsedPoolIds, calendarState: s.calendarState }),
+      partialize: s => ({ player: s.player, quests: s.quests, sideQuests: s.sideQuests, extraQuests: s.extraQuests, questDictionary: s.questDictionary, customShadows: s.customShadows, settings: s.settings, system: { ...s.system, penaltyTriggered: false, pendingKeyId: null }, statistics: s.statistics, lastResetDate: s.lastResetDate, unlockedAchievements: s.unlockedAchievements, achievementProgress: s.achievementProgress, questRecords: s.questRecords, questCompletions: s.questCompletions, activeMissionTimers: s.activeMissionTimers, extraQuestRerolledIds: s.extraQuestRerolledIds, extraQuestUsedPoolIds: s.extraQuestUsedPoolIds, calendarState: s.calendarState, activeBuffs: s.activeBuffs.filter(b => !b.expiresAt || b.expiresAt > Date.now()) }),
     }
   )
 );

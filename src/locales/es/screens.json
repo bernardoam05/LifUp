@@ -90,7 +90,7 @@
     "break_modal_title": "ROMPER JURAMENTO",
     "break_modal_message": "¿Estás seguro de que quieres romper tu juramento de Cazador?\n\nEl Modo Hardcore se desactivará.\n\nEl Sistema recuerda todo.",
     "break_modal_confirm": "ROMPER JURAMENTO",
-    "overlay_title": "OJO DEL MONARCA",
+    "overlay_title": "OJO DEL SISTEMA",
     "overlay_save": "GUARDAR",
     "overlay_search_placeholder": "Buscar app...",
     "overlay_scanning": "Escaneando territorio...",
@@ -100,7 +100,12 @@
     "overlay_empty": "Ninguna app encontrada.",
     "overlay_force_scan": "FORZAR ESCANEO DE TERRITORIO",
     "overlay_custom_label": "personalizada",
-    "overlay_add_btn": "AÑADIR"
+    "overlay_add_btn": "AÑADIR",
+    "warn_no_native_web": "El bloqueo de apps solo está disponible en la app de Android.",
+    "ambient_lofi": "Lofi",
+    "ambient_rain": "Lluvia",
+    "ambient_fire": "Hoguera",
+    "perm_fix": "FIX"
   },
   "status": {
     "title": "VENTANA DE ESTADO",
@@ -147,7 +152,8 @@
     "job_change_title": "[ CLASE CAMBIADA ]",
     "job_change_new_title": "NUEVO TÍTULO CONSEGUIDO",
     "job_change_system_msg": "El Sistema reconoce tu evolución.\nTu leyenda empieza a tomar forma.",
-    "job_change_accept": "[ ACEPTAR PODER ]"
+    "job_change_accept": "[ ACEPTAR PODER ]",
+    "stats_ops_empty": "Aún no hay operaciones registradas. Completa misiones para ver el detalle por rango."
   },
   "inventory": {
     "title": "INVENTARIO",
@@ -181,6 +187,18 @@
     "fb_buff_active": "Buff activo: +{{pct}}% {{stat}} por {{time}}!",
     "fb_consumed": "¡Consumible activado!",
     "fb_item_used": "¡Objeto usado con éxito!",
-    "fb_quest_done": "¡Misión completada por el Sistema!"
+    "fb_quest_done": "¡Misión completada por el Sistema!",
+    "fb_gold_suffix": " y +{{gold}} Gold",
+    "empty_cta": "IR A LA TIENDA"
+  },
+  "gps_tracker_hook": {
+    "perm_title": "Permiso de Ubicación",
+    "perm_message": "La misión de carrera necesita tu ubicación en tiempo real.",
+    "perm_positive": "PERMITIR",
+    "perm_negative": "CANCELAR",
+    "err_denied": "Permiso de GPS denegado.",
+    "err_denied_short": "Permiso denegado.",
+    "err_unavailable": "Posición no disponible. ¿Estás en interior?",
+    "err_timeout": "GPS timeout. Prueba en espacio abierto."
   }
 }

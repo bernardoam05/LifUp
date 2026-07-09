@@ -27,7 +27,7 @@
       "C": "Maître de la Volonté",
       "B": "Chevalier des Ombres",
       "A": "Commandant",
-      "S": "Monarque",
+      "S": "Souverain",
       "National": "Chasseur de Niveau National"
     },
     "labels": {
@@ -36,7 +36,7 @@
       "C": "Maître de la Volonté",
       "B": "Chevalier des Ombres",
       "A": "Commandant",
-      "S": "Monarque",
+      "S": "Souverain",
       "National": "Chasseur de Niveau National"
     }
   },
@@ -81,7 +81,10 @@
     "field_notes_label": "NOTES DE TERRAIN",
     "field_notes_placeholder": "Enregistre ta progression...",
     "finish_mission": "TERMINER LA MISSION",
-    "open_settings": "OUVRIR PARAMÈTRES"
+    "open_settings": "OUVRIR PARAMÈTRES",
+    "confirm_early_title": "TERMINER AVANT L’OBJECTIF ?",
+    "confirm_early_message": "Tu n’as parcouru que {{dist}} km sur {{target}} km.\nVeux-tu vraiment terminer la mission ?",
+    "confirm_early_btn": "TERMINER"
   },
   "penalty": {
     "system_label": "◈ SYSTÈME ◈",

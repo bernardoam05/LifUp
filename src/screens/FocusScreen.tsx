@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, TextInput, AppState, AppStateStatus,
+  TouchableOpacity, TextInput, AppState, AppStateStatus, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -390,6 +390,7 @@ export default function FocusScreen() {
   const [hardcoreToggle, setHardcoreToggle] = useState(false);
   const [showAppOverlay, setShowAppOverlay] = useState(false);
   const [showBreakModal, setShowBreakModal] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [alertCfg, setAlertCfg] = useState<{ title: string; message?: string; buttons?: AlertButton[] } | null>(null);
   const appStateRef   = useRef(AppState.currentState);
   const hoursInputRef = useRef<TextInput>(null);
@@ -805,7 +806,6 @@ export default function FocusScreen() {
 
     const state = useGameStore.getState();
     const startTime = state.system.focusStartTime;
-    const isHardcore = state.system.hardcoreFocusMode;
     const isPenaltySession = state.system.hasPenalty && state.system.penaltyBlockEnd > 0 && state.system.focusEndTime === state.system.penaltyBlockEnd;
     
     let elapsedMins = 0;
@@ -851,7 +851,7 @@ export default function FocusScreen() {
         {/* 1. Titulo */}
         <View style={s.titleRow}>
           <Icon name="shield-lock" size={16} color={C.neonBlue} />
-          <Text style={s.title}> FOCUS MODE</Text>
+          <Text style={s.title}> [ {t('focus.title')} ]</Text>
         </View>
 
         {/* Banners */}
@@ -874,26 +874,26 @@ export default function FocusScreen() {
               color={hardcoreFocusMode ? C.neonRed : C.green}
             />
             <Text style={[s.activeTxt, hardcoreFocusMode && { color: C.neonRed }]}>
-              {hardcoreFocusMode ? ' HARDCORE MODE ATIVO' : ' FOCUS MODE ATIVO'}
+              {' '}{t(hardcoreFocusMode ? 'focus.active_hardcore' : 'focus.active_focus')}
             </Text>
           </View>
         )}
         {focusActive && hardcoreFocusMode && hardcorePunished && (
           <View style={s.punishBanner}>
             <Icon name="skull" size={12} color={C.neonRed} />
-            <Text style={s.punishBannerTxt}> HARDCORE ATIVO POR PUNIÇÃO — NÃO PODE SER DESLIGADO</Text>
+            <Text style={s.punishBannerTxt}> {t('focus.punish_banner')}</Text>
           </View>
         )}
         {!FocusBlocker && (
           <View style={s.warnBox}>
             <Icon name="alert-circle-outline" size={14} color={C.neonRed} />
-            <Text style={s.warnTxt}> Módulo nativo não encontrado. Re-builda o APK.</Text>
+            <Text style={s.warnTxt}> {t(Platform.OS === 'android' ? 'focus.warn_no_native' : 'focus.warn_no_native_web')}</Text>
           </View>
         )}
         {pomodoroPhase === 'break' && (
           <View style={s.pomodoroBreakBanner}>
             <Icon name="coffee" size={14} color={C.gold} />
-            <Text style={s.pomodoroBreakTxt}> CICLO {pomodoroCycle} — EM PAUSA</Text>
+            <Text style={s.pomodoroBreakTxt}> {t('focus.pomodoro_break_banner', { cycle: pomodoroCycle })}</Text>
           </View>
         )}
 
@@ -905,14 +905,14 @@ export default function FocusScreen() {
               onPress={() => setPomodoroMode(false)}
             >
               <Icon name="lightning-bolt" size={12} color={!pomodoroMode ? C.neonBlue : C.dimmed} />
-              <Text style={[s.modeToggleTxt, !pomodoroMode && { color: C.neonBlue }]}> LIVRE</Text>
+              <Text style={[s.modeToggleTxt, !pomodoroMode && { color: C.neonBlue }]}> {t('focus.mode_free')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[s.modeToggleBtn, pomodoroMode && s.modeToggleBtnPomodoro]}
               onPress={() => { setPomodoroMode(true); setHardcoreToggle(false); }}
             >
               <Icon name="timer-sand" size={12} color={pomodoroMode ? C.gold : C.dimmed} />
-              <Text style={[s.modeToggleTxt, pomodoroMode && { color: C.gold }]}> POMODORO</Text>
+              <Text style={[s.modeToggleTxt, pomodoroMode && { color: C.gold }]}> {t('focus.mode_pomodoro')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -924,7 +924,7 @@ export default function FocusScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
               <Icon name="coffee" size={14} color={C.gold} />
               <Text style={[s.countdownTxt, { color: C.gold, fontSize: 13 }]}>
-                CICLO {pomodoroCycle}{pomodoroRounds > 0 ? `/${pomodoroRounds}` : ''} — PAUSA
+                {t('focus.pomodoro_cycle_label', { cycle: `${pomodoroCycle}${pomodoroRounds > 0 ? `/${pomodoroRounds}` : ''}` })}
               </Text>
             </View>
             <Text style={[s.countdownTxt, { color: C.gold }]}>
@@ -948,10 +948,10 @@ export default function FocusScreen() {
                   finishPomodoro();
                 }
               }}>
-                <Text style={s.pomodoroSkipTxt}>SALTAR PAUSA</Text>
+                <Text style={s.pomodoroSkipTxt}>{t('focus.pomodoro_break_skip')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[s.pomodoroSkipBtn, { borderColor: C.neonRed + '55' }]} onPress={finishPomodoro}>
-                <Text style={[s.pomodoroSkipTxt, { color: C.neonRed + 'aa' }]}>TERMINAR</Text>
+                <Text style={[s.pomodoroSkipTxt, { color: C.neonRed + 'aa' }]}>{t('focus.pomodoro_break_finish')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -961,13 +961,13 @@ export default function FocusScreen() {
               <Text style={[s.countdownTxt, { color: C.neonRed }]}>
                 {formatElapsed(nowMs - (hardcorePunished ? (penaltyBlockStart ?? nowMs) : (focusEndTime! - HARDCORE_DURATION_MS)))}
               </Text>
-              <Text style={{ color: C.neonRed + 'aa', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: 6 }}>ATIVO — SEM LIMITE</Text>
+              <Text style={{ color: C.neonRed + 'aa', fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 2, marginTop: 6 }}>{t('focus.hardcore_no_limit')}</Text>
             </View>
           ) : (
             <View style={s.countdownBox}>
               {(pomodoroMode || pomodoroPhase === 'work') && (
                 <Text style={{ color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 2, marginBottom: 6 }}>
-                  CICLO {pomodoroCycle}{pomodoroRounds > 0 ? `/${pomodoroRounds}` : ''} — TRABALHO
+                  {t('focus.pomodoro_cycle_work', { cycle: `${pomodoroCycle}${pomodoroRounds > 0 ? `/${pomodoroRounds}` : ''}` })}
                 </Text>
               )}
               <Text style={s.countdownTxt}>
@@ -1049,13 +1049,13 @@ export default function FocusScreen() {
           <View style={s.pomodoroConfigCard}>
             <View style={s.pomodoroConfigRow}>
               <Icon name="timer-sand" size={14} color={C.gold} />
-              <Text style={s.pomodoroConfigTitle}> POMODORO</Text>
+              <Text style={s.pomodoroConfigTitle}> {t('focus.pomodoro_config_title')}</Text>
             </View>
             {/* Row 1: Work + Break */}
             <View style={s.pomodoroPickersRow}>
               {/* Work duration */}
               <View style={s.pomodoroPicker}>
-                <Text style={s.pomodoroPickerLabel}>TRABALHO</Text>
+                <Text style={s.pomodoroPickerLabel}>{t('focus.pomodoro_work_label')}</Text>
                 <View style={s.pomodoroPickerCtrl}>
                   <TouchableOpacity onPress={() => updateSettings({ pomodoroWorkMins: Math.min(120, pomodoroWorkMins + 5) })} style={s.pomodoroPickerBtn}>
                     <Text style={s.pomodoroPickerArrow}>▲</Text>
@@ -1085,7 +1085,7 @@ export default function FocusScreen() {
               <View style={s.pomodoroPickerDivider} />
               {/* Break duration */}
               <View style={s.pomodoroPicker}>
-                <Text style={s.pomodoroPickerLabel}>PAUSA</Text>
+                <Text style={s.pomodoroPickerLabel}>{t('focus.pomodoro_break_label')}</Text>
                 <View style={s.pomodoroPickerCtrl}>
                   <TouchableOpacity onPress={() => updateSettings({ pomodoroBreakMins: Math.min(60, pomodoroBreakMins + 1) })} style={s.pomodoroPickerBtn}>
                     <Text style={s.pomodoroPickerArrow}>▲</Text>
@@ -1115,7 +1115,7 @@ export default function FocusScreen() {
               <View style={s.pomodoroPickerDivider} />
               {/* Rounds */}
               <View style={s.pomodoroPicker}>
-                <Text style={s.pomodoroPickerLabel}>RONDAS</Text>
+                <Text style={s.pomodoroPickerLabel}>{t('focus.pomodoro_rounds_label')}</Text>
                 <View style={s.pomodoroPickerCtrl}>
                   <TouchableOpacity onPress={() => updateSettings({ pomodoroRounds: Math.min(20, pomodoroRounds + 1) })} style={s.pomodoroPickerBtn}>
                     <Text style={s.pomodoroPickerArrow}>▲</Text>
@@ -1146,8 +1146,14 @@ export default function FocusScreen() {
               </View>
             </View>
             <Text style={s.pomodoroDesc}>
-              {pomodoroWorkMins}m trabalho · {pomodoroBreakMins}m pausa · {pomodoroRounds === 0 ? '∞ rondas' : `${pomodoroRounds} ronda${pomodoroRounds !== 1 ? 's' : ''}`}
-              {pomodoroRounds > 0 ? ` · ${pomodoroRounds * pomodoroWorkMins}min total` : ''}
+              {t('focus.pomodoro_desc', {
+                work: pomodoroWorkMins,
+                break: pomodoroBreakMins,
+                rounds: pomodoroRounds === 0
+                  ? t('focus.pomodoro_rounds_infinite')
+                  : t(pomodoroRounds === 1 ? 'focus.pomodoro_rounds_singular' : 'focus.pomodoro_rounds_plural', { count: pomodoroRounds }),
+              })}
+              {pomodoroRounds > 0 ? t('focus.pomodoro_total', { total: pomodoroRounds * pomodoroWorkMins }) : ''}
             </Text>
           </View>
         )}
@@ -1189,12 +1195,12 @@ export default function FocusScreen() {
           hardcoreFocusMode ? (
             <TouchableOpacity style={[s.mainBtn, s.hardcoreStopBtn]} onPress={handleHardcoreBreak}>
               <Icon name="shield-lock" size={18} color={C.neonRed} />
-              <Text style={[s.mainBtnTxt, { color: C.neonRed }]}> QUEBRAR JURAMENTO</Text>
+              <Text style={[s.mainBtnTxt, { color: C.neonRed }]}> {t('focus.btn_break_oath')}</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={[s.mainBtn, s.stopBtn]} onPress={stopFocus}>
               <Icon name="stop-circle-outline" size={18} color={C.neonRed} />
-              <Text style={[s.mainBtnTxt, { color: C.neonRed }]}> PARAR FOCUS MODE</Text>
+              <Text style={[s.mainBtnTxt, { color: C.neonRed }]}> {t('focus.btn_stop')}</Text>
             </TouchableOpacity>
           )
         ) : pomodoroPhase === 'break' ? null : (
@@ -1204,7 +1210,7 @@ export default function FocusScreen() {
           >
             <Icon name={pomodoroMode ? 'timer-sand' : 'play-circle-outline'} size={18} color={pomodoroMode ? C.gold : C.neonBlue} />
             <Text style={[s.mainBtnTxt, pomodoroMode && { color: C.gold }]}>
-              {pomodoroMode ? ` INICIAR POMODORO (${pomodoroWorkMins}m)` : ' ATIVAR FOCUS MODE'}
+              {' '}{pomodoroMode ? t('focus.btn_start_pomodoro', { mins: pomodoroWorkMins }) : t('focus.btn_activate')}
             </Text>
           </TouchableOpacity>
         )}
@@ -1212,7 +1218,7 @@ export default function FocusScreen() {
         {/* 5. Som ambiente */}
         {!hardcorePunished && (
           <>
-            <Text style={s.section}>SOM AMBIENTE</Text>
+            <Text style={s.section}>{t('focus.section_ambient')}</Text>
             <View style={s.ambientRow}>
               {([null, 'lofi', 'rain', 'fire'] as (AmbientSoundId | null)[]).map(id => {
                 const isActive = activeAmbient === id;
@@ -1236,10 +1242,9 @@ export default function FocusScreen() {
                       size={14}
                       color={isActive ? C.neonBlue : C.dimmed}
                     />
-                    {meta
-                      ? <Text style={[s.ambientBtnTxt, isActive && { color: C.neonBlue }]}> {meta.label}</Text>
-                      : <Text style={[s.ambientBtnTxt, isActive && { color: C.neonBlue }]}> Off</Text>
-                    }
+                    <Text style={[s.ambientBtnTxt, isActive && { color: C.neonBlue }]}>
+                      {' '}{id ? t(`focus.ambient_${id}`) : t('focus.ambient_off')}
+                    </Text>
                   </TouchableOpacity>
                 );
               })}
@@ -1248,13 +1253,13 @@ export default function FocusScreen() {
         )}
 
         {/* 6. Apps a bloquear */}
-        <Text style={s.section}>APPS A BLOQUEAR</Text>
+        <Text style={s.section}>{t('focus.section_apps')}</Text>
         <TouchableOpacity style={s.appSelectorBtn} onPress={() => setShowAppOverlay(true)}>
           <Icon name="shield-lock-outline" size={16} color={selectedCount > 0 ? C.neonBlue : C.muted} />
           <View style={{ flex: 1 }}>
             <Text style={[s.appSelectorTxt, selectedCount > 0 && { color: C.muted }]}>
               {selectedCount > 0
-                ? `${selectedCount} app${selectedCount !== 1 ? 's' : ''} configurada${selectedCount !== 1 ? 's' : ''}`
+                ? t(selectedCount === 1 ? 'focus.apps_configured' : 'focus.apps_configured_plural', { count: selectedCount })
                 : t('focus.apps_none')}
             </Text>
             {focusActive && (
@@ -1264,14 +1269,22 @@ export default function FocusScreen() {
           <Icon name="chevron-right" size={16} color={C.muted} />
         </TouchableOpacity>
 
-        {/* 6. Card de explicação */}
-        <Text style={s.section}>COMO FUNCIONA</Text>
+        {/* 6. Card de explicação — collapsible: after the first sessions it's just noise */}
+        <TouchableOpacity
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          onPress={() => setShowHowItWorks(v => !v)}
+          activeOpacity={0.7}
+        >
+          <Text style={s.section}>{t('focus.section_how')}</Text>
+          <Icon name={showHowItWorks ? 'chevron-up' : 'chevron-down'} size={16} color={C.muted} style={{ marginTop: SPACING.md }} />
+        </TouchableOpacity>
+        {showHowItWorks && (
         <View style={s.explanationCard}>
           <View style={{ gap: SPACING.sm, marginBottom: SPACING.md }}>
             <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
               <Icon name="lightning-bolt" size={14} color={C.neonBlue} />
               <View style={{ flex: 1 }}>
-                <Text style={[s.modeLabel, { color: C.neonBlue }]}>MODO LIVRE</Text>
+                <Text style={[s.modeLabel, { color: C.neonBlue }]}>{t('focus.mode_free_label')}</Text>
                 <Text style={s.modeDesc}>{t('focus.mode_free_desc')}</Text>
               </View>
             </View>
@@ -1280,7 +1293,7 @@ export default function FocusScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
               <Icon name="timer-sand" size={14} color={C.gold} />
               <View style={{ flex: 1 }}>
-                <Text style={[s.modeLabel, { color: C.gold }]}>MODO POMODORO</Text>
+                <Text style={[s.modeLabel, { color: C.gold }]}>{t('focus.mode_pomodoro_label')}</Text>
                 <Text style={s.modeDesc}>{t('focus.mode_pomodoro_desc')}</Text>
               </View>
             </View>
@@ -1288,14 +1301,15 @@ export default function FocusScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: SPACING.sm }}>
             <Icon name="skull" size={14} color={C.neonRed} />
             <View style={{ flex: 1 }}>
-              <Text style={[s.modeLabel, { color: C.neonRed }]}>MODO HARDCORE</Text>
+              <Text style={[s.modeLabel, { color: C.neonRed }]}>{t('focus.mode_hardcore_label')}</Text>
               <Text style={s.modeDesc}>{t('focus.mode_hardcore_desc')}</Text>
             </View>
           </View>
         </View>
+        )}
 
         {/* 7. Permissões */}
-        <Text style={s.section}>PERMISSÕES</Text>
+        <Text style={s.section}>{t('focus.section_permissions')}</Text>
         <View style={s.permBlock}>
           <PermRow
             label={t('focus.perm_usage')}
@@ -1322,15 +1336,15 @@ export default function FocusScreen() {
         <View style={s.batteryBox}>
           <View style={s.batteryHeader}>
             <Icon name="battery-alert" size={14} color={C.gold} />
-            <Text style={s.batteryTitle}> OTIMIZAÇÃO DE BATERIA (XIAOMI / MIUI)</Text>
+            <Text style={s.batteryTitle}> {t('focus.battery_title')}</Text>
           </View>
           <Text style={s.batteryDesc}>
-            Em dispositivos Xiaomi, Samsung e outros com gestão agressiva de bateria, o bloqueador pode adormecer em segundo plano. Se as apps bloqueadas não estão a ser bloqueadas corretamente, desativa a otimização de bateria para esta app:
+            {t('focus.battery_desc')}
           </Text>
           <View style={s.batterySteps}>
-            <Text style={s.batteryStep}>1. Definições → Apps → Gerir Apps</Text>
+            <Text style={s.batteryStep}>{t('focus.battery_step1')}</Text>
             <Text style={s.batteryStep}>{t('focus.battery_step2')}</Text>
-            <Text style={s.batteryStep}>3. Bateria → Sem restrições</Text>
+            <Text style={s.batteryStep}>{t('focus.battery_step3')}</Text>
           </View>
           <Text style={s.batteryNote}>
             {t('focus.battery_note')}
@@ -1385,6 +1399,7 @@ export default function FocusScreen() {
 // ── PermRow sub-component ──────────────────────────────────────────────────────
 
 function PermRow({ label, ok, onFix, C, optional }: { label: string; ok: boolean; onFix: () => void; C: any; optional?: boolean }) {
+  const { t } = useTranslation('screens');
   const p = getPRStyles(C);
   const warnColor = optional ? C.gold : C.neonRed;
   return (
@@ -1398,7 +1413,7 @@ function PermRow({ label, ok, onFix, C, optional }: { label: string; ok: boolean
       {!ok && (
         <TouchableOpacity onPress={onFix} style={[p.fixBtn, optional && { borderColor: C.gold }]}>
           <Icon name="cog-outline" size={10} color={warnColor} />
-          <Text style={[p.fixTxt, optional && { color: C.gold }]}> FIX</Text>
+          <Text style={[p.fixTxt, optional && { color: C.gold }]}> {t('focus.perm_fix')}</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -1414,16 +1429,16 @@ const getStyles = (C: any) => StyleSheet.create({
   titleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md, marginTop: SPACING.md },
   title:    { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 12, letterSpacing: 3 },
 
-  explanationCard: { backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 4, padding: SPACING.md, marginBottom: SPACING.md, gap: SPACING.sm },
+  explanationCard: { backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: SPACING.md, marginBottom: SPACING.md, gap: SPACING.sm },
   modeLabel: { fontFamily: FONT.orbitron, fontSize: 11, fontWeight: '700', letterSpacing: 1 },
   modeDesc: { color: C.dimmed, fontSize: 11, lineHeight: 16 },
 
-  warnBox:  { flexDirection: 'row', alignItems: 'center', backgroundColor: C.surface?.base || C.bg, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 4, padding: SPACING.sm, marginBottom: SPACING.md },
+  warnBox:  { flexDirection: 'row', alignItems: 'center', backgroundColor: C.surface?.base || C.bg, borderWidth: 1, borderColor: C.neonRed + '44', borderRadius: 10, padding: SPACING.sm, marginBottom: SPACING.md },
   warnTxt:  { color: C.neonRed, fontSize: 12 },
 
   section:  { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2, marginBottom: SPACING.sm, marginTop: SPACING.md },
 
-  mainBtn:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.neonBlue + '15', borderWidth: 1, borderColor: C.neonBlue, borderRadius: 4, paddingVertical: SPACING.md, marginBottom: SPACING.sm },
+  mainBtn:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.neonBlue + '15', borderWidth: 1, borderColor: C.neonBlue, borderRadius: 10, paddingVertical: SPACING.md, marginBottom: SPACING.sm },
   mainBtnPomodoro: { borderColor: C.gold, backgroundColor: C.gold + '15' },
   stopBtn:         { borderColor: C.neonRed, backgroundColor: C.neonRed + '15' },
   hardcoreStopBtn: { borderColor: C.neonRed, backgroundColor: C.surface?.danger || C.bg, borderWidth: 2 },
@@ -1432,7 +1447,7 @@ const getStyles = (C: any) => StyleSheet.create({
 
   // ── Pomodoro styles ───────────────────────────────────────────────────────
   modeToggleRow:      { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.sm },
-  modeToggleBtn:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 4, paddingVertical: SPACING.sm },
+  modeToggleBtn:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 10, paddingVertical: SPACING.sm },
   modeToggleBtnActive:{ borderColor: C.neonBlue + '88', backgroundColor: C.neonBlue + '10' },
   modeToggleBtnPomodoro: { borderColor: C.gold + '88', backgroundColor: C.gold + '10' },
   modeToggleTxt:      { color: C.dimmed, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 1 },
@@ -1484,7 +1499,7 @@ const getStyles = (C: any) => StyleSheet.create({
 
   durRow:        { flexDirection: 'row', alignItems: 'center', gap: SPACING.md, marginBottom: 4, backgroundColor: C.panel, borderWidth: 1, borderColor: C.border, borderRadius: 4, padding: SPACING.md },
   durPicker:     { alignItems: 'center', gap: 4 },
-  durPickerBtn:  { paddingHorizontal: SPACING.md, paddingVertical: 4 },
+  durPickerBtn:  { paddingHorizontal: SPACING.md, paddingVertical: 10, minWidth: 44, alignItems: 'center' },
   durPickerArrow:{ color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11 },
   durPickerVal:   { color: C.muted, fontFamily: FONT.orbitron, fontSize: 32, fontWeight: '900', letterSpacing: 2, minWidth: 54, textAlign: 'center' },
   durPickerInput: { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 32, fontWeight: '900', letterSpacing: 2, minWidth: 54, textAlign: 'center', borderBottomWidth: 1, borderBottomColor: C.neonBlue },
@@ -1493,14 +1508,14 @@ const getStyles = (C: any) => StyleSheet.create({
   durTotal:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
   durTotalTxt:   { color: C.neonBlue, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 1 },
 
-  countdownBox: { alignItems: 'center', justifyContent: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: '#38bdf888', borderRadius: 8, padding: 32, marginBottom: 16 },
+  countdownBox: { alignItems: 'center', justifyContent: 'center', backgroundColor: C.panel, borderWidth: 1, borderColor: '#38bdf888', borderRadius: 10, padding: 32, marginBottom: 16 },
   countdownTxt: { fontFamily: FONT.orbitron, fontSize: 48, fontWeight: '900', color: C.neonBlue, letterSpacing: 2 },
 
-  appSelectorBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.border, gap: SPACING.sm, marginBottom: 4 },
+  appSelectorBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 10, padding: SPACING.md, borderWidth: 1, borderColor: C.border, gap: SPACING.sm, marginBottom: 4 },
   appSelectorTxt: { color: C.muted, fontSize: 13 },
   appSelectorSub: { color: C.dimmed, fontSize: 10, marginTop: 2 },
 
-  permBlock: { backgroundColor: C.panel, borderRadius: 4, padding: SPACING.md, borderWidth: 1, borderColor: C.border, marginBottom: 4 },
+  permBlock: { backgroundColor: C.panel, borderRadius: 10, padding: SPACING.md, borderWidth: 1, borderColor: C.border, marginBottom: 4 },
 
   hardcoreFooterBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, paddingVertical: 16, paddingHorizontal: SPACING.md, borderTopWidth: 1, borderTopColor: C.neonRed + '44', backgroundColor: C.surface?.danger || C.bg },
   hardcoreFooterBtnActive: { backgroundColor: C.surface?.dangerHover || C.bg, borderTopColor: C.neonRed },
@@ -1515,7 +1530,7 @@ const getStyles = (C: any) => StyleSheet.create({
   hardcoreMiniBtnActive: { borderColor: C.neonRed, backgroundColor: C.surface?.danger || C.bg },
   hardcoreMiniTxt: { color: C.dimmed, fontSize: 10, fontFamily: FONT.orbitron, letterSpacing: 1, marginLeft: 6 },
 
-  batteryBox:    { backgroundColor: C.panel, borderWidth: 1, borderColor: C.gold + '55', borderRadius: 4, padding: SPACING.md, marginTop: SPACING.md, gap: SPACING.sm },
+  batteryBox:    { backgroundColor: C.panel, borderWidth: 1, borderColor: C.gold + '55', borderRadius: 10, padding: SPACING.md, marginTop: SPACING.md, gap: SPACING.sm },
   batteryHeader: { flexDirection: 'row', alignItems: 'center' },
   batteryTitle:  { color: C.gold, fontFamily: FONT.orbitron, fontSize: 9, letterSpacing: 1.5 },
   batteryDesc:   { color: C.dimmed, fontSize: 11, lineHeight: 16 },

@@ -41,7 +41,7 @@
       "lore": "\"What lies within? Only the System decides.\""
     },
     "theme_monarch": {
-      "name": "Theme: Shadow Monarch",
+      "name": "Theme: Shadow Souverän",
       "description": "A deep black and purple UI that reflects absolute power.",
       "lore": "\"Rise with the crown that rules the dead.\""
     },
@@ -93,7 +93,7 @@
     "cerberus_fang": {
       "name": "Cerberus Fang",
       "description": "Tooth of the abyss guardian. Activates buff: +20% Gold on all quests for 2 hours.",
-      "lore": "\"Three heads, one fate: to serve the Monarch.\""
+      "lore": "\"Three heads, one fate: to serve the Souverän.\""
     },
     "iron_will_crystal": {
       "name": "Iron Will Crystal",
@@ -185,14 +185,7 @@
     "feedback_quest_done": "Quest completed by the System!",
     "stat_xp": "XP",
     "stat_gold": "Gold",
-    "weekly_stock": "Wöchentlicher Vorrat: {{count}}",
-    "out_of_stock": "NICHT VERFÜGBAR",
-    "owned": "BESESSEN",
-    "empty_inventory": "Inventar leer.",
-    "item_used": "Gegenstand verwendet!",
-    "purchase_confirm": "{{name}} kaufen für {{cost}} Gold?",
-    "insufficient_gold": "Nicht genug Gold.",
-    "weekly_limit": "Wöchentliches Limit erreicht.",
-    "restocks_next_week": "nächste Woche wieder verfügbar"
+    "restocks_next_week": "nächste Woche wieder verfügbar",
+    "owned": "IM BESITZ"
   }
 }

@@ -93,7 +93,7 @@ export const CLASS_REQUIREMENTS = [
   { rank: 'C', level: 15, minCompleted: 50, label: 'Mestre da Vontade', color: '#3b82f6', bgColor: '#172554', minRankMissions: 10, minLevel: 15, minMissions: 50, minBosses: 2, prevRank: 'D' },
   { rank: 'B', level: 30, minCompleted: 150, label: 'Cavaleiro das Sombras', color: '#8b5cf6', bgColor: '#2e1065', minRankMissions: 20, minLevel: 30, minMissions: 150, minBosses: 5, prevRank: 'C' },
   { rank: 'A', level: 50, minCompleted: 300, label: 'Comandante', color: '#ec4899', bgColor: '#500724', minRankMissions: 15, minLevel: 50, minMissions: 300, minBosses: 10, prevRank: 'B' },
-  { rank: 'S', level: 70, minCompleted: 500, label: 'Monarca', color: '#fbbf24', bgColor: '#451a03', minRankMissions: 10, minLevel: 70, minMissions: 500, minBosses: 20, prevRank: 'A' },
+  { rank: 'S', level: 70, minCompleted: 500, label: 'Soberano', color: '#fbbf24', bgColor: '#451a03', minRankMissions: 10, minLevel: 70, minMissions: 500, minBosses: 20, prevRank: 'A' },
   { rank: 'National', level: 90, minCompleted: 1000, label: 'Caçador Nível Nacional', color: '#ef4444', bgColor: '#450a0a', minRankMissions: 0, minLevel: 90, minMissions: 1000, minBosses: 50, prevRank: 'S' },
 ] as const;
 
@@ -341,8 +341,10 @@ export function computeActivePassives(
     dailyBonus *= m;
   }
 
-  // Active Buffs
+  // Active Buffs — expired ones must not keep boosting (UI already hides them)
+  const now = Date.now();
   for (const buff of activeBuffs) {
+    if (buff.expiresAt && buff.expiresAt <= now) {continue;}
     if (buff.stat === 'xp') {xpBoost += (buff.multiplier - 1);}
     if (buff.stat === 'gold') {goldBoost += (buff.multiplier - 1);}
   }
@@ -459,10 +461,10 @@ export const JOB_CLASSES: JobClass[] = [
   { name: 'Shadow Commander',  color: '#5b21b6', minLevel: 45 },
   { name: 'Abyssal Reaper',    color: '#7e22ce', minLevel: 50 },
   { name: 'Arch Lich',         color: '#9333ea', minLevel: 60 },
-  { name: "Monarch's Herald",  color: '#c026d3', minLevel: 70 },
+  { name: "Sovereign's Herald",  color: '#c026d3', minLevel: 70 },
   { name: 'Dragon Emperor',    color: '#dc2626', minLevel: 80 },
-  { name: 'Monarch of Ruins',  color: '#b91c1c', minLevel: 90 },
-  { name: 'Shadow Monarch',    color: '#fbbf24', minLevel: 100 },
+  { name: 'Sovereign of Ruins',  color: '#b91c1c', minLevel: 90 },
+  { name: 'Shadow Sovereign',    color: '#fbbf24', minLevel: 100 },
 ];
 
 export function getJobClass(level: number): JobClass {

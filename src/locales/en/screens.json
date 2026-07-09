@@ -90,7 +90,7 @@
     "break_modal_title": "BREAK OATH",
     "break_modal_message": "Are you sure you want to break your Hunter's oath?\n\nHardcore Mode will be deactivated.\n\nThe System remembers everything.",
     "break_modal_confirm": "BREAK OATH",
-    "overlay_title": "MONARCH'S EYE",
+    "overlay_title": "SYSTEM EYE",
     "overlay_save": "SAVE",
     "overlay_search_placeholder": "Search app...",
     "overlay_scanning": "Scanning territory...",
@@ -100,7 +100,12 @@
     "overlay_empty": "No app found.",
     "overlay_force_scan": "FORCE TERRITORY SCAN",
     "overlay_custom_label": "custom",
-    "overlay_add_btn": "ADD"
+    "overlay_add_btn": "ADD",
+    "warn_no_native_web": "App blocking is only available in the Android app.",
+    "ambient_lofi": "Lofi",
+    "ambient_rain": "Rain",
+    "ambient_fire": "Fireplace",
+    "perm_fix": "FIX"
   },
   "status": {
     "title": "STATUS WINDOW",
@@ -147,7 +152,8 @@
     "job_change_title": "[ CLASS CHANGED ]",
     "job_change_new_title": "NEW TITLE EARNED",
     "job_change_system_msg": "The System acknowledges your evolution.\nYour legend begins to take shape.",
-    "job_change_accept": "[ ACCEPT POWER ]"
+    "job_change_accept": "[ ACCEPT POWER ]",
+    "stats_ops_empty": "No operations recorded yet. Complete missions to see the per-rank breakdown."
   },
   "inventory": {
     "title": "INVENTORY",
@@ -181,6 +187,18 @@
     "fb_buff_active": "Buff active: +{{pct}}% {{stat}} for {{time}}!",
     "fb_consumed": "Consumable activated!",
     "fb_item_used": "Item used successfully!",
-    "fb_quest_done": "Mission completed by the System!"
+    "fb_quest_done": "Mission completed by the System!",
+    "fb_gold_suffix": " and +{{gold}} Gold",
+    "empty_cta": "GO TO SHOP"
+  },
+  "gps_tracker_hook": {
+    "perm_title": "Location Permission",
+    "perm_message": "The running mission needs your real-time location.",
+    "perm_positive": "ALLOW",
+    "perm_negative": "CANCEL",
+    "err_denied": "GPS permission denied.",
+    "err_denied_short": "Permission denied.",
+    "err_unavailable": "Position unavailable. Are you indoors?",
+    "err_timeout": "GPS timeout. Try in an open area."
   }
 }

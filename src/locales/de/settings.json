@@ -75,7 +75,7 @@
     },
     "hardcore": {
       "label": "HARDCORE",
-      "sublabel": "Monarchen-Protokoll",
+      "sublabel": "Souveräns-Protokoll",
       "desc0": "· XP-Verlust: 20% gesamt",
       "desc1": "· 2–4 Strafmissionen",
       "desc2": "· Serie auf null zurückgesetzt",
@@ -111,7 +111,7 @@
   },
   "theme": {
     "sectionTitle": "SYSTEMDARSTELLUNG",
-    "infoText": "Wähle das visuelle Thema deines Monarchen-Systems. Neue Themen werden durch Rang-Aufstieg oder im Shop freigeschaltet."
+    "infoText": "Wähle das visuelle Thema deines Souveräns-Systems. Neue Themen werden durch Rang-Aufstieg oder im Shop freigeschaltet."
   },
   "notifications": {
     "sectionTitle": "SYSTEM",

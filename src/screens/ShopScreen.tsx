@@ -8,7 +8,7 @@ import { SHOP_CATALOG, ShopItem } from '../data/shopItems';
 import CustomModal from '../components/CustomModal';
 import ShadowShopModal from '../components/ShadowShopModal';
 import { useTheme, FONT, SPACING } from '../theme';
-import { useRewardedAd, AD_UNIT_GOLD, AD_UNIT_ITEM } from '../hooks/useRewardedAd';
+import { useRewardedAd, adsAvailable, AD_UNIT_GOLD, AD_UNIT_ITEM } from '../hooks/useRewardedAd';
 
 // ── Item card ──────────────────────────────────────────────────────────────────
 
@@ -16,6 +16,7 @@ function ItemCard({
   item,
   gold,
   stockRemaining,
+  owned,
   onBuy,
   onBuyBulk,
   C,
@@ -23,6 +24,7 @@ function ItemCard({
   item: ShopItem
   gold: number
   stockRemaining: number | undefined   // undefined = unlimited
+  owned?: boolean
   onBuy: () => void
   onBuyBulk?: () => void
   C: any
@@ -60,7 +62,6 @@ function ItemCard({
           </Text>
         )}
         <Text style={ic.desc}>{t(`items.${item.id}.description`, { defaultValue: item.description })}</Text>
-        <Text style={ic.lore}>{t(`items.${item.id}.lore`, { defaultValue: item.lore ?? '' })}</Text>
       </View>
 
       {/* Buy */}
@@ -74,8 +75,8 @@ function ItemCard({
           onPress={onBuy}
           disabled={!canAfford}
         >
-          <Text style={[ic.buyTxt, { color: canAfford ? item.color : C.dimmed }]}>
-            {soldOut ? t('ui.sold_out') : canAfford ? t('ui.buy') : t('ui.no_gold')}
+          <Text style={[ic.buyTxt, { color: owned ? C.green : canAfford ? item.color : C.dimmed }]}>
+            {owned ? t('ui.owned') : soldOut ? t('ui.sold_out') : canAfford ? t('ui.buy') : t('ui.no_gold')}
           </Text>
         </TouchableOpacity>
         {onBuyBulk && !soldOut && gold >= item.cost * 10 && (
@@ -130,7 +131,7 @@ export default function ShopScreen() {
   const adLastDate = useGameStore(st => st.system.adLastDate ?? '');
   const unlockedThemes = player.unlockedThemes ?? [];
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toDateString();
   const goldAdsCount = adLastDate === today ? goldAdsToday : 0;
   const itemAdsCount = adLastDate === today ? adItemsToday : 0;
   const MAX_GOLD_ADS = 3;
@@ -173,7 +174,7 @@ export default function ShopScreen() {
         {/* Header */}
         <View style={s.titleRow}>
           <Icon name="shopping-outline" size={16} color={C.neonBlue} />
-          <Text style={s.title}> LOJA DO SISTEMA</Text>
+          <Text style={s.title}> [ {t('ui.shop_title')} ]</Text>
         </View>
         <Text style={s.subtitle}>{t('ui.shop_subtitle')}</Text>
 
@@ -183,7 +184,8 @@ export default function ShopScreen() {
           <Text style={s.goldTxt}> {t('ui.gold_available', { amount: player.gold.toLocaleString() })}</Text>
         </View>
 
-        {/* Ad Rewards */}
+        {/* Ad Rewards — hidden where rewarded ads don't exist (web) */}
+        {adsAvailable && (
         <View style={s.adCard}>
           <View style={s.adCardHeader}>
             <Icon name="television-play" size={14} color={C.gold} />
@@ -221,6 +223,7 @@ export default function ShopScreen() {
             </View>
           )}
         </View>
+        )}
 
         {/* Success banner */}
         {lastBought && (
@@ -245,6 +248,7 @@ export default function ShopScreen() {
               item={item}
               gold={player.gold}
               stockRemaining={stockRemaining}
+              owned={isThemeOwned}
               onBuy={() => setPending(item)}
               onBuyBulk={item.effect !== 'cosmetic' ? () => setPending({ ...item, amount: 10 }) : undefined}
               C={C}
@@ -281,6 +285,7 @@ export default function ShopScreen() {
             ? (pending.amount && pending.amount > 1
                 ? t('ui.confirm_purchase_msg_bulk', { quantity: pending.amount, name: t(`items.${pending.id}.name`, { defaultValue: pending.name }), cost: pending.cost * pending.amount, description: t(`items.${pending.id}.description`, { defaultValue: pending.description }) })
                 : t('ui.confirm_purchase_msg', { quantity: '', name: t(`items.${pending.id}.name`, { defaultValue: pending.name }), cost: pending.cost, description: t(`items.${pending.id}.description`, { defaultValue: pending.description }) }))
+              + (t(`items.${pending.id}.lore`, { defaultValue: pending.lore ?? '' }) ? `\n\n${t(`items.${pending.id}.lore`, { defaultValue: pending.lore ?? '' })}` : '')
             : ''
         }
         confirmLabel={t('ui.buy')}
@@ -357,17 +362,17 @@ const getStyles = (C: any) => StyleSheet.create({
 });
 
 const getGateStyles = (C: any) => StyleSheet.create({
-  gate: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: '#a855f744', padding: SPACING.md, gap: SPACING.md },
-  iconWrap: { width: 56, height: 56, borderRadius: 14, backgroundColor: '#a855f718', alignItems: 'center', justifyContent: 'center' },
+  gate: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 10, borderWidth: 1, borderColor: '#a855f744', padding: SPACING.md, gap: SPACING.md },
+  iconWrap: { width: 56, height: 56, borderRadius: 10, backgroundColor: '#a855f718', alignItems: 'center', justifyContent: 'center' },
   info: { flex: 1 },
   title: { color: '#a855f7', fontFamily: FONT.orbitron, fontSize: 13, fontWeight: '700', marginBottom: 2 },
   subtitle: { color: C.muted, fontSize: 10, lineHeight: 14 },
 });
 
 const getICStyles = (C: any) => StyleSheet.create({
-  card: { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'flex-start' },
+  card: { flexDirection: 'row', backgroundColor: C.panel, borderRadius: 10, borderWidth: 1, padding: SPACING.md, marginBottom: SPACING.sm, gap: SPACING.sm, alignItems: 'flex-start' },
   cardSoldOut: { opacity: 0.5 },
-  iconWrap: { width: 52, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  iconWrap: { width: 52, height: 52, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   info: { flex: 1 },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: 3, flexWrap: 'wrap' },
   name: { fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700' },

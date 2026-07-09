@@ -8,6 +8,7 @@ import useGameStore, { Quest } from '../store/useGameStore';
 import { useLocationTracker } from '../hooks/useLocationTracker';
 import { formatTime } from '../utils/time';
 import BottomSheetModal from './BottomSheetModal';
+import CustomModal from './CustomModal';
 import { FONT, SPACING } from '../theme';
 
 const getGMStyles = (C: any) => StyleSheet.create({
@@ -46,6 +47,7 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
   );
   const [running, setRunning] = useState(!timerStore?.isPaused && !!timerStore);
   const [note, setNote] = useState(record?.lastNote ?? '');
+  const [confirmEarly, setConfirmEarly] = useState(false);
 
   const tracker = useLocationTracker(target, () => {
     handleFinalize();
@@ -106,6 +108,15 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
     clearT(quest.id);
     saveRec(quest.id, Math.floor(elapsed / 1000), note.trim());
     onComplete();
+  }
+
+  // Finish button: confirm first when the distance target hasn't been reached
+  function handleFinishPress() {
+    if (tracker.distKm < target) {
+      setConfirmEarly(true);
+      return;
+    }
+    handleFinalize();
   }
 
   const { t } = useTranslation('modals');
@@ -205,12 +216,24 @@ export default function GPSTrackerModal({ quest, onClose, onComplete, C }: {
             />
           </View>
 
-          <TouchableOpacity style={[gm.completeBtn, { width: '100%', backgroundColor: C.green, paddingVertical: 14 }]} onPress={handleFinalize}>
+          <TouchableOpacity style={[gm.completeBtn, { width: '100%', backgroundColor: C.green, paddingVertical: 14 }]} onPress={handleFinishPress}>
             <Icon name="check-bold" size={16} color={C.bg} />
             <Text style={{ color: C.bg, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '900', marginLeft: 8 }}>{t('gps_tracker.finish_mission')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <CustomModal
+        visible={confirmEarly}
+        title={t('gps_tracker.confirm_early_title')}
+        message={t('gps_tracker.confirm_early_message', { dist: tracker.distKm.toFixed(2), target })}
+        confirmLabel={t('gps_tracker.confirm_early_btn')}
+        confirmIcon="flag-checkered"
+        confirmColor={C.gold}
+        onConfirm={() => { setConfirmEarly(false); handleFinalize(); }}
+        onCancel={() => setConfirmEarly(false)}
+        C={C}
+      />
     </BottomSheetModal>
   );
 }

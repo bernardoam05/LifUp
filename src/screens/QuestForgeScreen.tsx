@@ -861,14 +861,14 @@ const getSStyles = (C: any) => StyleSheet.create({
     position: 'absolute', bottom: 24, left: SPACING.md, right: SPACING.md,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     backgroundColor: C.purple,
-    borderRadius: 14, paddingVertical: 16,
+    borderRadius: 10, paddingVertical: 16,
     shadowColor: C.purple, shadowOpacity: 0.5, shadowRadius: 12, elevation: 8,
   },
   fabTxt: { color: C.bg, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 2 },
 });
 
 const getDRStyles = (C: any) => StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 12, borderWidth: 1, borderColor: C.border, padding: SPACING.sm, marginBottom: 8, gap: SPACING.sm },
+  row: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.panel, borderRadius: 10, borderWidth: 1, borderColor: C.border, padding: SPACING.sm, marginBottom: 8, gap: SPACING.sm },
   iconWrap: { width: 40, height: 40, borderRadius: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   info: { flex: 1 },
   title: { color: C.text, fontFamily: FONT.orbitron, fontSize: 10, fontWeight: '700', marginBottom: 2 },
@@ -927,7 +927,7 @@ const getFMStyles = (C: any) => StyleSheet.create({
   saveBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     backgroundColor: C.neonBlue,
-    borderRadius: 14, paddingVertical: 16, marginTop: SPACING.lg,
+    borderRadius: 10, paddingVertical: 16, marginTop: SPACING.lg,
     shadowColor: C.neonBlue, shadowOpacity: 0.4, shadowRadius: 10, elevation: 6,
   },
   saveTxt: { color: C.bg, fontFamily: FONT.orbitron, fontSize: 12, fontWeight: '700', letterSpacing: 1 },
@@ -953,7 +953,7 @@ const getFMStyles = (C: any) => StyleSheet.create({
 
 const getIPStyles = (C: any) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: C.bg + 'f2', justifyContent: 'center', padding: SPACING.md },
-  card: { backgroundColor: C.bg, borderRadius: 12, borderWidth: 1, borderColor: C.purple, maxHeight: '80%' },
+  card: { backgroundColor: C.bg, borderRadius: 10, borderWidth: 1, borderColor: C.purple, maxHeight: '80%' },
   header: { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, borderBottomWidth: 1, borderBottomColor: C.border },
   headerTxt: { flex: 1, color: C.purple, fontFamily: FONT.orbitron, fontSize: 10, letterSpacing: 2 },
   hint: { color: C.dimmed, fontSize: 11, paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm },

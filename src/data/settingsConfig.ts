@@ -46,7 +46,7 @@ export const getDifficultyOptions = (C: any): DifficultyOption[] => [
   {
     value:    'hard',
     label:    'DIFÍCIL',
-    sublabel: 'Protocolo do Monarca Sombrio',
+    sublabel: 'Protocolo do Soberano Sombrio',
     icon:     'skull-crossbones',
     color:    C.neonRed,
     description: [
@@ -99,7 +99,7 @@ export const getIntensityOptions = (C: any): IntensityOption[] => [
   {
     value:    'hardcore',
     label:    'HARDCORE',
-    sublabel: 'Protocolo do Monarca',
+    sublabel: 'Protocolo do Soberano',
     icon:     'skull-crossbones',
     color:    C.neonRed,
     description: [

@@ -161,7 +161,7 @@ export const SHADOWS_BOSS_MIXED: Shadow[] = [
   }),
   bossDrop('boss_poison_monarch', {
     id: 'quest_boss_poison_monarch',
-    name: 'Monarca Quimera do Veneno',
+    name: 'Soberano Quimera do Veneno',
     rank: 'Marshal',
     type: 'Beast',
     passiveEffect: { type: 'xp_boost', value: 0.14, description: '+14% XP em todas as missões' },

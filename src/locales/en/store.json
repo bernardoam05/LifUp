@@ -41,7 +41,7 @@
     "rank_c_label": "Will Master",
     "rank_b_label": "Shadow Knight",
     "rank_a_label": "Commander",
-    "rank_s_label": "Monarch",
+    "rank_s_label": "Sovereign",
     "rank_national_label": "National Level Hunter"
   },
   "notifications": {
@@ -58,5 +58,13 @@
     "side_quest_reminder_body": "Mission \"{{title}}\" is still awaiting completion.",
     "system_warning_final_body": "Final Warning: Complete daily missions before System reactivation at midnight.",
     "system_warning_title": "System Warning"
+  },
+  "reroll": {
+    "invalid": "Invalid mission.",
+    "none_available": "No missions available.",
+    "weekly_limit": "Weekly limit reached (7/7).",
+    "already_today": "Already replaced today.",
+    "pool_empty": "Pool is empty.",
+    "limit_reached": "Limit reached."
   }
 }

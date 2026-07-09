@@ -59,13 +59,13 @@ export default function BossVictoryModal({
     <SystemModal transparent visible={visible} onRequestClose={onRequestClose}>
       <View style={bv.card}>
         <Icon name="sword" size={48} color={C.gold} style={{ marginBottom: SPACING.sm }} />
-        <Text style={bv.header}>BOSS DERROTADO!</Text>
+        <Text style={bv.header}>{t('boss_victory.header')}</Text>
         {info.bossLabel && (
           <Text style={[bv.sub, { color: C.gold, fontFamily: FONT.orbitron, fontSize: 11, letterSpacing: 1, marginBottom: 4 }]}>
             {info.bossLabel.toUpperCase()}
           </Text>
         )}
-        <Text style={bv.sub}>O dungeon foi limpo. O Sistema reconhece a tua força.</Text>
+        <Text style={bv.sub}>{t('boss_victory.sub')}</Text>
 
         <View style={bv.rewardsBox}>
           <View style={bv.rewardRow}>
@@ -80,9 +80,7 @@ export default function BossVictoryModal({
             <View style={[bv.rewardRow, { marginTop: SPACING.sm }]}>
               <Icon name="ghost" size={16} color={C.purple} />
               <Text style={[bv.rewardTxt, { color: C.purple }]}>
-                {info.leveledUpShadow
-                  ? ` ${info.shadowName} subiu de nível!`
-                  : ` Sombra obtida: ${info.shadowName}`}
+                {' '}{t(info.leveledUpShadow ? 'boss_victory.shadow_leveled_up' : 'boss_victory.shadow_obtained', { name: info.shadowName })}
               </Text>
             </View>
           )}
@@ -90,7 +88,7 @@ export default function BossVictoryModal({
 
         {info.droppedItems && info.droppedItems.length > 0 && (
           <>
-            <Text style={bv.lootHeader}>— LOOT —</Text>
+            <Text style={bv.lootHeader}>{t('boss_victory.loot_header')}</Text>
             <View style={bv.lootBox}>
               {info.droppedItems.map((itemId, idx) => {
                 const itm = CATALOG_MAP[itemId];
@@ -111,7 +109,7 @@ export default function BossVictoryModal({
         )}
 
         <TouchableOpacity style={bv.btn} onPress={onClose}>
-          <Text style={bv.btnTxt}>CONTINUAR</Text>
+          <Text style={bv.btnTxt}>{t('boss_victory.continue')}</Text>
         </TouchableOpacity>
       </View>
     </SystemModal>

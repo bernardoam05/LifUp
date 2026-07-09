@@ -121,7 +121,7 @@
       "description": "150 reps of strength exercise. Prove your resilience."
     },
     "king_of_the_dead": {
-      "name": "Monarch of the Undead",
+      "name": "Sovereign of the Undead",
       "description": "120 min of absolute focus. The silence of the tomb is your ally."
     },
     "boss_training": {
@@ -169,7 +169,7 @@
       "description": "Perform {target} min of continuous dynamic stretching (leg swings, shoulder rotations, hip circles) without pauses exceeding 30s. Focus Mode active."
     },
     "boss_poison_monarch": {
-      "name": "Chimera Poison Monarch (S-Rank)",
+      "name": "Chimera Poison Sovereign (S-Rank)",
       "description": "The poison is in the body. {target} burpees to sweat and burn the poison once and for all."
     },
     "boss_goliath": {
@@ -390,7 +390,7 @@
     "pool_empty": "Pool empty. The System will not generate rotating habits.",
     "boss_section_title": "BOSS — EPIC CHALLENGES",
     "boss_section_sub": "High-risk missions. Activated manually by the Forge.",
-    "boss_empty": "No Boss created. The System awaits a courageous Monarch.",
+    "boss_empty": "No Boss created. The System awaits a courageous Sovereign.",
     "create_directive": "CREATE NEW DIRECTIVE",
     "restore_defaults_title": "RESTORE DEFAULTS",
     "restore_defaults_message": "Restores the System's original dictionary.\n\nAll customization will be permanently lost.",

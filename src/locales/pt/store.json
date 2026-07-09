@@ -41,7 +41,7 @@
     "rank_c_label": "Mestre da Vontade",
     "rank_b_label": "Cavaleiro das Sombras",
     "rank_a_label": "Comandante",
-    "rank_s_label": "Monarca",
+    "rank_s_label": "Soberano",
     "rank_national_label": "Caçador Nível Nacional"
   },
   "notifications": {
@@ -58,5 +58,13 @@
     "side_quest_reminder_body": "A missão \"{{title}}\" ainda aguarda conclusão.",
     "system_warning_final_body": "Aviso Final: Completa as missões diárias antes da reativação do Sistema à meia-noite.",
     "system_warning_title": "Aviso do Sistema"
+  },
+  "reroll": {
+    "invalid": "Missão inválida.",
+    "none_available": "Sem missões disponíveis.",
+    "weekly_limit": "Limite semanal atingido (7/7).",
+    "already_today": "Já substituída hoje.",
+    "pool_empty": "Pool vazia.",
+    "limit_reached": "Limite atingido."
   }
 }

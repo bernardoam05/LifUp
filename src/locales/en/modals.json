@@ -27,7 +27,7 @@
       "C": "Will Master",
       "B": "Shadow Knight",
       "A": "Commander",
-      "S": "Monarch",
+      "S": "Sovereign",
       "National": "National Level Hunter"
     },
     "labels": {
@@ -36,7 +36,7 @@
       "C": "Iron Will Master",
       "B": "Shadow Knight",
       "A": "Commander",
-      "S": "Monarch",
+      "S": "Sovereign",
       "National": "National-Level Hunter"
     }
   },
@@ -81,7 +81,10 @@
     "field_notes_label": "FIELD NOTES",
     "field_notes_placeholder": "Log your progress...",
     "finish_mission": "FINISH MISSION",
-    "open_settings": "OPEN SETTINGS"
+    "open_settings": "OPEN SETTINGS",
+    "confirm_early_title": "FINISH BEFORE TARGET?",
+    "confirm_early_message": "You have only covered {{dist}} km of {{target}} km.\nDo you really want to finish the mission?",
+    "confirm_early_btn": "FINISH"
   },
   "penalty": {
     "system_label": "◈ SYSTEM ◈",
