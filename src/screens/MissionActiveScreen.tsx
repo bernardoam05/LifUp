@@ -7,7 +7,6 @@ import BottomSheetModal from '../components/BottomSheetModal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
 import useGameStore, { Quest } from '../store/useGameStore';
-import CustomModal from '../components/CustomModal';
 import { showOngoingMissionNotification, clearOngoingMissionNotification } from '../utils/notifications';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FONT, SPACING } from '../theme';
@@ -37,7 +36,7 @@ function formatTime(ms: number): string {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export default function MissionActiveScreen({ quest, onClose, onComplete, initialElapsed = 0, initialPaused, targetSeconds, C }: Props) {
+export default function MissionActiveScreen({ quest, onClose, onComplete, initialElapsed, initialPaused, targetSeconds, C }: Props) {
   const { t } = useTranslation('dungeons');
   const s = getStyles(C);
   const insets = useSafeAreaInsets();
@@ -51,14 +50,21 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
   const record = questRecords[quest.id];
   const targetMs = targetSeconds ? targetSeconds * 1000 : 0;
 
-  const initialRunning = initialPaused === false;
-  const [elapsed, setElapsed] = useState(initialElapsed);
+  // Resume from the persisted store timer when the caller doesn't provide state —
+  // closing the sheet never loses progress, on any entry point (daily or boss).
+  const storeTimer = useGameStore.getState().activeMissionTimers[quest.id];
+  const resumedElapsed = initialElapsed
+    ?? (storeTimer ? storeTimer.accumulatedMs + (storeTimer.isPaused ? 0 : Date.now() - storeTimer.startTime) : 0);
+  const initialRunning = initialPaused !== undefined
+    ? initialPaused === false
+    : (!!storeTimer && !storeTimer.isPaused);
+
+  const [elapsed, setElapsed] = useState(resumedElapsed);
   const [running, setRunning] = useState(initialRunning);
   const [note, setNote] = useState(record?.lastNote ?? '');
-  const [showNoTime, setShowNoTime] = useState(false);  // confirm when timer < 10s
 
   const startRef = useRef<number | null>(initialRunning ? Date.now() : null);
-  const accRef = useRef(initialElapsed);  // pre-fill accumulated ms when resuming
+  const accRef = useRef(resumedElapsed);  // pre-fill accumulated ms when resuming
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const doneRef = useRef(false);
 
@@ -127,13 +133,9 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
   }
 
   function handleComplete() {
-    const timeMs = elapsed;
-    if (timeMs < 10_000 && timeMs > 0) {
-      // Timer ran but less than 10s — ask for confirmation
-      setShowNoTime(true);
-      return;
-    }
-    finalize(timeMs);
+    // Completes with whatever time has elapsed (0 is fine) — no friction modal;
+    // pausing/closing keeps the timer, so completion is always a deliberate act.
+    finalize(elapsed);
   }
 
   const bestSecs = record?.bestTime ?? 0;
@@ -222,33 +224,14 @@ export default function MissionActiveScreen({ quest, onClose, onComplete, initia
             />
           </View>
 
-          {/* Complete button */}
+          {/* Complete button — uses elapsed time as-is */}
           <TouchableOpacity style={s.completeBtn} onPress={handleComplete} activeOpacity={0.8}>
             <Icon name="check-circle-outline" size={18} color={C.bg} />
             <Text style={s.completeTxt}> {t('ui.completeMission')}</Text>
           </TouchableOpacity>
 
-          {/* Complete without timer */}
-          <TouchableOpacity style={s.skipTimerBtn} onPress={() => finalize(0)}>
-            <Icon name="pencil-outline" size={13} color={C.muted} />
-            <Text style={s.skipTimerTxt}> {t('ui.completeWithoutTimer')}</Text>
-          </TouchableOpacity>
-
         </View>
       </ScrollView>
-
-      {/* Confirm: short timer */}
-      <CustomModal
-        visible={showNoTime}
-        title={t('ui.insufficientTime')}
-        message={t('ui.insufficientTimeMsg', { time: formatTime(elapsed) })}
-        confirmLabel={t('ui.saveNotes')}
-        confirmIcon="notebook-outline"
-        confirmColor={C.neonBlue}
-        onConfirm={() => { setShowNoTime(false); finalize(0); }}
-        onCancel={() => setShowNoTime(false)}
-        C={C}
-      />
     </BottomSheetModal>
   );
 }

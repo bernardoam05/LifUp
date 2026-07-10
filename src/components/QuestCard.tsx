@@ -1,8 +1,9 @@
 // src/components/QuestCard.tsx
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking, Pressable, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Pressable, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTranslation } from 'react-i18next';
+import { useNavigation } from '@react-navigation/native';
 import useGameStore, { Quest } from '../store/useGameStore';
 import { getQuestConfig } from '../store/questDictionary';
 import CustomModal from './CustomModal';
@@ -105,6 +106,7 @@ const getExtraStyles = (C: any) => StyleSheet.create({
 
 export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Quest; isExtra?: boolean; isPenalty?: boolean; C: any }) {
   const { t } = useTranslation('quests');
+  const navigation = useNavigation();
   const qc = getQCStyles(C);
   const ex = getExtraStyles(C);
   const limitDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -158,7 +160,8 @@ export default function QuestCard({ quest, isExtra, isPenalty, C }: { quest: Que
     } else if (quest.type === 'forbidden' || quest.type === 'limit') {
       // handled inline
     } else if (quest.type === 'focus' || quest.type === 'pomodoro') {
-      Linking.openURL('lifup://focus');
+      // Navigate in-app: a deep link would open a dead browser tab on web
+      navigation.navigate('Focus' as never);
     } else {
       setMissionModalOpen(true);
       setShowMission(true);
