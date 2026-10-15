@@ -158,8 +158,14 @@ class SessionService : Service() {
             val s = store.current
             val now = System.currentTimeMillis()
             val f = s.focus
-            if (f != null && now >= f.endsAt()) { store.fire(); return }
-            if (s.penalty.active && s.penalty.blockEnd in 1..now) { store.fire(); return }
+            if (f != null && now >= f.endsAt()) {
+                // The engine settles the session; the state change then stops this service.
+                store.fire()
+                handler.postDelayed(this, 2_000)
+                return
+            }
+            if (!needed(s, now)) { stopSelf(); return }
+            if (s.blockPlan(now) != plan) refresh()
             f?.pomodoro?.let { p ->
                 val phase = Pomodoro.phaseAt(p, f.elapsedMinutes(now))
                 val prev = lastPhase
