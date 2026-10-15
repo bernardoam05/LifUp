@@ -1,0 +1,535 @@
+[
+ {
+  "id": "boss_goblin_warlord",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "TRAINING",
+  "target": 8,
+  "unit": "rounds",
+  "baseXp": 680,
+  "baseGold": 220,
+  "title": {
+   "pt": "Senhor Goblin",
+   "en": "Goblin Warlord"
+  },
+  "description": {
+   "pt": "Tabata: completa {target} rounds de 20s de esforço máximo + 10s de repouso. Define um único exercício antes de começar (burpees, saltos ou sprints) e mantém a intensidade máxima em cada round.",
+   "en": "Tabata: complete {target} rounds of 20s maximum effort + 10s rest. Define a single exercise before starting (burpees, jumps or sprints) and maintain maximum intensity in each round."
+  },
+  "shadowId": "quest_boss_goblin_warlord"
+ },
+ {
+  "id": "boss_cave_spider_matriarch",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "FOCUS",
+  "target": 35,
+  "unit": "min",
+  "baseXp": 700,
+  "baseGold": 230,
+  "title": {
+   "pt": "Matriarca da Caverna",
+   "en": "Cave Matriarch"
+  },
+  "description": {
+   "pt": "Técnica Feynman: ativa o modo Foco por {target} min e explica por escrito (ou em voz alta gravada) um conceito que estás a aprender, como se ensinasses a um iniciante — sem consultar fontes durante a explicação.",
+   "en": "Feynman Technique: activate Focus mode for {target} min and explain in writing (or recorded out loud) a concept you are learning, as if teaching a beginner — without consulting sources during the explanation."
+  },
+  "shadowId": "quest_boss_cave_spider_matriarch"
+ },
+ {
+  "id": "boss_ant_worker_prime",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "GPS",
+  "target": 4,
+  "unit": "km",
+  "baseXp": 690,
+  "baseGold": 210,
+  "title": {
+   "pt": "Operária Primordial",
+   "en": "Primordial Worker"
+  },
+  "description": {
+   "pt": "Rota de exploração: percorre {target} km num trajeto que nunca fizeste antes, escolhendo o caminho no momento (sem rota pré-definida). Nota 3 coisas novas que descobriste ao longo do percurso.",
+   "en": "Exploration route: cover {target} km on a path you have never taken before, choosing the way in the moment (no pre-defined route). Note 3 new things you discovered along the way."
+  },
+  "shadowId": "quest_boss_ant_worker_prime"
+ },
+ {
+  "id": "boss_stone_golem_shard",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "FOCUS",
+  "target": 30,
+  "unit": "min",
+  "baseXp": 670,
+  "baseGold": 200,
+  "title": {
+   "pt": "Fragmento do Golem",
+   "en": "Golem Fragment"
+  },
+  "description": {
+   "pt": "Experimenta uma prática física nova (yoga, capoeira, calistenia, tai chi ou outra que nunca tentaste): segue um tutorial e pratica {target} min sem interrupção com modo Foco ativo. Repete os movimentos no final sem guia.",
+   "en": "Try a new physical practice (yoga, capoeira, calisthenics, tai chi or one you've never tried): follow a tutorial and practice {target} min without interruption with Focus Mode active. Repeat the movements at the end without guidance."
+  },
+  "shadowId": "quest_boss_stone_golem_shard"
+ },
+ {
+  "id": "boss_stringsinger",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "FOCUS",
+  "target": 35,
+  "unit": "min",
+  "baseXp": 720,
+  "baseGold": 230,
+  "title": {
+   "pt": "O Cantor das Cordas",
+   "en": "The String Singer"
+  },
+  "description": {
+   "pt": "Guitarra: {target} min de prática com metrónomo (3 acordes + 1 ritmo básico).",
+   "en": "Guitar: {target} min of practice with metronome (3 chords + 1 basic rhythm)."
+  },
+  "shadowId": "quest_boss_stringsinger"
+ },
+ {
+  "id": "boss_polyglot_trial",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "KNOWLEDGE",
+  "target": 20,
+  "unit": "palavras",
+  "baseXp": 740,
+  "baseGold": 240,
+  "title": {
+   "pt": "Provação do Poliglota",
+   "en": "Polyglot Trial"
+  },
+  "description": {
+   "pt": "Idioma: aprende {target} palavras + escreve 5 frases usando-as.",
+   "en": "Language: learn {target} words + write 5 sentences using them."
+  },
+  "shadowId": "quest_boss_polyglot_trial"
+ },
+ {
+  "id": "boss_culinary_ritual",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "TRAINING",
+  "target": 1,
+  "unit": "refeição",
+  "baseXp": 760,
+  "baseGold": 250,
+  "title": {
+   "pt": "Ritual Culinário",
+   "en": "Culinary Ritual"
+  },
+  "description": {
+   "pt": "Cozinha: prepara 1 refeição saudável + 1 acompanhamento (do zero).",
+   "en": "Cook: prepare 1 healthy meal + 1 side dish (from scratch)."
+  },
+  "shadowId": "quest_boss_culinary_ritual"
+ },
+ {
+  "id": "boss_memory_labyrinth",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "FOCUS",
+  "target": 30,
+  "unit": "min",
+  "baseXp": 780,
+  "baseGold": 260,
+  "title": {
+   "pt": "Labirinto da Memória",
+   "en": "Memory Labyrinth"
+  },
+  "description": {
+   "pt": "Memória: {target} min de foco para criar um palácio mental com 12 locais e rever as associações 2 vezes em silêncio.",
+   "en": "Memory: {target} min of focus to create a mental palace with 12 locations and review the associations 2 times in silence."
+  },
+  "shadowId": "quest_boss_memory_labyrinth"
+ },
+ {
+  "id": "boss_new_frontier",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "KNOWLEDGE",
+  "target": 1,
+  "unit": "aula",
+  "baseXp": 800,
+  "baseGold": 270,
+  "title": {
+   "pt": "Fronteira Inédita",
+   "en": "New Frontier"
+  },
+  "description": {
+   "pt": "Experimenta algo novo: 1 aula curta (20–30 min) + 3 notas do que aprendeste.",
+   "en": "Try something new: 1 short class (20–30 min) + 3 notes on what you learned."
+  },
+  "shadowId": "quest_boss_new_frontier"
+ },
+ {
+  "id": "boss_artisan_trial",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "TRAINING",
+  "target": 1,
+  "unit": "objeto",
+  "baseXp": 820,
+  "baseGold": 280,
+  "title": {
+   "pt": "Prova do Artesão",
+   "en": "Artisan Trial"
+  },
+  "description": {
+   "pt": "Constrói algo pequeno: 1 objeto útil (ex.: suporte, organizador, remendo).",
+   "en": "Build something small: 1 useful object (e.g.: stand, organizer, patch)."
+  },
+  "shadowId": "quest_boss_artisan_trial"
+ },
+ {
+  "id": "boss_wind_walker",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "FOCUS",
+  "target": 45,
+  "unit": "min",
+  "baseXp": 680,
+  "baseGold": 210,
+  "title": {
+   "pt": "Caminhante do Vento Silencioso",
+   "en": "Silent Wind Walker"
+  },
+  "description": {
+   "pt": "Realiza {target} min de alongamentos dinâmicos contínuos (balanços de pernas, rotações de ombros, hip circles) sem pausas superiores a 30s. Modo Foco ativo.",
+   "en": "Perform {target} min of continuous dynamic stretching (leg swings, shoulder rotations, hip circles) without pauses exceeding 30s. Focus Mode active."
+  },
+  "shadowId": "quest_boss_wind_walker"
+ },
+ {
+  "id": "boss_tarantula",
+  "rank": "A",
+  "minLevel": 1,
+  "type": "GPS",
+  "target": 6,
+  "unit": "km",
+  "baseXp": 650,
+  "baseGold": 200,
+  "title": {
+   "pt": "Tarântula Imperial",
+   "en": "Imperial Tarantula"
+  },
+  "description": {
+   "pt": "Marcha controlada: percorre {target} km num percurso definido à partida (evita desvios), sem música nem telemóvel.",
+   "en": "Controlled march: cover {target} km on a predetermined route (avoid deviations), without music or phone."
+  },
+  "shadowId": "quest_boss_tarantula"
+ },
+ {
+  "id": "boss_cold_philosopher",
+  "rank": "A",
+  "minLevel": 10,
+  "type": "FOCUS",
+  "target": 50,
+  "unit": "min",
+  "baseXp": 760,
+  "baseGold": 245,
+  "title": {
+   "pt": "O Filósofo da Montanha",
+   "en": "The Mountain Philosopher"
+  },
+  "description": {
+   "pt": "Análise de problema real: define um problema pessoal concreto que estás a adiar. Pesquisa contexto e opiniões opostas durante {target} min (modo Foco ativo) e termina com uma decisão escrita.",
+   "en": "Real problem analysis: define a concrete personal problem you are postponing. Research context and opposing opinions for {target} min (Focus Mode active) and finish with a written decision."
+  },
+  "shadowId": "quest_boss_cold_philosopher"
+ },
+ {
+  "id": "boss_digital_craftsman",
+  "rank": "A",
+  "minLevel": 10,
+  "type": "KNOWLEDGE",
+  "target": 90,
+  "unit": "min",
+  "baseXp": 850,
+  "baseGold": 280,
+  "title": {
+   "pt": "O Artesão Digital",
+   "en": "The Digital Craftsman"
+  },
+  "description": {
+   "pt": "Constrói algo digital do zero em {target} min: uma página web simples, um script útil, uma apresentação estruturada ou um protótipo. O resultado tem de ser funcional ou apresentável no final.",
+   "en": "Build something digital from scratch in {target} min: a simple web page, a useful script, a structured presentation or a prototype. The result must be functional or presentable at the end."
+  },
+  "shadowId": "quest_boss_digital_craftsman"
+ },
+ {
+  "id": "boss_stoic_challenge",
+  "rank": "A",
+  "minLevel": 10,
+  "type": "FOCUS",
+  "target": 20,
+  "unit": "min",
+  "baseXp": 700,
+  "baseGold": 220,
+  "title": {
+   "pt": "A Prova do Estoico",
+   "en": "The Stoic's Trial"
+  },
+  "description": {
+   "pt": "Desconforto voluntário: {target} min de treino físico num ambiente frio real (ao ar livre no frio, ou janelas abertas). Modo Foco ativo. Regista como te sentiste antes e depois.",
+   "en": "Voluntary discomfort: {target} min of physical training in a real cold environment (outdoors in the cold, or open windows). Focus Mode active. Record how you felt before and after."
+  },
+  "shadowId": "quest_boss_stoic_challenge"
+ },
+ {
+  "id": "boss_titan_ape",
+  "rank": "A",
+  "minLevel": 10,
+  "type": "TRAINING",
+  "target": 130,
+  "unit": "reps",
+  "baseXp": 850,
+  "baseGold": 260,
+  "title": {
+   "pt": "Primata Titânico",
+   "en": "Titanic Primate"
+  },
+  "description": {
+   "pt": "Força bruta total: {target} reps alternadas de push-ups + squats.",
+   "en": "Total brute force: {target} alternating reps of push-ups + squats."
+  },
+  "shadowId": "quest_boss_titan_ape"
+ },
+ {
+  "id": "boss_astral_drake",
+  "rank": "S",
+  "minLevel": 20,
+  "type": "FOCUS",
+  "target": 60,
+  "unit": "min",
+  "baseXp": 1400,
+  "baseGold": 500,
+  "title": {
+   "pt": "Dragão Astral",
+   "en": "Astral Dragon"
+  },
+  "description": {
+   "pt": "Ativa o modo Foco por {target} min: realiza ciclos de respiração Wim Hof (30 respirações profundas + retenção do ar) e finaliza com 5 min de meditação silenciosa.",
+   "en": "Activate Focus mode for {target} min: perform Wim Hof breathing cycles (30 deep breaths + breath retention) and finish with 5 min of silent meditation."
+  },
+  "shadowId": "quest_boss_astral_drake"
+ },
+ {
+  "id": "boss_storm_bringer",
+  "rank": "S",
+  "minLevel": 30,
+  "type": "FOCUS",
+  "target": 45,
+  "unit": "min",
+  "baseXp": 1700,
+  "baseGold": 760,
+  "title": {
+   "pt": "Invocador de Tempestades",
+   "en": "Storm Bringer"
+  },
+  "description": {
+   "pt": "Skill sprint: define uma micro-skill específica que queres aprender. Estuda-a em modo Foco por {target} min e pratica-a imediatamente durante 15 min adicionais — sem avançar para outro tema antes de terminar.",
+   "en": "Skill sprint: define a specific micro-skill you want to learn. Study it in Focus mode for {target} min and practice it immediately for an additional 15 min — without moving on to another topic before finishing."
+  },
+  "shadowId": "quest_boss_storm_bringer"
+ },
+ {
+  "id": "boss_chrono_master",
+  "rank": "S",
+  "minLevel": 30,
+  "type": "FOCUS",
+  "target": 75,
+  "unit": "min",
+  "baseXp": 1800,
+  "baseGold": 820,
+  "title": {
+   "pt": "Senhor do Tempo",
+   "en": "Time Master"
+  },
+  "description": {
+   "pt": "Timeboxing: {target} min de foco (equivale a 3 blocos Pomodoro de 25 min). Executa com pausas de 5 min entre blocos.",
+   "en": "Timeboxing: {target} min of focus (equivalent to 3 Pomodoro blocks of 25 min). Execute with 5-min breaks between blocks."
+  },
+  "shadowId": "quest_boss_chrono_master"
+ },
+ {
+  "id": "boss_star_breaker",
+  "rank": "S",
+  "minLevel": 30,
+  "type": "GPS",
+  "target": 10,
+  "unit": "km",
+  "baseXp": 1900,
+  "baseGold": 880,
+  "title": {
+   "pt": "Quebrador de Estrelas",
+   "en": "Star Breaker"
+  },
+  "description": {
+   "pt": "Exploração documentada: percorre {target} km a pé num percurso nunca feito antes. Durante a marcha, identifica e regista (por escrito ou foto) pelo menos 3 elementos novos que nunca tinhas reparado.",
+   "en": "Documented exploration: cover {target} km on foot on a never-before-done route. During the march, identify and record (in writing or photo) at least 3 new elements you had never noticed."
+  },
+  "shadowId": "quest_boss_star_breaker"
+ },
+ {
+  "id": "boss_blood_knight",
+  "rank": "S",
+  "minLevel": 30,
+  "type": "TRAINING",
+  "target": 150,
+  "unit": "reps",
+  "baseXp": 1400,
+  "baseGold": 600,
+  "title": {
+   "pt": "Cavaleiro de Sangue Sangreal",
+   "en": "Sangreal Blood Knight"
+  },
+  "description": {
+   "pt": "Luta corpo a corpo pura. {target} repetições de levantamento de peso (Deadlift/Squats).",
+   "en": "Pure close combat. {target} repetitions of weightlifting (Deadlift/Squats)."
+  },
+  "shadowId": "quest_boss_blood_knight"
+ },
+ {
+  "id": "boss_lich_king",
+  "rank": "S",
+  "minLevel": 30,
+  "type": "FOCUS",
+  "target": 100,
+  "unit": "min",
+  "baseXp": 1500,
+  "baseGold": 700,
+  "title": {
+   "pt": "Rei Lich Esquecido",
+   "en": "Forgotten Lich King"
+  },
+  "description": {
+   "pt": "Foco resistente: {target} min sentado e imóvel, sem distrações.",
+   "en": "Resistant focus: {target} min sitting still, without distractions."
+  },
+  "shadowId": "quest_boss_lich_king"
+ },
+ {
+  "id": "season_halloween",
+  "rank": "S",
+  "minLevel": 1,
+  "type": "FOCUS",
+  "target": 66,
+  "unit": "min",
+  "baseXp": 1500,
+  "baseGold": 666,
+  "title": {
+   "pt": "Ceifeiro da Meia-Noite",
+   "en": "Midnight Reaper"
+  },
+  "description": {
+   "pt": "Atravessa a noite das almas: {target} min de foco profundo sem interrupções.",
+   "en": "Cross the night of souls: {target} min of deep, uninterrupted focus."
+  },
+  "shadowId": "soul_reaper",
+  "season": {
+   "from": "10-24",
+   "to": "11-02"
+  }
+ },
+ {
+  "id": "season_yule",
+  "rank": "S",
+  "minLevel": 1,
+  "type": "TRAINING",
+  "target": 100,
+  "unit": "reps",
+  "baseXp": 1400,
+  "baseGold": 600,
+  "title": {
+   "pt": "Serafim do Solstício",
+   "en": "Solstice Seraph"
+  },
+  "description": {
+   "pt": "Aquece o inverno: {target} repetições de um exercício composto à tua escolha (agachamentos, flexões ou burpees).",
+   "en": "Warm up the winter: {target} reps of a compound exercise of your choice (squats, push-ups or burpees)."
+  },
+  "shadowId": "god_seraphim",
+  "season": {
+   "from": "12-15",
+   "to": "12-26"
+  }
+ },
+ {
+  "id": "season_newyear",
+  "rank": "S",
+  "minLevel": 1,
+  "type": "KNOWLEDGE",
+  "target": 1,
+  "unit": "plan",
+  "baseXp": 1200,
+  "baseGold": 500,
+  "title": {
+   "pt": "Titã das Resoluções",
+   "en": "Titan of Resolutions"
+  },
+  "description": {
+   "pt": "Forja o ano novo: escreve {target} plano com 3 objetivos, os passos do primeiro mês e o que vais cortar.",
+   "en": "Forge the new year: write {target} plan with 3 goals, the first month's steps and what you will cut."
+  },
+  "shadowId": "auto_titan",
+  "season": {
+   "from": "12-29",
+   "to": "01-04"
+  }
+ },
+ {
+  "id": "season_spring",
+  "rank": "S",
+  "minLevel": 1,
+  "type": "GPS",
+  "target": 6,
+  "unit": "km",
+  "baseXp": 1000,
+  "baseGold": 420,
+  "title": {
+   "pt": "Lebre dos Portais",
+   "en": "Portal Hare"
+  },
+  "description": {
+   "pt": "Corrida da primavera: percorre {target} km ao ar livre.",
+   "en": "Spring race: cover {target} km outdoors."
+  },
+  "shadowId": "easter_hare_shadow",
+  "season": {
+   "from": "04-01",
+   "to": "04-15"
+  }
+ },
+ {
+  "id": "season_summer",
+  "rank": "S",
+  "minLevel": 1,
+  "type": "GPS",
+  "target": 8,
+  "unit": "km",
+  "baseXp": 1400,
+  "baseGold": 600,
+  "title": {
+   "pt": "Dragão do Solstício",
+   "en": "Solstice Dragon"
+  },
+  "description": {
+   "pt": "Desafio de verão: {target} km a pé ou a correr, antes das 10h ou depois das 19h.",
+   "en": "Summer challenge: {target} km walking or running, before 10:00 or after 19:00."
+  },
+  "shadowId": "shadow_dragon",
+  "season": {
+   "from": "07-01",
+   "to": "07-15"
+  }
+ }
+]

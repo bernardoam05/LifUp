@@ -1,0 +1,520 @@
+{
+ "quests": [
+  {
+   "id": "core_pushups",
+   "kind": "CORE",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Preparação Física: Força",
+    "en": "Physical Training: Strength"
+   },
+   "description": {
+    "pt": "Realiza {target} flexões.",
+    "en": "Perform {target} push-ups."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 2,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 50,
+   "baseGold": 10
+  },
+  {
+   "id": "core_squats",
+   "kind": "CORE",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Preparação Física: Pernas",
+    "en": "Physical Training: Legs"
+   },
+   "description": {
+    "pt": "Realiza {target} agachamentos.",
+    "en": "Perform {target} squats."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 50,
+   "baseGold": 10
+  },
+  {
+   "id": "core_reading",
+   "kind": "CORE",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Treino Mental: Leitura",
+    "en": "Mental Training: Reading"
+   },
+   "description": {
+    "pt": "Lê {target} páginas de um livro útil.",
+    "en": "Read {target} pages of a useful book."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 1,
+   "scalingInterval": 10,
+   "unit": "pages",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "core_water",
+   "kind": "CORE",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Sobrevivência: Hidratação",
+    "en": "Survival: Hydration"
+   },
+   "description": {
+    "pt": "Bebe {target} copos de água.",
+    "en": "Drink {target} glasses of water."
+   },
+   "baseTarget": 8,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "glasses",
+   "baseXp": 10,
+   "baseGold": 5
+  },
+  {
+   "id": "pool_run",
+   "kind": "POOL",
+   "type": "GPS",
+   "title": {
+    "pt": "Missão de Caçador: Corrida",
+    "en": "Hunter Mission: Run"
+   },
+   "description": {
+    "pt": "Corre {target} km.",
+    "en": "Run {target} km."
+   },
+   "baseTarget": 3,
+   "scalingAmount": 0.2,
+   "scalingInterval": 5,
+   "unit": "km",
+   "baseXp": 100,
+   "baseGold": 30
+  },
+  {
+   "id": "pool_plank",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Resistência Muscular",
+    "en": "Muscular Endurance"
+   },
+   "description": {
+    "pt": "Mantém uma prancha por {target} s.",
+    "en": "Hold a plank for {target} s."
+   },
+   "baseTarget": 60,
+   "scalingAmount": 5,
+   "scalingInterval": 5,
+   "unit": "s",
+   "baseXp": 60,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_meditate",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Treino de Mana",
+    "en": "Mana Training"
+   },
+   "description": {
+    "pt": "Medita em silêncio por {target} min.",
+    "en": "Meditate in silence for {target} min."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 1,
+   "scalingInterval": 10,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_social",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "title": {
+    "pt": "Prova de Vontade",
+    "en": "Test of Will"
+   },
+   "description": {
+    "pt": "Zero redes sociais por {target} h.",
+    "en": "Zero social media for {target} h."
+   },
+   "baseTarget": 4,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "h",
+   "baseXp": 80,
+   "baseGold": 20
+  },
+  {
+   "id": "pool_sugar",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "title": {
+    "pt": "Corpo Limpo",
+    "en": "Clean Body"
+   },
+   "description": {
+    "pt": "Não comer açúcar hoje.",
+    "en": "No sugar today."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "day",
+   "baseXp": 70,
+   "baseGold": 20
+  },
+  {
+   "id": "pool_pullups",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Elevações",
+    "en": "Pull-ups"
+   },
+   "description": {
+    "pt": "Realiza {target} elevações.",
+    "en": "Perform {target} pull-ups."
+   },
+   "baseTarget": 5,
+   "scalingAmount": 1,
+   "scalingInterval": 10,
+   "unit": "reps",
+   "baseXp": 90,
+   "baseGold": 25
+  },
+  {
+   "id": "pool_screentime",
+   "kind": "POOL",
+   "type": "LIMIT",
+   "title": {
+    "pt": "Desintoxicação Digital",
+    "en": "Digital Detox"
+   },
+   "description": {
+    "pt": "Limita o tempo de ecrã (lazer) a {target} h.",
+    "en": "Limit screen time (leisure) to {target} h."
+   },
+   "baseTarget": 2,
+   "scalingAmount": 0.1,
+   "scalingInterval": 10,
+   "unit": "h",
+   "baseXp": 60,
+   "baseGold": 15,
+   "descending": true
+  },
+  {
+   "id": "pool_stretching",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Flexibilidade",
+    "en": "Flexibility"
+   },
+   "description": {
+    "pt": "Sessão de alongamentos por {target} min.",
+    "en": "Stretching session for {target} min."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 1,
+   "scalingInterval": 10,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_deepwork",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Trabalho Profundo",
+    "en": "Deep Work"
+   },
+   "description": {
+    "pt": "Trabalha focado por {target} min sem pausas.",
+    "en": "Work focused for {target} min without breaks."
+   },
+   "baseTarget": 60,
+   "scalingAmount": 5,
+   "scalingInterval": 10,
+   "unit": "min",
+   "baseXp": 100,
+   "baseGold": 30
+  },
+  {
+   "id": "pool_coldshower",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Banho Gelado",
+    "en": "Cold Shower"
+   },
+   "description": {
+    "pt": "Toma um banho de água fria.",
+    "en": "Take a cold water shower."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "shower",
+   "baseXp": 80,
+   "baseGold": 20
+  },
+  {
+   "id": "pool_walking",
+   "kind": "POOL",
+   "type": "GPS",
+   "title": {
+    "pt": "Patrulha Ligeira",
+    "en": "Light Patrol"
+   },
+   "description": {
+    "pt": "Caminha {target} km hoje.",
+    "en": "Walk {target} km today."
+   },
+   "baseTarget": 5,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "km",
+   "baseXp": 70,
+   "baseGold": 20
+  },
+  {
+   "id": "pool_language",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Conhecimento Arcano",
+    "en": "Arcane Knowledge"
+   },
+   "description": {
+    "pt": "Estuda um idioma {target} min.",
+    "en": "Study a language for {target} min."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 50,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_burpees",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Condicionamento Extremo",
+    "en": "Extreme Conditioning"
+   },
+   "description": {
+    "pt": "Realiza {target} burpees.",
+    "en": "Perform {target} burpees."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 1,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 80,
+   "baseGold": 25
+  },
+  {
+   "id": "pool_cook",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Refeição de Caçador",
+    "en": "Hunter's Meal"
+   },
+   "description": {
+    "pt": "Cozinha a tua própria refeição saudável.",
+    "en": "Cook your own healthy meal."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "meal",
+   "baseXp": 60,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_journal",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Mente Clara",
+    "en": "Clear Mind"
+   },
+   "description": {
+    "pt": "Escreve um diário/reflexão por {target} min.",
+    "en": "Write a journal/reflection for {target} min."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_pomodoro_basic",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Técnica de Caçador: Foco Cíclico",
+    "en": "Hunter Technique: Cyclic Focus"
+   },
+   "description": {
+    "pt": "Completa {target} min de foco (ciclos Pomodoro contam).",
+    "en": "Complete {target} min of focus (Pomodoro cycles count)."
+   },
+   "baseTarget": 50,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 80,
+   "baseGold": 25
+  },
+  {
+   "id": "pool_pomodoro_adv",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Técnica de Caçador: Maestria Temporal",
+    "en": "Hunter Technique: Temporal Mastery"
+   },
+   "description": {
+    "pt": "Completa {target} min de foco (ciclos Pomodoro contam).",
+    "en": "Complete {target} min of focus (Pomodoro cycles count)."
+   },
+   "baseTarget": 100,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 160,
+   "baseGold": 50
+  }
+ ],
+ "penalty": [
+  {
+   "id": "p_cardio",
+   "kind": "PENALTY",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Penalização: Cardio",
+    "en": "Penalty: Cardio"
+   },
+   "description": {
+    "pt": "20 min de corrida contínua",
+    "en": "20 min of continuous running"
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 0,
+   "baseGold": 0
+  },
+  {
+   "id": "p_squat",
+   "kind": "PENALTY",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Penalização: Agachamentos",
+    "en": "Penalty: Squats"
+   },
+   "description": {
+    "pt": "50 agachamentos consecutivos",
+    "en": "50 consecutive squats"
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 0,
+   "baseGold": 0
+  },
+  {
+   "id": "p_focus",
+   "kind": "PENALTY",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Penalização: Foco Forçado",
+    "en": "Penalty: Forced Focus"
+   },
+   "description": {
+    "pt": "30 min de foco sem interrupções",
+    "en": "30 min of uninterrupted focus"
+   },
+   "baseTarget": 30,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 0,
+   "baseGold": 0
+  },
+  {
+   "id": "p_reading",
+   "kind": "PENALTY",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Penalização: Leitura Disciplinar",
+    "en": "Penalty: Disciplinary Reading"
+   },
+   "description": {
+    "pt": "15 páginas (livro não-ficção)",
+    "en": "15 pages of a non-fiction book"
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 0,
+   "baseGold": 0
+  },
+  {
+   "id": "p_plank",
+   "kind": "PENALTY",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Penalização: Prancha do Sistema",
+    "en": "Penalty: System Plank"
+   },
+   "description": {
+    "pt": "3 min de prancha (acumulados)",
+    "en": "3 min of plank (accumulated)"
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 0,
+   "baseGold": 0
+  },
+  {
+   "id": "p_pushups",
+   "kind": "PENALTY",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Penalização: Flexões",
+    "en": "Penalty: Push-ups"
+   },
+   "description": {
+    "pt": "30 flexões de execução lenta",
+    "en": "30 slow push-ups"
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 0,
+   "baseGold": 0
+  }
+ ]
+}
