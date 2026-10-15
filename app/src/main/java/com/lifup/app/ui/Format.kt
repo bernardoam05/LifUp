@@ -70,6 +70,13 @@ fun unitLabel(unit: String): String = when (unit.lowercase()) {
     "reps" -> stringResource(R.string.unit_reps)
     "pages", "páginas" -> stringResource(R.string.unit_pages)
     "glasses" -> stringResource(R.string.unit_glasses)
+    "steps" -> stringResource(R.string.unit_steps)
+    "flights" -> stringResource(R.string.unit_flights)
+    "servings" -> stringResource(R.string.unit_servings)
+    "article" -> stringResource(R.string.unit_article)
+    "episode" -> stringResource(R.string.unit_episode)
+    "things" -> stringResource(R.string.unit_things)
+    "person" -> stringResource(R.string.unit_person)
     else -> unit
 }
 
@@ -188,4 +195,10 @@ fun itemIcon(id: String): ImageVector = when (id) {
     "pergaminho_troca" -> Icons.Rounded.SwapHoriz
     "bau_cacador" -> Icons.Rounded.Inventory2
     else -> Icons.Rounded.Diamond
+}
+
+@StringRes fun autoName(kind: com.lifup.app.domain.AutoKind) = when (kind) {
+    com.lifup.app.domain.AutoKind.STEPS -> R.string.auto_steps
+    com.lifup.app.domain.AutoKind.SCREEN_TIME -> R.string.auto_screen
+    com.lifup.app.domain.AutoKind.DISTRACTION_TIME -> R.string.auto_distraction
 }

@@ -416,4 +416,23 @@
     <string name="widget_today_desc">Your missions, streak and penalty at a glance.</string>
     <string name="widget_hero_name">Hunter</string>
     <string name="widget_hero_desc">Level, XP and the weekly boss.</string>
+    <string name="unit_steps">steps</string>
+    <string name="unit_flights">flights</string>
+    <string name="unit_servings">servings</string>
+    <string name="unit_article">article</string>
+    <string name="unit_episode">episode</string>
+    <string name="unit_things">things</string>
+    <string name="unit_person">person</string>
+    <string name="perm_activity">Physical activity (step missions)</string>
+    <string name="auto_badge">Auto</string>
+    <string name="auto_steps">Steps</string>
+    <string name="auto_screen">Screen time</string>
+    <string name="auto_distraction">Distraction apps</string>
+    <string name="auto_info">Counted automatically: %1$s. Updates every 15 min and whenever you open the app; the day closes with the final value.</string>
+    <string name="auto_missing">The automatic count is off on this phone. Until you enable it, mark it manually.</string>
+    <string name="auto_enable">Enable</string>
+    <string name="scaling_chip">%1$s every %2$d lv</string>
+    <string name="field_auto">Automatic tracking</string>
+    <string name="auto_none">None</string>
+    <string name="field_auto_hint">Progress fills in by itself from the phone; type and unit are set for you.</string>
 </resources>

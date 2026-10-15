@@ -79,6 +79,7 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, onClick: () -> Unit) {
             Spacer(Modifier.width(8.dp))
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Pill(q.rank.name, color)
+                if (q.auto != null) Pill(stringResource(R.string.auto_badge), p.green)
                 if (q.xp > 0) Text("+${if (done) q.xpGained else q.xp} XP", style = MaterialTheme.typography.labelSmall, color = p.accent)
             }
         }
@@ -90,12 +91,12 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, onClick: () -> Unit) {
             }
         }
         when (q.type) {
-            QuestType.FOCUS, QuestType.GPS -> if (!done) {
+            QuestType.FOCUS, QuestType.GPS, QuestType.TRAINING -> if (!done && (q.type != QuestType.TRAINING || q.auto != null)) {
                 Spacer(Modifier.height(8.dp))
                 Bar((q.progress / q.target).toFloat(), color)
                 Text("${fmtNum(q.progress)} / ${fmtNum(q.target)} $unit", style = MaterialTheme.typography.labelSmall, color = p.dim, modifier = Modifier.padding(top = 2.dp))
             }
-            QuestType.LIMIT -> if (!done) LimitControls(q, unit)
+            QuestType.LIMIT -> if (!done) LimitControls(q, unit, manual = q.auto == null)
             QuestType.FORBIDDEN -> if (!done) {
                 Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(
@@ -113,7 +114,7 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, onClick: () -> Unit) {
 }
 
 @Composable
-private fun LimitControls(q: Quest, unit: String) {
+private fun LimitControls(q: Quest, unit: String, manual: Boolean) {
     val p = Lif.colors
     val over = q.progress > q.target
     val step = if (q.unit == "h") 0.5 else 1.0
@@ -125,8 +126,10 @@ private fun LimitControls(q: Quest, unit: String) {
                 style = MaterialTheme.typography.labelSmall, color = if (over) p.red else p.dim, modifier = Modifier.padding(top = 2.dp),
             )
         }
-        IconButton(onClick = { act { setProgress(q.id, q.progress - step) } }) { Icon(Icons.Rounded.Remove, null, tint = p.muted) }
-        IconButton(onClick = { act { setProgress(q.id, q.progress + step) } }) { Icon(Icons.Rounded.Add, null, tint = if (over) p.red else p.text) }
+        if (manual) {
+            IconButton(onClick = { act { setProgress(q.id, q.progress - step) } }) { Icon(Icons.Rounded.Remove, null, tint = p.muted) }
+            IconButton(onClick = { act { setProgress(q.id, q.progress + step) } }) { Icon(Icons.Rounded.Add, null, tint = if (over) p.red else p.text) }
+        }
         if (q.status == QuestStatus.FAILED) Icon(Icons.Rounded.Close, null, tint = p.red)
     }
 }

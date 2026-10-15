@@ -9,6 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableStateOf
 import com.lifup.app.domain.rollPortal
 import com.lifup.app.system.AppVisibility
+import com.lifup.app.system.AutoTracker
+import kotlinx.coroutines.launch
 import com.lifup.app.ui.AppRoot
 import com.lifup.app.ui.Feedback
 
@@ -32,7 +34,11 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         AppVisibility.foreground = true
-        LifUpApp.store.fire { rollPortal() }
+        val app = applicationContext
+        LifUpApp.store.scope.launch {
+            AutoTracker.dispatchCatchingUp(app) { rollPortal() }
+            AutoTracker.sync(app)
+        }
     }
 
     override fun onStop() {

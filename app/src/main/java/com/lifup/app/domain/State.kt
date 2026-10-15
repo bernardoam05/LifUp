@@ -47,6 +47,7 @@ data class Quest(
     val status: QuestStatus = QuestStatus.OPEN,
     val xpGained: Int = 0,
     val goldGained: Int = 0,
+    val auto: AutoKind? = null,
 )
 
 @Serializable

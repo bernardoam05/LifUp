@@ -80,7 +80,7 @@ private fun BroadcastReceiver.tick(context: Context) {
     val store = LifUpApp.store
     store.scope.launch {
         try {
-            val s = store.dispatch()
+            val s = AutoTracker.dispatchCatchingUp(context)
             Alarms.maybeRemind(context, s)
             SystemSync.apply(context, s)
         } finally {

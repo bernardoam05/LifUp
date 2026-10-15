@@ -4,6 +4,7 @@ import android.app.Application
 import com.lifup.app.data.GameStore
 import com.lifup.app.data.LegacyImport
 import com.lifup.app.domain.Content
+import com.lifup.app.system.AutoWorker
 import com.lifup.app.system.Notifications
 import com.lifup.app.system.PortalWorker
 import com.lifup.app.system.SystemSync
@@ -27,6 +28,7 @@ class LifUpApp : Application() {
         SystemSync.onApply(Widgets::refresh)
         SystemSync.install(this, store)
         PortalWorker.schedule(this)
+        AutoWorker.schedule(this)
         store.fire()
     }
 

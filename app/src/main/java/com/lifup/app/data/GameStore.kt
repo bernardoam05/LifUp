@@ -47,9 +47,9 @@ class GameStore(
         listeners += listener
     }
 
-    suspend fun dispatch(action: Tx.() -> Unit = {}): GameState = mutex.withLock {
+    suspend fun dispatch(before: Tx.() -> Unit = {}, action: Tx.() -> Unit = {}): GameState = mutex.withLock {
         val old = _state.value
-        val new = withContext(serial) { Engine.run(old, Ctx(content, System.currentTimeMillis()), action) }
+        val new = withContext(serial) { Engine.run(old, Ctx(content, System.currentTimeMillis()), before, action) }
         if (new != old || !file.exists()) {
             _state.value = new
             withContext(Dispatchers.IO) { write(new) }

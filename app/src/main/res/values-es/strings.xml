@@ -415,4 +415,23 @@
     <string name="widget_today_desc">Tus misiones, streak y penalización de un vistazo.</string>
     <string name="widget_hero_name">Cazador</string>
     <string name="widget_hero_desc">Nivel, XP y el jefe semanal.</string>
+    <string name="unit_steps">pasos</string>
+    <string name="unit_flights">tramos</string>
+    <string name="unit_servings">raciones</string>
+    <string name="unit_article">artículo</string>
+    <string name="unit_episode">episodio</string>
+    <string name="unit_things">cosas</string>
+    <string name="unit_person">persona</string>
+    <string name="perm_activity">Actividad física (misiones de pasos)</string>
+    <string name="auto_badge">Auto</string>
+    <string name="auto_steps">Pasos</string>
+    <string name="auto_screen">Tiempo de pantalla</string>
+    <string name="auto_distraction">Apps de distracción</string>
+    <string name="auto_info">Conteo automático: %1$s. Se actualiza cada 15 min y cada vez que abres la app; el día cierra con el valor final.</string>
+    <string name="auto_missing">El conteo automático está desactivado en este teléfono. Hasta que lo actives, márcala a mano.</string>
+    <string name="auto_enable">Activar</string>
+    <string name="scaling_chip">%1$s cada %2$d nv</string>
+    <string name="field_auto">Seguimiento automático</string>
+    <string name="auto_none">Ninguno</string>
+    <string name="field_auto_hint">El progreso se rellena solo desde el teléfono; el tipo y la unidad se fijan solos.</string>
 </resources>

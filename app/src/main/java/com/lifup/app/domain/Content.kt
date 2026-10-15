@@ -17,6 +17,10 @@ enum class QuestType { TRAINING, KNOWLEDGE, FOCUS, GPS, FORBIDDEN, LIMIT }
 @Serializable
 enum class DefKind { CORE, POOL, PENALTY }
 
+/** Sources that fill a quest's progress on their own. */
+@Serializable
+enum class AutoKind { STEPS, SCREEN_TIME, DISTRACTION_TIME }
+
 @Serializable
 data class QuestDef(
     val id: String,
@@ -33,6 +37,7 @@ data class QuestDef(
     val descending: Boolean = false,
     /** ISO days of week (1 = Monday … 7 = Sunday); null = every day. */
     val daysOfWeek: List<Int>? = null,
+    val auto: AutoKind? = null,
 )
 
 @Serializable

@@ -37,6 +37,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -115,13 +119,16 @@ private fun MainScaffold(
     openSettings: () -> Unit,
     openForge: () -> Unit,
 ) {
-    var tab by rememberSaveable { mutableStateOf(Tab.TODAY) }
+    val pager = rememberPagerState { Tab.entries.size }
+    val scope = rememberCoroutineScope()
+    val tab = Tab.entries[pager.currentPage]
+    val goTo: (Tab) -> Unit = { t -> scope.launch { pager.animateScrollToPage(t.ordinal) } }
     LaunchedEffect(deepLink) {
-        Tab.entries.firstOrNull { it.route == deepLink }?.let { tab = it }
+        Tab.entries.firstOrNull { it.route == deepLink }?.let { pager.scrollToPage(it.ordinal) }
         if (deepLink != null) onDeepLinkConsumed()
     }
     val snackbar = remember { SnackbarHostState() }
-    CompositionLocalProvider(LocalSnackbar provides snackbar, LocalTabSwitcher provides { tab = it }) {
+    CompositionLocalProvider(LocalSnackbar provides snackbar, LocalTabSwitcher provides goTo) {
         Scaffold(
             containerColor = Lif.colors.bg,
             contentWindowInsets = WindowInsets(0),
@@ -132,7 +139,7 @@ private fun MainScaffold(
                     Tab.entries.forEach { t ->
                         NavigationBarItem(
                             selected = tab == t,
-                            onClick = { tab = t },
+                            onClick = { goTo(t) },
                             icon = { Icon(t.icon, null) },
                             label = { Text(stringResource(t.label).uppercase(), style = MaterialTheme.typography.labelMedium) },
                             colors = NavigationBarItemDefaults.colors(
@@ -147,8 +154,9 @@ private fun MainScaffold(
                 }
             },
         ) { padding ->
-            Box(Modifier.padding(padding).fillMaxSize()) {
-                when (tab) {
+            // Swipe between tabs; the bottom bar follows the pager.
+            HorizontalPager(pager, Modifier.padding(padding).fillMaxSize(), beyondViewportPageCount = 1) { page ->
+                when (Tab.entries[page]) {
                     Tab.TODAY -> TodayScreen(s, openForge)
                     Tab.FOCUS -> FocusScreen(s)
                     Tab.HERO -> HeroScreen(s)

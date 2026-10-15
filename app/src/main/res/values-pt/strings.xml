@@ -397,4 +397,23 @@
     <string name="widget_today_desc">As tuas missões, streak e penalização num relance.</string>
     <string name="widget_hero_name">Caçador</string>
     <string name="widget_hero_desc">Nível, XP e o boss semanal.</string>
+    <string name="unit_steps">passos</string>
+    <string name="unit_flights">lanços</string>
+    <string name="unit_servings">porções</string>
+    <string name="unit_article">artigo</string>
+    <string name="unit_episode">episódio</string>
+    <string name="unit_things">coisas</string>
+    <string name="unit_person">pessoa</string>
+    <string name="perm_activity">Atividade física (missões de passos)</string>
+    <string name="auto_badge">Auto</string>
+    <string name="auto_steps">Passos</string>
+    <string name="auto_screen">Tempo de ecrã</string>
+    <string name="auto_distraction">Apps de distração</string>
+    <string name="auto_info">Contagem automática: %1$s. Atualiza a cada 15 min e sempre que abres a app; o dia fecha com o valor final.</string>
+    <string name="auto_missing">A contagem automática está desligada neste telemóvel. Até a ativares, marca à mão.</string>
+    <string name="auto_enable">Ativar</string>
+    <string name="scaling_chip">%1$s a cada %2$d nv</string>
+    <string name="field_auto">Acompanhamento automático</string>
+    <string name="auto_none">Nenhum</string>
+    <string name="field_auto_hint">O progresso preenche-se sozinho a partir do telemóvel; o tipo e a unidade ficam definidos automaticamente.</string>
 </resources>

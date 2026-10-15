@@ -397,4 +397,23 @@
     <string name="widget_today_desc">Tes missions, ton streak et ta pénalité en un coup d\'œil.</string>
     <string name="widget_hero_name">Chasseur</string>
     <string name="widget_hero_desc">Niveau, XP et le boss hebdo.</string>
+    <string name="unit_steps">pas</string>
+    <string name="unit_flights">étages</string>
+    <string name="unit_servings">portions</string>
+    <string name="unit_article">article</string>
+    <string name="unit_episode">épisode</string>
+    <string name="unit_things">choses</string>
+    <string name="unit_person">personne</string>
+    <string name="perm_activity">Activité physique (missions de pas)</string>
+    <string name="auto_badge">Auto</string>
+    <string name="auto_steps">Pas</string>
+    <string name="auto_screen">Temps d\'écran</string>
+    <string name="auto_distraction">Apps de distraction</string>
+    <string name="auto_info">Compté automatiquement : %1$s. Mis à jour toutes les 15 min et à chaque ouverture ; la journée se clôt avec la valeur finale.</string>
+    <string name="auto_missing">Le comptage automatique est désactivé sur ce téléphone. En attendant, coche-la à la main.</string>
+    <string name="auto_enable">Activer</string>
+    <string name="scaling_chip">%1$s tous les %2$d nv</string>
+    <string name="field_auto">Suivi automatique</string>
+    <string name="auto_none">Aucun</string>
+    <string name="field_auto_hint">La progression se remplit toute seule depuis le téléphone ; type et unité sont fixés pour toi.</string>
 </resources>

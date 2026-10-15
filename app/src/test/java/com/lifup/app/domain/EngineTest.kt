@@ -66,13 +66,16 @@ class EngineTest {
 
     @Test fun `failed day applies penalty and resets streak`() {
         var s = fresh().let { it.copy(player = it.player.copy(streak = 5, xp = 90, gold = 500)) }
+        // Avoid/limit missions still count as kept and pay out at midnight.
+        val keptGold = s.dailyQuests.filter { it.status == QuestStatus.OPEN && it.isSuccessful() }.sumOf { it.gold }
         s = run(s, "2026-10-15T08:00")
         assertTrue(s.penalty.active)
         assertTrue(s.penalty.quests.isNotEmpty())
         assertEquals(0, s.player.streak)
         assertEquals(0, s.player.xp)
-        assertEquals(380, s.player.gold)
-        assertEquals(90, s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost)
+        assertEquals(500 + keptGold - 120, s.player.gold)
+        // Loss is capped by the XP actually held (never drops a level).
+        assertTrue(s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost in 1..120)
         s.penalty.quests.forEach { pq -> s = run(s, "2026-10-15T09:00") { completeQuest(pq.id) } }
         assertFalse(s.penalty.active)
         assertEquals(1L, s.count(StatKey.PENALTIES_CLEARED))
@@ -84,6 +87,36 @@ class EngineTest {
         assertEquals("2026-10-15", back.day)
         assertFalse(back.penalty.active)
         assertTrue(back.rewards.none { it is Reward.DayReport })
+    }
+
+    @Test fun `step readings complete step missions`() {
+        var s = fresh()
+        val steps = buildQuest(content.questDefById.getValue("pool_steps"), 1, QuestOrigin.DAILY)
+        s = s.copy(quests = s.quests + steps)
+        s = run(s, "2026-10-14T12:00") { applyAuto(AutoReading("2026-10-14", steps = 2500)) }
+        assertEquals(2500.0, s.quests.first { it.id == steps.id }.progress, 0.0)
+        s = run(s, "2026-10-14T18:00") { applyAuto(AutoReading("2026-10-14", steps = 6400)) }
+        assertEquals(QuestStatus.DONE, s.quests.first { it.id == steps.id }.status)
+    }
+
+    @Test fun `screen time over the limit breaks the mission and yesterday's final reading is used`() {
+        var s = fresh()
+        val limit = buildQuest(content.questDefById.getValue("pool_screen_limit"), 1, QuestOrigin.DAILY)
+        s = s.copy(quests = s.quests + limit)
+        s = run(s, "2026-10-14T12:00") { applyAuto(AutoReading("2026-10-14", screenMinutes = 120.0)) }
+        assertEquals(QuestStatus.OPEN, s.quests.first { it.id == limit.id }.status)
+        // Final values for the 14th arrive after midnight, before the day closes.
+        s = Engine.run(s, ctx("2026-10-15T00:01"), before = { applyAuto(AutoReading("2026-10-14", screenMinutes = 300.0)) })
+        assertEquals("2026-10-15", s.day)
+        val report = s.rewards.filterIsInstance<Reward.DayReport>().last()
+        assertTrue(report.done < report.total)
+    }
+
+    @Test fun `distraction missions need chosen apps`() {
+        val none = fresh()
+        assertTrue(none.availableDefs(content).none { it.auto == AutoKind.DISTRACTION_TIME })
+        val withApps = none.copy(settings = none.settings.copy(blockedApps = listOf("x")))
+        assertTrue(withApps.availableDefs(content).any { it.auto == AutoKind.DISTRACTION_TIME })
     }
 
     @Test fun `rest day skips penalty`() {

@@ -24,6 +24,7 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         xp = (def.baseXp * mult).roundToInt(),
         gold = (def.baseGold * mult).roundToInt(),
         rank = Rules.questRank(def.baseXp),
+        auto = def.auto,
     )
 }
 
@@ -37,7 +38,9 @@ fun Quest.isSuccessful(): Boolean = when {
 }
 
 fun GameState.availableDefs(content: Content): List<QuestDef> =
-    (content.quests + customDefs).filter { it.id !in disabledDefIds }
+    (content.quests + customDefs).filter {
+        it.id !in disabledDefIds && (it.auto != AutoKind.DISTRACTION_TIME || settings.blockedApps.isNotEmpty())
+    }
 
 fun GameState.allDailyDone(): Boolean = dailyQuests.isNotEmpty() && dailyQuests.all { it.isSuccessful() }
 
@@ -52,6 +55,8 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
         .take(Rules.dailyPoolCount(level, state.settings))
     return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY) }
 }
+
+internal fun Tx.updateQuestProgress(id: String, value: Double) = updateQuest(id) { it.copy(progress = value) }
 
 private fun Tx.updateQuest(id: String, f: (Quest) -> Quest) {
     s = when {

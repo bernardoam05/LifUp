@@ -147,6 +147,8 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 }
             }
 
+            com.lifup.app.ui.focus.PermissionsPanel(s, startExpanded = true)
+
             SectionTitle(stringResource(R.string.notifications))
             Panel {
                 ToggleRow(stringResource(R.string.notifications), stringResource(R.string.notifications_info), set.notifications) { v -> act { updateSettings { it.copy(notifications = v) } } }

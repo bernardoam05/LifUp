@@ -399,6 +399,449 @@
    "unit": "min",
    "baseXp": 160,
    "baseGold": 50
+  },
+  {
+   "id": "pool_steps",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Caminhante",
+    "en": "Walker"
+   },
+   "description": {
+    "pt": "Dá {target} passos hoje (contados automaticamente).",
+    "en": "Take {target} steps today (counted automatically)."
+   },
+   "baseTarget": 6000,
+   "scalingAmount": 500,
+   "scalingInterval": 5,
+   "unit": "steps",
+   "baseXp": 70,
+   "baseGold": 20,
+   "auto": "STEPS"
+  },
+  {
+   "id": "pool_steps_big",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Maratonista Urbano",
+    "en": "Urban Marathoner"
+   },
+   "description": {
+    "pt": "Chega aos {target} passos hoje (contados automaticamente).",
+    "en": "Reach {target} steps today (counted automatically)."
+   },
+   "baseTarget": 10000,
+   "scalingAmount": 1000,
+   "scalingInterval": 10,
+   "unit": "steps",
+   "baseXp": 120,
+   "baseGold": 35,
+   "auto": "STEPS"
+  },
+  {
+   "id": "pool_screen_limit",
+   "kind": "POOL",
+   "type": "LIMIT",
+   "title": {
+    "pt": "Ecrã sob Controlo",
+    "en": "Screen Under Control"
+   },
+   "description": {
+    "pt": "Tempo de ecrã total abaixo de {target} h hoje (medido automaticamente).",
+    "en": "Keep total screen time under {target} h today (measured automatically)."
+   },
+   "baseTarget": 4,
+   "scalingAmount": 0.25,
+   "scalingInterval": 10,
+   "unit": "h",
+   "baseXp": 70,
+   "baseGold": 20,
+   "descending": true,
+   "auto": "SCREEN_TIME"
+  },
+  {
+   "id": "pool_distraction_limit",
+   "kind": "POOL",
+   "type": "LIMIT",
+   "title": {
+    "pt": "Domínio das Distrações",
+    "en": "Master of Distractions"
+   },
+   "description": {
+    "pt": "No máximo {target} h nas tuas apps de distração hoje (medido automaticamente).",
+    "en": "At most {target} h on your distraction apps today (measured automatically)."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0.1,
+   "scalingInterval": 10,
+   "unit": "h",
+   "baseXp": 80,
+   "baseGold": 25,
+   "descending": true,
+   "auto": "DISTRACTION_TIME"
+  },
+  {
+   "id": "pool_jumprope",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Saltos de Corda",
+    "en": "Jump Rope"
+   },
+   "description": {
+    "pt": "Faz {target} saltos de corda (ou saltos no lugar).",
+    "en": "Do {target} jump-rope jumps (or jumps in place)."
+   },
+   "baseTarget": 100,
+   "scalingAmount": 10,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 70,
+   "baseGold": 20
+  },
+  {
+   "id": "pool_lunges",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Afundos",
+    "en": "Lunges"
+   },
+   "description": {
+    "pt": "Faz {target} afundos (alternando as pernas).",
+    "en": "Do {target} lunges (alternating legs)."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 60,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_dips",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Fundos de Tríceps",
+    "en": "Triceps Dips"
+   },
+   "description": {
+    "pt": "Faz {target} fundos de tríceps numa cadeira ou banco.",
+    "en": "Do {target} triceps dips on a chair or bench."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 1,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 60,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_mobility",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Mobilidade Articular",
+    "en": "Joint Mobility"
+   },
+   "description": {
+    "pt": "{target} min de mobilidade: ancas, ombros, coluna.",
+    "en": "{target} min of mobility: hips, shoulders, spine."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 1,
+   "scalingInterval": 10,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_stairs",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Escadaria",
+    "en": "Stairway"
+   },
+   "description": {
+    "pt": "Sobe {target} lanços de escadas ao longo do dia.",
+    "en": "Climb {target} flights of stairs during the day."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 1,
+   "scalingInterval": 10,
+   "unit": "flights",
+   "baseXp": 60,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_hike",
+   "kind": "POOL",
+   "type": "GPS",
+   "title": {
+    "pt": "Expedição",
+    "en": "Expedition"
+   },
+   "description": {
+    "pt": "Percorre {target} km a pé.",
+    "en": "Cover {target} km on foot."
+   },
+   "baseTarget": 8,
+   "scalingAmount": 0.5,
+   "scalingInterval": 10,
+   "unit": "km",
+   "baseXp": 150,
+   "baseGold": 45
+  },
+  {
+   "id": "pool_veggies",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Alimento do Herói",
+    "en": "Hero's Fuel"
+   },
+   "description": {
+    "pt": "Come {target} porções de fruta ou legumes.",
+    "en": "Eat {target} servings of fruit or vegetables."
+   },
+   "baseTarget": 3,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "servings",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_skill",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Aprendiz de Ofício",
+    "en": "Craft Apprentice"
+   },
+   "description": {
+    "pt": "{target} min a praticar uma competência que queres melhorar.",
+    "en": "{target} min practising a skill you want to improve."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 10,
+   "unit": "min",
+   "baseXp": 60,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_creative",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Forja Criativa",
+    "en": "Creative Forge"
+   },
+   "description": {
+    "pt": "{target} min a criar: desenho, música, escrita ou código.",
+    "en": "{target} min creating: drawing, music, writing or code."
+   },
+   "baseTarget": 30,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 70,
+   "baseGold": 20
+  },
+  {
+   "id": "pool_breathing",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Respiração Tática",
+    "en": "Tactical Breathing"
+   },
+   "description": {
+    "pt": "{target} min de respiração em caixa (4-4-4-4).",
+    "en": "{target} min of box breathing (4-4-4-4)."
+   },
+   "baseTarget": 5,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 30,
+   "baseGold": 8
+  },
+  {
+   "id": "pool_plan",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Conselho de Guerra",
+    "en": "War Council"
+   },
+   "description": {
+    "pt": "{target} min a planear o dia de amanhã por escrito.",
+    "en": "{target} min planning tomorrow in writing."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_article",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Explorador de Ideias",
+    "en": "Idea Explorer"
+   },
+   "description": {
+    "pt": "Lê {target} artigo longo ou capítulo sobre algo novo.",
+    "en": "Read {target} long article or chapter about something new."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "article",
+   "baseXp": 35,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_podcast",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Escuta Ativa",
+    "en": "Active Listening"
+   },
+   "description": {
+    "pt": "Ouve {target} episódio de um podcast educativo e anota uma ideia.",
+    "en": "Listen to {target} educational podcast episode and note one idea."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "episode",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_gratitude",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Diário de Gratidão",
+    "en": "Gratitude Log"
+   },
+   "description": {
+    "pt": "Escreve {target} coisas pelas quais estás grato hoje.",
+    "en": "Write {target} things you are grateful for today."
+   },
+   "baseTarget": 3,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "things",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_contact",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Aliança",
+    "en": "Alliance"
+   },
+   "description": {
+    "pt": "Contacta {target} amigo ou familiar com quem não falas há algum tempo.",
+    "en": "Reach out to {target} friend or relative you haven't talked to in a while."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "person",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_tidy",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Base Organizada",
+    "en": "Tidy Base"
+   },
+   "description": {
+    "pt": "{target} min a arrumar o quarto ou a secretária.",
+    "en": "{target} min tidying your room or desk."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_morning_phone",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "title": {
+    "pt": "Manhã sem Ecrã",
+    "en": "Screen-free Morning"
+   },
+   "description": {
+    "pt": "Sem telemóvel na primeira hora depois de acordar.",
+    "en": "No phone in the first hour after waking up."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "h",
+   "baseXp": 60,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_sleep",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "title": {
+    "pt": "Descanso do Caçador",
+    "en": "Hunter's Rest"
+   },
+   "description": {
+    "pt": "Deita-te antes da meia-noite.",
+    "en": "Go to bed before midnight."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 60,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_junk",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "title": {
+    "pt": "Sem Fast Food",
+    "en": "No Fast Food"
+   },
+   "description": {
+    "pt": "Nada de fast food nem snacks processados hoje.",
+    "en": "No fast food or processed snacks today."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 60,
+   "baseGold": 15
   }
  ],
  "penalty": [

@@ -415,4 +415,23 @@
     <string name="widget_today_desc">Deine Missionen, dein Streak und deine Strafe auf einen Blick.</string>
     <string name="widget_hero_name">Jäger</string>
     <string name="widget_hero_desc">Level, XP und der Wochenboss.</string>
+    <string name="unit_steps">Schritte</string>
+    <string name="unit_flights">Stockwerke</string>
+    <string name="unit_servings">Portionen</string>
+    <string name="unit_article">Artikel</string>
+    <string name="unit_episode">Folge</string>
+    <string name="unit_things">Dinge</string>
+    <string name="unit_person">Person</string>
+    <string name="perm_activity">Körperliche Aktivität (Schritt-Missionen)</string>
+    <string name="auto_badge">Auto</string>
+    <string name="auto_steps">Schritte</string>
+    <string name="auto_screen">Bildschirmzeit</string>
+    <string name="auto_distraction">Ablenkungs-Apps</string>
+    <string name="auto_info">Automatisch gezählt: %1$s. Aktualisiert alle 15 Min. und beim Öffnen der App; der Tag schließt mit dem Endwert.</string>
+    <string name="auto_missing">Die automatische Zählung ist auf diesem Handy aus. Bis du sie aktivierst, hake manuell ab.</string>
+    <string name="auto_enable">Aktivieren</string>
+    <string name="scaling_chip">%1$s alle %2$d Lv</string>
+    <string name="field_auto">Automatische Erfassung</string>
+    <string name="auto_none">Keine</string>
+    <string name="field_auto_hint">Der Fortschritt füllt sich vom Handy aus; Typ und Einheit werden für dich gesetzt.</string>
 </resources>

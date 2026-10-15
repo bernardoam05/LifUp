@@ -41,6 +41,9 @@ object Permissions {
     fun notifications(c: Context) = Build.VERSION.SDK_INT < 33 ||
         ContextCompat.checkSelfPermission(c, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
 
+    fun activity(c: Context) = Build.VERSION.SDK_INT < 29 ||
+        ContextCompat.checkSelfPermission(c, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED
+
     fun location(c: Context) = ContextCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     /** Minimum for blocking: usage access + overlay. Accessibility makes it instant. */

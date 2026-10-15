@@ -132,7 +132,9 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                 )
             }
 
-            if (open && (q.type == QuestType.TRAINING || q.type == QuestType.KNOWLEDGE)) {
+            if (q.auto != null) AutoInfo(q.auto, s)
+
+            if (open && q.auto == null && (q.type == QuestType.TRAINING || q.type == QuestType.KNOWLEDGE)) {
                 // Stopwatch, kept in the state so it survives the app being closed.
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(fmtDuration(timer?.elapsed(now) ?: 0), style = MaterialTheme.typography.displaySmall, color = if (timer?.running == true) p.accent else p.text, modifier = Modifier.weight(1f))
@@ -175,9 +177,10 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
             }
 
             if (open && q.type != QuestType.FORBIDDEN && q.type != QuestType.LIMIT) {
-                val label = if (q.type == QuestType.FOCUS || q.type == QuestType.GPS) R.string.mark_done_manual else R.string.complete
+                val manualOnly = q.type == QuestType.FOCUS || q.type == QuestType.GPS || q.auto != null
+                val label = if (manualOnly) R.string.mark_done_manual else R.string.complete
                 PrimaryButton(stringResource(label), onClick = { act { completeQuest(q.id) }; onDismiss() }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Check,
-                    color = if (q.type == QuestType.FOCUS || q.type == QuestType.GPS) p.border else p.accent)
+                    color = if (manualOnly) p.border else p.accent)
             }
 
             val def = content.questDefById[q.defId] ?: s.customDefs.firstOrNull { it.id == q.defId }
@@ -198,6 +201,37 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                 label = { Text(stringResource(R.string.note)) }, modifier = Modifier.fillMaxWidth(), minLines = 2,
             )
             Spacer(Modifier.height(4.dp))
+        }
+    }
+}
+
+/** Explains where an automatic quest gets its numbers and offers to enable the source when missing. */
+@Composable
+private fun AutoInfo(kind: com.lifup.app.domain.AutoKind, s: GameState) {
+    val context = LocalContext.current
+    val tick = com.lifup.app.ui.focus.rememberResumeTick()
+    val activity = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    val switchTab = LocalTabSwitcher.current
+    val ready = androidx.compose.runtime.remember(tick, s.settings.blockedApps) {
+        when (kind) {
+            com.lifup.app.domain.AutoKind.STEPS -> com.lifup.app.system.AutoTracker.stepsAvailable(context)
+            com.lifup.app.domain.AutoKind.SCREEN_TIME -> Permissions.usageAccess(context)
+            com.lifup.app.domain.AutoKind.DISTRACTION_TIME -> Permissions.usageAccess(context) && s.settings.blockedApps.isNotEmpty()
+        }
+    }
+    com.lifup.app.ui.components.Panel(background = Lif.colors.green.copy(alpha = 0.08f), border = Lif.colors.green.copy(alpha = 0.4f)) {
+        Text(stringResource(R.string.auto_info, stringResource(com.lifup.app.ui.autoName(kind))), style = MaterialTheme.typography.bodySmall, color = Lif.colors.text)
+        if (!ready) {
+            Spacer(Modifier.height(6.dp))
+            Text(stringResource(R.string.auto_missing), style = MaterialTheme.typography.bodySmall, color = Lif.colors.gold)
+            androidx.compose.material3.TextButton(onClick = {
+                when (kind) {
+                    com.lifup.app.domain.AutoKind.STEPS -> if (Build.VERSION.SDK_INT >= 29) activity.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+                    com.lifup.app.domain.AutoKind.SCREEN_TIME -> Permissions.openUsageAccess(context)
+                    com.lifup.app.domain.AutoKind.DISTRACTION_TIME ->
+                        if (!Permissions.usageAccess(context)) Permissions.openUsageAccess(context) else switchTab(Tab.FOCUS)
+                }
+            }) { Text(stringResource(R.string.auto_enable).uppercase()) }
         }
     }
 }

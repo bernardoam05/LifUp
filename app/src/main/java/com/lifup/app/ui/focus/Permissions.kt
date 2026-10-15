@@ -72,10 +72,11 @@ fun rememberResumeTick(): Int {
 }
 
 @Composable
-fun PermissionsPanel(s: GameState) {
+fun PermissionsPanel(s: GameState, startExpanded: Boolean = false) {
     val context = LocalContext.current
     val tick = rememberResumeTick()
     val notif = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    val activity = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
     val rows = remember(tick) {
         listOf(
             Triple(R.string.perm_usage, Permissions.usageAccess(context)) { Permissions.openUsageAccess(context); Unit },
@@ -86,10 +87,13 @@ fun PermissionsPanel(s: GameState) {
             Triple(R.string.perm_notifications, Permissions.notifications(context)) {
                 if (Build.VERSION.SDK_INT >= 33) notif.launch(Manifest.permission.POST_NOTIFICATIONS)
             },
+            Triple(R.string.perm_activity, Permissions.activity(context)) {
+                if (Build.VERSION.SDK_INT >= 29) activity.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+            },
         )
     }
     val missing = rows.count { !it.second }
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(startExpanded) }
     SectionTitle(stringResource(R.string.permissions)) {
         Text(if (missing == 0) stringResource(R.string.perm_all_ok) else stringResource(R.string.perm_missing, missing), color = if (missing == 0) Lif.colors.green else Lif.colors.gold, style = MaterialTheme.typography.labelMedium)
     }
