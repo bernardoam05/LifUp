@@ -76,6 +76,7 @@ fun HeroScreen(s: GameState) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var openShadow by rememberSaveable { mutableStateOf<String?>(null) }
     var filter by rememberSaveable { mutableStateOf<ShadowRank?>(null) }
+    var openAchievement by rememberSaveable { mutableStateOf<String?>(null) }
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item { Profile(s) }
         item {
@@ -101,11 +102,12 @@ fun HeroScreen(s: GameState) {
                 }
                 item { Collection(s, filter) { openShadow = it } }
             }
-            1 -> items(content.achievements, key = { it.id }) { def -> AchievementRow(s, def) }
+            1 -> items(content.achievements, key = { it.id }) { def -> AchievementRow(s, def) { openAchievement = def.id } }
             else -> item { Stats(s) }
         }
     }
     openShadow?.let { ShadowSheet(s, it) { openShadow = null } }
+    openAchievement?.let { id -> content.achievements.firstOrNull { it.id == id }?.let { AchievementSheet(s, it) { openAchievement = null } } }
 }
 
 @Composable
@@ -217,32 +219,34 @@ fun ShadowTile(def: ShadowDef, level: Int?, inSquad: Boolean = false, reveal: Bo
 }
 
 @Composable
-private fun AchievementRow(s: GameState, def: com.lifup.app.domain.AchievementDef) {
+private fun AchievementRow(s: GameState, def: com.lifup.app.domain.AchievementDef, onClick: () -> Unit) {
     val c = Lif.colors
     val tier = s.achievements[def.id] ?: 0
     val maxed = tier >= def.tiers.size
     val target = def.tiers.getOrElse(tier) { def.tiers.last() }
     val value = s.statValue(def.stat)
-    val tierColors = listOf(c.dim, Color(0xFFCD7F32), Color(0xFFC0C0C0), c.gold, c.accent, c.purple)
-    Panel(border = if (maxed) c.gold.copy(alpha = 0.5f) else c.border) {
+    Panel(border = if (maxed) c.gold.copy(alpha = 0.5f) else c.border, onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Rounded.EmojiEvents, null, tint = tierColors[tier.coerceAtMost(tierColors.lastIndex)], modifier = Modifier.size(28.dp))
+            Icon(Icons.Rounded.EmojiEvents, null, tint = tierColor(tier), modifier = Modifier.size(28.dp))
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
                 Text(def.title.local(), style = MaterialTheme.typography.titleMedium)
-                Text(def.description.local().replace("{target}", target.toString()), style = MaterialTheme.typography.bodySmall, color = c.muted)
+                Text(def.text(target), style = MaterialTheme.typography.bodySmall, color = c.muted)
             }
             Pill("$tier/${def.tiers.size}", if (maxed) c.gold else c.muted)
         }
         if (!maxed) {
             Spacer(Modifier.height(6.dp))
             Bar(value / target.toFloat(), c.gold)
-            Text("$value / $target", style = MaterialTheme.typography.labelSmall, color = c.dim)
-        }
-        def.shadowReward?.let { r ->
-            val shadow = content.shadowById[r.shadowId]
-            if (shadow != null) Text(stringResource(R.string.achievement_shadow_reward, r.tier, if (tier >= r.tier) shadow.name.local() else "???"), style = MaterialTheme.typography.labelSmall, color = c.purple)
-        }
+            Row {
+                Text("$value / $target", style = MaterialTheme.typography.labelSmall, color = c.dim, modifier = Modifier.weight(1f))
+                val shadowNext = def.shadowReward?.tier == tier + 1
+                Text(
+                    stringResource(if (shadowNext) R.string.achievement_next_shadow else R.string.achievement_next, com.lifup.app.domain.achievementGold(tier + 1)),
+                    style = MaterialTheme.typography.labelSmall, color = if (shadowNext) c.purple else c.gold,
+                )
+            }
+        } else Text(stringResource(R.string.achievement_maxed), style = MaterialTheme.typography.labelSmall, color = c.gold, modifier = Modifier.padding(top = 4.dp))
     }
 }
 

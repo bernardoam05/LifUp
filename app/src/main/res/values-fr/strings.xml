@@ -177,7 +177,6 @@
     <string name="squad_penalty">Pénalité −%1$d%%</string>
     <string name="squad_focus">Focus +%1$d%%</string>
     <string name="squad_luck">Chance +%1$d%%</string>
-    <string name="achievement_shadow_reward">Récompense du palier %1$d : %2$s</string>
     <string name="stat_quests">Missions</string>
     <string name="stat_perfect">Jours parfaits</string>
     <string name="stat_focus_h">Heures de focus</string>
@@ -442,4 +441,14 @@
     <string name="run_notif_running">Course en cours</string>
     <string name="run_notif_paused">Course en pause</string>
     <string name="run_no_sensor">Ce téléphone n\'a pas de podomètre : utilise le GPS ou saisis la distance à la main.</string>
+    <string name="achievement_tiers_done">%1$d paliers sur %2$d</string>
+    <string name="achievement_current">Valeur actuelle : %1$d</string>
+    <string name="achievement_tier">Palier %1$d</string>
+    <string name="achievement_gold">+%1$d or</string>
+    <string name="achievement_hidden_shadow">ombre %1$s, révélée au déblocage</string>
+    <string name="achievement_shadow">Ombre : %1$s</string>
+    <string name="achievement_note">Les récompenses sont versées dès que le palier est atteint.</string>
+    <string name="achievement_next">Suivant : +%1$d or</string>
+    <string name="achievement_next_shadow">Suivant : +%1$d or + ombre</string>
+    <string name="achievement_maxed">Tous les paliers terminés</string>
 </resources>

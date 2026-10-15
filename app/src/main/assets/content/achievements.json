@@ -1,28 +1,521 @@
 [
- {"id":"quests_total","stat":"QUESTS_COMPLETED","tiers":[10,50,200,500,1000],"shadowReward":{"tier":1,"shadowId":"shadow_wisp"},"title":{"pt":"Caçador Incansável","en":"Tireless Hunter"},"description":{"pt":"Completa {target} missões.","en":"Complete {target} missions."}},
- {"id":"perfect_days","stat":"PERFECT_DAYS","tiers":[1,7,30,100],"title":{"pt":"Dia Perfeito","en":"Perfect Day"},"description":{"pt":"Fecha {target} dias com todas as missões cumpridas.","en":"Close {target} days with every mission done."}},
- {"id":"streak_best","stat":"BEST_STREAK","tiers":[3,7,30,100],"shadowReward":{"tier":2,"shadowId":"moonlit_stalker"},"title":{"pt":"Corrente Inquebrável","en":"Unbroken Chain"},"description":{"pt":"Atinge um streak de {target} dias.","en":"Reach a {target}-day streak."}},
- {"id":"focus_hours","stat":"FOCUS_MINUTES","tiers":[60,600,3000,6000],"shadowReward":{"tier":2,"shadowId":"mind_flayer"},"title":{"pt":"Mente de Aço","en":"Steel Mind"},"description":{"pt":"Acumula {target} minutos de foco.","en":"Accumulate {target} minutes of focus."}},
- {"id":"focus_sessions","stat":"FOCUS_SESSIONS","tiers":[1,25,100,300],"title":{"pt":"Ritual de Concentração","en":"Focus Ritual"},"description":{"pt":"Termina {target} sessões de foco.","en":"Finish {target} focus sessions."}},
- {"id":"strict_sessions","stat":"STRICT_SESSIONS","tiers":[1,10,50],"title":{"pt":"Sem Saída","en":"No Way Out"},"description":{"pt":"Termina {target} sessões de foco rígidas até ao fim.","en":"Finish {target} strict focus sessions to the end."}},
- {"id":"pomodoro_cycles","stat":"POMODORO_CYCLES","tiers":[4,50,200],"title":{"pt":"Ciclo Eterno","en":"Endless Cycle"},"description":{"pt":"Completa {target} ciclos Pomodoro.","en":"Complete {target} Pomodoro cycles."}},
- {"id":"bosses","stat":"BOSSES_DEFEATED","tiers":[1,5,20,50],"title":{"pt":"Matador de Bosses","en":"Boss Slayer"},"description":{"pt":"Derrota {target} bosses semanais.","en":"Defeat {target} weekly bosses."}},
- {"id":"boss_challenges","stat":"BOSS_CHALLENGES","tiers":[1,10,30],"title":{"pt":"Desafiante","en":"Challenger"},"description":{"pt":"Cumpre {target} desafios de boss.","en":"Complete {target} boss challenges."}},
- {"id":"portals","stat":"PORTALS_CLEARED","tiers":[1,10,30,100],"title":{"pt":"Fecha-Portais","en":"Portal Closer"},"description":{"pt":"Fecha {target} portais antes de expirarem.","en":"Close {target} portals before they expire."}},
- {"id":"shadows_owned","stat":"SHADOWS_OWNED","tiers":[5,15,30,50,80],"shadowReward":{"tier":4,"shadowId":"architect_of_ruin"},"title":{"pt":"Exército das Sombras","en":"Shadow Army"},"description":{"pt":"Reúne {target} sombras diferentes.","en":"Gather {target} different shadows."}},
- {"id":"shadow_level","stat":"MAX_SHADOW_LEVEL","tiers":[5,10,20],"title":{"pt":"Evolução","en":"Evolution"},"description":{"pt":"Evolui uma sombra até ao nível {target}.","en":"Evolve a shadow to level {target}."}},
- {"id":"squad_full","stat":"SQUAD_FULL","tiers":[1],"title":{"pt":"Esquadrão Completo","en":"Full Squad"},"description":{"pt":"Coloca 3 sombras no esquadrão.","en":"Put 3 shadows in your squad."}},
- {"id":"level","stat":"LEVEL","tiers":[5,10,25,50,100],"title":{"pt":"Ascensão","en":"Ascension"},"description":{"pt":"Chega ao nível {target}.","en":"Reach level {target}."}},
- {"id":"gold_earned","stat":"GOLD_EARNED","tiers":[1000,10000,50000],"title":{"pt":"Tesouro","en":"Treasure"},"description":{"pt":"Ganha {target} de ouro no total.","en":"Earn {target} gold in total."}},
- {"id":"gold_spent","stat":"GOLD_SPENT","tiers":[500,5000,25000],"title":{"pt":"Cliente Fiel","en":"Loyal Customer"},"description":{"pt":"Gasta {target} de ouro na loja.","en":"Spend {target} gold in the shop."}},
- {"id":"items_used","stat":"ITEMS_USED","tiers":[1,25,100],"title":{"pt":"Alquimista","en":"Alchemist"},"description":{"pt":"Usa {target} itens.","en":"Use {target} items."}},
- {"id":"side_quests","stat":"SIDE_COMPLETED","tiers":[10,50,200],"title":{"pt":"Tarefas Paralelas","en":"Side Hustle"},"description":{"pt":"Completa {target} side quests.","en":"Complete {target} side quests."}},
- {"id":"extra_quests","stat":"EXTRA_COMPLETED","tiers":[1,10,50],"title":{"pt":"Mais Além","en":"Beyond Duty"},"description":{"pt":"Completa {target} missões extra.","en":"Complete {target} extra missions."}},
- {"id":"gps_km","stat":"GPS_KM","tiers":[10,100,500],"title":{"pt":"Andarilho","en":"Wanderer"},"description":{"pt":"Percorre {target} km com o GPS.","en":"Cover {target} km with GPS tracking."}},
- {"id":"penalties_cleared","stat":"PENALTIES_CLEARED","tiers":[1,10],"title":{"pt":"Redenção","en":"Redemption"},"description":{"pt":"Cumpre {target} penalizações.","en":"Clear {target} penalties."}},
- {"id":"comebacks","stat":"COMEBACKS","tiers":[1,5],"title":{"pt":"Regresso","en":"Comeback"},"description":{"pt":"Faz {target} dias perfeitos logo a seguir a uma penalização.","en":"Get {target} perfect days right after a penalty."}},
- {"id":"night_owl","stat":"NIGHT_QUESTS","tiers":[1,10],"title":{"pt":"Coruja","en":"Night Owl"},"description":{"pt":"Completa {target} missões entre a meia-noite e as 4h.","en":"Complete {target} missions between midnight and 4 AM."}},
- {"id":"early_bird","stat":"EARLY_QUESTS","tiers":[1,10,50],"title":{"pt":"Madrugador","en":"Early Bird"},"description":{"pt":"Completa {target} missões antes das 7h.","en":"Complete {target} missions before 7 AM."}},
- {"id":"resistance","stat":"BLOCKED_ATTEMPTS","tiers":[1,50],"title":{"pt":"Tentação","en":"Temptation"},"description":{"pt":"Bate {target} vezes no bloqueio de apps.","en":"Hit the app block {target} times."}},
- {"id":"custom_quests","stat":"CUSTOM_QUESTS","tiers":[1,5],"title":{"pt":"Forjador","en":"Forger"},"description":{"pt":"Cria {target} missões personalizadas.","en":"Create {target} custom missions."}}
+ {
+  "id": "quests_total",
+  "stat": "QUESTS_COMPLETED",
+  "tiers": [
+   10,
+   50,
+   200,
+   500,
+   1000
+  ],
+  "shadowReward": {
+   "tier": 1,
+   "shadowId": "shadow_wisp"
+  },
+  "title": {
+   "pt": "Caçador Incansável",
+   "en": "Tireless Hunter"
+  },
+  "description": {
+   "pt": "Completa {target} missões.",
+   "en": "Complete {target} missions."
+  }
+ },
+ {
+  "id": "perfect_days",
+  "stat": "PERFECT_DAYS",
+  "tiers": [
+   1,
+   7,
+   30,
+   100
+  ],
+  "title": {
+   "pt": "Dia Perfeito",
+   "en": "Perfect Day"
+  },
+  "description": {
+   "pt": "Fecha {target} dias com todas as missões cumpridas.",
+   "en": "Close {target} days with every mission done."
+  },
+  "descriptionOne": {
+   "pt": "Fecha um dia com todas as missões cumpridas.",
+   "en": "Close a day with every mission done."
+  }
+ },
+ {
+  "id": "streak_best",
+  "stat": "BEST_STREAK",
+  "tiers": [
+   3,
+   7,
+   30,
+   100
+  ],
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "moonlit_stalker"
+  },
+  "title": {
+   "pt": "Corrente Inquebrável",
+   "en": "Unbroken Chain"
+  },
+  "description": {
+   "pt": "Atinge um streak de {target} dias.",
+   "en": "Reach a {target}-day streak."
+  }
+ },
+ {
+  "id": "focus_hours",
+  "stat": "FOCUS_MINUTES",
+  "tiers": [
+   60,
+   600,
+   3000,
+   6000
+  ],
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "mind_flayer"
+  },
+  "title": {
+   "pt": "Mente de Aço",
+   "en": "Steel Mind"
+  },
+  "description": {
+   "pt": "Acumula {target} minutos de foco.",
+   "en": "Accumulate {target} minutes of focus."
+  }
+ },
+ {
+  "id": "focus_sessions",
+  "stat": "FOCUS_SESSIONS",
+  "tiers": [
+   1,
+   25,
+   100,
+   300
+  ],
+  "title": {
+   "pt": "Ritual de Concentração",
+   "en": "Focus Ritual"
+  },
+  "description": {
+   "pt": "Termina {target} sessões de foco.",
+   "en": "Finish {target} focus sessions."
+  },
+  "descriptionOne": {
+   "pt": "Termina uma sessão de foco.",
+   "en": "Finish a focus session."
+  }
+ },
+ {
+  "id": "strict_sessions",
+  "stat": "STRICT_SESSIONS",
+  "tiers": [
+   1,
+   10,
+   50
+  ],
+  "title": {
+   "pt": "Sem Saída",
+   "en": "No Way Out"
+  },
+  "description": {
+   "pt": "Termina {target} sessões de foco rígidas até ao fim.",
+   "en": "Finish {target} strict focus sessions to the end."
+  },
+  "descriptionOne": {
+   "pt": "Termina uma sessão de foco rígida até ao fim.",
+   "en": "Finish a strict focus session to the end."
+  }
+ },
+ {
+  "id": "pomodoro_cycles",
+  "stat": "POMODORO_CYCLES",
+  "tiers": [
+   4,
+   50,
+   200
+  ],
+  "title": {
+   "pt": "Ciclo Eterno",
+   "en": "Endless Cycle"
+  },
+  "description": {
+   "pt": "Completa {target} ciclos Pomodoro.",
+   "en": "Complete {target} Pomodoro cycles."
+  }
+ },
+ {
+  "id": "bosses",
+  "stat": "BOSSES_DEFEATED",
+  "tiers": [
+   1,
+   5,
+   20,
+   50
+  ],
+  "title": {
+   "pt": "Matador de Bosses",
+   "en": "Boss Slayer"
+  },
+  "description": {
+   "pt": "Derrota {target} bosses semanais.",
+   "en": "Defeat {target} weekly bosses."
+  },
+  "descriptionOne": {
+   "pt": "Derrota um boss semanal.",
+   "en": "Defeat a weekly boss."
+  }
+ },
+ {
+  "id": "boss_challenges",
+  "stat": "BOSS_CHALLENGES",
+  "tiers": [
+   1,
+   10,
+   30
+  ],
+  "title": {
+   "pt": "Desafiante",
+   "en": "Challenger"
+  },
+  "description": {
+   "pt": "Cumpre {target} desafios de boss.",
+   "en": "Complete {target} boss challenges."
+  },
+  "descriptionOne": {
+   "pt": "Cumpre um desafio de boss.",
+   "en": "Complete a boss challenge."
+  }
+ },
+ {
+  "id": "portals",
+  "stat": "PORTALS_CLEARED",
+  "tiers": [
+   1,
+   10,
+   30,
+   100
+  ],
+  "title": {
+   "pt": "Fecha-Portais",
+   "en": "Portal Closer"
+  },
+  "description": {
+   "pt": "Fecha {target} portais antes de expirarem.",
+   "en": "Close {target} portals before they expire."
+  },
+  "descriptionOne": {
+   "pt": "Fecha um portal antes de expirar.",
+   "en": "Close a portal before it expires."
+  }
+ },
+ {
+  "id": "shadows_owned",
+  "stat": "SHADOWS_OWNED",
+  "tiers": [
+   5,
+   15,
+   30,
+   50,
+   80
+  ],
+  "shadowReward": {
+   "tier": 4,
+   "shadowId": "architect_of_ruin"
+  },
+  "title": {
+   "pt": "Exército das Sombras",
+   "en": "Shadow Army"
+  },
+  "description": {
+   "pt": "Reúne {target} sombras diferentes.",
+   "en": "Gather {target} different shadows."
+  }
+ },
+ {
+  "id": "shadow_level",
+  "stat": "MAX_SHADOW_LEVEL",
+  "tiers": [
+   5,
+   10,
+   20
+  ],
+  "title": {
+   "pt": "Evolução",
+   "en": "Evolution"
+  },
+  "description": {
+   "pt": "Evolui uma sombra até ao nível {target}.",
+   "en": "Evolve a shadow to level {target}."
+  }
+ },
+ {
+  "id": "squad_full",
+  "stat": "SQUAD_FULL",
+  "tiers": [
+   1
+  ],
+  "title": {
+   "pt": "Esquadrão Completo",
+   "en": "Full Squad"
+  },
+  "description": {
+   "pt": "Coloca 3 sombras no esquadrão.",
+   "en": "Put 3 shadows in your squad."
+  }
+ },
+ {
+  "id": "level",
+  "stat": "LEVEL",
+  "tiers": [
+   5,
+   10,
+   25,
+   50,
+   100
+  ],
+  "title": {
+   "pt": "Ascensão",
+   "en": "Ascension"
+  },
+  "description": {
+   "pt": "Chega ao nível {target}.",
+   "en": "Reach level {target}."
+  }
+ },
+ {
+  "id": "gold_earned",
+  "stat": "GOLD_EARNED",
+  "tiers": [
+   1000,
+   10000,
+   50000
+  ],
+  "title": {
+   "pt": "Tesouro",
+   "en": "Treasure"
+  },
+  "description": {
+   "pt": "Ganha {target} de ouro no total.",
+   "en": "Earn {target} gold in total."
+  }
+ },
+ {
+  "id": "gold_spent",
+  "stat": "GOLD_SPENT",
+  "tiers": [
+   500,
+   5000,
+   25000
+  ],
+  "title": {
+   "pt": "Cliente Fiel",
+   "en": "Loyal Customer"
+  },
+  "description": {
+   "pt": "Gasta {target} de ouro na loja.",
+   "en": "Spend {target} gold in the shop."
+  }
+ },
+ {
+  "id": "items_used",
+  "stat": "ITEMS_USED",
+  "tiers": [
+   1,
+   25,
+   100
+  ],
+  "title": {
+   "pt": "Alquimista",
+   "en": "Alchemist"
+  },
+  "description": {
+   "pt": "Usa {target} itens.",
+   "en": "Use {target} items."
+  },
+  "descriptionOne": {
+   "pt": "Usa um item.",
+   "en": "Use an item."
+  }
+ },
+ {
+  "id": "side_quests",
+  "stat": "SIDE_COMPLETED",
+  "tiers": [
+   10,
+   50,
+   200
+  ],
+  "title": {
+   "pt": "Tarefas Paralelas",
+   "en": "Side Hustle"
+  },
+  "description": {
+   "pt": "Completa {target} side quests.",
+   "en": "Complete {target} side quests."
+  }
+ },
+ {
+  "id": "extra_quests",
+  "stat": "EXTRA_COMPLETED",
+  "tiers": [
+   1,
+   10,
+   50
+  ],
+  "title": {
+   "pt": "Mais Além",
+   "en": "Beyond Duty"
+  },
+  "description": {
+   "pt": "Completa {target} missões extra.",
+   "en": "Complete {target} extra missions."
+  },
+  "descriptionOne": {
+   "pt": "Completa uma missão extra.",
+   "en": "Complete an extra mission."
+  }
+ },
+ {
+  "id": "gps_km",
+  "stat": "GPS_KM",
+  "tiers": [
+   10,
+   100,
+   500
+  ],
+  "title": {
+   "pt": "Andarilho",
+   "en": "Wanderer"
+  },
+  "description": {
+   "pt": "Percorre {target} km com o GPS.",
+   "en": "Cover {target} km with GPS tracking."
+  }
+ },
+ {
+  "id": "penalties_cleared",
+  "stat": "PENALTIES_CLEARED",
+  "tiers": [
+   1,
+   10
+  ],
+  "title": {
+   "pt": "Redenção",
+   "en": "Redemption"
+  },
+  "description": {
+   "pt": "Cumpre {target} penalizações.",
+   "en": "Clear {target} penalties."
+  },
+  "descriptionOne": {
+   "pt": "Cumpre uma penalização.",
+   "en": "Clear a penalty."
+  }
+ },
+ {
+  "id": "comebacks",
+  "stat": "COMEBACKS",
+  "tiers": [
+   1,
+   5
+  ],
+  "title": {
+   "pt": "Regresso",
+   "en": "Comeback"
+  },
+  "description": {
+   "pt": "Faz {target} dias perfeitos logo a seguir a uma penalização.",
+   "en": "Get {target} perfect days right after a penalty."
+  },
+  "descriptionOne": {
+   "pt": "Faz um dia perfeito logo a seguir a uma penalização.",
+   "en": "Get a perfect day right after a penalty."
+  }
+ },
+ {
+  "id": "night_owl",
+  "stat": "NIGHT_QUESTS",
+  "tiers": [
+   1,
+   10
+  ],
+  "title": {
+   "pt": "Coruja",
+   "en": "Night Owl"
+  },
+  "description": {
+   "pt": "Completa {target} missões entre a meia-noite e as 4h.",
+   "en": "Complete {target} missions between midnight and 4 AM."
+  },
+  "descriptionOne": {
+   "pt": "Completa uma missão entre a meia-noite e as 4h.",
+   "en": "Complete a mission between midnight and 4 AM."
+  }
+ },
+ {
+  "id": "early_bird",
+  "stat": "EARLY_QUESTS",
+  "tiers": [
+   1,
+   10,
+   50
+  ],
+  "title": {
+   "pt": "Madrugador",
+   "en": "Early Bird"
+  },
+  "description": {
+   "pt": "Completa {target} missões antes das 7h.",
+   "en": "Complete {target} missions before 7 AM."
+  },
+  "descriptionOne": {
+   "pt": "Completa uma missão antes das 7h.",
+   "en": "Complete a mission before 7 AM."
+  }
+ },
+ {
+  "id": "resistance",
+  "stat": "BLOCKED_ATTEMPTS",
+  "tiers": [
+   1,
+   50
+  ],
+  "title": {
+   "pt": "Tentação",
+   "en": "Temptation"
+  },
+  "description": {
+   "pt": "Bate {target} vezes no bloqueio de apps.",
+   "en": "Hit the app block {target} times."
+  },
+  "descriptionOne": {
+   "pt": "Bate uma vez no bloqueio de apps.",
+   "en": "Hit the app block once."
+  }
+ },
+ {
+  "id": "custom_quests",
+  "stat": "CUSTOM_QUESTS",
+  "tiers": [
+   1,
+   5
+  ],
+  "title": {
+   "pt": "Forjador",
+   "en": "Forger"
+  },
+  "description": {
+   "pt": "Cria {target} missões personalizadas.",
+   "en": "Create {target} custom missions."
+  },
+  "descriptionOne": {
+   "pt": "Cria uma missão personalizada.",
+   "en": "Create a custom mission."
+  }
+ }
 ]

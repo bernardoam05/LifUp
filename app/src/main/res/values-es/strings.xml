@@ -188,7 +188,6 @@
     <string name="squad_penalty">Penalización −%1$d%%</string>
     <string name="squad_focus">Foco +%1$d%%</string>
     <string name="squad_luck">Suerte +%1$d%%</string>
-    <string name="achievement_shadow_reward">Recompensa del grado %1$d: %2$s</string>
     <string name="stat_quests">Misiones</string>
     <string name="stat_perfect">Días perfectos</string>
     <string name="stat_focus_h">Horas de foco</string>
@@ -460,4 +459,14 @@
     <string name="run_notif_running">Carrera en curso</string>
     <string name="run_notif_paused">Carrera en pausa</string>
     <string name="run_no_sensor">Este teléfono no tiene contador de pasos: usa el GPS o anota la distancia a mano.</string>
+    <string name="achievement_tiers_done">%1$d de %2$d niveles</string>
+    <string name="achievement_current">Valor actual: %1$d</string>
+    <string name="achievement_tier">Nivel %1$d</string>
+    <string name="achievement_gold">+%1$d de oro</string>
+    <string name="achievement_hidden_shadow">sombra %1$s, se revela al desbloquear</string>
+    <string name="achievement_shadow">Sombra: %1$s</string>
+    <string name="achievement_note">Las recompensas se entregan en cuanto se alcanza el nivel.</string>
+    <string name="achievement_next">Siguiente: +%1$d de oro</string>
+    <string name="achievement_next_shadow">Siguiente: +%1$d de oro + sombra</string>
+    <string name="achievement_maxed">Todos los niveles completados</string>
 </resources>

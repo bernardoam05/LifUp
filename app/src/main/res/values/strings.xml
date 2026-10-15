@@ -189,7 +189,6 @@
     <string name="squad_penalty">Penalty −%1$d%%</string>
     <string name="squad_focus">Focus +%1$d%%</string>
     <string name="squad_luck">Luck +%1$d%%</string>
-    <string name="achievement_shadow_reward">Tier %1$d reward: %2$s</string>
     <string name="stat_quests">Missions</string>
     <string name="stat_perfect">Perfect days</string>
     <string name="stat_focus_h">Focus hours</string>
@@ -461,4 +460,14 @@
     <string name="run_notif_running">Run in progress</string>
     <string name="run_notif_paused">Run paused</string>
     <string name="run_no_sensor">This phone has no step counter: use GPS or log the distance by hand.</string>
+    <string name="achievement_tiers_done">%1$d of %2$d tiers</string>
+    <string name="achievement_current">Current value: %1$d</string>
+    <string name="achievement_tier">Tier %1$d</string>
+    <string name="achievement_gold">+%1$d gold</string>
+    <string name="achievement_hidden_shadow">%1$s shadow, revealed when unlocked</string>
+    <string name="achievement_shadow">Shadow: %1$s</string>
+    <string name="achievement_note">Rewards are paid as soon as a tier is reached.</string>
+    <string name="achievement_next">Next: +%1$d gold</string>
+    <string name="achievement_next_shadow">Next: +%1$d gold + shadow</string>
+    <string name="achievement_maxed">All tiers complete</string>
 </resources>

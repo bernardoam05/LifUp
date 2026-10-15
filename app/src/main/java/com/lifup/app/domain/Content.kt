@@ -125,6 +125,8 @@ data class AchievementDef(
     val shadowReward: ShadowReward? = null,
     val title: L10n,
     val description: L10n,
+    /** Singular wording for a target of 1. */
+    val descriptionOne: L10n? = null,
 )
 
 @Serializable

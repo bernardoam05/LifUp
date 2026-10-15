@@ -177,7 +177,6 @@
     <string name="squad_penalty">Penalização −%1$d%%</string>
     <string name="squad_focus">Foco +%1$d%%</string>
     <string name="squad_luck">Sorte +%1$d%%</string>
-    <string name="achievement_shadow_reward">Recompensa do patamar %1$d: %2$s</string>
     <string name="stat_quests">Missões</string>
     <string name="stat_perfect">Dias perfeitos</string>
     <string name="stat_focus_h">Horas de foco</string>
@@ -442,4 +441,14 @@
     <string name="run_notif_running">Corrida em curso</string>
     <string name="run_notif_paused">Corrida em pausa</string>
     <string name="run_no_sensor">Este telemóvel não tem contador de passos: usa o GPS ou regista a distância à mão.</string>
+    <string name="achievement_tiers_done">%1$d de %2$d patamares</string>
+    <string name="achievement_current">Valor atual: %1$d</string>
+    <string name="achievement_tier">Patamar %1$d</string>
+    <string name="achievement_gold">+%1$d ouro</string>
+    <string name="achievement_hidden_shadow">sombra %1$s, revelada ao desbloquear</string>
+    <string name="achievement_shadow">Sombra: %1$s</string>
+    <string name="achievement_note">As recompensas são entregues assim que o patamar é atingido.</string>
+    <string name="achievement_next">Próximo: +%1$d ouro</string>
+    <string name="achievement_next_shadow">Próximo: +%1$d ouro + sombra</string>
+    <string name="achievement_maxed">Todos os patamares concluídos</string>
 </resources>

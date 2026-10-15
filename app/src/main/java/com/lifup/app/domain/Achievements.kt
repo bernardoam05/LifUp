@@ -10,7 +10,7 @@ fun GameState.statValue(key: StatKey): Long = when (key) {
     else -> count(key)
 }
 
-private fun achievementGold(tier: Int) = Rules.ACHIEVEMENT_GOLD[(tier - 1).coerceAtMost(Rules.ACHIEVEMENT_GOLD.lastIndex)]
+fun achievementGold(tier: Int) = Rules.ACHIEVEMENT_GOLD[(tier - 1).coerceAtMost(Rules.ACHIEVEMENT_GOLD.lastIndex)]
 
 /** Saves from version 1 didn't count achievement gold as earned: add what was paid so far, once. */
 fun Tx.migrateState() {
