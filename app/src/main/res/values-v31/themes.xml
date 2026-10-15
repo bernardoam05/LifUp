@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ draws its own splash from the adaptive icon; match the app background. -->
+    <style name="Theme.LifUp.Launch">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+        <item name="android:windowSplashScreenBackground">@color/app_bg</item>
+    </style>
+</resources>

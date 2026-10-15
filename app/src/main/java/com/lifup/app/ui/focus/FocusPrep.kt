@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.lifup.app.domain.Quest
+import com.lifup.app.domain.usesPomodoro
 import com.lifup.app.ui.content
 import kotlin.math.ceil
 
@@ -12,7 +13,6 @@ object FocusPrep {
     var questId by mutableStateOf<String?>(null)
 }
 
-/** Older saves don't carry the flag on today's quests, so the definition decides too. */
-fun Quest.usesPomodoro() = pomodoro || content.questDefById[defId]?.pomodoro == true
+fun Quest.usesPomodoro() = usesPomodoro(content)
 
 fun Quest.minutesLeft() = ceil(target - progress).toInt().coerceAtLeast(1)

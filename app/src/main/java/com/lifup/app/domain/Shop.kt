@@ -138,6 +138,6 @@ private fun Tx.finishFocus(f: FocusSession, minutes: Double, completed: Boolean)
     count(StatKey.FOCUS_SESSIONS)
     if (completed && f.strict) count(StatKey.STRICT_SESSIONS)
     f.pomodoro?.let { count(StatKey.POMODORO_CYCLES, Pomodoro.completedCycles(it, f.elapsedMinutes(ctx.now)).toLong()) }
-    creditFocus(minutes, f.questId)
+    creditFocus(minutes, f.questId, pomodoro = f.pomodoro != null)
     toast(ToastKind.FOCUS_DONE, minutes.roundToInt().toString())
 }

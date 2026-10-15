@@ -155,12 +155,15 @@ fun Tx.setProgress(id: String, value: Double) {
     if (q.type != QuestType.LIMIT && q.type != QuestType.FORBIDDEN && value >= q.target) completeQuest(id)
 }
 
-/** Counts focus minutes, and credits them to the session's mission only. */
-fun Tx.creditFocus(minutes: Double, questId: String?) {
+/** Older saves don't carry the flag on today's quests, so the definition decides too. */
+fun Quest.usesPomodoro(content: Content) = pomodoro || content.questDefById[defId]?.pomodoro == true
+
+/** Counts focus minutes, and credits them to the session's mission only when done in that mission's mode. */
+fun Tx.creditFocus(minutes: Double, questId: String?, pomodoro: Boolean) {
     if (minutes <= 0) return
     count(StatKey.FOCUS_MINUTES, minutes.roundToInt().toLong())
     val q = s.allQuests.firstOrNull { it.id == questId } ?: return
-    if (q.type != QuestType.FOCUS || q.status != QuestStatus.OPEN) return
+    if (q.type != QuestType.FOCUS || q.status != QuestStatus.OPEN || q.usesPomodoro(content) != pomodoro) return
     val next = q.progress + minutes * (1 + s.passives(content, ctx.now).focusMastery)
     updateQuest(q.id) { it.copy(progress = minOf(next, it.target)) }
     if (next >= q.target) completeQuest(q.id)

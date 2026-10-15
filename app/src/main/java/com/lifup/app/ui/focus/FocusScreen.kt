@@ -223,6 +223,7 @@ private fun SessionSetup(s: GameState) {
     var pickApps by rememberSaveable { mutableStateOf(false) }
     var linked by rememberSaveable { mutableStateOf<String?>(null) }
     val focusQuests = s.allQuests.filter { it.type == QuestType.FOCUS && it.status == QuestStatus.OPEN }
+    val linkedQuest = focusQuests.firstOrNull { it.id == linked }
     // A mission fills in its mode and remaining minutes; the user can still adjust before starting.
     fun prepare(q: Quest) {
         linked = q.id
@@ -249,11 +250,13 @@ private fun SessionSetup(s: GameState) {
 
     Text(stringResource(R.string.focus_title), style = MaterialTheme.typography.headlineSmall)
     Spacer(Modifier.height(12.dp))
-    MissionPicker(focusQuests, focusQuests.firstOrNull { it.id == linked }, onPick = ::prepare, onFree = { linked = null })
+    MissionPicker(focusQuests, linkedQuest, onPick = ::prepare, onFree = { linked = null })
     Spacer(Modifier.height(8.dp))
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         listOf(R.string.mode_timer, R.string.mode_pomodoro).forEachIndexed { i, label ->
-            SegmentedButton(selected = pomodoro == (i == 1), onClick = { pomodoro = i == 1 }, shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(stringResource(label)) }
+            // A mission fixes the mode: only that mode's minutes count for it.
+            val locked = linkedQuest != null && linkedQuest.usesPomodoro() != (i == 1)
+            SegmentedButton(selected = pomodoro == (i == 1), onClick = { pomodoro = i == 1 }, enabled = !locked, shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(stringResource(label)) }
         }
     }
     Spacer(Modifier.height(12.dp))

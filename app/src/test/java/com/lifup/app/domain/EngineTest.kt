@@ -171,6 +171,16 @@ class EngineTest {
         assertTrue(content.questDefById.getValue("pool_pomodoro_basic").pomodoro)
     }
 
+    @Test fun `focus in the wrong mode does not fill the mission`() {
+        var s = fresh()
+        val timer = buildQuest(content.questDefById.getValue("pool_journal"), 1, QuestOrigin.EXTRA, "ft")
+        s = s.copy(quests = s.quests + timer)
+        s = run(s, "2026-10-14T10:00") { startFocus(FocusSession(0, 0, PomodoroPlan(10, 5, 1), questId = timer.id)) }
+        s = run(s, "2026-10-14T10:16")
+        assertEquals(0.0, s.quests.first { it.id == timer.id }.progress, 0.001)
+        assertEquals(10L, s.count(StatKey.FOCUS_MINUTES))
+    }
+
     @Test fun `strict focus loses minutes when stopped early`() {
         var s = run(fresh(), "2026-10-14T10:00") { startFocus(FocusSession(0, 60, strict = true)) }
         s = run(s, "2026-10-14T10:30") { stopFocus() }
