@@ -1,0 +1,204 @@
+package com.lifup.app.ui.rewards
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Bedtime
+import androidx.compose.material.icons.rounded.EmojiEvents
+import androidx.compose.material.icons.rounded.Inventory2
+import androidx.compose.material.icons.rounded.LocalFireDepartment
+import androidx.compose.material.icons.rounded.MilitaryTech
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.TaskAlt
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material.icons.rounded.Whatshot
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.lifup.app.R
+import com.lifup.app.domain.GameState
+import com.lifup.app.domain.Reward
+import com.lifup.app.domain.ToastKind
+import com.lifup.app.domain.dismissReward
+import com.lifup.app.ui.Feedback
+import com.lifup.app.ui.LocalSnackbar
+import com.lifup.app.ui.Sfx
+import com.lifup.app.ui.accentRank
+import com.lifup.app.ui.act
+import com.lifup.app.ui.components.Panel
+import com.lifup.app.ui.components.PrimaryButton
+import com.lifup.app.ui.content
+import com.lifup.app.ui.hero.ShadowTile
+import com.lifup.app.ui.hunterTitle
+import com.lifup.app.ui.local
+import com.lifup.app.ui.passiveText
+import com.lifup.app.domain.Rules
+import com.lifup.app.ui.shadowRankColor
+import com.lifup.app.ui.shadowRankName
+import com.lifup.app.ui.theme.Lif
+
+/** Shows pending rewards one at a time: dialogs for big moments, snackbars for small notices. */
+@Composable
+fun RewardHost(s: GameState) {
+    val context = LocalContext.current
+    val snackbar = LocalSnackbar.current
+    val toast = s.rewards.firstOrNull { it is Reward.Toast } as Reward.Toast?
+    val toastText = toast?.let { toastMessage(it) }
+    LaunchedEffect(toast?.id) {
+        if (toast != null && toastText != null) {
+            snackbar.showSnackbar(toastText)
+            act { dismissReward(toast.id) }
+        }
+    }
+
+    val reward = s.rewards.firstOrNull { it !is Reward.Toast } ?: return
+    LaunchedEffect(reward.id) {
+        when (reward) {
+            is Reward.LevelUp, is Reward.RankUp, is Reward.StreakMilestone -> Feedback.play(context, Sfx.LEVEL)
+            is Reward.BossDefeated, is Reward.AchievementUnlocked -> Feedback.play(context, Sfx.VICTORY)
+            is Reward.ShadowGained -> Feedback.play(context, Sfx.SHADOW)
+            is Reward.DayReport -> if (reward.penalty != null && reward.penalty.absorbedBy == null) Feedback.play(context, Sfx.PENALTY)
+            else -> Unit
+        }
+        Feedback.buzz(context, strong = true)
+    }
+    val dismiss = { act { dismissReward(reward.id) } }
+    Dialog(onDismissRequest = dismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Box(Modifier.padding(24.dp)) {
+            when (reward) {
+                is Reward.LevelUp -> RewardCard(Icons.Rounded.Star, Lif.colors.accent, stringResource(R.string.reward_level_title), stringResource(R.string.level_n, reward.level), dismiss) {
+                    Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
+                    reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
+                }
+                is Reward.RankUp -> RewardCard(Icons.Rounded.MilitaryTech, accentRank(reward.rank), stringResource(R.string.reward_rank_title), "${reward.rank.name} · ${stringResource(hunterTitle(reward.rank))}", dismiss) {
+                    Line(stringResource(R.string.reward_rank_text), Lif.colors.muted)
+                }
+                is Reward.ShadowGained -> {
+                    val def = content.shadowById[reward.shadowId]
+                    RewardCard(null, def?.let { shadowRankColor(it.rank) } ?: Lif.colors.purple,
+                        stringResource(if (reward.isNew) R.string.reward_shadow_new else R.string.reward_shadow_copy),
+                        def?.name?.local().orEmpty(), dismiss) {
+                        if (def != null) {
+                            Box(Modifier.width(120.dp)) { ShadowTile(def, s.owned(def.id)?.level ?: 1) {} }
+                            Spacer(Modifier.height(8.dp))
+                            Line(stringResource(shadowRankName(def.rank)), shadowRankColor(def.rank))
+                            Line(passiveText(def.passive, Rules.passiveValue(def, s.owned(def.id)?.level ?: 1)), Lif.colors.accent)
+                            if (!reward.isNew) Line(stringResource(R.string.reward_copies, reward.copies), Lif.colors.muted)
+                        }
+                    }
+                }
+                is Reward.BossDefeated -> RewardCard(Icons.Rounded.Whatshot, Lif.colors.red, stringResource(R.string.reward_boss_title), content.bossById[reward.bossId]?.title?.local().orEmpty(), dismiss) {
+                    Line("+${reward.xp} XP", Lif.colors.accent)
+                    Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
+                    reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
+                }
+                is Reward.AchievementUnlocked -> {
+                    val def = content.achievementById[reward.achievementId]
+                    RewardCard(Icons.Rounded.EmojiEvents, Lif.colors.gold, stringResource(R.string.reward_achievement_title), def?.title?.local().orEmpty(), dismiss) {
+                        Line(stringResource(R.string.tier_n, reward.tier, def?.tiers?.size ?: reward.tier), Lif.colors.muted)
+                        Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
+                    }
+                }
+                is Reward.StreakMilestone -> RewardCard(Icons.Rounded.LocalFireDepartment, Lif.colors.red, stringResource(R.string.reward_streak_title), stringResource(R.string.days_in_a_row, reward.days), dismiss) {
+                    if (reward.gold > 0) Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
+                    reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
+                }
+                is Reward.ChestOpened -> RewardCard(Icons.Rounded.Inventory2, Lif.colors.gold, stringResource(R.string.reward_chest_title), "", dismiss) {
+                    if (reward.gold > 0) Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
+                    if (reward.xp > 0) Line("+${reward.xp} XP", Lif.colors.accent)
+                    reward.itemId?.let { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
+                }
+                is Reward.DayReport -> DayReportCard(reward, dismiss)
+                is Reward.Toast -> Unit
+            }
+        }
+    }
+}
+
+@Composable
+private fun DayReportCard(r: Reward.DayReport, dismiss: () -> Unit) {
+    val c = Lif.colors
+    val pen = r.penalty
+    val (icon, color, title) = when {
+        r.rest -> Triple(Icons.Rounded.Bedtime, c.purple, stringResource(R.string.report_rest))
+        r.perfect -> Triple(Icons.Rounded.TaskAlt, c.green, stringResource(R.string.report_perfect))
+        pen != null && pen.absorbedBy != null -> Triple(Icons.Rounded.TaskAlt, c.purple, stringResource(R.string.report_absorbed))
+        else -> Triple(Icons.Rounded.Warning, c.red, stringResource(R.string.report_failed))
+    }
+    RewardCard(icon, color, stringResource(R.string.report_title, r.day), title, dismiss) {
+        Line(stringResource(R.string.report_done, r.done, r.total))
+        if (r.bonusXp > 0) Line("+${r.bonusXp} XP", c.accent)
+        if (pen != null) {
+            if (pen.absorbedBy != null) {
+                Line(stringResource(R.string.report_absorbed_by, content.shadowById[pen.absorbedBy]?.name?.local().orEmpty()), c.purple)
+            } else {
+                Line(stringResource(R.string.report_loss, pen.xpLost, pen.goldLost), c.red)
+                Line(stringResource(R.string.report_penalty_quests, pen.quests), c.red)
+            }
+        }
+        r.streakSavedBy?.let { by ->
+            val name = content.shadowById[by]?.name?.local() ?: content.itemById[by]?.name?.local() ?: by
+            Line(stringResource(R.string.report_streak_saved, name), c.gold)
+        }
+        Line(stringResource(R.string.report_streak, r.streak), if (r.streak > 0) c.red else c.muted)
+    }
+}
+
+@Composable
+private fun RewardCard(icon: ImageVector?, color: Color, title: String, subtitle: String, onContinue: () -> Unit, body: @Composable () -> Unit) {
+    Panel(border = color.copy(alpha = 0.7f), padding = androidx.compose.foundation.layout.PaddingValues(24.dp)) {
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            if (icon != null) Icon(icon, null, tint = color, modifier = Modifier.padding(bottom = 4.dp).height(44.dp).width(44.dp))
+            Text(title.uppercase(), style = MaterialTheme.typography.titleSmall, color = color, textAlign = TextAlign.Center)
+            if (subtitle.isNotEmpty()) Text(subtitle, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+            Spacer(Modifier.height(4.dp))
+            body()
+            Spacer(Modifier.height(12.dp))
+            PrimaryButton(stringResource(R.string.continue_), onClick = onContinue, modifier = Modifier.fillMaxWidth(), color = color)
+        }
+    }
+}
+
+@Composable
+private fun Line(text: String, color: Color = Lif.colors.text) {
+    Text(text, style = MaterialTheme.typography.bodyLarge, color = color, textAlign = TextAlign.Center)
+}
+
+@Composable
+private fun toastMessage(t: Reward.Toast): String {
+    val shadowName = content.shadowById[t.arg]?.name?.local() ?: t.arg
+    val itemName = content.itemById[t.arg]?.name?.local() ?: t.arg
+    return when (t.kind) {
+        ToastKind.LEVEL_UP -> stringResource(R.string.toast_level, t.arg)
+        ToastKind.ITEM_FOUND -> stringResource(R.string.toast_item_found, itemName)
+        ToastKind.PENALTY_CLEARED -> stringResource(R.string.toast_penalty_cleared)
+        ToastKind.FOCUS_DONE -> stringResource(R.string.toast_focus_done, t.arg)
+        ToastKind.FOCUS_LOST -> stringResource(R.string.toast_focus_lost, t.arg)
+        ToastKind.BOSS_ESCAPED -> stringResource(R.string.toast_boss_escaped, content.bossById[t.arg]?.title?.local() ?: t.arg)
+        ToastKind.PORTAL_ESCAPED -> stringResource(R.string.toast_portal_escaped)
+        ToastKind.PORTAL_CLEARED -> stringResource(R.string.toast_portal_cleared)
+        ToastKind.SHADOW_UPGRADED -> stringResource(R.string.toast_shadow_upgraded, shadowName)
+        ToastKind.PASSIVE_FIRED -> stringResource(R.string.toast_passive_fired, shadowName)
+        ToastKind.BUFF_ACTIVE -> stringResource(R.string.toast_buff, itemName)
+        ToastKind.BOSS_HIT -> ""
+    }
+}

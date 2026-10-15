@@ -72,6 +72,7 @@ class EngineTest {
         assertEquals(0, s.player.streak)
         assertEquals(0, s.player.xp)
         assertEquals(380, s.player.gold)
+        assertEquals(90, s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost)
         s.penalty.quests.forEach { pq -> s = run(s, "2026-10-15T09:00") { completeQuest(pq.id) } }
         assertFalse(s.penalty.active)
         assertEquals(1L, s.count(StatKey.PENALTIES_CLEARED))

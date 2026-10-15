@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">LifUp</string>
+    <string name="accessibility_description">Detects in real time which app is in the foreground, so LifUp can block distractions during focus sessions and penalties. No screen content is read.</string>
+
+    <!-- General -->
+    <string name="add">Add</string>
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="continue_">Continue</string>
+    <string name="delete">Delete</string>
+    <string name="next">Next</string>
+    <string name="save">Save</string>
+    <string name="save_n">Save (%1$d)</string>
+    <string name="search">Search</string>
+    <string name="settings">Settings</string>
+    <string name="undo">Undo</string>
+    <string name="use">Use</string>
+    <string name="fix">Fix</string>
+    <string name="all">All</string>
+    <string name="weekly">weekly</string>
+    <string name="automatic">Automatic</string>
+    <string name="default_hunter">Hunter</string>
+    <string name="level_short">Lv %1$d</string>
+    <string name="level_n">Level %1$d</string>
+    <string name="tier_n">Tier %1$d of %2$d</string>
+    <string name="version">Version %1$s</string>
+
+    <!-- Tabs -->
+    <string name="tab_today">Today</string>
+    <string name="tab_focus">Focus</string>
+    <string name="tab_hero">Hero</string>
+    <string name="tab_shop">Shop</string>
+
+    <!-- Units and types -->
+    <string name="unit_min">min</string>
+    <string name="unit_h">h</string>
+    <string name="unit_s">s</string>
+    <string name="unit_reps">reps</string>
+    <string name="unit_pages">pages</string>
+    <string name="unit_glasses">glasses</string>
+    <string name="type_training">Training</string>
+    <string name="type_knowledge">Knowledge</string>
+    <string name="type_focus">Focus</string>
+    <string name="type_gps">GPS</string>
+    <string name="type_forbidden">Avoid</string>
+    <string name="type_limit">Limit</string>
+
+    <!-- Ranks -->
+    <string name="rank_title_e">Novice</string>
+    <string name="rank_title_d">Apprentice Hunter</string>
+    <string name="rank_title_c">Master of Will</string>
+    <string name="rank_title_b">Shadow Knight</string>
+    <string name="rank_title_a">Commander</string>
+    <string name="rank_title_s">Sovereign</string>
+    <string name="rank_title_n">National-Level Hunter</string>
+    <string name="next_rank_at">Next rank: %1$s at level %2$d</string>
+    <string name="srank_normal">Normal</string>
+    <string name="srank_elite">Elite</string>
+    <string name="srank_knight">Knight</string>
+    <string name="srank_commander">Commander</string>
+    <string name="srank_marshal">Marshal</string>
+
+    <!-- HUD / penalty -->
+    <string name="penalty_banner">Penalty active</string>
+    <string name="block_starts_in">Block in %1$s</string>
+    <string name="block_ends_in">Block ends in %1$s</string>
+
+    <!-- Today -->
+    <string name="today_progress">%1$d / %2$d missions</string>
+    <string name="rest_day">Rest</string>
+    <string name="rest_day_info">Rest day: no penalty tonight, but the streak won\'t grow either.</string>
+    <string name="forge">Mission forge</string>
+    <string name="penalty_section">Penalty</string>
+    <string name="penalty_info">Clear these missions to lift the penalty. Unfinished ones count as failures at midnight.</string>
+    <string name="portal_section">Portal open</string>
+    <string name="portal_info">A timed portal: double rewards and a chance to bind a shadow. It closes on its own.</string>
+    <string name="daily_section">Daily missions</string>
+    <string name="extra_section">Extra missions</string>
+    <string name="add_extra">Extra mission</string>
+    <string name="side_section">Side quests</string>
+    <string name="side_hint">A task for today…</string>
+    <string name="side_empty">No side quests. Add small tasks for bonus XP.</string>
+    <string name="forbidden_keep">Kept until midnight</string>
+    <string name="forbidden_broken">Broken today</string>
+    <string name="forbidden_fail">I slipped</string>
+    <string name="forbidden_undo">Undo</string>
+    <string name="limit_used">%1$s of %2$s %3$s used</string>
+
+    <!-- Boss -->
+    <string name="boss_section">Weekly boss</string>
+    <string name="boss_section_season">Seasonal boss</string>
+    <string name="boss_ends_in">ends in %1$s</string>
+    <string name="boss_hint">your XP deals damage</string>
+    <string name="boss_challenge">Boss challenge</string>
+    <string name="boss_challenge_done">Done</string>
+    <string name="boss_defeated">Defeated! %1$s joined your army.</string>
+    <string name="boss_drop">Drops: %1$s</string>
+
+    <!-- Mission sheet -->
+    <string name="rewards_line">+%1$d XP · +%2$d gold</string>
+    <string name="double_xp_active">Hourglass active: next mission gives double XP</string>
+    <string name="record_count">Done %1$d×</string>
+    <string name="record_best">best %1$s</string>
+    <string name="start_focus">Start focus</string>
+    <string name="complete">Complete</string>
+    <string name="mark_done_manual">Mark as done</string>
+    <string name="swap_free">Swap (free today)</string>
+    <string name="swap_scroll">Swap (scrolls: %1$d)</string>
+    <string name="note">Note</string>
+    <string name="gps_start">Start GPS tracking</string>
+    <string name="gps_stop">Stop tracking</string>
+    <string name="gps_live">%1$.2f km · %2$.1f km/h</string>
+    <string name="gps_waiting">waiting for GPS</string>
+    <string name="gps_rejected">%1$d readings ignored (too fast for walking/running)</string>
+    <string name="gps_tracking_title">GPS mission</string>
+    <string name="gps_tracking_text">%1$.2f km covered</string>
+
+    <!-- Focus -->
+    <string name="focus_title">Focus session</string>
+    <string name="mode_timer">Timer</string>
+    <string name="mode_pomodoro">Pomodoro</string>
+    <string name="fine_tune">Fine tune</string>
+    <string name="pomodoro_work_len">Work</string>
+    <string name="pomodoro_break_len">Break</string>
+    <string name="pomodoro_rounds">Rounds</string>
+    <string name="pomodoro_total">%1$d min total · %2$d min of focus</string>
+    <string name="pomodoro_work">Work · cycle %1$d/%2$d</string>
+    <string name="pomodoro_break">Break · cycle %1$d/%2$d</string>
+    <string name="block_apps">Block apps</string>
+    <string name="block_apps_info">The chosen apps are covered while the session runs.</string>
+    <string name="block_needs_perms">Needs usage access and overlay permission (see Permissions below).</string>
+    <string name="apps_selected">%1$d apps selected</string>
+    <string name="choose_apps">Choose apps</string>
+    <string name="strict_mode">Strict mode</string>
+    <string name="strict_info">Stopping early loses the session\'s minutes, unless you use a Spellbreaker.</string>
+    <string name="ambient">Ambient sound</string>
+    <string name="ambient_none">Silence</string>
+    <string name="ambient_rain">Rain</string>
+    <string name="ambient_fire">Fireplace</string>
+    <string name="ambient_lofi">Lo-fi</string>
+    <string name="start_session">Start session</string>
+    <string name="focusing">Focusing</string>
+    <string name="session_total_left">%1$s left in session</string>
+    <string name="strict">Strict</string>
+    <string name="blocking_n">Blocking %1$d apps</string>
+    <string name="credited_min">%1$d min earned</string>
+    <string name="stop_session">Stop session</string>
+    <string name="stop_text">You will keep %1$d minutes of focus.</string>
+    <string name="stop_strict_text">Strict session: stopping now loses %1$d minutes. Spellbreakers: %2$d.</string>
+    <string name="use_spellbreaker">Use Spellbreaker</string>
+    <string name="stop">Stop</string>
+    <string name="stop_and_lose">Stop and lose</string>
+    <string name="keep_going">Keep going</string>
+    <string name="focus_quests">Focus missions</string>
+    <string name="penalty_block_active">Penalty block: %1$s left</string>
+    <string name="penalty_block_info">Your blocked apps stay closed until the window ends or you clear the penalty missions.</string>
+
+    <!-- Permissions -->
+    <string name="permissions">Permissions</string>
+    <string name="perm_all_ok">all set</string>
+    <string name="perm_missing">%1$d missing</string>
+    <string name="perm_explain">App blocking, midnight day-closing and reminders depend on these system permissions.</string>
+    <string name="perm_usage">Usage access</string>
+    <string name="perm_overlay">Display over other apps</string>
+    <string name="perm_accessibility">Accessibility (instant blocking)</string>
+    <string name="perm_battery">No battery restrictions</string>
+    <string name="perm_alarms">Exact alarms</string>
+    <string name="perm_notifications">Notifications</string>
+    <string name="perm_autostart">Autostart settings (Xiaomi, Oppo…)</string>
+    <string name="perm_restricted_hint">Installed outside the Play Store: in App info, open ⋮ and tap \"Allow restricted settings\" before enabling accessibility.</string>
+    <string name="open_app_info">Open app info</string>
+
+    <!-- Hero -->
+    <string name="hero_shadows">Shadows</string>
+    <string name="hero_achievements">Achievements</string>
+    <string name="hero_stats">Stats</string>
+    <string name="streak">Streak</string>
+    <string name="best_streak">Best</string>
+    <string name="bosses">Bosses</string>
+    <string name="squad">Squad</string>
+    <string name="collection">Collection</string>
+    <string name="squad_xp">XP +%1$d%%</string>
+    <string name="squad_gold">Gold +%1$d%%</string>
+    <string name="squad_boss">Boss damage +%1$d%%</string>
+    <string name="squad_penalty">Penalty −%1$d%%</string>
+    <string name="squad_focus">Focus +%1$d%%</string>
+    <string name="squad_luck">Luck +%1$d%%</string>
+    <string name="achievement_shadow_reward">Tier %1$d reward: %2$s</string>
+    <string name="stat_quests">Missions</string>
+    <string name="stat_perfect">Perfect days</string>
+    <string name="stat_focus_h">Focus hours</string>
+    <string name="stat_sessions">Sessions</string>
+    <string name="stat_km">Km tracked</string>
+    <string name="stat_portals">Portals</string>
+    <string name="stat_gold_earned">Gold earned</string>
+    <string name="stat_penalties">Penalties</string>
+    <string name="stat_side">Side quests</string>
+    <string name="history">History</string>
+    <string name="history_empty">Your days will show up here.</string>
+    <string name="day_rest">Rest</string>
+    <string name="day_perfect">Perfect</string>
+    <string name="day_penalty">Penalty · %1$d/%2$d</string>
+
+    <!-- Shadow sheet -->
+    <string name="passive">Passive</string>
+    <string name="next_level_value">Next level: %1$s</string>
+    <string name="source_extraction">Bound after perfect days, from portals or with Shadow Essence.</string>
+    <string name="source_shop">Sold in the shop (weekly rotation).</string>
+    <string name="source_achievement">Achievement reward.</string>
+    <string name="source_streak">Streak milestone reward.</string>
+    <string name="source_boss">Dropped by the boss %1$s.</string>
+    <string name="upgrade_capped">Max level: a shadow can\'t pass your level.</string>
+    <string name="upgrade_cost">Evolve: %1$d gold · copies %2$d/%3$d</string>
+    <string name="equip">Equip</string>
+    <string name="unequip">Unequip</string>
+    <string name="upgrade">Evolve</string>
+    <string name="passive_xp">+%1$s XP</string>
+    <string name="passive_gold">+%1$s gold</string>
+    <string name="passive_training">+%1$s XP on training missions</string>
+    <string name="passive_mind">+%1$s XP on knowledge and focus missions</string>
+    <string name="passive_explorer">+%1$s XP on GPS missions</string>
+    <string name="passive_boss">+%1$s damage to bosses</string>
+    <string name="passive_penalty">−%1$s penalty losses</string>
+    <string name="passive_immunity">Absorbs one penalty per week</string>
+    <string name="passive_streak">Saves your streak once per week</string>
+    <string name="passive_shop">−%1$s shop prices</string>
+    <string name="passive_focus">+%1$s focus minutes credited</string>
+    <string name="passive_daily">+%1$d XP for each perfect day</string>
+    <string name="passive_luck">+%1$s luck for drops and rare shadows</string>
+    <string name="passive_all">Amplifies the squad\'s other passives by %1$s</string>
+
+    <!-- Shop -->
+    <string name="shop">Shop</string>
+    <string name="inventory">Inventory</string>
+    <string name="items">Items</string>
+    <string name="shadow_offers">Shadows for hire</string>
+    <string name="stock_left">%1$d/%2$d this week</string>
+    <string name="owned_n">owned %1$d</string>
+    <string name="sold_out">Sold out</string>
+    <string name="active_effects">Active effects</string>
+    <string name="inventory_empty">Empty. Items drop from missions, chests, bosses and level-ups.</string>
+    <string name="pick_quest">Choose a mission</string>
+    <string name="no_open_quests">No eligible open missions.</string>
+
+    <!-- Rewards -->
+    <string name="reward_level_title">Level up</string>
+    <string name="reward_gold">+%1$d gold</string>
+    <string name="reward_rank_title">New rank</string>
+    <string name="reward_rank_text">The interface takes on your new rank\'s colour.</string>
+    <string name="reward_shadow_new">New shadow</string>
+    <string name="reward_shadow_copy">Shadow copy</string>
+    <string name="reward_copies">Copies: %1$d</string>
+    <string name="reward_boss_title">Boss defeated</string>
+    <string name="reward_achievement_title">Achievement</string>
+    <string name="reward_streak_title">Streak milestone</string>
+    <string name="days_in_a_row">%1$d days in a row</string>
+    <string name="reward_chest_title">Chest opened</string>
+    <string name="report_title">Report · %1$s</string>
+    <string name="report_rest">Rest day</string>
+    <string name="report_perfect">Perfect day</string>
+    <string name="report_absorbed">Penalty absorbed</string>
+    <string name="report_failed">Missions failed</string>
+    <string name="report_done">%1$d of %2$d missions done</string>
+    <string name="report_absorbed_by">%1$s absorbed the penalty</string>
+    <string name="report_loss">−%1$d XP · −%2$d gold</string>
+    <string name="report_penalty_quests">%1$d penalty missions to clear</string>
+    <string name="report_streak_saved">Streak saved by %1$s</string>
+    <string name="report_streak">Streak: %1$d</string>
+    <string name="toast_level">Level %1$s!</string>
+    <string name="toast_item_found">Found: %1$s</string>
+    <string name="toast_penalty_cleared">Penalty cleared</string>
+    <string name="toast_focus_done">Focus complete: %1$s min</string>
+    <string name="toast_focus_lost">Strict session abandoned: %1$s min lost</string>
+    <string name="toast_boss_escaped">%1$s escaped</string>
+    <string name="toast_portal_escaped">The portal closed</string>
+    <string name="toast_portal_cleared">Portal cleared!</string>
+    <string name="toast_shadow_upgraded">%1$s evolved</string>
+    <string name="toast_passive_fired">%1$s used its ability</string>
+    <string name="toast_buff">%1$s active</string>
+
+    <!-- Settings -->
+    <string name="profile">Profile</string>
+    <string name="hunter_name">Hunter name</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="rigor_easy">Easy</string>
+    <string name="rigor_normal">Normal</string>
+    <string name="rigor_hard">Hard</string>
+    <string name="rigor_easy_info">2 extra missions a day. Light penalties: one penalty mission, the streak only breaks if you fail everything. Blocking window 13:00–19:00.</string>
+    <string name="rigor_normal_info">3–5 extra missions a day as you level up. A failed day costs XP and gold, breaks the streak and adds up to 3 penalty missions. Blocking window 10:00–22:00.</string>
+    <string name="rigor_hard_info">4–7 extra missions a day. Double losses, up to 4 penalty missions and a 24-hour block.</string>
+    <string name="auto_missions">Automatic mission count</string>
+    <string name="auto_missions_info">Currently %1$d extra missions per day, plus the fixed ones.</string>
+    <string name="extra_daily_missions">Extra missions per day</string>
+    <string name="penalties">Penalties</string>
+    <string name="block_on_penalty">Block apps during penalties</string>
+    <string name="block_on_penalty_info">Your blocked apps close during the penalty window.</string>
+    <string name="side_penalize">Side quests count</string>
+    <string name="side_penalize_info">Unfinished side quests count as failures at midnight.</string>
+    <string name="notifications">Notifications</string>
+    <string name="notifications_info">Portals, finished sessions, penalties and an evening reminder.</string>
+    <string name="reminder_hour">Reminder hour</string>
+    <string name="sound">Sound</string>
+    <string name="sound_info">Effects and ambient sound.</string>
+    <string name="vibration">Vibration</string>
+    <string name="vibration_info">Haptic feedback.</string>
+    <string name="theme">Theme</string>
+    <string name="theme_auto">Auto</string>
+    <string name="theme_info">By default the colour follows your rank. Unlock more by ranking up.</string>
+    <string name="missions">Missions</string>
+    <string name="backup">Backup</string>
+    <string name="backup_info">Export your progress to a file and import it on any device. Old-app backups are accepted too.</string>
+    <string name="export">Export</string>
+    <string name="import_">Import</string>
+    <string name="paste_old_backup">Paste old backup code</string>
+    <string name="import_old_app">Import from the old app</string>
+    <string name="import_confirm_text">Replace your current progress with this one (level %1$d, %2$d shadows)?</string>
+    <string name="backup_saved">Backup saved.</string>
+    <string name="backup_invalid">Couldn\'t read that backup.</string>
+    <string name="about">About</string>
+    <string name="reset_progress">Reset progress</string>
+    <string name="reset_text">Everything will be erased: level, shadows, items and history. This can\'t be undone.</string>
+    <string name="reset_confirm">Erase everything</string>
+
+    <!-- Forge -->
+    <string name="forge_info">Create your own missions or turn system missions off. Changes apply to tomorrow\'s list.</string>
+    <string name="your_missions">Your missions</string>
+    <string name="system_missions">System missions</string>
+    <string name="no_custom">No custom missions yet. Tap + to forge one.</string>
+    <string name="kind_core">Every day</string>
+    <string name="kind_pool">Random draw</string>
+    <string name="kind_core_info">Shows up every chosen day.</string>
+    <string name="kind_pool_info">Joins the pool drawn for the daily missions.</string>
+    <string name="new_mission">New mission</string>
+    <string name="edit_mission">Edit mission</string>
+    <string name="field_title">Title</string>
+    <string name="field_description">Description</string>
+    <string name="field_description_hint">Use {target} and {unit} to show the goal.</string>
+    <string name="field_type">Type</string>
+    <string name="field_target">Goal</string>
+    <string name="field_unit">Unit</string>
+    <string name="field_scaling">Increase</string>
+    <string name="field_interval">Every N levels</string>
+    <string name="field_scaling_hint">The goal grows by \"increase\" every N levels.</string>
+    <string name="field_reward">Reward</string>
+    <string name="preset_easy">Easy</string>
+    <string name="preset_medium">Medium</string>
+    <string name="preset_hard">Hard</string>
+    <string name="preset_epic">Epic</string>
+    <string name="field_days">Days</string>
+    <string name="add_today">Add to today\'s missions as well</string>
+    <string name="delete_mission_text">Delete this mission? Today\'s copy stays until midnight.</string>
+    <string-array name="weekdays_short">
+        <item>M</item><item>T</item><item>W</item><item>T</item><item>F</item><item>S</item><item>S</item>
+    </string-array>
+
+    <!-- Onboarding -->
+    <string name="onb_welcome">Welcome</string>
+    <string name="onb_title">Level up your real life.</string>
+    <string name="onb_intro">Every day the System hands you missions. Complete them to gain XP, gold and shadows. Ignore them and pay the price.</string>
+    <string name="onb_how">How it works</string>
+    <string name="onb_f_missions">Daily missions</string>
+    <string name="onb_f_missions_text">Fixed habits plus a daily draw. Their goals grow as you level up.</string>
+    <string name="onb_f_penalty">Penalties</string>
+    <string name="onb_f_penalty_text">At midnight, failed missions cost XP and gold, add penalty missions and can block your distracting apps.</string>
+    <string name="onb_f_focus">Focus</string>
+    <string name="onb_f_focus_text">Timer or Pomodoro with app blocking and ambient sound. Minutes count toward focus missions.</string>
+    <string name="onb_f_boss">Weekly boss</string>
+    <string name="onb_f_boss_text">Your XP damages it. Defeat it by Sunday to claim its shadow.</string>
+    <string name="onb_f_shadows">Shadows</string>
+    <string name="onb_f_shadows_text">Collect them, evolve them and put three in your squad for passive bonuses.</string>
+    <string name="onb_register">Registration</string>
+    <string name="onb_change_later">You can change this any time in Settings.</string>
+    <string name="onb_start">Begin</string>
+
+    <!-- System: notifications, blocker, tile -->
+    <string name="channel_session">Focus sessions</string>
+    <string name="channel_events">Events</string>
+    <string name="channel_reminders">Reminders</string>
+    <string name="session_focus_title">Focus session</string>
+    <string name="session_penalty_title">Penalty block active</string>
+    <string name="session_left_h">%1$dh %2$dm left</string>
+    <string name="session_left_m">%1$d min left</string>
+    <string name="notif_portal_title">A portal opened</string>
+    <string name="notif_portal_text">%1$s — closes in %2$d min. Double rewards.</string>
+    <string name="notif_focus_done_title">Focus complete</string>
+    <string name="notif_focus_done_text">%1$d minutes credited.</string>
+    <string name="notif_pomodoro_work">Back to work</string>
+    <string name="notif_pomodoro_break">Break time</string>
+    <string name="notif_pomodoro_cycle">Pomodoro cycle %1$d</string>
+    <string name="notif_penalty_title">Penalty applied</string>
+    <string name="notif_penalty_text">Yesterday\'s missions failed. Clear %1$d penalty missions.</string>
+    <string name="notif_reminder_title">Missions waiting</string>
+    <string name="notif_reminder_text">%1$d missions still open today. Midnight is coming.</string>
+    <string name="block_focus_title">Focus in progress</string>
+    <string name="block_penalty_title">Penalty active</string>
+    <string name="block_penalty_text">This app is blocked. Clear your penalty missions first.</string>
+    <string name="block_time_left">Time left: %1$s</string>
+    <string name="block_close">[ CLOSE ]</string>
+    <string-array name="block_quotes">
+        <item>Success demands sacrifice. Yours, right now, is focus.</item>
+        <item>Giving up now? Your future self will thank you for staying.</item>
+        <item>Discipline is the bridge between goals and results.</item>
+        <item>The System accepts no excuses. Only results.</item>
+        <item>Focus on the process. Distraction is the enemy of progress.</item>
+        <item>Every second of focus is a step beyond your limits.</item>
+        <item>You don\'t need motivation. You need discipline.</item>
+    </string-array>
+    <string name="tile_label">Focus</string>
+    <string name="tile_on">On</string>
+    <string name="tile_off">Off</string>
+</resources>

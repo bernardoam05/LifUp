@@ -27,3 +27,19 @@ fun Tx.updateSettings(f: (Settings) -> Settings) {
 }
 
 fun Tx.recordBlockedAttempt() = count(StatKey.BLOCKED_ATTEMPTS)
+
+fun Tx.setFocusAmbient(kind: String?) {
+    val f = s.focus ?: return
+    s = s.copy(focus = f.copy(ambient = kind))
+}
+
+fun Tx.rename(name: String) {
+    s = s.copy(player = s.player.copy(name = name.trim().take(24)))
+}
+
+/** Puts a (custom) definition into today's list right away instead of waiting for tomorrow. */
+fun Tx.addDefToToday(defId: String) {
+    val def = s.customDefs.firstOrNull { it.id == defId } ?: content.questDefById[defId] ?: return
+    if (s.quests.any { it.defId == defId }) return
+    s = s.copy(quests = s.quests + buildQuest(def, s.player.level, QuestOrigin.DAILY))
+}

@@ -910,7 +910,7 @@
    "bossId": "boss_goblin_warlord"
   },
   "name": {
-   "pt": "Senhor Goblin",
+   "pt": "Senhor Goblin Tabata",
    "en": "Goblin Warlord"
   },
   "lore": {
@@ -982,7 +982,7 @@
    "bossId": "boss_stringsinger"
   },
   "name": {
-   "pt": "O Cantor das Cordas",
+   "pt": "Cantor das Cordas",
    "en": "The Stringsinger"
   },
   "lore": {
@@ -1000,7 +1000,7 @@
    "bossId": "boss_polyglot_trial"
   },
   "name": {
-   "pt": "Provação do Poliglota",
+   "pt": "Poliglota da Provação",
    "en": "Polyglot of the Trial"
   },
   "lore": {
@@ -1018,7 +1018,7 @@
    "bossId": "boss_culinary_ritual"
   },
   "name": {
-   "pt": "Ritual Culinário",
+   "pt": "Chef do Ritual",
    "en": "Ritual Chef"
   },
   "lore": {
@@ -1036,7 +1036,7 @@
    "bossId": "boss_memory_labyrinth"
   },
   "name": {
-   "pt": "Labirinto da Memória",
+   "pt": "Curador do Palácio Mental",
    "en": "Curator of the Mind Palace"
   },
   "lore": {
@@ -1054,7 +1054,7 @@
    "bossId": "boss_new_frontier"
   },
   "name": {
-   "pt": "Fronteira Inédita",
+   "pt": "Pioneiro da Fronteira",
    "en": "Frontier Pioneer"
   },
   "lore": {
@@ -1072,7 +1072,7 @@
    "bossId": "boss_artisan_trial"
   },
   "name": {
-   "pt": "Prova do Artesão",
+   "pt": "Artesão do Protótipo",
    "en": "Prototype Artisan"
   },
   "lore": {
@@ -1090,7 +1090,7 @@
    "bossId": "boss_wind_walker"
   },
   "name": {
-   "pt": "Caminhante do Vento Silencioso",
+   "pt": "Caminhante do Vento",
    "en": "Wind Walker"
   },
   "lore": {
@@ -1126,7 +1126,7 @@
    "bossId": "boss_cold_philosopher"
   },
   "name": {
-   "pt": "O Filósofo da Montanha",
+   "pt": "Filósofo da Montanha",
    "en": "Mountain Philosopher"
   },
   "lore": {
@@ -1144,7 +1144,7 @@
    "bossId": "boss_digital_craftsman"
   },
   "name": {
-   "pt": "O Artesão Digital",
+   "pt": "Artesão Digital",
    "en": "Digital Artisan"
   },
   "lore": {
@@ -1162,7 +1162,7 @@
    "bossId": "boss_stoic_challenge"
   },
   "name": {
-   "pt": "A Prova do Estoico",
+   "pt": "Estoico do Desconforto",
    "en": "Stoic of Discomfort"
   },
   "lore": {
@@ -1270,7 +1270,7 @@
    "bossId": "boss_blood_knight"
   },
   "name": {
-   "pt": "Cavaleiro de Sangue Sangreal",
+   "pt": "Sangreal, Cavaleiro de Sangue",
    "en": "Sangreal, the Blood Knight"
   },
   "lore": {

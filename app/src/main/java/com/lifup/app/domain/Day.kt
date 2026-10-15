@@ -98,8 +98,9 @@ private fun Tx.applyFailure(failed: Int, total: Int): Pair<PenaltyInfo, String?>
     val mult = when (rigor) { Rigor.EASY -> 0.3; Rigor.NORMAL -> 1.0; Rigor.HARD -> 2.0 }
     val reduce = s.passives(content, ctx.now).penaltyReduce
     val xpLost = floor(Rules.penaltyBase(s.player.level) * mult * (1 - reduce)).toInt()
-    loseXp(xpLost)
     val goldLost = loseGold(xpLost)
+    val xpActuallyLost = minOf(xpLost, s.player.xp)
+    loseXp(xpLost)
     count(StatKey.PENALTIES_TAKEN)
 
     val questCount = when (rigor) {
@@ -136,7 +137,7 @@ private fun Tx.applyFailure(failed: Int, total: Int): Pair<PenaltyInfo, String?>
             else -> setStreak(0)
         }
     }
-    return PenaltyInfo(failed, total, xpLost, goldLost, quests.size) to savedBy
+    return PenaltyInfo(failed, total, xpActuallyLost, goldLost, quests.size) to savedBy
 }
 
 fun Tx.clearPenalty(cleared: Boolean) {
