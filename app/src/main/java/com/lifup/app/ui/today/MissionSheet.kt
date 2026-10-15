@@ -157,11 +157,12 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
 
             if (open && q.type == QuestType.GPS) RunPanel(s, q, tracking = q.auto == null)
 
-            if (open && q.type != QuestType.FORBIDDEN && q.type != QuestType.LIMIT && q.type != QuestType.GPS) {
-                val manualOnly = q.type == QuestType.FOCUS || q.auto != null
-                val label = if (manualOnly) R.string.mark_done_manual else R.string.complete
-                PrimaryButton(stringResource(label), onClick = { act { completeQuest(q.id) }; onDismiss() }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Check,
-                    color = if (manualOnly) p.border else p.accent)
+            if (open && q.type != QuestType.FORBIDDEN && q.type != QuestType.LIMIT) {
+                // Tracked missions normally fill themselves, so marking them by hand is the secondary action.
+                val tracked = q.type == QuestType.FOCUS || q.type == QuestType.GPS || q.auto != null
+                val complete = { act { completeQuest(q.id) }; onDismiss() }
+                if (tracked) GhostButton(stringResource(R.string.mark_done_manual), onClick = complete, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Check)
+                else PrimaryButton(stringResource(R.string.complete), onClick = complete, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Check)
             }
 
             val def = content.questDefById[q.defId] ?: s.customDefs.firstOrNull { it.id == q.defId }
