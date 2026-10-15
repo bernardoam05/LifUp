@@ -230,22 +230,32 @@ private fun Tx.updateSide(id: String, f: (SideQuest) -> SideQuest) {
     s = s.copy(sideQuests = s.sideQuests.map { if (it.id == id) f(it) else it })
 }
 
+fun GameState.sideRewardsLeft() = (Rules.SIDE_REWARDS_PER_DAY - daily.sideRewarded).coerceAtLeast(0)
+
 fun Tx.completeSideQuest(id: String) {
     val sq = s.sideQuests.firstOrNull { it.id == id && !it.done } ?: return
+    if (s.sideRewardsLeft() == 0) {
+        updateSide(id) { it.copy(done = true) }
+        return
+    }
     val (xp, dealt) = gainXpTracked(sq.xp, null)
     val gold = gainGold(sq.gold)
     gainAttributes(null)
     count(StatKey.SIDE_COMPLETED)
+    s = s.copy(daily = s.daily.copy(sideRewarded = s.daily.sideRewarded + 1))
     updateSide(id) { it.copy(done = true, xpGained = xp, goldGained = gold, bossDamage = dealt) }
 }
 
 /** Unticks a side quest and takes back exactly what it paid. */
 fun Tx.undoSideQuest(id: String) {
     val sq = s.sideQuests.firstOrNull { it.id == id && it.done } ?: return
-    loseXp(sq.xpGained)
-    refundGold(sq.goldGained)
-    healBoss(sq.bossDamage)
-    count(StatKey.SIDE_COMPLETED, -1)
+    if (sq.xpGained > 0 || sq.goldGained > 0) {
+        loseXp(sq.xpGained)
+        refundGold(sq.goldGained)
+        healBoss(sq.bossDamage)
+        count(StatKey.SIDE_COMPLETED, -1)
+        s = s.copy(daily = s.daily.copy(sideRewarded = (s.daily.sideRewarded - 1).coerceAtLeast(0)))
+    }
     updateSide(id) { it.copy(done = false, xpGained = 0, goldGained = 0, bossDamage = 0) }
 }
 

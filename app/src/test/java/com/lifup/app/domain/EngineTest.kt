@@ -397,6 +397,22 @@ class EngineTest {
         assertEquals(s.player.gold.toLong(), s.count(StatKey.GOLD_EARNED))
     }
 
+    @Test fun `only five side quests a day pay rewards`() {
+        var s = fresh()
+        s = run(s, "2026-10-14T10:00") { repeat(7) { addSideQuest("t$it") } }
+        val ids = s.sideQuests.map { it.id }
+        s = run(s, "2026-10-14T10:01") { ids.forEach { completeSideQuest(it) } }
+        assertEquals(5, s.sideQuests.count { it.xpGained > 0 })
+        assertTrue(s.sideQuests.all { it.done })
+        assertEquals(0, s.sideRewardsLeft())
+        val unpaid = s.sideQuests.first { it.xpGained == 0 }.id
+        val gold = s.player.gold
+        s = run(s, "2026-10-14T10:02") { undoSideQuest(unpaid) }
+        assertEquals(gold, s.player.gold)
+        s = run(s, "2026-10-14T10:03") { undoSideQuest(ids.first()) }
+        assertEquals(1, s.sideRewardsLeft())
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

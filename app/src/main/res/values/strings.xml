@@ -485,4 +485,6 @@
     <string name="focus_view">See session in progress</string>
     <string name="focus_busy">A focus session for another mission is already running.</string>
     <string name="auto_off">Undone: automatic counting is off for this mission until tomorrow. Mark it by hand when you really finish it.</string>
+    <string name="side_rewards_left">rewards today: %1$d/%2$d</string>
+    <string name="side_no_reward">no reward</string>
 </resources>

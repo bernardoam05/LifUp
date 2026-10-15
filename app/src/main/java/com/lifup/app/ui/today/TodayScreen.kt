@@ -52,6 +52,7 @@ import com.lifup.app.domain.canAddExtra
 import com.lifup.app.domain.completeSideQuest
 import com.lifup.app.domain.isSuccessful
 import com.lifup.app.domain.removeSideQuest
+import com.lifup.app.domain.sideRewardsLeft
 import com.lifup.app.domain.undoSideQuest
 import com.lifup.app.domain.text
 import com.lifup.app.domain.toggleRestDay
@@ -143,7 +144,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
             }
         }
 
-        item { SideQuestHeader() }
+        item { SideQuestHeader(s.sideRewardsLeft()) }
         items(s.sideQuests, key = { it.id }) { sq ->
             Panel(padding = PaddingValues(start = 4.dp, end = 4.dp, top = 2.dp, bottom = 2.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -151,7 +152,12 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
                         Icon(if (sq.done) Icons.Rounded.CheckBox else Icons.Rounded.CheckBoxOutlineBlank, null, tint = if (sq.done) p.green else p.muted)
                     }
                     Text(sq.title, style = MaterialTheme.typography.bodyLarge, color = if (sq.done) p.dim else p.text, modifier = Modifier.weight(1f))
-                    Pill("${sq.rank.name} · +${sq.xp} XP", p.accent)
+                    val paid = sq.xpGained > 0 || sq.goldGained > 0
+                    when {
+                        sq.done && !paid -> Pill(stringResource(R.string.side_no_reward), p.dim)
+                        !sq.done && s.sideRewardsLeft() == 0 -> Pill(stringResource(R.string.side_no_reward), p.gold)
+                        else -> Pill("${sq.rank.name} · +${if (sq.done) sq.xpGained else sq.xp} XP", p.accent)
+                    }
                     IconButton(onClick = { act { removeSideQuest(sq.id) } }) { Icon(Icons.Rounded.DeleteOutline, null, tint = p.dim) }
                 }
             }
@@ -166,10 +172,15 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
 }
 
 @Composable
-private fun SideQuestHeader() {
+private fun SideQuestHeader(rewardsLeft: Int) {
     var text by remember { mutableStateOf("") }
     val add = { if (text.isNotBlank()) { val t = text; act { addSideQuest(t) }; text = "" } }
-    SectionTitle(stringResource(R.string.side_section))
+    SectionTitle(stringResource(R.string.side_section)) {
+        Text(
+            stringResource(R.string.side_rewards_left, Rules.SIDE_REWARDS_PER_DAY - rewardsLeft, Rules.SIDE_REWARDS_PER_DAY),
+            color = if (rewardsLeft == 0) Lif.colors.gold else Lif.colors.dim, style = MaterialTheme.typography.labelMedium,
+        )
+    }
     Row(verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
             value = text, onValueChange = { text = it.take(80) }, singleLine = true,

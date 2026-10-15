@@ -155,6 +155,7 @@ data class DailyFlags(
     val swapsUsed: Int = 0,
     val extrasAdded: Int = 0,
     val extractionDone: Boolean = false,
+    val sideRewarded: Int = 0,
     val rest: Boolean = false,
 )
 

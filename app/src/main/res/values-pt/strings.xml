@@ -466,4 +466,6 @@
     <string name="focus_view">Ver sessão em curso</string>
     <string name="focus_busy">Já há uma sessão de foco a decorrer para outra missão.</string>
     <string name="auto_off">Desfeita: a contagem automática fica desligada nesta missão até amanhã. Marca-a à mão quando a cumprires mesmo.</string>
+    <string name="side_rewards_left">recompensas hoje: %1$d/%2$d</string>
+    <string name="side_no_reward">sem recompensa</string>
 </resources>

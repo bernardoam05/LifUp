@@ -466,4 +466,6 @@
     <string name="focus_view">Voir la session en cours</string>
     <string name="focus_busy">Une session de focus pour une autre mission est déjà en cours.</string>
     <string name="auto_off">Annulée : le comptage automatique est coupé pour cette mission jusqu\'à demain. Marque-la à la main quand tu l\'as vraiment faite.</string>
+    <string name="side_rewards_left">récompenses aujourd\'hui : %1$d/%2$d</string>
+    <string name="side_no_reward">sans récompense</string>
 </resources>

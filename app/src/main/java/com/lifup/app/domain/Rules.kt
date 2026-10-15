@@ -28,6 +28,8 @@ enum class HunterRank(val minLevel: Int, val color: Long) {
 object Rules {
     const val SQUAD_SIZE = 3
     const val MAX_EXTRAS_PER_DAY = 3
+    /** Side quests that pay XP/gold per day; more can be ticked, as a plain to-do list. */
+    const val SIDE_REWARDS_PER_DAY = 5
     const val FREE_SWAPS_PER_DAY = 1
     const val MAX_PORTALS_PER_DAY = 2
     const val PORTAL_CHANCE = 0.25
