@@ -48,6 +48,7 @@ data class Quest(
     val xpGained: Int = 0,
     val goldGained: Int = 0,
     val auto: AutoKind? = null,
+    val pomodoro: Boolean = false,
     /** Boss HP this quest removed, given back if it is undone. */
     val bossDamage: Int = 0,
 )
@@ -117,6 +118,8 @@ data class FocusSession(
     val strict: Boolean = false,
     val blockApps: Boolean = true,
     val ambient: String? = null,
+    /** The one focus mission this session counts for; null = free session. */
+    val questId: String? = null,
 )
 
 @Serializable

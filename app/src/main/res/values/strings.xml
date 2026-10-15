@@ -474,4 +474,14 @@
     <string name="calendar_more">More</string>
     <string name="calendar_summary">Last 30 days: %1$d active · %2$d perfect</string>
     <string name="calendar_no_data">no record</string>
+    <string name="focus_mission">Mission</string>
+    <string name="focus_free">Free</string>
+    <string name="focus_free_hint">Free session: minutes count in your stats but don\'t fill any mission.</string>
+    <string name="focus_left">%1$d min left for this mission</string>
+    <string name="focus_counts_for">Counts for: %1$s</string>
+    <string name="focus_free_session">Free session</string>
+    <string name="focus_prepare">Set up focus session</string>
+    <string name="focus_prepare_pomodoro">Set up Pomodoro</string>
+    <string name="focus_view">See session in progress</string>
+    <string name="focus_busy">A focus session for another mission is already running.</string>
 </resources>

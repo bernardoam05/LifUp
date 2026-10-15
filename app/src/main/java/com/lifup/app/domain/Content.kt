@@ -38,6 +38,8 @@ data class QuestDef(
     /** ISO days of week (1 = Monday … 7 = Sunday); null = every day. */
     val daysOfWeek: List<Int>? = null,
     val auto: AutoKind? = null,
+    /** Focus missions done in Pomodoro cycles instead of one straight timer. */
+    val pomodoro: Boolean = false,
 )
 
 @Serializable

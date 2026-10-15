@@ -455,4 +455,14 @@
     <string name="calendar_more">Plus</string>
     <string name="calendar_summary">30 derniers jours : %1$d actifs · %2$d parfaits</string>
     <string name="calendar_no_data">aucune donnée</string>
+    <string name="focus_mission">Mission</string>
+    <string name="focus_free">Libre</string>
+    <string name="focus_free_hint">Session libre : les minutes comptent dans tes stats mais ne remplissent aucune mission.</string>
+    <string name="focus_left">Il reste %1$d min pour cette mission</string>
+    <string name="focus_counts_for">Compte pour : %1$s</string>
+    <string name="focus_free_session">Session libre</string>
+    <string name="focus_prepare">Préparer la session de focus</string>
+    <string name="focus_prepare_pomodoro">Préparer le Pomodoro</string>
+    <string name="focus_view">Voir la session en cours</string>
+    <string name="focus_busy">Une session de focus pour une autre mission est déjà en cours.</string>
 </resources>

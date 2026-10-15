@@ -147,12 +147,28 @@ class EngineTest {
         val focusDef = content.quests.first { it.id == "pool_deepwork" }
         val fq = buildQuest(focusDef, 1, QuestOrigin.DAILY)
         s = s.copy(quests = s.quests + fq)
-        s = run(s, "2026-10-14T10:00") { startFocus(FocusSession(0, 60)) }
+        s = run(s, "2026-10-14T10:00") { startFocus(FocusSession(0, 60, questId = fq.id)) }
         assertNotNull(s.focus)
         s = run(s, "2026-10-14T11:01")
         assertNull(s.focus)
         assertEquals(QuestStatus.DONE, s.quests.first { it.id == fq.id }.status)
         assertEquals(1L, s.count(StatKey.FOCUS_SESSIONS))
+    }
+
+    @Test fun `focus minutes go only to the session's mission`() {
+        var s = fresh()
+        val a = buildQuest(content.questDefById.getValue("pool_journal"), 1, QuestOrigin.EXTRA, "fa")
+        val b = buildQuest(content.questDefById.getValue("pool_meditate"), 1, QuestOrigin.EXTRA, "fb")
+        s = s.copy(quests = s.quests + a + b)
+        s = run(s, "2026-10-14T10:00") { startFocus(FocusSession(0, 5, questId = a.id)) }
+        s = run(s, "2026-10-14T10:06")
+        assertEquals(5.0, s.quests.first { it.id == a.id }.progress, 0.001)
+        assertEquals(0.0, s.quests.first { it.id == b.id }.progress, 0.001)
+        s = run(s, "2026-10-14T11:00") { startFocus(FocusSession(0, 10)) }
+        s = run(s, "2026-10-14T11:11")
+        assertEquals(5.0, s.quests.first { it.id == a.id }.progress, 0.001)
+        assertEquals(15L, s.count(StatKey.FOCUS_MINUTES))
+        assertTrue(content.questDefById.getValue("pool_pomodoro_basic").pomodoro)
     }
 
     @Test fun `strict focus loses minutes when stopped early`() {

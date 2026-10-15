@@ -170,6 +170,7 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
     val days = remember { mutableStateListOf<Int>().apply { addAll(existing?.daysOfWeek ?: (1..7).toList()) } }
     var addToday by rememberSaveable { mutableStateOf(existing == null) }
     var auto by rememberSaveable { mutableStateOf(existing?.auto) }
+    var pomodoro by rememberSaveable { mutableStateOf(existing?.pomodoro ?: false) }
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
     val dayNames = stringArrayResourceCompat()
 
@@ -199,6 +200,10 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
             Text(stringResource(R.string.field_type), style = MaterialTheme.typography.labelLarge, color = c.muted)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 QuestType.entries.forEach { t -> FilterChip(selected = type == t, enabled = auto == null, onClick = { type = t; if (t == QuestType.FOCUS) unit = "min"; if (t == QuestType.GPS) unit = "km" }, label = { Text(stringResource(questTypeName(t))) }) }
+            }
+            if (type == QuestType.FOCUS) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                FilterChip(selected = !pomodoro, onClick = { pomodoro = false }, label = { Text(stringResource(R.string.mode_timer)) })
+                FilterChip(selected = pomodoro, onClick = { pomodoro = true }, label = { Text(stringResource(R.string.mode_pomodoro)) })
             }
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 FilterChip(selected = core, onClick = { core = true }, label = { Text(stringResource(R.string.kind_core)) })
@@ -243,6 +248,7 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
                     baseGold = PRESETS[preset].gold,
                     daysOfWeek = days.sorted().takeIf { it.size < 7 },
                     auto = auto,
+                    pomodoro = pomodoro && type == QuestType.FOCUS,
                     descending = auto == AutoKind.SCREEN_TIME || auto == AutoKind.DISTRACTION_TIME,
                 )
                 val today = addToday

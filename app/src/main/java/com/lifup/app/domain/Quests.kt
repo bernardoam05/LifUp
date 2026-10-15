@@ -25,6 +25,7 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         gold = (def.baseGold * mult).roundToInt(),
         rank = Rules.questRank(def.baseXp),
         auto = def.auto,
+        pomodoro = def.pomodoro,
     )
 }
 
@@ -154,16 +155,15 @@ fun Tx.setProgress(id: String, value: Double) {
     if (q.type != QuestType.LIMIT && q.type != QuestType.FORBIDDEN && value >= q.target) completeQuest(id)
 }
 
-/** Credits focus minutes to every open focus quest. */
-fun Tx.creditFocus(minutes: Double) {
+/** Counts focus minutes, and credits them to the session's mission only. */
+fun Tx.creditFocus(minutes: Double, questId: String?) {
     if (minutes <= 0) return
-    val credited = minutes * (1 + s.passives(content, ctx.now).focusMastery)
     count(StatKey.FOCUS_MINUTES, minutes.roundToInt().toLong())
-    s.allQuests.filter { it.type == QuestType.FOCUS && it.status == QuestStatus.OPEN }.forEach { q ->
-        val next = q.progress + credited
-        updateQuest(q.id) { it.copy(progress = minOf(next, it.target)) }
-        if (next >= q.target) completeQuest(q.id)
-    }
+    val q = s.allQuests.firstOrNull { it.id == questId } ?: return
+    if (q.type != QuestType.FOCUS || q.status != QuestStatus.OPEN) return
+    val next = q.progress + minutes * (1 + s.passives(content, ctx.now).focusMastery)
+    updateQuest(q.id) { it.copy(progress = minOf(next, it.target)) }
+    if (next >= q.target) completeQuest(q.id)
 }
 
 fun Tx.creditGps(questId: String, km: Double) {

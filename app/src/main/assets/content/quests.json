@@ -380,7 +380,8 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 80,
-   "baseGold": 25
+   "baseGold": 25,
+   "pomodoro": true
   },
   {
    "id": "pool_pomodoro_adv",
@@ -399,7 +400,8 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 160,
-   "baseGold": 50
+   "baseGold": 50,
+   "pomodoro": true
   },
   {
    "id": "pool_steps",

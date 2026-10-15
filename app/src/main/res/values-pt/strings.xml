@@ -455,4 +455,14 @@
     <string name="calendar_more">Mais</string>
     <string name="calendar_summary">Últimos 30 dias: %1$d ativos · %2$d perfeitos</string>
     <string name="calendar_no_data">sem registo</string>
+    <string name="focus_mission">Missão</string>
+    <string name="focus_free">Livre</string>
+    <string name="focus_free_hint">Sessão livre: os minutos contam nas estatísticas mas não preenchem nenhuma missão.</string>
+    <string name="focus_left">Faltam %1$d min nesta missão</string>
+    <string name="focus_counts_for">Conta para: %1$s</string>
+    <string name="focus_free_session">Sessão livre</string>
+    <string name="focus_prepare">Preparar sessão de foco</string>
+    <string name="focus_prepare_pomodoro">Preparar Pomodoro</string>
+    <string name="focus_view">Ver sessão em curso</string>
+    <string name="focus_busy">Já há uma sessão de foco a decorrer para outra missão.</string>
 </resources>

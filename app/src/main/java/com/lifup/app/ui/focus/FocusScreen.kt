@@ -34,6 +34,9 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -55,6 +58,7 @@ import com.lifup.app.domain.FocusSession
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.Pomodoro
 import com.lifup.app.domain.PomodoroPlan
+import com.lifup.app.domain.Quest
 import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.QuestType
 import com.lifup.app.domain.creditableMinutes
@@ -81,6 +85,7 @@ import com.lifup.app.ui.fmtShort
 import com.lifup.app.ui.lang
 import com.lifup.app.ui.questTitle
 import com.lifup.app.ui.theme.Lif
+import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 @Composable
@@ -146,6 +151,11 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
                 }
             }
         }
+        val mission = s.allQuests.firstOrNull { it.id == f.questId }
+        Text(
+            mission?.let { stringResource(R.string.focus_counts_for, questTitle(it, lang())) } ?: stringResource(R.string.focus_free_session),
+            style = MaterialTheme.typography.titleSmall, color = if (mission != null) p.purple else p.muted, modifier = Modifier.padding(bottom = 6.dp),
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             if (f.strict) com.lifup.app.ui.components.Pill(stringResource(R.string.strict), p.red)
             if (f.blockApps && s.settings.blockedApps.isNotEmpty()) com.lifup.app.ui.components.Pill(stringResource(R.string.blocking_n, s.settings.blockedApps.size), p.accent)
@@ -211,6 +221,23 @@ private fun SessionSetup(s: GameState) {
     var block by rememberSaveable { mutableStateOf(set.blockedApps.isNotEmpty()) }
     var ambient by rememberSaveable { mutableStateOf<String?>(null) }
     var pickApps by rememberSaveable { mutableStateOf(false) }
+    var linked by rememberSaveable { mutableStateOf<String?>(null) }
+    val focusQuests = s.allQuests.filter { it.type == QuestType.FOCUS && it.status == QuestStatus.OPEN }
+    // A mission fills in its mode and remaining minutes; the user can still adjust before starting.
+    fun prepare(q: Quest) {
+        linked = q.id
+        pomodoro = q.usesPomodoro()
+        if (pomodoro) {
+            val rounds = ceil(q.minutesLeft() / set.pomodoroWork.toDouble()).toInt().coerceIn(1, 12)
+            act { updateSettings { it.copy(pomodoroRounds = rounds) } }
+        } else minutes = q.minutesLeft().coerceIn(1, 240)
+    }
+    val request = FocusPrep.questId
+    LaunchedEffect(request) {
+        if (request == null) return@LaunchedEffect
+        FocusPrep.questId = null
+        s.allQuests.firstOrNull { it.id == request }?.let(::prepare)
+    }
     // Choosing apps implies wanting them blocked.
     var lastAppCount by rememberSaveable { mutableStateOf(set.blockedApps.size) }
     if (set.blockedApps.size != lastAppCount) {
@@ -222,6 +249,8 @@ private fun SessionSetup(s: GameState) {
 
     Text(stringResource(R.string.focus_title), style = MaterialTheme.typography.headlineSmall)
     Spacer(Modifier.height(12.dp))
+    MissionPicker(focusQuests, focusQuests.firstOrNull { it.id == linked }, onPick = ::prepare, onFree = { linked = null })
+    Spacer(Modifier.height(8.dp))
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         listOf(R.string.mode_timer, R.string.mode_pomodoro).forEachIndexed { i, label ->
             SegmentedButton(selected = pomodoro == (i == 1), onClick = { pomodoro = i == 1 }, shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(stringResource(label)) }
@@ -236,7 +265,7 @@ private fun SessionSetup(s: GameState) {
                     FilterChip(selected = minutes == m, onClick = { minutes = m }, label = { Text("$m") })
                 }
             }
-            Stepper(minutes, { minutes = it }, 5..240, stringResource(R.string.fine_tune), " min")
+            Stepper(minutes, { minutes = it }, 1..240, stringResource(R.string.fine_tune), " min")
         } else {
             Stepper(set.pomodoroWork, { v -> act { updateSettings { it.copy(pomodoroWork = v) } } }, 5..90, stringResource(R.string.pomodoro_work_len), "m")
             Stepper(set.pomodoroBreak, { v -> act { updateSettings { it.copy(pomodoroBreak = v) } } }, 1..30, stringResource(R.string.pomodoro_break_len), "m")
@@ -263,11 +292,29 @@ private fun SessionSetup(s: GameState) {
     PrimaryButton(stringResource(R.string.start_session), onClick = {
         if (Build.VERSION.SDK_INT >= 33 && !Permissions.notifications(context)) notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         val plan = if (pomodoro) PomodoroPlan(set.pomodoroWork, set.pomodoroBreak, set.pomodoroRounds) else null
-        val session = FocusSession(0, minutes, plan, strict, block && Permissions.blockerReady(context) && set.blockedApps.isNotEmpty(), ambient)
+        val quest = focusQuests.firstOrNull { it.id == linked }?.id
+        val session = FocusSession(0, minutes, plan, strict, block && Permissions.blockerReady(context) && set.blockedApps.isNotEmpty(), ambient, quest)
         act { startFocus(session) }
     }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.PlayArrow, color = p.purple)
 
     if (pickApps) AppPickerSheet(set.blockedApps) { pickApps = false }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun MissionPicker(quests: List<Quest>, linked: Quest?, onPick: (Quest) -> Unit, onFree: () -> Unit) {
+    val p = Lif.colors
+    Panel {
+        Text(stringResource(R.string.focus_mission), style = MaterialTheme.typography.labelLarge, color = p.muted)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            FilterChip(selected = linked == null, onClick = onFree, label = { Text(stringResource(R.string.focus_free)) })
+            quests.forEach { q -> FilterChip(selected = linked?.id == q.id, onClick = { onPick(q) }, label = { Text(questTitle(q, lang()), maxLines = 1) }) }
+        }
+        Text(
+            linked?.let { stringResource(R.string.focus_left, it.minutesLeft()) } ?: stringResource(R.string.focus_free_hint),
+            style = MaterialTheme.typography.bodySmall, color = if (linked != null) p.purple else p.muted,
+        )
+    }
 }
 
 @Composable
@@ -288,8 +335,16 @@ private fun FocusQuests(s: GameState) {
     if (quests.isEmpty()) return
     SectionTitle(stringResource(R.string.focus_quests))
     quests.forEach { q ->
-        Panel(modifier = Modifier.padding(bottom = 6.dp)) {
-            Text(questTitle(q, lang()), style = MaterialTheme.typography.titleSmall)
+        val active = s.focus?.questId == q.id
+        Panel(
+            modifier = Modifier.padding(bottom = 6.dp),
+            border = if (active) Lif.colors.purple else Lif.colors.border,
+            onClick = if (s.focus == null) ({ FocusPrep.questId = q.id }) else null,
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(questTitle(q, lang()), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
+                if (q.usesPomodoro()) com.lifup.app.ui.components.Pill(stringResource(R.string.mode_pomodoro), Lif.colors.purple)
+            }
             Spacer(Modifier.height(6.dp))
             Bar((q.progress / q.target).toFloat(), Lif.colors.purple)
             Text("${fmtNum(q.progress)} / ${fmtNum(q.target)} min", style = MaterialTheme.typography.labelSmall, color = Lif.colors.dim)

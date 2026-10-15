@@ -66,6 +66,7 @@ import com.lifup.app.ui.components.Pill
 import com.lifup.app.ui.components.PrimaryButton
 import com.lifup.app.ui.components.rememberNow
 import com.lifup.app.ui.content
+import com.lifup.app.ui.focus.usesPomodoro
 import com.lifup.app.ui.fmtDuration
 import com.lifup.app.ui.fmtNum
 import com.lifup.app.ui.lang
@@ -142,7 +143,16 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
             }
 
             if (open && q.type == QuestType.FOCUS) {
-                PrimaryButton(stringResource(R.string.start_focus), onClick = { onDismiss(); switchTab(Tab.FOCUS) }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Psychology, color = p.purple)
+                val active = s.focus
+                when {
+                    active?.questId == q.id -> PrimaryButton(stringResource(R.string.focus_view), onClick = { onDismiss(); switchTab(Tab.FOCUS) }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Psychology, color = p.purple)
+                    active != null -> Text(stringResource(R.string.focus_busy), style = MaterialTheme.typography.bodySmall, color = p.gold)
+                    else -> PrimaryButton(
+                        stringResource(if (q.usesPomodoro()) R.string.focus_prepare_pomodoro else R.string.focus_prepare),
+                        onClick = { com.lifup.app.ui.focus.FocusPrep.questId = q.id; onDismiss(); switchTab(Tab.FOCUS) },
+                        modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Psychology, color = p.purple,
+                    )
+                }
             }
 
             if (open && q.type == QuestType.GPS) RunPanel(s, q, tracking = q.auto == null)
