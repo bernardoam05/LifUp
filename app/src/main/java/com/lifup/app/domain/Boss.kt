@@ -63,9 +63,26 @@ private fun Tx.defeatBoss() {
     count(StatKey.BOSSES_DEFEATED)
     val xp = gainXp(def.baseXp, hitsBoss = false)
     val gold = gainGold(def.baseGold)
-    addItem("bau_cacador")
-    reward { Reward.BossDefeated(it, def.id, xp, gold, listOf("bau_cacador")) }
-    gainShadow(def.shadowId, SourceType.BOSS)
+    val loot = if (b.lootGiven) emptyList() else listOf("bau_cacador")
+    loot.forEach { addItem(it) }
+    s = s.copy(boss = s.boss?.copy(spoils = BossSpoils(xp, gold), lootGiven = true))
+    reward { Reward.BossDefeated(it, def.id, xp, gold, loot) }
+    if (!b.lootGiven) gainShadow(def.shadowId, SourceType.BOSS)
+}
+
+/** Gives back HP removed by an undone quest. A boss that fell to it comes back and takes its XP and gold back. */
+fun Tx.healBoss(amount: Int) {
+    val b = s.boss ?: return
+    if (amount <= 0) return
+    if (!b.defeated) {
+        s = s.copy(boss = b.copy(hp = minOf(b.maxHp, b.hp + amount)))
+        return
+    }
+    b.spoils?.let { loseXp(it.xp); loseGold(it.gold) }
+    count(StatKey.BOSSES_DEFEATED, -1)
+    val history = s.bossHistory.toMutableList().apply { lastIndexOf(b.bossId).takeIf { it >= 0 }?.let(::removeAt) }
+    s = s.copy(boss = b.copy(defeated = false, hp = minOf(b.maxHp, amount), spoils = null), bossHistory = history)
+    toast(ToastKind.BOSS_REVIVED, b.bossId)
 }
 
 // ── Portals ───────────────────────────────────────────────────────────────────

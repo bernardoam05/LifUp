@@ -22,6 +22,7 @@ fun Tx.ensureDay() {
             quests = generateDailyQuests(s, content, ctx.today),
             sideQuests = s.sideQuests.filterNot { it.done },
             timers = emptyMap(),
+            run = null,
         )
     }
     s = s.copy(buffs = s.buffs.filter { it.expiresAt > ctx.now })

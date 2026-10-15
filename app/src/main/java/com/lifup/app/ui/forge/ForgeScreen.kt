@@ -188,6 +188,7 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
                         auto = k
                         when (k) {
                             AutoKind.STEPS -> { type = QuestType.TRAINING; unit = "steps"; target = "6000" }
+                            AutoKind.WALK_DISTANCE -> { type = QuestType.GPS; unit = "km"; target = "4" }
                             AutoKind.SCREEN_TIME -> { type = QuestType.LIMIT; unit = "h"; target = "3" }
                             AutoKind.DISTRACTION_TIME -> { type = QuestType.LIMIT; unit = "h"; target = "1" }
                         }

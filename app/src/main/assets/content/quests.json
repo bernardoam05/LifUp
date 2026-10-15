@@ -284,7 +284,8 @@
    "scalingInterval": 1,
    "unit": "km",
    "baseXp": 70,
-   "baseGold": 20
+   "baseGold": 20,
+   "auto": "WALK_DISTANCE"
   },
   {
    "id": "pool_language",
@@ -594,7 +595,8 @@
    "scalingInterval": 10,
    "unit": "km",
    "baseXp": 150,
-   "baseGold": 45
+   "baseGold": 45,
+   "auto": "WALK_DISTANCE"
   },
   {
    "id": "pool_veggies",

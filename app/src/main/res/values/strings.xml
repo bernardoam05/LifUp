@@ -42,7 +42,7 @@
     <string name="type_training">Training</string>
     <string name="type_knowledge">Knowledge</string>
     <string name="type_focus">Focus</string>
-    <string name="type_gps">GPS</string>
+    <string name="type_gps">Distance</string>
     <string name="type_forbidden">Avoid</string>
     <string name="type_limit">Limit</string>
 
@@ -435,4 +435,30 @@
     <string name="field_auto">Automatic tracking</string>
     <string name="auto_none">None</string>
     <string name="field_auto_hint">Progress fills in by itself from the phone; type and unit are set for you.</string>
+    <string name="buy">Buy</string>
+    <string name="buy_confirm_title">Confirm purchase</string>
+    <string name="buy_confirm_text">Buy %1$s for %2$d gold? You will have %3$d left.</string>
+    <string name="toast_boss_revived">%1$s got back up: the undone mission no longer counts</string>
+    <string name="auto_walk">Walked distance (steps)</string>
+    <string name="body">Body</string>
+    <string name="height">Height</string>
+    <string name="height_info">Used to turn steps into distance (walking and running strides).</string>
+    <string name="run_start">Start run</string>
+    <string name="run_pause">Pause</string>
+    <string name="run_resume">Resume</string>
+    <string name="run_finish">Finish</string>
+    <string name="run_km">%1$.2f km</string>
+    <string name="run_steps">%1$d steps</string>
+    <string name="run_explain">Counts steps with the phone\'s own sensor, without GPS: almost no battery. You can lock the screen. Distance uses your height (%1$d cm, in Settings).</string>
+    <string name="run_hint_running">Counting. Lock the screen and run; press Finish at the end.</string>
+    <string name="run_hint_paused">Paused. Steps taken now don\'t count.</string>
+    <string name="run_enable_steps">Allow step counting</string>
+    <string name="run_gps">Precise GPS</string>
+    <string name="run_log">Log km</string>
+    <string name="run_log_title">Log distance</string>
+    <string name="run_log_text">Ran without tracking? Enter the distance you covered.</string>
+    <string name="run_log_save">Add</string>
+    <string name="run_notif_running">Run in progress</string>
+    <string name="run_notif_paused">Run paused</string>
+    <string name="run_no_sensor">This phone has no step counter: use GPS or log the distance by hand.</string>
 </resources>

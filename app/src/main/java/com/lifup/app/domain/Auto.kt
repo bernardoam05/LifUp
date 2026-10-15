@@ -17,14 +17,16 @@ fun Tx.applyAuto(r: AutoReading) {
     s.allQuests.filter { it.auto != null && it.status == QuestStatus.OPEN }.forEach { q ->
         val value = when (q.auto) {
             AutoKind.STEPS -> r.steps?.toDouble()
+            AutoKind.WALK_DISTANCE -> r.steps?.let { Stride.walkKm(it.toLong(), s.settings.heightCm) }
             AutoKind.SCREEN_TIME -> r.screenMinutes?.let { it / 60.0 }
             AutoKind.DISTRACTION_TIME -> r.distractionMinutes?.let { it / 60.0 }
             null -> null
         } ?: return@forEach
         val rounded = (value * 100).toLong() / 100.0
         when (q.auto) {
-            AutoKind.STEPS -> {
-                updateQuestProgress(q.id, minOf(rounded, q.target))
+            AutoKind.STEPS, AutoKind.WALK_DISTANCE -> {
+                // Never lowers progress: distance logged by hand or by a run stays.
+                updateQuestProgress(q.id, minOf(maxOf(rounded, q.progress), q.target))
                 if (rounded >= q.target) completeQuest(q.id)
             }
             else -> {

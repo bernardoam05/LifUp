@@ -147,6 +147,12 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 }
             }
 
+            SectionTitle(stringResource(R.string.body))
+            Panel {
+                Stepper(set.heightCm, { v -> act { updateSettings { it.copy(heightCm = v) } } }, 120..220, stringResource(R.string.height), " cm", step = 2)
+                Text(stringResource(R.string.height_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+            }
+
             com.lifup.app.ui.focus.PermissionsPanel(s, startExpanded = true)
 
             SectionTitle(stringResource(R.string.notifications))

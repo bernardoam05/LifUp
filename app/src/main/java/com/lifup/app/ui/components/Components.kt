@@ -165,12 +165,12 @@ fun GhostButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier
 }
 
 @Composable
-fun Stepper(value: Int, onChange: (Int) -> Unit, range: IntRange, label: String, suffix: String = "") {
+fun Stepper(value: Int, onChange: (Int) -> Unit, range: IntRange, label: String, suffix: String = "", step: Int = 1) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(label, color = Lif.colors.muted, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-        IconButton(onClick = { onChange((value - 1).coerceIn(range)) }, enabled = value > range.first) { Icon(Icons.Rounded.Remove, null) }
+        IconButton(onClick = { onChange((value - step).coerceIn(range)) }, enabled = value > range.first) { Icon(Icons.Rounded.Remove, null) }
         Text("$value$suffix", style = MaterialTheme.typography.titleMedium, modifier = Modifier.width(56.dp), textAlign = TextAlign.Center)
-        IconButton(onClick = { onChange((value + 1).coerceIn(range)) }, enabled = value < range.last) { Icon(Icons.Rounded.Add, null) }
+        IconButton(onClick = { onChange((value + step).coerceIn(range)) }, enabled = value < range.last) { Icon(Icons.Rounded.Add, null) }
     }
 }
 

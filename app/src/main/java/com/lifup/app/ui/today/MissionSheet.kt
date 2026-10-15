@@ -16,14 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.DirectionsRun
 import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.RestartAlt
-import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lifup.app.R
 import com.lifup.app.domain.DefKind
 import com.lifup.app.domain.GameState
@@ -59,8 +56,6 @@ import com.lifup.app.domain.setProgress
 import com.lifup.app.domain.startTimer
 import com.lifup.app.domain.swapQuest
 import com.lifup.app.domain.undoQuest
-import com.lifup.app.system.GpsService
-import com.lifup.app.system.GpsTracker
 import com.lifup.app.system.Permissions
 import com.lifup.app.ui.LocalTabSwitcher
 import com.lifup.app.ui.Tab
@@ -95,12 +90,7 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
     val open = q.status == QuestStatus.OPEN
     val record = s.records[q.defId]
     val timer = s.timers[q.id]
-    val gps by GpsTracker.session.collectAsStateWithLifecycle()
     var note by remember(q.defId) { mutableStateOf(record?.note.orEmpty()) }
-
-    val gpsPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
-        if (granted[Manifest.permission.ACCESS_FINE_LOCATION] == true) GpsService.start(context, q.id)
-    }
 
     ModalBottomSheet(onDismissRequest = { if (note != record?.note.orEmpty()) act { saveNote(q.defId, note) }; onDismiss() }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = p.panel) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp).padding(bottom = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -155,29 +145,10 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                 PrimaryButton(stringResource(R.string.start_focus), onClick = { onDismiss(); switchTab(Tab.FOCUS) }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Psychology, color = p.purple)
             }
 
-            if (open && q.type == QuestType.GPS) {
-                val tracking = gps?.questId == q.id
-                if (tracking) {
-                    val g = gps!!
-                    Text(
-                        stringResource(R.string.gps_live, g.km, g.speedKmh) + if (!g.hasFix) " · " + stringResource(R.string.gps_waiting) else "",
-                        style = MaterialTheme.typography.titleMedium, color = p.green,
-                    )
-                    if (g.rejected > 0) Text(stringResource(R.string.gps_rejected, g.rejected), style = MaterialTheme.typography.bodySmall, color = p.gold)
-                    GhostButton(stringResource(R.string.gps_stop), onClick = { GpsService.stop(context) }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Stop, color = p.red)
-                } else {
-                    PrimaryButton(stringResource(R.string.gps_start), onClick = {
-                        if (Permissions.location(context)) GpsService.start(context, q.id)
-                        else gpsPermission.launch(
-                            if (Build.VERSION.SDK_INT >= 33) arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.POST_NOTIFICATIONS)
-                            else arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-                        )
-                    }, modifier = Modifier.fillMaxWidth(), icon = Icons.AutoMirrored.Rounded.DirectionsRun, color = p.green)
-                }
-            }
+            if (open && q.type == QuestType.GPS) RunPanel(s, q, tracking = q.auto == null)
 
-            if (open && q.type != QuestType.FORBIDDEN && q.type != QuestType.LIMIT) {
-                val manualOnly = q.type == QuestType.FOCUS || q.type == QuestType.GPS || q.auto != null
+            if (open && q.type != QuestType.FORBIDDEN && q.type != QuestType.LIMIT && q.type != QuestType.GPS) {
+                val manualOnly = q.type == QuestType.FOCUS || q.auto != null
                 val label = if (manualOnly) R.string.mark_done_manual else R.string.complete
                 PrimaryButton(stringResource(label), onClick = { act { completeQuest(q.id) }; onDismiss() }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Check,
                     color = if (manualOnly) p.border else p.accent)
@@ -214,7 +185,7 @@ private fun AutoInfo(kind: com.lifup.app.domain.AutoKind, s: GameState) {
     val switchTab = LocalTabSwitcher.current
     val ready = androidx.compose.runtime.remember(tick, s.settings.blockedApps) {
         when (kind) {
-            com.lifup.app.domain.AutoKind.STEPS -> com.lifup.app.system.AutoTracker.stepsAvailable(context)
+            com.lifup.app.domain.AutoKind.STEPS, com.lifup.app.domain.AutoKind.WALK_DISTANCE -> com.lifup.app.system.AutoTracker.stepsAvailable(context)
             com.lifup.app.domain.AutoKind.SCREEN_TIME -> Permissions.usageAccess(context)
             com.lifup.app.domain.AutoKind.DISTRACTION_TIME -> Permissions.usageAccess(context) && s.settings.blockedApps.isNotEmpty()
         }
@@ -226,7 +197,7 @@ private fun AutoInfo(kind: com.lifup.app.domain.AutoKind, s: GameState) {
             Text(stringResource(R.string.auto_missing), style = MaterialTheme.typography.bodySmall, color = Lif.colors.gold)
             androidx.compose.material3.TextButton(onClick = {
                 when (kind) {
-                    com.lifup.app.domain.AutoKind.STEPS -> if (Build.VERSION.SDK_INT >= 29) activity.launch(Manifest.permission.ACTIVITY_RECOGNITION)
+                    com.lifup.app.domain.AutoKind.STEPS, com.lifup.app.domain.AutoKind.WALK_DISTANCE -> if (Build.VERSION.SDK_INT >= 29) activity.launch(Manifest.permission.ACTIVITY_RECOGNITION)
                     com.lifup.app.domain.AutoKind.SCREEN_TIME -> Permissions.openUsageAccess(context)
                     com.lifup.app.domain.AutoKind.DISTRACTION_TIME ->
                         if (!Permissions.usageAccess(context)) Permissions.openUsageAccess(context) else switchTab(Tab.FOCUS)

@@ -90,10 +90,12 @@ fun Tx.completeQuest(id: String) {
 private fun Tx.completeMission(q: Quest) {
     val doubled = s.doubleXpNext
     if (doubled) s = s.copy(doubleXpNext = false)
+    val hpBefore = s.boss?.takeUnless { it.defeated }?.hp
     val xp = gainXp(if (doubled) q.xp * 2 else q.xp, q.type)
+    val dealt = hpBefore?.let { it - (s.boss?.hp ?: it) } ?: 0
     val gold = gainGold(q.gold)
     gainAttributes(q.type)
-    updateQuest(q.id) { it.copy(status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold) }
+    updateQuest(q.id) { it.copy(status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt) }
     count(StatKey.QUESTS_COMPLETED)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED)
     when (ctx.hour) {
@@ -124,11 +126,12 @@ fun Tx.undoQuest(id: String) {
     if (q.status != QuestStatus.DONE) return
     loseXp(q.xpGained)
     loseGold(q.goldGained)
+    healBoss(q.bossDamage)
     count(StatKey.QUESTS_COMPLETED, -1)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED, -1)
     updateQuest(id) {
         val progress = if (it.type == QuestType.FOCUS || it.type == QuestType.GPS) it.progress else 0.0
-        it.copy(status = QuestStatus.OPEN, xpGained = 0, goldGained = 0, progress = progress.coerceAtMost(it.target * 0.99))
+        it.copy(status = QuestStatus.OPEN, xpGained = 0, goldGained = 0, bossDamage = 0, progress = progress.coerceAtMost(it.target * 0.99))
     }
 }
 

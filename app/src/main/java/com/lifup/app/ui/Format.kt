@@ -199,6 +199,7 @@ fun itemIcon(id: String): ImageVector = when (id) {
 
 @StringRes fun autoName(kind: com.lifup.app.domain.AutoKind) = when (kind) {
     com.lifup.app.domain.AutoKind.STEPS -> R.string.auto_steps
+    com.lifup.app.domain.AutoKind.WALK_DISTANCE -> R.string.auto_walk
     com.lifup.app.domain.AutoKind.SCREEN_TIME -> R.string.auto_screen
     com.lifup.app.domain.AutoKind.DISTRACTION_TIME -> R.string.auto_distraction
 }

@@ -48,6 +48,8 @@ data class Quest(
     val xpGained: Int = 0,
     val goldGained: Int = 0,
     val auto: AutoKind? = null,
+    /** Boss HP this quest removed, given back if it is undone. */
+    val bossDamage: Int = 0,
 )
 
 @Serializable
@@ -78,7 +80,14 @@ data class BossState(
     val challenge: Quest,
     val endsAt: Long,
     val defeated: Boolean = false,
+    /** XP and gold the kill paid, taken back if an undo revives the boss. */
+    val spoils: BossSpoils? = null,
+    /** Chest and shadow were already given; a revived boss only pays XP and gold again. */
+    val lootGiven: Boolean = false,
 )
+
+@Serializable
+data class BossSpoils(val xp: Int, val gold: Int)
 
 @Serializable
 data class PortalState(val quest: Quest, val opensAt: Long, val expiresAt: Long)
@@ -126,6 +135,8 @@ data class Settings(
     val pomodoroBreak: Int = 5,
     val pomodoroRounds: Int = 4,
     val blockedApps: List<String> = emptyList(),
+    /** Used to turn steps into distance. */
+    val heightCm: Int = 170,
     /** null = follows the hunter rank. */
     val themeRank: HunterRank? = null,
 )
@@ -201,7 +212,7 @@ sealed interface Reward {
 @Serializable
 enum class ToastKind {
     LEVEL_UP, ITEM_FOUND, PENALTY_CLEARED, FOCUS_DONE, FOCUS_LOST, BOSS_ESCAPED, PORTAL_ESCAPED,
-    PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT,
+    PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED,
 }
 
 @Serializable
@@ -227,6 +238,7 @@ data class GameState(
     val buffs: List<Buff> = emptyList(),
     val shop: ShopState = ShopState(),
     val focus: FocusSession? = null,
+    val run: RunSession? = null,
     val settings: Settings = Settings(),
     val counters: Map<StatKey, Long> = emptyMap(),
     val achievements: Map<String, Int> = emptyMap(),

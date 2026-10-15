@@ -10,10 +10,6 @@
   "name": {
    "pt": "Peão Mecânico",
    "en": "Clockwork Pawn"
-  },
-  "lore": {
-   "pt": "A forma mais simples de autómato da cripta, desenhado apenas para marchar em frente. Agora marcha para o Soberano.",
-   "en": "The simplest crypt automaton, built only to march forward. Now it marches for you."
   }
  },
  {
@@ -27,10 +23,6 @@
   "name": {
    "pt": "Sentinela Batedor",
    "en": "Scout Sentinel"
-  },
-  "lore": {
-   "pt": "Pequeno e rápido, um autómato que vigiava os corredores labirínticos dos criadores mortos.",
-   "en": "Small and fast, it once patrolled the labyrinths of long-dead makers."
   }
  },
  {
@@ -44,10 +36,6 @@
   "name": {
    "pt": "Mariposa do Vácuo",
    "en": "Void Moth"
-  },
-  "lore": {
-   "pt": "Atraída não pelo calor, mas pela energia umbrosa do Soberano. Flutua entre dimensões.",
-   "en": "Drawn not by heat but by shadow energy. It drifts between dimensions."
   }
  },
  {
@@ -61,10 +49,6 @@
   "name": {
    "pt": "Recruta da Arena",
    "en": "Arena Recruit"
-  },
-  "lore": {
-   "pt": "Lutou com paus, sangrou na areia, morreu por aplausos vazios. O Soberano oferece-lhe uma arena eterna.",
-   "en": "Fought with sticks and bled on the sand. Now it trains beside you, forever."
   }
  },
  {
@@ -78,10 +62,6 @@
   "name": {
    "pt": "Caçador de Redes",
    "en": "Net Hunter"
-  },
-  "lore": {
-   "pt": "Com as suas redes de malha dupla enredou campeões antes de lhe cortarem a garganta nas costas.",
-   "en": "Its double-mesh nets once tangled champions. Now they map unknown roads."
   }
  },
  {
@@ -95,10 +75,6 @@
   "name": {
    "pt": "Acolito de Bronze",
    "en": "Bronze Acolyte"
-  },
-  "lore": {
-   "pt": "Limparam templos desmoronados das divindades esquecidas. Agora limparão os obstáculos do Soberano.",
-   "en": "It swept the temples of forgotten gods. Now it clears your mind."
   }
  },
  {
@@ -112,10 +88,6 @@
   "name": {
    "pt": "Mago Esquecido",
    "en": "Forgotten Mage"
-  },
-  "lore": {
-   "pt": "Gagueja encantamentos que já não funcionam. Serve como distração mágica.",
-   "en": "It stutters spells that no longer work. Enough to soften a blow."
   }
  },
  {
@@ -129,10 +101,6 @@
   "name": {
    "pt": "Rei dos Ratos",
    "en": "Rat King"
-  },
-  "lore": {
-   "pt": "Milhares de consciências roedoras fundidas num colosso rasteiro que o Soberano subjugou.",
-   "en": "Thousands of rodent minds fused into one crawling colossus. It knows every bargain."
   }
  },
  {
@@ -146,10 +114,6 @@
   "name": {
    "pt": "Vidente Cego",
    "en": "Blind Seer"
-  },
-  "lore": {
-   "pt": "Previu a ascensão do Soberano. Arrancou os próprios olhos porque a visão era aterradora.",
-   "en": "It foresaw your rise and tore out its eyes. Now it only sees focus."
   }
  },
  {
@@ -163,10 +127,6 @@
   "name": {
    "pt": "Cão Ferruginoso",
    "en": "Rust Hound"
-  },
-  "lore": {
-   "pt": "Corroído por chuvas ácidas nas arenas abertas. Forte e desesparado.",
-   "en": "Corroded by acid rain in open arenas. Strong and desperate."
   }
  },
  {
@@ -180,10 +140,6 @@
   "name": {
    "pt": "Colecionador de Ossos",
    "en": "Bone Collector"
-  },
-  "lore": {
-   "pt": "As montanhas de esqueletos na Cripta eram o seu parque de diversões.",
-   "en": "The skeleton mountains of the crypt were its playground."
   }
  },
  {
@@ -197,10 +153,6 @@
   "name": {
    "pt": "Salamandra de Fogo",
    "en": "Fire Salamander"
-  },
-  "lore": {
-   "pt": "Vivia nos lagos de lava dos dungeons vulcânicos. As suas escamas eram mais valiosas que ouro. Agora serve um mestre mais valioso ainda.",
-   "en": "Its scales were worth more than gold in the volcanic lakes. Now it serves a richer master."
   }
  },
  {
@@ -214,10 +166,6 @@
   "name": {
    "pt": "Troll do Pântano",
    "en": "Swamp Troll"
-  },
-  "lore": {
-   "pt": "Regenerava qualquer ferida. Não havia arma que o pudesse matar permanentemente — até ao dia em que o Soberano o tentou. E conseguiu.",
-   "en": "It regenerated from any wound. Setbacks barely scratch it."
   }
  },
  {
@@ -231,10 +179,6 @@
   "name": {
    "pt": "Autómato Relógio",
    "en": "Clockwork Automaton"
-  },
-  "lore": {
-   "pt": "Move-se com a precisão de um ponteiro. Cada golpe é perfeitamente cronometrado.",
-   "en": "It moves with the precision of a clock hand. Every strike perfectly timed."
   }
  },
  {
@@ -248,10 +192,6 @@
   "name": {
    "pt": "Tecelã de Constelações",
    "en": "Constellation Weaver"
-  },
-  "lore": {
-   "pt": "Poder capaz de ligar estrelas. Agora liga e fortifica os fragmentos mágicos do Soberano.",
-   "en": "A power able to bind stars. Now it binds your progress together."
   }
  },
  {
@@ -265,10 +205,6 @@
   "name": {
    "pt": "Minotauro Escravo",
    "en": "Chained Minotaur"
-  },
-  "lore": {
-   "pt": "Preso sob correntes que pesavam mais do que os blocos de pedra. Uma vez livre pelo escuro, o bater do casco faz o chão tremer.",
-   "en": "Once bound by chains heavier than stone. When it charges, the ground shakes."
   }
  },
  {
@@ -282,10 +218,6 @@
   "name": {
    "pt": "Papiro Amaldiçoado",
    "en": "Cursed Scripture"
-  },
-  "lore": {
-   "pt": "Uma folha com as leis antigas — agora obedece apenas à lei do sistema, o qual substituiu as divindades mortais.",
-   "en": "A page of ancient laws that now obeys only the System."
   }
  },
  {
@@ -299,10 +231,6 @@
   "name": {
    "pt": "Tecedeira de Veneno",
    "en": "Venom Weaver"
-  },
-  "lore": {
-   "pt": "Aranha do tamanho de cavalos. Fia teias que dissolvem a carne dos descuidados.",
-   "en": "A spider the size of a horse. Its webs dissolve the careless."
   }
  },
  {
@@ -316,10 +244,6 @@
   "name": {
    "pt": "Samurai Vingativo",
    "en": "Vengeful Samurai"
-  },
-  "lore": {
-   "pt": "Lutou sem senhor em vida. Encontrou na morte o Lorde das Sombras perfeito.",
-   "en": "Masterless in life, it found purpose in daily discipline."
   }
  },
  {
@@ -333,10 +257,6 @@
   "name": {
    "pt": "Golem de Cristal",
    "en": "Crystal Golem"
-  },
-  "lore": {
-   "pt": "Refratava magia em focos mortais no Ninho de Cristal Perdido.",
-   "en": "It refracts magic into deadly beams — and fortune into your hands."
   }
  },
  {
@@ -350,10 +270,6 @@
   "name": {
    "pt": "Espreitador Glacial",
    "en": "Glacier Stalker"
-  },
-  "lore": {
-   "pt": "Move-se entre estalidos de gelo. Só deixa pegadas quando quer.",
-   "en": "It moves between cracks of ice and leaves footprints only when it wants."
   }
  },
  {
@@ -367,10 +283,6 @@
   "name": {
    "pt": "Bruxa das Tempestades",
    "en": "Storm Witch"
-  },
-  "lore": {
-   "pt": "Invocou relâmpagos que partiam montanhas. Mesmo convertida em sombra, o trovão que a acompanha pode ser ouvido.",
-   "en": "She summoned lightning that split mountains. The thunder still follows her."
   }
  },
  {
@@ -384,10 +296,6 @@
   "name": {
    "pt": "Lorde Vampiro",
    "en": "Vampire Lord"
-  },
-  "lore": {
-   "pt": "Viveu mil anos a roubar a vitalidade dos outros. Agora doa a sua para alimentar o poder do Soberano.",
-   "en": "A thousand years stealing vitality. Now it donates its own."
   }
  },
  {
@@ -401,10 +309,6 @@
   "name": {
    "pt": "Wendigo das Altitudes",
    "en": "Highland Wendigo"
-  },
-  "lore": {
-   "pt": "A fome que o consumia em vida nunca cessou. Na morte, essa fome converteu-se em vontade — e a vontade serve o Soberano.",
-   "en": "The hunger that consumed it never stopped. In death it became will."
   }
  },
  {
@@ -418,10 +322,6 @@
   "name": {
    "pt": "Banshee das Profundezas",
    "en": "Banshee of the Deep"
-  },
-  "lore": {
-   "pt": "O seu grito era uma profecia de morte. Cada manhã, a sua voz anuncia o início de um novo dia de poder para o Soberano.",
-   "en": "Her cry was a prophecy of death. Now each morning it announces a new day of power."
   }
  },
  {
@@ -435,10 +335,6 @@
   "name": {
    "pt": "Manticora Sombria",
    "en": "Shadow Manticore"
-  },
-  "lore": {
-   "pt": "Corpo de leão, asas de raptor, cauda venenosa. Era a criatura mais temida de três dungeons. O Soberano levou dez minutos a subjugá-la.",
-   "en": "Lion body, raptor wings, venomous tail. The most feared creature of three dungeons."
   }
  },
  {
@@ -452,10 +348,6 @@
   "name": {
    "pt": "Médico da Peste",
    "en": "Plague Doctor"
-  },
-  "lore": {
-   "pt": "Tentou curar a sombra. Percebeu que a sombra é a única cura contra as doenças dos deuses.",
-   "en": "It tried to cure the shadow and learned the shadow is the cure."
   }
  },
  {
@@ -469,10 +361,6 @@
   "name": {
    "pt": "Cavalaria Sombria",
    "en": "Dark Cavalry"
-  },
-  "lore": {
-   "pt": "Cavalos descarnados montados por generais que esqueceram de que império vieram.",
-   "en": "Fleshless horses ridden by generals who forgot which empire they came from."
   }
  },
  {
@@ -486,10 +374,6 @@
   "name": {
    "pt": "Guardião da Cripta",
    "en": "Crypt Guardian"
-  },
-  "lore": {
-   "pt": "Guarda os túmulos dos antigos Caçadores. Conhece cada lápide, cada nome. Agora guarda o único caçador que não precisa de lápide.",
-   "en": "It knows every tombstone and every name. It guards the one who keeps going."
   }
  },
  {
@@ -503,10 +387,6 @@
   "name": {
    "pt": "Feiticeiro Abissal",
    "en": "Abyssal Warlock"
-  },
-  "lore": {
-   "pt": "Canalizou o vácuo de uma dimensão estéril, vendendo a sanidade pelo foco inquebrável da sombra.",
-   "en": "It traded its sanity for unbreakable focus."
   }
  },
  {
@@ -520,10 +400,6 @@
   "name": {
    "pt": "Cavaleiro Carmesim",
    "en": "Crimson Knight"
-  },
-  "lore": {
-   "pt": "O mais fiel dos cavaleiros das sombras. Mesmo na morte, a sua armadura mantém o brilho carmesim. Nenhuma ordem é recusada.",
-   "en": "The most loyal of knights. Even in death its armour keeps its crimson glow."
   }
  },
  {
@@ -537,10 +413,6 @@
   "name": {
    "pt": "Cerberus, o Guardião",
    "en": "Cerberus, the Gatekeeper"
-  },
-  "lore": {
-   "pt": "Três cabeças, três mentes, um único propósito. Nenhum caçador passou o portal que ele guardava. O Soberano foi o primeiro.",
-   "en": "Three heads, three minds, one purpose: nothing gets past it. Not even a penalty."
   }
  },
  {
@@ -554,10 +426,6 @@
   "name": {
    "pt": "Lorde Tigre Branco",
    "en": "White Tiger Lord"
-  },
-  "lore": {
-   "pt": "Um tigre albino sagrado do dungeon das montanhas nevadas. As tribos locais oravam para ele. O Soberano combateu-o durante três dias. Ambos sobreviveram. Apenas um continua de pé.",
-   "en": "A sacred albino tiger of the snowy mountains. Tribes once prayed to it."
   }
  },
  {
@@ -571,10 +439,6 @@
   "name": {
    "pt": "Comandante Espectral",
    "en": "Wraith Commander"
-  },
-  "lore": {
-   "pt": "Liderou exércitos de mortos-vivos através de sete dungeons sem nunca perder um único soldado — porque os mortos não podem ser mortos duas vezes. A streak também não.",
-   "en": "It led armies through seven dungeons without losing a soldier. Nor a streak."
   }
  },
  {
@@ -588,10 +452,6 @@
   "name": {
    "pt": "Arauto da Tempestade",
    "en": "Storm Herald"
-  },
-  "lore": {
-   "pt": "Anunciava as tempestades antes de chegarem. As criaturas do dungeon fugiam ao ouvir o seu grito. O Soberano ouviu e avançou. O Arauto decidiu seguir quem não fugia.",
-   "en": "It announced storms before they arrived. Bosses flee when they hear it."
   }
  },
  {
@@ -605,10 +465,6 @@
   "name": {
    "pt": "Assassino Real",
    "en": "Royal Assassin"
-  },
-  "lore": {
-   "pt": "Trabalhava nas sombras para imperadores frágeis. Serve a escuridão suprema sob promessa de caos silenciado.",
-   "en": "It worked in the shadows for fragile emperors. Silence is its weapon."
   }
  },
  {
@@ -622,10 +478,6 @@
   "name": {
    "pt": "Imperador da Dor",
    "en": "Emperor of Pain"
-  },
-  "lore": {
-   "pt": "Nunca foi ferido profundamente. A lenda na arena afirmava que ele não tinha órgãos — apenas blocos de agonia solidificada.",
-   "en": "Never deeply wounded. Legend says it has no organs — only solid agony."
   }
  },
  {
@@ -639,10 +491,6 @@
   "name": {
    "pt": "Eclipse, a Fome Cósmica",
    "en": "Eclipse, the Cosmic Hunger"
-  },
-  "lore": {
-   "pt": "A escuridão que engole a luz de cem galáxias. Foi preciso o poder integral de um Autarca e o Soberano para o subjugar.",
-   "en": "The darkness that swallows the light of a hundred galaxies."
   }
  },
  {
@@ -656,10 +504,6 @@
   "name": {
    "pt": "Deus da Arena",
    "en": "God of the Arena"
-  },
-  "lore": {
-   "pt": "O Avatar imortal de sangue derramado. Todos que caem no coliseu abrem caminho para esta criatura. Submeteu-se pela primeira vez à autoridade do Soberano.",
-   "en": "The immortal avatar of spilled blood. It kneels for the first time."
   }
  },
  {
@@ -673,10 +517,6 @@
   "name": {
    "pt": "O Monólito Primitivo",
    "en": "The Primeval Monolith"
-  },
-  "lore": {
-   "pt": "Uma rocha senciente com vinte metros de altura que o Sistema marcava como indomável. Destrói economias inteiras só de aterrar.",
-   "en": "A twenty-metre sentient rock the System marked as untameable."
   }
  },
  {
@@ -690,10 +530,6 @@
   "name": {
    "pt": "Prime, O Motor Eterno",
    "en": "Prime, the Eternal Engine"
-  },
-  "lore": {
-   "pt": "A primeira máquina da Cripta. Funciona através de energia sombria pura. Em sua presença, o Sistema reorganiza as prioridades logísticas e comerciais.",
-   "en": "The first machine of the crypt. In its presence every other shadow works harder."
   }
  },
  {
@@ -707,10 +543,6 @@
   "name": {
    "pt": "Golem de Aluguer",
    "en": "Hired Golem"
-  },
-  "lore": {
-   "pt": "Construído por um mago mercenário para ser vendido a qualquer senhor. O último comprador foi o Soberano. E desta vez, não há devolução.",
-   "en": "Built by a mercenary mage to be sold to any lord. No refunds this time."
   }
  },
  {
@@ -724,10 +556,6 @@
   "name": {
    "pt": "Mercenário das Sombras",
    "en": "Shadow Mercenary"
-  },
-  "lore": {
-   "pt": "Trabalhou para os cinco maiores Guildas antes de os trair a todos. Agora serve apenas um. E desta vez, a traição é impossível — está morto.",
-   "en": "It betrayed five guilds. Now it serves only one — betrayal is no longer possible."
   }
  },
  {
@@ -741,10 +569,6 @@
   "name": {
    "pt": "Ferreiro das Sombras",
    "en": "Shadow Blacksmith"
-  },
-  "lore": {
-   "pt": "Martelava o aço até o sangue ferver. Agora martela o destino.",
-   "en": "It hammered steel until its blood boiled. Now it hammers prices."
   }
  },
  {
@@ -758,10 +582,6 @@
   "name": {
    "pt": "Alquimista Escuro",
    "en": "Dark Alchemist"
-  },
-  "lore": {
-   "pt": "Procurava a vida eterna. Encontrou a imortalidade na Sombra do Soberano.",
-   "en": "It sought eternal life and found it in study."
   }
  },
  {
@@ -775,10 +595,6 @@
   "name": {
    "pt": "Assombrador do Tesouro",
    "en": "Treasury Haunter"
-  },
-  "lore": {
-   "pt": "Um espírito ganancioso que não largava o seu ouro. O Soberano comprou o espírito e o ouro.",
-   "en": "A greedy spirit that never let go of its gold — or of a lucky find."
   }
  },
  {
@@ -792,10 +608,6 @@
   "name": {
    "pt": "Vizir Fantasmagórico",
    "en": "Phantom Vizier"
-  },
-  "lore": {
-   "pt": "O conselheiro secreto de impérios caídos. Os seus sussurros agora guiam o Sistema.",
-   "en": "The secret counsellor of fallen empires. Its whispers now guide every deal."
   }
  },
  {
@@ -809,10 +621,6 @@
   "name": {
    "pt": "Chama Sombria",
    "en": "Shadow Wisp"
-  },
-  "lore": {
-   "pt": "Uma alma que não sabe que está morta. Os teus primeiros passos acordaram-na.",
-   "en": "A soul that does not know it is dead. Your first steps woke it."
   }
  },
  {
@@ -826,10 +634,6 @@
   "name": {
    "pt": "Caçador da Lua",
    "en": "Moonlit Stalker"
-  },
-  "lore": {
-   "pt": "Só caça de noite. Uma semana de disciplina revelou-o.",
-   "en": "It only hunts at night. A week of discipline revealed it."
   }
  },
  {
@@ -843,10 +647,6 @@
   "name": {
    "pt": "Devorador de Mentes",
    "en": "Mind Devourer"
-  },
-  "lore": {
-   "pt": "Alimentava-se de mentes. Dez horas de foco deixaram-no saciado pela primeira vez.",
-   "en": "It fed on minds. Ten hours of focus left it full for the first time."
   }
  },
  {
@@ -860,10 +660,6 @@
   "name": {
    "pt": "Arquiteto da Ruína",
    "en": "Architect of Ruin"
-  },
-  "lore": {
-   "pt": "Construiu os primeiros dungeons. Só um verdadeiro colecionador o pode comandar.",
-   "en": "It built the first dungeons. Only a true collector can command it."
   }
  },
  {
@@ -877,10 +673,6 @@
   "name": {
    "pt": "Guardião da Constância",
    "en": "Guardian of Constancy"
-  },
-  "lore": {
-   "pt": "A sua lealdade não se mede em batalhas, mas em consistência.",
-   "en": "Its loyalty is measured not in battles but in consistency."
   }
  },
  {
@@ -894,10 +686,6 @@
   "name": {
    "pt": "Marechal da Perseverança",
    "en": "Marshal of Perseverance"
-  },
-  "lore": {
-   "pt": "Só o conquista quem nunca para. Cem dias de disciplina.",
-   "en": "Earned only by those who never stop. One hundred days of discipline."
   }
  },
  {
@@ -912,10 +700,6 @@
   "name": {
    "pt": "Senhor Goblin Tabata",
    "en": "Goblin Warlord"
-  },
-  "lore": {
-   "pt": "20s inferno, 10s purgatório. Repete.",
-   "en": "20 seconds of hell, 10 of purgatory. Repeat."
   }
  },
  {
@@ -930,10 +714,6 @@
   "name": {
    "pt": "Matriarca da Caverna",
    "en": "Cave Matriarch"
-  },
-  "lore": {
-   "pt": "Ensina como quem tece. Feynman é armadilha de caça.",
-   "en": "It teaches the way it weaves. Explaining is the trap."
   }
  },
  {
@@ -948,10 +728,6 @@
   "name": {
    "pt": "Operária Primordial",
    "en": "Primeval Worker"
-  },
-  "lore": {
-   "pt": "Explora sem mapa. Descobre três verdades novas.",
-   "en": "It explores without a map and finds three new truths."
   }
  },
  {
@@ -966,10 +742,6 @@
   "name": {
    "pt": "Fragmento do Golem",
    "en": "Golem Shard"
-  },
-  "lore": {
-   "pt": "Corpo novo, movimento estranho. Domina no fim.",
-   "en": "A new body, a strange movement. Mastered by the end."
   }
  },
  {
@@ -984,10 +756,6 @@
   "name": {
    "pt": "Cantor das Cordas",
    "en": "The Stringsinger"
-  },
-  "lore": {
-   "pt": "Metrónomo implacável. Três acordes, um império.",
-   "en": "A relentless metronome. Three chords, an empire."
   }
  },
  {
@@ -1002,10 +770,6 @@
   "name": {
    "pt": "Poliglota da Provação",
    "en": "Polyglot of the Trial"
-  },
-  "lore": {
-   "pt": "Palavras novas, frases novas. O mundo encolhe.",
-   "en": "New words, new sentences. The world gets smaller."
   }
  },
  {
@@ -1020,10 +784,6 @@
   "name": {
    "pt": "Chef do Ritual",
    "en": "Ritual Chef"
-  },
-  "lore": {
-   "pt": "Do zero ao prato. O fogão é forja.",
-   "en": "From scratch to the plate. The stove is a forge."
   }
  },
  {
@@ -1038,10 +798,6 @@
   "name": {
    "pt": "Curador do Palácio Mental",
    "en": "Curator of the Mind Palace"
-  },
-  "lore": {
-   "pt": "Doze âncoras na memória. Duas voltas completas.",
-   "en": "Twelve anchors in memory. Two full laps."
   }
  },
  {
@@ -1056,10 +812,6 @@
   "name": {
    "pt": "Pioneiro da Fronteira",
    "en": "Frontier Pioneer"
-  },
-  "lore": {
-   "pt": "Aula curta, notas longas. Novo é perigoso e necessário.",
-   "en": "A short class, long notes. New is dangerous and necessary."
   }
  },
  {
@@ -1074,10 +826,6 @@
   "name": {
    "pt": "Artesão do Protótipo",
    "en": "Prototype Artisan"
-  },
-  "lore": {
-   "pt": "Objeto útil. Erro vira lição sólida.",
-   "en": "A useful object. Every mistake becomes a solid lesson."
   }
  },
  {
@@ -1092,10 +840,6 @@
   "name": {
    "pt": "Caminhante do Vento",
    "en": "Wind Walker"
-  },
-  "lore": {
-   "pt": "Alonga o silêncio entre movimentos. O vento ensina ritmo.",
-   "en": "It stretches the silence between movements. The wind teaches rhythm."
   }
  },
  {
@@ -1110,10 +854,6 @@
   "name": {
    "pt": "Tarântula Imperial",
    "en": "Imperial Tarantula"
-  },
-  "lore": {
-   "pt": "Cada passo medido. O labirinto obedece ao mapa interno.",
-   "en": "Every step measured. The labyrinth obeys the inner map."
   }
  },
  {
@@ -1128,10 +868,6 @@
   "name": {
    "pt": "Filósofo da Montanha",
    "en": "Mountain Philosopher"
-  },
-  "lore": {
-   "pt": "Problema real, opiniões opostas. Decisão escrita no fim.",
-   "en": "A real problem, opposing views, a written decision."
   }
  },
  {
@@ -1146,10 +882,6 @@
   "name": {
    "pt": "Artesão Digital",
    "en": "Digital Artisan"
-  },
-  "lore": {
-   "pt": "Build que compila. Demo que impressiona.",
-   "en": "A build that compiles. A demo that impresses."
   }
  },
  {
@@ -1164,10 +896,6 @@
   "name": {
    "pt": "Estoico do Desconforto",
    "en": "Stoic of Discomfort"
-  },
-  "lore": {
-   "pt": "Frio real, corpo honesto. Antes e depois contam a história.",
-   "en": "Real cold, an honest body. Before and after tell the story."
   }
  },
  {
@@ -1182,10 +910,6 @@
   "name": {
    "pt": "Primata Titânico",
    "en": "Titanic Ape"
-  },
-  "lore": {
-   "pt": "Alterna força bruta até o chão tremer de respeito.",
-   "en": "Alternating brute force until the ground trembles with respect."
   }
  },
  {
@@ -1200,10 +924,6 @@
   "name": {
    "pt": "Dragão Astral",
    "en": "Astral Drake"
-  },
-  "lore": {
-   "pt": "Respira, retém, medita. O fogo interior acorda sem queimar.",
-   "en": "Breathe, hold, meditate. The inner fire wakes without burning."
   }
  },
  {
@@ -1218,10 +938,6 @@
   "name": {
    "pt": "Invocador de Tempestades",
    "en": "Storm Bringer"
-  },
-  "lore": {
-   "pt": "Uma skill, um sprint. A tempestade tem nome.",
-   "en": "One skill, one sprint. The storm has a name."
   }
  },
  {
@@ -1236,10 +952,6 @@
   "name": {
    "pt": "Senhor do Tempo",
    "en": "Lord of Time"
-  },
-  "lore": {
-   "pt": "Cinco blocos. Três vitórias. O relógio aplaude.",
-   "en": "Three blocks, three victories. The clock applauds."
   }
  },
  {
@@ -1254,10 +966,6 @@
   "name": {
    "pt": "Quebrador de Estrelas",
    "en": "Star Breaker"
-  },
-  "lore": {
-   "pt": "Km novos, olhos novos. O mapa rasga-se sozinho.",
-   "en": "New kilometres, new eyes. The map tears itself."
   }
  },
  {
@@ -1272,10 +980,6 @@
   "name": {
    "pt": "Sangreal, Cavaleiro de Sangue",
    "en": "Sangreal, the Blood Knight"
-  },
-  "lore": {
-   "pt": "O ferro obedece à repetição. O sangue lembra cada rep.",
-   "en": "Iron obeys repetition. Blood remembers every rep."
   }
  },
  {
@@ -1290,10 +994,6 @@
   "name": {
    "pt": "Rei Lich Esquecido",
    "en": "Forgotten Lich King"
-  },
-  "lore": {
-   "pt": "Imobilidade total. Só a mente atravessa muros.",
-   "en": "Total stillness. Only the mind passes through walls."
   }
  },
  {
@@ -1308,10 +1008,6 @@
   "name": {
    "pt": "Ceifeiro de Almas",
    "en": "Soul Reaper"
-  },
-  "lore": {
-   "pt": "Rivalizava os Guias do Submundo. O Soberano usurpou a sua posição numa única batalha.",
-   "en": "It rivalled the guides of the underworld. One battle was enough to claim it."
   }
  },
  {
@@ -1326,10 +1022,6 @@
   "name": {
    "pt": "Lâmina Serafim Caído",
    "en": "Fallen Seraph Blade"
-  },
-  "lore": {
-   "pt": "Seis asas decepadas transmutadas em tendão escuro. Onde passava trazia luz cega. Onde vai, só cai sombra espessa e letal.",
-   "en": "Six severed wings turned into dark sinew. Where it goes, only shadow falls."
   }
  },
  {
@@ -1344,10 +1036,6 @@
   "name": {
    "pt": "Titã de Sucata",
    "en": "Scrap Titan"
-  },
-  "lore": {
-   "pt": "Nasceu da fusão de centenas de autómatos quebrados. Uma montanha de metal que segue o Soberano de forma desajeitada mas letal.",
-   "en": "Born from hundreds of broken automatons. Clumsy, but unstoppable."
   }
  },
  {
@@ -1362,10 +1050,6 @@
   "name": {
    "pt": "Coelho das Sombras",
    "en": "Shadow Hare"
-  },
-  "lore": {
-   "pt": "Saltava entre os portais com agilidade sobrenatural. O Soberano venceu-o na sua própria corrida — e reclamou-o como sombra.",
-   "en": "It leapt between portals with supernatural speed — until it lost its own race."
   }
  },
  {
@@ -1380,10 +1064,6 @@
   "name": {
    "pt": "Filhote de Dragão Sombrio",
    "en": "Shadow Dragon Whelp"
-  },
-  "lore": {
-   "pt": "Um pálido eco do poder dracónico, mas cresce dia após dia no exército real do Soberano.",
-   "en": "A pale echo of draconic power that grows stronger every day."
   }
  }
 ]

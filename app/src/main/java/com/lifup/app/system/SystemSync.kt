@@ -15,6 +15,7 @@ object AppVisibility {
  */
 object SystemSync {
     private val extraListeners = mutableListOf<(Context, GameState) -> Unit>()
+    private var postedRun: Any? = Unit
 
     fun install(context: Context, store: GameStore) {
         val app = context.applicationContext
@@ -32,6 +33,7 @@ object SystemSync {
     fun apply(context: Context, s: GameState) {
         SessionService.sync(context, s)
         Alarms.schedule(context, s)
+        if (s.run != postedRun) { postedRun = s.run; Notifications.run(context, s.run) }
         extraListeners.forEach { runCatching { it(context, s) } }
     }
 

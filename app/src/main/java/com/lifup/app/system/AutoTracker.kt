@@ -23,6 +23,7 @@ import com.lifup.app.LifUpApp
 import com.lifup.app.domain.AutoReading
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.applyAuto
+import com.lifup.app.domain.runCheckpoint
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
@@ -34,9 +35,11 @@ import kotlin.coroutines.resume
 object AutoTracker {
     private const val PREFS = "auto_tracker"
 
-    fun stepsAvailable(c: Context) =
-        (Build.VERSION.SDK_INT < 29 || ContextCompat.checkSelfPermission(c, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED) &&
-            (c.getSystemService(Context.SENSOR_SERVICE) as SensorManager).getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null
+    fun hasStepSensor(c: Context) =
+        (c.getSystemService(Context.SENSOR_SERVICE) as SensorManager).getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null
+
+    fun stepsAvailable(c: Context) = hasStepSensor(c) &&
+        (Build.VERSION.SDK_INT < 29 || ContextCompat.checkSelfPermission(c, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED)
 
     /** Measurements for [day]. Today's reading also advances the step baseline. */
     suspend fun read(c: Context, day: LocalDate, s: GameState): AutoReading {
@@ -46,7 +49,7 @@ object AutoTracker {
         val usage = if (Permissions.usageAccess(c)) runCatching { screenMinutes(c, start, end, s.settings.blockedApps.toSet()) }.getOrNull() else null
         return AutoReading(
             day = day.toString(),
-            steps = if (stepsAvailable(c)) readCounter(c)?.let { stepsFor(c, day.toString(), it) } else null,
+            steps = stepCounter(c)?.let { stepsFor(c, day.toString(), it) },
             screenMinutes = usage?.first,
             distractionMinutes = usage?.second?.takeIf { s.settings.blockedApps.isNotEmpty() },
         )
@@ -54,7 +57,9 @@ object AutoTracker {
 
     // ── Steps ─────────────────────────────────────────────────────────────────
 
-    private suspend fun readCounter(c: Context): Long? {
+    /** Steps since boot, or null without the sensor or the permission. */
+    suspend fun stepCounter(c: Context): Long? {
+        if (!stepsAvailable(c)) return null
         val sm = c.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val sensor = sm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) ?: return null
         return withTimeoutOrNull(4_000) {
@@ -141,10 +146,11 @@ object AutoTracker {
         c.packageManager.queryIntentActivities(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0)
             .map { it.activityInfo.packageName }.toSet()
 
-    /** Reads today's values and applies them. */
+    /** Reads today's values and applies them; also credits steps of a run in progress. */
     suspend fun sync(c: Context) {
         val store = LifUpApp.store
         val s = store.current
+        if (s.run?.running == true) stepCounter(c)?.let { n -> store.dispatch { runCheckpoint(n) } }
         if (s.allQuests.none { it.auto != null }) return
         val reading = read(c, LocalDate.now(), s)
         store.dispatch { applyAuto(reading) }

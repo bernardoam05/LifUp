@@ -194,6 +194,7 @@ private fun toastMessage(t: Reward.Toast): String {
         ToastKind.FOCUS_DONE -> stringResource(R.string.toast_focus_done, t.arg)
         ToastKind.FOCUS_LOST -> stringResource(R.string.toast_focus_lost, t.arg)
         ToastKind.BOSS_ESCAPED -> stringResource(R.string.toast_boss_escaped, content.bossById[t.arg]?.title?.local() ?: t.arg)
+        ToastKind.BOSS_REVIVED -> stringResource(R.string.toast_boss_revived, content.bossById[t.arg]?.title?.local() ?: t.arg)
         ToastKind.PORTAL_ESCAPED -> stringResource(R.string.toast_portal_escaped)
         ToastKind.PORTAL_CLEARED -> stringResource(R.string.toast_portal_cleared)
         ToastKind.SHADOW_UPGRADED -> stringResource(R.string.toast_shadow_upgraded, shadowName)

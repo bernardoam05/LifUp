@@ -244,6 +244,74 @@ class EngineTest {
         assertEquals(1L, s.count(StatKey.PORTALS_CLEARED))
     }
 
+    @Test fun `undoing a mission heals the boss`() {
+        var s = fresh()
+        val maxHp = s.boss!!.maxHp
+        val q = s.dailyQuests.first { it.type == QuestType.TRAINING }
+        s = run(s, "2026-10-14T10:00") { completeQuest(q.id) }
+        assertTrue(s.boss!!.hp < maxHp)
+        assertEquals(maxHp - s.boss!!.hp, s.quests.first { it.id == q.id }.bossDamage)
+        s = run(s, "2026-10-14T10:01") { undoQuest(q.id) }
+        assertEquals(maxHp, s.boss!!.hp)
+    }
+
+    @Test fun `undoing the killing blow revives the boss without duplicating loot`() {
+        var s = fresh()
+        s = s.copy(boss = s.boss!!.copy(hp = 1))
+        val q = s.dailyQuests.first { it.type == QuestType.TRAINING }
+        s = run(s, "2026-10-14T10:00") { completeQuest(q.id) }
+        assertTrue(s.boss!!.defeated)
+        val gold = s.player.gold
+        val chests = s.items("bau_cacador")
+        s = run(s, "2026-10-14T10:01") { undoQuest(q.id) }
+        assertFalse(s.boss!!.defeated)
+        assertEquals(1, s.boss!!.hp)
+        assertEquals(0L, s.count(StatKey.BOSSES_DEFEATED))
+        assertTrue(s.player.gold < gold)
+        s = run(s, "2026-10-14T10:02") { completeQuest(q.id) }
+        assertTrue(s.boss!!.defeated)
+        assertEquals(chests, s.items("bau_cacador"))
+        assertEquals(1, s.rewards.count { it is Reward.ShadowGained && it.source == SourceType.BOSS })
+    }
+
+    private fun withRunQuest(s: GameState): Pair<GameState, Quest> {
+        val q = buildQuest(content.questDefById.getValue("pool_run"), 1, QuestOrigin.EXTRA, "run_test")
+        return s.copy(quests = s.quests + q) to q
+    }
+
+    @Test fun `step-counted run credits distance by cadence and completes`() {
+        var (s, q) = withRunQuest(fresh())
+        s = run(s, "2026-10-14T10:00") { startRun(q.id, 1_000) }
+        s = run(s, "2026-10-14T10:10") { runCheckpoint(1_500) } // 50 spm: walking stride
+        assertEquals(500 * Stride.walkM(170) / 1000, s.run!!.km, 1e-9)
+        s = run(s, "2026-10-14T10:30") { runCheckpoint(4_700) } // 160 spm: running stride
+        assertEquals(QuestStatus.DONE, s.quests.first { it.id == q.id }.status)
+        assertNull(s.run)
+    }
+
+    @Test fun `paused time does not count`() {
+        var (s, q) = withRunQuest(fresh())
+        s = run(s, "2026-10-14T10:00") { startRun(q.id, 0) }
+        s = run(s, "2026-10-14T10:05") { pauseRun(800) }
+        s = run(s, "2026-10-14T10:30") { resumeRun(5_000) }
+        s = run(s, "2026-10-14T10:35") { pauseRun(5_800) }
+        assertEquals(1_600L, s.run!!.steps)
+        assertEquals(10 * 60_000L, s.run!!.elapsed(at("2026-10-14T11:00")))
+        s = run(s, "2026-10-14T10:36") { finishRun(5_800); logDistance(q.id, 0.5) }
+        assertNull(s.run)
+        assertEquals(1_600 * Stride.runM(170) / 1000 + 0.5, s.quests.first { it.id == q.id }.progress, 1e-9)
+    }
+
+    @Test fun `walk distance missions follow daily steps and keep logged distance`() {
+        var s = fresh()
+        val q = buildQuest(content.questDefById.getValue("pool_walking"), 1, QuestOrigin.EXTRA, "walk_test")
+        s = s.copy(quests = s.quests + q)
+        s = run(s, "2026-10-14T10:00") { logDistance(q.id, 2.0); applyAuto(AutoReading("2026-10-14", steps = 1_000)) }
+        assertEquals(2.0, s.quests.first { it.id == q.id }.progress, 1e-9)
+        s = run(s, "2026-10-14T18:00") { applyAuto(AutoReading("2026-10-14", steps = 20_000)) }
+        assertEquals(QuestStatus.DONE, s.quests.first { it.id == q.id }.status)
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

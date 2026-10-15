@@ -21,6 +21,7 @@ object Notifications {
 
     const val ID_SESSION = 1337
     const val ID_GPS = 1338
+    private const val ID_RUN = 1339
     private const val ID_PORTAL = 2001
     private const val ID_FOCUS_DONE = 2002
     private const val ID_PENALTY = 2003
@@ -88,6 +89,25 @@ object Notifications {
         context, ID_REMINDER, CH_REMINDERS, context.getString(R.string.notif_reminder_title),
         context.getString(R.string.notif_reminder_text, left), "today",
     )
+
+    /** Ongoing note for a step-counted run (no service: the counter runs in hardware). */
+    fun run(context: Context, r: com.lifup.app.domain.RunSession?) {
+        val nm = NotificationManagerCompat.from(context)
+        if (r == null || !canPost(context)) { nm.cancel(ID_RUN); return }
+        val now = System.currentTimeMillis()
+        val n = NotificationCompat.Builder(context, CH_SESSION)
+            .setSmallIcon(R.drawable.ic_stat_lifup)
+            .setContentTitle(context.getString(if (r.running) R.string.run_notif_running else R.string.run_notif_paused))
+            .setContentText(context.getString(R.string.run_km, r.km))
+            .setOngoing(true)
+            .setSilent(true)
+            .setShowWhen(r.running)
+            .setUsesChronometer(r.running)
+            .setWhen(now - r.elapsed(now))
+            .setContentIntent(openApp(context, "today"))
+            .build()
+        runCatching { nm.notify(ID_RUN, n) }
+    }
 
     fun cancelReminder(context: Context) = NotificationManagerCompat.from(context).cancel(ID_REMINDER)
 }

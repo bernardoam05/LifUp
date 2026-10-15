@@ -48,6 +48,7 @@ import com.lifup.app.domain.price
 import com.lifup.app.domain.useItem
 import com.lifup.app.ui.Feedback
 import com.lifup.app.ui.act
+import com.lifup.app.ui.components.ConfirmDialog
 import com.lifup.app.ui.components.EmptyNote
 import com.lifup.app.ui.components.IconBadge
 import com.lifup.app.ui.components.Panel
@@ -70,6 +71,7 @@ fun ShopScreen(s: GameState) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var pickFor by rememberSaveable { mutableStateOf<String?>(null) }
     var shadowInfo by rememberSaveable { mutableStateOf<String?>(null) }
+    var buying by rememberSaveable { mutableStateOf<String?>(null) }
     val now = rememberNow(30_000)
     val context = LocalContext.current
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -90,7 +92,7 @@ fun ShopScreen(s: GameState) {
                         val cost = s.price(content, Rules.shopShadowPrice(def.rank), now)
                         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                             ShadowTile(def, s.owned(def.id)?.level, reveal = true) { shadowInfo = def.id }
-                            TextButton(onClick = { act { buyShadow(def.id) }; Feedback.buzz(context) }, enabled = s.player.gold >= cost) {
+                            TextButton(onClick = { buying = "shadow:${def.id}" }, enabled = s.player.gold >= cost) {
                                 Icon(Icons.Rounded.Paid, null, tint = Lif.colors.gold)
                                 Spacer(Modifier.width(4.dp))
                                 Text("$cost", color = if (s.player.gold >= cost) Lif.colors.text else Lif.colors.dim)
@@ -100,7 +102,7 @@ fun ShopScreen(s: GameState) {
                 }
             }
             item { SectionTitle(stringResource(R.string.items)) }
-            items(content.items, key = { it.id }) { item -> ShopRow(s, item, now) }
+            items(content.items, key = { it.id }) { item -> ShopRow(s, item, now) { buying = "item:${item.id}" } }
         } else {
             val owned = content.items.filter { s.items(it.id) > 0 }
             val buffs = s.buffs.filter { it.expiresAt > now }
@@ -132,16 +134,37 @@ fun ShopScreen(s: GameState) {
     }
     pickFor?.let { itemId -> QuestPicker(s, itemId) { pickFor = null } }
     shadowInfo?.let { ShadowSheet(s, it, reveal = true) { shadowInfo = null } }
+    buying?.let { key -> BuyConfirm(s, key, now) { buying = null } }
+}
+
+/** [key] is "item:<id>" or "shadow:<id>". */
+@Composable
+private fun BuyConfirm(s: GameState, key: String, now: Long, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val (kind, id) = key.split(":", limit = 2)
+    val shadow = if (kind == "shadow") content.shadowById[id] else null
+    val item = if (kind == "item") content.itemById[id] else null
+    val name = shadow?.name?.local() ?: item?.name?.local() ?: return onDismiss()
+    val cost = s.price(content, shadow?.let { Rules.shopShadowPrice(it.rank) } ?: item!!.cost, now)
+    ConfirmDialog(
+        title = stringResource(R.string.buy_confirm_title),
+        text = stringResource(R.string.buy_confirm_text, name, cost, s.player.gold - cost),
+        confirm = stringResource(R.string.buy),
+        onConfirm = {
+            act { if (shadow != null) buyShadow(id) else buyItem(id) }
+            Feedback.buzz(context)
+        },
+        onDismiss = onDismiss,
+    )
 }
 
 @Composable
-private fun ShopRow(s: GameState, item: ItemDef, now: Long) {
+private fun ShopRow(s: GameState, item: ItemDef, now: Long, onBuy: () -> Unit) {
     val c = Lif.colors
     val cost = s.price(content, item.cost, now)
     val left = s.shop.stock[item.id]
     val soldOut = left != null && left <= 0
     val affordable = s.player.gold >= cost && !soldOut
-    val context = LocalContext.current
     Panel {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconBadge(itemIcon(item.id), c.accent)
@@ -154,7 +177,7 @@ private fun ShopRow(s: GameState, item: ItemDef, now: Long) {
                     if (s.items(item.id) > 0) Pill(stringResource(R.string.owned_n, s.items(item.id)), c.green)
                 }
             }
-            TextButton(onClick = { act { buyItem(item.id) }; Feedback.buzz(context) }, enabled = affordable) {
+            TextButton(onClick = onBuy, enabled = affordable) {
                 Icon(Icons.Rounded.Paid, null, tint = if (affordable) c.gold else c.dim)
                 Spacer(Modifier.width(4.dp))
                 Text(if (soldOut) stringResource(R.string.sold_out) else "$cost", color = if (affordable) c.text else c.dim, style = MaterialTheme.typography.labelLarge)

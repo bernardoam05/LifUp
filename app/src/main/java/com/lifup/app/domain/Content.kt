@@ -19,7 +19,7 @@ enum class DefKind { CORE, POOL, PENALTY }
 
 /** Sources that fill a quest's progress on their own. */
 @Serializable
-enum class AutoKind { STEPS, SCREEN_TIME, DISTRACTION_TIME }
+enum class AutoKind { STEPS, WALK_DISTANCE, SCREEN_TIME, DISTRACTION_TIME }
 
 @Serializable
 data class QuestDef(
@@ -85,7 +85,6 @@ data class ShadowDef(
     val passive: Passive,
     val source: ShadowSource,
     val name: L10n,
-    val lore: L10n,
 )
 
 @Serializable

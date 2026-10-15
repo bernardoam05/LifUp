@@ -41,7 +41,7 @@
     <string name="type_training">Entrenamiento</string>
     <string name="type_knowledge">Conocimiento</string>
     <string name="type_focus">Foco</string>
-    <string name="type_gps">GPS</string>
+    <string name="type_gps">Distancia</string>
     <string name="type_forbidden">Evitar</string>
     <string name="type_limit">Límite</string>
 
@@ -434,4 +434,30 @@
     <string name="field_auto">Seguimiento automático</string>
     <string name="auto_none">Ninguno</string>
     <string name="field_auto_hint">El progreso se rellena solo desde el teléfono; el tipo y la unidad se fijan solos.</string>
+    <string name="buy">Comprar</string>
+    <string name="buy_confirm_title">Confirmar compra</string>
+    <string name="buy_confirm_text">¿Comprar %1$s por %2$d de oro? Te quedarán %3$d.</string>
+    <string name="toast_boss_revived">%1$s se ha levantado: la misión deshecha ya no cuenta</string>
+    <string name="auto_walk">Distancia a pie (pasos)</string>
+    <string name="body">Cuerpo</string>
+    <string name="height">Altura</string>
+    <string name="height_info">Se usa para convertir pasos en distancia (zancada caminando y corriendo).</string>
+    <string name="run_start">Empezar carrera</string>
+    <string name="run_pause">Pausar</string>
+    <string name="run_resume">Reanudar</string>
+    <string name="run_finish">Terminar</string>
+    <string name="run_km">%1$.2f km</string>
+    <string name="run_steps">%1$d pasos</string>
+    <string name="run_explain">Cuenta pasos con el sensor del teléfono, sin GPS: casi no gasta batería. Puedes bloquear la pantalla. La distancia usa tu altura (%1$d cm, en Ajustes).</string>
+    <string name="run_hint_running">Contando. Bloquea la pantalla y corre; al final pulsa Terminar.</string>
+    <string name="run_hint_paused">En pausa. Los pasos de ahora no cuentan.</string>
+    <string name="run_enable_steps">Permitir contar pasos</string>
+    <string name="run_gps">GPS preciso</string>
+    <string name="run_log">Anotar km</string>
+    <string name="run_log_title">Registrar distancia</string>
+    <string name="run_log_text">¿Corriste sin registrar? Indica la distancia que hiciste.</string>
+    <string name="run_log_save">Añadir</string>
+    <string name="run_notif_running">Carrera en curso</string>
+    <string name="run_notif_paused">Carrera en pausa</string>
+    <string name="run_no_sensor">Este teléfono no tiene contador de pasos: usa el GPS o anota la distancia a mano.</string>
 </resources>

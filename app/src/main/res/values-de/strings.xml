@@ -41,7 +41,7 @@
     <string name="type_training">Training</string>
     <string name="type_knowledge">Wissen</string>
     <string name="type_focus">Fokus</string>
-    <string name="type_gps">GPS</string>
+    <string name="type_gps">Strecke</string>
     <string name="type_forbidden">Meiden</string>
     <string name="type_limit">Limit</string>
 
@@ -434,4 +434,30 @@
     <string name="field_auto">Automatische Erfassung</string>
     <string name="auto_none">Keine</string>
     <string name="field_auto_hint">Der Fortschritt füllt sich vom Handy aus; Typ und Einheit werden für dich gesetzt.</string>
+    <string name="buy">Kaufen</string>
+    <string name="buy_confirm_title">Kauf bestätigen</string>
+    <string name="buy_confirm_text">%1$s für %2$d Gold kaufen? Dir bleiben %3$d.</string>
+    <string name="toast_boss_revived">%1$s ist wieder aufgestanden: die rückgängig gemachte Mission zählt nicht mehr</string>
+    <string name="auto_walk">Gehstrecke (Schritte)</string>
+    <string name="body">Körper</string>
+    <string name="height">Größe</string>
+    <string name="height_info">Wird genutzt, um Schritte in Strecke umzurechnen (Schrittlänge beim Gehen und Laufen).</string>
+    <string name="run_start">Lauf starten</string>
+    <string name="run_pause">Pause</string>
+    <string name="run_resume">Fortsetzen</string>
+    <string name="run_finish">Beenden</string>
+    <string name="run_km">%1$.2f km</string>
+    <string name="run_steps">%1$d Schritte</string>
+    <string name="run_explain">Zählt Schritte mit dem Sensor des Handys, ohne GPS: fast kein Akku. Du kannst den Bildschirm sperren. Die Strecke nutzt deine Größe (%1$d cm, in den Einstellungen).</string>
+    <string name="run_hint_running">Zählt. Sperr den Bildschirm und lauf los; am Ende auf Beenden tippen.</string>
+    <string name="run_hint_paused">Pausiert. Schritte jetzt zählen nicht.</string>
+    <string name="run_enable_steps">Schrittzählung erlauben</string>
+    <string name="run_gps">Präzises GPS</string>
+    <string name="run_log">km eintragen</string>
+    <string name="run_log_title">Strecke eintragen</string>
+    <string name="run_log_text">Ohne Aufzeichnung gelaufen? Gib die Strecke ein.</string>
+    <string name="run_log_save">Hinzufügen</string>
+    <string name="run_notif_running">Lauf aktiv</string>
+    <string name="run_notif_paused">Lauf pausiert</string>
+    <string name="run_no_sensor">Dieses Handy hat keinen Schrittzähler: nutze GPS oder trag die Strecke von Hand ein.</string>
 </resources>

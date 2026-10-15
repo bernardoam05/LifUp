@@ -38,7 +38,7 @@
     <string name="type_training">Entraînement</string>
     <string name="type_knowledge">Savoir</string>
     <string name="type_focus">Focus</string>
-    <string name="type_gps">GPS</string>
+    <string name="type_gps">Distance</string>
     <string name="type_forbidden">Éviter</string>
     <string name="type_limit">Limite</string>
 
@@ -416,4 +416,30 @@
     <string name="field_auto">Suivi automatique</string>
     <string name="auto_none">Aucun</string>
     <string name="field_auto_hint">La progression se remplit toute seule depuis le téléphone ; type et unité sont fixés pour toi.</string>
+    <string name="buy">Acheter</string>
+    <string name="buy_confirm_title">Confirmer l\'achat</string>
+    <string name="buy_confirm_text">Acheter %1$s pour %2$d d\'or ? Il t\'en restera %3$d.</string>
+    <string name="toast_boss_revived">%1$s s\'est relevé : la mission annulée ne compte plus</string>
+    <string name="auto_walk">Distance à pied (pas)</string>
+    <string name="body">Corps</string>
+    <string name="height">Taille</string>
+    <string name="height_info">Sert à convertir les pas en distance (foulée en marchant et en courant).</string>
+    <string name="run_start">Démarrer la course</string>
+    <string name="run_pause">Pause</string>
+    <string name="run_resume">Reprendre</string>
+    <string name="run_finish">Terminer</string>
+    <string name="run_km">%1$.2f km</string>
+    <string name="run_steps">%1$d pas</string>
+    <string name="run_explain">Compte les pas avec le capteur du téléphone, sans GPS : presque aucune batterie. Tu peux verrouiller l\'écran. La distance utilise ta taille (%1$d cm, dans Réglages).</string>
+    <string name="run_hint_running">Comptage en cours. Verrouille l\'écran et cours ; à la fin, appuie sur Terminer.</string>
+    <string name="run_hint_paused">En pause. Les pas faits maintenant ne comptent pas.</string>
+    <string name="run_enable_steps">Autoriser le comptage des pas</string>
+    <string name="run_gps">GPS précis</string>
+    <string name="run_log">Saisir km</string>
+    <string name="run_log_title">Saisir la distance</string>
+    <string name="run_log_text">Tu as couru sans suivi ? Indique la distance parcourue.</string>
+    <string name="run_log_save">Ajouter</string>
+    <string name="run_notif_running">Course en cours</string>
+    <string name="run_notif_paused">Course en pause</string>
+    <string name="run_no_sensor">Ce téléphone n\'a pas de podomètre : utilise le GPS ou saisis la distance à la main.</string>
 </resources>

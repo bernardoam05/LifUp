@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.lifup.app.R
 import com.lifup.app.domain.GameState
@@ -66,7 +65,6 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
                     }
                 }
             }
-            if (known) Text(def.lore.local(), style = MaterialTheme.typography.bodyMedium, fontStyle = FontStyle.Italic, color = c.muted)
             val level = owned?.level ?: 1
             Panel(background = c.panelHigh) {
                 Text(stringResource(R.string.passive).uppercase(), style = MaterialTheme.typography.labelMedium, color = c.dim)

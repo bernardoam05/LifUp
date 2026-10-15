@@ -38,7 +38,7 @@
     <string name="type_training">Treino</string>
     <string name="type_knowledge">Conhecimento</string>
     <string name="type_focus">Foco</string>
-    <string name="type_gps">GPS</string>
+    <string name="type_gps">Distância</string>
     <string name="type_forbidden">Evitar</string>
     <string name="type_limit">Limite</string>
 
@@ -416,4 +416,30 @@
     <string name="field_auto">Acompanhamento automático</string>
     <string name="auto_none">Nenhum</string>
     <string name="field_auto_hint">O progresso preenche-se sozinho a partir do telemóvel; o tipo e a unidade ficam definidos automaticamente.</string>
+    <string name="buy">Comprar</string>
+    <string name="buy_confirm_title">Confirmar compra</string>
+    <string name="buy_confirm_text">Comprar %1$s por %2$d de ouro? Ficas com %3$d.</string>
+    <string name="toast_boss_revived">%1$s levantou-se: a missão desfeita já não conta</string>
+    <string name="auto_walk">Distância a pé (passos)</string>
+    <string name="body">Corpo</string>
+    <string name="height">Altura</string>
+    <string name="height_info">Usada para converter passos em distância (passada a andar e a correr).</string>
+    <string name="run_start">Começar corrida</string>
+    <string name="run_pause">Pausar</string>
+    <string name="run_resume">Retomar</string>
+    <string name="run_finish">Terminar</string>
+    <string name="run_km">%1$.2f km</string>
+    <string name="run_steps">%1$d passos</string>
+    <string name="run_explain">Conta passos com o sensor do telemóvel, sem GPS: quase não gasta bateria. Podes bloquear o ecrã. A distância usa a tua altura (%1$d cm, nas Definições).</string>
+    <string name="run_hint_running">A contar. Bloqueia o ecrã e corre; no fim carrega em Terminar.</string>
+    <string name="run_hint_paused">Em pausa. Os passos dados agora não contam.</string>
+    <string name="run_enable_steps">Permitir contagem de passos</string>
+    <string name="run_gps">GPS preciso</string>
+    <string name="run_log">Registar km</string>
+    <string name="run_log_title">Registar distância</string>
+    <string name="run_log_text">Correste sem registar? Indica a distância que fizeste.</string>
+    <string name="run_log_save">Adicionar</string>
+    <string name="run_notif_running">Corrida em curso</string>
+    <string name="run_notif_paused">Corrida em pausa</string>
+    <string name="run_no_sensor">Este telemóvel não tem contador de passos: usa o GPS ou regista a distância à mão.</string>
 </resources>
