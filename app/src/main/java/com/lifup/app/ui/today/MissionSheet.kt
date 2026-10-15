@@ -123,7 +123,8 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                 )
             }
 
-            if (q.auto != null) AutoInfo(q.auto, s)
+            if (q.auto != null && q.autoOff) Text(stringResource(R.string.auto_off), style = MaterialTheme.typography.bodySmall, color = p.gold)
+            else if (q.auto != null) AutoInfo(q.auto, s)
 
             if (open && q.auto == null && (q.type == QuestType.TRAINING || q.type == QuestType.KNOWLEDGE)) {
                 // Stopwatch, kept in the state so it survives the app being closed.
@@ -155,7 +156,7 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                 }
             }
 
-            if (open && q.type == QuestType.GPS) RunPanel(s, q, tracking = q.auto == null)
+            if (open && q.type == QuestType.GPS) RunPanel(s, q, tracking = q.auto == null || q.autoOff)
 
             if (open && q.type != QuestType.FORBIDDEN && q.type != QuestType.LIMIT) {
                 // Tracked missions normally fill themselves, so marking them by hand is the secondary action.

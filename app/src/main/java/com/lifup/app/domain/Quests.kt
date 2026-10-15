@@ -131,8 +131,10 @@ fun Tx.undoQuest(id: String) {
     count(StatKey.QUESTS_COMPLETED, -1)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED, -1)
     updateQuest(id) {
-        val progress = if (it.type == QuestType.FOCUS || it.type == QuestType.GPS) it.progress else 0.0
-        it.copy(status = QuestStatus.OPEN, xpGained = 0, goldGained = 0, bossDamage = 0, progress = progress.coerceAtMost(it.target * 0.99))
+        // Tracked minutes/km stay (they were really done); automatic missions restart and stop auto-filling.
+        val tracked = it.auto == null && (it.type == QuestType.FOCUS || it.type == QuestType.GPS)
+        val progress = if (tracked) it.progress.coerceAtMost(it.target * 0.99) else 0.0
+        it.copy(status = QuestStatus.OPEN, xpGained = 0, goldGained = 0, bossDamage = 0, progress = progress, autoOff = it.auto != null)
     }
 }
 

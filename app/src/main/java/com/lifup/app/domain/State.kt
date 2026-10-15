@@ -48,6 +48,8 @@ data class Quest(
     val xpGained: Int = 0,
     val goldGained: Int = 0,
     val auto: AutoKind? = null,
+    /** Set when an automatic mission is undone: the phone stops filling it for the rest of the day. */
+    val autoOff: Boolean = false,
     val pomodoro: Boolean = false,
     /** Boss HP this quest removed, given back if it is undone. */
     val bossDamage: Int = 0,

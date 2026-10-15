@@ -349,6 +349,32 @@ class EngineTest {
         assertEquals(s.player.gold.toLong(), fixed.count(StatKey.GOLD_EARNED))
     }
 
+    @Test fun `extra missions can be undone`() {
+        var s = fresh()
+        s = run(s, "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
+        s = run(s, "2026-10-14T12:01") { addExtraQuest() }
+        val extra = s.extraQuests.single()
+        s = run(s, "2026-10-14T12:02") { completeQuest(extra.id) }
+        val gold = s.player.gold
+        assertEquals(QuestStatus.DONE, s.quests.first { it.id == extra.id }.status)
+        s = run(s, "2026-10-14T12:03") { undoQuest(extra.id) }
+        assertEquals(QuestStatus.OPEN, s.quests.first { it.id == extra.id }.status)
+        assertTrue(s.player.gold < gold)
+    }
+
+    @Test fun `undoing an automatic mission stops it from completing itself again`() {
+        var s = fresh()
+        val q = buildQuest(content.questDefById.getValue("pool_steps"), 1, QuestOrigin.EXTRA, "steps_x")
+        s = s.copy(quests = s.quests + q)
+        s = run(s, "2026-10-14T12:00") { applyAuto(AutoReading("2026-10-14", steps = 50_000)) }
+        assertEquals(QuestStatus.DONE, s.quests.first { it.id == q.id }.status)
+        s = run(s, "2026-10-14T12:01") { undoQuest(q.id) }
+        s = run(s, "2026-10-14T12:15") { applyAuto(AutoReading("2026-10-14", steps = 51_000)) }
+        val after = s.quests.first { it.id == q.id }
+        assertEquals(QuestStatus.OPEN, after.status)
+        assertTrue(after.autoOff)
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

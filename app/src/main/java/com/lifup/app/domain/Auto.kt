@@ -14,7 +14,7 @@ data class AutoReading(
  */
 fun Tx.applyAuto(r: AutoReading) {
     if (r.day != s.day) return
-    s.allQuests.filter { it.auto != null && it.status == QuestStatus.OPEN }.forEach { q ->
+    s.allQuests.filter { it.auto != null && !it.autoOff && it.status == QuestStatus.OPEN }.forEach { q ->
         val value = when (q.auto) {
             AutoKind.STEPS -> r.steps?.toDouble()
             AutoKind.WALK_DISTANCE -> r.steps?.let { Stride.walkKm(it.toLong(), s.settings.heightCm) }

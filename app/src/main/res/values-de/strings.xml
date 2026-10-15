@@ -483,4 +483,5 @@
     <string name="focus_prepare_pomodoro">Pomodoro vorbereiten</string>
     <string name="focus_view">Laufende Sitzung ansehen</string>
     <string name="focus_busy">Für eine andere Mission läuft bereits eine Fokus-Sitzung.</string>
+    <string name="auto_off">Rückgängig gemacht: Die automatische Zählung ist für diese Mission bis morgen aus. Markiere sie von Hand, wenn du sie wirklich erledigt hast.</string>
 </resources>
