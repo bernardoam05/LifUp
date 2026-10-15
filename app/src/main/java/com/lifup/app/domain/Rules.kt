@@ -148,6 +148,9 @@ object Rules {
 
     val ACHIEVEMENT_GOLD = intArrayOf(50, 150, 400, 1000, 2500)
 
+    /** Days of history kept for the activity calendar (a bit over a year). */
+    const val DAY_LOG_DAYS = 371
+
     /** Streak milestones replace the old login calendar. */
     data class Milestone(val days: Int, val gold: Int = 0, val items: List<String> = emptyList(), val shadowId: String? = null)
 

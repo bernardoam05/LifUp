@@ -1,6 +1,9 @@
 package com.lifup.app.widget
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.glance.appwidget.action.actionStartActivity as startActivityIntent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -134,13 +137,19 @@ class HeroWidget : GlanceAppWidget() {
                 )
                 s.boss?.let { b ->
                     val def = LifUpApp.store.content.bossById[b.bossId]
-                    Spacer(GlanceModifier.height(10.dp))
-                    Text(def?.title?.text(lang).orEmpty(), style = TextStyle(color = c(if (b.defeated) GREEN else RED), fontSize = 12.sp, fontWeight = FontWeight.Bold), maxLines = 1)
-                    if (!b.defeated) LinearProgressIndicator(
-                        progress = b.hp / b.maxHp.toFloat(),
-                        modifier = GlanceModifier.fillMaxWidth().height(5.dp),
-                        color = c(RED), backgroundColor = c(Color(0xFF262C3E)),
+                    val openBoss = startActivityIntent(
+                        Intent(Intent.ACTION_VIEW, Uri.parse("lifup://boss"), context, MainActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP),
                     )
+                    Spacer(GlanceModifier.height(10.dp))
+                    Column(GlanceModifier.fillMaxWidth().clickable(openBoss)) {
+                        Text(def?.title?.text(lang).orEmpty(), style = TextStyle(color = c(if (b.defeated) GREEN else RED), fontSize = 12.sp, fontWeight = FontWeight.Bold), maxLines = 1)
+                        if (!b.defeated) LinearProgressIndicator(
+                            progress = b.hp / b.maxHp.toFloat(),
+                            modifier = GlanceModifier.fillMaxWidth().height(5.dp),
+                            color = c(RED), backgroundColor = c(Color(0xFF262C3E)),
+                        )
+                    }
                 }
             }
         }

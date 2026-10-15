@@ -469,4 +469,8 @@
     <string name="achievement_next">Nächste: +%1$d Gold</string>
     <string name="achievement_next_shadow">Nächste: +%1$d Gold + Schatten</string>
     <string name="achievement_maxed">Alle Stufen abgeschlossen</string>
+    <string name="calendar_less">Weniger</string>
+    <string name="calendar_more">Mehr</string>
+    <string name="calendar_summary">Letzte 30 Tage: %1$d aktiv · %2$d perfekt</string>
+    <string name="calendar_no_data">kein Eintrag</string>
 </resources>

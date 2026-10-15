@@ -269,23 +269,9 @@ private fun Stats(s: GameState) {
         tiles.forEach { (label, value) -> StatTile(stringResource(label), value.toString(), modifier = Modifier.weight(1f)) }
     }
     SectionTitle(stringResource(R.string.history))
-    // Last 8 weeks as a heat strip: green perfect, red penalty, purple rest, grey partial.
-    val days = s.dayLog.takeLast(56)
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalArrangement = Arrangement.spacedBy(4.dp), maxItemsInEachRow = 14) {
-        days.forEach { d ->
-            val color = when {
-                d.rest -> c.purple
-                d.perfect -> c.green
-                d.penalty -> c.red
-                d.total > 0 && d.done > 0 -> c.gold.copy(alpha = 0.5f)
-                else -> c.border
-            }
-            Box(Modifier.size(18.dp).clip(RoundedCornerShape(4.dp)).background(color))
-        }
-    }
-    if (days.isEmpty()) Text(stringResource(R.string.history_empty), style = MaterialTheme.typography.bodySmall, color = c.dim)
+    ActivityCalendar(s)
     Spacer(Modifier.height(8.dp))
-    s.dayLog.takeLast(14).reversed().forEach { d ->
+    s.dayLog.takeLast(7).reversed().forEach { d ->
         Row(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
             Text(d.day, style = MaterialTheme.typography.labelMedium, color = c.muted, modifier = Modifier.weight(1f))
             Text(

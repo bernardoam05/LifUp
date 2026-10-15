@@ -470,4 +470,8 @@
     <string name="achievement_next">Next: +%1$d gold</string>
     <string name="achievement_next_shadow">Next: +%1$d gold + shadow</string>
     <string name="achievement_maxed">All tiers complete</string>
+    <string name="calendar_less">Less</string>
+    <string name="calendar_more">More</string>
+    <string name="calendar_summary">Last 30 days: %1$d active · %2$d perfect</string>
+    <string name="calendar_no_data">no record</string>
 </resources>

@@ -451,4 +451,8 @@
     <string name="achievement_next">Próximo: +%1$d ouro</string>
     <string name="achievement_next_shadow">Próximo: +%1$d ouro + sombra</string>
     <string name="achievement_maxed">Todos os patamares concluídos</string>
+    <string name="calendar_less">Menos</string>
+    <string name="calendar_more">Mais</string>
+    <string name="calendar_summary">Últimos 30 dias: %1$d ativos · %2$d perfeitos</string>
+    <string name="calendar_no_data">sem registo</string>
 </resources>

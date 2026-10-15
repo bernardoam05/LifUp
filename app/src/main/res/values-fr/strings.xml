@@ -451,4 +451,8 @@
     <string name="achievement_next">Suivant : +%1$d or</string>
     <string name="achievement_next_shadow">Suivant : +%1$d or + ombre</string>
     <string name="achievement_maxed">Tous les paliers terminés</string>
+    <string name="calendar_less">Moins</string>
+    <string name="calendar_more">Plus</string>
+    <string name="calendar_summary">30 derniers jours : %1$d actifs · %2$d parfaits</string>
+    <string name="calendar_no_data">aucune donnée</string>
 </resources>

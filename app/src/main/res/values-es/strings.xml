@@ -469,4 +469,8 @@
     <string name="achievement_next">Siguiente: +%1$d de oro</string>
     <string name="achievement_next_shadow">Siguiente: +%1$d de oro + sombra</string>
     <string name="achievement_maxed">Todos los niveles completados</string>
+    <string name="calendar_less">Menos</string>
+    <string name="calendar_more">Más</string>
+    <string name="calendar_summary">Últimos 30 días: %1$d activos · %2$d perfectos</string>
+    <string name="calendar_no_data">sin registro</string>
 </resources>

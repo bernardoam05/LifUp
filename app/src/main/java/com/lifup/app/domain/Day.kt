@@ -75,7 +75,7 @@ private fun Tx.closeDay(day: LocalDate) {
     val gap = ChronoUnit.DAYS.between(day, ctx.today)
     if (gap > 1 && !rest && s.player.streak > 0) setStreak(0)
 
-    s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null, rest)).takeLast(120))
+    s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null, rest)).takeLast(Rules.DAY_LOG_DAYS))
     reward { Reward.DayReport(it, day.toString(), done, daily.size, perfect && !rest, rest, s.player.streak, bonusXp, penaltyInfo, streakSavedBy) }
 }
 

@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,10 +75,13 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
-fun TodayScreen(s: GameState, openForge: () -> Unit) {
+fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, onQuestOpened: () -> Unit = {}) {
     val p = Lif.colors
     val now = rememberNow(1_000)
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
+    LaunchedEffect(openQuest) {
+        if (openQuest != null) { selected = openQuest; onQuestOpened() }
+    }
     val daily = s.dailyQuests
     val done = daily.count { it.status == QuestStatus.DONE }
 
@@ -186,7 +190,7 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
     SectionTitle(stringResource(if (def.season != null) R.string.boss_section_season else R.string.boss_section)) {
         Text(stringResource(R.string.boss_ends_in, fmtShort(b.endsAt - now)), color = p.dim, style = MaterialTheme.typography.labelMedium)
     }
-    Panel(border = (if (b.defeated) p.green else p.red).copy(alpha = 0.5f)) {
+    Panel(border = (if (b.defeated) p.green else p.red).copy(alpha = 0.5f), onClick = { onChallenge(b.challenge.id) }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Rounded.Whatshot, null, tint = if (b.defeated) p.green else p.red)
             Spacer(Modifier.width(8.dp))
@@ -204,7 +208,7 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
             }
             val c = b.challenge
             Spacer(Modifier.height(10.dp))
-            Panel(background = p.panelHigh, onClick = { if (c.status == QuestStatus.OPEN) onChallenge(c.id) }, padding = PaddingValues(12.dp)) {
+            Panel(background = p.panelHigh, onClick = { onChallenge(c.id) }, padding = PaddingValues(12.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.boss_challenge).uppercase(), style = MaterialTheme.typography.labelMedium, color = p.gold, modifier = Modifier.weight(1f))
                     Text(

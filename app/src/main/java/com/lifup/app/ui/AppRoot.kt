@@ -123,8 +123,13 @@ private fun MainScaffold(
     val scope = rememberCoroutineScope()
     val tab = Tab.entries[pager.currentPage]
     val goTo: (Tab) -> Unit = { t -> scope.launch { pager.animateScrollToPage(t.ordinal) } }
+    var openQuest by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(deepLink) {
         Tab.entries.firstOrNull { it.route == deepLink }?.let { pager.scrollToPage(it.ordinal) }
+        if (deepLink == "boss") {
+            pager.scrollToPage(Tab.TODAY.ordinal)
+            openQuest = s.boss?.challenge?.id
+        }
         if (deepLink != null) onDeepLinkConsumed()
     }
     val snackbar = remember { SnackbarHostState() }
@@ -157,7 +162,7 @@ private fun MainScaffold(
             // Swipe between tabs; the bottom bar follows the pager.
             HorizontalPager(pager, Modifier.padding(padding).fillMaxSize(), beyondViewportPageCount = 1) { page ->
                 when (Tab.entries[page]) {
-                    Tab.TODAY -> TodayScreen(s, openForge)
+                    Tab.TODAY -> TodayScreen(s, openForge, openQuest) { openQuest = null }
                     Tab.FOCUS -> FocusScreen(s)
                     Tab.HERO -> HeroScreen(s)
                     Tab.SHOP -> ShopScreen(s)
