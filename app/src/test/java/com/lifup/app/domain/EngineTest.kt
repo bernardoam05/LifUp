@@ -312,6 +312,17 @@ class EngineTest {
         assertEquals(QuestStatus.DONE, s.quests.first { it.id == q.id }.status)
     }
 
+    @Test fun `gold earned includes achievement gold and old saves are corrected once`() {
+        var s = run(fresh(), "2026-10-14T10:00") { openPortal() }
+        val portal = s.portal!!.quest
+        s = run(s, "2026-10-14T10:10") { completeQuest(portal.id) } // first portal unlocks an achievement
+        assertTrue(s.achievements.isNotEmpty())
+        assertEquals(s.player.gold.toLong(), s.count(StatKey.GOLD_EARNED))
+        val old = s.copy(version = 1, counters = s.counters + (StatKey.GOLD_EARNED to portal.gold.toLong()))
+        val fixed = run(run(old, "2026-10-14T10:01"), "2026-10-14T10:02")
+        assertEquals(s.player.gold.toLong(), fixed.count(StatKey.GOLD_EARNED))
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

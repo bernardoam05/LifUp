@@ -7,6 +7,7 @@ object Engine {
     /** [before] runs ahead of the day check, e.g. to record yesterday's final step count before it closes. */
     fun run(state: GameState, ctx: Ctx, before: Tx.() -> Unit = {}, action: Tx.() -> Unit = {}): GameState {
         val tx = Tx(state, ctx)
+        tx.migrateState()
         tx.before()
         tx.ensureDay()
         tx.action()
