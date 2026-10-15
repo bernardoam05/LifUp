@@ -119,14 +119,14 @@ object LegacyImport {
         }
 
         val counters = buildMap<StatKey, Long> {
-            fun put(key: StatKey, v: Long?) { if (v != null && v > 0) put(key, v) }
-            put(StatKey.QUESTS_COMPLETED, stats.long("totalCompleted"))
-            put(StatKey.PERFECT_DAYS, stats.long("perfectDays"))
-            put(StatKey.FOCUS_MINUTES, stats.long("totalFocusMinutes"))
-            put(StatKey.SIDE_COMPLETED, stats.long("totalSideCompleted"))
-            put(StatKey.POMODORO_CYCLES, stats.long("totalPomodoroSessions"))
-            put(StatKey.GOLD_SPENT, stats.long("totalGoldSpent"))
-            put(StatKey.BOSSES_DEFEATED, system.long("bossesDefeated"))
+            fun stat(key: StatKey, v: Long?) { if (v != null && v > 0) put(key, v) }
+            stat(StatKey.QUESTS_COMPLETED, stats.long("totalCompleted"))
+            stat(StatKey.PERFECT_DAYS, stats.long("perfectDays"))
+            stat(StatKey.FOCUS_MINUTES, stats.long("totalFocusMinutes"))
+            stat(StatKey.SIDE_COMPLETED, stats.long("totalSideCompleted"))
+            stat(StatKey.POMODORO_CYCLES, stats.long("totalPomodoroSessions"))
+            stat(StatKey.GOLD_SPENT, stats.long("totalGoldSpent"))
+            stat(StatKey.BOSSES_DEFEATED, system.long("bossesDefeated"))
         }
 
         val level = (p.int("level") ?: 1).coerceAtLeast(1)

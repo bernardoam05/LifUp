@@ -4,7 +4,7 @@ import kotlin.math.roundToInt
 import kotlin.random.Random
 
 fun Tx.ensureShop() {
-    if (s.shop.weekKey == ctx.weekKey) return
+    if (s.shop.weekKey >= ctx.weekKey) return
     val stock = content.items.mapNotNull { item -> item.weeklyStock?.let { item.id to it } }.toMap()
     val offers = content.shadowPool(SourceType.SHOP).shuffled(Random(ctx.weekKey.hashCode() + 7)).take(3).map { it.id }
     s = s.copy(shop = ShopState(ctx.weekKey, stock, offers))

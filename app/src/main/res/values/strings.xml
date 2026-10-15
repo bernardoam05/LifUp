@@ -130,7 +130,10 @@
     <string name="block_apps">Block apps</string>
     <string name="block_apps_info">The chosen apps are covered while the session runs.</string>
     <string name="block_needs_perms">Needs usage access and overlay permission (see Permissions below).</string>
-    <string name="apps_selected">%1$d apps selected</string>
+    <plurals name="apps_selected">
+        <item quantity="one">%1$d app selected</item>
+        <item quantity="other">%1$d apps selected</item>
+    </plurals>
     <string name="choose_apps">Choose apps</string>
     <string name="strict_mode">Strict mode</string>
     <string name="strict_info">Stopping early loses the session\'s minutes, unless you use a Spellbreaker.</string>
@@ -409,4 +412,8 @@
     <string name="tile_label">Focus</string>
     <string name="tile_on">On</string>
     <string name="tile_off">Off</string>
+    <string name="widget_today_name">Today\'s missions</string>
+    <string name="widget_today_desc">Your missions, streak and penalty at a glance.</string>
+    <string name="widget_hero_name">Hunter</string>
+    <string name="widget_hero_desc">Level, XP and the weekly boss.</string>
 </resources>

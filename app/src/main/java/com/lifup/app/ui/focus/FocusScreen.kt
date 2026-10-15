@@ -45,6 +45,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -210,6 +211,13 @@ private fun SessionSetup(s: GameState) {
     var block by rememberSaveable { mutableStateOf(set.blockedApps.isNotEmpty()) }
     var ambient by rememberSaveable { mutableStateOf<String?>(null) }
     var pickApps by rememberSaveable { mutableStateOf(false) }
+    // Choosing apps implies wanting them blocked.
+    var lastAppCount by rememberSaveable { mutableStateOf(set.blockedApps.size) }
+    if (set.blockedApps.size != lastAppCount) {
+        if (set.blockedApps.size > lastAppCount) block = true
+        if (set.blockedApps.isEmpty()) block = false
+        lastAppCount = set.blockedApps.size
+    }
     val notifPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
     Text(stringResource(R.string.focus_title), style = MaterialTheme.typography.headlineSmall)
@@ -244,7 +252,7 @@ private fun SessionSetup(s: GameState) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
             Icon(Icons.Rounded.Apps, null, tint = p.muted, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
-            Text(stringResource(R.string.apps_selected, set.blockedApps.size), style = MaterialTheme.typography.bodyMedium, color = p.muted, modifier = Modifier.weight(1f))
+            Text(pluralStringResource(R.plurals.apps_selected, set.blockedApps.size, set.blockedApps.size), style = MaterialTheme.typography.bodyMedium, color = p.muted, modifier = Modifier.weight(1f))
             TextButton(onClick = { pickApps = true }) { Text(stringResource(R.string.choose_apps).uppercase()) }
         }
         ToggleRow(stringResource(R.string.strict_mode), stringResource(R.string.strict_info), strict) { strict = it }

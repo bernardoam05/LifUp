@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">Erkennt in Echtzeit, welche App im Vordergrund ist, damit LifUp Ablenkungen während Fokus-Sessions und Strafen blockieren kann. Bildschirminhalte werden nicht gelesen.</string>
+
+    <!-- General -->
+    <string name="add">Hinzufügen</string>
+    <string name="back">Zurück</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="continue_">Weiter</string>
+    <string name="delete">Löschen</string>
+    <string name="next">Weiter</string>
+    <string name="save">Speichern</string>
+    <string name="save_n">Speichern (%1$d)</string>
+    <string name="search">Suchen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="undo">Rückgängig</string>
+    <string name="use">Nutzen</string>
+    <string name="fix">Beheben</string>
+    <string name="all">Alle</string>
+    <string name="weekly">wöchentlich</string>
+    <string name="automatic">Automatisch</string>
+    <string name="default_hunter">Jäger</string>
+    <string name="level_short">Lv %1$d</string>
+    <string name="level_n">Level %1$d</string>
+    <string name="tier_n">Stufe %1$d von %2$d</string>
+    <string name="version">Version %1$s</string>
+
+    <!-- Tabs -->
+    <string name="tab_today">Heute</string>
+    <string name="tab_focus">Fokus</string>
+    <string name="tab_hero">Held</string>
+    <string name="tab_shop">Shop</string>
+
+    <!-- Units and types -->
+    <string name="unit_min">min</string>
+    <string name="unit_h">h</string>
+    <string name="unit_s">s</string>
+    <string name="unit_reps">Wdh.</string>
+    <string name="unit_pages">Seiten</string>
+    <string name="unit_glasses">Gläser</string>
+    <string name="type_training">Training</string>
+    <string name="type_knowledge">Wissen</string>
+    <string name="type_focus">Fokus</string>
+    <string name="type_gps">GPS</string>
+    <string name="type_forbidden">Meiden</string>
+    <string name="type_limit">Limit</string>
+
+    <!-- Ranks -->
+    <string name="rank_title_e">Neuling</string>
+    <string name="rank_title_d">Jägerlehrling</string>
+    <string name="rank_title_c">Meister des Willens</string>
+    <string name="rank_title_b">Schattenritter</string>
+    <string name="rank_title_a">Kommandant</string>
+    <string name="rank_title_s">Souverän</string>
+    <string name="rank_title_n">Jäger nationaler Stufe</string>
+    <string name="next_rank_at">Nächster Rang: %1$s auf Level %2$d</string>
+    <string name="srank_normal">Normal</string>
+    <string name="srank_elite">Elite</string>
+    <string name="srank_knight">Ritter</string>
+    <string name="srank_commander">Kommandant</string>
+    <string name="srank_marshal">Marschall</string>
+
+    <!-- HUD / penalty -->
+    <string name="penalty_banner">Strafe aktiv</string>
+    <string name="block_starts_in">Sperre in %1$s</string>
+    <string name="block_ends_in">Sperre endet in %1$s</string>
+
+    <!-- Today -->
+    <string name="today_progress">%1$d / %2$d Missionen</string>
+    <string name="rest_day">Ruhetag</string>
+    <string name="rest_day_info">Ruhetag: heute Nacht keine Strafe, aber dein Streak wächst auch nicht.</string>
+    <string name="forge">Missionsschmiede</string>
+    <string name="penalty_section">Strafe</string>
+    <string name="penalty_info">Schließ diese Missionen ab, um die Strafe aufzuheben. Unerledigte zählen um Mitternacht als gescheitert.</string>
+    <string name="portal_section">Portal offen</string>
+    <string name="portal_info">Ein zeitlich begrenztes Portal: doppelte Belohnungen und die Chance, einen Schatten zu binden. Es schließt sich von selbst.</string>
+    <string name="daily_section">Tägliche Missionen</string>
+    <string name="extra_section">Extra-Missionen</string>
+    <string name="add_extra">Extra-Mission</string>
+    <string name="side_section">Nebenquests</string>
+    <string name="side_hint">Eine Aufgabe für heute…</string>
+    <string name="side_empty">Keine Nebenquests. Füge kleine Aufgaben für Bonus-XP hinzu.</string>
+    <string name="forbidden_keep">Bis Mitternacht halten</string>
+    <string name="forbidden_broken">Heute gebrochen</string>
+    <string name="forbidden_fail">Ausgerutscht</string>
+    <string name="forbidden_undo">Doch nicht</string>
+    <string name="limit_used">%1$s von %2$s %3$s genutzt</string>
+
+    <!-- Boss -->
+    <string name="boss_section">Wochenboss</string>
+    <string name="boss_section_season">Saisonboss</string>
+    <string name="boss_ends_in">endet in %1$s</string>
+    <string name="boss_hint">deine XP verursachen Schaden</string>
+    <string name="boss_challenge">Boss-Challenge</string>
+    <string name="boss_challenge_done">Erledigt</string>
+    <string name="boss_defeated">Besiegt! %1$s ist deiner Armee beigetreten.</string>
+    <string name="boss_drop">Beute: %1$s</string>
+
+    <!-- Mission sheet -->
+    <string name="rewards_line">+%1$d XP · +%2$d Gold</string>
+    <string name="double_xp_active">Sanduhr aktiv: die nächste Mission gibt doppelte XP</string>
+    <string name="record_count">%1$d× erledigt</string>
+    <string name="record_best">Bestwert %1$s</string>
+    <string name="start_focus">Fokus starten</string>
+    <string name="complete">Abschließen</string>
+    <string name="mark_done_manual">Als erledigt markieren</string>
+    <string name="swap_free">Tauschen (heute gratis)</string>
+    <string name="swap_scroll">Tauschen (Schriftrollen: %1$d)</string>
+    <string name="note">Notiz</string>
+    <string name="gps_start">GPS-Tracking starten</string>
+    <string name="gps_stop">Tracking stoppen</string>
+    <string name="gps_live">%1$.2f km · %2$.1f km/h</string>
+    <string name="gps_waiting">warte auf GPS</string>
+    <string name="gps_rejected">%1$d Messungen ignoriert (zu schnell für Gehen/Laufen)</string>
+    <string name="gps_tracking_title">GPS-Mission</string>
+    <string name="gps_tracking_text">%1$.2f km zurückgelegt</string>
+
+    <!-- Focus -->
+    <string name="focus_title">Fokus-Session</string>
+    <string name="mode_timer">Timer</string>
+    <string name="mode_pomodoro">Pomodoro</string>
+    <string name="fine_tune">Feinjustierung</string>
+    <string name="pomodoro_work_len">Arbeit</string>
+    <string name="pomodoro_break_len">Pause</string>
+    <string name="pomodoro_rounds">Runden</string>
+    <string name="pomodoro_total">%1$d min gesamt · %2$d min Fokus</string>
+    <string name="pomodoro_work">Arbeit · Zyklus %1$d/%2$d</string>
+    <string name="pomodoro_break">Pause · Zyklus %1$d/%2$d</string>
+    <string name="block_apps">Apps sperren</string>
+    <string name="block_apps_info">Die gewählten Apps werden während der Session verdeckt.</string>
+    <string name="block_needs_perms">Benötigt Nutzungszugriff und Overlay-Berechtigung (siehe Berechtigungen unten).</string>
+    <plurals name="apps_selected">
+        <item quantity="one">%1$d App gewählt</item>
+        <item quantity="other">%1$d Apps gewählt</item>
+    </plurals>
+    <string name="choose_apps">Apps wählen</string>
+    <string name="strict_mode">Strikter Modus</string>
+    <string name="strict_info">Wenn du vorzeitig stoppst, verlierst du die Minuten der Session, außer du nutzt einen Bannbrecher.</string>
+    <string name="ambient">Umgebungsklang</string>
+    <string name="ambient_none">Stille</string>
+    <string name="ambient_rain">Regen</string>
+    <string name="ambient_fire">Kamin</string>
+    <string name="ambient_lofi">Lo-fi</string>
+    <string name="start_session">Session starten</string>
+    <string name="focusing">Im Fokus</string>
+    <string name="session_total_left">noch %1$s in der Session</string>
+    <string name="strict">Strikt</string>
+    <string name="blocking_n">%1$d Apps gesperrt</string>
+    <string name="credited_min">%1$d min verdient</string>
+    <string name="stop_session">Session stoppen</string>
+    <string name="stop_text">Du behältst %1$d Minuten Fokus.</string>
+    <string name="stop_strict_text">Strikte Session: wenn du jetzt stoppst, verlierst du %1$d Minuten. Bannbrecher: %2$d.</string>
+    <string name="use_spellbreaker">Bannbrecher nutzen</string>
+    <string name="stop">Stopp</string>
+    <string name="stop_and_lose">Stoppen und verlieren</string>
+    <string name="keep_going">Weitermachen</string>
+    <string name="focus_quests">Fokus-Missionen</string>
+    <string name="penalty_block_active">Strafsperre: noch %1$s</string>
+    <string name="penalty_block_info">Deine gesperrten Apps bleiben zu, bis das Zeitfenster endet oder du die Strafmissionen erledigst.</string>
+
+    <!-- Permissions -->
+    <string name="permissions">Berechtigungen</string>
+    <string name="perm_all_ok">alles bereit</string>
+    <string name="perm_missing">%1$d fehlen</string>
+    <string name="perm_explain">App-Sperre, Tagesabschluss um Mitternacht und Erinnerungen hängen von diesen Systemberechtigungen ab.</string>
+    <string name="perm_usage">Nutzungszugriff</string>
+    <string name="perm_overlay">Über anderen Apps einblenden</string>
+    <string name="perm_accessibility">Bedienungshilfen (sofortige Sperre)</string>
+    <string name="perm_battery">Keine Akku-Einschränkungen</string>
+    <string name="perm_alarms">Exakte Wecker</string>
+    <string name="perm_notifications">Benachrichtigungen</string>
+    <string name="perm_autostart">Autostart-Einstellungen (Xiaomi, Oppo…)</string>
+    <string name="perm_restricted_hint">Außerhalb des Play Store installiert: Öffne in den App-Infos ⋮ und tippe auf \"Eingeschränkte Einstellungen zulassen\", bevor du die Bedienungshilfen aktivierst.</string>
+    <string name="open_app_info">App-Infos öffnen</string>
+
+    <!-- Hero -->
+    <string name="hero_shadows">Schatten</string>
+    <string name="hero_achievements">Erfolge</string>
+    <string name="hero_stats">Statistiken</string>
+    <string name="streak">Streak</string>
+    <string name="best_streak">Rekord</string>
+    <string name="bosses">Bosse</string>
+    <string name="squad">Trupp</string>
+    <string name="collection">Sammlung</string>
+    <string name="squad_xp">XP +%1$d%%</string>
+    <string name="squad_gold">Gold +%1$d%%</string>
+    <string name="squad_boss">Bossschaden +%1$d%%</string>
+    <string name="squad_penalty">Strafe −%1$d%%</string>
+    <string name="squad_focus">Fokus +%1$d%%</string>
+    <string name="squad_luck">Glück +%1$d%%</string>
+    <string name="achievement_shadow_reward">Belohnung Stufe %1$d: %2$s</string>
+    <string name="stat_quests">Missionen</string>
+    <string name="stat_perfect">Perfekte Tage</string>
+    <string name="stat_focus_h">Fokusstunden</string>
+    <string name="stat_sessions">Sessions</string>
+    <string name="stat_km">Km getrackt</string>
+    <string name="stat_portals">Portale</string>
+    <string name="stat_gold_earned">Gold verdient</string>
+    <string name="stat_penalties">Strafen</string>
+    <string name="stat_side">Nebenquests</string>
+    <string name="history">Verlauf</string>
+    <string name="history_empty">Deine Tage erscheinen hier.</string>
+    <string name="day_rest">Ruhe</string>
+    <string name="day_perfect">Perfekt</string>
+    <string name="day_penalty">Strafe · %1$d/%2$d</string>
+
+    <!-- Shadow sheet -->
+    <string name="passive">Passiv</string>
+    <string name="next_level_value">Nächstes Level: %1$s</string>
+    <string name="source_extraction">Gebunden nach perfekten Tagen, aus Portalen oder mit Schattenessenz.</string>
+    <string name="source_shop">Im Shop erhältlich (wöchentlicher Wechsel).</string>
+    <string name="source_achievement">Belohnung für einen Erfolg.</string>
+    <string name="source_streak">Belohnung für einen Streak-Meilenstein.</string>
+    <string name="source_boss">Beute vom Boss %1$s.</string>
+    <string name="upgrade_capped">Max. Level: ein Schatten kann dein Level nicht übersteigen.</string>
+    <string name="upgrade_cost">Entwickeln: %1$d Gold · Kopien %2$d/%3$d</string>
+    <string name="equip">Ausrüsten</string>
+    <string name="unequip">Ablegen</string>
+    <string name="upgrade">Entwickeln</string>
+    <string name="passive_xp">+%1$s XP</string>
+    <string name="passive_gold">+%1$s Gold</string>
+    <string name="passive_training">+%1$s XP bei Trainingsmissionen</string>
+    <string name="passive_mind">+%1$s XP bei Wissens- und Fokusmissionen</string>
+    <string name="passive_explorer">+%1$s XP bei GPS-Missionen</string>
+    <string name="passive_boss">+%1$s Schaden an Bossen</string>
+    <string name="passive_penalty">−%1$s Strafverluste</string>
+    <string name="passive_immunity">Absorbiert eine Strafe pro Woche</string>
+    <string name="passive_streak">Rettet deinen Streak einmal pro Woche</string>
+    <string name="passive_shop">−%1$s auf Shop-Preise</string>
+    <string name="passive_focus">+%1$s angerechnete Fokusminuten</string>
+    <string name="passive_daily">+%1$d XP für jeden perfekten Tag</string>
+    <string name="passive_luck">+%1$s Glück für Beute und seltene Schatten</string>
+    <string name="passive_all">Verstärkt die anderen Passiven des Trupps um %1$s</string>
+
+    <!-- Shop -->
+    <string name="shop">Shop</string>
+    <string name="inventory">Inventar</string>
+    <string name="items">Items</string>
+    <string name="shadow_offers">Schatten zu mieten</string>
+    <string name="stock_left">%1$d/%2$d diese Woche</string>
+    <string name="owned_n">%1$d im Besitz</string>
+    <string name="sold_out">Ausverkauft</string>
+    <string name="active_effects">Aktive Effekte</string>
+    <string name="inventory_empty">Leer. Items gibt es aus Missionen, Truhen, Bossen und Level-ups.</string>
+    <string name="pick_quest">Mission wählen</string>
+    <string name="no_open_quests">Keine passenden offenen Missionen.</string>
+
+    <!-- Rewards -->
+    <string name="reward_level_title">Level-up</string>
+    <string name="reward_gold">+%1$d Gold</string>
+    <string name="reward_rank_title">Neuer Rang</string>
+    <string name="reward_rank_text">Die Oberfläche nimmt die Farbe deines neuen Rangs an.</string>
+    <string name="reward_shadow_new">Neuer Schatten</string>
+    <string name="reward_shadow_copy">Schattenkopie</string>
+    <string name="reward_copies">Kopien: %1$d</string>
+    <string name="reward_boss_title">Boss besiegt</string>
+    <string name="reward_achievement_title">Erfolg</string>
+    <string name="reward_streak_title">Streak-Meilenstein</string>
+    <string name="days_in_a_row">%1$d Tage in Folge</string>
+    <string name="reward_chest_title">Truhe geöffnet</string>
+    <string name="report_title">Bericht · %1$s</string>
+    <string name="report_rest">Ruhetag</string>
+    <string name="report_perfect">Perfekter Tag</string>
+    <string name="report_absorbed">Strafe absorbiert</string>
+    <string name="report_failed">Missionen gescheitert</string>
+    <string name="report_done">%1$d von %2$d Missionen erledigt</string>
+    <string name="report_absorbed_by">%1$s hat die Strafe absorbiert</string>
+    <string name="report_loss">−%1$d XP · −%2$d Gold</string>
+    <string name="report_penalty_quests">%1$d Strafmissionen zu erledigen</string>
+    <string name="report_streak_saved">Streak gerettet von %1$s</string>
+    <string name="report_streak">Streak: %1$d</string>
+    <string name="toast_level">Level %1$s!</string>
+    <string name="toast_item_found">Gefunden: %1$s</string>
+    <string name="toast_penalty_cleared">Strafe aufgehoben</string>
+    <string name="toast_focus_done">Fokus beendet: %1$s min</string>
+    <string name="toast_focus_lost">Strikte Session abgebrochen: %1$s min verloren</string>
+    <string name="toast_boss_escaped">%1$s ist entkommen</string>
+    <string name="toast_portal_escaped">Das Portal hat sich geschlossen</string>
+    <string name="toast_portal_cleared">Portal bezwungen!</string>
+    <string name="toast_shadow_upgraded">%1$s hat sich entwickelt</string>
+    <string name="toast_passive_fired">%1$s hat seine Fähigkeit eingesetzt</string>
+    <string name="toast_buff">%1$s aktiv</string>
+
+    <!-- Settings -->
+    <string name="profile">Profil</string>
+    <string name="hunter_name">Jägername</string>
+    <string name="difficulty">Schwierigkeit</string>
+    <string name="rigor_easy">Leicht</string>
+    <string name="rigor_normal">Normal</string>
+    <string name="rigor_hard">Schwer</string>
+    <string name="rigor_easy_info">2 Extra-Missionen pro Tag. Milde Strafen: eine Strafmission, der Streak bricht nur, wenn du alles verpasst. Sperrfenster 13:00–19:00.</string>
+    <string name="rigor_normal_info">3–5 Extra-Missionen pro Tag, je nach Level. Ein gescheiterter Tag kostet XP und Gold, bricht den Streak und bringt bis zu 3 Strafmissionen. Sperrfenster 10:00–22:00.</string>
+    <string name="rigor_hard_info">4–7 Extra-Missionen pro Tag. Doppelte Verluste, bis zu 4 Strafmissionen und 24 Stunden Sperre.</string>
+    <string name="auto_missions">Missionsanzahl automatisch</string>
+    <string name="auto_missions_info">Aktuell %1$d Extra-Missionen pro Tag, plus die festen.</string>
+    <string name="extra_daily_missions">Extra-Missionen pro Tag</string>
+    <string name="penalties">Strafen</string>
+    <string name="block_on_penalty">Apps bei Strafen sperren</string>
+    <string name="block_on_penalty_info">Deine gesperrten Apps schließen sich während des Strafzeitfensters.</string>
+    <string name="side_penalize">Nebenquests zählen</string>
+    <string name="side_penalize_info">Unerledigte Nebenquests zählen um Mitternacht als gescheitert.</string>
+    <string name="notifications">Benachrichtigungen</string>
+    <string name="notifications_info">Portale, beendete Sessions, Strafen und eine Erinnerung am Abend.</string>
+    <string name="reminder_hour">Erinnerungszeit</string>
+    <string name="sound">Sound</string>
+    <string name="sound_info">Effekte und Umgebungsklang.</string>
+    <string name="vibration">Vibration</string>
+    <string name="vibration_info">Haptisches Feedback.</string>
+    <string name="theme">Design</string>
+    <string name="theme_auto">Auto</string>
+    <string name="theme_info">Standardmäßig folgt die Farbe deinem Rang. Steig im Rang auf, um mehr freizuschalten.</string>
+    <string name="missions">Missionen</string>
+    <string name="backup">Backup</string>
+    <string name="backup_info">Exportiere deinen Fortschritt in eine Datei und importiere ihn auf jedem Gerät. Backups der alten App werden auch akzeptiert.</string>
+    <string name="export">Exportieren</string>
+    <string name="import_">Importieren</string>
+    <string name="paste_old_backup">Alten Backup-Code einfügen</string>
+    <string name="import_old_app">Aus alter App importieren</string>
+    <string name="import_confirm_text">Deinen aktuellen Fortschritt durch diesen ersetzen (Level %1$d, %2$d Schatten)?</string>
+    <string name="backup_saved">Backup gespeichert.</string>
+    <string name="backup_invalid">Backup konnte nicht gelesen werden.</string>
+    <string name="about">Über</string>
+    <string name="reset_progress">Fortschritt zurücksetzen</string>
+    <string name="reset_text">Alles wird gelöscht: Level, Schatten, Items und Verlauf. Das kann nicht rückgängig gemacht werden.</string>
+    <string name="reset_confirm">Alles löschen</string>
+
+    <!-- Forge -->
+    <string name="forge_info">Erstelle eigene Missionen oder schalte Systemmissionen ab. Änderungen gelten für die Liste von morgen.</string>
+    <string name="your_missions">Deine Missionen</string>
+    <string name="system_missions">Systemmissionen</string>
+    <string name="no_custom">Noch keine eigenen Missionen. Tippe auf +, um eine zu schmieden.</string>
+    <string name="kind_core">Jeden Tag</string>
+    <string name="kind_pool">Zufall</string>
+    <string name="kind_core_info">Erscheint an jedem gewählten Tag.</string>
+    <string name="kind_pool_info">Kommt in den Pool für die tägliche Auslosung.</string>
+    <string name="new_mission">Neue Mission</string>
+    <string name="edit_mission">Mission bearbeiten</string>
+    <string name="field_title">Titel</string>
+    <string name="field_description">Beschreibung</string>
+    <string name="field_description_hint">Nutze {target} und {unit}, um das Ziel anzuzeigen.</string>
+    <string name="field_type">Typ</string>
+    <string name="field_target">Ziel</string>
+    <string name="field_unit">Einheit</string>
+    <string name="field_scaling">Zuwachs</string>
+    <string name="field_interval">Alle N Level</string>
+    <string name="field_scaling_hint">Das Ziel wächst alle N Level um den \"Zuwachs\".</string>
+    <string name="field_reward">Belohnung</string>
+    <string name="preset_easy">Leicht</string>
+    <string name="preset_medium">Mittel</string>
+    <string name="preset_hard">Schwer</string>
+    <string name="preset_epic">Episch</string>
+    <string name="field_days">Tage</string>
+    <string name="add_today">Auch zu den heutigen Missionen hinzufügen</string>
+    <string name="delete_mission_text">Diese Mission löschen? Die heutige Kopie bleibt bis Mitternacht.</string>
+    <string-array name="weekdays_short">
+        <item>M</item><item>D</item><item>M</item><item>D</item><item>F</item><item>S</item><item>S</item>
+    </string-array>
+
+    <!-- Onboarding -->
+    <string name="onb_welcome">Willkommen</string>
+    <string name="onb_title">Level dein echtes Leben auf.</string>
+    <string name="onb_intro">Jeden Tag gibt dir das System Missionen. Erledige sie für XP, Gold und Schatten. Ignorier sie und zahl den Preis.</string>
+    <string name="onb_how">So funktioniert\'s</string>
+    <string name="onb_f_missions">Tägliche Missionen</string>
+    <string name="onb_f_missions_text">Feste Gewohnheiten plus eine tägliche Auslosung. Die Ziele wachsen mit deinem Level.</string>
+    <string name="onb_f_penalty">Strafen</string>
+    <string name="onb_f_penalty_text">Um Mitternacht kosten gescheiterte Missionen XP und Gold, bringen Strafmissionen und können deine Ablenkungs-Apps sperren.</string>
+    <string name="onb_f_focus">Fokus</string>
+    <string name="onb_f_focus_text">Timer oder Pomodoro mit App-Sperre und Umgebungsklang. Die Minuten zählen für Fokus-Missionen.</string>
+    <string name="onb_f_boss">Wochenboss</string>
+    <string name="onb_f_boss_text">Deine XP fügen ihm Schaden zu. Besiege ihn bis Sonntag, um seinen Schatten zu erhalten.</string>
+    <string name="onb_f_shadows">Schatten</string>
+    <string name="onb_f_shadows_text">Sammle sie, entwickle sie und setz drei in deinen Trupp für passive Boni.</string>
+    <string name="onb_register">Registrierung</string>
+    <string name="onb_change_later">Du kannst das jederzeit in den Einstellungen ändern.</string>
+    <string name="onb_start">Los geht\'s</string>
+
+    <!-- System: notifications, blocker, tile -->
+    <string name="channel_session">Fokus-Sessions</string>
+    <string name="channel_events">Ereignisse</string>
+    <string name="channel_reminders">Erinnerungen</string>
+    <string name="session_focus_title">Fokus-Session</string>
+    <string name="session_penalty_title">Strafsperre aktiv</string>
+    <string name="session_left_h">noch %1$dh %2$dm</string>
+    <string name="session_left_m">noch %1$d min</string>
+    <string name="notif_portal_title">Ein Portal hat sich geöffnet</string>
+    <string name="notif_portal_text">%1$s — schließt in %2$d min. Doppelte Belohnungen.</string>
+    <string name="notif_focus_done_title">Fokus beendet</string>
+    <string name="notif_focus_done_text">%1$d Minuten angerechnet.</string>
+    <string name="notif_pomodoro_work">Zurück an die Arbeit</string>
+    <string name="notif_pomodoro_break">Pausenzeit</string>
+    <string name="notif_pomodoro_cycle">Pomodoro-Zyklus %1$d</string>
+    <string name="notif_penalty_title">Strafe verhängt</string>
+    <string name="notif_penalty_text">Die Missionen von gestern sind gescheitert. Erledige %1$d Strafmissionen.</string>
+    <string name="notif_reminder_title">Missionen warten</string>
+    <string name="notif_reminder_text">Heute sind noch %1$d Missionen offen. Mitternacht naht.</string>
+    <string name="block_focus_title">Fokus läuft</string>
+    <string name="block_penalty_title">Strafe aktiv</string>
+    <string name="block_penalty_text">Diese App ist gesperrt. Erledige zuerst deine Strafmissionen.</string>
+    <string name="block_time_left">Verbleibend: %1$s</string>
+    <string name="block_close">[ SCHLIESSEN ]</string>
+    <string-array name="block_quotes">
+        <item>Erfolg verlangt Opfer. Deins ist jetzt der Fokus.</item>
+        <item>Jetzt aufgeben? Dein zukünftiges Ich dankt dir, wenn du dranbleibst.</item>
+        <item>Disziplin ist die Brücke zwischen Zielen und Ergebnissen.</item>
+        <item>Das System akzeptiert keine Ausreden. Nur Ergebnisse.</item>
+        <item>Konzentrier dich auf den Prozess. Ablenkung ist der Feind des Fortschritts.</item>
+        <item>Jede Sekunde Fokus ist ein Schritt über deine Grenzen hinaus.</item>
+        <item>Du brauchst keine Motivation. Du brauchst Disziplin.</item>
+    </string-array>
+    <string name="tile_label">Fokus</string>
+    <string name="tile_on">An</string>
+    <string name="tile_off">Aus</string>
+    <string name="widget_today_name">Heutige Missionen</string>
+    <string name="widget_today_desc">Deine Missionen, dein Streak und deine Strafe auf einen Blick.</string>
+    <string name="widget_hero_name">Jäger</string>
+    <string name="widget_hero_desc">Level, XP und der Wochenboss.</string>
+</resources>

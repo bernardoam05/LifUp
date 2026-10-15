@@ -7,6 +7,7 @@ import com.lifup.app.domain.Content
 import com.lifup.app.system.Notifications
 import com.lifup.app.system.PortalWorker
 import com.lifup.app.system.SystemSync
+import com.lifup.app.widget.Widgets
 import java.io.File
 
 class LifUpApp : Application() {
@@ -23,6 +24,7 @@ class LifUpApp : Application() {
         } else null
         store = GameStore(content, file, migrated)
         Notifications.createChannels(this)
+        SystemSync.onApply(Widgets::refresh)
         SystemSync.install(this, store)
         PortalWorker.schedule(this)
         store.fire()

@@ -13,7 +13,8 @@ fun Tx.ensureDay() {
     if (s.day.isEmpty()) {
         s = s.copy(day = ctx.todayKey, daily = DailyFlags(ctx.todayKey))
         s = s.copy(quests = generateDailyQuests(s, content, ctx.today))
-    } else if (s.day != ctx.todayKey) {
+    } else if (LocalDate.parse(s.day) < ctx.today) {
+        // Only move forward: a clock set back (manual change, timezone hop) never re-closes a day.
         closeDay(LocalDate.parse(s.day))
         s = s.copy(
             day = ctx.todayKey,

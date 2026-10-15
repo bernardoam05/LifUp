@@ -120,7 +120,10 @@
     <string name="block_apps">Bloquear apps</string>
     <string name="block_apps_info">As apps escolhidas ficam tapadas durante a sessão.</string>
     <string name="block_needs_perms">Precisa de acesso de utilização e de sobreposição (ver Permissões em baixo).</string>
-    <string name="apps_selected">%1$d apps escolhidas</string>
+    <plurals name="apps_selected">
+        <item quantity="one">%1$d app escolhida</item>
+        <item quantity="other">%1$d apps escolhidas</item>
+    </plurals>
     <string name="choose_apps">Escolher apps</string>
     <string name="strict_mode">Modo rígido</string>
     <string name="strict_info">Parar antes do fim perde os minutos da sessão, a não ser que uses um Quebra-Feitiços.</string>
@@ -390,4 +393,8 @@
     <string name="tile_label">Foco</string>
     <string name="tile_on">Ligado</string>
     <string name="tile_off">Desligado</string>
+    <string name="widget_today_name">Missões de hoje</string>
+    <string name="widget_today_desc">As tuas missões, streak e penalização num relance.</string>
+    <string name="widget_hero_name">Caçador</string>
+    <string name="widget_hero_desc">Nível, XP e o boss semanal.</string>
 </resources>

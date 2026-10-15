@@ -78,6 +78,14 @@ class EngineTest {
         assertEquals(1L, s.count(StatKey.PENALTIES_CLEARED))
     }
 
+    @Test fun `clock going backwards does not close a day`() {
+        val s = fresh("2026-10-15T09:00")
+        val back = run(s, "2026-10-14T23:00")
+        assertEquals("2026-10-15", back.day)
+        assertFalse(back.penalty.active)
+        assertTrue(back.rewards.none { it is Reward.DayReport })
+    }
+
     @Test fun `rest day skips penalty`() {
         var s = run(fresh(), "2026-10-14T10:00") { toggleRestDay() }
         s = run(s, "2026-10-15T08:00")

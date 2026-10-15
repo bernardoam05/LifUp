@@ -15,7 +15,7 @@ fun BossDef.activeOn(day: MonthDay): Boolean {
 /** Rotates the weekly boss on Mondays. Seasonal bosses take over during their window. */
 fun Tx.ensureBoss() {
     val current = s.boss
-    if (current != null && current.weekKey == ctx.weekKey) return
+    if (current != null && current.weekKey >= ctx.weekKey) return // ISO dates: never rotate backwards
     if (current != null && !current.defeated) toast(ToastKind.BOSS_ESCAPED, current.bossId)
 
     val level = s.player.level

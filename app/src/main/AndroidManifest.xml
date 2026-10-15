@@ -95,6 +95,15 @@
             </intent-filter>
         </service>
 
+        <receiver android:name=".widget.TodayWidgetReceiver" android:exported="true" android:label="@string/widget_today_name">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_today" />
+        </receiver>
+        <receiver android:name=".widget.HeroWidgetReceiver" android:exported="true" android:label="@string/widget_hero_name">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_hero" />
+        </receiver>
+
         <receiver android:name=".system.TickReceiver" android:exported="false" />
 
         <receiver android:name=".system.BootReceiver" android:exported="true">
