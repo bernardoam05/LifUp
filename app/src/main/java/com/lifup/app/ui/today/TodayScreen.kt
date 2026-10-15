@@ -52,6 +52,7 @@ import com.lifup.app.domain.canAddExtra
 import com.lifup.app.domain.completeSideQuest
 import com.lifup.app.domain.isSuccessful
 import com.lifup.app.domain.removeSideQuest
+import com.lifup.app.domain.undoSideQuest
 import com.lifup.app.domain.text
 import com.lifup.app.domain.toggleRestDay
 import com.lifup.app.ui.act
@@ -146,7 +147,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
         items(s.sideQuests, key = { it.id }) { sq ->
             Panel(padding = PaddingValues(start = 4.dp, end = 4.dp, top = 2.dp, bottom = 2.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { act { completeSideQuest(sq.id) } }, enabled = !sq.done) {
+                    IconButton(onClick = { act { if (sq.done) undoSideQuest(sq.id) else completeSideQuest(sq.id) } }) {
                         Icon(if (sq.done) Icons.Rounded.CheckBox else Icons.Rounded.CheckBoxOutlineBlank, null, tint = if (sq.done) p.green else p.muted)
                     }
                     Text(sq.title, style = MaterialTheme.typography.bodyLarge, color = if (sq.done) p.dim else p.text, modifier = Modifier.weight(1f))

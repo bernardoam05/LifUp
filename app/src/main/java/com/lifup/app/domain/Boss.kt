@@ -78,7 +78,7 @@ fun Tx.healBoss(amount: Int) {
         s = s.copy(boss = b.copy(hp = minOf(b.maxHp, b.hp + amount)))
         return
     }
-    b.spoils?.let { loseXp(it.xp); loseGold(it.gold) }
+    b.spoils?.let { loseXp(it.xp); refundGold(it.gold) }
     count(StatKey.BOSSES_DEFEATED, -1)
     val history = s.bossHistory.toMutableList().apply { lastIndexOf(b.bossId).takeIf { it >= 0 }?.let(::removeAt) }
     s = s.copy(boss = b.copy(defeated = false, hp = minOf(b.maxHp, amount), spoils = null), bossHistory = history)

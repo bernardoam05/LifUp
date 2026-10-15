@@ -91,9 +91,7 @@ fun Tx.completeQuest(id: String) {
 private fun Tx.completeMission(q: Quest) {
     val doubled = s.doubleXpNext
     if (doubled) s = s.copy(doubleXpNext = false)
-    val hpBefore = s.boss?.takeUnless { it.defeated }?.hp
-    val xp = gainXp(if (doubled) q.xp * 2 else q.xp, q.type)
-    val dealt = hpBefore?.let { it - (s.boss?.hp ?: it) } ?: 0
+    val (xp, dealt) = gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.type)
     val gold = gainGold(q.gold)
     gainAttributes(q.type)
     updateQuest(q.id) { it.copy(status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt) }
@@ -126,7 +124,7 @@ fun Tx.undoQuest(id: String) {
     val q = s.quests.firstOrNull { it.id == id } ?: return
     if (q.status != QuestStatus.DONE) return
     loseXp(q.xpGained)
-    loseGold(q.goldGained)
+    refundGold(q.goldGained)
     healBoss(q.bossDamage)
     count(StatKey.QUESTS_COMPLETED, -1)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED, -1)
@@ -228,16 +226,32 @@ fun Tx.addSideQuest(title: String) {
     s = s.copy(nextId = s.nextId + 1)
 }
 
-fun Tx.completeSideQuest(id: String) {
-    val sq = s.sideQuests.firstOrNull { it.id == id && !it.done } ?: return
-    gainXp(sq.xp)
-    gainGold(sq.gold)
-    gainAttributes(null)
-    count(StatKey.SIDE_COMPLETED)
-    s = s.copy(sideQuests = s.sideQuests.map { if (it.id == id) it.copy(done = true) else it })
+private fun Tx.updateSide(id: String, f: (SideQuest) -> SideQuest) {
+    s = s.copy(sideQuests = s.sideQuests.map { if (it.id == id) f(it) else it })
 }
 
+fun Tx.completeSideQuest(id: String) {
+    val sq = s.sideQuests.firstOrNull { it.id == id && !it.done } ?: return
+    val (xp, dealt) = gainXpTracked(sq.xp, null)
+    val gold = gainGold(sq.gold)
+    gainAttributes(null)
+    count(StatKey.SIDE_COMPLETED)
+    updateSide(id) { it.copy(done = true, xpGained = xp, goldGained = gold, bossDamage = dealt) }
+}
+
+/** Unticks a side quest and takes back exactly what it paid. */
+fun Tx.undoSideQuest(id: String) {
+    val sq = s.sideQuests.firstOrNull { it.id == id && it.done } ?: return
+    loseXp(sq.xpGained)
+    refundGold(sq.goldGained)
+    healBoss(sq.bossDamage)
+    count(StatKey.SIDE_COMPLETED, -1)
+    updateSide(id) { it.copy(done = false, xpGained = 0, goldGained = 0, bossDamage = 0) }
+}
+
+/** Deleting a finished side quest also removes its rewards, so create-tick-delete can't farm XP. */
 fun Tx.removeSideQuest(id: String) {
+    undoSideQuest(id)
     s = s.copy(sideQuests = s.sideQuests.filterNot { it.id == id })
 }
 

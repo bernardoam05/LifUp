@@ -64,6 +64,9 @@ data class SideQuest(
     val xp: Int,
     val gold: Int,
     val done: Boolean = false,
+    val xpGained: Int = 0,
+    val goldGained: Int = 0,
+    val bossDamage: Int = 0,
 )
 
 @Serializable

@@ -375,6 +375,28 @@ class EngineTest {
         assertTrue(after.autoOff)
     }
 
+    @Test fun `side quests can be unticked and deleting a finished one takes its rewards back`() {
+        var s = fresh()
+        val start = s.player
+        val hp = s.boss!!.hp
+        s = run(s, "2026-10-14T10:00") { addSideQuest("Lavar a loiça") }
+        val id = s.sideQuests.single().id
+        s = run(s, "2026-10-14T10:01") { completeSideQuest(id) }
+        assertTrue(s.player.xp > start.xp || s.player.level > start.level)
+        s = run(s, "2026-10-14T10:02") { undoSideQuest(id) }
+        assertFalse(s.sideQuests.single().done)
+        assertEquals(start.xp, s.player.xp)
+        assertEquals(start.gold, s.player.gold)
+        assertEquals(hp, s.boss!!.hp)
+        s = run(s, "2026-10-14T10:03") { completeSideQuest(id) }
+        s = run(s, "2026-10-14T10:04") { removeSideQuest(id) }
+        assertTrue(s.sideQuests.isEmpty())
+        assertEquals(start.xp, s.player.xp)
+        assertEquals(start.gold, s.player.gold)
+        assertEquals(0L, s.count(StatKey.SIDE_COMPLETED))
+        assertEquals(s.player.gold.toLong(), s.count(StatKey.GOLD_EARNED))
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

@@ -25,6 +25,13 @@ fun Tx.gainXp(base: Int, type: QuestType? = null, hitsBoss: Boolean = true, boos
     return amount
 }
 
+/** [gainXp] that also reports the boss HP it removed, so an undo can give it back. Returns (xp, damage). */
+fun Tx.gainXpTracked(base: Int, type: QuestType?): Pair<Int, Int> {
+    val hpBefore = s.boss?.takeUnless { it.defeated }?.hp
+    val xp = gainXp(base, type)
+    return xp to (hpBefore?.let { it - (s.boss?.hp ?: it) } ?: 0)
+}
+
 private fun Tx.onLevelReached(level: Int) {
     if (level % 5 != 0) {
         toast(ToastKind.LEVEL_UP, level.toString())
@@ -55,6 +62,11 @@ fun Tx.gainAttributes(type: QuestType?) {
 /** Removes XP without ever dropping a level (used by penalties and undo). */
 fun Tx.loseXp(amount: Int) {
     s = s.copy(player = s.player.copy(xp = (s.player.xp - amount).coerceAtLeast(0)))
+}
+
+/** Takes back gold that an undone action paid, so "gold earned" stays truthful. */
+fun Tx.refundGold(amount: Int) {
+    count(StatKey.GOLD_EARNED, -loseGold(amount).toLong())
 }
 
 fun Tx.loseGold(amount: Int): Int {
