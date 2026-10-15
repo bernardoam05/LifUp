@@ -26,6 +26,7 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         rank = Rules.questRank(def.baseXp),
         auto = def.auto,
         pomodoro = def.pomodoro,
+        fromHour = def.fromHour,
     )
 }
 
@@ -69,9 +70,11 @@ private fun Tx.updateQuest(id: String, f: (Quest) -> Quest) {
     }
 }
 
+fun Quest.availableAt(hour: Int) = fromHour == null || hour >= fromHour
+
 fun Tx.completeQuest(id: String) {
     val q = s.allQuests.firstOrNull { it.id == id } ?: return
-    if (q.status != QuestStatus.OPEN) return
+    if (q.status != QuestStatus.OPEN || !q.availableAt(ctx.hour)) return
     when (q.origin) {
         QuestOrigin.PENALTY -> {
             updateQuest(id) { it.copy(status = QuestStatus.DONE, progress = it.target) }

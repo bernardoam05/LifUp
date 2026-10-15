@@ -14,10 +14,19 @@ fun achievementGold(tier: Int) = Rules.ACHIEVEMENT_GOLD[(tier - 1).coerceAtMost(
 
 /** Saves from version 1 didn't count achievement gold as earned: add what was paid so far, once. */
 fun Tx.migrateState() {
-    if (s.version >= 2) return
-    val paid = s.achievements.values.sumOf { tiers -> (1..tiers).sumOf { achievementGold(it).toLong() } }
-    count(StatKey.GOLD_EARNED, paid)
-    s = s.copy(version = 2)
+    if (s.version < 2) {
+        val paid = s.achievements.values.sumOf { tiers -> (1..tiers).sumOf { achievementGold(it).toLong() } }
+        count(StatKey.GOLD_EARNED, paid)
+        s = s.copy(version = 2)
+    }
+    if (s.version < 3) {
+        // The bedtime mission became a check-in confirmed before midnight.
+        val def = content.questDefById["pool_sleep"]
+        s = s.copy(
+            quests = s.quests.map { if (it.defId == "pool_sleep" && def != null) it.copy(type = def.type, fromHour = def.fromHour, description = def.description) else it },
+            version = 3,
+        )
+    }
 }
 
 /** Unlocks every tier whose target has been reached. Rewards are paid unboosted to avoid feedback loops. */

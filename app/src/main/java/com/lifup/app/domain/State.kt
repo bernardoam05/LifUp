@@ -53,6 +53,7 @@ data class Quest(
     val pomodoro: Boolean = false,
     /** Boss HP this quest removed, given back if it is undone. */
     val bossDamage: Int = 0,
+    val fromHour: Int? = null,
 )
 
 @Serializable

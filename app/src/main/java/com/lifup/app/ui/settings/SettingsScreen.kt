@@ -53,6 +53,7 @@ import com.lifup.app.domain.HunterRank
 import com.lifup.app.domain.Rigor
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.rename
+import com.lifup.app.domain.setBlockOnPenalty
 import com.lifup.app.domain.updateSettings
 import com.lifup.app.system.Permissions
 import com.lifup.app.ui.LocalSnackbar
@@ -140,7 +141,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
             Panel {
                 val ready = Permissions.blockerReady(context)
                 ToggleRow(stringResource(R.string.block_on_penalty), stringResource(if (ready) R.string.block_on_penalty_info else R.string.block_needs_perms), set.blockOnPenalty) { v ->
-                    act { updateSettings { it.copy(blockOnPenalty = v) } }
+                    act { setBlockOnPenalty(v) }
                 }
                 ToggleRow(stringResource(R.string.side_penalize), stringResource(R.string.side_penalize_info), set.sidePenalize) { v ->
                     act { updateSettings { it.copy(sidePenalize = v) } }

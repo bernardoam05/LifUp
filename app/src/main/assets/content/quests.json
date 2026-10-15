@@ -812,21 +812,22 @@
   {
    "id": "pool_sleep",
    "kind": "POOL",
-   "type": "FORBIDDEN",
+   "type": "TRAINING",
    "title": {
     "pt": "Descanso do Caçador",
     "en": "Hunter's Rest"
    },
    "description": {
-    "pt": "Deita-te antes da meia-noite.",
-    "en": "Go to bed before midnight."
+    "pt": "Confirma quando te fores deitar, entre as 21h e a meia-noite. Se não confirmares antes da meia-noite, falha.",
+    "en": "Confirm when you go to bed, between 9 PM and midnight. If it isn't confirmed before midnight, it fails."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 60,
-   "baseGold": 15
+   "baseGold": 15,
+   "fromHour": 21
   },
   {
    "id": "pool_junk",

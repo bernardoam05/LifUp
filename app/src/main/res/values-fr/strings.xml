@@ -95,6 +95,7 @@
     <string name="record_best">record %1$s</string>
     <string name="start_focus">Lancer le focus</string>
     <string name="complete">Terminer</string>
+    <string name="available_from">Disponible de %1$d h à minuit</string>
     <string name="mark_done_manual">Marquer comme faite</string>
     <string name="swap_free">Changer (gratuit aujourd\'hui)</string>
     <string name="swap_scroll">Changer (parchemins : %1$d)</string>

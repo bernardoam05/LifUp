@@ -40,6 +40,8 @@ data class QuestDef(
     val auto: AutoKind? = null,
     /** Focus missions done in Pomodoro cycles instead of one straight timer. */
     val pomodoro: Boolean = false,
+    /** Can only be completed from this hour until midnight (e.g. bedtime check-ins). */
+    val fromHour: Int? = null,
 )
 
 @Serializable

@@ -48,6 +48,7 @@ import com.lifup.app.domain.QuestOrigin
 import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.QuestType
 import com.lifup.app.domain.Rules
+import com.lifup.app.domain.availableAt
 import com.lifup.app.domain.completeQuest
 import com.lifup.app.domain.pauseTimer
 import com.lifup.app.domain.resetTimer
@@ -126,7 +127,7 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
             if (q.auto != null && q.autoOff) Text(stringResource(R.string.auto_off), style = MaterialTheme.typography.bodySmall, color = p.gold)
             else if (q.auto != null) AutoInfo(q.auto, s)
 
-            if (open && q.auto == null && (q.type == QuestType.TRAINING || q.type == QuestType.KNOWLEDGE)) {
+            if (open && q.auto == null && q.fromHour == null && (q.type == QuestType.TRAINING || q.type == QuestType.KNOWLEDGE)) {
                 // Stopwatch, kept in the state so it survives the app being closed.
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(fmtDuration(timer?.elapsed(now) ?: 0), style = MaterialTheme.typography.displaySmall, color = if (timer?.running == true) p.accent else p.text, modifier = Modifier.weight(1f))
@@ -162,8 +163,10 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                 // Tracked missions normally fill themselves, so marking them by hand is the secondary action.
                 val tracked = q.type == QuestType.FOCUS || q.type == QuestType.GPS || q.auto != null
                 val complete = { act { completeQuest(q.id) }; onDismiss() }
+                val available = q.availableAt(java.time.LocalTime.now().hour)
+                if (!available) Text(stringResource(R.string.available_from, q.fromHour ?: 0), style = MaterialTheme.typography.bodySmall, color = p.gold)
                 if (tracked) GhostButton(stringResource(R.string.mark_done_manual), onClick = complete, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Check)
-                else PrimaryButton(stringResource(R.string.complete), onClick = complete, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Check)
+                else PrimaryButton(stringResource(R.string.complete), onClick = complete, modifier = Modifier.fillMaxWidth(), enabled = available, icon = Icons.Rounded.Check)
             }
 
             val def = content.questDefById[q.defId] ?: s.customDefs.firstOrNull { it.id == q.defId }

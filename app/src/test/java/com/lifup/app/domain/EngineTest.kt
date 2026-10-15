@@ -413,6 +413,26 @@ class EngineTest {
         assertEquals(1, s.sideRewardsLeft())
     }
 
+    @Test fun `bedtime mission only confirms before midnight`() {
+        var s = run(fresh(), "2026-10-14T10:00") { addDefToToday("pool_sleep") }
+        val q = s.quests.last { it.defId == "pool_sleep" }
+        s = run(s, "2026-10-14T20:00") { completeQuest(q.id) }
+        assertEquals(QuestStatus.OPEN, s.quests.first { it.id == q.id }.status)
+        assertFalse(s.quests.first { it.id == q.id }.isSuccessful())
+        s = run(s, "2026-10-14T23:30") { completeQuest(q.id) }
+        assertEquals(QuestStatus.DONE, s.quests.first { it.id == q.id }.status)
+    }
+
+    @Test fun `turning blocking on during a penalty schedules the block`() {
+        var s = run(fresh(), "2026-10-15T08:00")
+        assertTrue(s.penalty.active)
+        assertEquals(0L, s.penalty.blockEnd)
+        s = run(s, "2026-10-15T09:00") { setBlockOnPenalty(true) }
+        assertFalse(s.penaltyBlockActive(at("2026-10-15T09:30")))
+        assertTrue(s.penaltyBlockActive(at("2026-10-15T11:00")))
+        assertFalse(s.penaltyBlockActive(at("2026-10-15T22:30")))
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

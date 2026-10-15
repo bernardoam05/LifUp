@@ -95,6 +95,7 @@
     <string name="record_best">melhor %1$s</string>
     <string name="start_focus">Começar foco</string>
     <string name="complete">Concluir</string>
+    <string name="available_from">Disponível das %1$d:00 até à meia-noite</string>
     <string name="mark_done_manual">Marcar como feita</string>
     <string name="swap_free">Trocar (grátis hoje)</string>
     <string name="swap_scroll">Trocar (pergaminhos: %1$d)</string>

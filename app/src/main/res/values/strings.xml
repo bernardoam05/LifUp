@@ -104,6 +104,7 @@
     <string name="record_best">best %1$s</string>
     <string name="start_focus">Start focus</string>
     <string name="complete">Complete</string>
+    <string name="available_from">Available from %1$d:00 until midnight</string>
     <string name="mark_done_manual">Mark as done</string>
     <string name="swap_free">Swap (free today)</string>
     <string name="swap_scroll">Swap (scrolls: %1$d)</string>
