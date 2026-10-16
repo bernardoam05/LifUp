@@ -33,6 +33,11 @@ object Rules {
     const val FREE_SWAPS_PER_DAY = 1
     const val MAX_PORTALS_PER_DAY = 2
     const val PORTAL_CHANCE = 0.25
+    /** Portals never ask for more than this much effort, so they fit in an evening. */
+    const val PORTAL_MAX_TASK_MIN = 150.0
+    const val MIN_PER_KM = 10.0
+    const val STEPS_PER_MIN = 100.0
+    const val DEFAULT_TASK_MIN = 15.0
     const val BOSS_CHALLENGE_DAMAGE = 0.35
     const val WEEK_MS = 7L * 24 * 3_600_000
 

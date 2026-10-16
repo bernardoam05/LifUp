@@ -433,6 +433,16 @@ class EngineTest {
         assertFalse(s.penaltyBlockActive(at("2026-10-15T22:30")))
     }
 
+    @Test fun `portals always last longer than their mission takes`() {
+        repeat(40) { seed ->
+            val s = run(fresh(), "2026-10-14T10:00", seed) { openPortal() }
+            val p = s.portal!!
+            val needed = p.quest.estimatedMinutes(s.settings, content)
+            assertTrue(needed <= Rules.PORTAL_MAX_TASK_MIN)
+            assertTrue((p.expiresAt - p.opensAt) / 60_000.0 >= needed * 1.5)
+        }
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

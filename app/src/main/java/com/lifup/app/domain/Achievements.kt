@@ -27,6 +27,12 @@ fun Tx.migrateState() {
             version = 3,
         )
     }
+    if (s.version < 4) {
+        // Portals opened before their length followed the effort get enough time to finish.
+        val p = s.portal
+        val needed = p?.let { it.opensAt + ((it.quest.estimatedMinutes(s.settings, content) * 1.5).toLong() + 30) * 60_000L }
+        s = s.copy(portal = if (p != null && needed != null && needed > p.expiresAt) p.copy(expiresAt = needed) else p, version = 4)
+    }
 }
 
 /** Unlocks every tier whose target has been reached. Rewards are paid unboosted to avoid feedback loops. */

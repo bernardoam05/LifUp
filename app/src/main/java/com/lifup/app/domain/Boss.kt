@@ -101,15 +101,35 @@ fun Tx.rollPortal() {
 
 fun Tx.openPortal() {
     val types = setOf(QuestType.TRAINING, QuestType.KNOWLEDGE, QuestType.FOCUS, QuestType.GPS)
-    val def = s.availableDefs(content).filter { it.kind == DefKind.POOL && it.type in types }.randomOrNull(ctx.rng) ?: return
-    val base = buildQuest(def, s.player.level, QuestOrigin.PORTAL, "portal_${s.nextId}")
-    val quest = base.copy(target = roundTarget(base.target * 1.5, base.unit), xp = base.xp * 2, gold = base.gold * 2)
-    val minutes = 60 + ctx.rng.nextInt(121)
+    val quest = s.availableDefs(content)
+        .filter { it.kind == DefKind.POOL && it.type in types && it.fromHour == null }
+        .map { portalQuest(it) }
+        .filter { it.estimatedMinutes(s.settings, content) <= Rules.PORTAL_MAX_TASK_MIN }
+        .randomOrNull(ctx.rng) ?: return
+    // Always leave room to finish: half again the expected effort plus a margin.
+    val needed = (quest.estimatedMinutes(s.settings, content) * 1.5).toInt() + 30
+    val minutes = maxOf(60 + ctx.rng.nextInt(121), needed)
     s = s.copy(
         portal = PortalState(quest, ctx.now, ctx.now + minutes * 60_000L),
         portalsToday = s.portalsToday + 1,
         nextId = s.nextId + 1,
     )
+}
+
+private fun Tx.portalQuest(def: QuestDef): Quest {
+    val base = buildQuest(def, s.player.level, QuestOrigin.PORTAL, "portal_${s.nextId}")
+    return base.copy(target = roundTarget(base.target * 1.5, base.unit), xp = base.xp * 2, gold = base.gold * 2)
+}
+
+/** Rough wall-clock minutes a quest takes; Pomodoro breaks included. */
+fun Quest.estimatedMinutes(settings: Settings, content: Content): Double = when (unit) {
+    "min" -> if (usesPomodoro(content)) target * (settings.pomodoroWork + settings.pomodoroBreak) / settings.pomodoroWork else target
+    "h" -> target * 60
+    "s" -> target / 60
+    "km" -> target * Rules.MIN_PER_KM
+    "steps" -> target / Rules.STEPS_PER_MIN
+    "day" -> Double.MAX_VALUE
+    else -> Rules.DEFAULT_TASK_MIN
 }
 
 fun Tx.expirePortal() {
