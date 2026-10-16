@@ -102,7 +102,8 @@ fun Tx.rollPortal() {
 fun Tx.openPortal() {
     val types = setOf(QuestType.TRAINING, QuestType.KNOWLEDGE, QuestType.FOCUS, QuestType.GPS)
     val quest = s.availableDefs(content)
-        .filter { it.kind == DefKind.POOL && it.type in types && it.fromHour == null }
+        // Automatic missions add up the whole day's steps, so they can't be a timed challenge.
+        .filter { it.kind == DefKind.POOL && it.type in types && it.fromHour == null && it.auto == null }
         .map { portalQuest(it) }
         .filter { it.estimatedMinutes(s.settings, content) <= Rules.PORTAL_MAX_TASK_MIN }
         .randomOrNull(ctx.rng) ?: return
