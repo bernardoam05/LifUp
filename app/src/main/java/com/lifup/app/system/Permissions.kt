@@ -29,9 +29,10 @@ object Permissions {
 
     fun accessibility(c: Context): Boolean {
         val enabled = Settings.Secure.getString(c.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: return false
-        val me = ComponentName(c, BlockerAccessibilityService::class.java).flattenToString()
+        // The system may store the short form ("pkg/.Cls"), so compare parsed components.
+        val me = ComponentName(c, BlockerAccessibilityService::class.java)
         val splitter = TextUtils.SimpleStringSplitter(':').apply { setString(enabled) }
-        return splitter.any { it.equals(me, ignoreCase = true) }
+        return splitter.any { ComponentName.unflattenFromString(it) == me }
     }
 
     fun batteryUnrestricted(c: Context) = (c.getSystemService(Context.POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(c.packageName)
