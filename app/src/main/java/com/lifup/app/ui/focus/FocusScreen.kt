@@ -1,5 +1,7 @@
 package com.lifup.app.ui.focus
 
+import com.lifup.app.ui.guide.InfoButton
+import com.lifup.app.ui.guide.Guide
 import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -35,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.runtime.getValue
@@ -95,8 +98,6 @@ fun FocusScreen(s: GameState) {
         if (s.penaltyBlockActive(now) || (s.penalty.active && s.penalty.blockStart > now && s.settings.blockOnPenalty)) PenaltyBlockBanner(s, now)
         val f = s.focus
         if (f != null) ActiveSession(s, f, now) else SessionSetup(s)
-        FocusQuests(s)
-        PermissionsPanel(s)
     }
 }
 
@@ -122,7 +123,16 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
     val p = Lif.colors
     val total = f.totalMinutes() * 60_000L
     val remaining = (f.endsAt() - now).coerceAtLeast(0)
+    val elapsedMs = (now - f.startedAt).coerceAtLeast(0)
     val phase = f.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(now)) }
+    val mission = s.allQuests.firstOrNull { it.id == f.questId }
+    // Ring: the current Pomodoro block, the mission's remaining minutes, or the hour for open timers.
+    val ring = when {
+        phase != null -> ((f.elapsedMinutes(now) - phase.startMin) / (phase.endsAtMin - phase.startMin)).toFloat()
+        !f.open -> 1 - remaining / total.toFloat()
+        mission != null -> (f.creditableMinutes(now) / mission.minutesLeft().coerceAtLeast(1)).toFloat()
+        else -> (elapsedMs % 3_600_000L) / 3_600_000f
+    }.coerceIn(0f, 1f)
     val ringColor = if (phase?.work == false) p.green else if (f.strict) p.red else p.purple
     var confirmStop by rememberSaveable { mutableStateOf(false) }
 
@@ -134,31 +144,38 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
                 val arc = Size(size.width - stroke, size.height - stroke)
                 val tl = Offset(stroke / 2, stroke / 2)
                 drawArc(track, -90f, 360f, false, tl, arc, style = Stroke(stroke))
-                drawArc(ringColor, -90f, 360f * (1 - remaining / total.toFloat()), false, tl, arc, style = Stroke(stroke, cap = StrokeCap.Round))
+                drawArc(ringColor, -90f, 360f * ring, false, tl, arc, style = Stroke(stroke, cap = StrokeCap.Round))
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 if (phase != null) {
                     val endMs = f.startedAt + (phase.endsAtMin * 60_000).toLong()
-                    Text(
-                        stringResource(if (phase.work) R.string.pomodoro_work else R.string.pomodoro_break, phase.cycle, f.pomodoro!!.rounds).uppercase(),
-                        style = MaterialTheme.typography.labelMedium, color = ringColor,
-                    )
+                    val label = when {
+                        f.open -> stringResource(if (phase.work) R.string.pomodoro_work_open else R.string.pomodoro_break_open, phase.cycle)
+                        else -> stringResource(if (phase.work) R.string.pomodoro_work else R.string.pomodoro_break, phase.cycle, f.pomodoro!!.rounds)
+                    }
+                    Text(label.uppercase(), style = MaterialTheme.typography.labelMedium, color = ringColor)
                     Text(fmtDuration(endMs - now), fontSize = 52.sp, fontWeight = FontWeight.Bold, fontFamily = com.lifup.app.ui.theme.Rajdhani)
-                    Text(stringResource(R.string.session_total_left, fmtDuration(remaining)), style = MaterialTheme.typography.labelSmall, color = p.muted)
+                    Text(
+                        if (f.open) stringResource(R.string.session_elapsed, fmtDuration(elapsedMs)) else stringResource(R.string.session_total_left, fmtDuration(remaining)),
+                        style = MaterialTheme.typography.labelSmall, color = p.muted,
+                    )
                 } else {
                     Text(stringResource(R.string.focusing).uppercase(), style = MaterialTheme.typography.labelMedium, color = ringColor)
-                    Text(fmtDuration(remaining), fontSize = 56.sp, fontWeight = FontWeight.Bold, fontFamily = com.lifup.app.ui.theme.Rajdhani)
+                    Text(fmtDuration(if (f.open) elapsedMs else remaining), fontSize = 56.sp, fontWeight = FontWeight.Bold, fontFamily = com.lifup.app.ui.theme.Rajdhani)
+                    if (f.open) Text(stringResource(R.string.open_session_running), style = MaterialTheme.typography.labelSmall, color = p.muted)
                 }
             }
         }
-        val mission = s.allQuests.firstOrNull { it.id == f.questId }
         Text(
             mission?.let { stringResource(R.string.focus_counts_for, questTitle(it, lang())) } ?: stringResource(R.string.focus_free_session),
             style = MaterialTheme.typography.titleSmall, color = if (mission != null) p.purple else p.muted, modifier = Modifier.padding(bottom = 6.dp),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             if (f.strict) com.lifup.app.ui.components.Pill(stringResource(R.string.strict), p.red)
-            if (f.blockApps && s.settings.blockedApps.isNotEmpty()) com.lifup.app.ui.components.Pill(stringResource(R.string.blocking_n, s.settings.blockedApps.size), p.accent)
+            if (f.blockApps && s.settings.blockedApps.isNotEmpty()) {
+                if (phase?.work == false) com.lifup.app.ui.components.Pill(stringResource(R.string.apps_free_break), p.green)
+                else com.lifup.app.ui.components.Pill(stringResource(R.string.blocking_n, s.settings.blockedApps.size), p.accent)
+            }
             com.lifup.app.ui.components.Pill(stringResource(R.string.credited_min, f.creditableMinutes(now).roundToInt()), p.green)
         }
         SectionTitle(stringResource(R.string.ambient))
@@ -176,7 +193,7 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
             title = { Text(stringResource(R.string.stop_session), style = MaterialTheme.typography.titleLarge) },
             text = {
                 Text(
-                    if (f.strict) stringResource(R.string.stop_strict_text, minutes, breakers) else stringResource(R.string.stop_text, minutes),
+                    if (f.strict) stringResource(R.string.stop_strict_text, minutes, breakers) else stringResource(if (f.open) R.string.stop_open_text else R.string.stop_text, minutes),
                     color = p.muted,
                 )
             },
@@ -221,6 +238,8 @@ private fun SessionSetup(s: GameState) {
     var block by rememberSaveable { mutableStateOf(set.blockedApps.isNotEmpty()) }
     var ambient by rememberSaveable { mutableStateOf<String?>(null) }
     var pickApps by rememberSaveable { mutableStateOf(false) }
+    var showPerms by rememberSaveable { mutableStateOf(false) }
+    var open by rememberSaveable { mutableStateOf(false) }
     var linked by rememberSaveable { mutableStateOf<String?>(null) }
     val focusQuests = s.allQuests.filter { it.type == QuestType.FOCUS && it.status == QuestStatus.OPEN }
     val linkedQuest = focusQuests.firstOrNull { it.id == linked }
@@ -229,7 +248,7 @@ private fun SessionSetup(s: GameState) {
         linked = q.id
         pomodoro = q.usesPomodoro()
         if (pomodoro) {
-            val rounds = ceil(q.minutesLeft() / set.pomodoroWork.toDouble()).toInt().coerceIn(1, 12)
+            val rounds = ceil(q.minutesLeft() / set.pomodoroPlan().workMin.toDouble()).toInt().coerceIn(1, 12)
             act { updateSettings { it.copy(pomodoroRounds = rounds) } }
         } else minutes = q.minutesLeft().coerceIn(1, 240)
     }
@@ -248,7 +267,10 @@ private fun SessionSetup(s: GameState) {
     }
     val notifPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
-    Text(stringResource(R.string.focus_title), style = MaterialTheme.typography.headlineSmall)
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(R.string.focus_title), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
+        InfoButton(Guide.FOCUS)
+    }
     Spacer(Modifier.height(12.dp))
     MissionPicker(focusQuests, linkedQuest, onPick = ::prepare, onFree = { linked = null })
     Spacer(Modifier.height(8.dp))
@@ -261,7 +283,8 @@ private fun SessionSetup(s: GameState) {
     }
     Spacer(Modifier.height(12.dp))
     Panel {
-        if (!pomodoro) {
+        ToggleRow(stringResource(R.string.open_session), stringResource(R.string.open_session_info), open) { open = it }
+        if (!pomodoro && !open) {
             Text("$minutes min", style = MaterialTheme.typography.displaySmall, modifier = Modifier.align(Alignment.CenterHorizontally))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 listOf(15, 25, 45, 60, 90, 120).forEach { m ->
@@ -269,54 +292,98 @@ private fun SessionSetup(s: GameState) {
                 }
             }
             Stepper(minutes, { minutes = it }, 1..240, stringResource(R.string.fine_tune), " min")
-        } else {
-            Stepper(set.pomodoroWork, { v -> act { updateSettings { it.copy(pomodoroWork = v) } } }, 5..90, stringResource(R.string.pomodoro_work_len), "m")
-            Stepper(set.pomodoroBreak, { v -> act { updateSettings { it.copy(pomodoroBreak = v) } } }, 1..30, stringResource(R.string.pomodoro_break_len), "m")
-            Stepper(set.pomodoroRounds, { v -> act { updateSettings { it.copy(pomodoroRounds = v) } } }, 1..12, stringResource(R.string.pomodoro_rounds), "")
-            val plan = PomodoroPlan(set.pomodoroWork, set.pomodoroBreak, set.pomodoroRounds)
-            Text(stringResource(R.string.pomodoro_total, Pomodoro.totalMinutes(plan), set.pomodoroWork * set.pomodoroRounds), style = MaterialTheme.typography.labelMedium, color = p.muted)
         }
+        if (pomodoro) PomodoroSettings(s, open)
     }
     Spacer(Modifier.height(8.dp))
     Panel {
-        val ready = Permissions.blockerReady(context)
+        val tick = rememberResumeTick()
+        val ready = remember(tick) { Permissions.blockerReady(context) }
         ToggleRow(stringResource(R.string.block_apps), stringResource(if (ready) R.string.block_apps_info else R.string.block_needs_perms), block && ready, enabled = ready) { block = it }
+        if (!ready) TextButton(onClick = { showPerms = true }) { Text(stringResource(R.string.grant_permissions).uppercase(), color = p.gold) }
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
             Icon(Icons.Rounded.Apps, null, tint = p.muted, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
             Text(pluralStringResource(R.plurals.apps_selected, set.blockedApps.size, set.blockedApps.size), style = MaterialTheme.typography.bodyMedium, color = p.muted, modifier = Modifier.weight(1f))
             TextButton(onClick = { pickApps = true }) { Text(stringResource(R.string.choose_apps).uppercase()) }
         }
-        ToggleRow(stringResource(R.string.strict_mode), stringResource(R.string.strict_info), strict) { strict = it }
+        ToggleRow(stringResource(R.string.strict_mode), stringResource(if (open) R.string.strict_open_info else R.string.strict_info), strict && !open, enabled = !open) { strict = it }
     }
     SectionTitle(stringResource(R.string.ambient))
     AmbientChips(ambient) { ambient = it }
     Spacer(Modifier.height(16.dp))
     PrimaryButton(stringResource(R.string.start_session), onClick = {
         if (Build.VERSION.SDK_INT >= 33 && !Permissions.notifications(context)) notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
-        val plan = if (pomodoro) PomodoroPlan(set.pomodoroWork, set.pomodoroBreak, set.pomodoroRounds) else null
+        val plan = if (pomodoro) set.pomodoroPlan() else null
         val quest = focusQuests.firstOrNull { it.id == linked }?.id
-        val session = FocusSession(0, minutes, plan, strict, block && Permissions.blockerReady(context) && set.blockedApps.isNotEmpty(), ambient, quest)
+        val session = FocusSession(0, minutes, plan, strict && !open, block && Permissions.blockerReady(context) && set.blockedApps.isNotEmpty(), ambient, quest, open)
         act { startFocus(session) }
     }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.PlayArrow, color = p.purple)
 
     if (pickApps) AppPickerSheet(set.blockedApps) { pickApps = false }
+    if (showPerms) PermissionsSheet(s) { showPerms = false }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+private fun com.lifup.app.domain.Settings.pomodoroPlan() =
+    Pomodoro.sane(PomodoroPlan(pomodoroWork, pomodoroBreak, pomodoroRounds, pomodoroLongBreak, pomodoroLongEvery))
+
+/** Pomodoro lengths, with breaks capped so they can't outweigh the work. */
+@Composable
+private fun PomodoroSettings(s: GameState, open: Boolean) {
+    val p = Lif.colors
+    val plan = s.settings.pomodoroPlan()
+    fun save(f: (com.lifup.app.domain.Settings) -> com.lifup.app.domain.Settings) = act {
+        updateSettings { old ->
+            val n = f(old)
+            val sane = Pomodoro.sane(PomodoroPlan(n.pomodoroWork, n.pomodoroBreak, n.pomodoroRounds, n.pomodoroLongBreak, n.pomodoroLongEvery))
+            n.copy(pomodoroBreak = sane.breakMin, pomodoroLongBreak = sane.longBreakMin)
+        }
+    }
+    Stepper(plan.workMin, { v -> save { it.copy(pomodoroWork = v) } }, 5..90, stringResource(R.string.pomodoro_work_len), "m", step = 5)
+    Stepper(plan.breakMin, { v -> save { it.copy(pomodoroBreak = v) } }, 1..Pomodoro.maxBreak(plan.workMin), stringResource(R.string.pomodoro_break_len), "m")
+    Stepper(plan.longBreakMin, { v -> save { it.copy(pomodoroLongBreak = v) } }, 0..Pomodoro.maxLongBreak(plan.workMin), stringResource(R.string.pomodoro_long_len), "m", step = 5)
+    if (plan.longBreakMin > 0) Stepper(plan.longEvery, { v -> save { it.copy(pomodoroLongEvery = v) } }, 2..8, stringResource(R.string.pomodoro_long_every), "")
+    if (!open) {
+        Stepper(plan.rounds, { v -> save { it.copy(pomodoroRounds = v) } }, 1..12, stringResource(R.string.pomodoro_rounds), "")
+        Text(stringResource(R.string.pomodoro_total, Pomodoro.totalMinutes(plan), plan.workMin * plan.rounds), style = MaterialTheme.typography.labelMedium, color = p.muted)
+    }
+    Text(stringResource(R.string.pomodoro_rules), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.padding(top = 4.dp))
+}
+
+/** The only place focus missions are listed: pick one (or a free session) and see its progress. */
 @Composable
 private fun MissionPicker(quests: List<Quest>, linked: Quest?, onPick: (Quest) -> Unit, onFree: () -> Unit) {
     val p = Lif.colors
     Panel {
         Text(stringResource(R.string.focus_mission), style = MaterialTheme.typography.labelLarge, color = p.muted)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            FilterChip(selected = linked == null, onClick = onFree, label = { Text(stringResource(R.string.focus_free)) })
-            quests.forEach { q -> FilterChip(selected = linked?.id == q.id, onClick = { onPick(q) }, label = { Text(questTitle(q, lang()), maxLines = 1) }) }
+        MissionOption(stringResource(R.string.focus_free), stringResource(R.string.focus_free_hint), linked == null, onFree)
+        quests.forEach { q ->
+            MissionOption(
+                questTitle(q, lang()),
+                stringResource(R.string.focus_left, q.minutesLeft()),
+                linked?.id == q.id, { onPick(q) },
+                progress = (q.progress / q.target).toFloat(), pomodoro = q.usesPomodoro(),
+            )
         }
-        Text(
-            linked?.let { stringResource(R.string.focus_left, it.minutesLeft()) } ?: stringResource(R.string.focus_free_hint),
-            style = MaterialTheme.typography.bodySmall, color = if (linked != null) p.purple else p.muted,
-        )
+    }
+}
+
+@Composable
+private fun MissionOption(title: String, detail: String, selected: Boolean, onClick: () -> Unit, progress: Float? = null, pomodoro: Boolean = false) {
+    val p = Lif.colors
+    Panel(
+        modifier = Modifier.padding(top = 6.dp),
+        border = if (selected) p.purple else p.border,
+        background = if (selected) p.purple.copy(alpha = 0.08f) else p.panelHigh,
+        onClick = onClick,
+        padding = androidx.compose.foundation.layout.PaddingValues(10.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(title, style = MaterialTheme.typography.titleSmall, color = if (selected) p.purple else p.text, modifier = Modifier.weight(1f), maxLines = 1)
+            if (pomodoro) com.lifup.app.ui.components.Pill(stringResource(R.string.mode_pomodoro), p.purple)
+        }
+        if (progress != null) { Spacer(Modifier.height(4.dp)); Bar(progress, p.purple) }
+        if (selected || progress != null) Text(detail, style = MaterialTheme.typography.labelSmall, color = p.muted, modifier = Modifier.padding(top = 2.dp))
     }
 }
 
@@ -329,28 +396,5 @@ fun ToggleRow(title: String, subtitle: String, checked: Boolean, enabled: Boolea
         }
         Spacer(Modifier.width(8.dp))
         Switch(checked = checked, onCheckedChange = onChange, enabled = enabled)
-    }
-}
-
-@Composable
-private fun FocusQuests(s: GameState) {
-    val quests = s.allQuests.filter { it.type == QuestType.FOCUS && it.status == QuestStatus.OPEN }
-    if (quests.isEmpty()) return
-    SectionTitle(stringResource(R.string.focus_quests))
-    quests.forEach { q ->
-        val active = s.focus?.questId == q.id
-        Panel(
-            modifier = Modifier.padding(bottom = 6.dp),
-            border = if (active) Lif.colors.purple else Lif.colors.border,
-            onClick = if (s.focus == null) ({ FocusPrep.questId = q.id }) else null,
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(questTitle(q, lang()), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
-                if (q.usesPomodoro()) com.lifup.app.ui.components.Pill(stringResource(R.string.mode_pomodoro), Lif.colors.purple)
-            }
-            Spacer(Modifier.height(6.dp))
-            Bar((q.progress / q.target).toFloat(), Lif.colors.purple)
-            Text("${fmtNum(q.progress)} / ${fmtNum(q.target)} min", style = MaterialTheme.typography.labelSmall, color = Lif.colors.dim)
-        }
     }
 }

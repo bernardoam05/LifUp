@@ -1,5 +1,7 @@
 package com.lifup.app.ui.shop
 
+import com.lifup.app.ui.guide.InfoButton
+import com.lifup.app.ui.guide.Guide
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -85,7 +87,7 @@ fun ShopScreen(s: GameState) {
             }
         }
         if (tab == 0) {
-            item { SectionTitle(stringResource(R.string.shadow_offers)) { Text(stringResource(R.string.weekly), color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium) } }
+            item { SectionTitle(stringResource(R.string.shadow_offers)) { Text(stringResource(R.string.weekly), color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium); InfoButton(Guide.SHOP) } }
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     s.shop.shadowOffers.mapNotNull { content.shadowById[it] }.forEach { def ->

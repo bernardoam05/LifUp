@@ -101,9 +101,13 @@ private fun Tx.openChest() {
 
 fun Tx.startFocus(session: FocusSession) {
     if (s.focus != null) return
+    val plan = session.pomodoro?.let(Pomodoro::sane)?.let { p ->
+        if (session.open) p.copy(rounds = Pomodoro.roundsWithin(p, Rules.OPEN_SESSION_MAX_MIN)) else p
+    }
+    // Strict means "don't stop early", which an open session doesn't have.
     s = s.copy(
-        focus = session.copy(startedAt = ctx.now),
-        settings = if (session.pomodoro == null) s.settings.copy(focusMinutes = session.minutes) else s.settings,
+        focus = session.copy(startedAt = ctx.now, pomodoro = plan, strict = session.strict && !session.open),
+        settings = if (session.pomodoro == null && !session.open) s.settings.copy(focusMinutes = session.minutes) else s.settings,
     )
 }
 
@@ -129,7 +133,7 @@ fun Tx.stopFocus(useSpellbreaker: Boolean = false) {
             return
         }
     }
-    finishFocus(f, minutes, completed = false)
+    finishFocus(f, minutes, completed = f.open)
 }
 
 private fun Tx.finishFocus(f: FocusSession, minutes: Double, completed: Boolean) {

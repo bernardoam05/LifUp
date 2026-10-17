@@ -111,6 +111,9 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding()) {
             message?.let { Text(it, color = Lif.colors.accent, style = MaterialTheme.typography.labelLarge) }
 
+            SectionTitle(stringResource(R.string.guide_section))
+            com.lifup.app.ui.guide.GuideList(s)
+
             SectionTitle(stringResource(R.string.profile))
             var name by remember { mutableStateOf(s.player.name) }
             OutlinedTextField(
@@ -118,7 +121,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 label = { Text(stringResource(R.string.hunter_name)) }, singleLine = true, modifier = Modifier.fillMaxWidth(),
             )
 
-            SectionTitle(stringResource(R.string.difficulty))
+            SectionTitle(stringResource(R.string.difficulty)) { com.lifup.app.ui.guide.InfoButton(com.lifup.app.ui.guide.Guide.STREAK) }
             Panel {
                 SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                     Rigor.entries.forEachIndexed { i, r ->
@@ -137,12 +140,9 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 if (!auto) Stepper(set.dailyPoolOverride!!, { v -> act { updateSettings { it.copy(dailyPoolOverride = v) } } }, 1..10, stringResource(R.string.extra_daily_missions))
             }
 
-            SectionTitle(stringResource(R.string.penalties))
+            SectionTitle(stringResource(R.string.penalties)) { com.lifup.app.ui.guide.InfoButton(com.lifup.app.ui.guide.Guide.PENALTY) }
             Panel {
-                val ready = Permissions.blockerReady(context)
-                ToggleRow(stringResource(R.string.block_on_penalty), stringResource(if (ready) R.string.block_on_penalty_info else R.string.block_needs_perms), set.blockOnPenalty) { v ->
-                    act { setBlockOnPenalty(v) }
-                }
+                com.lifup.app.ui.guide.PenaltyBlockToggle(s)
                 ToggleRow(stringResource(R.string.side_penalize), stringResource(R.string.side_penalize_info), set.sidePenalize) { v ->
                     act { updateSettings { it.copy(sidePenalize = v) } }
                 }
@@ -154,7 +154,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 Text(stringResource(R.string.height_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
             }
 
-            com.lifup.app.ui.focus.PermissionsPanel(s, startExpanded = true)
+            com.lifup.app.ui.focus.PermissionsPanel(s)
 
             SectionTitle(stringResource(R.string.notifications))
             Panel {

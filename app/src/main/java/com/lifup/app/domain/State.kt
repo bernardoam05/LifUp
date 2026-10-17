@@ -113,7 +113,14 @@ data class ShopState(
 )
 
 @Serializable
-data class PomodoroPlan(val workMin: Int, val breakMin: Int, val rounds: Int)
+data class PomodoroPlan(
+    val workMin: Int,
+    val breakMin: Int,
+    val rounds: Int,
+    /** Longer break after every [longEvery] work blocks; 0 = off. */
+    val longBreakMin: Int = 0,
+    val longEvery: Int = 4,
+)
 
 @Serializable
 data class FocusSession(
@@ -126,6 +133,8 @@ data class FocusSession(
     val ambient: String? = null,
     /** The one focus mission this session counts for; null = free session. */
     val questId: String? = null,
+    /** No set length: counts until the user stops (capped at [Rules.OPEN_SESSION_MAX_MIN]). */
+    val open: Boolean = false,
 )
 
 @Serializable
@@ -143,6 +152,8 @@ data class Settings(
     val pomodoroWork: Int = 25,
     val pomodoroBreak: Int = 5,
     val pomodoroRounds: Int = 4,
+    val pomodoroLongBreak: Int = 15,
+    val pomodoroLongEvery: Int = 4,
     val blockedApps: List<String> = emptyList(),
     /** Used to turn steps into distance. */
     val heightCm: Int = 170,

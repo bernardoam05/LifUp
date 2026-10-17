@@ -1,5 +1,6 @@
 package com.lifup.app.domain
 
+import com.lifup.app.system.blockPlan
 import kotlinx.serialization.encodeToString
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -510,6 +511,42 @@ class EngineTest {
         s = run(s, "2026-10-20T08:00")
         s = run(s, "2026-10-20T09:00") { toggleRestDay() }
         assertTrue(s.daily.rest)
+    }
+
+    @Test fun `long breaks and break limits`() {
+        val p = PomodoroPlan(25, 5, 4, longBreakMin = 15, longEvery = 2)
+        assertEquals(125, Pomodoro.totalMinutes(p))
+        assertEquals(50.0, Pomodoro.workMinutes(p, 60.0), 0.001)
+        assertFalse(Pomodoro.phaseAt(p, 60.0).work)
+        val greedy = Pomodoro.sane(PomodoroPlan(10, 120, 3, longBreakMin = 300))
+        assertEquals(5, greedy.breakMin)
+        assertEquals(10, greedy.longBreakMin)
+    }
+
+    @Test fun `open session counts until stopped`() {
+        var s = fresh()
+        val fq = buildQuest(content.questDefById.getValue("pool_deepwork"), 1, QuestOrigin.EXTRA, "fq")
+        s = s.copy(quests = s.quests + fq)
+        s = run(s, "2026-10-14T10:00") { startFocus(FocusSession(0, 0, questId = fq.id, strict = true, open = true)) }
+        assertFalse(s.focus!!.strict)
+        s = run(s, "2026-10-14T10:40") { stopFocus() }
+        assertNull(s.focus)
+        assertEquals(40.0, s.quests.first { it.id == fq.id }.progress.coerceAtMost(40.0), 0.001)
+        assertEquals(40L, s.count(StatKey.FOCUS_MINUTES))
+    }
+
+    @Test fun `open pomodoro keeps cycling`() {
+        val s = run(fresh(), "2026-10-14T10:00") { startFocus(FocusSession(0, 0, PomodoroPlan(25, 5, 1), open = true)) }
+        assertTrue(s.focus!!.pomodoro!!.rounds > 10)
+        assertTrue(s.focus!!.totalMinutes() <= Rules.OPEN_SESSION_MAX_MIN)
+    }
+
+    @Test fun `apps are free during pomodoro breaks`() {
+        val base = fresh().let { it.copy(settings = it.settings.copy(blockedApps = listOf("x"))) }
+        val s = run(base, "2026-10-14T10:00") { startFocus(FocusSession(0, 0, PomodoroPlan(25, 5, 2), blockApps = true)) }
+        assertNotNull(s.blockPlan(at("2026-10-14T10:10")))
+        assertNull(s.blockPlan(at("2026-10-14T10:27")))
+        assertEquals(at("2026-10-14T10:55"), s.blockPlan(at("2026-10-14T10:31"))!!.until)
     }
 
     @Test fun `state survives json round trip`() {

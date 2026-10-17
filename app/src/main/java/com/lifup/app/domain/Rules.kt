@@ -86,6 +86,9 @@ object Rules {
     /** Below this share the day is a bad one: penalty missions and app blocking. */
     const val SEVERE_RATIO = 0.5
 
+    /** Sessions without a set end still stop by themselves after this long. */
+    const val OPEN_SESSION_MAX_MIN = 480
+
     /** A penalty, and its app block, lasts this long for every rigor. */
     const val PENALTY_MS = 24 * 3_600_000L
 
@@ -187,32 +190,60 @@ object Rules {
 
 /** Pomodoro timeline maths: everything derives from the start time, so no ticking state is stored. */
 object Pomodoro {
-    fun totalMinutes(p: PomodoroPlan) = p.rounds * p.workMin + (p.rounds - 1).coerceAtLeast(0) * p.breakMin
+    data class Phase(val work: Boolean, val cycle: Int, val startMin: Double, val endsAtMin: Double)
 
-    /** Work minutes accumulated after [elapsedMin] minutes. */
-    fun workMinutes(p: PomodoroPlan, elapsedMin: Double): Double {
-        val cycle = (p.workMin + p.breakMin).toDouble()
-        val e = elapsedMin.coerceIn(0.0, totalMinutes(p).toDouble())
-        val full = floor(e / cycle).toInt()
-        val rem = e - full * cycle
-        return minOf(full, p.rounds) * p.workMin + if (full < p.rounds) minOf(rem, p.workMin.toDouble()) else 0.0
+    /** Breaks can't outweigh the work: a short one is at most half a block, a long one at most a block. */
+    fun sane(p: PomodoroPlan): PomodoroPlan {
+        val work = p.workMin.coerceIn(5, 120)
+        return p.copy(
+            workMin = work,
+            breakMin = p.breakMin.coerceIn(1, maxBreak(work)),
+            rounds = p.rounds.coerceAtLeast(1),
+            longBreakMin = p.longBreakMin.coerceIn(0, maxLongBreak(work)),
+            longEvery = p.longEvery.coerceIn(2, 8),
+        )
     }
 
-    data class Phase(val work: Boolean, val cycle: Int, val endsAtMin: Double)
+    fun maxBreak(work: Int) = (work / 2).coerceAtLeast(1)
+    fun maxLongBreak(work: Int) = work
+
+    private fun breakAfter(p: PomodoroPlan, cycle: Int) =
+        if (p.longBreakMin > 0 && cycle % p.longEvery == 0) p.longBreakMin else p.breakMin
+
+    /** Work blocks with the breaks between them (none after the last). */
+    fun phases(p: PomodoroPlan): List<Phase> {
+        val out = ArrayList<Phase>(p.rounds * 2)
+        var t = 0.0
+        for (c in 1..p.rounds) {
+            out += Phase(true, c, t, t + p.workMin); t += p.workMin
+            if (c < p.rounds) { val b = breakAfter(p, c); out += Phase(false, c, t, t + b); t += b }
+        }
+        return out
+    }
+
+    fun totalMinutes(p: PomodoroPlan) = phases(p).last().endsAtMin.toInt()
+
+    /** Rounds that fit in [minutes], for sessions without a set end. */
+    fun roundsWithin(p: PomodoroPlan, minutes: Int): Int {
+        var rounds = 1
+        while (rounds < 200 && totalMinutes(p.copy(rounds = rounds + 1)) <= minutes) rounds++
+        return rounds
+    }
+
+    /** Work minutes accumulated after [elapsedMin] minutes. */
+    fun workMinutes(p: PomodoroPlan, elapsedMin: Double): Double =
+        phases(p).filter { it.work }.sumOf { (elapsedMin - it.startMin).coerceIn(0.0, it.endsAtMin - it.startMin) }
 
     fun phaseAt(p: PomodoroPlan, elapsedMin: Double): Phase {
-        val cycle = (p.workMin + p.breakMin).toDouble()
-        val idx = floor(elapsedMin / cycle).toInt().coerceAtMost(p.rounds - 1)
-        val rem = elapsedMin - idx * cycle
-        return if (rem < p.workMin) Phase(true, idx + 1, idx * cycle + p.workMin)
-        else Phase(false, idx + 1, (idx + 1) * cycle)
+        val all = phases(p)
+        return all.firstOrNull { elapsedMin < it.endsAtMin } ?: all.last()
     }
 
     fun completedCycles(p: PomodoroPlan, elapsedMin: Double) =
-        (workMinutes(p, elapsedMin) / p.workMin).toInt()
+        phases(p).count { it.work && elapsedMin >= it.endsAtMin }
 }
 
-fun FocusSession.totalMinutes() = pomodoro?.let { Pomodoro.totalMinutes(it) } ?: minutes
+fun FocusSession.totalMinutes() = pomodoro?.let { Pomodoro.totalMinutes(it) } ?: if (open) Rules.OPEN_SESSION_MAX_MIN else minutes
 fun FocusSession.endsAt() = startedAt + totalMinutes() * 60_000L
 fun FocusSession.elapsedMinutes(now: Long) = ((minOf(now, endsAt()) - startedAt) / 60_000.0).coerceAtLeast(0.0)
 fun FocusSession.creditableMinutes(now: Long): Double {

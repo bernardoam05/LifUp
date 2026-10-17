@@ -1,5 +1,7 @@
 package com.lifup.app.ui.hero
 
+import com.lifup.app.ui.guide.InfoButton
+import com.lifup.app.ui.guide.Guide
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -153,7 +155,7 @@ private fun Profile(s: GameState) {
 private fun Squad(s: GameState, onOpen: (String) -> Unit) {
     val c = Lif.colors
     val passives = s.passives(content, System.currentTimeMillis())
-    SectionTitle(stringResource(R.string.squad)) { Text("${s.squad.size}/${Rules.SQUAD_SIZE}", color = c.muted, style = MaterialTheme.typography.labelMedium) }
+    SectionTitle(stringResource(R.string.squad)) { Text("${s.squad.size}/${Rules.SQUAD_SIZE}", color = c.muted, style = MaterialTheme.typography.labelMedium); InfoButton(Guide.SHADOWS) }
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         repeat(Rules.SQUAD_SIZE) { i ->
             val id = s.squad.getOrNull(i)

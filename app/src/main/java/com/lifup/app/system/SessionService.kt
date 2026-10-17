@@ -43,7 +43,12 @@ fun GameState.blockPlan(now: Long): BlockPlan? {
     if (apps.isEmpty()) return null
     if (penaltyBlockActive(now)) return BlockPlan(apps, penalty.blockEnd, penalty = true)
     val f = focus ?: return null
-    return if (f.blockApps && f.endsAt() > now) BlockPlan(apps, f.endsAt(), penalty = false) else null
+    if (!f.blockApps || f.endsAt() <= now) return null
+    // Pomodoro breaks are real breaks: apps are free until the next work block.
+    val phase = f.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(now)) }
+    if (phase?.work == false) return null
+    val until = phase?.let { f.startedAt + (it.endsAtMin * 60_000).toLong() } ?: f.endsAt()
+    return BlockPlan(apps, until, penalty = false)
 }
 
 /**

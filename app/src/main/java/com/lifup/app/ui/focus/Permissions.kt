@@ -71,6 +71,12 @@ fun rememberResumeTick(): Int {
     return tick
 }
 
+private class PermRow(val label: Int, val why: Int, val ok: Boolean, val fix: () -> Unit)
+
+/**
+ * System permissions with what each one is for. Collapsible at all times; it opens by itself only
+ * when something is missing, so a user who chose to skip a permission isn't nagged forever.
+ */
 @Composable
 fun PermissionsPanel(s: GameState, startExpanded: Boolean = false) {
     val context = LocalContext.current
@@ -79,36 +85,39 @@ fun PermissionsPanel(s: GameState, startExpanded: Boolean = false) {
     val activity = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
     val rows = remember(tick) {
         listOf(
-            Triple(R.string.perm_usage, Permissions.usageAccess(context)) { Permissions.openUsageAccess(context); Unit },
-            Triple(R.string.perm_overlay, Permissions.overlay(context)) { Permissions.openOverlay(context); Unit },
-            Triple(R.string.perm_accessibility, Permissions.accessibility(context)) { Permissions.openAccessibility(context); Unit },
-            Triple(R.string.perm_battery, Permissions.batteryUnrestricted(context)) { Permissions.openBattery(context) },
-            Triple(R.string.perm_alarms, Permissions.exactAlarms(context)) { Permissions.openExactAlarms(context) },
-            Triple(R.string.perm_notifications, Permissions.notifications(context)) {
+            PermRow(R.string.perm_usage, R.string.perm_usage_why, Permissions.usageAccess(context)) { Permissions.openUsageAccess(context) },
+            PermRow(R.string.perm_overlay, R.string.perm_overlay_why, Permissions.overlay(context)) { Permissions.openOverlay(context) },
+            PermRow(R.string.perm_accessibility, R.string.perm_accessibility_why, Permissions.accessibility(context)) { Permissions.openAccessibility(context) },
+            PermRow(R.string.perm_battery, R.string.perm_battery_why, Permissions.batteryUnrestricted(context)) { Permissions.openBattery(context) },
+            PermRow(R.string.perm_alarms, R.string.perm_alarms_why, Permissions.exactAlarms(context)) { Permissions.openExactAlarms(context) },
+            PermRow(R.string.perm_notifications, R.string.perm_notifications_why, Permissions.notifications(context)) {
                 if (Build.VERSION.SDK_INT >= 33) notif.launch(Manifest.permission.POST_NOTIFICATIONS)
             },
-            Triple(R.string.perm_activity, Permissions.activity(context)) {
+            PermRow(R.string.perm_activity, R.string.perm_activity_why, Permissions.activity(context)) {
                 if (Build.VERSION.SDK_INT >= 29) activity.launch(Manifest.permission.ACTIVITY_RECOGNITION)
             },
         )
     }
-    val missing = rows.count { !it.second }
-    var expanded by rememberSaveable { mutableStateOf(startExpanded) }
+    val missing = rows.count { !it.ok }
+    var expanded by rememberSaveable { mutableStateOf(startExpanded || missing > 0) }
     SectionTitle(stringResource(R.string.permissions)) {
         Text(if (missing == 0) stringResource(R.string.perm_all_ok) else stringResource(R.string.perm_missing, missing), color = if (missing == 0) Lif.colors.green else Lif.colors.gold, style = MaterialTheme.typography.labelMedium)
     }
-    Panel(onClick = { expanded = !expanded }) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    Panel {
+        Row(Modifier.clickable { expanded = !expanded }, verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.perm_explain), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted, modifier = Modifier.weight(1f))
             Icon(if (expanded) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = Lif.colors.muted)
         }
-        if (expanded || missing > 0) {
-            rows.forEach { (label, ok, fix) ->
-                Row(Modifier.fillMaxWidth().padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(if (ok) Icons.Rounded.CheckCircle else Icons.Rounded.ErrorOutline, null, tint = if (ok) Lif.colors.green else Lif.colors.gold, modifier = Modifier.size(18.dp))
+        if (expanded) {
+            rows.forEach { r ->
+                Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(if (r.ok) Icons.Rounded.CheckCircle else Icons.Rounded.ErrorOutline, null, tint = if (r.ok) Lif.colors.green else Lif.colors.gold, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(label), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                    if (!ok) TextButton(onClick = fix) { Text(stringResource(R.string.fix).uppercase()) }
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(r.label), style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(r.why), style = MaterialTheme.typography.bodySmall, color = Lif.colors.dim)
+                    }
+                    if (!r.ok) TextButton(onClick = r.fix) { Text(stringResource(R.string.fix).uppercase()) }
                 }
             }
             if (!Permissions.accessibility(context) && Permissions.sideloaded(context)) {
@@ -116,6 +125,17 @@ fun PermissionsPanel(s: GameState, startExpanded: Boolean = false) {
                 TextButton(onClick = { Permissions.openAppDetails(context) }) { Text(stringResource(R.string.open_app_info).uppercase()) }
             }
             TextButton(onClick = { Permissions.openAutostart(context) }) { Text(stringResource(R.string.perm_autostart).uppercase()) }
+        }
+    }
+}
+
+/** Permissions on demand, opened from the feature that needs them. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PermissionsSheet(s: GameState, onDismiss: () -> Unit) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = Lif.colors.panel) {
+        Column(Modifier.padding(horizontal = 16.dp).navigationBarsPadding().padding(bottom = 16.dp)) {
+            PermissionsPanel(s, startExpanded = true)
         }
     }
 }

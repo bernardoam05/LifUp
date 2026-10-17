@@ -1,5 +1,8 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.ui.guide.PenaltyBlockToggle
+import com.lifup.app.ui.guide.InfoButton
+import com.lifup.app.ui.guide.Guide
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -116,7 +119,10 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
             if (s.daily.rest) Text(stringResource(R.string.rest_day_info), style = MaterialTheme.typography.bodySmall, color = p.purple, modifier = Modifier.padding(top = 6.dp))
             else if (daily.isNotEmpty()) {
                 val needed = kotlin.math.ceil(daily.size * Rules.passRatio(s.settings.rigor) - 1e-9).toInt()
-                Text(stringResource(R.string.today_goal, needed, daily.size), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.padding(top = 6.dp))
+                Row(Modifier.padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.today_goal, needed, daily.size), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.weight(1f))
+                    InfoButton(Guide.STREAK)
+                }
             }
             s.recovery?.takeIf { it.day == s.day }?.let { r ->
                 Text(stringResource(R.string.streak_recovery, r.streak), style = MaterialTheme.typography.bodySmall, color = p.gold, modifier = Modifier.padding(top = 4.dp))
@@ -124,13 +130,14 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
         }
 
         if (s.penalty.active) {
-            item { SectionTitle(stringResource(R.string.penalty_section)) }
+            item { SectionTitle(stringResource(R.string.penalty_section)) { InfoButton(Guide.PENALTY, s) } }
             item { Text(stringResource(R.string.penalty_info), style = MaterialTheme.typography.bodySmall, color = p.red) }
+            if (!s.settings.blockOnPenalty) item { Panel { PenaltyBlockToggle(s) } }
             items(s.penalty.quests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now) { selected = q.id } }
         }
 
         s.portal?.let { portal ->
-            item { SectionTitle(stringResource(R.string.portal_section)) { Text(fmtShort(portal.expiresAt - now), color = p.purple, style = MaterialTheme.typography.labelLarge) } }
+            item { SectionTitle(stringResource(R.string.portal_section)) { Text(fmtShort(portal.expiresAt - now), color = p.purple, style = MaterialTheme.typography.labelLarge); InfoButton(Guide.PORTAL) } }
             item {
                 Panel(border = p.purple.copy(alpha = 0.6f), background = p.purple.copy(alpha = 0.06f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -145,7 +152,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
 
         item { BossCard(s, now) { selected = it } }
 
-        item { SectionTitle(stringResource(R.string.daily_section)) }
+        item { SectionTitle(stringResource(R.string.daily_section)) { InfoButton(Guide.DAILY) } }
         items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now) { selected = q.id } }
 
         if (s.extraQuests.isNotEmpty() || s.canAddExtra()) {
@@ -192,6 +199,7 @@ private fun SideQuestHeader(rewardsLeft: Int) {
             stringResource(R.string.side_rewards_left, Rules.SIDE_REWARDS_PER_DAY - rewardsLeft, Rules.SIDE_REWARDS_PER_DAY),
             color = if (rewardsLeft == 0) Lif.colors.gold else Lif.colors.dim, style = MaterialTheme.typography.labelMedium,
         )
+        InfoButton(Guide.SIDE)
     }
     Row(verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
@@ -213,6 +221,7 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
     val shadow = content.shadowById[def.shadowId]
     SectionTitle(stringResource(if (def.season != null) R.string.boss_section_season else R.string.boss_section)) {
         Text(stringResource(R.string.boss_ends_in, fmtShort(b.endsAt - now)), color = p.dim, style = MaterialTheme.typography.labelMedium)
+        InfoButton(Guide.BOSS)
     }
     Panel(border = (if (b.defeated) p.green else p.red).copy(alpha = 0.5f), onClick = { onChallenge(b.challenge.id) }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
