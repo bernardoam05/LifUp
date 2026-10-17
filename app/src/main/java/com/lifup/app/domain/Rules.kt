@@ -78,7 +78,7 @@ object Rules {
 
     /** Drawn missions per day; rigor only changes the consequences, not the workload. */
     fun dailyPoolCount(level: Int, settings: Settings): Int = settings.dailyPoolOverride?.coerceIn(0, 10)
-        ?: minOf(3 + level / 15, 5)
+        ?: minOf(3 + level / 25, 4) // at most 1 fixed + 4 drawn; more is opt-in
 
     /** Share of the day's missions that keeps the streak and avoids the penalty. */
     fun passRatio(rigor: Rigor) = when (rigor) { Rigor.EASY -> 0.6; Rigor.NORMAL -> 0.75; Rigor.HARD -> 1.0 }

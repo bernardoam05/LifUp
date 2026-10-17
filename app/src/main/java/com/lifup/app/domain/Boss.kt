@@ -30,7 +30,8 @@ fun Tx.ensureBoss() {
     }
 
     val dailyXp = s.dailyQuests.sumOf { it.xp }.coerceAtLeast(150)
-    val maxHp = (dailyXp * 4 * if (def.rank == "S") 1.3 else 1.0).roundToInt()
+    // About a week of full days: steady players win, occasional ones only sometimes (see SimulationTest).
+    val maxHp = (dailyXp * 7 * if (def.rank == "S") 1.3 else 1.0).roundToInt()
     val challenge = Quest(
         id = "boss_${ctx.weekKey}",
         defId = def.id,
