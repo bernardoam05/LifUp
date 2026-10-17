@@ -444,16 +444,15 @@ class EngineTest {
         }
     }
 
-    @Test fun `unfinished penalty missions do not cause the next penalty`() {
+    @Test fun `penalty lasts one day and its leftovers expire without a new penalty`() {
         var s = run(fresh(), "2026-10-15T08:00")
         assertTrue(s.penalty.active)
-        val penaltyIds = s.penalty.quests.map { it.id }
         s = run(s, "2026-10-15T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-16T08:00")
         val report = s.rewards.filterIsInstance<Reward.DayReport>().last()
         assertTrue(report.perfect)
         assertNull(report.penalty)
-        assertEquals(penaltyIds, s.penalty.quests.map { it.id })
+        assertFalse(s.penalty.active)
     }
 
     @Test fun `state survives json round trip`() {

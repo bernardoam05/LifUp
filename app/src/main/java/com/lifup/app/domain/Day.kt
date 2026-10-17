@@ -52,6 +52,8 @@ private fun Tx.closeDay(day: LocalDate) {
         }
     }
 
+    // A penalty lasts one day: its missions only lift it early, and leftovers just expire.
+    s = s.copy(penalty = Penalty())
     var penaltyInfo: PenaltyInfo? = null
     var streakSavedBy: String? = null
     val p = s.player
