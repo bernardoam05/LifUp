@@ -392,8 +392,8 @@
     <string name="notif_pomodoro_cycle">Ciclo Pomodoro %1$d</string>
     <string name="notif_penalty_title">Penalización aplicada</string>
     <string name="notif_penalty_text">Las misiones de ayer fallaron. Cumple %1$d misiones de penalización.</string>
-    <string name="notif_reminder_title">Misiones pendientes</string>
-    <string name="notif_reminder_text">Aún tienes %1$d misiones abiertas hoy. Se acerca la medianoche.</string>
+    <string name="notif_reminder_title">Racha en peligro</string>
+    <string name="notif_reminder_text">Te faltan %1$d misiones para mantener la racha hoy.</string>
     <string name="block_focus_title">Foco en curso</string>
     <string name="block_penalty_title">Penalización activa</string>
     <string name="block_penalty_text">Esta app está bloqueada. Primero cumple tus misiones de penalización.</string>
@@ -558,4 +558,12 @@
     <string name="adapt_down">Objetivo −%1$d%%: ajustado tras unos días fallados.</string>
     <string name="show_all">Ver todas</string>
     <string name="show_less">Ver menos</string>
+    <string name="notif_reminder_safe_title">Racha asegurada</string>
+    <string name="notif_reminder_safe_text">Te faltan %1$d para un día perfecto, con XP extra y una sombra.</string>
+    <string name="notif_bedtime_title">Hora de descansar</string>
+    <string name="notif_bedtime_text">Confirma el check-in de dormir antes de medianoche.</string>
+    <string name="widget_goal">Faltan %1$d para la racha</string>
+    <string name="widget_goal_safe">Racha asegurada ✓</string>
+    <string name="widget_hours_left">%1$d h hasta medianoche</string>
+    <string name="widget_under_hour">menos de 1 h</string>
 </resources>

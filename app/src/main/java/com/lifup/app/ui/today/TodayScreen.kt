@@ -47,6 +47,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.lifup.app.R
 import com.lifup.app.domain.Ctx
+import com.lifup.app.domain.dayGoal
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.canRest
 import com.lifup.app.domain.restDaysLeft
@@ -118,7 +119,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
             Bar(if (daily.isEmpty()) 0f else done / daily.size.toFloat(), if (s.daily.rest) p.purple else p.accent)
             if (s.daily.rest) Text(stringResource(R.string.rest_day_info), style = MaterialTheme.typography.bodySmall, color = p.purple, modifier = Modifier.padding(top = 6.dp))
             else if (daily.isNotEmpty()) {
-                val needed = kotlin.math.ceil(daily.size * Rules.passRatio(s.settings.rigor) - 1e-9).toInt()
+                val needed = s.dayGoal().needed
                 Row(Modifier.padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.today_goal, needed, daily.size), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.weight(1f))
                     InfoButton(Guide.STREAK)

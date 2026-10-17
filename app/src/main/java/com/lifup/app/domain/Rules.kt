@@ -95,6 +95,9 @@ object Rules {
     /** A mission needs this many days in a week to be called best or worst. */
     const val WEEK_MIN_SAMPLES = 3
 
+    /** Nudge for an open bedtime check-in, in minutes after midnight (22:30). */
+    const val BEDTIME_NUDGE_MIN = 22 * 60 + 30
+
     /** Sessions without a set end still stop by themselves after this long. */
     const val OPEN_SESSION_MAX_MIN = 480
 

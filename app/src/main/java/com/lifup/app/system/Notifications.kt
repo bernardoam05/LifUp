@@ -25,6 +25,7 @@ object Notifications {
     private const val ID_PORTAL = 2001
     private const val ID_FOCUS_DONE = 2002
     private const val ID_PENALTY = 2003
+    private const val ID_BEDTIME = 2006
     private const val ID_REMINDER = 2004
     private const val ID_POMODORO = 2005
 
@@ -85,9 +86,17 @@ object Notifications {
         context.getString(R.string.notif_penalty_text, quests), "today",
     )
 
-    fun reminder(context: Context, left: Int) = post(
-        context, ID_REMINDER, CH_REMINDERS, context.getString(R.string.notif_reminder_title),
-        context.getString(R.string.notif_reminder_text, left), "today",
+    fun reminder(context: Context, goal: com.lifup.app.domain.DayGoal) = post(
+        context, ID_REMINDER, CH_REMINDERS,
+        context.getString(if (goal.safe) R.string.notif_reminder_safe_title else R.string.notif_reminder_title),
+        if (goal.safe) context.getString(R.string.notif_reminder_safe_text, goal.total - goal.kept)
+        else context.getString(R.string.notif_reminder_text, goal.needed - goal.kept),
+        "today",
+    )
+
+    fun bedtime(context: Context) = post(
+        context, ID_BEDTIME, CH_REMINDERS, context.getString(R.string.notif_bedtime_title),
+        context.getString(R.string.notif_bedtime_text), "today",
     )
 
     /** Ongoing note for a step-counted run (no service: the counter runs in hardware). */

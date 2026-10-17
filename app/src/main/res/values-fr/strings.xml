@@ -374,8 +374,8 @@
     <string name="notif_pomodoro_cycle">Cycle Pomodoro %1$d</string>
     <string name="notif_penalty_title">Pénalité appliquée</string>
     <string name="notif_penalty_text">Les missions d\'hier ont échoué. Termine %1$d missions de pénalité.</string>
-    <string name="notif_reminder_title">Missions en attente</string>
-    <string name="notif_reminder_text">Encore %1$d missions ouvertes aujourd\'hui. Minuit approche.</string>
+    <string name="notif_reminder_title">Série en danger</string>
+    <string name="notif_reminder_text">Encore %1$d missions pour garder ta série aujourd\'hui.</string>
     <string name="block_focus_title">Focus en cours</string>
     <string name="block_penalty_title">Pénalité active</string>
     <string name="block_penalty_text">Cette app est bloquée. Termine d\'abord tes missions de pénalité.</string>
@@ -540,4 +540,12 @@
     <string name="adapt_down">Objectif −%1$d %% : ajusté après quelques jours manqués.</string>
     <string name="show_all">Tout voir</string>
     <string name="show_less">Voir moins</string>
+    <string name="notif_reminder_safe_title">Série assurée</string>
+    <string name="notif_reminder_safe_text">Encore %1$d pour une journée parfaite, avec bonus d\'XP et une ombre.</string>
+    <string name="notif_bedtime_title">L\'heure du repos</string>
+    <string name="notif_bedtime_text">Confirme ton check-in du coucher avant minuit.</string>
+    <string name="widget_goal">Encore %1$d pour la série</string>
+    <string name="widget_goal_safe">Série assurée ✓</string>
+    <string name="widget_hours_left">%1$d h avant minuit</string>
+    <string name="widget_under_hour">moins d\'1 h</string>
 </resources>

@@ -392,8 +392,8 @@
     <string name="notif_pomodoro_cycle">Pomodoro-Zyklus %1$d</string>
     <string name="notif_penalty_title">Strafe verhängt</string>
     <string name="notif_penalty_text">Die Missionen von gestern sind gescheitert. Erledige %1$d Strafmissionen.</string>
-    <string name="notif_reminder_title">Missionen warten</string>
-    <string name="notif_reminder_text">Heute sind noch %1$d Missionen offen. Mitternacht naht.</string>
+    <string name="notif_reminder_title">Streak in Gefahr</string>
+    <string name="notif_reminder_text">Noch %1$d Missionen, um heute deinen Streak zu halten.</string>
     <string name="block_focus_title">Fokus läuft</string>
     <string name="block_penalty_title">Strafe aktiv</string>
     <string name="block_penalty_text">Diese App ist gesperrt. Erledige zuerst deine Strafmissionen.</string>
@@ -558,4 +558,12 @@
     <string name="adapt_down">Ziel −%1$d %%: angepasst nach ein paar verpassten Tagen.</string>
     <string name="show_all">Alle anzeigen</string>
     <string name="show_less">Weniger anzeigen</string>
+    <string name="notif_reminder_safe_title">Streak gesichert</string>
+    <string name="notif_reminder_safe_text">Noch %1$d für einen perfekten Tag, mit Bonus-XP und einem Schatten.</string>
+    <string name="notif_bedtime_title">Zeit zum Ausruhen</string>
+    <string name="notif_bedtime_text">Bestätige deinen Schlaf-Check-in vor Mitternacht.</string>
+    <string name="widget_goal">Noch %1$d für den Streak</string>
+    <string name="widget_goal_safe">Streak gesichert ✓</string>
+    <string name="widget_hours_left">%1$d h bis Mitternacht</string>
+    <string name="widget_under_hour">unter 1 h</string>
 </resources>

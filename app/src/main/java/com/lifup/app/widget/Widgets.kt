@@ -1,5 +1,7 @@
 package com.lifup.app.widget
 
+import com.lifup.app.domain.dayGoal
+import com.lifup.app.domain.Ctx
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -71,6 +73,20 @@ object Widgets {
     }
 }
 
+/** What the streak needs today and how long is left (refreshed on changes and every 30 min). */
+@Composable
+private fun GoalLine(context: Context, s: GameState) {
+    val goal = s.dayGoal()
+    val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
+    val hours = ((ctx.nextMidnight() - ctx.now) / 3_600_000L).toInt()
+    val left = if (hours < 1) context.getString(R.string.widget_under_hour) else context.getString(R.string.widget_hours_left, hours)
+    Text(
+        if (goal.safe) context.getString(R.string.widget_goal_safe) else context.getString(R.string.widget_goal, goal.needed - goal.kept) + " · " + left,
+        style = TextStyle(color = c(if (goal.safe) GREEN else if (hours < 3) RED else MUTED), fontSize = 12.sp),
+        maxLines = 1,
+    )
+}
+
 @Composable
 private fun Card(content: @Composable () -> Unit) {
     Column(
@@ -97,6 +113,7 @@ class TodayWidget : GlanceAppWidget() {
                 if (s.penalty.active) {
                     Text(context.getString(R.string.penalty_banner), style = TextStyle(color = c(RED), fontSize = 12.sp, fontWeight = FontWeight.Bold))
                 }
+                if (!s.daily.rest && daily.isNotEmpty()) GoalLine(context, s)
                 Spacer(GlanceModifier.height(6.dp))
                 val shown = (s.penalty.quests.filter { it.status != QuestStatus.DONE } + daily.sortedBy { it.status == QuestStatus.DONE }).take(5)
                 shown.forEach { q ->

@@ -393,8 +393,8 @@
     <string name="notif_pomodoro_cycle">Pomodoro cycle %1$d</string>
     <string name="notif_penalty_title">Penalty applied</string>
     <string name="notif_penalty_text">Yesterday\'s missions failed. Clear %1$d penalty missions.</string>
-    <string name="notif_reminder_title">Missions waiting</string>
-    <string name="notif_reminder_text">%1$d missions still open today. Midnight is coming.</string>
+    <string name="notif_reminder_title">Streak at risk</string>
+    <string name="notif_reminder_text">%1$d more missions keep your streak today.</string>
     <string name="block_focus_title">Focus in progress</string>
     <string name="block_penalty_title">Penalty active</string>
     <string name="block_penalty_text">This app is blocked. Clear your penalty missions first.</string>
@@ -559,4 +559,12 @@
     <string name="adapt_down">Target −%1$d%%: adjusted after a few missed days.</string>
     <string name="show_all">Show all</string>
     <string name="show_less">Show less</string>
+    <string name="notif_reminder_safe_title">Streak secured</string>
+    <string name="notif_reminder_safe_text">%1$d more for a perfect day, with bonus XP and a shadow.</string>
+    <string name="notif_bedtime_title">Time to rest</string>
+    <string name="notif_bedtime_text">Confirm your bedtime check-in before midnight.</string>
+    <string name="widget_goal">%1$d more for the streak</string>
+    <string name="widget_goal_safe">Streak secured ✓</string>
+    <string name="widget_hours_left">%1$d h to midnight</string>
+    <string name="widget_under_hour">under 1 h</string>
 </resources>

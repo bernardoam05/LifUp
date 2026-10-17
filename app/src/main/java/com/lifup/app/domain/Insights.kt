@@ -34,6 +34,22 @@ private fun Adapt.next(ok: Boolean): Adapt = when {
     else -> copy(wins = 0, losses = losses + 1)
 }
 
+// ── Today's goal ──────────────────────────────────────────────────────────────
+
+/** Missions kept so far, how many keep the streak, and the day's total. */
+data class DayGoal(val kept: Int, val needed: Int, val total: Int) {
+    val safe get() = kept >= needed
+}
+
+fun GameState.dayGoal(): DayGoal {
+    val daily = dailyQuests
+    val needed = kotlin.math.ceil(daily.size * Rules.passRatio(settings.rigor) - 1e-9).toInt()
+    return DayGoal(daily.count { it.isSuccessful() }, needed, daily.size)
+}
+
+/** An open bedtime check-in that the user should be nudged about. */
+fun GameState.openBedtime(): Quest? = dailyQuests.firstOrNull { it.fromHour != null && it.status == QuestStatus.OPEN }
+
 // ── Weekly report ─────────────────────────────────────────────────────────────
 
 /** On the first run of a new week, sums up the previous one and starts fresh stats. */

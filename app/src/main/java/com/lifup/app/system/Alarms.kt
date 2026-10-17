@@ -1,5 +1,8 @@
 package com.lifup.app.system
 
+import com.lifup.app.domain.openBedtime
+import com.lifup.app.domain.dayGoal
+import com.lifup.app.domain.Rules
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -42,6 +45,10 @@ object Alarms {
             val at = ctx.atHour(ctx.today, s.settings.reminderHour)
             if (at > now) candidates += at
         }
+        if (s.settings.notifications && s.openBedtime() != null) {
+            val at = ctx.atHour(ctx.today, 0) + Rules.BEDTIME_NUDGE_MIN * 60_000L
+            if (at > now) candidates += at
+        }
         return candidates.filter { it > now }.min()
     }
 
@@ -63,14 +70,22 @@ object Alarms {
     private fun reminderSentToday(context: Context, today: String) =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("reminder", "") == today
 
-    /** Evening nudge if today's missions are still open. */
+    /** Evening nudge that says what is actually at stake, plus a late one for an open bedtime check-in. */
     fun maybeRemind(context: Context, s: GameState) {
         val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
-        if (!s.settings.notifications || ctx.hour < s.settings.reminderHour) return
-        if (reminderSentToday(context, ctx.todayKey)) return
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("reminder", ctx.todayKey).apply()
-        if (s.daily.rest || s.allDailyDone()) return
-        Notifications.reminder(context, s.dailyQuests.count { it.status == com.lifup.app.domain.QuestStatus.OPEN })
+        if (!s.settings.notifications || s.daily.rest) return
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        if (ctx.hour >= s.settings.reminderHour && !reminderSentToday(context, ctx.todayKey)) {
+            prefs.edit().putString("reminder", ctx.todayKey).apply()
+            if (!s.allDailyDone()) Notifications.reminder(context, s.dayGoal())
+        }
+        val minute = ctx.dateTime.hour * 60 + ctx.dateTime.minute
+        if (minute >= Rules.BEDTIME_NUDGE_MIN && prefs.getString("bedtime", "") != ctx.todayKey) {
+            if (s.openBedtime() != null) {
+                prefs.edit().putString("bedtime", ctx.todayKey).apply()
+                Notifications.bedtime(context)
+            }
+        }
     }
 }
 
