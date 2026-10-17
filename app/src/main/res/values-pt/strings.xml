@@ -514,4 +514,8 @@
     <string name="guide_focus">Escolhe uma missão de foco para os minutos contarem para ela; uma sessão livre só conta nas estatísticas. Cada missão tem o seu modo (temporizador ou Pomodoro) e só esse conta. No Pomodoro só os minutos de foco contam e nas pausas as apps ficam livres. Sem limite: conta até parares. Modo estrito: parar a meio perde os minutos, a não ser que uses um Quebra-Feitiços.</string>
     <string name="guide_shop_title">Loja</string>
     <string name="guide_shop">Gasta o ouro em objetos (trocar missões, proteger o streak, elixires de XP e ouro, baús) e em sombras. As 3 sombras à venda e o stock de alguns objetos mudam todas as segundas-feiras. Os objetos ficam no inventário até os usares.</string>
+    <string name="auto_backups">Cópias automáticas</string>
+    <string name="auto_backups_info">A app guarda uma cópia por dia dos últimos 7 dias. Com a cópia de segurança do Android ligada, também vão para a tua conta Google.</string>
+    <string name="auto_backups_none">Ainda não há cópias.</string>
+    <string name="restore">Restaurar</string>
 </resources>

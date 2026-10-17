@@ -188,6 +188,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                     GhostButton(stringResource(R.string.import_), onClick = { importer.launch(arrayOf("application/json", "text/plain", "*/*")) }, modifier = Modifier.weight(1f), icon = Icons.Rounded.Download)
                 }
                 TextButton(onClick = { pasteOpen = true }) { Text(stringResource(R.string.paste_old_backup).uppercase()) }
+                AutoBackups { pendingImport = it }
                 val legacy = remember { LegacyImport.readAsyncStorage(context) }
                 if (legacy != null) {
                     GhostButton(stringResource(R.string.import_old_app), onClick = {
@@ -236,3 +237,19 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
 
 fun rigorName(r: Rigor) = when (r) { Rigor.EASY -> R.string.rigor_easy; Rigor.NORMAL -> R.string.rigor_normal; Rigor.HARD -> R.string.rigor_hard }
 fun rigorInfo(r: Rigor) = when (r) { Rigor.EASY -> R.string.rigor_easy_info; Rigor.NORMAL -> R.string.rigor_normal_info; Rigor.HARD -> R.string.rigor_hard_info }
+
+/** Daily copies kept by the app; restoring one goes through the usual import confirmation. */
+@Composable
+private fun AutoBackups(onRestore: (GameState) -> Unit) {
+    val entries = remember { LifUpApp.store.snapshots.list() }
+    Spacer(Modifier.height(8.dp))
+    Text(stringResource(R.string.auto_backups), style = MaterialTheme.typography.titleSmall)
+    Text(stringResource(R.string.auto_backups_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+    if (entries.isEmpty()) Text(stringResource(R.string.auto_backups_none), style = MaterialTheme.typography.bodySmall, color = Lif.colors.dim)
+    entries.forEach { e ->
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(java.time.LocalDate.parse(e.day).format(java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+            TextButton(onClick = { LifUpApp.store.readSnapshot(e.file)?.let(onRestore) }) { Text(stringResource(R.string.restore).uppercase()) }
+        }
+    }
+}

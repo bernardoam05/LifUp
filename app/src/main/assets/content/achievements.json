@@ -15,11 +15,17 @@
   },
   "title": {
    "pt": "Caçador Incansável",
-   "en": "Tireless Hunter"
+   "en": "Tireless Hunter",
+   "es": "Cazador Incansable",
+   "fr": "Chasseur Infatigable",
+   "de": "Unermüdlicher Jäger"
   },
   "description": {
    "pt": "Completa {target} missões.",
-   "en": "Complete {target} missions."
+   "en": "Complete {target} missions.",
+   "es": "Completa {target} misiones.",
+   "fr": "Termine {target} missions.",
+   "de": "Schließe {target} Missionen ab."
   }
  },
  {
@@ -33,15 +39,24 @@
   ],
   "title": {
    "pt": "Dia Perfeito",
-   "en": "Perfect Day"
+   "en": "Perfect Day",
+   "es": "Día Perfecto",
+   "fr": "Journée Parfaite",
+   "de": "Perfekter Tag"
   },
   "description": {
    "pt": "Fecha {target} dias com todas as missões cumpridas.",
-   "en": "Close {target} days with every mission done."
+   "en": "Close {target} days with every mission done.",
+   "es": "Cierra {target} días con todas las misiones cumplidas.",
+   "fr": "Boucle {target} jours avec toutes les missions accomplies.",
+   "de": "Beende {target} Tage mit allen erledigten Missionen."
   },
   "descriptionOne": {
    "pt": "Fecha um dia com todas as missões cumpridas.",
-   "en": "Close a day with every mission done."
+   "en": "Close a day with every mission done.",
+   "es": "Cierra un día con todas las misiones cumplidas.",
+   "fr": "Boucle une journée avec toutes les missions accomplies.",
+   "de": "Beende einen Tag mit allen erledigten Missionen."
   }
  },
  {
@@ -59,11 +74,17 @@
   },
   "title": {
    "pt": "Corrente Inquebrável",
-   "en": "Unbroken Chain"
+   "en": "Unbroken Chain",
+   "es": "Cadena Inquebrantable",
+   "fr": "Chaîne Ininterrompue",
+   "de": "Ungebrochene Kette"
   },
   "description": {
    "pt": "Atinge um streak de {target} dias.",
-   "en": "Reach a {target}-day streak."
+   "en": "Reach a {target}-day streak.",
+   "es": "Alcanza una racha de {target} días.",
+   "fr": "Atteins une série de {target} jours.",
+   "de": "Erreiche einen Streak von {target} Tagen."
   }
  },
  {
@@ -81,11 +102,17 @@
   },
   "title": {
    "pt": "Mente de Aço",
-   "en": "Steel Mind"
+   "en": "Steel Mind",
+   "es": "Mente de Acero",
+   "fr": "Esprit d'Acier",
+   "de": "Geist aus Stahl"
   },
   "description": {
    "pt": "Acumula {target} minutos de foco.",
-   "en": "Accumulate {target} minutes of focus."
+   "en": "Accumulate {target} minutes of focus.",
+   "es": "Acumula {target} minutos de concentración.",
+   "fr": "Cumule {target} minutes de focus.",
+   "de": "Sammle {target} Minuten Fokus."
   }
  },
  {
@@ -99,15 +126,24 @@
   ],
   "title": {
    "pt": "Ritual de Concentração",
-   "en": "Focus Ritual"
+   "en": "Focus Ritual",
+   "es": "Ritual de Concentración",
+   "fr": "Rituel de Concentration",
+   "de": "Fokus-Ritual"
   },
   "description": {
    "pt": "Termina {target} sessões de foco.",
-   "en": "Finish {target} focus sessions."
+   "en": "Finish {target} focus sessions.",
+   "es": "Termina {target} sesiones de concentración.",
+   "fr": "Termine {target} sessions de focus.",
+   "de": "Beende {target} Fokus-Sessions."
   },
   "descriptionOne": {
    "pt": "Termina uma sessão de foco.",
-   "en": "Finish a focus session."
+   "en": "Finish a focus session.",
+   "es": "Termina una sesión de concentración.",
+   "fr": "Termine une session de focus.",
+   "de": "Beende eine Fokus-Session."
   }
  },
  {
@@ -120,15 +156,24 @@
   ],
   "title": {
    "pt": "Sem Saída",
-   "en": "No Way Out"
+   "en": "No Way Out",
+   "es": "Sin Salida",
+   "fr": "Sans Issue",
+   "de": "Kein Ausweg"
   },
   "description": {
    "pt": "Termina {target} sessões de foco rígidas até ao fim.",
-   "en": "Finish {target} strict focus sessions to the end."
+   "en": "Finish {target} strict focus sessions to the end.",
+   "es": "Termina {target} sesiones de concentración estrictas hasta el final.",
+   "fr": "Mène {target} sessions de focus strictes jusqu'au bout.",
+   "de": "Bring {target} strenge Fokus-Sessions bis zum Ende durch."
   },
   "descriptionOne": {
    "pt": "Termina uma sessão de foco rígida até ao fim.",
-   "en": "Finish a strict focus session to the end."
+   "en": "Finish a strict focus session to the end.",
+   "es": "Termina una sesión de concentración estricta hasta el final.",
+   "fr": "Mène une session de focus stricte jusqu'au bout.",
+   "de": "Bring eine strenge Fokus-Session bis zum Ende durch."
   }
  },
  {
@@ -141,11 +186,17 @@
   ],
   "title": {
    "pt": "Ciclo Eterno",
-   "en": "Endless Cycle"
+   "en": "Endless Cycle",
+   "es": "Ciclo Eterno",
+   "fr": "Cycle Éternel",
+   "de": "Endloser Zyklus"
   },
   "description": {
    "pt": "Completa {target} ciclos Pomodoro.",
-   "en": "Complete {target} Pomodoro cycles."
+   "en": "Complete {target} Pomodoro cycles.",
+   "es": "Completa {target} ciclos Pomodoro.",
+   "fr": "Termine {target} cycles Pomodoro.",
+   "de": "Schließe {target} Pomodoro-Zyklen ab."
   }
  },
  {
@@ -159,15 +210,24 @@
   ],
   "title": {
    "pt": "Matador de Bosses",
-   "en": "Boss Slayer"
+   "en": "Boss Slayer",
+   "es": "Matajefes",
+   "fr": "Tueur de Boss",
+   "de": "Boss-Bezwinger"
   },
   "description": {
    "pt": "Derrota {target} bosses semanais.",
-   "en": "Defeat {target} weekly bosses."
+   "en": "Defeat {target} weekly bosses.",
+   "es": "Derrota a {target} jefes semanales.",
+   "fr": "Bats {target} boss hebdomadaires.",
+   "de": "Besiege {target} Wochen-Bosse."
   },
   "descriptionOne": {
    "pt": "Derrota um boss semanal.",
-   "en": "Defeat a weekly boss."
+   "en": "Defeat a weekly boss.",
+   "es": "Derrota a un jefe semanal.",
+   "fr": "Bats un boss hebdomadaire.",
+   "de": "Besiege einen Wochen-Boss."
   }
  },
  {
@@ -180,15 +240,24 @@
   ],
   "title": {
    "pt": "Desafiante",
-   "en": "Challenger"
+   "en": "Challenger",
+   "es": "Retador",
+   "fr": "Challenger",
+   "de": "Herausforderer"
   },
   "description": {
    "pt": "Cumpre {target} desafios de boss.",
-   "en": "Complete {target} boss challenges."
+   "en": "Complete {target} boss challenges.",
+   "es": "Cumple {target} desafíos de jefe.",
+   "fr": "Relève {target} défis de boss.",
+   "de": "Meistere {target} Boss-Herausforderungen."
   },
   "descriptionOne": {
    "pt": "Cumpre um desafio de boss.",
-   "en": "Complete a boss challenge."
+   "en": "Complete a boss challenge.",
+   "es": "Cumple un desafío de jefe.",
+   "fr": "Relève un défi de boss.",
+   "de": "Meistere eine Boss-Herausforderung."
   }
  },
  {
@@ -202,15 +271,24 @@
   ],
   "title": {
    "pt": "Fecha-Portais",
-   "en": "Portal Closer"
+   "en": "Portal Closer",
+   "es": "Cierraportales",
+   "fr": "Fermeur de Portails",
+   "de": "Portalschließer"
   },
   "description": {
    "pt": "Fecha {target} portais antes de expirarem.",
-   "en": "Close {target} portals before they expire."
+   "en": "Close {target} portals before they expire.",
+   "es": "Cierra {target} portales antes de que expiren.",
+   "fr": "Ferme {target} portails avant qu'ils n'expirent.",
+   "de": "Schließe {target} Portale, bevor sie ablaufen."
   },
   "descriptionOne": {
    "pt": "Fecha um portal antes de expirar.",
-   "en": "Close a portal before it expires."
+   "en": "Close a portal before it expires.",
+   "es": "Cierra un portal antes de que expire.",
+   "fr": "Ferme un portail avant qu'il n'expire.",
+   "de": "Schließe ein Portal, bevor es abläuft."
   }
  },
  {
@@ -229,11 +307,17 @@
   },
   "title": {
    "pt": "Exército das Sombras",
-   "en": "Shadow Army"
+   "en": "Shadow Army",
+   "es": "Ejército de Sombras",
+   "fr": "Armée des Ombres",
+   "de": "Schattenarmee"
   },
   "description": {
    "pt": "Reúne {target} sombras diferentes.",
-   "en": "Gather {target} different shadows."
+   "en": "Gather {target} different shadows.",
+   "es": "Reúne {target} sombras distintas.",
+   "fr": "Rassemble {target} ombres différentes.",
+   "de": "Sammle {target} verschiedene Schatten."
   }
  },
  {
@@ -246,11 +330,17 @@
   ],
   "title": {
    "pt": "Evolução",
-   "en": "Evolution"
+   "en": "Evolution",
+   "es": "Evolución",
+   "fr": "Évolution",
+   "de": "Evolution"
   },
   "description": {
    "pt": "Evolui uma sombra até ao nível {target}.",
-   "en": "Evolve a shadow to level {target}."
+   "en": "Evolve a shadow to level {target}.",
+   "es": "Evoluciona una sombra hasta el nivel {target}.",
+   "fr": "Fais évoluer une ombre jusqu'au niveau {target}.",
+   "de": "Entwickle einen Schatten auf Level {target}."
   }
  },
  {
@@ -261,11 +351,17 @@
   ],
   "title": {
    "pt": "Esquadrão Completo",
-   "en": "Full Squad"
+   "en": "Full Squad",
+   "es": "Escuadrón Completo",
+   "fr": "Escouade au Complet",
+   "de": "Volles Team"
   },
   "description": {
    "pt": "Coloca 3 sombras no esquadrão.",
-   "en": "Put 3 shadows in your squad."
+   "en": "Put 3 shadows in your squad.",
+   "es": "Pon 3 sombras en tu escuadrón.",
+   "fr": "Place 3 ombres dans ton escouade.",
+   "de": "Stelle 3 Schatten in dein Team."
   }
  },
  {
@@ -280,11 +376,17 @@
   ],
   "title": {
    "pt": "Ascensão",
-   "en": "Ascension"
+   "en": "Ascension",
+   "es": "Ascensión",
+   "fr": "Ascension",
+   "de": "Aufstieg"
   },
   "description": {
    "pt": "Chega ao nível {target}.",
-   "en": "Reach level {target}."
+   "en": "Reach level {target}.",
+   "es": "Alcanza el nivel {target}.",
+   "fr": "Atteins le niveau {target}.",
+   "de": "Erreiche Level {target}."
   }
  },
  {
@@ -297,11 +399,17 @@
   ],
   "title": {
    "pt": "Tesouro",
-   "en": "Treasure"
+   "en": "Treasure",
+   "es": "Tesoro",
+   "fr": "Trésor",
+   "de": "Schatz"
   },
   "description": {
    "pt": "Ganha {target} de ouro no total.",
-   "en": "Earn {target} gold in total."
+   "en": "Earn {target} gold in total.",
+   "es": "Gana {target} de oro en total.",
+   "fr": "Gagne {target} d'or au total.",
+   "de": "Verdiene insgesamt {target} Gold."
   }
  },
  {
@@ -314,11 +422,17 @@
   ],
   "title": {
    "pt": "Cliente Fiel",
-   "en": "Loyal Customer"
+   "en": "Loyal Customer",
+   "es": "Cliente Fiel",
+   "fr": "Client Fidèle",
+   "de": "Stammkunde"
   },
   "description": {
    "pt": "Gasta {target} de ouro na loja.",
-   "en": "Spend {target} gold in the shop."
+   "en": "Spend {target} gold in the shop.",
+   "es": "Gasta {target} de oro en la tienda.",
+   "fr": "Dépense {target} d'or à la boutique.",
+   "de": "Gib {target} Gold im Shop aus."
   }
  },
  {
@@ -331,15 +445,24 @@
   ],
   "title": {
    "pt": "Alquimista",
-   "en": "Alchemist"
+   "en": "Alchemist",
+   "es": "Alquimista",
+   "fr": "Alchimiste",
+   "de": "Alchemist"
   },
   "description": {
    "pt": "Usa {target} itens.",
-   "en": "Use {target} items."
+   "en": "Use {target} items.",
+   "es": "Usa {target} objetos.",
+   "fr": "Utilise {target} objets.",
+   "de": "Benutze {target} Items."
   },
   "descriptionOne": {
    "pt": "Usa um item.",
-   "en": "Use an item."
+   "en": "Use an item.",
+   "es": "Usa un objeto.",
+   "fr": "Utilise un objet.",
+   "de": "Benutze ein Item."
   }
  },
  {
@@ -352,11 +475,17 @@
   ],
   "title": {
    "pt": "Tarefas Paralelas",
-   "en": "Side Hustle"
+   "en": "Side Hustle",
+   "es": "Trabajillos Extra",
+   "fr": "Petits Boulots",
+   "de": "Nebenjob"
   },
   "description": {
    "pt": "Completa {target} side quests.",
-   "en": "Complete {target} side quests."
+   "en": "Complete {target} side quests.",
+   "es": "Completa {target} misiones secundarias.",
+   "fr": "Termine {target} quêtes secondaires.",
+   "de": "Schließe {target} Nebenquests ab."
   }
  },
  {
@@ -369,15 +498,24 @@
   ],
   "title": {
    "pt": "Mais Além",
-   "en": "Beyond Duty"
+   "en": "Beyond Duty",
+   "es": "Más Allá del Deber",
+   "fr": "Au-delà du Devoir",
+   "de": "Über die Pflicht hinaus"
   },
   "description": {
    "pt": "Completa {target} missões extra.",
-   "en": "Complete {target} extra missions."
+   "en": "Complete {target} extra missions.",
+   "es": "Completa {target} misiones extra.",
+   "fr": "Termine {target} missions bonus.",
+   "de": "Schließe {target} Extra-Missionen ab."
   },
   "descriptionOne": {
    "pt": "Completa uma missão extra.",
-   "en": "Complete an extra mission."
+   "en": "Complete an extra mission.",
+   "es": "Completa una misión extra.",
+   "fr": "Termine une mission bonus.",
+   "de": "Schließe eine Extra-Mission ab."
   }
  },
  {
@@ -390,11 +528,17 @@
   ],
   "title": {
    "pt": "Andarilho",
-   "en": "Wanderer"
+   "en": "Wanderer",
+   "es": "Vagabundo",
+   "fr": "Vagabond",
+   "de": "Wanderer"
   },
   "description": {
    "pt": "Percorre {target} km com o GPS.",
-   "en": "Cover {target} km with GPS tracking."
+   "en": "Cover {target} km with GPS tracking.",
+   "es": "Recorre {target} km con seguimiento GPS.",
+   "fr": "Parcours {target} km avec le GPS.",
+   "de": "Lege {target} km mit GPS-Tracking zurück."
   }
  },
  {
@@ -406,15 +550,24 @@
   ],
   "title": {
    "pt": "Redenção",
-   "en": "Redemption"
+   "en": "Redemption",
+   "es": "Redención",
+   "fr": "Rédemption",
+   "de": "Erlösung"
   },
   "description": {
    "pt": "Cumpre {target} penalizações.",
-   "en": "Clear {target} penalties."
+   "en": "Clear {target} penalties.",
+   "es": "Cumple {target} penalizaciones.",
+   "fr": "Purge {target} pénalités.",
+   "de": "Erledige {target} Strafen."
   },
   "descriptionOne": {
    "pt": "Cumpre uma penalização.",
-   "en": "Clear a penalty."
+   "en": "Clear a penalty.",
+   "es": "Cumple una penalización.",
+   "fr": "Purge une pénalité.",
+   "de": "Erledige eine Strafe."
   }
  },
  {
@@ -426,15 +579,24 @@
   ],
   "title": {
    "pt": "Regresso",
-   "en": "Comeback"
+   "en": "Comeback",
+   "es": "Regreso",
+   "fr": "Retour en Force",
+   "de": "Comeback"
   },
   "description": {
    "pt": "Faz {target} dias perfeitos logo a seguir a uma penalização.",
-   "en": "Get {target} perfect days right after a penalty."
+   "en": "Get {target} perfect days right after a penalty.",
+   "es": "Consigue {target} días perfectos justo después de una penalización.",
+   "fr": "Fais {target} journées parfaites juste après une pénalité.",
+   "de": "Schaffe {target} perfekte Tage direkt nach einer Strafe."
   },
   "descriptionOne": {
    "pt": "Faz um dia perfeito logo a seguir a uma penalização.",
-   "en": "Get a perfect day right after a penalty."
+   "en": "Get a perfect day right after a penalty.",
+   "es": "Consigue un día perfecto justo después de una penalización.",
+   "fr": "Fais une journée parfaite juste après une pénalité.",
+   "de": "Schaffe einen perfekten Tag direkt nach einer Strafe."
   }
  },
  {
@@ -446,15 +608,24 @@
   ],
   "title": {
    "pt": "Coruja",
-   "en": "Night Owl"
+   "en": "Night Owl",
+   "es": "Búho Nocturno",
+   "fr": "Oiseau de Nuit",
+   "de": "Nachteule"
   },
   "description": {
    "pt": "Completa {target} missões entre a meia-noite e as 4h.",
-   "en": "Complete {target} missions between midnight and 4 AM."
+   "en": "Complete {target} missions between midnight and 4 AM.",
+   "es": "Completa {target} misiones entre la medianoche y las 4:00.",
+   "fr": "Termine {target} missions entre minuit et 4h.",
+   "de": "Schließe {target} Missionen zwischen Mitternacht und 4 Uhr ab."
   },
   "descriptionOne": {
    "pt": "Completa uma missão entre a meia-noite e as 4h.",
-   "en": "Complete a mission between midnight and 4 AM."
+   "en": "Complete a mission between midnight and 4 AM.",
+   "es": "Completa una misión entre la medianoche y las 4:00.",
+   "fr": "Termine une mission entre minuit et 4h.",
+   "de": "Schließe eine Mission zwischen Mitternacht und 4 Uhr ab."
   }
  },
  {
@@ -467,15 +638,24 @@
   ],
   "title": {
    "pt": "Madrugador",
-   "en": "Early Bird"
+   "en": "Early Bird",
+   "es": "Madrugador",
+   "fr": "Lève-Tôt",
+   "de": "Frühaufsteher"
   },
   "description": {
    "pt": "Completa {target} missões antes das 7h.",
-   "en": "Complete {target} missions before 7 AM."
+   "en": "Complete {target} missions before 7 AM.",
+   "es": "Completa {target} misiones antes de las 7:00.",
+   "fr": "Termine {target} missions avant 7h.",
+   "de": "Schließe {target} Missionen vor 7 Uhr ab."
   },
   "descriptionOne": {
    "pt": "Completa uma missão antes das 7h.",
-   "en": "Complete a mission before 7 AM."
+   "en": "Complete a mission before 7 AM.",
+   "es": "Completa una misión antes de las 7:00.",
+   "fr": "Termine une mission avant 7h.",
+   "de": "Schließe eine Mission vor 7 Uhr ab."
   }
  },
  {
@@ -487,15 +667,24 @@
   ],
   "title": {
    "pt": "Tentação",
-   "en": "Temptation"
+   "en": "Temptation",
+   "es": "Tentación",
+   "fr": "Tentation",
+   "de": "Versuchung"
   },
   "description": {
    "pt": "Bate {target} vezes no bloqueio de apps.",
-   "en": "Hit the app block {target} times."
+   "en": "Hit the app block {target} times.",
+   "es": "Choca {target} veces con el bloqueo de apps.",
+   "fr": "Heurte le blocage d'apps {target} fois.",
+   "de": "Stoße {target} Mal auf die App-Sperre."
   },
   "descriptionOne": {
    "pt": "Bate uma vez no bloqueio de apps.",
-   "en": "Hit the app block once."
+   "en": "Hit the app block once.",
+   "es": "Choca una vez con el bloqueo de apps.",
+   "fr": "Heurte le blocage d'apps une fois.",
+   "de": "Stoße einmal auf die App-Sperre."
   }
  },
  {
@@ -507,15 +696,24 @@
   ],
   "title": {
    "pt": "Forjador",
-   "en": "Forger"
+   "en": "Forger",
+   "es": "Forjador",
+   "fr": "Forgeron",
+   "de": "Schmied"
   },
   "description": {
    "pt": "Cria {target} missões personalizadas.",
-   "en": "Create {target} custom missions."
+   "en": "Create {target} custom missions.",
+   "es": "Crea {target} misiones personalizadas.",
+   "fr": "Crée {target} missions personnalisées.",
+   "de": "Erstelle {target} eigene Missionen."
   },
   "descriptionOne": {
    "pt": "Cria uma missão personalizada.",
-   "en": "Create a custom mission."
+   "en": "Create a custom mission.",
+   "es": "Crea una misión personalizada.",
+   "fr": "Crée une mission personnalisée.",
+   "de": "Erstelle eine eigene Mission."
   }
  }
 ]

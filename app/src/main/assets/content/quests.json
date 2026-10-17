@@ -6,11 +6,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Preparação Física: Força",
-    "en": "Physical Training: Strength"
+    "en": "Physical Training: Strength",
+    "es": "Preparación Física: Fuerza",
+    "fr": "Entraînement Physique : Force",
+    "de": "Körpertraining: Kraft"
    },
    "description": {
     "pt": "Realiza {target} flexões.",
-    "en": "Perform {target} push-ups."
+    "en": "Perform {target} push-ups.",
+    "es": "Haz {target} flexiones.",
+    "fr": "Fais {target} pompes.",
+    "de": "Mache {target} Liegestütze."
    },
    "baseTarget": 15,
    "scalingAmount": 2,
@@ -25,11 +31,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Preparação Física: Pernas",
-    "en": "Physical Training: Legs"
+    "en": "Physical Training: Legs",
+    "es": "Preparación Física: Piernas",
+    "fr": "Entraînement Physique : Jambes",
+    "de": "Körpertraining: Beine"
    },
    "description": {
     "pt": "Realiza {target} agachamentos.",
-    "en": "Perform {target} squats."
+    "en": "Perform {target} squats.",
+    "es": "Haz {target} sentadillas.",
+    "fr": "Fais {target} squats.",
+    "de": "Mache {target} Kniebeugen."
    },
    "baseTarget": 20,
    "scalingAmount": 2,
@@ -44,11 +56,17 @@
    "type": "KNOWLEDGE",
    "title": {
     "pt": "Treino Mental: Leitura",
-    "en": "Mental Training: Reading"
+    "en": "Mental Training: Reading",
+    "es": "Entrenamiento Mental: Lectura",
+    "fr": "Entraînement Mental : Lecture",
+    "de": "Geistestraining: Lesen"
    },
    "description": {
     "pt": "Lê {target} páginas de um livro útil.",
-    "en": "Read {target} pages of a useful book."
+    "en": "Read {target} pages of a useful book.",
+    "es": "Lee {target} páginas de un libro útil.",
+    "fr": "Lis {target} pages d'un livre utile.",
+    "de": "Lies {target} Seiten eines nützlichen Buchs."
    },
    "baseTarget": 10,
    "scalingAmount": 1,
@@ -63,11 +81,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Sobrevivência: Hidratação",
-    "en": "Survival: Hydration"
+    "en": "Survival: Hydration",
+    "es": "Supervivencia: Hidratación",
+    "fr": "Survie : Hydratation",
+    "de": "Überleben: Flüssigkeit"
    },
    "description": {
     "pt": "Bebe {target} copos de água.",
-    "en": "Drink {target} glasses of water."
+    "en": "Drink {target} glasses of water.",
+    "es": "Bebe {target} vasos de agua.",
+    "fr": "Bois {target} verres d'eau.",
+    "de": "Trinke {target} Gläser Wasser."
    },
    "baseTarget": 8,
    "scalingAmount": 0,
@@ -82,11 +106,17 @@
    "type": "GPS",
    "title": {
     "pt": "Missão de Caçador: Corrida",
-    "en": "Hunter Mission: Run"
+    "en": "Hunter Mission: Run",
+    "es": "Misión de Cazador: Carrera",
+    "fr": "Mission de Chasseur : Course",
+    "de": "Jägermission: Laufen"
    },
    "description": {
     "pt": "Corre {target} km.",
-    "en": "Run {target} km."
+    "en": "Run {target} km.",
+    "es": "Corre {target} km.",
+    "fr": "Cours {target} km.",
+    "de": "Laufe {target} km."
    },
    "baseTarget": 3,
    "scalingAmount": 0.2,
@@ -101,11 +131,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Resistência Muscular",
-    "en": "Muscular Endurance"
+    "en": "Muscular Endurance",
+    "es": "Resistencia Muscular",
+    "fr": "Endurance Musculaire",
+    "de": "Muskelausdauer"
    },
    "description": {
     "pt": "Mantém uma prancha por {target} s.",
-    "en": "Hold a plank for {target} s."
+    "en": "Hold a plank for {target} s.",
+    "es": "Aguanta una plancha durante {target} s.",
+    "fr": "Tiens un gainage pendant {target} s.",
+    "de": "Halte {target} s lang einen Plank."
    },
    "baseTarget": 60,
    "scalingAmount": 5,
@@ -120,11 +156,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Treino de Mana",
-    "en": "Mana Training"
+    "en": "Mana Training",
+    "es": "Entrenamiento de Maná",
+    "fr": "Entraînement de Mana",
+    "de": "Mana-Training"
    },
    "description": {
     "pt": "Medita em silêncio por {target} min.",
-    "en": "Meditate in silence for {target} min."
+    "en": "Meditate in silence for {target} min.",
+    "es": "Medita en silencio durante {target} min.",
+    "fr": "Médite en silence pendant {target} min.",
+    "de": "Meditiere {target} Min. in Stille."
    },
    "baseTarget": 10,
    "scalingAmount": 1,
@@ -139,11 +181,17 @@
    "type": "FORBIDDEN",
    "title": {
     "pt": "Prova de Vontade",
-    "en": "Test of Will"
+    "en": "Test of Will",
+    "es": "Prueba de Voluntad",
+    "fr": "Épreuve de Volonté",
+    "de": "Willensprobe"
    },
    "description": {
     "pt": "Zero redes sociais por {target} h.",
-    "en": "Zero social media for {target} h."
+    "en": "Zero social media for {target} h.",
+    "es": "Cero redes sociales durante {target} h.",
+    "fr": "Zéro réseaux sociaux pendant {target} h.",
+    "de": "Keine sozialen Medien für {target} Std."
    },
    "baseTarget": 4,
    "scalingAmount": 0,
@@ -158,11 +206,17 @@
    "type": "FORBIDDEN",
    "title": {
     "pt": "Corpo Limpo",
-    "en": "Clean Body"
+    "en": "Clean Body",
+    "es": "Cuerpo Limpio",
+    "fr": "Corps Pur",
+    "de": "Reiner Körper"
    },
    "description": {
     "pt": "Não comer açúcar hoje.",
-    "en": "No sugar today."
+    "en": "No sugar today.",
+    "es": "Nada de azúcar hoy.",
+    "fr": "Pas de sucre aujourd'hui.",
+    "de": "Heute kein Zucker."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -177,11 +231,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Elevações",
-    "en": "Pull-ups"
+    "en": "Pull-ups",
+    "es": "Dominadas",
+    "fr": "Tractions",
+    "de": "Klimmzüge"
    },
    "description": {
     "pt": "Realiza {target} elevações.",
-    "en": "Perform {target} pull-ups."
+    "en": "Perform {target} pull-ups.",
+    "es": "Haz {target} dominadas.",
+    "fr": "Fais {target} tractions.",
+    "de": "Mache {target} Klimmzüge."
    },
    "baseTarget": 5,
    "scalingAmount": 1,
@@ -196,11 +256,17 @@
    "type": "LIMIT",
    "title": {
     "pt": "Desintoxicação Digital",
-    "en": "Digital Detox"
+    "en": "Digital Detox",
+    "es": "Desintoxicación Digital",
+    "fr": "Détox Numérique",
+    "de": "Digital Detox"
    },
    "description": {
     "pt": "Limita o tempo de ecrã (lazer) a {target} h.",
-    "en": "Limit screen time (leisure) to {target} h."
+    "en": "Limit screen time (leisure) to {target} h.",
+    "es": "Limita el tiempo de pantalla (ocio) a {target} h.",
+    "fr": "Limite le temps d'écran (loisirs) à {target} h.",
+    "de": "Begrenze die Bildschirmzeit (Freizeit) auf {target} Std."
    },
    "baseTarget": 2,
    "scalingAmount": 0.1,
@@ -216,11 +282,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Flexibilidade",
-    "en": "Flexibility"
+    "en": "Flexibility",
+    "es": "Flexibilidad",
+    "fr": "Souplesse",
+    "de": "Beweglichkeit"
    },
    "description": {
     "pt": "Sessão de alongamentos por {target} min.",
-    "en": "Stretching session for {target} min."
+    "en": "Stretching session for {target} min.",
+    "es": "Sesión de estiramientos de {target} min.",
+    "fr": "Séance d'étirements de {target} min.",
+    "de": "Dehneinheit für {target} Min."
    },
    "baseTarget": 15,
    "scalingAmount": 1,
@@ -235,11 +307,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Trabalho Profundo",
-    "en": "Deep Work"
+    "en": "Deep Work",
+    "es": "Trabajo Profundo",
+    "fr": "Travail Profond",
+    "de": "Deep Work"
    },
    "description": {
     "pt": "Trabalha focado por {target} min sem pausas.",
-    "en": "Work focused for {target} min without breaks."
+    "en": "Work focused for {target} min without breaks.",
+    "es": "Trabaja concentrado {target} min sin pausas.",
+    "fr": "Travaille concentré {target} min sans pause.",
+    "de": "Arbeite {target} Min. fokussiert ohne Pausen."
    },
    "baseTarget": 60,
    "scalingAmount": 5,
@@ -254,11 +332,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Banho Gelado",
-    "en": "Cold Shower"
+    "en": "Cold Shower",
+    "es": "Ducha Fría",
+    "fr": "Douche Glacée",
+    "de": "Kalte Dusche"
    },
    "description": {
     "pt": "Toma um banho de água fria.",
-    "en": "Take a cold water shower."
+    "en": "Take a cold water shower.",
+    "es": "Date una ducha de agua fría.",
+    "fr": "Prends une douche froide.",
+    "de": "Dusche kalt."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -273,11 +357,17 @@
    "type": "GPS",
    "title": {
     "pt": "Patrulha Ligeira",
-    "en": "Light Patrol"
+    "en": "Light Patrol",
+    "es": "Patrulla Ligera",
+    "fr": "Patrouille Légère",
+    "de": "Leichte Patrouille"
    },
    "description": {
     "pt": "Caminha {target} km hoje.",
-    "en": "Walk {target} km today."
+    "en": "Walk {target} km today.",
+    "es": "Camina {target} km hoy.",
+    "fr": "Marche {target} km aujourd'hui.",
+    "de": "Gehe heute {target} km zu Fuß."
    },
    "baseTarget": 5,
    "scalingAmount": 0,
@@ -293,11 +383,17 @@
    "type": "KNOWLEDGE",
    "title": {
     "pt": "Conhecimento Arcano",
-    "en": "Arcane Knowledge"
+    "en": "Arcane Knowledge",
+    "es": "Conocimiento Arcano",
+    "fr": "Savoir Arcanique",
+    "de": "Arkanes Wissen"
    },
    "description": {
     "pt": "Estuda um idioma {target} min.",
-    "en": "Study a language for {target} min."
+    "en": "Study a language for {target} min.",
+    "es": "Estudia un idioma durante {target} min.",
+    "fr": "Étudie une langue pendant {target} min.",
+    "de": "Lerne {target} Min. eine Sprache."
    },
    "baseTarget": 15,
    "scalingAmount": 0,
@@ -312,11 +408,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Condicionamento Extremo",
-    "en": "Extreme Conditioning"
+    "en": "Extreme Conditioning",
+    "es": "Acondicionamiento Extremo",
+    "fr": "Conditionnement Extrême",
+    "de": "Extremes Konditionstraining"
    },
    "description": {
     "pt": "Realiza {target} burpees.",
-    "en": "Perform {target} burpees."
+    "en": "Perform {target} burpees.",
+    "es": "Haz {target} burpees.",
+    "fr": "Fais {target} burpees.",
+    "de": "Mache {target} Burpees."
    },
    "baseTarget": 15,
    "scalingAmount": 1,
@@ -331,11 +433,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Refeição de Caçador",
-    "en": "Hunter's Meal"
+    "en": "Hunter's Meal",
+    "es": "Comida de Cazador",
+    "fr": "Repas du Chasseur",
+    "de": "Jägermahl"
    },
    "description": {
     "pt": "Cozinha a tua própria refeição saudável.",
-    "en": "Cook your own healthy meal."
+    "en": "Cook your own healthy meal.",
+    "es": "Cocina tu propia comida saludable.",
+    "fr": "Cuisine ton propre repas sain.",
+    "de": "Koche dir selbst eine gesunde Mahlzeit."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -350,11 +458,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Mente Clara",
-    "en": "Clear Mind"
+    "en": "Clear Mind",
+    "es": "Mente Clara",
+    "fr": "Esprit Clair",
+    "de": "Klarer Geist"
    },
    "description": {
     "pt": "Escreve um diário/reflexão por {target} min.",
-    "en": "Write a journal/reflection for {target} min."
+    "en": "Write a journal/reflection for {target} min.",
+    "es": "Escribe un diario/reflexión durante {target} min.",
+    "fr": "Écris un journal/une réflexion pendant {target} min.",
+    "de": "Schreibe {target} Min. Tagebuch bzw. eine Reflexion."
    },
    "baseTarget": 10,
    "scalingAmount": 0,
@@ -369,11 +483,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Técnica de Caçador: Foco Cíclico",
-    "en": "Hunter Technique: Cyclic Focus"
+    "en": "Hunter Technique: Cyclic Focus",
+    "es": "Técnica de Cazador: Concentración Cíclica",
+    "fr": "Technique de Chasseur : Focus Cyclique",
+    "de": "Jägertechnik: Zyklischer Fokus"
    },
    "description": {
     "pt": "Completa {target} min de foco (ciclos Pomodoro contam).",
-    "en": "Complete {target} min of focus (Pomodoro cycles count)."
+    "en": "Complete {target} min of focus (Pomodoro cycles count).",
+    "es": "Completa {target} min de concentración (los ciclos Pomodoro cuentan).",
+    "fr": "Accomplis {target} min de focus (les cycles Pomodoro comptent).",
+    "de": "Absolviere {target} Min. Fokus (Pomodoro-Zyklen zählen)."
    },
    "baseTarget": 50,
    "scalingAmount": 0,
@@ -389,11 +509,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Técnica de Caçador: Maestria Temporal",
-    "en": "Hunter Technique: Temporal Mastery"
+    "en": "Hunter Technique: Temporal Mastery",
+    "es": "Técnica de Cazador: Maestría Temporal",
+    "fr": "Technique de Chasseur : Maîtrise du Temps",
+    "de": "Jägertechnik: Zeitbeherrschung"
    },
    "description": {
     "pt": "Completa {target} min de foco (ciclos Pomodoro contam).",
-    "en": "Complete {target} min of focus (Pomodoro cycles count)."
+    "en": "Complete {target} min of focus (Pomodoro cycles count).",
+    "es": "Completa {target} min de concentración (los ciclos Pomodoro cuentan).",
+    "fr": "Accomplis {target} min de focus (les cycles Pomodoro comptent).",
+    "de": "Absolviere {target} Min. Fokus (Pomodoro-Zyklen zählen)."
    },
    "baseTarget": 100,
    "scalingAmount": 0,
@@ -409,11 +535,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Caminhante",
-    "en": "Walker"
+    "en": "Walker",
+    "es": "Caminante",
+    "fr": "Marcheur",
+    "de": "Geher"
    },
    "description": {
     "pt": "Dá {target} passos hoje (contados automaticamente).",
-    "en": "Take {target} steps today (counted automatically)."
+    "en": "Take {target} steps today (counted automatically).",
+    "es": "Da {target} pasos hoy (contados automáticamente).",
+    "fr": "Fais {target} pas aujourd'hui (comptés automatiquement).",
+    "de": "Gehe heute {target} Schritte (automatisch gezählt)."
    },
    "baseTarget": 6000,
    "scalingAmount": 500,
@@ -429,11 +561,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Maratonista Urbano",
-    "en": "Urban Marathoner"
+    "en": "Urban Marathoner",
+    "es": "Maratoniano Urbano",
+    "fr": "Marathonien Urbain",
+    "de": "Stadtmarathonläufer"
    },
    "description": {
     "pt": "Chega aos {target} passos hoje (contados automaticamente).",
-    "en": "Reach {target} steps today (counted automatically)."
+    "en": "Reach {target} steps today (counted automatically).",
+    "es": "Llega a {target} pasos hoy (contados automáticamente).",
+    "fr": "Atteins {target} pas aujourd'hui (comptés automatiquement).",
+    "de": "Erreiche heute {target} Schritte (automatisch gezählt)."
    },
    "baseTarget": 10000,
    "scalingAmount": 1000,
@@ -449,11 +587,17 @@
    "type": "LIMIT",
    "title": {
     "pt": "Ecrã sob Controlo",
-    "en": "Screen Under Control"
+    "en": "Screen Under Control",
+    "es": "Pantalla bajo Control",
+    "fr": "Écran sous Contrôle",
+    "de": "Bildschirm unter Kontrolle"
    },
    "description": {
     "pt": "Tempo de ecrã total abaixo de {target} h hoje (medido automaticamente).",
-    "en": "Keep total screen time under {target} h today (measured automatically)."
+    "en": "Keep total screen time under {target} h today (measured automatically).",
+    "es": "Mantén el tiempo de pantalla total por debajo de {target} h hoy (medido automáticamente).",
+    "fr": "Garde ton temps d'écran total sous {target} h aujourd'hui (mesuré automatiquement).",
+    "de": "Halte die gesamte Bildschirmzeit heute unter {target} Std. (automatisch gemessen)."
    },
    "baseTarget": 4,
    "scalingAmount": 0.25,
@@ -470,11 +614,17 @@
    "type": "LIMIT",
    "title": {
     "pt": "Domínio das Distrações",
-    "en": "Master of Distractions"
+    "en": "Master of Distractions",
+    "es": "Dominio de las Distracciones",
+    "fr": "Maître des Distractions",
+    "de": "Meister der Ablenkungen"
    },
    "description": {
     "pt": "No máximo {target} h nas tuas apps de distração hoje (medido automaticamente).",
-    "en": "At most {target} h on your distraction apps today (measured automatically)."
+    "en": "At most {target} h on your distraction apps today (measured automatically).",
+    "es": "Como máximo {target} h en tus apps de distracción hoy (medido automáticamente).",
+    "fr": "Au maximum {target} h sur tes apps de distraction aujourd'hui (mesuré automatiquement).",
+    "de": "Heute höchstens {target} Std. in deinen Ablenkungs-Apps (automatisch gemessen)."
    },
    "baseTarget": 1,
    "scalingAmount": 0.1,
@@ -491,11 +641,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Saltos de Corda",
-    "en": "Jump Rope"
+    "en": "Jump Rope",
+    "es": "Saltos de Comba",
+    "fr": "Corde à Sauter",
+    "de": "Seilspringen"
    },
    "description": {
     "pt": "Faz {target} saltos de corda (ou saltos no lugar).",
-    "en": "Do {target} jump-rope jumps (or jumps in place)."
+    "en": "Do {target} jump-rope jumps (or jumps in place).",
+    "es": "Haz {target} saltos de comba (o saltos en el sitio).",
+    "fr": "Fais {target} sauts à la corde (ou sauts sur place).",
+    "de": "Mache {target} Sprünge mit dem Seil (oder Sprünge auf der Stelle)."
    },
    "baseTarget": 100,
    "scalingAmount": 10,
@@ -510,11 +666,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Afundos",
-    "en": "Lunges"
+    "en": "Lunges",
+    "es": "Zancadas",
+    "fr": "Fentes",
+    "de": "Ausfallschritte"
    },
    "description": {
     "pt": "Faz {target} afundos (alternando as pernas).",
-    "en": "Do {target} lunges (alternating legs)."
+    "en": "Do {target} lunges (alternating legs).",
+    "es": "Haz {target} zancadas (alternando piernas).",
+    "fr": "Fais {target} fentes (jambes en alternance).",
+    "de": "Mache {target} Ausfallschritte (Beine abwechselnd)."
    },
    "baseTarget": 20,
    "scalingAmount": 2,
@@ -529,11 +691,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Fundos de Tríceps",
-    "en": "Triceps Dips"
+    "en": "Triceps Dips",
+    "es": "Fondos de Tríceps",
+    "fr": "Dips Triceps",
+    "de": "Trizeps-Dips"
    },
    "description": {
     "pt": "Faz {target} fundos de tríceps numa cadeira ou banco.",
-    "en": "Do {target} triceps dips on a chair or bench."
+    "en": "Do {target} triceps dips on a chair or bench.",
+    "es": "Haz {target} fondos de tríceps en una silla o banco.",
+    "fr": "Fais {target} dips triceps sur une chaise ou un banc.",
+    "de": "Mache {target} Trizeps-Dips an einem Stuhl oder einer Bank."
    },
    "baseTarget": 15,
    "scalingAmount": 1,
@@ -548,11 +716,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Mobilidade Articular",
-    "en": "Joint Mobility"
+    "en": "Joint Mobility",
+    "es": "Movilidad Articular",
+    "fr": "Mobilité Articulaire",
+    "de": "Gelenkmobilität"
    },
    "description": {
     "pt": "{target} min de mobilidade: ancas, ombros, coluna.",
-    "en": "{target} min of mobility: hips, shoulders, spine."
+    "en": "{target} min of mobility: hips, shoulders, spine.",
+    "es": "{target} min de movilidad: caderas, hombros, columna.",
+    "fr": "{target} min de mobilité : hanches, épaules, colonne.",
+    "de": "{target} Min. Mobilität: Hüfte, Schultern, Wirbelsäule."
    },
    "baseTarget": 10,
    "scalingAmount": 1,
@@ -567,11 +741,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Escadaria",
-    "en": "Stairway"
+    "en": "Stairway",
+    "es": "Escalinata",
+    "fr": "Escalier",
+    "de": "Treppenaufstieg"
    },
    "description": {
     "pt": "Sobe {target} lanços de escadas ao longo do dia.",
-    "en": "Climb {target} flights of stairs during the day."
+    "en": "Climb {target} flights of stairs during the day.",
+    "es": "Sube {target} tramos de escaleras a lo largo del día.",
+    "fr": "Monte {target} étages d'escalier dans la journée.",
+    "de": "Steige tagsüber {target} Treppenabsätze hoch."
    },
    "baseTarget": 10,
    "scalingAmount": 1,
@@ -586,11 +766,17 @@
    "type": "GPS",
    "title": {
     "pt": "Expedição",
-    "en": "Expedition"
+    "en": "Expedition",
+    "es": "Expedición",
+    "fr": "Expédition",
+    "de": "Expedition"
    },
    "description": {
     "pt": "Percorre {target} km a pé.",
-    "en": "Cover {target} km on foot."
+    "en": "Cover {target} km on foot.",
+    "es": "Recorre {target} km a pie.",
+    "fr": "Parcours {target} km à pied.",
+    "de": "Lege {target} km zu Fuß zurück."
    },
    "baseTarget": 8,
    "scalingAmount": 0.5,
@@ -606,11 +792,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Alimento do Herói",
-    "en": "Hero's Fuel"
+    "en": "Hero's Fuel",
+    "es": "Combustible del Héroe",
+    "fr": "Carburant du Héros",
+    "de": "Heldenkraftstoff"
    },
    "description": {
     "pt": "Come {target} porções de fruta ou legumes.",
-    "en": "Eat {target} servings of fruit or vegetables."
+    "en": "Eat {target} servings of fruit or vegetables.",
+    "es": "Come {target} raciones de fruta o verdura.",
+    "fr": "Mange {target} portions de fruits ou de légumes.",
+    "de": "Iss {target} Portionen Obst oder Gemüse."
    },
    "baseTarget": 3,
    "scalingAmount": 0,
@@ -625,11 +817,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Aprendiz de Ofício",
-    "en": "Craft Apprentice"
+    "en": "Craft Apprentice",
+    "es": "Aprendiz de Oficio",
+    "fr": "Apprenti Artisan",
+    "de": "Lehrling des Handwerks"
    },
    "description": {
     "pt": "{target} min a praticar uma competência que queres melhorar.",
-    "en": "{target} min practising a skill you want to improve."
+    "en": "{target} min practising a skill you want to improve.",
+    "es": "{target} min practicando una habilidad que quieras mejorar.",
+    "fr": "{target} min à pratiquer une compétence à améliorer.",
+    "de": "{target} Min. eine Fähigkeit üben, die du verbessern willst."
    },
    "baseTarget": 20,
    "scalingAmount": 2,
@@ -644,11 +842,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Forja Criativa",
-    "en": "Creative Forge"
+    "en": "Creative Forge",
+    "es": "Forja Creativa",
+    "fr": "Forge Créative",
+    "de": "Kreative Schmiede"
    },
    "description": {
     "pt": "{target} min a criar: desenho, música, escrita ou código.",
-    "en": "{target} min creating: drawing, music, writing or code."
+    "en": "{target} min creating: drawing, music, writing or code.",
+    "es": "{target} min creando: dibujo, música, escritura o código.",
+    "fr": "{target} min à créer : dessin, musique, écriture ou code.",
+    "de": "{target} Min. kreativ sein: Zeichnen, Musik, Schreiben oder Code."
    },
    "baseTarget": 30,
    "scalingAmount": 0,
@@ -663,11 +867,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Respiração Tática",
-    "en": "Tactical Breathing"
+    "en": "Tactical Breathing",
+    "es": "Respiración Táctica",
+    "fr": "Respiration Tactique",
+    "de": "Taktische Atmung"
    },
    "description": {
     "pt": "{target} min de respiração em caixa (4-4-4-4).",
-    "en": "{target} min of box breathing (4-4-4-4)."
+    "en": "{target} min of box breathing (4-4-4-4).",
+    "es": "{target} min de respiración en caja (4-4-4-4).",
+    "fr": "{target} min de respiration en carré (4-4-4-4).",
+    "de": "{target} Min. Box-Atmung (4-4-4-4)."
    },
    "baseTarget": 5,
    "scalingAmount": 0,
@@ -682,11 +892,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Conselho de Guerra",
-    "en": "War Council"
+    "en": "War Council",
+    "es": "Consejo de Guerra",
+    "fr": "Conseil de Guerre",
+    "de": "Kriegsrat"
    },
    "description": {
     "pt": "{target} min a planear o dia de amanhã por escrito.",
-    "en": "{target} min planning tomorrow in writing."
+    "en": "{target} min planning tomorrow in writing.",
+    "es": "{target} min planificando mañana por escrito.",
+    "fr": "{target} min à planifier demain par écrit.",
+    "de": "{target} Min. den morgigen Tag schriftlich planen."
    },
    "baseTarget": 10,
    "scalingAmount": 0,
@@ -701,11 +917,17 @@
    "type": "KNOWLEDGE",
    "title": {
     "pt": "Explorador de Ideias",
-    "en": "Idea Explorer"
+    "en": "Idea Explorer",
+    "es": "Explorador de Ideas",
+    "fr": "Explorateur d'Idées",
+    "de": "Ideenforscher"
    },
    "description": {
     "pt": "Lê {target} artigo longo ou capítulo sobre algo novo.",
-    "en": "Read {target} long article or chapter about something new."
+    "en": "Read {target} long article or chapter about something new.",
+    "es": "Lee {target} artículo largo o capítulo sobre algo nuevo.",
+    "fr": "Lis {target} long article ou chapitre sur un sujet nouveau.",
+    "de": "Lies {target} langen Artikel oder ein Kapitel über etwas Neues."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -720,11 +942,17 @@
    "type": "KNOWLEDGE",
    "title": {
     "pt": "Escuta Ativa",
-    "en": "Active Listening"
+    "en": "Active Listening",
+    "es": "Escucha Activa",
+    "fr": "Écoute Active",
+    "de": "Aktives Zuhören"
    },
    "description": {
     "pt": "Ouve {target} episódio de um podcast educativo e anota uma ideia.",
-    "en": "Listen to {target} educational podcast episode and note one idea."
+    "en": "Listen to {target} educational podcast episode and note one idea.",
+    "es": "Escucha {target} episodio de un pódcast educativo y anota una idea.",
+    "fr": "Écoute {target} épisode de podcast éducatif et note une idée.",
+    "de": "Höre {target} Folge eines Bildungs-Podcasts und notiere eine Idee."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -739,11 +967,17 @@
    "type": "KNOWLEDGE",
    "title": {
     "pt": "Diário de Gratidão",
-    "en": "Gratitude Log"
+    "en": "Gratitude Log",
+    "es": "Diario de Gratitud",
+    "fr": "Journal de Gratitude",
+    "de": "Dankbarkeitstagebuch"
    },
    "description": {
     "pt": "Escreve {target} coisas pelas quais estás grato hoje.",
-    "en": "Write {target} things you are grateful for today."
+    "en": "Write {target} things you are grateful for today.",
+    "es": "Escribe {target} cosas por las que estés agradecido hoy.",
+    "fr": "Écris {target} choses pour lesquelles tu es reconnaissant aujourd'hui.",
+    "de": "Schreibe {target} Dinge auf, für die du heute dankbar bist."
    },
    "baseTarget": 3,
    "scalingAmount": 0,
@@ -758,11 +992,17 @@
    "type": "KNOWLEDGE",
    "title": {
     "pt": "Aliança",
-    "en": "Alliance"
+    "en": "Alliance",
+    "es": "Alianza",
+    "fr": "Alliance",
+    "de": "Allianz"
    },
    "description": {
     "pt": "Contacta {target} amigo ou familiar com quem não falas há algum tempo.",
-    "en": "Reach out to {target} friend or relative you haven't talked to in a while."
+    "en": "Reach out to {target} friend or relative you haven't talked to in a while.",
+    "es": "Contacta con {target} amigo o familiar con quien hace tiempo que no hablas.",
+    "fr": "Contacte {target} ami ou proche à qui tu n'as pas parlé depuis un moment.",
+    "de": "Melde dich bei {target} Freund oder Verwandten, mit dem du schon länger nicht gesprochen hast."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -777,11 +1017,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Base Organizada",
-    "en": "Tidy Base"
+    "en": "Tidy Base",
+    "es": "Base Ordenada",
+    "fr": "Base Rangée",
+    "de": "Aufgeräumte Basis"
    },
    "description": {
     "pt": "{target} min a arrumar o quarto ou a secretária.",
-    "en": "{target} min tidying your room or desk."
+    "en": "{target} min tidying your room or desk.",
+    "es": "{target} min ordenando tu cuarto o tu escritorio.",
+    "fr": "{target} min à ranger ta chambre ou ton bureau.",
+    "de": "{target} Min. dein Zimmer oder deinen Schreibtisch aufräumen."
    },
    "baseTarget": 15,
    "scalingAmount": 0,
@@ -796,11 +1042,17 @@
    "type": "FORBIDDEN",
    "title": {
     "pt": "Manhã sem Ecrã",
-    "en": "Screen-free Morning"
+    "en": "Screen-free Morning",
+    "es": "Mañana sin Pantallas",
+    "fr": "Matin sans Écran",
+    "de": "Bildschirmfreier Morgen"
    },
    "description": {
     "pt": "Sem telemóvel na primeira hora depois de acordar.",
-    "en": "No phone in the first hour after waking up."
+    "en": "No phone in the first hour after waking up.",
+    "es": "Sin móvil durante la primera hora después de despertarte.",
+    "fr": "Pas de téléphone la première heure après le réveil.",
+    "de": "Kein Handy in der ersten Stunde nach dem Aufwachen."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -815,11 +1067,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Descanso do Caçador",
-    "en": "Hunter's Rest"
+    "en": "Hunter's Rest",
+    "es": "Descanso del Cazador",
+    "fr": "Repos du Chasseur",
+    "de": "Jägerruhe"
    },
    "description": {
     "pt": "Confirma quando te fores deitar, entre as 21h e a meia-noite. Se não confirmares antes da meia-noite, falha.",
-    "en": "Confirm when you go to bed, between 9 PM and midnight. If it isn't confirmed before midnight, it fails."
+    "en": "Confirm when you go to bed, between 9 PM and midnight. If it isn't confirmed before midnight, it fails.",
+    "es": "Confirma cuándo te acuestas, entre las 21:00 y la medianoche. Si no lo confirmas antes de la medianoche, fallas.",
+    "fr": "Confirme quand tu vas te coucher, entre 21h et minuit. Sans confirmation avant minuit, c'est raté.",
+    "de": "Bestätige, wenn du ins Bett gehst, zwischen 21 Uhr und Mitternacht. Wenn du nicht vor Mitternacht bestätigst, schlägt sie fehl."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -835,11 +1093,17 @@
    "type": "FORBIDDEN",
    "title": {
     "pt": "Sem Fast Food",
-    "en": "No Fast Food"
+    "en": "No Fast Food",
+    "es": "Sin Comida Rápida",
+    "fr": "Zéro Fast-Food",
+    "de": "Kein Fast Food"
    },
    "description": {
     "pt": "Nada de fast food nem snacks processados hoje.",
-    "en": "No fast food or processed snacks today."
+    "en": "No fast food or processed snacks today.",
+    "es": "Nada de comida rápida ni snacks procesados hoy.",
+    "fr": "Pas de fast-food ni de snacks transformés aujourd'hui.",
+    "de": "Heute kein Fast Food und keine verarbeiteten Snacks."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -856,11 +1120,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Penalização: Cardio",
-    "en": "Penalty: Cardio"
+    "en": "Penalty: Cardio",
+    "es": "Penalización: Cardio",
+    "fr": "Pénalité : Cardio",
+    "de": "Strafe: Cardio"
    },
    "description": {
     "pt": "20 min de corrida contínua",
-    "en": "20 min of continuous running"
+    "en": "20 min of continuous running",
+    "es": "20 min de carrera continua",
+    "fr": "20 min de course continue",
+    "de": "20 Min. durchgehend laufen"
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -875,11 +1145,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Penalização: Agachamentos",
-    "en": "Penalty: Squats"
+    "en": "Penalty: Squats",
+    "es": "Penalización: Sentadillas",
+    "fr": "Pénalité : Squats",
+    "de": "Strafe: Kniebeugen"
    },
    "description": {
     "pt": "50 agachamentos consecutivos",
-    "en": "50 consecutive squats"
+    "en": "50 consecutive squats",
+    "es": "50 sentadillas seguidas",
+    "fr": "50 squats d'affilée",
+    "de": "50 Kniebeugen am Stück"
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -894,11 +1170,17 @@
    "type": "FOCUS",
    "title": {
     "pt": "Penalização: Foco Forçado",
-    "en": "Penalty: Forced Focus"
+    "en": "Penalty: Forced Focus",
+    "es": "Penalización: Concentración Forzada",
+    "fr": "Pénalité : Focus Forcé",
+    "de": "Strafe: Erzwungener Fokus"
    },
    "description": {
     "pt": "30 min de foco sem interrupções",
-    "en": "30 min of uninterrupted focus"
+    "en": "30 min of uninterrupted focus",
+    "es": "30 min de concentración sin interrupciones",
+    "fr": "30 min de focus sans interruption",
+    "de": "30 Min. ununterbrochener Fokus"
    },
    "baseTarget": 30,
    "scalingAmount": 0,
@@ -913,11 +1195,17 @@
    "type": "KNOWLEDGE",
    "title": {
     "pt": "Penalização: Leitura Disciplinar",
-    "en": "Penalty: Disciplinary Reading"
+    "en": "Penalty: Disciplinary Reading",
+    "es": "Penalización: Lectura Disciplinaria",
+    "fr": "Pénalité : Lecture Disciplinaire",
+    "de": "Strafe: Disziplinarlektüre"
    },
    "description": {
     "pt": "15 páginas (livro não-ficção)",
-    "en": "15 pages of a non-fiction book"
+    "en": "15 pages of a non-fiction book",
+    "es": "15 páginas de un libro de no ficción",
+    "fr": "15 pages d'un livre non fictif",
+    "de": "15 Seiten eines Sachbuchs"
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -932,11 +1220,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Penalização: Prancha do Sistema",
-    "en": "Penalty: System Plank"
+    "en": "Penalty: System Plank",
+    "es": "Penalización: Plancha del Sistema",
+    "fr": "Pénalité : Gainage du Système",
+    "de": "Strafe: System-Plank"
    },
    "description": {
     "pt": "3 min de prancha (acumulados)",
-    "en": "3 min of plank (accumulated)"
+    "en": "3 min of plank (accumulated)",
+    "es": "3 min de plancha (acumulados)",
+    "fr": "3 min de gainage (cumulées)",
+    "de": "3 Min. Plank (insgesamt)"
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -951,11 +1245,17 @@
    "type": "TRAINING",
    "title": {
     "pt": "Penalização: Flexões",
-    "en": "Penalty: Push-ups"
+    "en": "Penalty: Push-ups",
+    "es": "Penalización: Flexiones",
+    "fr": "Pénalité : Pompes",
+    "de": "Strafe: Liegestütze"
    },
    "description": {
     "pt": "30 flexões de execução lenta",
-    "en": "30 slow push-ups"
+    "en": "30 slow push-ups",
+    "es": "30 flexiones lentas",
+    "fr": "30 pompes lentes",
+    "de": "30 langsame Liegestütze"
    },
    "baseTarget": 1,
    "scalingAmount": 0,

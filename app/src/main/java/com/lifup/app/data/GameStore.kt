@@ -30,6 +30,7 @@ class GameStore(
     initial: GameState? = null,
 ) {
     private val atomic = AtomicFile(file)
+    val snapshots = Snapshots(File(file.parentFile, "backups"))
     private val mutex = Mutex()
     private val listeners = mutableListOf<(old: GameState, new: GameState) -> Unit>()
 
@@ -71,16 +72,28 @@ class GameStore(
         listeners.forEach { runCatching { it(old, state) } }
     }
 
-    private fun read(): GameState? = runCatching {
+    private fun read(): GameState? {
         if (!file.exists()) return null
-        Content.json.decodeFromString<GameState>(atomic.readFully().decodeToString())
-    }.onFailure { Log.e(TAG, "state unreadable, starting fresh", it) }.getOrNull()
+        return runCatching { decode(atomic.readFully().decodeToString()) }.getOrElse { e ->
+            // Never overwrite an unreadable save: keep it aside and fall back to the newest daily copy.
+            Log.e(TAG, "state unreadable, trying snapshots", e)
+            file.copyTo(File(file.parentFile, "state.corrupt-${System.currentTimeMillis()}.json"), overwrite = true)
+            snapshots.list().firstNotNullOfOrNull { runCatching { decode(it.file.readText()) }.getOrNull() }
+        }
+    }
+
+    fun readSnapshot(file: File): GameState? = runCatching { decode(file.readText()) }.getOrNull()
+
+    private fun decode(text: String) = Content.json.decodeFromString<GameState>(text)
 
     private fun write(state: GameState) {
         val out = atomic.startWrite()
         try {
-            out.write(Content.json.encodeToString(GameState.serializer(), state).encodeToByteArray())
+            val text = Content.json.encodeToString(GameState.serializer(), state)
+            out.write(text.encodeToByteArray())
             atomic.finishWrite(out)
+            if (state.onboarded) runCatching { snapshots.maybeSave(text, System.currentTimeMillis(), java.time.LocalDate.now()) }
+                .onFailure { Log.e(TAG, "snapshot failed", it) }
         } catch (e: Exception) {
             atomic.failWrite(out)
             Log.e(TAG, "state write failed", e)

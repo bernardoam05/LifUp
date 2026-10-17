@@ -532,4 +532,8 @@
     <string name="guide_focus">Wähle eine Fokus-Mission, damit die Minuten für sie zählen; eine freie Sitzung zählt nur in der Statistik. Jede Mission hat ihren Modus (Timer oder Pomodoro), und nur dieser zählt. Bei Pomodoro zählen nur Fokusminuten, und in Pausen sind Apps frei. Ohne Limit: zählt, bis du stoppst. Strenger Modus: Wer vorzeitig stoppt, verliert die Minuten, außer mit einem Bannbrecher.</string>
     <string name="guide_shop_title">Shop</string>
     <string name="guide_shop">Gib Gold für Gegenstände (Missionen tauschen, Streak schützen, XP- und Gold-Elixiere, Truhen) und Schatten aus. Die 3 angebotenen Schatten und der Vorrat einiger Gegenstände wechseln jeden Montag. Gegenstände bleiben im Inventar, bis du sie benutzt.</string>
+    <string name="auto_backups">Automatische Kopien</string>
+    <string name="auto_backups_info">Die App behält eine Kopie pro Tag der letzten 7 Tage. Mit aktivierter Android-Sicherung landen sie auch in deinem Google-Konto.</string>
+    <string name="auto_backups_none">Noch keine Kopien.</string>
+    <string name="restore">Wiederherstellen</string>
 </resources>

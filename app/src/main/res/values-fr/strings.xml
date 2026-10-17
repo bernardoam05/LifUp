@@ -514,4 +514,8 @@
     <string name="guide_focus">Choisis une mission de focus pour que les minutes comptent pour elle ; une session libre ne compte que dans les statistiques. Chaque mission a son mode (minuteur ou Pomodoro) et seul celui-ci compte. En Pomodoro seules les minutes de focus comptent et les apps sont libres pendant les pauses. Sans limite : compte jusqu\'à ce que tu arrêtes. Mode strict : arrêter avant la fin fait perdre les minutes, sauf avec un Brise-Sort.</string>
     <string name="guide_shop_title">Boutique</string>
     <string name="guide_shop">Dépense ton or en objets (échanger des missions, protéger ta série, élixirs d\'XP et d\'or, coffres) et en ombres. Les 3 ombres en vente et le stock de certains objets changent chaque lundi. Les objets restent dans ton inventaire jusqu\'à leur utilisation.</string>
+    <string name="auto_backups">Copies automatiques</string>
+    <string name="auto_backups_info">L\'app garde une copie par jour des 7 derniers jours. Avec la sauvegarde Android activée, elles vont aussi sur ton compte Google.</string>
+    <string name="auto_backups_none">Pas encore de copie.</string>
+    <string name="restore">Restaurer</string>
 </resources>

@@ -9,7 +9,10 @@
   },
   "name": {
    "pt": "Peão Mecânico",
-   "en": "Clockwork Pawn"
+   "en": "Clockwork Pawn",
+   "es": "Peón Mecánico",
+   "fr": "Pion Mécanique",
+   "de": "Uhrwerk-Bauer"
   }
  },
  {
@@ -22,7 +25,10 @@
   },
   "name": {
    "pt": "Sentinela Batedor",
-   "en": "Scout Sentinel"
+   "en": "Scout Sentinel",
+   "es": "Centinela Explorador",
+   "fr": "Sentinelle Éclaireuse",
+   "de": "Späher-Wächter"
   }
  },
  {
@@ -35,7 +41,10 @@
   },
   "name": {
    "pt": "Mariposa do Vácuo",
-   "en": "Void Moth"
+   "en": "Void Moth",
+   "es": "Polilla del Vacío",
+   "fr": "Phalène du Vide",
+   "de": "Leerenmotte"
   }
  },
  {
@@ -48,7 +57,10 @@
   },
   "name": {
    "pt": "Recruta da Arena",
-   "en": "Arena Recruit"
+   "en": "Arena Recruit",
+   "es": "Recluta de la Arena",
+   "fr": "Recrue de l'Arène",
+   "de": "Arena-Rekrut"
   }
  },
  {
@@ -61,7 +73,10 @@
   },
   "name": {
    "pt": "Caçador de Redes",
-   "en": "Net Hunter"
+   "en": "Net Hunter",
+   "es": "Cazador de Redes",
+   "fr": "Chasseur de Filets",
+   "de": "Netzjäger"
   }
  },
  {
@@ -74,7 +89,10 @@
   },
   "name": {
    "pt": "Acolito de Bronze",
-   "en": "Bronze Acolyte"
+   "en": "Bronze Acolyte",
+   "es": "Acólito de Bronce",
+   "fr": "Acolyte de Bronze",
+   "de": "Bronze-Akolyth"
   }
  },
  {
@@ -87,7 +105,10 @@
   },
   "name": {
    "pt": "Mago Esquecido",
-   "en": "Forgotten Mage"
+   "en": "Forgotten Mage",
+   "es": "Mago Olvidado",
+   "fr": "Mage Oublié",
+   "de": "Vergessener Magier"
   }
  },
  {
@@ -100,7 +121,10 @@
   },
   "name": {
    "pt": "Rei dos Ratos",
-   "en": "Rat King"
+   "en": "Rat King",
+   "es": "Rey de las Ratas",
+   "fr": "Roi des Rats",
+   "de": "Rattenkönig"
   }
  },
  {
@@ -113,7 +137,10 @@
   },
   "name": {
    "pt": "Vidente Cego",
-   "en": "Blind Seer"
+   "en": "Blind Seer",
+   "es": "Vidente Ciego",
+   "fr": "Voyant Aveugle",
+   "de": "Blinder Seher"
   }
  },
  {
@@ -126,7 +153,10 @@
   },
   "name": {
    "pt": "Cão Ferruginoso",
-   "en": "Rust Hound"
+   "en": "Rust Hound",
+   "es": "Sabueso Oxidado",
+   "fr": "Chien de Rouille",
+   "de": "Rosthund"
   }
  },
  {
@@ -139,7 +169,10 @@
   },
   "name": {
    "pt": "Colecionador de Ossos",
-   "en": "Bone Collector"
+   "en": "Bone Collector",
+   "es": "Coleccionista de Huesos",
+   "fr": "Collecteur d'Os",
+   "de": "Knochensammler"
   }
  },
  {
@@ -152,7 +185,10 @@
   },
   "name": {
    "pt": "Salamandra de Fogo",
-   "en": "Fire Salamander"
+   "en": "Fire Salamander",
+   "es": "Salamandra de Fuego",
+   "fr": "Salamandre de Feu",
+   "de": "Feuersalamander"
   }
  },
  {
@@ -165,7 +201,10 @@
   },
   "name": {
    "pt": "Troll do Pântano",
-   "en": "Swamp Troll"
+   "en": "Swamp Troll",
+   "es": "Trol del Pantano",
+   "fr": "Troll des Marais",
+   "de": "Sumpftroll"
   }
  },
  {
@@ -178,7 +217,10 @@
   },
   "name": {
    "pt": "Autómato Relógio",
-   "en": "Clockwork Automaton"
+   "en": "Clockwork Automaton",
+   "es": "Autómata de Relojería",
+   "fr": "Automate d'Horlogerie",
+   "de": "Uhrwerk-Automat"
   }
  },
  {
@@ -191,7 +233,10 @@
   },
   "name": {
    "pt": "Tecelã de Constelações",
-   "en": "Constellation Weaver"
+   "en": "Constellation Weaver",
+   "es": "Tejedora de Constelaciones",
+   "fr": "Tisseuse de Constellations",
+   "de": "Sternbildweberin"
   }
  },
  {
@@ -204,7 +249,10 @@
   },
   "name": {
    "pt": "Minotauro Escravo",
-   "en": "Chained Minotaur"
+   "en": "Chained Minotaur",
+   "es": "Minotauro Encadenado",
+   "fr": "Minotaure Enchaîné",
+   "de": "Angeketteter Minotaurus"
   }
  },
  {
@@ -217,7 +265,10 @@
   },
   "name": {
    "pt": "Papiro Amaldiçoado",
-   "en": "Cursed Scripture"
+   "en": "Cursed Scripture",
+   "es": "Pergamino Maldito",
+   "fr": "Écrit Maudit",
+   "de": "Verfluchte Schriftrolle"
   }
  },
  {
@@ -230,7 +281,10 @@
   },
   "name": {
    "pt": "Tecedeira de Veneno",
-   "en": "Venom Weaver"
+   "en": "Venom Weaver",
+   "es": "Tejedora de Veneno",
+   "fr": "Tisseuse de Venin",
+   "de": "Giftweberin"
   }
  },
  {
@@ -243,7 +297,10 @@
   },
   "name": {
    "pt": "Samurai Vingativo",
-   "en": "Vengeful Samurai"
+   "en": "Vengeful Samurai",
+   "es": "Samurái Vengativo",
+   "fr": "Samouraï Vengeur",
+   "de": "Rachsüchtiger Samurai"
   }
  },
  {
@@ -256,7 +313,10 @@
   },
   "name": {
    "pt": "Golem de Cristal",
-   "en": "Crystal Golem"
+   "en": "Crystal Golem",
+   "es": "Gólem de Cristal",
+   "fr": "Golem de Cristal",
+   "de": "Kristallgolem"
   }
  },
  {
@@ -269,7 +329,10 @@
   },
   "name": {
    "pt": "Espreitador Glacial",
-   "en": "Glacier Stalker"
+   "en": "Glacier Stalker",
+   "es": "Acechador Glacial",
+   "fr": "Rôdeur des Glaciers",
+   "de": "Gletscherpirscher"
   }
  },
  {
@@ -282,7 +345,10 @@
   },
   "name": {
    "pt": "Bruxa das Tempestades",
-   "en": "Storm Witch"
+   "en": "Storm Witch",
+   "es": "Bruja de las Tormentas",
+   "fr": "Sorcière des Tempêtes",
+   "de": "Sturmhexe"
   }
  },
  {
@@ -295,7 +361,10 @@
   },
   "name": {
    "pt": "Lorde Vampiro",
-   "en": "Vampire Lord"
+   "en": "Vampire Lord",
+   "es": "Señor Vampiro",
+   "fr": "Seigneur Vampire",
+   "de": "Vampirlord"
   }
  },
  {
@@ -308,7 +377,10 @@
   },
   "name": {
    "pt": "Wendigo das Altitudes",
-   "en": "Highland Wendigo"
+   "en": "Highland Wendigo",
+   "es": "Wendigo de las Cumbres",
+   "fr": "Wendigo des Hauteurs",
+   "de": "Hochland-Wendigo"
   }
  },
  {
@@ -321,7 +393,10 @@
   },
   "name": {
    "pt": "Banshee das Profundezas",
-   "en": "Banshee of the Deep"
+   "en": "Banshee of the Deep",
+   "es": "Banshee de las Profundidades",
+   "fr": "Banshee des Profondeurs",
+   "de": "Banshee der Tiefe"
   }
  },
  {
@@ -334,7 +409,10 @@
   },
   "name": {
    "pt": "Manticora Sombria",
-   "en": "Shadow Manticore"
+   "en": "Shadow Manticore",
+   "es": "Mantícora Sombría",
+   "fr": "Manticore d'Ombre",
+   "de": "Schattenmanticore"
   }
  },
  {
@@ -347,7 +425,10 @@
   },
   "name": {
    "pt": "Médico da Peste",
-   "en": "Plague Doctor"
+   "en": "Plague Doctor",
+   "es": "Médico de la Peste",
+   "fr": "Médecin de la Peste",
+   "de": "Pestdoktor"
   }
  },
  {
@@ -360,7 +441,10 @@
   },
   "name": {
    "pt": "Cavalaria Sombria",
-   "en": "Dark Cavalry"
+   "en": "Dark Cavalry",
+   "es": "Caballería Oscura",
+   "fr": "Cavalerie Sombre",
+   "de": "Dunkle Kavallerie"
   }
  },
  {
@@ -373,7 +457,10 @@
   },
   "name": {
    "pt": "Guardião da Cripta",
-   "en": "Crypt Guardian"
+   "en": "Crypt Guardian",
+   "es": "Guardián de la Cripta",
+   "fr": "Gardien de la Crypte",
+   "de": "Gruftwächter"
   }
  },
  {
@@ -386,7 +473,10 @@
   },
   "name": {
    "pt": "Feiticeiro Abissal",
-   "en": "Abyssal Warlock"
+   "en": "Abyssal Warlock",
+   "es": "Brujo Abisal",
+   "fr": "Sorcier Abyssal",
+   "de": "Abgrund-Hexenmeister"
   }
  },
  {
@@ -399,7 +489,10 @@
   },
   "name": {
    "pt": "Cavaleiro Carmesim",
-   "en": "Crimson Knight"
+   "en": "Crimson Knight",
+   "es": "Caballero Carmesí",
+   "fr": "Chevalier Écarlate",
+   "de": "Purpurritter"
   }
  },
  {
@@ -412,7 +505,10 @@
   },
   "name": {
    "pt": "Cerberus, o Guardião",
-   "en": "Cerberus, the Gatekeeper"
+   "en": "Cerberus, the Gatekeeper",
+   "es": "Cerbero, el Guardián",
+   "fr": "Cerbère, le Gardien des Portes",
+   "de": "Cerberus, der Torwächter"
   }
  },
  {
@@ -425,7 +521,10 @@
   },
   "name": {
    "pt": "Lorde Tigre Branco",
-   "en": "White Tiger Lord"
+   "en": "White Tiger Lord",
+   "es": "Señor Tigre Blanco",
+   "fr": "Seigneur Tigre Blanc",
+   "de": "Weißer Tigerlord"
   }
  },
  {
@@ -438,7 +537,10 @@
   },
   "name": {
    "pt": "Comandante Espectral",
-   "en": "Wraith Commander"
+   "en": "Wraith Commander",
+   "es": "Comandante Espectral",
+   "fr": "Commandant Spectral",
+   "de": "Geisterkommandant"
   }
  },
  {
@@ -451,7 +553,10 @@
   },
   "name": {
    "pt": "Arauto da Tempestade",
-   "en": "Storm Herald"
+   "en": "Storm Herald",
+   "es": "Heraldo de la Tormenta",
+   "fr": "Héraut de la Tempête",
+   "de": "Sturmherold"
   }
  },
  {
@@ -464,7 +569,10 @@
   },
   "name": {
    "pt": "Assassino Real",
-   "en": "Royal Assassin"
+   "en": "Royal Assassin",
+   "es": "Asesino Real",
+   "fr": "Assassin Royal",
+   "de": "Königlicher Assassine"
   }
  },
  {
@@ -477,7 +585,10 @@
   },
   "name": {
    "pt": "Imperador da Dor",
-   "en": "Emperor of Pain"
+   "en": "Emperor of Pain",
+   "es": "Emperador del Dolor",
+   "fr": "Empereur de la Douleur",
+   "de": "Kaiser des Schmerzes"
   }
  },
  {
@@ -490,7 +601,10 @@
   },
   "name": {
    "pt": "Eclipse, a Fome Cósmica",
-   "en": "Eclipse, the Cosmic Hunger"
+   "en": "Eclipse, the Cosmic Hunger",
+   "es": "Eclipse, el Hambre Cósmica",
+   "fr": "Éclipse, la Faim Cosmique",
+   "de": "Eklipse, der kosmische Hunger"
   }
  },
  {
@@ -503,7 +617,10 @@
   },
   "name": {
    "pt": "Deus da Arena",
-   "en": "God of the Arena"
+   "en": "God of the Arena",
+   "es": "Dios de la Arena",
+   "fr": "Dieu de l'Arène",
+   "de": "Gott der Arena"
   }
  },
  {
@@ -516,7 +633,10 @@
   },
   "name": {
    "pt": "O Monólito Primitivo",
-   "en": "The Primeval Monolith"
+   "en": "The Primeval Monolith",
+   "es": "El Monolito Primigenio",
+   "fr": "Le Monolithe Primordial",
+   "de": "Der Urzeit-Monolith"
   }
  },
  {
@@ -529,7 +649,10 @@
   },
   "name": {
    "pt": "Prime, O Motor Eterno",
-   "en": "Prime, the Eternal Engine"
+   "en": "Prime, the Eternal Engine",
+   "es": "Prime, el Motor Eterno",
+   "fr": "Prime, le Moteur Éternel",
+   "de": "Prime, die ewige Maschine"
   }
  },
  {
@@ -542,7 +665,10 @@
   },
   "name": {
    "pt": "Golem de Aluguer",
-   "en": "Hired Golem"
+   "en": "Hired Golem",
+   "es": "Gólem a Sueldo",
+   "fr": "Golem Mercenaire",
+   "de": "Gemieteter Golem"
   }
  },
  {
@@ -555,7 +681,10 @@
   },
   "name": {
    "pt": "Mercenário das Sombras",
-   "en": "Shadow Mercenary"
+   "en": "Shadow Mercenary",
+   "es": "Mercenario de las Sombras",
+   "fr": "Mercenaire d'Ombre",
+   "de": "Schattensöldner"
   }
  },
  {
@@ -568,7 +697,10 @@
   },
   "name": {
    "pt": "Ferreiro das Sombras",
-   "en": "Shadow Blacksmith"
+   "en": "Shadow Blacksmith",
+   "es": "Herrero de las Sombras",
+   "fr": "Forgeron d'Ombre",
+   "de": "Schattenschmied"
   }
  },
  {
@@ -581,7 +713,10 @@
   },
   "name": {
    "pt": "Alquimista Escuro",
-   "en": "Dark Alchemist"
+   "en": "Dark Alchemist",
+   "es": "Alquimista Oscuro",
+   "fr": "Alchimiste Noir",
+   "de": "Dunkler Alchemist"
   }
  },
  {
@@ -594,7 +729,10 @@
   },
   "name": {
    "pt": "Assombrador do Tesouro",
-   "en": "Treasury Haunter"
+   "en": "Treasury Haunter",
+   "es": "Espectro del Tesoro",
+   "fr": "Hanteur du Trésor",
+   "de": "Schatzkammer-Spuk"
   }
  },
  {
@@ -607,7 +745,10 @@
   },
   "name": {
    "pt": "Vizir Fantasmagórico",
-   "en": "Phantom Vizier"
+   "en": "Phantom Vizier",
+   "es": "Visir Fantasmal",
+   "fr": "Vizir Fantôme",
+   "de": "Phantomwesir"
   }
  },
  {
@@ -620,7 +761,10 @@
   },
   "name": {
    "pt": "Chama Sombria",
-   "en": "Shadow Wisp"
+   "en": "Shadow Wisp",
+   "es": "Fuego Fatuo Sombrío",
+   "fr": "Feu Follet d'Ombre",
+   "de": "Schattenirrlicht"
   }
  },
  {
@@ -633,7 +777,10 @@
   },
   "name": {
    "pt": "Caçador da Lua",
-   "en": "Moonlit Stalker"
+   "en": "Moonlit Stalker",
+   "es": "Acechador Lunar",
+   "fr": "Rôdeur Lunaire",
+   "de": "Mondlicht-Pirscher"
   }
  },
  {
@@ -646,7 +793,10 @@
   },
   "name": {
    "pt": "Devorador de Mentes",
-   "en": "Mind Devourer"
+   "en": "Mind Devourer",
+   "es": "Devorador de Mentes",
+   "fr": "Dévoreur d'Esprits",
+   "de": "Gedankenverschlinger"
   }
  },
  {
@@ -659,7 +809,10 @@
   },
   "name": {
    "pt": "Arquiteto da Ruína",
-   "en": "Architect of Ruin"
+   "en": "Architect of Ruin",
+   "es": "Arquitecto de la Ruina",
+   "fr": "Architecte de la Ruine",
+   "de": "Architekt des Verfalls"
   }
  },
  {
@@ -672,7 +825,10 @@
   },
   "name": {
    "pt": "Guardião da Constância",
-   "en": "Guardian of Constancy"
+   "en": "Guardian of Constancy",
+   "es": "Guardián de la Constancia",
+   "fr": "Gardien de la Constance",
+   "de": "Wächter der Beständigkeit"
   }
  },
  {
@@ -685,7 +841,10 @@
   },
   "name": {
    "pt": "Marechal da Perseverança",
-   "en": "Marshal of Perseverance"
+   "en": "Marshal of Perseverance",
+   "es": "Mariscal de la Perseverancia",
+   "fr": "Maréchal de la Persévérance",
+   "de": "Marschall der Ausdauer"
   }
  },
  {
@@ -699,7 +858,10 @@
   },
   "name": {
    "pt": "Senhor Goblin Tabata",
-   "en": "Goblin Warlord"
+   "en": "Goblin Warlord",
+   "es": "Señor Goblin Tabata",
+   "fr": "Seigneur Gobelin du Tabata",
+   "de": "Goblin-Kriegsherr Tabata"
   }
  },
  {
@@ -713,7 +875,10 @@
   },
   "name": {
    "pt": "Matriarca da Caverna",
-   "en": "Cave Matriarch"
+   "en": "Cave Matriarch",
+   "es": "Matriarca de la Caverna",
+   "fr": "Matriarche de la Caverne",
+   "de": "Höhlenmatriarchin"
   }
  },
  {
@@ -727,7 +892,10 @@
   },
   "name": {
    "pt": "Operária Primordial",
-   "en": "Primeval Worker"
+   "en": "Primeval Worker",
+   "es": "Obrera Primigenia",
+   "fr": "Ouvrière Primordiale",
+   "de": "Urzeit-Arbeiterin"
   }
  },
  {
@@ -741,7 +909,10 @@
   },
   "name": {
    "pt": "Fragmento do Golem",
-   "en": "Golem Shard"
+   "en": "Golem Shard",
+   "es": "Esquirla de Gólem",
+   "fr": "Éclat de Golem",
+   "de": "Golem-Splitter"
   }
  },
  {
@@ -755,7 +926,10 @@
   },
   "name": {
    "pt": "Cantor das Cordas",
-   "en": "The Stringsinger"
+   "en": "The Stringsinger",
+   "es": "El Cantor de Cuerdas",
+   "fr": "Le Chantre des Cordes",
+   "de": "Der Saitensänger"
   }
  },
  {
@@ -769,7 +943,10 @@
   },
   "name": {
    "pt": "Poliglota da Provação",
-   "en": "Polyglot of the Trial"
+   "en": "Polyglot of the Trial",
+   "es": "Políglota de la Prueba",
+   "fr": "Polyglotte de l'Épreuve",
+   "de": "Polyglott der Prüfung"
   }
  },
  {
@@ -783,7 +960,10 @@
   },
   "name": {
    "pt": "Chef do Ritual",
-   "en": "Ritual Chef"
+   "en": "Ritual Chef",
+   "es": "Chef del Ritual",
+   "fr": "Chef du Rituel",
+   "de": "Ritualkoch"
   }
  },
  {
@@ -797,7 +977,10 @@
   },
   "name": {
    "pt": "Curador do Palácio Mental",
-   "en": "Curator of the Mind Palace"
+   "en": "Curator of the Mind Palace",
+   "es": "Curador del Palacio Mental",
+   "fr": "Conservateur du Palais Mental",
+   "de": "Kurator des Gedächtnispalasts"
   }
  },
  {
@@ -811,7 +994,10 @@
   },
   "name": {
    "pt": "Pioneiro da Fronteira",
-   "en": "Frontier Pioneer"
+   "en": "Frontier Pioneer",
+   "es": "Pionero de la Frontera",
+   "fr": "Pionnier de la Frontière",
+   "de": "Grenzpionier"
   }
  },
  {
@@ -825,7 +1011,10 @@
   },
   "name": {
    "pt": "Artesão do Protótipo",
-   "en": "Prototype Artisan"
+   "en": "Prototype Artisan",
+   "es": "Artesano del Prototipo",
+   "fr": "Artisan du Prototype",
+   "de": "Prototyp-Handwerker"
   }
  },
  {
@@ -839,7 +1028,10 @@
   },
   "name": {
    "pt": "Caminhante do Vento",
-   "en": "Wind Walker"
+   "en": "Wind Walker",
+   "es": "Caminante del Viento",
+   "fr": "Marcheur du Vent",
+   "de": "Windwanderer"
   }
  },
  {
@@ -853,7 +1045,10 @@
   },
   "name": {
    "pt": "Tarântula Imperial",
-   "en": "Imperial Tarantula"
+   "en": "Imperial Tarantula",
+   "es": "Tarántula Imperial",
+   "fr": "Tarentule Impériale",
+   "de": "Kaiserliche Tarantel"
   }
  },
  {
@@ -867,7 +1062,10 @@
   },
   "name": {
    "pt": "Filósofo da Montanha",
-   "en": "Mountain Philosopher"
+   "en": "Mountain Philosopher",
+   "es": "Filósofo de la Montaña",
+   "fr": "Philosophe de la Montagne",
+   "de": "Bergphilosoph"
   }
  },
  {
@@ -881,7 +1079,10 @@
   },
   "name": {
    "pt": "Artesão Digital",
-   "en": "Digital Artisan"
+   "en": "Digital Artisan",
+   "es": "Artesano Digital",
+   "fr": "Artisan Numérique",
+   "de": "Digitaler Handwerker"
   }
  },
  {
@@ -895,7 +1096,10 @@
   },
   "name": {
    "pt": "Estoico do Desconforto",
-   "en": "Stoic of Discomfort"
+   "en": "Stoic of Discomfort",
+   "es": "Estoico de la Incomodidad",
+   "fr": "Stoïque de l'Inconfort",
+   "de": "Stoiker des Unbehagens"
   }
  },
  {
@@ -909,7 +1113,10 @@
   },
   "name": {
    "pt": "Primata Titânico",
-   "en": "Titanic Ape"
+   "en": "Titanic Ape",
+   "es": "Simio Titánico",
+   "fr": "Grand Singe Titanesque",
+   "de": "Titanischer Affe"
   }
  },
  {
@@ -923,7 +1130,10 @@
   },
   "name": {
    "pt": "Dragão Astral",
-   "en": "Astral Drake"
+   "en": "Astral Drake",
+   "es": "Draco Astral",
+   "fr": "Drake Astral",
+   "de": "Astraldrache"
   }
  },
  {
@@ -937,7 +1147,10 @@
   },
   "name": {
    "pt": "Invocador de Tempestades",
-   "en": "Storm Bringer"
+   "en": "Storm Bringer",
+   "es": "Invocador de Tormentas",
+   "fr": "Porteur de Tempêtes",
+   "de": "Sturmbringer"
   }
  },
  {
@@ -951,7 +1164,10 @@
   },
   "name": {
    "pt": "Senhor do Tempo",
-   "en": "Lord of Time"
+   "en": "Lord of Time",
+   "es": "Señor del Tiempo",
+   "fr": "Seigneur du Temps",
+   "de": "Herr der Zeit"
   }
  },
  {
@@ -965,7 +1181,10 @@
   },
   "name": {
    "pt": "Quebrador de Estrelas",
-   "en": "Star Breaker"
+   "en": "Star Breaker",
+   "es": "Rompeestrellas",
+   "fr": "Brise-Étoiles",
+   "de": "Sternenbrecher"
   }
  },
  {
@@ -979,7 +1198,10 @@
   },
   "name": {
    "pt": "Sangreal, Cavaleiro de Sangue",
-   "en": "Sangreal, the Blood Knight"
+   "en": "Sangreal, the Blood Knight",
+   "es": "Sangreal, el Caballero de Sangre",
+   "fr": "Sangreal, le Chevalier de Sang",
+   "de": "Sangreal, der Blutritter"
   }
  },
  {
@@ -993,7 +1215,10 @@
   },
   "name": {
    "pt": "Rei Lich Esquecido",
-   "en": "Forgotten Lich King"
+   "en": "Forgotten Lich King",
+   "es": "Rey Lich Olvidado",
+   "fr": "Roi Liche Oublié",
+   "de": "Vergessener Lichkönig"
   }
  },
  {
@@ -1007,7 +1232,10 @@
   },
   "name": {
    "pt": "Ceifeiro de Almas",
-   "en": "Soul Reaper"
+   "en": "Soul Reaper",
+   "es": "Segador de Almas",
+   "fr": "Faucheur d'Âmes",
+   "de": "Seelenschnitter"
   }
  },
  {
@@ -1021,7 +1249,10 @@
   },
   "name": {
    "pt": "Lâmina Serafim Caído",
-   "en": "Fallen Seraph Blade"
+   "en": "Fallen Seraph Blade",
+   "es": "Hoja del Serafín Caído",
+   "fr": "Lame du Séraphin Déchu",
+   "de": "Klinge des gefallenen Seraphs"
   }
  },
  {
@@ -1035,7 +1266,10 @@
   },
   "name": {
    "pt": "Titã de Sucata",
-   "en": "Scrap Titan"
+   "en": "Scrap Titan",
+   "es": "Titán de Chatarra",
+   "fr": "Titan de Ferraille",
+   "de": "Schrotttitan"
   }
  },
  {
@@ -1049,7 +1283,10 @@
   },
   "name": {
    "pt": "Coelho das Sombras",
-   "en": "Shadow Hare"
+   "en": "Shadow Hare",
+   "es": "Liebre de las Sombras",
+   "fr": "Lièvre d'Ombre",
+   "de": "Schattenhase"
   }
  },
  {
@@ -1063,7 +1300,10 @@
   },
   "name": {
    "pt": "Filhote de Dragão Sombrio",
-   "en": "Shadow Dragon Whelp"
+   "en": "Shadow Dragon Whelp",
+   "es": "Cría de Dragón Sombrío",
+   "fr": "Dragonnet d'Ombre",
+   "de": "Schattendrachenjunges"
   }
  }
 ]

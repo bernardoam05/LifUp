@@ -1,13 +1,219 @@
 [
- {"id":"system_pass","cost":1500,"weeklyStock":2,"effect":"COMPLETE_QUEST","name":{"pt":"Passe do Sistema","en":"System Pass"},"description":{"pt":"Completa automaticamente uma missão diária à tua escolha.","en":"Automatically completes a daily mission of your choice."}},
- {"id":"relogio_ampulheta","cost":300,"effect":"DOUBLE_NEXT_XP","name":{"pt":"Relógio de Ampulheta","en":"Hourglass"},"description":{"pt":"A próxima missão concluída dá o dobro de XP.","en":"Your next completed mission grants double XP."}},
- {"id":"lagrima_purificacao","cost":1200,"weeklyStock":2,"effect":"REMOVE_PENALTY","name":{"pt":"Lágrima da Purificação","en":"Tear of Purification"},"description":{"pt":"Remove imediatamente a penalização ativa e o bloqueio.","en":"Immediately removes the active penalty and its block."}},
- {"id":"escudo_constancia","cost":800,"weeklyStock":1,"effect":"STREAK_SHIELD","name":{"pt":"Escudo da Constância","en":"Shield of Constancy"},"description":{"pt":"Protege o teu streak uma vez. Gasta-se sozinho no próximo dia falhado.","en":"Protects your streak once. Used automatically on your next failed day."}},
- {"id":"elixir_sabedoria","cost":400,"effect":"BUFF_XP","value":0.2,"hours":24,"name":{"pt":"Elixir da Sabedoria","en":"Elixir of Wisdom"},"description":{"pt":"+20% XP durante 24 horas.","en":"+20% XP for 24 hours."}},
- {"id":"elixir_fortuna","cost":400,"effect":"BUFF_GOLD","value":0.2,"hours":24,"name":{"pt":"Elixir da Fortuna","en":"Elixir of Fortune"},"description":{"pt":"+20% ouro durante 24 horas.","en":"+20% gold for 24 hours."}},
- {"id":"essencia_sombria","cost":900,"effect":"SHADOW_ESSENCE","name":{"pt":"Essência Sombria","en":"Shadow Essence"},"description":{"pt":"Invoca uma sombra aleatória (Normal 45% · Elite 35% · Cavaleiro 15% · Comandante 4% · Marechal 1%).","en":"Summons a random shadow (Normal 45% · Elite 35% · Knight 15% · Commander 4% · Marshal 1%)."}},
- {"id":"quebra_feiticos","cost":600,"effect":"SPELL_BREAKER","name":{"pt":"Quebra-Feitiços","en":"Spellbreaker"},"description":{"pt":"Termina uma sessão de foco rígida mais cedo sem perder os minutos.","en":"Ends a strict focus session early without losing its minutes."}},
- {"id":"pergaminho_troca","cost":150,"effect":"SWAP_QUEST","name":{"pt":"Pergaminho de Troca","en":"Swap Scroll"},"description":{"pt":"Troca uma missão diária por outra (além da troca grátis do dia).","en":"Swaps a daily mission for another (on top of the free daily swap)."}},
- {"id":"bau_cacador","cost":500,"effect":"CHEST","name":{"pt":"Baú do Caçador","en":"Hunter's Chest"},"description":{"pt":"Pode conter ouro, XP ou um item raro.","en":"May contain gold, XP or a rare item."}},
- {"id":"cristal_xp","cost":300,"effect":"ADD_XP","value":120,"name":{"pt":"Cristal de XP","en":"XP Crystal"},"description":{"pt":"+120 XP imediatos.","en":"+120 XP instantly."}}
+ {
+  "id": "system_pass",
+  "cost": 1500,
+  "weeklyStock": 2,
+  "effect": "COMPLETE_QUEST",
+  "name": {
+   "pt": "Passe do Sistema",
+   "en": "System Pass",
+   "es": "Pase del Sistema",
+   "fr": "Passe du Système",
+   "de": "System-Pass"
+  },
+  "description": {
+   "pt": "Completa automaticamente uma missão diária à tua escolha.",
+   "en": "Automatically completes a daily mission of your choice.",
+   "es": "Completa automáticamente una misión diaria a tu elección.",
+   "fr": "Termine automatiquement une mission quotidienne de ton choix.",
+   "de": "Schließt automatisch eine tägliche Mission deiner Wahl ab."
+  }
+ },
+ {
+  "id": "relogio_ampulheta",
+  "cost": 300,
+  "effect": "DOUBLE_NEXT_XP",
+  "name": {
+   "pt": "Relógio de Ampulheta",
+   "en": "Hourglass",
+   "es": "Reloj de Arena",
+   "fr": "Sablier",
+   "de": "Sanduhr"
+  },
+  "description": {
+   "pt": "A próxima missão concluída dá o dobro de XP.",
+   "en": "Your next completed mission grants double XP.",
+   "es": "Tu próxima misión completada otorga el doble de XP.",
+   "fr": "Ta prochaine mission terminée rapporte le double d'XP.",
+   "de": "Deine nächste abgeschlossene Mission gibt doppelte XP."
+  }
+ },
+ {
+  "id": "lagrima_purificacao",
+  "cost": 1200,
+  "weeklyStock": 2,
+  "effect": "REMOVE_PENALTY",
+  "name": {
+   "pt": "Lágrima da Purificação",
+   "en": "Tear of Purification",
+   "es": "Lágrima de Purificación",
+   "fr": "Larme de Purification",
+   "de": "Träne der Läuterung"
+  },
+  "description": {
+   "pt": "Remove imediatamente a penalização ativa e o bloqueio.",
+   "en": "Immediately removes the active penalty and its block.",
+   "es": "Elimina al instante la penalización activa y su bloqueo.",
+   "fr": "Supprime immédiatement la pénalité active et son blocage.",
+   "de": "Entfernt sofort die aktive Strafe und ihre Sperre."
+  }
+ },
+ {
+  "id": "escudo_constancia",
+  "cost": 800,
+  "weeklyStock": 1,
+  "effect": "STREAK_SHIELD",
+  "name": {
+   "pt": "Escudo da Constância",
+   "en": "Shield of Constancy",
+   "es": "Escudo de la Constancia",
+   "fr": "Bouclier de Constance",
+   "de": "Schild der Beständigkeit"
+  },
+  "description": {
+   "pt": "Protege o teu streak uma vez. Gasta-se sozinho no próximo dia falhado.",
+   "en": "Protects your streak once. Used automatically on your next failed day.",
+   "es": "Protege tu racha una vez. Se gasta solo en tu próximo día fallido.",
+   "fr": "Protège ta série une fois. S'utilise automatiquement lors de ta prochaine journée ratée.",
+   "de": "Schützt deinen Streak einmal. Wird automatisch an deinem nächsten verpassten Tag verbraucht."
+  }
+ },
+ {
+  "id": "elixir_sabedoria",
+  "cost": 400,
+  "effect": "BUFF_XP",
+  "value": 0.2,
+  "hours": 24,
+  "name": {
+   "pt": "Elixir da Sabedoria",
+   "en": "Elixir of Wisdom",
+   "es": "Elixir de la Sabiduría",
+   "fr": "Élixir de Sagesse",
+   "de": "Elixier der Weisheit"
+  },
+  "description": {
+   "pt": "+20% XP durante 24 horas.",
+   "en": "+20% XP for 24 hours.",
+   "es": "+20 % de XP durante 24 horas.",
+   "fr": "+20 % d'XP pendant 24 heures.",
+   "de": "+20 % XP für 24 Stunden."
+  }
+ },
+ {
+  "id": "elixir_fortuna",
+  "cost": 400,
+  "effect": "BUFF_GOLD",
+  "value": 0.2,
+  "hours": 24,
+  "name": {
+   "pt": "Elixir da Fortuna",
+   "en": "Elixir of Fortune",
+   "es": "Elixir de la Fortuna",
+   "fr": "Élixir de Fortune",
+   "de": "Elixier des Glücks"
+  },
+  "description": {
+   "pt": "+20% ouro durante 24 horas.",
+   "en": "+20% gold for 24 hours.",
+   "es": "+20 % de oro durante 24 horas.",
+   "fr": "+20 % d'or pendant 24 heures.",
+   "de": "+20 % Gold für 24 Stunden."
+  }
+ },
+ {
+  "id": "essencia_sombria",
+  "cost": 900,
+  "effect": "SHADOW_ESSENCE",
+  "name": {
+   "pt": "Essência Sombria",
+   "en": "Shadow Essence",
+   "es": "Esencia Sombría",
+   "fr": "Essence d'Ombre",
+   "de": "Schattenessenz"
+  },
+  "description": {
+   "pt": "Invoca uma sombra aleatória (Normal 45% · Elite 35% · Cavaleiro 15% · Comandante 4% · Marechal 1%).",
+   "en": "Summons a random shadow (Normal 45% · Elite 35% · Knight 15% · Commander 4% · Marshal 1%).",
+   "es": "Invoca una sombra aleatoria (Normal 45 % · Élite 35 % · Caballero 15 % · Comandante 4 % · Mariscal 1 %).",
+   "fr": "Invoque une ombre aléatoire (Normal 45 % · Élite 35 % · Chevalier 15 % · Commandant 4 % · Maréchal 1 %).",
+   "de": "Beschwört einen zufälligen Schatten (Normal 45 % · Elite 35 % · Ritter 15 % · Kommandant 4 % · Marschall 1 %)."
+  }
+ },
+ {
+  "id": "quebra_feiticos",
+  "cost": 600,
+  "effect": "SPELL_BREAKER",
+  "name": {
+   "pt": "Quebra-Feitiços",
+   "en": "Spellbreaker",
+   "es": "Rompehechizos",
+   "fr": "Brise-Sort",
+   "de": "Bannbrecher"
+  },
+  "description": {
+   "pt": "Termina uma sessão de foco rígida mais cedo sem perder os minutos.",
+   "en": "Ends a strict focus session early without losing its minutes.",
+   "es": "Termina antes una sesión de concentración estricta sin perder sus minutos.",
+   "fr": "Met fin à une session de focus stricte plus tôt sans perdre ses minutes.",
+   "de": "Beendet eine strenge Fokus-Session früher, ohne ihre Minuten zu verlieren."
+  }
+ },
+ {
+  "id": "pergaminho_troca",
+  "cost": 150,
+  "effect": "SWAP_QUEST",
+  "name": {
+   "pt": "Pergaminho de Troca",
+   "en": "Swap Scroll",
+   "es": "Pergamino de Cambio",
+   "fr": "Parchemin d'Échange",
+   "de": "Tauschrolle"
+  },
+  "description": {
+   "pt": "Troca uma missão diária por outra (além da troca grátis do dia).",
+   "en": "Swaps a daily mission for another (on top of the free daily swap).",
+   "es": "Cambia una misión diaria por otra (además del cambio gratuito del día).",
+   "fr": "Remplace une mission quotidienne par une autre (en plus de l'échange gratuit du jour).",
+   "de": "Tauscht eine tägliche Mission gegen eine andere (zusätzlich zum kostenlosen Tagestausch)."
+  }
+ },
+ {
+  "id": "bau_cacador",
+  "cost": 500,
+  "effect": "CHEST",
+  "name": {
+   "pt": "Baú do Caçador",
+   "en": "Hunter's Chest",
+   "es": "Cofre del Cazador",
+   "fr": "Coffre du Chasseur",
+   "de": "Jägertruhe"
+  },
+  "description": {
+   "pt": "Pode conter ouro, XP ou um item raro.",
+   "en": "May contain gold, XP or a rare item.",
+   "es": "Puede contener oro, XP o un objeto raro.",
+   "fr": "Peut contenir de l'or, de l'XP ou un objet rare.",
+   "de": "Kann Gold, XP oder ein seltenes Item enthalten."
+  }
+ },
+ {
+  "id": "cristal_xp",
+  "cost": 300,
+  "effect": "ADD_XP",
+  "value": 120,
+  "name": {
+   "pt": "Cristal de XP",
+   "en": "XP Crystal",
+   "es": "Cristal de XP",
+   "fr": "Cristal d'XP",
+   "de": "XP-Kristall"
+  },
+  "description": {
+   "pt": "+120 XP imediatos.",
+   "en": "+120 XP instantly.",
+   "es": "+120 XP al instante.",
+   "fr": "+120 XP instantanément.",
+   "de": "+120 XP sofort."
+  }
+ }
 ]

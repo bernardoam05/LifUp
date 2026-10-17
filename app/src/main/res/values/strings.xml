@@ -533,4 +533,8 @@
     <string name="guide_focus">Pick a focus mission so the minutes count for it; a free session only counts in your stats. Each mission has its mode (timer or Pomodoro) and only that one counts. In Pomodoro only focus minutes count and apps are free on breaks. No limit: counts until you stop. Strict mode: stopping early loses the minutes unless you use a Spellbreaker.</string>
     <string name="guide_shop_title">Shop</string>
     <string name="guide_shop">Spend gold on items (swapping missions, protecting your streak, XP and gold elixirs, chests) and on shadows. The 3 shadows for sale and some item stock change every Monday. Items stay in your inventory until you use them.</string>
+    <string name="auto_backups">Automatic copies</string>
+    <string name="auto_backups_info">The app keeps one copy a day for the last 7 days. With Android backup on, they also go to your Google account.</string>
+    <string name="auto_backups_none">No copies yet.</string>
+    <string name="restore">Restore</string>
 </resources>
