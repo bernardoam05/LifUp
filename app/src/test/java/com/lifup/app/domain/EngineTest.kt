@@ -612,6 +612,21 @@ class EngineTest {
         assertTrue(s.boss!!.bossId != "season_halloween")
     }
 
+    @Test fun `finishing a no-quitting session pays a bonus`() {
+        val fq = buildQuest(content.questDefById.getValue("pool_deepwork"), 1, QuestOrigin.EXTRA, "fq")
+        fun session(strict: Boolean): GameState {
+            var s = fresh().let { it.copy(quests = it.quests + fq) }
+            s = run(s, "2026-10-14T10:00") { startFocus(FocusSession(0, 20, strict = strict, questId = fq.id)) }
+            return run(s, "2026-10-14T10:21")
+        }
+        val plain = session(false)
+        val bet = session(true)
+        assertEquals(20.0, plain.quests.first { it.id == fq.id }.progress, 0.01)
+        assertEquals(25.0, bet.quests.first { it.id == fq.id }.progress, 0.01)
+        // +4 gold for 20 min (the "no quitting" achievement may add more on top).
+        assertTrue(bet.player.gold >= plain.player.gold + 4)
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

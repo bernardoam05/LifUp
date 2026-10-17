@@ -314,7 +314,7 @@ private fun SessionSetup(s: GameState) {
                 }
                 TextButton(onClick = { pickApps = true }) { Text(stringResource(R.string.choose_apps).uppercase()) }
             }
-            ToggleRow(stringResource(R.string.strict_mode), if (open) stringResource(R.string.strict_open_info) else "", strict && !open, enabled = !open) { strict = it }
+            ToggleRow(stringResource(R.string.strict_mode), stringResource(if (open) R.string.strict_open_info else R.string.strict_info), strict && !open, enabled = !open) { strict = it }
         }
         SectionTitle(stringResource(R.string.ambient))
         AmbientChips(ambient) { ambient = it }

@@ -149,11 +149,12 @@ fun shadowIcon(c: ShadowClass): ImageVector = when (c) {
 }
 
 fun shadowRankColor(r: ShadowRank): Color = when (r) {
+    // The usual rarity colours, so the order reads without learning it.
     ShadowRank.NORMAL -> Color(0xFF94A3B8)
-    ShadowRank.ELITE -> Color(0xFF22C55E)
-    ShadowRank.KNIGHT -> Color(0xFF3B82F6)
+    ShadowRank.ELITE -> Color(0xFF3B82F6)
+    ShadowRank.KNIGHT -> Color(0xFFA855F7)
     ShadowRank.COMMANDER -> Color(0xFFF59E0B)
-    ShadowRank.MARSHAL -> Color(0xFFEF4444)
+    ShadowRank.MARSHAL -> Color(0xFFF43F5E)
 }
 
 @StringRes fun shadowRankName(r: ShadowRank) = when (r) {

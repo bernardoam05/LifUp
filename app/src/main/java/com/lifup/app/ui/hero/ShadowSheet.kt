@@ -55,7 +55,7 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = c.panel) {
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                IconBadge(if (known) shadowIcon(def.shadowClass) else Icons.Rounded.Lock, color, 56.dp)
+                EchoEmblem(def, known = known, size = 72.dp)
                 Spacer(Modifier.width(14.dp))
                 Column(Modifier.weight(1f)) {
                     Text(if (known) def.name.local() else "???", style = MaterialTheme.typography.headlineSmall)

@@ -1,5 +1,6 @@
 package com.lifup.app.ui.hero
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.runtime.remember
 import androidx.compose.material3.TextButton
 import kotlin.math.roundToInt
@@ -207,14 +208,14 @@ fun ShadowTile(def: ShadowDef, level: Int?, inSquad: Boolean = false, reveal: Bo
     val owned = level != null || reveal
     Column(
         Modifier.fillMaxWidth().aspectRatio(0.8f).clip(RoundedCornerShape(12.dp))
-            .background(if (owned) color.copy(alpha = 0.10f) else c.panel)
+            .background(if (owned) Brush.verticalGradient(listOf(color.copy(alpha = 0.16f), c.panel)) else Brush.verticalGradient(listOf(c.panel, c.panel)))
             .border(if (inSquad) 2.dp else 1.dp, if (owned) color.copy(alpha = if (inSquad) 1f else 0.5f) else c.border, RoundedCornerShape(12.dp))
             .clickable(onClick = onClick).padding(6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Icon(if (owned) shadowIcon(def.shadowClass) else Icons.Rounded.Lock, null, tint = if (owned) color else c.dim, modifier = Modifier.size(28.dp))
-        Spacer(Modifier.height(4.dp))
+        EchoEmblem(def, known = owned, size = 46.dp)
+        Spacer(Modifier.height(6.dp))
         Text(
             if (owned) def.name.local() else "???",
             style = MaterialTheme.typography.labelSmall, color = if (owned) c.text else c.dim,

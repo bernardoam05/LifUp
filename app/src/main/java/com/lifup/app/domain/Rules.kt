@@ -98,6 +98,10 @@ object Rules {
     /** Nudge for an open bedtime check-in, in minutes after midnight (22:30). */
     const val BEDTIME_NUDGE_MIN = 22 * 60 + 30
 
+    /** A finished "no quitting" session credits its minutes ×1.25 and 1 gold per 5 minutes. */
+    const val STRICT_BONUS = 1.25
+    const val STRICT_GOLD_EVERY_MIN = 5.0
+
     /** Sessions without a set end still stop by themselves after this long. */
     const val OPEN_SESSION_MAX_MIN = 480
 

@@ -142,6 +142,9 @@ private fun Tx.finishFocus(f: FocusSession, minutes: Double, completed: Boolean)
     count(StatKey.FOCUS_SESSIONS)
     if (completed && f.strict) count(StatKey.STRICT_SESSIONS)
     f.pomodoro?.let { count(StatKey.POMODORO_CYCLES, Pomodoro.completedCycles(it, f.elapsedMinutes(ctx.now)).toLong()) }
-    creditFocus(minutes, f.questId, pomodoro = f.pomodoro != null)
+    // "No quitting" is a bet: finishing pays the minutes +25% and some gold.
+    val won = completed && f.strict
+    if (won) gainGold((minutes / Rules.STRICT_GOLD_EVERY_MIN).toInt(), boosted = false)
+    creditFocus(if (won) minutes * Rules.STRICT_BONUS else minutes, f.questId, pomodoro = f.pomodoro != null)
     toast(ToastKind.FOCUS_DONE, minutes.roundToInt().toString())
 }

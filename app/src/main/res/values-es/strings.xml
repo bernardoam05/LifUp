@@ -49,16 +49,16 @@
     <string name="rank_title_e">Novato</string>
     <string name="rank_title_d">Cazador Aprendiz</string>
     <string name="rank_title_c">Maestro de la Voluntad</string>
-    <string name="rank_title_b">Caballero de las Sombras</string>
-    <string name="rank_title_a">Comandante</string>
+    <string name="rank_title_b">Guardián de los Ecos</string>
+    <string name="rank_title_a">Campeón</string>
     <string name="rank_title_s">Soberano</string>
-    <string name="rank_title_n">Cazador de Nivel Nacional</string>
+    <string name="rank_title_n">Leyenda Viva</string>
     <string name="next_rank_at">Próximo rango: %1$s en el nivel %2$d</string>
-    <string name="srank_normal">Normal</string>
-    <string name="srank_elite">Élite</string>
-    <string name="srank_knight">Caballero</string>
-    <string name="srank_commander">Comandante</string>
-    <string name="srank_marshal">Mariscal</string>
+    <string name="srank_normal">Común</string>
+    <string name="srank_elite">Raro</string>
+    <string name="srank_knight">Épico</string>
+    <string name="srank_commander">Legendario</string>
+    <string name="srank_marshal">Mítico</string>
 
     <!-- HUD / penalty -->
     <string name="penalty_banner">Penalización activa</string>
@@ -73,7 +73,7 @@
     <string name="penalty_section">Penalización</string>
     <string name="penalty_info">Haz estas misiones para levantarla antes.</string>
     <string name="portal_section">Portal abierto</string>
-    <string name="portal_info">Un portal temporal: recompensas dobles y la posibilidad de vincular una sombra. Se cierra solo.</string>
+    <string name="portal_info">Un portal temporal: recompensas dobles y la posibilidad de despertar un eco. Se cierra solo.</string>
     <string name="daily_section">Misiones diarias</string>
     <string name="extra_section">Misiones extra</string>
     <string name="add_extra">Misión extra</string>
@@ -93,7 +93,7 @@
     <string name="boss_hint">tu XP causa daño</string>
     <string name="boss_challenge">Desafío del jefe</string>
     <string name="boss_challenge_done">Cumplido</string>
-    <string name="boss_defeated">¡Derrotado! %1$s se unió a tu ejército.</string>
+    <string name="boss_defeated">¡Derrotado! %1$s se unió a tu escuadrón.</string>
     <string name="boss_drop">Botín: %1$s</string>
 
     <!-- Mission sheet -->
@@ -135,8 +135,8 @@
         <item quantity="other">%1$d apps elegidas</item>
     </plurals>
     <string name="choose_apps">Elegir apps</string>
-    <string name="strict_mode">Modo estricto</string>
-    <string name="strict_info">Parar antes de tiempo pierde los minutos de la sesión, salvo que uses un Rompehechizos.</string>
+    <string name="strict_mode">Sin rendirse</string>
+    <string name="strict_info">Si paras antes del final pierdes los minutos. Si llegas al final, valen +25% y ganas oro extra.</string>
     <string name="ambient">Sonido ambiente</string>
     <string name="ambient_none">Silencio</string>
     <string name="ambient_rain">Lluvia</string>
@@ -145,12 +145,12 @@
     <string name="start_session">Empezar sesión</string>
     <string name="focusing">En foco</string>
     <string name="session_total_left">quedan %1$s de sesión</string>
-    <string name="strict">Estricto</string>
+    <string name="strict">Sin rendirse</string>
     <string name="blocking_n">Bloqueando %1$d apps</string>
     <string name="credited_min">%1$d min ganados</string>
     <string name="stop_session">Detener sesión</string>
     <string name="stop_text">Conservarás %1$d minutos de foco.</string>
-    <string name="stop_strict_text">Sesión estricta: parar ahora pierde %1$d minutos. Rompehechizos: %2$d.</string>
+    <string name="stop_strict_text">Sin rendirse: parar ahora pierde %1$d minutos. Rompehechizos: %2$d.</string>
     <string name="use_spellbreaker">Usar Rompehechizos</string>
     <string name="stop">Detener</string>
     <string name="stop_and_lose">Detener y perder</string>
@@ -175,7 +175,7 @@
     <string name="open_app_info">Abrir información de la app</string>
 
     <!-- Hero -->
-    <string name="hero_shadows">Sombras</string>
+    <string name="hero_shadows">Ecos</string>
     <string name="hero_achievements">Logros</string>
     <string name="hero_stats">Estadísticas</string>
     <string name="streak">Streak</string>
@@ -207,12 +207,12 @@
     <!-- Shadow sheet -->
     <string name="passive">Pasiva</string>
     <string name="next_level_value">Próximo nivel: %1$s</string>
-    <string name="source_extraction">Se vincula tras días perfectos, en portales o con Esencia Sombría.</string>
+    <string name="source_extraction">Se despierta tras días perfectos, en portales o con Esencia de Eco.</string>
     <string name="source_shop">Se vende en la tienda (rotación semanal).</string>
     <string name="source_achievement">Recompensa de logro.</string>
     <string name="source_streak">Recompensa de hito de streak.</string>
     <string name="source_boss">La suelta el jefe %1$s.</string>
-    <string name="upgrade_capped">Nivel máximo: una sombra no puede superar tu nivel.</string>
+    <string name="upgrade_capped">Nivel máximo: un eco no puede superar tu nivel.</string>
     <string name="upgrade_cost">Evolucionar: %1$d oro · copias %2$d/%3$d</string>
     <string name="equip">Equipar</string>
     <string name="unequip">Quitar</string>
@@ -229,14 +229,14 @@
     <string name="passive_shop">−%1$s en precios de la tienda</string>
     <string name="passive_focus">+%1$s en minutos de foco acreditados</string>
     <string name="passive_daily">+%1$d XP por cada día perfecto</string>
-    <string name="passive_luck">+%1$s de suerte en botín y sombras raras</string>
+    <string name="passive_luck">+%1$s de suerte en botín y ecos raros</string>
     <string name="passive_all">Amplifica en %1$s las demás pasivas del escuadrón</string>
 
     <!-- Shop -->
     <string name="shop">Tienda</string>
     <string name="inventory">Inventario</string>
     <string name="items">Objetos</string>
-    <string name="shadow_offers">Sombras a la venta</string>
+    <string name="shadow_offers">Ecos a la venta</string>
     <string name="stock_left">%1$d/%2$d esta semana</string>
     <string name="owned_n">tienes %1$d</string>
     <string name="sold_out">Agotado</string>
@@ -250,8 +250,8 @@
     <string name="reward_gold">+%1$d oro</string>
     <string name="reward_rank_title">Nuevo rango</string>
     <string name="reward_rank_text">La interfaz adopta el color de tu nuevo rango.</string>
-    <string name="reward_shadow_new">Nueva sombra</string>
-    <string name="reward_shadow_copy">Copia de sombra</string>
+    <string name="reward_shadow_new">Nuevo eco</string>
+    <string name="reward_shadow_copy">Copia de eco</string>
     <string name="reward_copies">Copias: %1$d</string>
     <string name="reward_boss_title">Jefe derrotado</string>
     <string name="reward_achievement_title">Logro</string>
@@ -273,7 +273,7 @@
     <string name="toast_item_found">Encontraste: %1$s</string>
     <string name="toast_penalty_cleared">Penalización cumplida</string>
     <string name="toast_focus_done">Foco completado: %1$s min</string>
-    <string name="toast_focus_lost">Sesión estricta abandonada: %1$s min perdidos</string>
+    <string name="toast_focus_lost">Sin rendirse: %1$s min perdidos</string>
     <string name="toast_boss_escaped">%1$s escapó</string>
     <string name="toast_portal_escaped">El portal se cerró</string>
     <string name="toast_portal_cleared">¡Portal superado!</string>
@@ -316,18 +316,18 @@
     <string name="import_">Importar</string>
     <string name="paste_old_backup">Pegar código de copia antigua</string>
     <string name="import_old_app">Importar de la app antigua</string>
-    <string name="import_confirm_text">¿Reemplazar tu progreso actual por este (nivel %1$d, %2$d sombras)?</string>
+    <string name="import_confirm_text">¿Reemplazar tu progreso actual por este (nivel %1$d, %2$d ecos)?</string>
     <string name="backup_saved">Copia guardada.</string>
     <string name="backup_invalid">No se pudo leer esa copia.</string>
     <string name="about">Acerca de</string>
     <string name="reset_progress">Restablecer progreso</string>
-    <string name="reset_text">Se borrará todo: nivel, sombras, objetos e historial. No se puede deshacer.</string>
+    <string name="reset_text">Se borrará todo: nivel, ecos, objetos e historial. No se puede deshacer.</string>
     <string name="reset_confirm">Borrar todo</string>
 
     <!-- Forge -->
-    <string name="forge_info">Crea tus propias misiones o desactiva las del sistema. Los cambios se aplican a la lista de mañana.</string>
+    <string name="forge_info">Crea tus propias misiones o desactiva las base. Los cambios se aplican a la lista de mañana.</string>
     <string name="your_missions">Tus misiones</string>
-    <string name="system_missions">Misiones del sistema</string>
+    <string name="system_missions">Misiones base</string>
     <string name="no_custom">Aún no tienes misiones propias. Toca + para forjar una.</string>
     <string name="kind_core">Todos los días</string>
     <string name="kind_pool">Sorteo</string>
@@ -359,7 +359,7 @@
     <!-- Onboarding -->
     <string name="onb_welcome">Bienvenido</string>
     <string name="onb_title">Sube de nivel en la vida real.</string>
-    <string name="onb_intro">Cada día el Sistema te asigna misiones. Cúmplelas para ganar XP, oro y sombras. Ignóralas y paga el precio.</string>
+    <string name="onb_intro">Cada día recibes misiones. Cúmplelas para ganar XP, oro y ecos. Ignóralas y paga el precio.</string>
     <string name="onb_how">Cómo funciona</string>
     <string name="onb_f_missions">Misiones diarias</string>
     <string name="onb_f_missions_text">Hábitos fijos más un sorteo diario. Sus objetivos crecen con tu nivel.</string>
@@ -368,8 +368,8 @@
     <string name="onb_f_focus">Foco</string>
     <string name="onb_f_focus_text">Temporizador o Pomodoro con bloqueo de apps y sonido ambiente. Los minutos cuentan para las misiones de foco.</string>
     <string name="onb_f_boss">Jefe semanal</string>
-    <string name="onb_f_boss_text">Tu XP le causa daño. Derrótalo antes del domingo para quedarte con su sombra.</string>
-    <string name="onb_f_shadows">Sombras</string>
+    <string name="onb_f_boss_text">Tu XP le causa daño. Derrótalo antes del domingo para quedarte con su eco.</string>
+    <string name="onb_f_shadows">Ecos</string>
     <string name="onb_f_shadows_text">Colecciónalas, haz que evolucionen y pon tres en tu escuadrón para obtener bonos pasivos.</string>
     <string name="onb_register">Registro</string>
     <string name="onb_change_later">Puedes cambiarlo cuando quieras en Ajustes.</string>
@@ -403,7 +403,7 @@
         <item>El éxito exige sacrificio. El tuyo, ahora mismo, es el foco.</item>
         <item>¿Vas a rendirte ahora? Tu yo del futuro te agradecerá seguir.</item>
         <item>La disciplina es el puente entre las metas y los resultados.</item>
-        <item>El Sistema no acepta excusas. Solo resultados.</item>
+        <item>La disciplina no acepta excusas. Solo resultados.</item>
         <item>Céntrate en el proceso. La distracción es enemiga del progreso.</item>
         <item>Cada segundo de foco es un paso más allá de tus límites.</item>
         <item>No necesitas motivación. Necesitas disciplina.</item>
@@ -464,11 +464,11 @@
     <string name="achievement_current">Valor actual: %1$d</string>
     <string name="achievement_tier">Nivel %1$d</string>
     <string name="achievement_gold">+%1$d de oro</string>
-    <string name="achievement_hidden_shadow">sombra %1$s, se revela al desbloquear</string>
-    <string name="achievement_shadow">Sombra: %1$s</string>
+    <string name="achievement_hidden_shadow">eco %1$s, se revela al desbloquear</string>
+    <string name="achievement_shadow">Eco: %1$s</string>
     <string name="achievement_note">Las recompensas se entregan en cuanto se alcanza el nivel.</string>
     <string name="achievement_next">Siguiente: +%1$d de oro</string>
-    <string name="achievement_next_shadow">Siguiente: +%1$d de oro + sombra</string>
+    <string name="achievement_next_shadow">Siguiente: +%1$d de oro + eco</string>
     <string name="achievement_maxed">Todos los niveles completados</string>
     <string name="calendar_less">Menos</string>
     <string name="calendar_more">Más</string>
@@ -515,23 +515,23 @@
     <string name="perm_activity_why">Contar pasos en misiones de caminar y carreras.</string>
     <string name="guide_section">Cómo funciona</string>
     <string name="guide_daily_title">Misiones diarias</string>
-    <string name="guide_daily">Fijas y sorteadas::1 misión fija y varias sorteadas que cambian cada día.\nMínimo para la racha::En Normal te basta con el 75% de las misiones. Un 60% en Fácil, 100% en Difícil.\nDía perfecto::Hazlas todas y ganas XP extra y una sombra nueva.\n¿Hoy no te encaja?::Cambia una sorteada al día gratis, o crea las tuyas en la Forja.</string>
+    <string name="guide_daily">Fijas y sorteadas::1 misión fija y varias sorteadas que cambian cada día.\nMínimo para la racha::En Normal te basta con el 75% de las misiones. Un 60% en Fácil, 100% en Difícil.\nDía perfecto::Hazlas todas y ganas XP extra y un eco nuevo.\n¿Hoy no te encaja?::Cambia una sorteada al día gratis, o crea las tuyas en la Forja.</string>
     <string name="guide_streak_title">Racha y descanso</string>
-    <string name="guide_streak">Sube cada día::+1 por cada día que llegas al mínimo.\nSegunda oportunidad::¿La perdiste? Un día perfecto justo después la recupera (una vez por semana).\nDías de descanso::Márcalo antes del mediodía y ese día no cuenta ni a favor ni en contra. 2 por semana en Fácil, 1 en Normal.\nProtección extra::El Escudo de la Constancia y algunas sombras salvan tu racha por ti.</string>
+    <string name="guide_streak">Sube cada día::+1 por cada día que llegas al mínimo.\nSegunda oportunidad::¿La perdiste? Un día perfecto justo después la recupera (una vez por semana).\nDías de descanso::Márcalo antes del mediodía y ese día no cuenta ni a favor ni en contra. 2 por semana en Fácil, 1 en Normal.\nProtección extra::El Escudo de la Constancia y algunos ecos salvan tu racha por ti.</string>
     <string name="guide_penalty_title">Penalización</string>
     <string name="guide_penalty">Pérdida proporcional::Pierdes XP y oro según lo que quedó sin hacer. Casi lograrlo casi no cuesta nada.\n24 horas::Por debajo del 50% empieza una penalización con misiones extra. Hazlas y termina antes.\nBloqueo de apps::Si quieres, tus apps de distracción quedan bloqueadas mientras dure.</string>
     <string name="guide_side_title">Misiones secundarias</string>
     <string name="guide_side">Libres::Escribe cualquier tarea, sin objetivos ni reglas.\n5 con recompensa::Las 5 primeras que completes cada día dan XP y oro, y hieren al jefe.\nDespués de eso::Siguen funcionando como lista de tareas.\nSin trampas::Desmarcar o borrar te quita la recompensa.</string>
     <string name="guide_boss_title">Jefe semanal</string>
-    <string name="guide_boss">Todo el XP es daño::Cada misión que haces le quita vida.\nDesafío del jefe::Una misión especial que le arranca un 35% de golpe.\nBotín::Derrótalo y ganas XP, oro, un cofre y su sombra.\nSi no…::El domingo por la noche huye, y llega otro.</string>
+    <string name="guide_boss">Todo el XP es daño::Cada misión que haces le quita vida.\nDesafío del jefe::Una misión especial que le arranca un 35% de golpe.\nBotín::Derrótalo y ganas XP, oro, un cofre y su eco.\nSi no…::El domingo por la noche huye, y llega otro.</string>
     <string name="guide_portal_title">Portales</string>
-    <string name="guide_portal">Aparecen solos::Entre las 8:00 y las 22:00, hasta 2 al día.\nRecompensa doble::Una misión más grande, con el doble de XP y oro.\nNuevo aliado::Completarlo puede darte una sombra.\nContra el reloj::Siempre hay tiempo de sobra, pero el portal se cierra cuando se acaba.</string>
-    <string name="guide_shadows_title">Sombras</string>
-    <string name="guide_shadows">Dónde encontrarlas::Días perfectos, jefes, portales, logros, hitos de racha y la tienda.\nEscuadrón::Hasta 3 en combate, cada una con una pasiva: más XP, más oro, más daño, protección.\nEvolución::Copias repetidas y oro suben el nivel de la sombra, hasta el tuyo.</string>
+    <string name="guide_portal">Aparecen solos::Entre las 8:00 y las 22:00, hasta 2 al día.\nRecompensa doble::Una misión más grande, con el doble de XP y oro.\nNuevo aliado::Completarlo puede despertar un eco.\nContra el reloj::Siempre hay tiempo de sobra, pero el portal se cierra cuando se acaba.</string>
+    <string name="guide_shadows_title">Ecos</string>
+    <string name="guide_shadows">Dónde encontrarlos::Días perfectos, jefes, portales, logros, hitos de racha y la tienda.\nEscuadrón::Hasta 3 en combate, cada uno con una pasiva: más XP, más oro, más daño, protección.\nEvolución::Copias repetidas y oro suben el nivel del eco, hasta el tuyo.</string>
     <string name="guide_focus_title">Foco y Pomodoro</string>
-    <string name="guide_focus">Vincula una misión::Los minutos cuentan para ella. Una sesión libre solo cuenta en las estadísticas.\nEl modo correcto::Cada misión es de temporizador o de Pomodoro, y solo cuenta ese modo.\nDescansos de verdad::En Pomodoro solo cuentan los minutos de enfoque, y en los descansos las apps quedan libres.\nSin límite::Cuenta hasta que pares.\nModo estricto::Parar a mitad pierde los minutos, salvo que uses un Rompehechizos.</string>
+    <string name="guide_focus">Vincula una misión::Los minutos cuentan para ella. Una sesión libre solo cuenta en las estadísticas.\nEl modo correcto::Cada misión es de temporizador o de Pomodoro, y solo cuenta ese modo.\nDescansos de verdad::En Pomodoro solo cuentan los minutos de enfoque, y en los descansos las apps quedan libres.\nSin límite::Cuenta hasta que pares.\nSin rendirse::Parar a mitad pierde los minutos; llegar al final vale +25% y oro extra.</string>
     <string name="guide_shop_title">Tienda</string>
-    <string name="guide_shop">Objetos::Cambiar misiones, proteger la racha, elixires de XP y oro, cofres.\nSombras a la venta::3 por semana, se renuevan cada lunes.\nInventario::Lo que compras se guarda hasta que lo uses.</string>
+    <string name="guide_shop">Objetos::Cambiar misiones, proteger la racha, elixires de XP y oro, cofres.\nEcos a la venta::3 por semana, se renuevan cada lunes.\nInventario::Lo que compras se guarda hasta que lo uses.</string>
     <string name="auto_backups">Copias automáticas</string>
     <string name="auto_backups_info">La app guarda una copia diaria de los últimos 7 días. Con la copia de seguridad de Android activada, también van a tu cuenta de Google.</string>
     <string name="auto_backups_none">Aún no hay copias.</string>
@@ -559,7 +559,7 @@
     <string name="show_all">Ver todas</string>
     <string name="show_less">Ver menos</string>
     <string name="notif_reminder_safe_title">Racha asegurada</string>
-    <string name="notif_reminder_safe_text">Te faltan %1$d para un día perfecto, con XP extra y una sombra.</string>
+    <string name="notif_reminder_safe_text">Te faltan %1$d para un día perfecto, con XP extra y un eco.</string>
     <string name="notif_bedtime_title">Hora de descansar</string>
     <string name="notif_bedtime_text">Confirma el check-in de dormir antes de medianoche.</string>
     <string name="widget_goal">Faltan %1$d para la racha</string>
@@ -589,10 +589,14 @@
     <string name="season_newyear">Evento de Año Nuevo</string>
     <string name="season_spring">Evento de Primavera</string>
     <string name="season_summer">Evento de Verano</string>
-    <string name="season_exclusive">Sombra exclusiva</string>
+    <string name="season_exclusive">Eco exclusivo</string>
     <string name="season_next">La próxima semana: %1$s</string>
     <string name="today_count_suffix">misiones · %1$s</string>
     <string name="more_options">Más opciones</string>
     <string name="options_none">ninguna activa</string>
     <string name="custom">Personalizar</string>
+    <string name="gold">Oro</string>
+    <string name="rigor_easy_short">60% de las misiones para la racha · 2 descansos por semana</string>
+    <string name="rigor_normal_short">75% de las misiones · 1 descanso por semana</string>
+    <string name="rigor_hard_short">Todas las misiones · sin descansos · pérdidas dobles</string>
 </resources>

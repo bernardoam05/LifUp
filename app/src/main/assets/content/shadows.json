@@ -88,7 +88,7 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Acolito de Bronze",
+   "pt": "Acólito de Bronze",
    "en": "Bronze Acolyte",
    "es": "Acólito de Bronce",
    "fr": "Acolyte de Bronze",
@@ -248,7 +248,7 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Minotauro Escravo",
+   "pt": "Minotauro Acorrentado",
    "en": "Chained Minotaur",
    "es": "Minotauro Encadenado",
    "fr": "Minotaure Enchaîné",
@@ -648,11 +648,11 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Prime, O Motor Eterno",
-   "en": "Prime, the Eternal Engine",
-   "es": "Prime, el Motor Eterno",
-   "fr": "Prime, le Moteur Éternel",
-   "de": "Prime, die ewige Maschine"
+   "pt": "O Motor Eterno",
+   "en": "The Eternal Engine",
+   "es": "El Motor Eterno",
+   "fr": "Le Moteur Éternel",
+   "de": "Die ewige Maschine"
   }
  },
  {
@@ -857,11 +857,11 @@
    "bossId": "boss_goblin_warlord"
   },
   "name": {
-   "pt": "Senhor Goblin Tabata",
+   "pt": "Senhor Goblin",
    "en": "Goblin Warlord",
-   "es": "Señor Goblin Tabata",
-   "fr": "Seigneur Gobelin du Tabata",
-   "de": "Goblin-Kriegsherr Tabata"
+   "es": "Señor Goblin",
+   "fr": "Seigneur Gobelin",
+   "de": "Goblin-Kriegsherr"
   }
  },
  {
@@ -925,11 +925,11 @@
    "bossId": "boss_stringsinger"
   },
   "name": {
-   "pt": "Cantor das Cordas",
-   "en": "The Stringsinger",
-   "es": "El Cantor de Cuerdas",
-   "fr": "Le Chantre des Cordes",
-   "de": "Der Saitensänger"
+   "pt": "Sereia das Cordas",
+   "en": "Siren of Strings",
+   "es": "Sirena de las Cuerdas",
+   "fr": "Sirène des Cordes",
+   "de": "Sirene der Saiten"
   }
  },
  {
@@ -942,11 +942,11 @@
    "bossId": "boss_polyglot_trial"
   },
   "name": {
-   "pt": "Poliglota da Provação",
-   "en": "Polyglot of the Trial",
-   "es": "Políglota de la Prueba",
-   "fr": "Polyglotte de l'Épreuve",
-   "de": "Polyglott der Prüfung"
+   "pt": "Esfinge Poliglota",
+   "en": "Polyglot Sphinx",
+   "es": "Esfinge Políglota",
+   "fr": "Sphinx Polyglotte",
+   "de": "Polyglotte Sphinx"
   }
  },
  {
@@ -959,11 +959,11 @@
    "bossId": "boss_culinary_ritual"
   },
   "name": {
-   "pt": "Chef do Ritual",
-   "en": "Ritual Chef",
-   "es": "Chef del Ritual",
-   "fr": "Chef du Rituel",
-   "de": "Ritualkoch"
+   "pt": "Ogre do Caldeirão",
+   "en": "Cauldron Ogre",
+   "es": "Ogro del Caldero",
+   "fr": "Ogre du Chaudron",
+   "de": "Kessel-Oger"
   }
  },
  {
@@ -976,11 +976,11 @@
    "bossId": "boss_memory_labyrinth"
   },
   "name": {
-   "pt": "Curador do Palácio Mental",
-   "en": "Curator of the Mind Palace",
-   "es": "Curador del Palacio Mental",
-   "fr": "Conservateur du Palais Mental",
-   "de": "Kurator des Gedächtnispalasts"
+   "pt": "Coruja do Palácio Mental",
+   "en": "Mind Palace Owl",
+   "es": "Búho del Palacio Mental",
+   "fr": "Chouette du Palais Mental",
+   "de": "Eule des Gedächtnispalasts"
   }
  },
  {
@@ -993,11 +993,11 @@
    "bossId": "boss_new_frontier"
   },
   "name": {
-   "pt": "Pioneiro da Fronteira",
-   "en": "Frontier Pioneer",
-   "es": "Pionero de la Frontera",
-   "fr": "Pionnier de la Frontière",
-   "de": "Grenzpionier"
+   "pt": "Grifo da Fronteira",
+   "en": "Frontier Griffin",
+   "es": "Grifo de la Frontera",
+   "fr": "Griffon de la Frontière",
+   "de": "Grenzgreif"
   }
  },
  {
@@ -1010,11 +1010,11 @@
    "bossId": "boss_artisan_trial"
   },
   "name": {
-   "pt": "Artesão do Protótipo",
-   "en": "Prototype Artisan",
-   "es": "Artesano del Prototipo",
-   "fr": "Artisan du Prototype",
-   "de": "Prototyp-Handwerker"
+   "pt": "Golem Artesão",
+   "en": "Artisan Golem",
+   "es": "Gólem Artesano",
+   "fr": "Golem Artisan",
+   "de": "Handwerker-Golem"
   }
  },
  {
@@ -1061,11 +1061,11 @@
    "bossId": "boss_cold_philosopher"
   },
   "name": {
-   "pt": "Filósofo da Montanha",
-   "en": "Mountain Philosopher",
-   "es": "Filósofo de la Montaña",
-   "fr": "Philosophe de la Montagne",
-   "de": "Bergphilosoph"
+   "pt": "Iéti Filósofo",
+   "en": "Philosopher Yeti",
+   "es": "Yeti Filósofo",
+   "fr": "Yéti Philosophe",
+   "de": "Philosophen-Yeti"
   }
  },
  {
@@ -1078,11 +1078,11 @@
    "bossId": "boss_digital_craftsman"
   },
   "name": {
-   "pt": "Artesão Digital",
-   "en": "Digital Artisan",
-   "es": "Artesano Digital",
-   "fr": "Artisan Numérique",
-   "de": "Digitaler Handwerker"
+   "pt": "Autómato Digital",
+   "en": "Digital Automaton",
+   "es": "Autómata Digital",
+   "fr": "Automate Numérique",
+   "de": "Digitaler Automat"
   }
  },
  {
@@ -1095,11 +1095,11 @@
    "bossId": "boss_stoic_challenge"
   },
   "name": {
-   "pt": "Estoico do Desconforto",
-   "en": "Stoic of Discomfort",
-   "es": "Estoico de la Incomodidad",
-   "fr": "Stoïque de l'Inconfort",
-   "de": "Stoiker des Unbehagens"
+   "pt": "Gárgula Estoica",
+   "en": "Stoic Gargoyle",
+   "es": "Gárgola Estoica",
+   "fr": "Gargouille Stoïque",
+   "de": "Stoische Gargoyle"
   }
  },
  {
@@ -1248,7 +1248,7 @@
    "bossId": "season_yule"
   },
   "name": {
-   "pt": "Lâmina Serafim Caído",
+   "pt": "Lâmina do Serafim Caído",
    "en": "Fallen Seraph Blade",
    "es": "Hoja del Serafín Caído",
    "fr": "Lame du Séraphin Déchu",

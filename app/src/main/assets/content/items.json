@@ -5,11 +5,11 @@
   "weeklyStock": 2,
   "effect": "COMPLETE_QUEST",
   "name": {
-   "pt": "Passe do Sistema",
-   "en": "System Pass",
-   "es": "Pase del Sistema",
-   "fr": "Passe du Système",
-   "de": "System-Pass"
+   "pt": "Passe Mestre",
+   "en": "Master Pass",
+   "es": "Pase Maestro",
+   "fr": "Passe maître",
+   "de": "Meisterpass"
   },
   "description": {
    "pt": "Completa automaticamente uma missão diária à tua escolha.",
@@ -125,18 +125,18 @@
   "cost": 900,
   "effect": "SHADOW_ESSENCE",
   "name": {
-   "pt": "Essência Sombria",
-   "en": "Shadow Essence",
-   "es": "Esencia Sombría",
-   "fr": "Essence d'Ombre",
-   "de": "Schattenessenz"
+   "pt": "Essência de Eco",
+   "en": "Echo Essence",
+   "es": "Esencia de Eco",
+   "fr": "Essence d'écho",
+   "de": "Echo-Essenz"
   },
   "description": {
-   "pt": "Invoca uma sombra aleatória (Normal 45% · Elite 35% · Cavaleiro 15% · Comandante 4% · Marechal 1%).",
-   "en": "Summons a random shadow (Normal 45% · Elite 35% · Knight 15% · Commander 4% · Marshal 1%).",
-   "es": "Invoca una sombra aleatoria (Normal 45 % · Élite 35 % · Caballero 15 % · Comandante 4 % · Mariscal 1 %).",
-   "fr": "Invoque une ombre aléatoire (Normal 45 % · Élite 35 % · Chevalier 15 % · Commandant 4 % · Maréchal 1 %).",
-   "de": "Beschwört einen zufälligen Schatten (Normal 45 % · Elite 35 % · Ritter 15 % · Kommandant 4 % · Marschall 1 %)."
+   "pt": "Desperta um eco aleatório (Comum 45% · Raro 35% · Épico 15% · Lendário 4% · Mítico 1%).",
+   "en": "Awakens a random echo (Common 45% · Rare 35% · Epic 15% · Legendary 4% · Mythic 1%).",
+   "es": "Despierta un eco aleatorio (Común 45 % · Raro 35 % · Épico 15 % · Legendario 4 % · Mítico 1 %).",
+   "fr": "Éveille un écho aléatoire (Commun 45 % · Rare 35 % · Épique 15 % · Légendaire 4 % · Mythique 1 %).",
+   "de": "Erweckt ein zufälliges Echo (Gewöhnlich 45 % · Selten 35 % · Episch 15 % · Legendär 4 % · Mythisch 1 %)."
   }
  },
  {

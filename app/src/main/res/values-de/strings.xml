@@ -49,16 +49,16 @@
     <string name="rank_title_e">Neuling</string>
     <string name="rank_title_d">Jägerlehrling</string>
     <string name="rank_title_c">Meister des Willens</string>
-    <string name="rank_title_b">Schattenritter</string>
-    <string name="rank_title_a">Kommandant</string>
+    <string name="rank_title_b">Echo-Wächter</string>
+    <string name="rank_title_a">Champion</string>
     <string name="rank_title_s">Souverän</string>
-    <string name="rank_title_n">Jäger nationaler Stufe</string>
+    <string name="rank_title_n">Lebende Legende</string>
     <string name="next_rank_at">Nächster Rang: %1$s auf Level %2$d</string>
-    <string name="srank_normal">Normal</string>
-    <string name="srank_elite">Elite</string>
-    <string name="srank_knight">Ritter</string>
-    <string name="srank_commander">Kommandant</string>
-    <string name="srank_marshal">Marschall</string>
+    <string name="srank_normal">Gewöhnlich</string>
+    <string name="srank_elite">Selten</string>
+    <string name="srank_knight">Episch</string>
+    <string name="srank_commander">Legendär</string>
+    <string name="srank_marshal">Mythisch</string>
 
     <!-- HUD / penalty -->
     <string name="penalty_banner">Strafe aktiv</string>
@@ -73,7 +73,7 @@
     <string name="penalty_section">Strafe</string>
     <string name="penalty_info">Erledige diese Missionen, um sie früher aufzuheben.</string>
     <string name="portal_section">Portal offen</string>
-    <string name="portal_info">Ein zeitlich begrenztes Portal: doppelte Belohnungen und die Chance, einen Schatten zu binden. Es schließt sich von selbst.</string>
+    <string name="portal_info">Ein zeitlich begrenztes Portal: doppelte Belohnungen und die Chance, ein Echo zu erwecken. Es schließt sich von selbst.</string>
     <string name="daily_section">Tägliche Missionen</string>
     <string name="extra_section">Extra-Missionen</string>
     <string name="add_extra">Extra-Mission</string>
@@ -93,7 +93,7 @@
     <string name="boss_hint">deine XP verursachen Schaden</string>
     <string name="boss_challenge">Boss-Challenge</string>
     <string name="boss_challenge_done">Erledigt</string>
-    <string name="boss_defeated">Besiegt! %1$s ist deiner Armee beigetreten.</string>
+    <string name="boss_defeated">Besiegt! %1$s ist deinem Trupp beigetreten.</string>
     <string name="boss_drop">Beute: %1$s</string>
 
     <!-- Mission sheet -->
@@ -135,8 +135,8 @@
         <item quantity="other">%1$d Apps gewählt</item>
     </plurals>
     <string name="choose_apps">Apps wählen</string>
-    <string name="strict_mode">Strikter Modus</string>
-    <string name="strict_info">Wenn du vorzeitig stoppst, verlierst du die Minuten der Session, außer du nutzt einen Bannbrecher.</string>
+    <string name="strict_mode">Kein Aufgeben</string>
+    <string name="strict_info">Wenn du vorzeitig stoppst, verlierst du die Minuten. Wenn du durchhältst, zählen sie +25 % und du bekommst Extra-Gold.</string>
     <string name="ambient">Umgebungsklang</string>
     <string name="ambient_none">Stille</string>
     <string name="ambient_rain">Regen</string>
@@ -145,12 +145,12 @@
     <string name="start_session">Session starten</string>
     <string name="focusing">Im Fokus</string>
     <string name="session_total_left">noch %1$s in der Session</string>
-    <string name="strict">Strikt</string>
+    <string name="strict">Kein Aufgeben</string>
     <string name="blocking_n">%1$d Apps gesperrt</string>
     <string name="credited_min">%1$d min verdient</string>
     <string name="stop_session">Session stoppen</string>
     <string name="stop_text">Du behältst %1$d Minuten Fokus.</string>
-    <string name="stop_strict_text">Strikte Session: wenn du jetzt stoppst, verlierst du %1$d Minuten. Bannbrecher: %2$d.</string>
+    <string name="stop_strict_text">Kein Aufgeben: wenn du jetzt stoppst, verlierst du %1$d Minuten. Bannbrecher: %2$d.</string>
     <string name="use_spellbreaker">Bannbrecher nutzen</string>
     <string name="stop">Stopp</string>
     <string name="stop_and_lose">Stoppen und verlieren</string>
@@ -175,7 +175,7 @@
     <string name="open_app_info">App-Infos öffnen</string>
 
     <!-- Hero -->
-    <string name="hero_shadows">Schatten</string>
+    <string name="hero_shadows">Echos</string>
     <string name="hero_achievements">Erfolge</string>
     <string name="hero_stats">Statistiken</string>
     <string name="streak">Streak</string>
@@ -207,12 +207,12 @@
     <!-- Shadow sheet -->
     <string name="passive">Passiv</string>
     <string name="next_level_value">Nächstes Level: %1$s</string>
-    <string name="source_extraction">Gebunden nach perfekten Tagen, aus Portalen oder mit Schattenessenz.</string>
+    <string name="source_extraction">Erweckt nach perfekten Tagen, aus Portalen oder mit Echo-Essenz.</string>
     <string name="source_shop">Im Shop erhältlich (wöchentlicher Wechsel).</string>
     <string name="source_achievement">Belohnung für einen Erfolg.</string>
     <string name="source_streak">Belohnung für einen Streak-Meilenstein.</string>
     <string name="source_boss">Beute vom Boss %1$s.</string>
-    <string name="upgrade_capped">Max. Level: ein Schatten kann dein Level nicht übersteigen.</string>
+    <string name="upgrade_capped">Max. Level: ein Echo kann dein Level nicht übersteigen.</string>
     <string name="upgrade_cost">Entwickeln: %1$d Gold · Kopien %2$d/%3$d</string>
     <string name="equip">Ausrüsten</string>
     <string name="unequip">Ablegen</string>
@@ -229,14 +229,14 @@
     <string name="passive_shop">−%1$s auf Shop-Preise</string>
     <string name="passive_focus">+%1$s angerechnete Fokusminuten</string>
     <string name="passive_daily">+%1$d XP für jeden perfekten Tag</string>
-    <string name="passive_luck">+%1$s Glück für Beute und seltene Schatten</string>
+    <string name="passive_luck">+%1$s Glück für Beute und seltene Echos</string>
     <string name="passive_all">Verstärkt die anderen Passiven des Trupps um %1$s</string>
 
     <!-- Shop -->
     <string name="shop">Shop</string>
     <string name="inventory">Inventar</string>
     <string name="items">Items</string>
-    <string name="shadow_offers">Schatten zu mieten</string>
+    <string name="shadow_offers">Echos zu mieten</string>
     <string name="stock_left">%1$d/%2$d diese Woche</string>
     <string name="owned_n">%1$d im Besitz</string>
     <string name="sold_out">Ausverkauft</string>
@@ -250,8 +250,8 @@
     <string name="reward_gold">+%1$d Gold</string>
     <string name="reward_rank_title">Neuer Rang</string>
     <string name="reward_rank_text">Die Oberfläche nimmt die Farbe deines neuen Rangs an.</string>
-    <string name="reward_shadow_new">Neuer Schatten</string>
-    <string name="reward_shadow_copy">Schattenkopie</string>
+    <string name="reward_shadow_new">Neues Echo</string>
+    <string name="reward_shadow_copy">Echo-Kopie</string>
     <string name="reward_copies">Kopien: %1$d</string>
     <string name="reward_boss_title">Boss besiegt</string>
     <string name="reward_achievement_title">Erfolg</string>
@@ -273,7 +273,7 @@
     <string name="toast_item_found">Gefunden: %1$s</string>
     <string name="toast_penalty_cleared">Strafe aufgehoben</string>
     <string name="toast_focus_done">Fokus beendet: %1$s min</string>
-    <string name="toast_focus_lost">Strikte Session abgebrochen: %1$s min verloren</string>
+    <string name="toast_focus_lost">Kein Aufgeben gescheitert: %1$s min verloren</string>
     <string name="toast_boss_escaped">%1$s ist entkommen</string>
     <string name="toast_portal_escaped">Das Portal hat sich geschlossen</string>
     <string name="toast_portal_cleared">Portal bezwungen!</string>
@@ -316,18 +316,18 @@
     <string name="import_">Importieren</string>
     <string name="paste_old_backup">Alten Backup-Code einfügen</string>
     <string name="import_old_app">Aus alter App importieren</string>
-    <string name="import_confirm_text">Deinen aktuellen Fortschritt durch diesen ersetzen (Level %1$d, %2$d Schatten)?</string>
+    <string name="import_confirm_text">Deinen aktuellen Fortschritt durch diesen ersetzen (Level %1$d, %2$d Echos)?</string>
     <string name="backup_saved">Backup gespeichert.</string>
     <string name="backup_invalid">Backup konnte nicht gelesen werden.</string>
     <string name="about">Über</string>
     <string name="reset_progress">Fortschritt zurücksetzen</string>
-    <string name="reset_text">Alles wird gelöscht: Level, Schatten, Items und Verlauf. Das kann nicht rückgängig gemacht werden.</string>
+    <string name="reset_text">Alles wird gelöscht: Level, Echos, Items und Verlauf. Das kann nicht rückgängig gemacht werden.</string>
     <string name="reset_confirm">Alles löschen</string>
 
     <!-- Forge -->
-    <string name="forge_info">Erstelle eigene Missionen oder schalte Systemmissionen ab. Änderungen gelten für die Liste von morgen.</string>
+    <string name="forge_info">Erstelle eigene Missionen oder schalte Basis-Missionen ab. Änderungen gelten für die Liste von morgen.</string>
     <string name="your_missions">Deine Missionen</string>
-    <string name="system_missions">Systemmissionen</string>
+    <string name="system_missions">Basis-Missionen</string>
     <string name="no_custom">Noch keine eigenen Missionen. Tippe auf +, um eine zu schmieden.</string>
     <string name="kind_core">Jeden Tag</string>
     <string name="kind_pool">Zufall</string>
@@ -359,7 +359,7 @@
     <!-- Onboarding -->
     <string name="onb_welcome">Willkommen</string>
     <string name="onb_title">Level dein echtes Leben auf.</string>
-    <string name="onb_intro">Jeden Tag gibt dir das System Missionen. Erledige sie für XP, Gold und Schatten. Ignorier sie und zahl den Preis.</string>
+    <string name="onb_intro">Jeden Tag bekommst du Missionen. Erledige sie für XP, Gold und Echos. Ignorier sie und zahl den Preis.</string>
     <string name="onb_how">So funktioniert\'s</string>
     <string name="onb_f_missions">Tägliche Missionen</string>
     <string name="onb_f_missions_text">Feste Gewohnheiten plus eine tägliche Auslosung. Die Ziele wachsen mit deinem Level.</string>
@@ -368,8 +368,8 @@
     <string name="onb_f_focus">Fokus</string>
     <string name="onb_f_focus_text">Timer oder Pomodoro mit App-Sperre und Umgebungsklang. Die Minuten zählen für Fokus-Missionen.</string>
     <string name="onb_f_boss">Wochenboss</string>
-    <string name="onb_f_boss_text">Deine XP fügen ihm Schaden zu. Besiege ihn bis Sonntag, um seinen Schatten zu erhalten.</string>
-    <string name="onb_f_shadows">Schatten</string>
+    <string name="onb_f_boss_text">Deine XP fügen ihm Schaden zu. Besiege ihn bis Sonntag, um sein Echo zu erhalten.</string>
+    <string name="onb_f_shadows">Echos</string>
     <string name="onb_f_shadows_text">Sammle sie, entwickle sie und setz drei in deinen Trupp für passive Boni.</string>
     <string name="onb_register">Registrierung</string>
     <string name="onb_change_later">Du kannst das jederzeit in den Einstellungen ändern.</string>
@@ -403,7 +403,7 @@
         <item>Erfolg verlangt Opfer. Deins ist jetzt der Fokus.</item>
         <item>Jetzt aufgeben? Dein zukünftiges Ich dankt dir, wenn du dranbleibst.</item>
         <item>Disziplin ist die Brücke zwischen Zielen und Ergebnissen.</item>
-        <item>Das System akzeptiert keine Ausreden. Nur Ergebnisse.</item>
+        <item>Disziplin akzeptiert keine Ausreden. Nur Ergebnisse.</item>
         <item>Konzentrier dich auf den Prozess. Ablenkung ist der Feind des Fortschritts.</item>
         <item>Jede Sekunde Fokus ist ein Schritt über deine Grenzen hinaus.</item>
         <item>Du brauchst keine Motivation. Du brauchst Disziplin.</item>
@@ -464,11 +464,11 @@
     <string name="achievement_current">Aktueller Wert: %1$d</string>
     <string name="achievement_tier">Stufe %1$d</string>
     <string name="achievement_gold">+%1$d Gold</string>
-    <string name="achievement_hidden_shadow">%1$s-Schatten, wird beim Freischalten enthüllt</string>
-    <string name="achievement_shadow">Schatten: %1$s</string>
+    <string name="achievement_hidden_shadow">%1$s-Echo, wird beim Freischalten enthüllt</string>
+    <string name="achievement_shadow">Echo: %1$s</string>
     <string name="achievement_note">Belohnungen gibt es, sobald eine Stufe erreicht ist.</string>
     <string name="achievement_next">Nächste: +%1$d Gold</string>
-    <string name="achievement_next_shadow">Nächste: +%1$d Gold + Schatten</string>
+    <string name="achievement_next_shadow">Nächste: +%1$d Gold + Echo</string>
     <string name="achievement_maxed">Alle Stufen abgeschlossen</string>
     <string name="calendar_less">Weniger</string>
     <string name="calendar_more">Mehr</string>
@@ -515,23 +515,23 @@
     <string name="perm_activity_why">Schritte für Geh-Missionen und Läufe zählen.</string>
     <string name="guide_section">So funktioniert es</string>
     <string name="guide_daily_title">Tägliche Missionen</string>
-    <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nStreak-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle und du bekommst Bonus-XP und einen neuen Schatten.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede.</string>
+    <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nStreak-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle und du bekommst Bonus-XP und ein neues Echo.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede.</string>
     <string name="guide_streak_title">Streak und Ruhetage</string>
-    <string name="guide_streak">Wächst jeden Tag::+1 für jeden Tag, an dem du das Minimum erreichst.\nZweite Chance::Verloren? Ein perfekter Tag direkt danach holt ihn zurück (einmal pro Woche).\nRuhetage::Melde ihn vor Mittag an und der Tag zählt weder dafür noch dagegen. 2 pro Woche auf Leicht, 1 auf Normal.\nExtra-Schutz::Der Schild der Beständigkeit und manche Schatten retten deinen Streak für dich.</string>
+    <string name="guide_streak">Wächst jeden Tag::+1 für jeden Tag, an dem du das Minimum erreichst.\nZweite Chance::Verloren? Ein perfekter Tag direkt danach holt ihn zurück (einmal pro Woche).\nRuhetage::Melde ihn vor Mittag an und der Tag zählt weder dafür noch dagegen. 2 pro Woche auf Leicht, 1 auf Normal.\nExtra-Schutz::Der Schild der Beständigkeit und manche Echos retten deinen Streak für dich.</string>
     <string name="guide_penalty_title">Strafe</string>
     <string name="guide_penalty">Anteiliger Verlust::Du verlierst XP und Gold je nach dem, was offen blieb. Fast geschafft kostet fast nichts.\n24 Stunden::Unter 50 % beginnt eine Strafe mit Extra-Missionen. Erledige sie und sie endet früher.\nApp-Sperre::Wenn du willst, bleiben deine Ablenkungs-Apps gesperrt, solange sie dauert.</string>
     <string name="guide_side_title">Nebenquests</string>
     <string name="guide_side">Freie::Schreib jede beliebige Aufgabe, ohne Ziele und Regeln.\n5 mit Belohnung::Die ersten 5 erledigten pro Tag geben XP und Gold und verletzen den Boss.\nDanach::Sie funktionieren weiter als To-do-Liste.\nKein Schummeln::Abhaken rückgängig machen oder Löschen nimmt die Belohnung zurück.</string>
     <string name="guide_boss_title">Wochenboss</string>
-    <string name="guide_boss">Alle XP sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben.\nBoss-Challenge::Eine Spezialmission, die ihm auf einen Schlag 35 % abzieht.\nBeute::Besiege ihn für XP, Gold, eine Truhe und seinen Schatten.\nWenn nicht …::Sonntagnacht flieht er, und ein neuer kommt.</string>
+    <string name="guide_boss">Alle XP sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben.\nBoss-Challenge::Eine Spezialmission, die ihm auf einen Schlag 35 % abzieht.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nWenn nicht …::Sonntagnacht flieht er, und ein neuer kommt.</string>
     <string name="guide_portal_title">Portale</string>
-    <string name="guide_portal">Sie erscheinen von selbst::Zwischen 8 und 22 Uhr, bis zu 2 pro Tag.\nDoppelte Belohnung::Eine größere Mission mit doppelt so viel XP und Gold.\nNeuer Verbündeter::Sie abzuschließen kann dir einen Schatten bringen.\nAuf Zeit::Die Zeit reicht immer, aber das Portal schließt sich, wenn sie abläuft.</string>
-    <string name="guide_shadows_title">Schatten</string>
-    <string name="guide_shadows">Wo du sie findest::Perfekte Tage, Bosse, Portale, Erfolge, Streak-Meilensteine und der Shop.\nTeam::Bis zu 3 im Einsatz, jeder mit einem Passiv: mehr XP, mehr Gold, mehr Schaden, Schutz.\nEntwicklung::Doppelte Kopien und Gold steigern den Schatten im Level, bis zu deinem.</string>
+    <string name="guide_portal">Sie erscheinen von selbst::Zwischen 8 und 22 Uhr, bis zu 2 pro Tag.\nDoppelte Belohnung::Eine größere Mission mit doppelt so viel XP und Gold.\nNeuer Verbündeter::Sie abzuschließen kann dir ein Echo bringen.\nAuf Zeit::Die Zeit reicht immer, aber das Portal schließt sich, wenn sie abläuft.</string>
+    <string name="guide_shadows_title">Echos</string>
+    <string name="guide_shadows">Wo du sie findest::Perfekte Tage, Bosse, Portale, Erfolge, Streak-Meilensteine und der Shop.\nTeam::Bis zu 3 im Einsatz, jedes mit einem Passiv: mehr XP, mehr Gold, mehr Schaden, Schutz.\nEntwicklung::Doppelte Kopien und Gold steigern das Echo im Level, bis zu deinem.</string>
     <string name="guide_focus_title">Fokus und Pomodoro</string>
-    <string name="guide_focus">Mission verknüpfen::Die Minuten zählen für sie. Eine freie Sitzung zählt nur in den Statistiken.\nDer richtige Modus::Jede Mission läuft mit Timer oder Pomodoro, und nur dieser Modus zählt.\nEchte Pausen::Im Pomodoro zählen nur die Fokus-Minuten, und in den Pausen sind die Apps frei.\nOhne Limit::Zählt, bis du stoppst.\nStrenger Modus::Wer mittendrin stoppt, verliert die Minuten, außer du nutzt einen Bannbrecher.</string>
+    <string name="guide_focus">Mission verknüpfen::Die Minuten zählen für sie. Eine freie Sitzung zählt nur in den Statistiken.\nDer richtige Modus::Jede Mission läuft mit Timer oder Pomodoro, und nur dieser Modus zählt.\nEchte Pausen::Im Pomodoro zählen nur die Fokus-Minuten, und in den Pausen sind die Apps frei.\nOhne Limit::Zählt, bis du stoppst.\nKein Aufgeben::Mittendrin stoppen kostet die Minuten; bis zum Ende durchhalten zählt +25 % und bringt Extra-Gold.</string>
     <string name="guide_shop_title">Shop</string>
-    <string name="guide_shop">Gegenstände::Missionen tauschen, Streak schützen, XP- und Gold-Elixiere, Truhen.\nSchatten im Angebot::3 pro Woche, erneuert jeden Montag.\nInventar::Was du kaufst, bleibt gespeichert, bis du es nutzt.</string>
+    <string name="guide_shop">Gegenstände::Missionen tauschen, Streak schützen, XP- und Gold-Elixiere, Truhen.\nEchos im Angebot::3 pro Woche, erneuert jeden Montag.\nInventar::Was du kaufst, bleibt gespeichert, bis du es nutzt.</string>
     <string name="auto_backups">Automatische Kopien</string>
     <string name="auto_backups_info">Die App behält eine Kopie pro Tag der letzten 7 Tage. Mit aktivierter Android-Sicherung landen sie auch in deinem Google-Konto.</string>
     <string name="auto_backups_none">Noch keine Kopien.</string>
@@ -559,7 +559,7 @@
     <string name="show_all">Alle anzeigen</string>
     <string name="show_less">Weniger anzeigen</string>
     <string name="notif_reminder_safe_title">Streak gesichert</string>
-    <string name="notif_reminder_safe_text">Noch %1$d für einen perfekten Tag, mit Bonus-XP und einem Schatten.</string>
+    <string name="notif_reminder_safe_text">Noch %1$d für einen perfekten Tag, mit Bonus-XP und einem Echo.</string>
     <string name="notif_bedtime_title">Zeit zum Ausruhen</string>
     <string name="notif_bedtime_text">Bestätige deinen Schlaf-Check-in vor Mitternacht.</string>
     <string name="widget_goal">Noch %1$d für den Streak</string>
@@ -589,10 +589,14 @@
     <string name="season_newyear">Neujahrs-Event</string>
     <string name="season_spring">Frühlings-Event</string>
     <string name="season_summer">Sommer-Event</string>
-    <string name="season_exclusive">Exklusiver Schatten</string>
+    <string name="season_exclusive">Exklusives Echo</string>
     <string name="season_next">Nächste Woche: %1$s</string>
     <string name="today_count_suffix">Missionen · %1$s</string>
     <string name="more_options">Weitere Optionen</string>
     <string name="options_none">keine aktiv</string>
     <string name="custom">Anpassen</string>
+    <string name="gold">Gold</string>
+    <string name="rigor_easy_short">60 % der Missionen für den Streak · 2 Ruhetage pro Woche</string>
+    <string name="rigor_normal_short">75 % der Missionen · 1 Ruhetag pro Woche</string>
+    <string name="rigor_hard_short">Alle Missionen · keine Ruhetage · doppelte Verluste</string>
 </resources>

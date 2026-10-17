@@ -306,18 +306,18 @@
    "shadowId": "architect_of_ruin"
   },
   "title": {
-   "pt": "Exército das Sombras",
-   "en": "Shadow Army",
-   "es": "Ejército de Sombras",
-   "fr": "Armée des Ombres",
-   "de": "Schattenarmee"
+   "pt": "Exército de Ecos",
+   "en": "Echo Army",
+   "es": "Ejército de Ecos",
+   "fr": "Armée d'Échos",
+   "de": "Echo-Armee"
   },
   "description": {
-   "pt": "Reúne {target} sombras diferentes.",
-   "en": "Gather {target} different shadows.",
-   "es": "Reúne {target} sombras distintas.",
-   "fr": "Rassemble {target} ombres différentes.",
-   "de": "Sammle {target} verschiedene Schatten."
+   "pt": "Reúne {target} ecos diferentes.",
+   "en": "Gather {target} different echoes.",
+   "es": "Reúne {target} ecos distintos.",
+   "fr": "Rassemble {target} échos différents.",
+   "de": "Sammle {target} verschiedene Echos."
   }
  },
  {
@@ -336,11 +336,11 @@
    "de": "Evolution"
   },
   "description": {
-   "pt": "Evolui uma sombra até ao nível {target}.",
-   "en": "Evolve a shadow to level {target}.",
-   "es": "Evoluciona una sombra hasta el nivel {target}.",
-   "fr": "Fais évoluer une ombre jusqu'au niveau {target}.",
-   "de": "Entwickle einen Schatten auf Level {target}."
+   "pt": "Evolui um eco até ao nível {target}.",
+   "en": "Evolve an echo to level {target}.",
+   "es": "Evoluciona un eco hasta el nivel {target}.",
+   "fr": "Fais évoluer un écho jusqu'au niveau {target}.",
+   "de": "Entwickle ein Echo auf Level {target}."
   }
  },
  {
@@ -357,11 +357,11 @@
    "de": "Volles Team"
   },
   "description": {
-   "pt": "Coloca 3 sombras no esquadrão.",
-   "en": "Put 3 shadows in your squad.",
-   "es": "Pon 3 sombras en tu escuadrón.",
-   "fr": "Place 3 ombres dans ton escouade.",
-   "de": "Stelle 3 Schatten in dein Team."
+   "pt": "Coloca 3 ecos no esquadrão.",
+   "en": "Put 3 echoes in your squad.",
+   "es": "Pon 3 ecos en tu escuadrón.",
+   "fr": "Place 3 échos dans ton escouade.",
+   "de": "Stelle 3 Echos in dein Team."
   }
  },
  {

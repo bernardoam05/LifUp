@@ -11,9 +11,9 @@
   "title": {
    "pt": "Senhor Goblin",
    "en": "Goblin Warlord",
-   "es": "Señor Goblin Tabata",
-   "fr": "Seigneur Gobelin du Tabata",
-   "de": "Goblin-Kriegsherr Tabata"
+   "es": "Señor Goblin",
+   "fr": "Seigneur Gobelin",
+   "de": "Goblin-Kriegsherr"
   },
   "description": {
    "pt": "Tabata: completa {target} rounds de 20s de esforço máximo + 10s de repouso. Define um único exercício antes de começar (burpees, saltos ou sprints) e mantém a intensidade máxima em cada round.",
