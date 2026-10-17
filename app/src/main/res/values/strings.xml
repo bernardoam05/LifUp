@@ -585,4 +585,11 @@
     <string name="guide_focus_hook">Real focus, without your phone pulling at you.</string>
     <string name="guide_shop_hook">The gold you earn is good for something.</string>
     <string name="got_it">Got it</string>
+    <string name="season_halloween">Halloween event</string>
+    <string name="season_yule">Winter holidays event</string>
+    <string name="season_newyear">New Year event</string>
+    <string name="season_spring">Spring event</string>
+    <string name="season_summer">Summer event</string>
+    <string name="season_exclusive">Exclusive shadow</string>
+    <string name="season_next">Next week: %1$s</string>
 </resources>

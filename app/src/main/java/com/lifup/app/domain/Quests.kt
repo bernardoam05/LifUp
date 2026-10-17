@@ -55,7 +55,7 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
     val core = defs.filter { it.kind == DefKind.CORE && (it.daysOfWeek == null || dow in it.daysOfWeek) }
     val seed = date.year * 10_000 + date.monthValue * 100 + date.dayOfMonth
     val pool = defs.filter { it.kind == DefKind.POOL && (it.daysOfWeek == null || dow in it.daysOfWeek) }
-        .shuffled(Random(seed))
+        .shuffled(Random(seed.toLong() xor state.seed))
         .take(Rules.dailyPoolCount(level, state.settings))
     return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, adapt = state.adapt[it.id]?.level ?: 0) }
 }

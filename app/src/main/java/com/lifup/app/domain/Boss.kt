@@ -19,14 +19,18 @@ fun Tx.ensureBoss() {
     if (current != null && !current.defeated) toast(ToastKind.BOSS_ESCAPED, current.bossId)
 
     val level = s.player.level
-    val weekRng = Random(ctx.weekKey.hashCode())
+    val weekRng = s.weekRandom(ctx, salt = 0)
     val today = MonthDay.from(ctx.today)
-    val seasonal = content.bosses.firstOrNull { it.activeOn(today) }
+    // A seasonal boss takes over once per season, even if its window covers two Mondays.
+    val seasonal = content.bosses.firstOrNull { it.activeOn(today) && it.id != current?.bossId }
     val def = seasonal ?: run {
         val regular = content.bosses.filter { it.season == null && it.minLevel <= level }
-        val wantS = level >= 30 && weekRng.nextDouble() < 0.6
+        // S-rank weeks get likelier as more S bosses unlock (12% each, up to 60%).
+        val sPool = regular.count { it.rank == "S" }
+        val wantS = sPool > 0 && weekRng.nextDouble() < minOf(0.6, 0.12 * sPool)
         val byRank = regular.filter { (it.rank == "S") == wantS }.ifEmpty { regular }
-        byRank.filterNot { it.id in s.bossHistory.takeLast(5) }.ifEmpty { byRank }.random(weekRng)
+        val recent = s.bossHistory.takeLast(5) + listOfNotNull(current?.bossId)
+        byRank.filterNot { it.id in recent }.ifEmpty { byRank }.random(weekRng)
     }
 
     val dailyXp = s.dailyQuests.sumOf { it.xp }.coerceAtLeast(150)

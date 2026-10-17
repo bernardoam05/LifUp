@@ -263,6 +263,9 @@ fun FocusSession.creditableMinutes(now: Long): Double {
     return pomodoro?.let { Pomodoro.workMinutes(it, e) } ?: e
 }
 
+/** Random source fixed for the week and this player: stable across reruns, different between players. */
+fun GameState.weekRandom(ctx: Ctx, salt: Int): Random = Random(ctx.weekKey.hashCode().toLong() * 31 + salt xor seed)
+
 /** Everything an action needs from the outside world. */
 class Ctx(val content: Content, val now: Long, val zone: ZoneId = ZoneId.systemDefault(), val rng: Random = Random.Default) {
     val dateTime: ZonedDateTime = Instant.ofEpochMilli(now).atZone(zone)

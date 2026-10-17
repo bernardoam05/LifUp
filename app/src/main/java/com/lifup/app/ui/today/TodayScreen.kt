@@ -224,9 +224,16 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
         Text(stringResource(R.string.boss_ends_in, fmtShort(b.endsAt - now)), color = p.dim, style = MaterialTheme.typography.labelMedium)
         InfoButton(Guide.BOSS)
     }
-    Panel(border = (if (b.defeated) p.green else p.red).copy(alpha = 0.5f), onClick = { onChallenge(b.challenge.id) }) {
+    val theme = seasonTheme(def)
+    val tint = theme?.color ?: p.red
+    Panel(
+        border = (if (b.defeated) p.green else tint).copy(alpha = if (theme != null) 0.8f else 0.5f),
+        background = theme?.color?.copy(alpha = 0.06f) ?: p.panel,
+        onClick = { onChallenge(b.challenge.id) },
+    ) {
+        if (theme != null) SeasonRibbon(theme)
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Rounded.Whatshot, null, tint = if (b.defeated) p.green else p.red)
+            Icon(theme?.icon ?: Icons.Rounded.Whatshot, null, tint = if (b.defeated) p.green else tint)
             Spacer(Modifier.width(8.dp))
             Text(def.title.local(), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
             Pill(def.rank, if (def.rank == "S") p.red else p.gold)
@@ -235,7 +242,7 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
         if (b.defeated) {
             Text(stringResource(R.string.boss_defeated, shadow?.name?.local().orEmpty()), style = MaterialTheme.typography.bodyMedium, color = p.green)
         } else {
-            Bar(b.hp / b.maxHp.toFloat(), p.red, height = 10.dp)
+            Bar(b.hp / b.maxHp.toFloat(), tint, height = 10.dp)
             Row(Modifier.padding(top = 4.dp)) {
                 Text("${b.hp} / ${b.maxHp} HP", style = MaterialTheme.typography.labelMedium, color = p.muted, modifier = Modifier.weight(1f))
                 Text(stringResource(R.string.boss_hint), style = MaterialTheme.typography.labelSmall, color = p.dim)
@@ -262,4 +269,5 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
             Text(stringResource(R.string.boss_drop, shadow.name.text(lang())), style = MaterialTheme.typography.labelSmall, color = p.dim, modifier = Modifier.padding(top = 8.dp))
         }
     }
+    if (def.season == null) upcomingSeason(content.bosses, LocalDate.now())?.let { SeasonTeaser(it) }
 }

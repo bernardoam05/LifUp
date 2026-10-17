@@ -566,4 +566,11 @@
     <string name="guide_focus_hook">Foco a sério, sem o telemóvel a puxar por ti.</string>
     <string name="guide_shop_hook">O ouro que ganhas serve para alguma coisa.</string>
     <string name="got_it">Entendido</string>
+    <string name="season_halloween">Evento de Halloween</string>
+    <string name="season_yule">Evento de Natal</string>
+    <string name="season_newyear">Evento de Ano Novo</string>
+    <string name="season_spring">Evento da Primavera</string>
+    <string name="season_summer">Evento de Verão</string>
+    <string name="season_exclusive">Sombra exclusiva</string>
+    <string name="season_next">Para a semana: %1$s</string>
 </resources>

@@ -584,4 +584,11 @@
     <string name="guide_focus_hook">Concentración de verdad, sin que el móvil tire de ti.</string>
     <string name="guide_shop_hook">El oro que ganas sirve para algo.</string>
     <string name="got_it">Entendido</string>
+    <string name="season_halloween">Evento de Halloween</string>
+    <string name="season_yule">Evento de Navidad</string>
+    <string name="season_newyear">Evento de Año Nuevo</string>
+    <string name="season_spring">Evento de Primavera</string>
+    <string name="season_summer">Evento de Verano</string>
+    <string name="season_exclusive">Sombra exclusiva</string>
+    <string name="season_next">La próxima semana: %1$s</string>
 </resources>

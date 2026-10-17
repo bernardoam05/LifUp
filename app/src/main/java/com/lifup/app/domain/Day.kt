@@ -10,6 +10,7 @@ import kotlin.math.roundToInt
  * opens today, rotates the weekly boss/shop and expires timed things. Safe to call any number of times.
  */
 fun Tx.ensureDay() {
+    if (s.seed == 0L) s = s.copy(seed = ctx.rng.nextLong().takeIf { it != 0L } ?: 1L)
     if (s.day.isEmpty()) {
         s = s.copy(day = ctx.todayKey, daily = DailyFlags(ctx.todayKey), statsWeek = ctx.weekKey)
         s = s.copy(quests = generateDailyQuests(s, content, ctx.today))

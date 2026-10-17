@@ -592,6 +592,26 @@ class EngineTest {
         assertTrue(s.weekStats.isEmpty() || s.weekStats.values.all { it.total <= 1 })
     }
 
+    @Test fun `each player gets their own boss draw`() {
+        val bosses = (1..12).map { seed -> run(GameState(onboarded = true, seed = seed.toLong()), "2026-10-14T09:00").boss!!.bossId }
+        assertTrue(bosses.toSet().size >= 4)
+    }
+
+    @Test fun `astral drake can show up from level 20`() {
+        val seen = (1..40).map { seed ->
+            val s = GameState(onboarded = true, seed = seed.toLong()).let { it.copy(player = it.player.copy(level = 22)) }
+            run(s, "2026-09-14T09:00").boss!!.bossId
+        }
+        assertTrue("boss_astral_drake" in seen)
+    }
+
+    @Test fun `seasonal boss comes once per season`() {
+        var s = run(GameState(onboarded = true, seed = 3), "2026-10-26T09:00")
+        assertEquals("season_halloween", s.boss!!.bossId)
+        s = run(s, "2026-11-02T09:00")
+        assertTrue(s.boss!!.bossId != "season_halloween")
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

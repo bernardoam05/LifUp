@@ -285,6 +285,8 @@ data class GameState(
     val penalty: Penalty = Penalty(),
     val boss: BossState? = null,
     val bossHistory: List<String> = emptyList(),
+    /** Per-install random seed, so weekly bosses, shop offers and drawn missions differ between players. */
+    val seed: Long = 0,
     val portal: PortalState? = null,
     val portalDay: String = "",
     val portalsToday: Int = 0,
