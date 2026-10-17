@@ -1,5 +1,8 @@
 package com.lifup.app.ui
 
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -175,6 +178,7 @@ private fun MainScaffold(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Hud(s: GameState, openSettings: () -> Unit) {
     val p = s.player
@@ -186,7 +190,7 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.Bottom) {
-                    Text(p.name.ifBlank { stringResource(R.string.default_hunter) }.uppercase(), style = MaterialTheme.typography.titleMedium, maxLines = 1)
+                    Text(p.name.ifBlank { stringResource(R.string.default_hunter) }.uppercase(), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                     Spacer(Modifier.width(8.dp))
                     Text(stringResource(R.string.level_short, p.level), style = MaterialTheme.typography.labelMedium, color = Lif.colors.accent)
                 }
@@ -201,18 +205,22 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
             IconButton(onClick = openSettings) { Icon(Icons.Rounded.Settings, stringResource(R.string.settings), tint = Lif.colors.muted) }
         }
         if (s.penalty.active) {
-            Row(
+            // Wraps instead of squeezing, so large font sizes stay readable.
+            FlowRow(
                 Modifier.fillMaxWidth().background(Lif.colors.red.copy(alpha = 0.12f)).padding(horizontal = 16.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.Center,
             ) {
-                Icon(Icons.Rounded.Warning, null, tint = Lif.colors.red, modifier = Modifier.size(14.dp))
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.penalty_banner).uppercase(), style = MaterialTheme.typography.labelMedium, color = Lif.colors.red, modifier = Modifier.weight(1f))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Rounded.Warning, null, tint = Lif.colors.red, modifier = Modifier.size(14.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.penalty_banner).uppercase(), style = MaterialTheme.typography.labelMedium, color = Lif.colors.red)
+                }
                 if (s.penalty.blockEnd > now) {
+                    val left = fmtShort(s.penalty.blockEnd - now)
                     Text(
-                        if (s.penalty.blockStart > now) stringResource(R.string.block_starts_in, fmtShort(s.penalty.blockStart - now))
-                        else stringResource(R.string.block_ends_in, fmtShort(s.penalty.blockEnd - now)),
-                        style = MaterialTheme.typography.labelSmall, color = Lif.colors.red,
+                        stringResource(if (s.settings.blockOnPenalty) R.string.block_ends_in else R.string.penalty_ends_in, left),
+                        style = MaterialTheme.typography.labelSmall, color = Lif.colors.red, modifier = Modifier.align(Alignment.CenterVertically),
                     )
                 }
             }

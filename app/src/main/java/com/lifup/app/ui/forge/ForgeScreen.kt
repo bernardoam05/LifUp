@@ -176,7 +176,7 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
 
     Column(Modifier.fillMaxSize().statusBarsPadding()) {
         TopBar(stringResource(if (existing == null) R.string.new_mission else R.string.edit_mission), onBack) {
-            if (existing != null) IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Rounded.DeleteOutline, null, tint = c.red) }
+            if (existing != null) IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.delete), tint = c.red) }
         }
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             OutlinedTextField(title, { title = it.take(60) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.field_title)) }, singleLine = true)

@@ -65,7 +65,7 @@
     <string name="rest_day_info">Jour de repos : pas de pénalité ce soir, mais le streak n\'augmente pas non plus.</string>
     <string name="forge">Forge de missions</string>
     <string name="penalty_section">Pénalité</string>
-    <string name="penalty_info">Termine ces missions pour lever la pénalité. Celles non faites comptent comme des échecs à minuit.</string>
+    <string name="penalty_info">Termine ces missions pour lever la pénalité plus tôt. Celles qui restent disparaissent à la fin.</string>
     <string name="portal_section">Portail ouvert</string>
     <string name="portal_info">Un portail temporaire : récompenses doublées et une chance de lier une ombre. Il se ferme tout seul.</string>
     <string name="daily_section">Missions quotidiennes</string>
@@ -524,8 +524,8 @@
     <string name="later">Plus tard</string>
     <string name="week_title">Bilan de la semaine</string>
     <string name="week_kept">%1$d jours validés sur %2$d</string>
-    <string name="week_perfect">%1$d journées parfaites</string>
-    <string name="week_rest">%1$d jours de repos</string>
+    <string name="week_perfect">Journées parfaites : %1$d</string>
+    <string name="week_rest">Jours de repos : %1$d</string>
     <string name="week_better">+%1$d jours par rapport à la semaine dernière</string>
     <string name="week_worse">%1$d jours de moins que la semaine dernière</string>
     <string name="week_same">Comme la semaine dernière</string>
@@ -548,4 +548,12 @@
     <string name="widget_goal_safe">Série assurée ✓</string>
     <string name="widget_hours_left">%1$d h avant minuit</string>
     <string name="widget_under_hour">moins d\'1 h</string>
+    <string name="a11y_decrease">Diminuer</string>
+    <string name="a11y_increase">Augmenter</string>
+    <string name="a11y_pause">Pause</string>
+    <string name="a11y_start">Démarrer</string>
+    <string name="a11y_reset">Réinitialiser</string>
+    <string name="a11y_mark_done">Marquer comme faite</string>
+    <string name="a11y_mark_undone">Décocher</string>
+    <string name="penalty_ends_in">Se termine dans %1$s</string>
 </resources>

@@ -169,7 +169,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
             Panel(padding = PaddingValues(start = 4.dp, end = 4.dp, top = 2.dp, bottom = 2.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { act { if (sq.done) undoSideQuest(sq.id) else completeSideQuest(sq.id) } }) {
-                        Icon(if (sq.done) Icons.Rounded.CheckBox else Icons.Rounded.CheckBoxOutlineBlank, null, tint = if (sq.done) p.green else p.muted)
+                        Icon(if (sq.done) Icons.Rounded.CheckBox else Icons.Rounded.CheckBoxOutlineBlank, stringResource(if (sq.done) R.string.a11y_mark_undone else R.string.a11y_mark_done), tint = if (sq.done) p.green else p.muted)
                     }
                     Text(sq.title, style = MaterialTheme.typography.bodyLarge, color = if (sq.done) p.dim else p.text, modifier = Modifier.weight(1f))
                     val paid = sq.xpGained > 0 || sq.goldGained > 0
@@ -178,7 +178,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
                         !sq.done && s.sideRewardsLeft() == 0 -> Pill(stringResource(R.string.side_no_reward), p.gold)
                         else -> Pill("${sq.rank.name} · +${if (sq.done) sq.xpGained else sq.xp} XP", p.accent)
                     }
-                    IconButton(onClick = { act { removeSideQuest(sq.id) } }) { Icon(Icons.Rounded.DeleteOutline, null, tint = p.dim) }
+                    IconButton(onClick = { act { removeSideQuest(sq.id) } }) { Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.delete), tint = p.dim) }
                 }
             }
         }

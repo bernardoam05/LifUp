@@ -72,7 +72,7 @@
     <string name="rest_day_info">Rest day: no penalty tonight, but the streak won\'t grow either.</string>
     <string name="forge">Mission forge</string>
     <string name="penalty_section">Penalty</string>
-    <string name="penalty_info">Clear these missions to lift the penalty. Unfinished ones count as failures at midnight.</string>
+    <string name="penalty_info">Clear these missions to lift the penalty early. Any left over vanish when it ends.</string>
     <string name="portal_section">Portal open</string>
     <string name="portal_info">A timed portal: double rewards and a chance to bind a shadow. It closes on its own.</string>
     <string name="daily_section">Daily missions</string>
@@ -543,8 +543,8 @@
     <string name="later">Later</string>
     <string name="week_title">Week in review</string>
     <string name="week_kept">%1$d of %2$d days kept</string>
-    <string name="week_perfect">%1$d perfect days</string>
-    <string name="week_rest">%1$d rest days</string>
+    <string name="week_perfect">Perfect days: %1$d</string>
+    <string name="week_rest">Rest days: %1$d</string>
     <string name="week_better">+%1$d days on last week</string>
     <string name="week_worse">%1$d fewer days than last week</string>
     <string name="week_same">Same as last week</string>
@@ -567,4 +567,12 @@
     <string name="widget_goal_safe">Streak secured ✓</string>
     <string name="widget_hours_left">%1$d h to midnight</string>
     <string name="widget_under_hour">under 1 h</string>
+    <string name="a11y_decrease">Decrease</string>
+    <string name="a11y_increase">Increase</string>
+    <string name="a11y_pause">Pause</string>
+    <string name="a11y_start">Start</string>
+    <string name="a11y_reset">Reset</string>
+    <string name="a11y_mark_done">Mark as done</string>
+    <string name="a11y_mark_undone">Untick</string>
+    <string name="penalty_ends_in">Ends in %1$s</string>
 </resources>

@@ -135,9 +135,9 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                 // Stopwatch, kept in the state so it survives the app being closed.
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(fmtDuration(timer?.elapsed(now) ?: 0), style = MaterialTheme.typography.displaySmall, color = if (timer?.running == true) p.accent else p.text, modifier = Modifier.weight(1f))
-                    if (timer?.running == true) IconButton(onClick = { act { pauseTimer(q.id) } }) { Icon(Icons.Rounded.Pause, null) }
-                    else IconButton(onClick = { act { startTimer(q.id) } }) { Icon(Icons.Rounded.PlayArrow, null, tint = p.accent) }
-                    IconButton(onClick = { act { resetTimer(q.id) } }, enabled = timer != null) { Icon(Icons.Rounded.RestartAlt, null) }
+                    if (timer?.running == true) IconButton(onClick = { act { pauseTimer(q.id) } }) { Icon(Icons.Rounded.Pause, stringResource(R.string.a11y_pause)) }
+                    else IconButton(onClick = { act { startTimer(q.id) } }) { Icon(Icons.Rounded.PlayArrow, stringResource(R.string.a11y_start), tint = p.accent) }
+                    IconButton(onClick = { act { resetTimer(q.id) } }, enabled = timer != null) { Icon(Icons.Rounded.RestartAlt, stringResource(R.string.a11y_reset)) }
                 }
                 if (q.target > 1 && q.unit.isNotEmpty() && q.unit != "s" && q.unit != "min") {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -212,10 +212,11 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AmbientChips(selected: String?, onSelect: (String?) -> Unit) {
     val names = mapOf(null to R.string.ambient_none, "rain" to R.string.ambient_rain, "fire" to R.string.ambient_fire, "lofi" to R.string.ambient_lofi)
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         (listOf<String?>(null) + Ambient.kinds).forEach { kind ->
             FilterChip(
                 selected = selected == kind,
@@ -227,6 +228,7 @@ private fun AmbientChips(selected: String?, onSelect: (String?) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SessionSetup(s: GameState) {
     val p = Lif.colors
@@ -278,7 +280,7 @@ private fun SessionSetup(s: GameState) {
         listOf(R.string.mode_timer, R.string.mode_pomodoro).forEachIndexed { i, label ->
             // A mission fixes the mode: only that mode's minutes count for it.
             val locked = linkedQuest != null && linkedQuest.usesPomodoro() != (i == 1)
-            SegmentedButton(selected = pomodoro == (i == 1), onClick = { pomodoro = i == 1 }, enabled = !locked, shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(stringResource(label)) }
+            SegmentedButton(selected = pomodoro == (i == 1), onClick = { pomodoro = i == 1 }, enabled = !locked, shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(stringResource(label), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis) }
         }
     }
     Spacer(Modifier.height(12.dp))
@@ -286,7 +288,7 @@ private fun SessionSetup(s: GameState) {
         ToggleRow(stringResource(R.string.open_session), stringResource(R.string.open_session_info), open) { open = it }
         if (!pomodoro && !open) {
             Text("$minutes min", style = MaterialTheme.typography.displaySmall, modifier = Modifier.align(Alignment.CenterHorizontally))
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 listOf(15, 25, 45, 60, 90, 120).forEach { m ->
                     FilterChip(selected = minutes == m, onClick = { minutes = m }, label = { Text("$m") })
                 }
@@ -301,10 +303,12 @@ private fun SessionSetup(s: GameState) {
         val ready = remember(tick) { Permissions.blockerReady(context) }
         ToggleRow(stringResource(R.string.block_apps), stringResource(if (ready) R.string.block_apps_info else R.string.block_needs_perms), block && ready, enabled = ready) { block = it }
         if (!ready) TextButton(onClick = { showPerms = true }) { Text(stringResource(R.string.grant_permissions).uppercase(), color = p.gold) }
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
-            Icon(Icons.Rounded.Apps, null, tint = p.muted, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(pluralStringResource(R.plurals.apps_selected, set.blockedApps.size, set.blockedApps.size), style = MaterialTheme.typography.bodyMedium, color = p.muted, modifier = Modifier.weight(1f))
+        FlowRow(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.align(Alignment.CenterVertically)) {
+                Icon(Icons.Rounded.Apps, null, tint = p.muted, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(pluralStringResource(R.plurals.apps_selected, set.blockedApps.size, set.blockedApps.size), style = MaterialTheme.typography.bodyMedium, color = p.muted)
+            }
             TextButton(onClick = { pickApps = true }) { Text(stringResource(R.string.choose_apps).uppercase()) }
         }
         ToggleRow(stringResource(R.string.strict_mode), stringResource(if (open) R.string.strict_open_info else R.string.strict_info), strict && !open, enabled = !open) { strict = it }
@@ -379,7 +383,7 @@ private fun MissionOption(title: String, detail: String, selected: Boolean, onCl
         padding = androidx.compose.foundation.layout.PaddingValues(10.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(title, style = MaterialTheme.typography.titleSmall, color = if (selected) p.purple else p.text, modifier = Modifier.weight(1f), maxLines = 1)
+            Text(title, style = MaterialTheme.typography.titleSmall, color = if (selected) p.purple else p.text, modifier = Modifier.weight(1f), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
             if (pomodoro) com.lifup.app.ui.components.Pill(stringResource(R.string.mode_pomodoro), p.purple)
         }
         if (progress != null) { Spacer(Modifier.height(4.dp)); Bar(progress, p.purple) }

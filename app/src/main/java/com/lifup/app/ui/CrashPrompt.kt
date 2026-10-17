@@ -18,9 +18,9 @@ import com.lifup.app.ui.theme.Lif
 @Composable
 fun CrashPrompt() {
     val context = LocalContext.current
-    var report by remember { mutableStateOf(CrashLog.read(context)?.takeIf { !CrashSeen.shown }) }
-    val text = report ?: return
-    val close = { CrashSeen.shown = true; report = null }
+    remember { CrashUi.load(context) }
+    val text = CrashUi.report ?: return
+    val close = { CrashUi.report = null }
     AlertDialog(
         onDismissRequest = close,
         containerColor = Lif.colors.panel,
@@ -31,5 +31,14 @@ fun CrashPrompt() {
     )
 }
 
-/** Shown at most once per process. */
-private object CrashSeen { var shown = false }
+/** The pending crash prompt, read once per process; other popups wait while it is up. */
+object CrashUi {
+    var report by mutableStateOf<String?>(null)
+    private var loaded = false
+
+    fun load(context: android.content.Context) {
+        if (loaded) return
+        loaded = true
+        report = CrashLog.read(context)
+    }
+}

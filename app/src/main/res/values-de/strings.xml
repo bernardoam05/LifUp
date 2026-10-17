@@ -71,7 +71,7 @@
     <string name="rest_day_info">Ruhetag: heute Nacht keine Strafe, aber dein Streak wächst auch nicht.</string>
     <string name="forge">Missionsschmiede</string>
     <string name="penalty_section">Strafe</string>
-    <string name="penalty_info">Schließ diese Missionen ab, um die Strafe aufzuheben. Unerledigte zählen um Mitternacht als gescheitert.</string>
+    <string name="penalty_info">Schließ diese Missionen ab, um die Strafe früher aufzuheben. Übrige verfallen, wenn sie endet.</string>
     <string name="portal_section">Portal offen</string>
     <string name="portal_info">Ein zeitlich begrenztes Portal: doppelte Belohnungen und die Chance, einen Schatten zu binden. Es schließt sich von selbst.</string>
     <string name="daily_section">Tägliche Missionen</string>
@@ -542,8 +542,8 @@
     <string name="later">Später</string>
     <string name="week_title">Wochenrückblick</string>
     <string name="week_kept">%1$d von %2$d Tagen geschafft</string>
-    <string name="week_perfect">%1$d perfekte Tage</string>
-    <string name="week_rest">%1$d Ruhetage</string>
+    <string name="week_perfect">Perfekte Tage: %1$d</string>
+    <string name="week_rest">Ruhetage: %1$d</string>
     <string name="week_better">+%1$d Tage gegenüber letzter Woche</string>
     <string name="week_worse">%1$d Tage weniger als letzte Woche</string>
     <string name="week_same">Wie letzte Woche</string>
@@ -566,4 +566,12 @@
     <string name="widget_goal_safe">Streak gesichert ✓</string>
     <string name="widget_hours_left">%1$d h bis Mitternacht</string>
     <string name="widget_under_hour">unter 1 h</string>
+    <string name="a11y_decrease">Verringern</string>
+    <string name="a11y_increase">Erhöhen</string>
+    <string name="a11y_pause">Pausieren</string>
+    <string name="a11y_start">Starten</string>
+    <string name="a11y_reset">Zurücksetzen</string>
+    <string name="a11y_mark_done">Als erledigt markieren</string>
+    <string name="a11y_mark_undone">Abhaken rückgängig</string>
+    <string name="penalty_ends_in">Endet in %1$s</string>
 </resources>

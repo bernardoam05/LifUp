@@ -71,7 +71,7 @@
     <string name="rest_day_info">Día de descanso: sin penalización esta noche, pero el streak tampoco crece.</string>
     <string name="forge">Forja de misiones</string>
     <string name="penalty_section">Penalización</string>
-    <string name="penalty_info">Cumple estas misiones para levantar la penalización. Las pendientes cuentan como fallos a medianoche.</string>
+    <string name="penalty_info">Cumple estas misiones para levantar antes la penalización. Las que sobren desaparecen cuando acabe.</string>
     <string name="portal_section">Portal abierto</string>
     <string name="portal_info">Un portal temporal: recompensas dobles y la posibilidad de vincular una sombra. Se cierra solo.</string>
     <string name="daily_section">Misiones diarias</string>
@@ -542,8 +542,8 @@
     <string name="later">Más tarde</string>
     <string name="week_title">Resumen de la semana</string>
     <string name="week_kept">%1$d de %2$d días cumplidos</string>
-    <string name="week_perfect">%1$d días perfectos</string>
-    <string name="week_rest">%1$d días de descanso</string>
+    <string name="week_perfect">Días perfectos: %1$d</string>
+    <string name="week_rest">Días de descanso: %1$d</string>
     <string name="week_better">+%1$d días que la semana pasada</string>
     <string name="week_worse">%1$d días menos que la semana pasada</string>
     <string name="week_same">Igual que la semana pasada</string>
@@ -566,4 +566,12 @@
     <string name="widget_goal_safe">Racha asegurada ✓</string>
     <string name="widget_hours_left">%1$d h hasta medianoche</string>
     <string name="widget_under_hour">menos de 1 h</string>
+    <string name="a11y_decrease">Disminuir</string>
+    <string name="a11y_increase">Aumentar</string>
+    <string name="a11y_pause">Pausar</string>
+    <string name="a11y_start">Iniciar</string>
+    <string name="a11y_reset">Reiniciar</string>
+    <string name="a11y_mark_done">Marcar como hecha</string>
+    <string name="a11y_mark_undone">Desmarcar</string>
+    <string name="penalty_ends_in">Acaba en %1$s</string>
 </resources>

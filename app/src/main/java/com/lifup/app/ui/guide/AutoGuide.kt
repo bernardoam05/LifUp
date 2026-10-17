@@ -38,7 +38,7 @@ private object GuideSession { val shown = mutableSetOf<Tab>() }
 fun AutoGuide(s: GameState, tab: Tab) {
     var open by remember(tab) { mutableStateOf<Guide?>(null) }
     // Never on top of a reward card.
-    val busy = s.rewards.any { it !is com.lifup.app.domain.Reward.Toast }
+    val busy = s.rewards.any { it !is com.lifup.app.domain.Reward.Toast } || com.lifup.app.ui.CrashUi.report != null
     LaunchedEffect(tab, busy) {
         if (busy || tab in GuideSession.shown) return@LaunchedEffect
         val next = topicsFor(tab, s).firstOrNull { it.name !in s.seenGuides } ?: return@LaunchedEffect

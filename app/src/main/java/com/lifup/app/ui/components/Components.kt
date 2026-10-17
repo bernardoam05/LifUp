@@ -1,5 +1,6 @@
 package com.lifup.app.ui.components
 
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -168,9 +169,9 @@ fun GhostButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier
 fun Stepper(value: Int, onChange: (Int) -> Unit, range: IntRange, label: String, suffix: String = "", step: Int = 1) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(label, color = Lif.colors.muted, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-        IconButton(onClick = { onChange((value - step).coerceIn(range)) }, enabled = value > range.first) { Icon(Icons.Rounded.Remove, null) }
-        Text("$value$suffix", style = MaterialTheme.typography.titleMedium, modifier = Modifier.width(56.dp), textAlign = TextAlign.Center)
-        IconButton(onClick = { onChange((value + step).coerceIn(range)) }, enabled = value < range.last) { Icon(Icons.Rounded.Add, null) }
+        IconButton(onClick = { onChange((value - step).coerceIn(range)) }, enabled = value > range.first) { Icon(Icons.Rounded.Remove, stringResource(R.string.a11y_decrease)) }
+        Text("$value$suffix", style = MaterialTheme.typography.titleMedium, modifier = Modifier.widthIn(min = 56.dp), textAlign = TextAlign.Center, maxLines = 1, softWrap = false)
+        IconButton(onClick = { onChange((value + step).coerceIn(range)) }, enabled = value < range.last) { Icon(Icons.Rounded.Add, stringResource(R.string.a11y_increase)) }
     }
 }
 

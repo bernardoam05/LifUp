@@ -127,8 +127,8 @@ private fun LimitControls(q: Quest, unit: String, manual: Boolean) {
             )
         }
         if (manual) {
-            IconButton(onClick = { act { setProgress(q.id, q.progress - step) } }) { Icon(Icons.Rounded.Remove, null, tint = p.muted) }
-            IconButton(onClick = { act { setProgress(q.id, q.progress + step) } }) { Icon(Icons.Rounded.Add, null, tint = if (over) p.red else p.text) }
+            IconButton(onClick = { act { setProgress(q.id, q.progress - step) } }) { Icon(Icons.Rounded.Remove, stringResource(R.string.a11y_decrease), tint = p.muted) }
+            IconButton(onClick = { act { setProgress(q.id, q.progress + step) } }) { Icon(Icons.Rounded.Add, stringResource(R.string.a11y_increase), tint = if (over) p.red else p.text) }
         }
         if (q.status == QuestStatus.FAILED) Icon(Icons.Rounded.Close, null, tint = p.red)
     }

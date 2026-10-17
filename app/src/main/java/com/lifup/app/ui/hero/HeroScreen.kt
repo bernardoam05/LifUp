@@ -308,7 +308,7 @@ private fun MissionRates(s: GameState) {
             val pct = (st.rate * 100).roundToInt()
             val color = when { pct >= 75 -> c.green; pct >= 50 -> c.gold; else -> c.red }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp)) {
-                Text(defTitle(s, id), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f), maxLines = 1)
+                Text(defTitle(s, id), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 Text("$pct% · ${st.done}/${st.total}", style = MaterialTheme.typography.labelMedium, color = color)
             }
             Bar(st.rate.toFloat(), color, height = 4.dp, modifier = Modifier.padding(top = 2.dp))

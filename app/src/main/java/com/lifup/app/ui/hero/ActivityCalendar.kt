@@ -1,5 +1,8 @@
 package com.lifup.app.ui.hero
 
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -72,7 +75,7 @@ fun ActivityCalendar(s: GameState) {
                                     val date = firstMonday.plusWeeks(w.toLong()).plusDays(d.toLong())
                                     val key = date.toString()
                                     if (date.isAfter(today)) Spacer(Modifier.size(CELL))
-                                    else Cell(cellColor(days[key]), selected = picked == key) { picked = if (picked == key) null else key }
+                                    else Cell(days[key], dayLine(key, days[key]), selected = picked == key) { picked = if (picked == key) null else key }
                                 }
                             }
                         }
@@ -110,12 +113,27 @@ private fun cellColor(d: DayLog?): Color {
     }
 }
 
+/** A day square; penalty and rest days also carry a mark so colour isn't the only signal. */
 @Composable
-private fun Cell(color: Color, selected: Boolean, onClick: () -> Unit) {
+private fun Cell(day: DayLog?, label: String, selected: Boolean, onClick: () -> Unit) {
     val shape = RoundedCornerShape(3.dp)
+    val mark = Lif.colors.bg.copy(alpha = 0.85f)
     Box(
-        Modifier.size(CELL).clip(shape).background(color)
+        Modifier.size(CELL).clip(shape).background(cellColor(day))
             .then(if (selected) Modifier.border(1.5.dp, Lif.colors.text, shape) else Modifier)
+            .drawWithContent {
+                drawContent()
+                val w = size.width
+                when {
+                    day?.rest == true -> drawCircle(mark, radius = w * 0.16f)
+                    day?.penalty == true -> {
+                        val a = w * 0.3f; val b = w * 0.7f; val sw = w * 0.12f
+                        drawLine(mark, androidx.compose.ui.geometry.Offset(a, a), androidx.compose.ui.geometry.Offset(b, b), sw)
+                        drawLine(mark, androidx.compose.ui.geometry.Offset(b, a), androidx.compose.ui.geometry.Offset(a, b), sw)
+                    }
+                }
+            }
+            .semantics { contentDescription = label }
             .clickable(onClick = onClick),
     )
 }
