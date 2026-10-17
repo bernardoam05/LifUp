@@ -17,6 +17,7 @@ class LifUpApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        com.lifup.app.system.CrashLog.install(this)
         val content = Content.load { name -> assets.open("content/$name").bufferedReader().use { it.readText() } }
         val file = File(filesDir, "state.json")
         // First launch over the old React Native app: carry its progress over automatically.

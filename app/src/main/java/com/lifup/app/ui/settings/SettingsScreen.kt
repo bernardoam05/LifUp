@@ -197,6 +197,8 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 }
             }
 
+            CrashReportRow()
+
             SectionTitle(stringResource(R.string.about))
             Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
             TextButton(onClick = { confirmReset = true }) { Text(stringResource(R.string.reset_progress).uppercase(), color = Lif.colors.red) }
@@ -250,6 +252,22 @@ private fun AutoBackups(onRestore: (GameState) -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(java.time.LocalDate.parse(e.day).format(java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
             TextButton(onClick = { LifUpApp.store.readSnapshot(e.file)?.let(onRestore) }) { Text(stringResource(R.string.restore).uppercase()) }
+        }
+    }
+}
+
+/** The last crash report, if any, until the user shares or deletes it. */
+@Composable
+private fun CrashReportRow() {
+    val context = LocalContext.current
+    var report by remember { mutableStateOf(com.lifup.app.system.CrashLog.read(context)) }
+    val text = report ?: return
+    SectionTitle(stringResource(R.string.crash_title))
+    Panel(border = Lif.colors.red.copy(alpha = 0.5f)) {
+        Text(stringResource(R.string.crash_text), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            TextButton(onClick = { com.lifup.app.system.CrashLog.share(context, text) }) { Text(stringResource(R.string.crash_share).uppercase()) }
+            TextButton(onClick = { com.lifup.app.system.CrashLog.clear(context); report = null }) { Text(stringResource(R.string.delete).uppercase(), color = Lif.colors.red) }
         }
     }
 }

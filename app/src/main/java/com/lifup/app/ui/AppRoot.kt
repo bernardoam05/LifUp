@@ -92,6 +92,7 @@ fun AppRoot(deepLink: String?, onDeepLinkConsumed: () -> Unit) {
                 OnboardingScreen()
                 return@Box
             }
+            CrashPrompt()
             val nav = rememberNavController()
             NavHost(nav, startDestination = "main") {
                 composable("main") {
@@ -170,6 +171,7 @@ private fun MainScaffold(
             }
         }
         RewardHost(s)
+        com.lifup.app.ui.guide.AutoGuide(s, Tab.entries[pager.settledPage])
     }
 }
 

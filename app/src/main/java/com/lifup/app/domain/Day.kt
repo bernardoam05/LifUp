@@ -11,11 +11,12 @@ import kotlin.math.roundToInt
  */
 fun Tx.ensureDay() {
     if (s.day.isEmpty()) {
-        s = s.copy(day = ctx.todayKey, daily = DailyFlags(ctx.todayKey))
+        s = s.copy(day = ctx.todayKey, daily = DailyFlags(ctx.todayKey), statsWeek = ctx.weekKey)
         s = s.copy(quests = generateDailyQuests(s, content, ctx.today))
     } else if (LocalDate.parse(s.day) < ctx.today) {
         // Only move forward: a clock set back (manual change, timezone hop) never re-closes a day.
         closeDay(LocalDate.parse(s.day))
+        rollWeek()
         s = s.copy(
             day = ctx.todayKey,
             daily = DailyFlags(ctx.todayKey),
@@ -56,6 +57,8 @@ private fun Tx.closeDay(day: LocalDate) {
         }
     }
 
+    if (!rest) recordMissions(daily)
+
     // A penalty lasts 24 hours: its missions only lift it early, and leftovers just expire.
     expirePenalty()
     var penaltyInfo: PenaltyInfo? = null
@@ -88,7 +91,7 @@ private fun Tx.closeDay(day: LocalDate) {
     if (gap > 1 && !rest && s.player.streak > 0) setStreak(0)
     if (gap > 1) s = s.copy(recovery = null)
 
-    s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null, rest)).takeLast(Rules.DAY_LOG_DAYS))
+    s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null, rest, passed && !rest)).takeLast(Rules.DAY_LOG_DAYS))
     reward { Reward.DayReport(it, day.toString(), done, daily.size, perfect && !rest, rest, s.player.streak, bonusXp, penaltyInfo, streakSavedBy, passed && !rest, restored) }
 }
 

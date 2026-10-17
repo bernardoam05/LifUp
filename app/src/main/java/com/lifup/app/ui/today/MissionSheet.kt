@@ -126,6 +126,10 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
 
             if (q.auto != null && q.autoOff) Text(stringResource(R.string.auto_off), style = MaterialTheme.typography.bodySmall, color = p.gold)
             else if (q.auto != null) AutoInfo(q.auto, s)
+            if (q.adapt != 0) Text(
+                stringResource(if (q.adapt > 0) R.string.adapt_up else R.string.adapt_down, kotlin.math.abs(q.adapt) * 10),
+                style = MaterialTheme.typography.bodySmall, color = p.dim,
+            )
 
             if (open && q.auto == null && q.fromHour == null && (q.type == QuestType.TRAINING || q.type == QuestType.KNOWLEDGE)) {
                 // Stopwatch, kept in the state so it survives the app being closed.

@@ -7,10 +7,11 @@ import kotlin.random.Random
 fun roundTarget(value: Double, unit: String): Double =
     if (unit == "km") (value * 10).roundToInt() / 10.0 else value.roundToInt().toDouble()
 
-fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.id): Quest {
-    val mult = Rules.tierMultiplier(level)
+fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.id, adapt: Int = 0): Quest {
+    val step = if (def.adaptable()) adapt else 0
+    val mult = Rules.tierMultiplier(level) * (1 + Rules.ADAPT_STEP / 2 * step)
     val steps = (level - 1) / def.scalingInterval.coerceAtLeast(1)
-    val raw = def.baseTarget + steps * (if (def.descending) -def.scalingAmount else def.scalingAmount)
+    val raw = (def.baseTarget + steps * (if (def.descending) -def.scalingAmount else def.scalingAmount)) * adaptFactor(def.type, step)
     val min = if (def.type == QuestType.FORBIDDEN || def.type == QuestType.LIMIT) 0.0 else 1.0
     return Quest(
         id = id,
@@ -27,6 +28,7 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         auto = def.auto,
         pomodoro = def.pomodoro,
         fromHour = def.fromHour,
+        adapt = step,
     )
 }
 
@@ -55,7 +57,7 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
     val pool = defs.filter { it.kind == DefKind.POOL && (it.daysOfWeek == null || dow in it.daysOfWeek) }
         .shuffled(Random(seed))
         .take(Rules.dailyPoolCount(level, state.settings))
-    return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY) }
+    return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, adapt = state.adapt[it.id]?.level ?: 0) }
 }
 
 internal fun Tx.updateQuestProgress(id: String, value: Double) = updateQuest(id) { it.copy(progress = value) }

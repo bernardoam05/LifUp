@@ -1,5 +1,9 @@
 package com.lifup.app.ui.hero
 
+import androidx.compose.runtime.remember
+import androidx.compose.material3.TextButton
+import kotlin.math.roundToInt
+import com.lifup.app.ui.defTitle
 import com.lifup.app.ui.guide.InfoButton
 import com.lifup.app.ui.guide.Guide
 import androidx.compose.foundation.background
@@ -287,5 +291,31 @@ private fun Stats(s: GameState) {
                 color = when { d.perfect -> c.green; d.penalty -> c.red; d.rest -> c.purple; else -> c.text },
             )
         }
+    }
+    MissionRates(s)
+}
+
+/** Kept-rate per mission, weakest first among the ones done often enough to judge. */
+@Composable
+private fun MissionRates(s: GameState) {
+    val c = Lif.colors
+    val stats = s.missionStats.entries.filter { it.value.total > 0 }.sortedWith(compareBy({ it.value.rate }, { -it.value.total }))
+    if (stats.isEmpty()) return
+    var all by remember { mutableStateOf(false) }
+    SectionTitle(stringResource(R.string.mission_rates))
+    Panel {
+        (if (all) stats else stats.take(6)).forEach { (id, st) ->
+            val pct = (st.rate * 100).roundToInt()
+            val color = when { pct >= 75 -> c.green; pct >= 50 -> c.gold; else -> c.red }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp)) {
+                Text(defTitle(s, id), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f), maxLines = 1)
+                Text("$pct% · ${st.done}/${st.total}", style = MaterialTheme.typography.labelMedium, color = color)
+            }
+            Bar(st.rate.toFloat(), color, height = 4.dp, modifier = Modifier.padding(top = 2.dp))
+            s.adapt[id]?.level?.takeIf { it != 0 }?.let { lvl ->
+                Text(stringResource(R.string.adapt_level, (if (lvl > 0) "+" else "") + lvl * 10), style = MaterialTheme.typography.labelSmall, color = c.dim)
+            }
+        }
+        if (stats.size > 6) TextButton(onClick = { all = !all }) { Text(stringResource(if (all) R.string.show_less else R.string.show_all).uppercase()) }
     }
 }

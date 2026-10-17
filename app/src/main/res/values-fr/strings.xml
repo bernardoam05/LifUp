@@ -518,4 +518,26 @@
     <string name="auto_backups_info">L\'app garde une copie par jour des 7 derniers jours. Avec la sauvegarde Android activée, elles vont aussi sur ton compte Google.</string>
     <string name="auto_backups_none">Pas encore de copie.</string>
     <string name="restore">Restaurer</string>
+    <string name="crash_title">L\'app s\'est fermée de façon inattendue</string>
+    <string name="crash_text">Un rapport d\'erreur est enregistré uniquement sur ton téléphone. Partage-le (e-mail, WhatsApp…) avec le développeur pour aider à corriger.</string>
+    <string name="crash_share">Partager le rapport</string>
+    <string name="later">Plus tard</string>
+    <string name="week_title">Bilan de la semaine</string>
+    <string name="week_kept">%1$d jours validés sur %2$d</string>
+    <string name="week_perfect">%1$d journées parfaites</string>
+    <string name="week_rest">%1$d jours de repos</string>
+    <string name="week_better">+%1$d jours par rapport à la semaine dernière</string>
+    <string name="week_worse">%1$d jours de moins que la semaine dernière</string>
+    <string name="week_same">Comme la semaine dernière</string>
+    <string name="week_boss_won">Tu as vaincu %1$s</string>
+    <string name="week_boss_lost">%1$s s\'est enfui</string>
+    <string name="week_best">La plus tenue : %1$s (%2$d %%)</string>
+    <string name="week_worst">La moins tenue : %1$s (%2$d %%)</string>
+    <string name="week_suggest">Si elle ne colle pas à ta journée, échange-la ou désactive-la dans la Forge.</string>
+    <string name="mission_rates">Missions tenues</string>
+    <string name="adapt_level">Objectif ajusté %1$s %%</string>
+    <string name="adapt_up">Objectif +%1$d %% : tu as tenu cette mission plusieurs jours d\'affilée.</string>
+    <string name="adapt_down">Objectif −%1$d %% : ajusté après quelques jours manqués.</string>
+    <string name="show_all">Tout voir</string>
+    <string name="show_less">Voir moins</string>
 </resources>

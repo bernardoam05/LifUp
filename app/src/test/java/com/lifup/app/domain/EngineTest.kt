@@ -549,6 +549,49 @@ class EngineTest {
         assertEquals(at("2026-10-14T10:55"), s.blockPlan(at("2026-10-14T10:31"))!!.until)
     }
 
+    @Test fun `targets adapt to what the user keeps`() {
+        var s = fresh()
+        val def = content.questDefById.getValue("core_pushups")
+        val base = buildQuest(def, 1, QuestOrigin.DAILY).target
+        // Five kept days in a row raise the target one step.
+        repeat(5) { d ->
+            val day = java.time.LocalDate.parse("2026-10-14").plusDays(d.toLong())
+            s = run(s, "${day}T08:00")
+            s = run(s, "${day}T12:00") { s.dailyQuests.filter { it.defId == def.id }.forEach { completeQuest(it.id) } }
+        }
+        s = run(s, "2026-10-19T08:00")
+        assertEquals(1, s.adapt[def.id]!!.level)
+        val q = s.dailyQuests.first { it.defId == def.id }
+        assertEquals(1, q.adapt)
+        assertTrue(q.target > base)
+        // Three misses bring it back down.
+        listOf("2026-10-20", "2026-10-21", "2026-10-22").forEach { s = run(s, "${it}T08:00") }
+        assertEquals(0, s.adapt[def.id]!!.level)
+        assertEquals(5, s.missionStats[def.id]!!.done)
+    }
+
+    @Test fun `limits get stricter when kept`() {
+        assertTrue(adaptFactor(QuestType.LIMIT, 1) < 1.0)
+        assertTrue(adaptFactor(QuestType.TRAINING, 1) > 1.0)
+    }
+
+    @Test fun `a new week sums up the last one`() {
+        var s = fresh("2026-10-12T09:00")
+        repeat(7) { d ->
+            val day = java.time.LocalDate.parse("2026-10-12").plusDays(d.toLong())
+            s = run(s, "${day}T08:00")
+            s = run(s, "${day}T12:00") { if (d % 2 == 0) s.dailyQuests.forEach { completeQuest(it.id) } }
+        }
+        s = run(s, "2026-10-19T08:00")
+        val report = s.rewards.filterIsInstance<Reward.WeekReport>().single()
+        assertEquals("2026-10-12", report.weekStart)
+        assertEquals(7, report.days)
+        assertEquals(4, report.daysKept)
+        assertEquals("2026-10-19", s.statsWeek)
+        assertEquals(4, s.lastWeekKept)
+        assertTrue(s.weekStats.isEmpty() || s.weekStats.values.all { it.total <= 1 })
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")

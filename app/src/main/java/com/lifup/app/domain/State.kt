@@ -54,6 +54,8 @@ data class Quest(
     /** Boss HP this quest removed, given back if it is undone. */
     val bossDamage: Int = 0,
     val fromHour: Int? = null,
+    /** Target adjustment applied when the quest was built (see [Adapt]). */
+    val adapt: Int = 0,
 )
 
 @Serializable
@@ -181,7 +183,7 @@ data class MissionTimer(val runningSince: Long = 0, val accumulatedMs: Long = 0)
 }
 
 @Serializable
-data class DayLog(val day: String, val done: Int, val total: Int, val perfect: Boolean, val penalty: Boolean, val rest: Boolean)
+data class DayLog(val day: String, val done: Int, val total: Int, val perfect: Boolean, val penalty: Boolean, val rest: Boolean, val passed: Boolean = false)
 
 @Serializable
 data class PenaltyInfo(val failed: Int, val total: Int, val xpLost: Int, val goldLost: Int, val quests: Int, val absorbedBy: String? = null)
@@ -222,6 +224,23 @@ sealed interface Reward {
         val streakRestored: Boolean = false,
     ) : Reward
 
+    @Serializable @SerialName("week")
+    data class WeekReport(
+        override val id: Long,
+        val weekStart: String,
+        val daysKept: Int,
+        val perfectDays: Int,
+        val restDays: Int,
+        val days: Int,
+        val previousKept: Int? = null,
+        val best: String? = null,
+        val bestRate: Double = 0.0,
+        val worst: String? = null,
+        val worstRate: Double = 0.0,
+        val bossId: String? = null,
+        val bossDefeated: Boolean = false,
+    ) : Reward
+
     @Serializable @SerialName("streak")
     data class StreakMilestone(override val id: Long, val days: Int, val gold: Int, val items: List<String>) : Reward
 
@@ -241,6 +260,17 @@ enum class ToastKind {
 
 @Serializable
 data class StreakRecovery(val streak: Int, val day: String)
+
+/** How often a mission was kept: lifetime and for the running week. */
+@Serializable
+data class MissionStat(val done: Int = 0, val total: Int = 0) {
+    val rate: Double get() = if (total == 0) 0.0 else done.toDouble() / total
+    fun add(success: Boolean) = MissionStat(done + if (success) 1 else 0, total + 1)
+}
+
+/** Target adjustment for one mission: [level] steps of 10%, moved by runs of wins or losses. */
+@Serializable
+data class Adapt(val level: Int = 0, val wins: Int = 0, val losses: Int = 0)
 
 @Serializable
 data class GameState(
@@ -279,6 +309,14 @@ data class GameState(
     /** A streak lost yesterday that a perfect [StreakRecovery.day] brings back. */
     val recovery: StreakRecovery? = null,
     val recoveryWeek: String = "",
+    val missionStats: Map<String, MissionStat> = emptyMap(),
+    val weekStats: Map<String, MissionStat> = emptyMap(),
+    /** Week [weekStats] and the weekly report refer to. */
+    val statsWeek: String = "",
+    val lastWeekKept: Int? = null,
+    val adapt: Map<String, Adapt> = emptyMap(),
+    /** Guides already shown automatically. */
+    val seenGuides: Set<String> = emptySet(),
     val passiveCooldowns: Map<Passive, Long> = emptyMap(),
     val doubleXpNext: Boolean = false,
     val rewards: List<Reward> = emptyList(),

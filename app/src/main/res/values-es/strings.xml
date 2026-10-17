@@ -536,4 +536,26 @@
     <string name="auto_backups_info">La app guarda una copia diaria de los últimos 7 días. Con la copia de seguridad de Android activada, también van a tu cuenta de Google.</string>
     <string name="auto_backups_none">Aún no hay copias.</string>
     <string name="restore">Restaurar</string>
+    <string name="crash_title">La app se cerró inesperadamente</string>
+    <string name="crash_text">Hay un informe del error guardado solo en tu teléfono. Compártelo (email, WhatsApp…) con quien desarrolla la app para ayudar a arreglarlo.</string>
+    <string name="crash_share">Compartir informe</string>
+    <string name="later">Más tarde</string>
+    <string name="week_title">Resumen de la semana</string>
+    <string name="week_kept">%1$d de %2$d días cumplidos</string>
+    <string name="week_perfect">%1$d días perfectos</string>
+    <string name="week_rest">%1$d días de descanso</string>
+    <string name="week_better">+%1$d días que la semana pasada</string>
+    <string name="week_worse">%1$d días menos que la semana pasada</string>
+    <string name="week_same">Igual que la semana pasada</string>
+    <string name="week_boss_won">Derrotaste a %1$s</string>
+    <string name="week_boss_lost">%1$s escapó</string>
+    <string name="week_best">Más cumplida: %1$s (%2$d%%)</string>
+    <string name="week_worst">Menos cumplida: %1$s (%2$d%%)</string>
+    <string name="week_suggest">Si no encaja en tu día, cámbiala o desactívala en la Forja.</string>
+    <string name="mission_rates">Misiones cumplidas</string>
+    <string name="adapt_level">Objetivo ajustado %1$s%%</string>
+    <string name="adapt_up">Objetivo +%1$d%%: has cumplido esta misión varios días seguidos.</string>
+    <string name="adapt_down">Objetivo −%1$d%%: ajustado tras unos días fallados.</string>
+    <string name="show_all">Ver todas</string>
+    <string name="show_less">Ver menos</string>
 </resources>

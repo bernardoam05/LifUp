@@ -86,6 +86,15 @@ object Rules {
     /** Below this share the day is a bad one: penalty missions and app blocking. */
     const val SEVERE_RATIO = 0.5
 
+    /** Adaptive targets: 10% steps, up after 5 kept days in a row, down after 3 misses, at most ±3 steps. */
+    const val ADAPT_STEP = 0.1
+    const val ADAPT_UP_AFTER = 5
+    const val ADAPT_DOWN_AFTER = 3
+    const val ADAPT_MAX = 3
+
+    /** A mission needs this many days in a week to be called best or worst. */
+    const val WEEK_MIN_SAMPLES = 3
+
     /** Sessions without a set end still stop by themselves after this long. */
     const val OPEN_SESSION_MAX_MIN = 480
 

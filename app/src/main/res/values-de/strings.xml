@@ -536,4 +536,26 @@
     <string name="auto_backups_info">Die App behält eine Kopie pro Tag der letzten 7 Tage. Mit aktivierter Android-Sicherung landen sie auch in deinem Google-Konto.</string>
     <string name="auto_backups_none">Noch keine Kopien.</string>
     <string name="restore">Wiederherstellen</string>
+    <string name="crash_title">Die App wurde unerwartet beendet</string>
+    <string name="crash_text">Ein Fehlerbericht ist nur auf deinem Handy gespeichert. Teile ihn (E-Mail, WhatsApp…) mit dem Entwickler, um bei der Behebung zu helfen.</string>
+    <string name="crash_share">Bericht teilen</string>
+    <string name="later">Später</string>
+    <string name="week_title">Wochenrückblick</string>
+    <string name="week_kept">%1$d von %2$d Tagen geschafft</string>
+    <string name="week_perfect">%1$d perfekte Tage</string>
+    <string name="week_rest">%1$d Ruhetage</string>
+    <string name="week_better">+%1$d Tage gegenüber letzter Woche</string>
+    <string name="week_worse">%1$d Tage weniger als letzte Woche</string>
+    <string name="week_same">Wie letzte Woche</string>
+    <string name="week_boss_won">Du hast %1$s besiegt</string>
+    <string name="week_boss_lost">%1$s ist entkommen</string>
+    <string name="week_best">Am häufigsten: %1$s (%2$d %%)</string>
+    <string name="week_worst">Am seltensten: %1$s (%2$d %%)</string>
+    <string name="week_suggest">Wenn sie nicht in deinen Tag passt, tausche sie oder schalte sie in der Schmiede ab.</string>
+    <string name="mission_rates">Geschaffte Missionen</string>
+    <string name="adapt_level">Ziel angepasst %1$s %%</string>
+    <string name="adapt_up">Ziel +%1$d %%: Du hast diese Mission mehrere Tage in Folge geschafft.</string>
+    <string name="adapt_down">Ziel −%1$d %%: angepasst nach ein paar verpassten Tagen.</string>
+    <string name="show_all">Alle anzeigen</string>
+    <string name="show_less">Weniger anzeigen</string>
 </resources>

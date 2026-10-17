@@ -537,4 +537,26 @@
     <string name="auto_backups_info">The app keeps one copy a day for the last 7 days. With Android backup on, they also go to your Google account.</string>
     <string name="auto_backups_none">No copies yet.</string>
     <string name="restore">Restore</string>
+    <string name="crash_title">The app closed unexpectedly</string>
+    <string name="crash_text">An error report is saved only on your phone. Share it (email, WhatsApp…) with the developer to help fix it.</string>
+    <string name="crash_share">Share report</string>
+    <string name="later">Later</string>
+    <string name="week_title">Week in review</string>
+    <string name="week_kept">%1$d of %2$d days kept</string>
+    <string name="week_perfect">%1$d perfect days</string>
+    <string name="week_rest">%1$d rest days</string>
+    <string name="week_better">+%1$d days on last week</string>
+    <string name="week_worse">%1$d fewer days than last week</string>
+    <string name="week_same">Same as last week</string>
+    <string name="week_boss_won">You beat %1$s</string>
+    <string name="week_boss_lost">%1$s escaped</string>
+    <string name="week_best">Most kept: %1$s (%2$d%%)</string>
+    <string name="week_worst">Least kept: %1$s (%2$d%%)</string>
+    <string name="week_suggest">If it doesn\'t fit your day, swap it or turn it off in the Forge.</string>
+    <string name="mission_rates">Missions kept</string>
+    <string name="adapt_level">Target adjusted %1$s%%</string>
+    <string name="adapt_up">Target +%1$d%%: you\'ve kept this mission several days in a row.</string>
+    <string name="adapt_down">Target −%1$d%%: adjusted after a few missed days.</string>
+    <string name="show_all">Show all</string>
+    <string name="show_less">Show less</string>
 </resources>

@@ -1,5 +1,8 @@
 package com.lifup.app.ui.rewards
 
+import kotlin.math.roundToInt
+import com.lifup.app.ui.defTitle
+import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -128,6 +131,7 @@ fun RewardHost(s: GameState) {
                     reward.itemId?.let { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
                 }
                 is Reward.DayReport -> DayReportCard(reward, dismiss)
+                is Reward.WeekReport -> WeekReportCard(s, reward, dismiss)
                 is Reward.Toast -> Unit
             }
         }
@@ -162,6 +166,32 @@ private fun DayReportCard(r: Reward.DayReport, dismiss: () -> Unit) {
         }
         if (r.streakRestored) Line(stringResource(R.string.report_streak_restored), c.gold)
         Line(stringResource(R.string.report_streak, r.streak), if (r.streak > 0) c.red else c.muted)
+    }
+}
+
+/** Sunday's look back: days kept, how it compares, the strongest and weakest mission. */
+@Composable
+private fun WeekReportCard(s: GameState, r: Reward.WeekReport, dismiss: () -> Unit) {
+    val c = Lif.colors
+    RewardCard(Icons.Rounded.CalendarMonth, c.accent, stringResource(R.string.week_title), stringResource(R.string.week_kept, r.daysKept, r.days), dismiss) {
+        if (r.perfectDays > 0) Line(stringResource(R.string.week_perfect, r.perfectDays), c.green)
+        if (r.restDays > 0) Line(stringResource(R.string.week_rest, r.restDays), c.purple)
+        r.previousKept?.let { prev ->
+            val diff = r.daysKept - prev
+            Line(
+                when { diff > 0 -> stringResource(R.string.week_better, diff); diff < 0 -> stringResource(R.string.week_worse, -diff); else -> stringResource(R.string.week_same) },
+                if (diff >= 0) c.green else c.gold,
+            )
+        }
+        r.bossId?.let { id ->
+            val name = content.bossById[id]?.title?.local() ?: id
+            Line(stringResource(if (r.bossDefeated) R.string.week_boss_won else R.string.week_boss_lost, name), if (r.bossDefeated) c.green else c.muted)
+        }
+        r.best?.let { Line(stringResource(R.string.week_best, defTitle(s, it), (r.bestRate * 100).roundToInt()), c.text) }
+        r.worst?.let {
+            Line(stringResource(R.string.week_worst, defTitle(s, it), (r.worstRate * 100).roundToInt()), c.gold)
+            if (r.worstRate < 0.4) Line(stringResource(R.string.week_suggest), c.muted)
+        }
     }
 }
 
