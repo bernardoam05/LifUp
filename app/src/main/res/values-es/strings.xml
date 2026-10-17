@@ -71,7 +71,7 @@
     <string name="rest_day_info">Día de descanso: sin penalización esta noche, pero el streak tampoco crece.</string>
     <string name="forge">Forja de misiones</string>
     <string name="penalty_section">Penalización</string>
-    <string name="penalty_info">Cumple estas misiones para levantar antes la penalización. Las que sobren desaparecen cuando acabe.</string>
+    <string name="penalty_info">Haz estas misiones para levantarla antes.</string>
     <string name="portal_section">Portal abierto</string>
     <string name="portal_info">Un portal temporal: recompensas dobles y la posibilidad de vincular una sombra. Se cierra solo.</string>
     <string name="daily_section">Misiones diarias</string>
@@ -591,4 +591,8 @@
     <string name="season_summer">Evento de Verano</string>
     <string name="season_exclusive">Sombra exclusiva</string>
     <string name="season_next">La próxima semana: %1$s</string>
+    <string name="today_count_suffix">misiones · %1$s</string>
+    <string name="more_options">Más opciones</string>
+    <string name="options_none">ninguna activa</string>
+    <string name="custom">Personalizar</string>
 </resources>

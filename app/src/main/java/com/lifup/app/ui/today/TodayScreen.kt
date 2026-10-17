@@ -1,5 +1,11 @@
 package com.lifup.app.ui.today
 
+import androidx.compose.material.icons.rounded.Groups
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.material.icons.rounded.LocalFireDepartment
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import com.lifup.app.ui.guide.PenaltyBlockToggle
 import com.lifup.app.ui.guide.InfoButton
 import com.lifup.app.ui.guide.Guide
@@ -96,15 +102,13 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
 
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item {
+            val ctx = Ctx(content, now)
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        LocalDate.parse(s.day.ifEmpty { LocalDate.now().toString() }).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)).replaceFirstChar { it.uppercase() },
-                        style = MaterialTheme.typography.labelMedium, color = p.muted,
-                    )
-                    Text(stringResource(R.string.today_progress, done, daily.size), style = MaterialTheme.typography.headlineSmall)
-                }
-                val ctx = Ctx(content, now)
+                // One line: the count that matters, with the date as a quiet suffix.
+                Text("$done / ${daily.size}", style = MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.width(8.dp))
+                val date = LocalDate.parse(s.day.ifEmpty { LocalDate.now().toString() }).format(DateTimeFormatter.ofPattern("EEE, d MMM"))
+                Text(stringResource(R.string.today_count_suffix, date), style = MaterialTheme.typography.labelMedium, color = p.muted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
                 FilterChip(
                     selected = s.daily.rest,
                     onClick = { act { toggleRestDay() } },
@@ -113,18 +117,15 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
                     leadingIcon = { Icon(Icons.Rounded.Bedtime, null, Modifier.size(16.dp)) },
                     colors = FilterChipDefaults.filterChipColors(selectedContainerColor = p.purple.copy(alpha = 0.2f), selectedLabelColor = p.purple, selectedLeadingIconColor = p.purple),
                 )
-                IconButton(onClick = openForge) { Icon(Icons.Rounded.Build, stringResource(R.string.forge), tint = p.muted) }
             }
-            Spacer(Modifier.height(6.dp))
-            Bar(if (daily.isEmpty()) 0f else done / daily.size.toFloat(), if (s.daily.rest) p.purple else p.accent)
-            if (s.daily.rest) Text(stringResource(R.string.rest_day_info), style = MaterialTheme.typography.bodySmall, color = p.purple, modifier = Modifier.padding(top = 6.dp))
-            else if (daily.isNotEmpty()) {
-                val needed = s.dayGoal().needed
-                Row(Modifier.padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.today_goal, needed, daily.size), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.weight(1f))
-                    InfoButton(Guide.STREAK)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.weight(1f)) {
+                    if (s.daily.rest || daily.isEmpty()) Bar(if (daily.isEmpty()) 0f else done / daily.size.toFloat(), p.purple)
+                    else GoalBar(s.dayGoal().copy(kept = done))
                 }
+                InfoButton(Guide.STREAK)
             }
+            if (s.daily.rest) Text(stringResource(R.string.rest_day_info), style = MaterialTheme.typography.bodySmall, color = p.purple)
             s.recovery?.takeIf { it.day == s.day }?.let { r ->
                 Text(stringResource(R.string.streak_recovery, r.streak), style = MaterialTheme.typography.bodySmall, color = p.gold, modifier = Modifier.padding(top = 4.dp))
             }
@@ -245,7 +246,6 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
             Bar(b.hp / b.maxHp.toFloat(), tint, height = 10.dp)
             Row(Modifier.padding(top = 4.dp)) {
                 Text("${b.hp} / ${b.maxHp} HP", style = MaterialTheme.typography.labelMedium, color = p.muted, modifier = Modifier.weight(1f))
-                Text(stringResource(R.string.boss_hint), style = MaterialTheme.typography.labelSmall, color = p.dim)
             }
             val c = b.challenge
             Spacer(Modifier.height(10.dp))
@@ -266,8 +266,28 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
             }
         }
         if (shadow != null && !b.defeated) {
-            Text(stringResource(R.string.boss_drop, shadow.name.text(lang())), style = MaterialTheme.typography.labelSmall, color = p.dim, modifier = Modifier.padding(top = 8.dp))
+            Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Rounded.Groups, stringResource(R.string.boss_drop, ""), tint = p.dim, modifier = Modifier.size(14.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(shadow.name.text(lang()), style = MaterialTheme.typography.labelSmall, color = p.dim)
+            }
         }
     }
     if (def.season == null) upcomingSeason(content.bosses, LocalDate.now())?.let { SeasonTeaser(it) }
+}
+
+/** Missions marked done, with a flame marking the streak minimum; the flame lights up once it's reached. */
+@Composable
+private fun GoalBar(goal: com.lifup.app.domain.DayGoal) {
+    val p = Lif.colors
+    val safe = goal.safe
+    BoxWithConstraints(Modifier.fillMaxWidth().height(22.dp)) {
+        val frac = goal.needed / goal.total.coerceAtLeast(1).toFloat()
+        Bar(goal.kept / goal.total.coerceAtLeast(1).toFloat(), if (safe) p.green else p.accent, modifier = Modifier.align(Alignment.BottomStart).padding(bottom = 2.dp))
+        Icon(
+            Icons.Rounded.LocalFireDepartment, stringResource(R.string.today_goal, goal.needed, goal.total),
+            tint = if (safe) p.red else p.dim,
+            modifier = Modifier.size(14.dp).offset(x = maxWidth * frac - 7.dp).align(Alignment.TopStart),
+        )
+    }
 }

@@ -1,5 +1,11 @@
 package com.lifup.app.ui.focus
 
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.rounded.Remove
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ExpandMore
+import androidx.compose.material.icons.rounded.ExpandLess
+import androidx.compose.foundation.clickable
 import com.lifup.app.ui.guide.InfoButton
 import com.lifup.app.ui.guide.Guide
 import android.Manifest
@@ -95,26 +101,8 @@ import kotlin.math.roundToInt
 fun FocusScreen(s: GameState) {
     Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
         val now = rememberNow(1_000)
-        if (s.penaltyBlockActive(now) || (s.penalty.active && s.penalty.blockStart > now && s.settings.blockOnPenalty)) PenaltyBlockBanner(s, now)
         val f = s.focus
         if (f != null) ActiveSession(s, f, now) else SessionSetup(s)
-    }
-}
-
-@Composable
-private fun PenaltyBlockBanner(s: GameState, now: Long) {
-    val p = Lif.colors
-    Panel(border = p.red.copy(alpha = 0.6f), background = p.red.copy(alpha = 0.08f), modifier = Modifier.padding(bottom = 12.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Rounded.Lock, null, tint = p.red)
-            Spacer(Modifier.width(8.dp))
-            Text(
-                if (s.penalty.blockStart > now) stringResource(R.string.block_starts_in, fmtShort(s.penalty.blockStart - now))
-                else stringResource(R.string.penalty_block_active, fmtShort(s.penalty.blockEnd - now)),
-                style = MaterialTheme.typography.titleSmall, color = p.red,
-            )
-        }
-        Text(stringResource(R.string.penalty_block_info), style = MaterialTheme.typography.bodySmall, color = p.muted)
     }
 }
 
@@ -212,16 +200,17 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
     }
 }
 
+private fun ambientName(kind: String?) = when (kind) { "rain" -> R.string.ambient_rain; "fire" -> R.string.ambient_fire; "lofi" -> R.string.ambient_lofi; else -> R.string.ambient_none }
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun AmbientChips(selected: String?, onSelect: (String?) -> Unit) {
-    val names = mapOf(null to R.string.ambient_none, "rain" to R.string.ambient_rain, "fire" to R.string.ambient_fire, "lofi" to R.string.ambient_lofi)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         (listOf<String?>(null) + Ambient.kinds).forEach { kind ->
             FilterChip(
                 selected = selected == kind,
                 onClick = { onSelect(kind) },
-                label = { Text(stringResource(names.getValue(kind))) },
+                label = { Text(stringResource(ambientName(kind))) },
                 colors = FilterChipDefaults.filterChipColors(selectedContainerColor = Lif.colors.accent.copy(alpha = 0.18f), selectedLabelColor = Lif.colors.accent),
             )
         }
@@ -285,37 +274,10 @@ private fun SessionSetup(s: GameState) {
     }
     Spacer(Modifier.height(12.dp))
     Panel {
-        ToggleRow(stringResource(R.string.open_session), stringResource(R.string.open_session_info), open) { open = it }
-        if (!pomodoro && !open) {
-            Text("$minutes min", style = MaterialTheme.typography.displaySmall, modifier = Modifier.align(Alignment.CenterHorizontally))
-            FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                listOf(15, 25, 45, 60, 90, 120).forEach { m ->
-                    FilterChip(selected = minutes == m, onClick = { minutes = m }, label = { Text("$m") })
-                }
-            }
-            Stepper(minutes, { minutes = it }, 1..240, stringResource(R.string.fine_tune), " min")
-        }
-        if (pomodoro) PomodoroSettings(s, open)
+        if (pomodoro) PomodoroSettings(s, open) { open = it }
+        else TimerLength(minutes, open, { minutes = it }) { open = it }
     }
-    Spacer(Modifier.height(8.dp))
-    Panel {
-        val tick = rememberResumeTick()
-        val ready = remember(tick) { Permissions.blockerReady(context) }
-        ToggleRow(stringResource(R.string.block_apps), stringResource(if (ready) R.string.block_apps_info else R.string.block_needs_perms), block && ready, enabled = ready) { block = it }
-        if (!ready) TextButton(onClick = { showPerms = true }) { Text(stringResource(R.string.grant_permissions).uppercase(), color = p.gold) }
-        FlowRow(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.align(Alignment.CenterVertically)) {
-                Icon(Icons.Rounded.Apps, null, tint = p.muted, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-                Text(pluralStringResource(R.plurals.apps_selected, set.blockedApps.size, set.blockedApps.size), style = MaterialTheme.typography.bodyMedium, color = p.muted)
-            }
-            TextButton(onClick = { pickApps = true }) { Text(stringResource(R.string.choose_apps).uppercase()) }
-        }
-        ToggleRow(stringResource(R.string.strict_mode), stringResource(if (open) R.string.strict_open_info else R.string.strict_info), strict && !open, enabled = !open) { strict = it }
-    }
-    SectionTitle(stringResource(R.string.ambient))
-    AmbientChips(ambient) { ambient = it }
-    Spacer(Modifier.height(16.dp))
+    Spacer(Modifier.height(12.dp))
     PrimaryButton(stringResource(R.string.start_session), onClick = {
         if (Build.VERSION.SDK_INT >= 33 && !Permissions.notifications(context)) notifPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         val plan = if (pomodoro) set.pomodoroPlan() else null
@@ -324,6 +286,40 @@ private fun SessionSetup(s: GameState) {
         act { startFocus(session) }
     }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.PlayArrow, color = p.purple)
 
+    // Everything else is optional and stays folded away, with a one-line summary of what's on.
+    val tick = rememberResumeTick()
+    val ready = remember(tick) { Permissions.blockerReady(context) }
+    val blocking = block && ready && set.blockedApps.isNotEmpty()
+    val summary = listOfNotNull(
+        stringResource(R.string.block_apps).takeIf { blocking },
+        stringResource(R.string.strict_mode).takeIf { strict && !open },
+        ambient?.let { stringResource(ambientName(it)) },
+    ).joinToString(" · ").ifEmpty { stringResource(R.string.options_none) }
+    var more by rememberSaveable { mutableStateOf(false) }
+    Row(Modifier.fillMaxWidth().clickable { more = !more }.padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(R.string.more_options), style = MaterialTheme.typography.titleSmall)
+        Spacer(Modifier.width(8.dp))
+        Text(summary, style = MaterialTheme.typography.labelMedium, color = p.muted, modifier = Modifier.weight(1f), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+        Icon(if (more) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = p.muted)
+    }
+    if (more) {
+        Panel {
+            ToggleRow(stringResource(R.string.block_apps), if (ready) "" else stringResource(R.string.block_needs_perms), block && ready, enabled = ready) { block = it }
+            if (!ready) TextButton(onClick = { showPerms = true }) { Text(stringResource(R.string.grant_permissions).uppercase(), color = p.gold) }
+            FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.align(Alignment.CenterVertically)) {
+                    Icon(Icons.Rounded.Apps, null, tint = p.muted, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(pluralStringResource(R.plurals.apps_selected, set.blockedApps.size, set.blockedApps.size), style = MaterialTheme.typography.bodyMedium, color = p.muted)
+                }
+                TextButton(onClick = { pickApps = true }) { Text(stringResource(R.string.choose_apps).uppercase()) }
+            }
+            ToggleRow(stringResource(R.string.strict_mode), if (open) stringResource(R.string.strict_open_info) else "", strict && !open, enabled = !open) { strict = it }
+        }
+        SectionTitle(stringResource(R.string.ambient))
+        AmbientChips(ambient) { ambient = it }
+    }
+
     if (pickApps) AppPickerSheet(set.blockedApps) { pickApps = false }
     if (showPerms) PermissionsSheet(s) { showPerms = false }
 }
@@ -331,9 +327,28 @@ private fun SessionSetup(s: GameState) {
 private fun com.lifup.app.domain.Settings.pomodoroPlan() =
     Pomodoro.sane(PomodoroPlan(pomodoroWork, pomodoroBreak, pomodoroRounds, pomodoroLongBreak, pomodoroLongEvery))
 
-/** Pomodoro lengths, with breaks capped so they can't outweigh the work. */
+/** Length of a plain timer: big number with ±5, quick picks, or no limit. */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun PomodoroSettings(s: GameState, open: Boolean) {
+private fun TimerLength(minutes: Int, open: Boolean, onMinutes: (Int) -> Unit, onOpen: (Boolean) -> Unit) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+        IconButton(onClick = { onMinutes((minutes - 5).coerceAtLeast(1)) }, enabled = !open && minutes > 1) { Icon(Icons.Rounded.Remove, stringResource(R.string.a11y_decrease)) }
+        Text(if (open) "∞" else "$minutes min", style = MaterialTheme.typography.displaySmall, modifier = Modifier.padding(horizontal = 12.dp))
+        IconButton(onClick = { onMinutes((minutes + 5).coerceAtMost(240)) }, enabled = !open && minutes < 240) { Icon(Icons.Rounded.Add, stringResource(R.string.a11y_increase)) }
+    }
+    FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)) {
+        listOf(15, 25, 45, 60, 90).forEach { m -> FilterChip(selected = !open && minutes == m, onClick = { onOpen(false); onMinutes(m) }, label = { Text("$m") }) }
+        FilterChip(selected = open, onClick = { onOpen(!open) }, label = { Text(stringResource(R.string.open_session)) })
+    }
+    if (open) Text(stringResource(R.string.open_session_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+}
+
+private val POMODORO_PRESETS = listOf(25 to 5, 50 to 10, 90 to 15)
+
+/** Pomodoro: three common presets, custom lengths on demand (breaks capped so they can't outweigh the work). */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PomodoroSettings(s: GameState, open: Boolean, onOpen: (Boolean) -> Unit) {
     val p = Lif.colors
     val plan = s.settings.pomodoroPlan()
     fun save(f: (com.lifup.app.domain.Settings) -> com.lifup.app.domain.Settings) = act {
@@ -343,15 +358,29 @@ private fun PomodoroSettings(s: GameState, open: Boolean) {
             n.copy(pomodoroBreak = sane.breakMin, pomodoroLongBreak = sane.longBreakMin)
         }
     }
-    Stepper(plan.workMin, { v -> save { it.copy(pomodoroWork = v) } }, 5..90, stringResource(R.string.pomodoro_work_len), "m", step = 5)
-    Stepper(plan.breakMin, { v -> save { it.copy(pomodoroBreak = v) } }, 1..Pomodoro.maxBreak(plan.workMin), stringResource(R.string.pomodoro_break_len), "m")
-    Stepper(plan.longBreakMin, { v -> save { it.copy(pomodoroLongBreak = v) } }, 0..Pomodoro.maxLongBreak(plan.workMin), stringResource(R.string.pomodoro_long_len), "m", step = 5)
-    if (plan.longBreakMin > 0) Stepper(plan.longEvery, { v -> save { it.copy(pomodoroLongEvery = v) } }, 2..8, stringResource(R.string.pomodoro_long_every), "")
-    if (!open) {
-        Stepper(plan.rounds, { v -> save { it.copy(pomodoroRounds = v) } }, 1..12, stringResource(R.string.pomodoro_rounds), "")
-        Text(stringResource(R.string.pomodoro_total, Pomodoro.totalMinutes(plan), plan.workMin * plan.rounds), style = MaterialTheme.typography.labelMedium, color = p.muted)
+    val preset = POMODORO_PRESETS.indexOf(plan.workMin to plan.breakMin)
+    var custom by rememberSaveable { mutableStateOf(preset < 0) }
+    FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        POMODORO_PRESETS.forEachIndexed { i, (w, b) ->
+            FilterChip(selected = !custom && preset == i, onClick = { custom = false; save { it.copy(pomodoroWork = w, pomodoroBreak = b) } }, label = { Text("$w / $b") })
+        }
+        FilterChip(selected = custom || preset < 0, onClick = { custom = !custom }, label = { Text(stringResource(R.string.custom)) })
     }
-    Text(stringResource(R.string.pomodoro_rules), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.padding(top = 4.dp))
+    if (custom || preset < 0) {
+        Stepper(plan.workMin, { v -> save { it.copy(pomodoroWork = v) } }, 5..90, stringResource(R.string.pomodoro_work_len), "m", step = 5)
+        Stepper(plan.breakMin, { v -> save { it.copy(pomodoroBreak = v) } }, 1..Pomodoro.maxBreak(plan.workMin), stringResource(R.string.pomodoro_break_len), "m")
+        Stepper(plan.longBreakMin, { v -> save { it.copy(pomodoroLongBreak = v) } }, 0..Pomodoro.maxLongBreak(plan.workMin), stringResource(R.string.pomodoro_long_len), "m", step = 5)
+        if (plan.longBreakMin > 0) Stepper(plan.longEvery, { v -> save { it.copy(pomodoroLongEvery = v) } }, 2..8, stringResource(R.string.pomodoro_long_every), "")
+    }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.weight(1f)) {
+            if (!open) Stepper(plan.rounds, { v -> save { it.copy(pomodoroRounds = v) } }, 1..12, stringResource(R.string.pomodoro_rounds), "")
+            else Text(stringResource(R.string.open_session_info), style = MaterialTheme.typography.bodySmall, color = p.muted)
+        }
+        Spacer(Modifier.width(8.dp))
+        FilterChip(selected = open, onClick = { onOpen(!open) }, label = { Text("∞") })
+    }
+    if (!open) Text(stringResource(R.string.pomodoro_total, Pomodoro.totalMinutes(plan), plan.workMin * plan.rounds), style = MaterialTheme.typography.labelMedium, color = p.muted)
 }
 
 /** The only place focus missions are listed: pick one (or a free session) and see its progress. */
@@ -396,7 +425,7 @@ fun ToggleRow(title: String, subtitle: String, checked: Boolean, enabled: Boolea
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.titleMedium, color = if (enabled) Lif.colors.text else Lif.colors.dim)
-            Text(subtitle, style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+            if (subtitle.isNotBlank()) Text(subtitle, style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
         }
         Spacer(Modifier.width(8.dp))
         Switch(checked = checked, onCheckedChange = onChange, enabled = enabled)

@@ -72,7 +72,7 @@
     <string name="rest_day_info">Rest day: no penalty tonight, but the streak won\'t grow either.</string>
     <string name="forge">Mission forge</string>
     <string name="penalty_section">Penalty</string>
-    <string name="penalty_info">Clear these missions to lift the penalty early. Any left over vanish when it ends.</string>
+    <string name="penalty_info">Do these missions to lift it early.</string>
     <string name="portal_section">Portal open</string>
     <string name="portal_info">A timed portal: double rewards and a chance to bind a shadow. It closes on its own.</string>
     <string name="daily_section">Daily missions</string>
@@ -592,4 +592,8 @@
     <string name="season_summer">Summer event</string>
     <string name="season_exclusive">Exclusive shadow</string>
     <string name="season_next">Next week: %1$s</string>
+    <string name="today_count_suffix">missions · %1$s</string>
+    <string name="more_options">More options</string>
+    <string name="options_none">none on</string>
+    <string name="custom">Custom</string>
 </resources>

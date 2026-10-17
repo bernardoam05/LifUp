@@ -111,9 +111,6 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding()) {
             message?.let { Text(it, color = Lif.colors.accent, style = MaterialTheme.typography.labelLarge) }
 
-            SectionTitle(stringResource(R.string.guide_section))
-            com.lifup.app.ui.guide.GuideList(s)
-
             SectionTitle(stringResource(R.string.profile))
             var name by remember { mutableStateOf(s.player.name) }
             OutlinedTextField(
@@ -198,6 +195,9 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
             }
 
             CrashReportRow()
+
+            Spacer(Modifier.height(12.dp))
+            com.lifup.app.ui.guide.GuideList(s)
 
             SectionTitle(stringResource(R.string.about))
             Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)

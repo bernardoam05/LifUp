@@ -65,7 +65,7 @@
     <string name="rest_day_info">Jour de repos : pas de pénalité ce soir, mais le streak n\'augmente pas non plus.</string>
     <string name="forge">Forge de missions</string>
     <string name="penalty_section">Pénalité</string>
-    <string name="penalty_info">Termine ces missions pour lever la pénalité plus tôt. Celles qui restent disparaissent à la fin.</string>
+    <string name="penalty_info">Fais ces missions pour la lever plus tôt.</string>
     <string name="portal_section">Portail ouvert</string>
     <string name="portal_info">Un portail temporaire : récompenses doublées et une chance de lier une ombre. Il se ferme tout seul.</string>
     <string name="daily_section">Missions quotidiennes</string>
@@ -573,4 +573,8 @@
     <string name="season_summer">Événement de l\'été</string>
     <string name="season_exclusive">Ombre exclusive</string>
     <string name="season_next">La semaine prochaine : %1$s</string>
+    <string name="today_count_suffix">missions · %1$s</string>
+    <string name="more_options">Plus d\'options</string>
+    <string name="options_none">aucune active</string>
+    <string name="custom">Personnaliser</string>
 </resources>
