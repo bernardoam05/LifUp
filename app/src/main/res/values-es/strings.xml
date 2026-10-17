@@ -288,9 +288,9 @@
     <string name="rigor_easy">Fácil</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Difícil</string>
-    <string name="rigor_easy_info">2 misiones extra al día. Penalizaciones leves: una misión de penalización y el streak solo se rompe si fallas todo. Ventana de bloqueo 13:00–19:00.</string>
-    <string name="rigor_normal_info">3–5 misiones extra al día según tu nivel. Un día fallado cuesta XP y oro, rompe el streak y añade hasta 3 misiones de penalización. Ventana de bloqueo 10:00–22:00.</string>
-    <string name="rigor_hard_info">4–7 misiones extra al día. Pérdidas dobles, hasta 4 misiones de penalización y bloqueo de 24 horas.</string>
+    <string name="rigor_easy_info">3 misiones extra al día. Penalizaciones leves: una misión de penalización y el streak solo se rompe si fallas todo. Ventana de bloqueo 13:00–19:00.</string>
+    <string name="rigor_normal_info">4–6 misiones extra al día según tu nivel. Un día fallado cuesta XP y oro, rompe el streak y añade hasta 3 misiones de penalización. Ventana de bloqueo 10:00–22:00.</string>
+    <string name="rigor_hard_info">5–8 misiones extra al día. Pérdidas dobles, hasta 4 misiones de penalización y bloqueo de 24 horas.</string>
     <string name="auto_missions">Cantidad de misiones automática</string>
     <string name="auto_missions_info">Ahora mismo %1$d misiones extra al día, más las fijas.</string>
     <string name="extra_daily_missions">Misiones extra al día</string>

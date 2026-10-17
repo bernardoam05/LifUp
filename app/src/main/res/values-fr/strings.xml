@@ -273,9 +273,9 @@
     <string name="rigor_easy">Facile</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Difficile</string>
-    <string name="rigor_easy_info">2 missions bonus par jour. Pénalités légères : une mission de pénalité, et le streak ne casse que si tu rates tout. Plage de blocage 13h–19h.</string>
-    <string name="rigor_normal_info">3 à 5 missions bonus par jour selon ton niveau. Un jour raté coûte de l\'XP et de l\'or, casse le streak et ajoute jusqu\'à 3 missions de pénalité. Plage de blocage 10h–22h.</string>
-    <string name="rigor_hard_info">4 à 7 missions bonus par jour. Pertes doublées, jusqu\'à 4 missions de pénalité et un blocage de 24 heures.</string>
+    <string name="rigor_easy_info">3 missions bonus par jour. Pénalités légères : une mission de pénalité, et le streak ne casse que si tu rates tout. Plage de blocage 13h–19h.</string>
+    <string name="rigor_normal_info">4 à 6 missions bonus par jour selon ton niveau. Un jour raté coûte de l\'XP et de l\'or, casse le streak et ajoute jusqu\'à 3 missions de pénalité. Plage de blocage 10h–22h.</string>
+    <string name="rigor_hard_info">5 à 8 missions bonus par jour. Pertes doublées, jusqu\'à 4 missions de pénalité et un blocage de 24 heures.</string>
     <string name="auto_missions">Nombre de missions auto</string>
     <string name="auto_missions_info">Actuellement %1$d missions bonus par jour, en plus des fixes.</string>
     <string name="extra_daily_missions">Missions bonus par jour</string>

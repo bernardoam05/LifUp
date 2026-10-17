@@ -78,9 +78,9 @@ object Rules {
 
     fun dailyPoolCount(level: Int, settings: Settings): Int = settings.dailyPoolOverride?.coerceIn(1, 10)
         ?: when (settings.rigor) {
-            Rigor.EASY -> 2
-            Rigor.NORMAL -> minOf(3 + level / 12, 5)
-            Rigor.HARD -> minOf(4 + level / 8, 7)
+            Rigor.EASY -> 3
+            Rigor.NORMAL -> minOf(4 + level / 12, 6)
+            Rigor.HARD -> minOf(5 + level / 8, 8)
         }
 
     fun attrGain(type: QuestType?): Attributes = when (type) {

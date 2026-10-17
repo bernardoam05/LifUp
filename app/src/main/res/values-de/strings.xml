@@ -288,9 +288,9 @@
     <string name="rigor_easy">Leicht</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Schwer</string>
-    <string name="rigor_easy_info">2 Extra-Missionen pro Tag. Milde Strafen: eine Strafmission, der Streak bricht nur, wenn du alles verpasst. Sperrfenster 13:00–19:00.</string>
-    <string name="rigor_normal_info">3–5 Extra-Missionen pro Tag, je nach Level. Ein gescheiterter Tag kostet XP und Gold, bricht den Streak und bringt bis zu 3 Strafmissionen. Sperrfenster 10:00–22:00.</string>
-    <string name="rigor_hard_info">4–7 Extra-Missionen pro Tag. Doppelte Verluste, bis zu 4 Strafmissionen und 24 Stunden Sperre.</string>
+    <string name="rigor_easy_info">3 Extra-Missionen pro Tag. Milde Strafen: eine Strafmission, der Streak bricht nur, wenn du alles verpasst. Sperrfenster 13:00–19:00.</string>
+    <string name="rigor_normal_info">4–6 Extra-Missionen pro Tag, je nach Level. Ein gescheiterter Tag kostet XP und Gold, bricht den Streak und bringt bis zu 3 Strafmissionen. Sperrfenster 10:00–22:00.</string>
+    <string name="rigor_hard_info">5–8 Extra-Missionen pro Tag. Doppelte Verluste, bis zu 4 Strafmissionen und 24 Stunden Sperre.</string>
     <string name="auto_missions">Missionsanzahl automatisch</string>
     <string name="auto_missions_info">Aktuell %1$d Extra-Missionen pro Tag, plus die festen.</string>
     <string name="extra_daily_missions">Extra-Missionen pro Tag</string>

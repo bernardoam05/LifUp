@@ -273,9 +273,9 @@
     <string name="rigor_easy">Fácil</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Difícil</string>
-    <string name="rigor_easy_info">2 missões sorteadas por dia. Penalizações leves: uma missão de penalização e o streak só quebra se falhares tudo. Janela de bloqueio 13h–19h.</string>
-    <string name="rigor_normal_info">3 a 5 missões sorteadas por dia, conforme o nível. Um dia falhado custa XP e ouro, quebra o streak e junta até 3 missões de penalização. Janela de bloqueio 10h–22h.</string>
-    <string name="rigor_hard_info">4 a 7 missões sorteadas por dia. Perdas a dobrar, até 4 missões de penalização e bloqueio de 24 horas.</string>
+    <string name="rigor_easy_info">3 missões sorteadas por dia. Penalizações leves: uma missão de penalização e o streak só quebra se falhares tudo. Janela de bloqueio 13h–19h.</string>
+    <string name="rigor_normal_info">4 a 6 missões sorteadas por dia, conforme o nível. Um dia falhado custa XP e ouro, quebra o streak e junta até 3 missões de penalização. Janela de bloqueio 10h–22h.</string>
+    <string name="rigor_hard_info">5 a 8 missões sorteadas por dia. Perdas a dobrar, até 4 missões de penalização e bloqueio de 24 horas.</string>
     <string name="auto_missions">Número de missões automático</string>
     <string name="auto_missions_info">Neste momento %1$d missões sorteadas por dia, mais as fixas.</string>
     <string name="extra_daily_missions">Missões sorteadas por dia</string>

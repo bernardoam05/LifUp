@@ -23,10 +23,10 @@ class EngineTest {
 
     private fun fresh(time: String = "2026-10-14T09:00") = run(GameState(onboarded = true), time)
 
-    @Test fun `level 1 normal day has 4 core and 3 pool missions`() {
+    @Test fun `level 1 normal day has 1 core and 4 pool missions`() {
         val s = fresh()
-        assertEquals(7, s.dailyQuests.size)
-        assertEquals(4, s.dailyQuests.count { content.questDefById[it.defId]?.kind == DefKind.CORE })
+        assertEquals(5, s.dailyQuests.size)
+        assertEquals(1, s.dailyQuests.count { content.questDefById[it.defId]?.kind == DefKind.CORE })
         assertNotNull(s.boss)
         assertEquals(3, s.shop.shadowOffers.size)
     }
@@ -442,6 +442,18 @@ class EngineTest {
             assertNull(p.quest.auto)
             assertTrue((p.expiresAt - p.opensAt) / 60_000.0 >= needed * 1.5)
         }
+    }
+
+    @Test fun `unfinished penalty missions do not cause the next penalty`() {
+        var s = run(fresh(), "2026-10-15T08:00")
+        assertTrue(s.penalty.active)
+        val penaltyIds = s.penalty.quests.map { it.id }
+        s = run(s, "2026-10-15T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
+        s = run(s, "2026-10-16T08:00")
+        val report = s.rewards.filterIsInstance<Reward.DayReport>().last()
+        assertTrue(report.perfect)
+        assertNull(report.penalty)
+        assertEquals(penaltyIds, s.penalty.quests.map { it.id })
     }
 
     @Test fun `state survives json round trip`() {

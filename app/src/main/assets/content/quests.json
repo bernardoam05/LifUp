@@ -21,7 +21,7 @@
   },
   {
    "id": "core_squats",
-   "kind": "CORE",
+   "kind": "POOL",
    "type": "TRAINING",
    "title": {
     "pt": "Preparação Física: Pernas",
@@ -40,7 +40,7 @@
   },
   {
    "id": "core_reading",
-   "kind": "CORE",
+   "kind": "POOL",
    "type": "KNOWLEDGE",
    "title": {
     "pt": "Treino Mental: Leitura",
@@ -59,7 +59,7 @@
   },
   {
    "id": "core_water",
-   "kind": "CORE",
+   "kind": "POOL",
    "type": "TRAINING",
    "title": {
     "pt": "Sobrevivência: Hidratação",

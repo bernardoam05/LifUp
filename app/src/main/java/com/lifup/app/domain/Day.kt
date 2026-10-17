@@ -36,9 +36,9 @@ private fun Tx.closeDay(day: LocalDate) {
     val daily = s.dailyQuests
     val rest = s.daily.rest
     val sideFailed = if (s.settings.sidePenalize) s.sideQuests.count { !it.done && it.createdDay < ctx.todayKey } else 0
-    val penaltyUnfinished = if (s.penalty.active) s.penalty.quests.count { it.status != QuestStatus.DONE } else 0
     val done = daily.count { it.isSuccessful() }
-    val failed = daily.size - done + sideFailed + penaltyUnfinished
+    // Unfinished penalty missions don't feed the next penalty.
+    val failed = daily.size - done + sideFailed
     val perfect = daily.isNotEmpty() && failed == 0
     val hadPenaltyBefore = s.dayLog.lastOrNull()?.penalty == true
 
@@ -65,7 +65,7 @@ private fun Tx.closeDay(day: LocalDate) {
             setStreak(p.streak + 1)
         }
         else -> {
-            val result = applyFailure(failed, daily.size + sideFailed + penaltyUnfinished)
+            val result = applyFailure(failed, daily.size + sideFailed)
             penaltyInfo = result.first
             streakSavedBy = result.second
         }

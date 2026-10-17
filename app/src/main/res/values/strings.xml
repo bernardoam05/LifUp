@@ -289,9 +289,9 @@
     <string name="rigor_easy">Easy</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Hard</string>
-    <string name="rigor_easy_info">2 extra missions a day. Light penalties: one penalty mission, the streak only breaks if you fail everything. Blocking window 13:00–19:00.</string>
-    <string name="rigor_normal_info">3–5 extra missions a day as you level up. A failed day costs XP and gold, breaks the streak and adds up to 3 penalty missions. Blocking window 10:00–22:00.</string>
-    <string name="rigor_hard_info">4–7 extra missions a day. Double losses, up to 4 penalty missions and a 24-hour block.</string>
+    <string name="rigor_easy_info">3 extra missions a day. Light penalties: one penalty mission, the streak only breaks if you fail everything. Blocking window 13:00–19:00.</string>
+    <string name="rigor_normal_info">4–6 extra missions a day as you level up. A failed day costs XP and gold, breaks the streak and adds up to 3 penalty missions. Blocking window 10:00–22:00.</string>
+    <string name="rigor_hard_info">5–8 extra missions a day. Double losses, up to 4 penalty missions and a 24-hour block.</string>
     <string name="auto_missions">Automatic mission count</string>
     <string name="auto_missions_info">Currently %1$d extra missions per day, plus the fixed ones.</string>
     <string name="extra_daily_missions">Extra missions per day</string>
