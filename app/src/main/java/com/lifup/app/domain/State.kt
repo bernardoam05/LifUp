@@ -206,6 +206,9 @@ sealed interface Reward {
         val bonusXp: Int,
         val penalty: PenaltyInfo? = null,
         val streakSavedBy: String? = null,
+        /** Enough missions for the streak, but not all of them. */
+        val passed: Boolean = false,
+        val streakRestored: Boolean = false,
     ) : Reward
 
     @Serializable @SerialName("streak")
@@ -224,6 +227,9 @@ enum class ToastKind {
     LEVEL_UP, ITEM_FOUND, PENALTY_CLEARED, FOCUS_DONE, FOCUS_LOST, BOSS_ESCAPED, PORTAL_ESCAPED,
     PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED,
 }
+
+@Serializable
+data class StreakRecovery(val streak: Int, val day: String)
 
 @Serializable
 data class GameState(
@@ -256,6 +262,12 @@ data class GameState(
     val timers: Map<String, MissionTimer> = emptyMap(),
     val dayLog: List<DayLog> = emptyList(),
     val daily: DailyFlags = DailyFlags(),
+    /** Rest days used in [restWeek]. */
+    val restWeek: String = "",
+    val restUsed: Int = 0,
+    /** A streak lost yesterday that a perfect [StreakRecovery.day] brings back. */
+    val recovery: StreakRecovery? = null,
+    val recoveryWeek: String = "",
     val passiveCooldowns: Map<Passive, Long> = emptyMap(),
     val doubleXpNext: Boolean = false,
     val rewards: List<Reward> = emptyList(),

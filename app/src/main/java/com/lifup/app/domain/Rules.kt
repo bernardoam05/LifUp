@@ -76,12 +76,20 @@ object Rules {
         else -> QuestRank.E
     }
 
-    fun dailyPoolCount(level: Int, settings: Settings): Int = settings.dailyPoolOverride?.coerceIn(1, 10)
-        ?: when (settings.rigor) {
-            Rigor.EASY -> 3
-            Rigor.NORMAL -> minOf(4 + level / 12, 6)
-            Rigor.HARD -> minOf(5 + level / 8, 8)
-        }
+    /** Drawn missions per day; rigor only changes the consequences, not the workload. */
+    fun dailyPoolCount(level: Int, settings: Settings): Int = settings.dailyPoolOverride?.coerceIn(0, 10)
+        ?: minOf(3 + level / 15, 5)
+
+    /** Share of the day's missions that keeps the streak and avoids the penalty. */
+    fun passRatio(rigor: Rigor) = when (rigor) { Rigor.EASY -> 0.6; Rigor.NORMAL -> 0.75; Rigor.HARD -> 1.0 }
+
+    /** Below this share the day is a bad one: penalty missions and app blocking. */
+    const val SEVERE_RATIO = 0.5
+
+    fun restDaysPerWeek(rigor: Rigor) = when (rigor) { Rigor.EASY -> 2; Rigor.NORMAL -> 1; Rigor.HARD -> 0 }
+
+    /** Rest days must be called before this hour, not as a last-minute escape. */
+    const val REST_DEADLINE_HOUR = 12
 
     fun attrGain(type: QuestType?): Attributes = when (type) {
         QuestType.TRAINING -> Attributes(str = 12, vit = 6)

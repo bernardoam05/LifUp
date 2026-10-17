@@ -289,9 +289,9 @@
     <string name="rigor_easy">Easy</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Hard</string>
-    <string name="rigor_easy_info">3 extra missions a day. Light penalties: one penalty mission, the streak only breaks if you fail everything. Blocking window 13:00–19:00.</string>
-    <string name="rigor_normal_info">4–6 extra missions a day as you level up. A failed day costs XP and gold, breaks the streak and adds up to 3 penalty missions. Blocking window 10:00–22:00.</string>
-    <string name="rigor_hard_info">5–8 extra missions a day. Double losses, up to 4 penalty missions and a 24-hour block.</string>
+    <string name="rigor_easy_info">A day counts with 60% of the missions. Below that you lose some XP and the streak; below 50% there is one penalty mission and blocking from 1 PM to 7 PM. 2 rest days a week.</string>
+    <string name="rigor_normal_info">A day counts with 75% of the missions. Below that you lose XP in proportion and the streak; below 50% up to 3 penalty missions and blocking from 10 AM to 10 PM. 1 rest day a week.</string>
+    <string name="rigor_hard_info">Only 100% counts. Double losses; below 50% up to 4 penalty missions and 24-hour blocking. No rest days.</string>
     <string name="auto_missions">Automatic mission count</string>
     <string name="auto_missions_info">Currently %1$d extra missions per day, plus the fixed ones.</string>
     <string name="extra_daily_missions">Extra missions per day</string>
@@ -488,4 +488,9 @@
     <string name="auto_off">Undone: automatic counting is off for this mission until tomorrow. Mark it by hand when you really finish it.</string>
     <string name="side_rewards_left">rewards today: %1$d/%2$d</string>
     <string name="side_no_reward">no reward</string>
+    <string name="rest_day_left">Rest · %1$d</string>
+    <string name="today_goal">Streak needs %1$d of %2$d · all of them for a perfect day</string>
+    <string name="streak_recovery">Make today perfect to get your %1$d-day streak back</string>
+    <string name="report_passed">Day kept</string>
+    <string name="report_streak_restored">Streak recovered</string>
 </resources>

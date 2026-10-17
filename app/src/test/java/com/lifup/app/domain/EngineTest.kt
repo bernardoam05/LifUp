@@ -23,9 +23,9 @@ class EngineTest {
 
     private fun fresh(time: String = "2026-10-14T09:00") = run(GameState(onboarded = true), time)
 
-    @Test fun `level 1 normal day has 1 core and 4 pool missions`() {
+    @Test fun `level 1 day has 1 core and 3 pool missions`() {
         val s = fresh()
-        assertEquals(5, s.dailyQuests.size)
+        assertEquals(4, s.dailyQuests.size)
         assertEquals(1, s.dailyQuests.count { content.questDefById[it.defId]?.kind == DefKind.CORE })
         assertNotNull(s.boss)
         assertEquals(3, s.shop.shadowOffers.size)
@@ -65,15 +65,13 @@ class EngineTest {
     }
 
     @Test fun `failed day applies penalty and resets streak`() {
-        var s = fresh().let { it.copy(player = it.player.copy(streak = 5, xp = 90, gold = 500)) }
-        // Avoid/limit missions still count as kept and pay out at midnight.
-        val keptGold = s.dailyQuests.filter { it.status == QuestStatus.OPEN && it.isSuccessful() }.sumOf { it.gold }
+        var s = dayWith(0).let { it.copy(player = it.player.copy(xp = 90)) }
         s = run(s, "2026-10-15T08:00")
         assertTrue(s.penalty.active)
         assertTrue(s.penalty.quests.isNotEmpty())
         assertEquals(0, s.player.streak)
         assertEquals(0, s.player.xp)
-        assertEquals(500 + keptGold - 120, s.player.gold)
+        assertEquals(500 - 120, s.player.gold)
         // Loss is capped by the XP actually held (never drops a level).
         assertTrue(s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost in 1..120)
         s.penalty.quests.forEach { pq -> s = run(s, "2026-10-15T09:00") { completeQuest(pq.id) } }
@@ -453,6 +451,63 @@ class EngineTest {
         assertTrue(report.perfect)
         assertNull(report.penalty)
         assertFalse(s.penalty.active)
+    }
+
+    /** A level-1 day with exactly [done] of 4 plain missions completed. */
+    private fun dayWith(done: Int, streak: Int = 5): GameState {
+        val defs = listOf("core_pushups", "core_squats", "core_reading", "core_water")
+        var s = fresh().let { st -> st.copy(quests = defs.map { buildQuest(content.questDefById[it]!!, 1, QuestOrigin.DAILY) }, player = st.player.copy(streak = streak, xp = 150, gold = 500)) }
+        s = run(s, "2026-10-14T12:00") { s.dailyQuests.take(done).forEach { completeQuest(it.id) } }
+        return s
+    }
+
+    @Test fun `three of four keeps the streak on normal`() {
+        val s = run(dayWith(3), "2026-10-15T08:00")
+        val report = s.rewards.filterIsInstance<Reward.DayReport>().last()
+        assertTrue(report.passed)
+        assertFalse(report.perfect)
+        assertNull(report.penalty)
+        assertEquals(6, s.player.streak)
+    }
+
+    @Test fun `half done is a light penalty without missions`() {
+        val s = run(dayWith(2), "2026-10-15T08:00")
+        val pen = s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!
+        assertEquals(60, pen.xpLost)
+        assertEquals(0, pen.quests)
+        assertFalse(s.penalty.active)
+        assertEquals(0, s.player.streak)
+        assertEquals(StreakRecovery(5, "2026-10-15"), s.recovery)
+    }
+
+    @Test fun `a bad day brings penalty missions`() {
+        val s = run(dayWith(1), "2026-10-15T08:00")
+        assertTrue(s.penalty.active)
+        assertEquals(90, s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost)
+    }
+
+    @Test fun `a perfect day right after a fail recovers the streak once a week`() {
+        var s = run(dayWith(1), "2026-10-15T08:00")
+        s = run(s, "2026-10-15T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
+        s = run(s, "2026-10-16T08:00")
+        assertEquals(6, s.player.streak)
+        assertTrue(s.rewards.filterIsInstance<Reward.DayReport>().last().streakRestored)
+        s = run(s, "2026-10-17T08:00")
+        assertEquals(0, s.player.streak)
+        assertNull(s.recovery)
+    }
+
+    @Test fun `rest days are limited per week and only before noon`() {
+        var s = run(fresh(), "2026-10-14T13:00") { toggleRestDay() }
+        assertFalse(s.daily.rest)
+        s = run(s, "2026-10-14T10:00") { toggleRestDay() }
+        assertTrue(s.daily.rest)
+        s = run(s, "2026-10-15T08:00")
+        s = run(s, "2026-10-15T09:00") { toggleRestDay() }
+        assertFalse(s.daily.rest)
+        s = run(s, "2026-10-20T08:00")
+        s = run(s, "2026-10-20T09:00") { toggleRestDay() }
+        assertTrue(s.daily.rest)
     }
 
     @Test fun `state survives json round trip`() {

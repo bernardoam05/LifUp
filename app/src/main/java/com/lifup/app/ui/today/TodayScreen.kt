@@ -43,7 +43,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.lifup.app.R
+import com.lifup.app.domain.Ctx
 import com.lifup.app.domain.GameState
+import com.lifup.app.domain.canRest
+import com.lifup.app.domain.restDaysLeft
 import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.addExtraQuest
@@ -97,10 +100,12 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
                     )
                     Text(stringResource(R.string.today_progress, done, daily.size), style = MaterialTheme.typography.headlineSmall)
                 }
+                val ctx = Ctx(content, now)
                 FilterChip(
                     selected = s.daily.rest,
                     onClick = { act { toggleRestDay() } },
-                    label = { Text(stringResource(R.string.rest_day)) },
+                    enabled = s.canRest(ctx),
+                    label = { Text(if (s.daily.rest) stringResource(R.string.rest_day) else stringResource(R.string.rest_day_left, s.restDaysLeft(ctx.weekKey).coerceAtLeast(0))) },
                     leadingIcon = { Icon(Icons.Rounded.Bedtime, null, Modifier.size(16.dp)) },
                     colors = FilterChipDefaults.filterChipColors(selectedContainerColor = p.purple.copy(alpha = 0.2f), selectedLabelColor = p.purple, selectedLeadingIconColor = p.purple),
                 )
@@ -109,6 +114,13 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
             Spacer(Modifier.height(6.dp))
             Bar(if (daily.isEmpty()) 0f else done / daily.size.toFloat(), if (s.daily.rest) p.purple else p.accent)
             if (s.daily.rest) Text(stringResource(R.string.rest_day_info), style = MaterialTheme.typography.bodySmall, color = p.purple, modifier = Modifier.padding(top = 6.dp))
+            else if (daily.isNotEmpty()) {
+                val needed = kotlin.math.ceil(daily.size * Rules.passRatio(s.settings.rigor) - 1e-9).toInt()
+                Text(stringResource(R.string.today_goal, needed, daily.size), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.padding(top = 6.dp))
+            }
+            s.recovery?.takeIf { it.day == s.day }?.let { r ->
+                Text(stringResource(R.string.streak_recovery, r.streak), style = MaterialTheme.typography.bodySmall, color = p.gold, modifier = Modifier.padding(top = 4.dp))
+            }
         }
 
         if (s.penalty.active) {

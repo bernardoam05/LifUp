@@ -288,9 +288,9 @@
     <string name="rigor_easy">Leicht</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Schwer</string>
-    <string name="rigor_easy_info">3 Extra-Missionen pro Tag. Milde Strafen: eine Strafmission, der Streak bricht nur, wenn du alles verpasst. Sperrfenster 13:00–19:00.</string>
-    <string name="rigor_normal_info">4–6 Extra-Missionen pro Tag, je nach Level. Ein gescheiterter Tag kostet XP und Gold, bricht den Streak und bringt bis zu 3 Strafmissionen. Sperrfenster 10:00–22:00.</string>
-    <string name="rigor_hard_info">5–8 Extra-Missionen pro Tag. Doppelte Verluste, bis zu 4 Strafmissionen und 24 Stunden Sperre.</string>
+    <string name="rigor_easy_info">Ein Tag zählt mit 60 % der Missionen. Darunter verlierst du etwas XP und den Streak; unter 50 % gibt es eine Strafmission und eine Sperre von 13 bis 19 Uhr. 2 Ruhetage pro Woche.</string>
+    <string name="rigor_normal_info">Ein Tag zählt mit 75 % der Missionen. Darunter verlierst du anteilig XP und den Streak; unter 50 % bis zu 3 Strafmissionen und eine Sperre von 10 bis 22 Uhr. 1 Ruhetag pro Woche.</string>
+    <string name="rigor_hard_info">Nur 100 % zählen. Doppelte Verluste; unter 50 % bis zu 4 Strafmissionen und eine 24-Stunden-Sperre. Keine Ruhetage.</string>
     <string name="auto_missions">Missionsanzahl automatisch</string>
     <string name="auto_missions_info">Aktuell %1$d Extra-Missionen pro Tag, plus die festen.</string>
     <string name="extra_daily_missions">Extra-Missionen pro Tag</string>
@@ -487,4 +487,9 @@
     <string name="auto_off">Rückgängig gemacht: Die automatische Zählung ist für diese Mission bis morgen aus. Markiere sie von Hand, wenn du sie wirklich erledigt hast.</string>
     <string name="side_rewards_left">Belohnungen heute: %1$d/%2$d</string>
     <string name="side_no_reward">ohne Belohnung</string>
+    <string name="rest_day_left">Ruhetag · %1$d</string>
+    <string name="today_goal">Streak mit %1$d von %2$d · alle für einen perfekten Tag</string>
+    <string name="streak_recovery">Mach heute einen perfekten Tag, um deinen Streak von %1$d Tagen zurückzuholen</string>
+    <string name="report_passed">Tag geschafft</string>
+    <string name="report_streak_restored">Streak zurückgeholt</string>
 </resources>

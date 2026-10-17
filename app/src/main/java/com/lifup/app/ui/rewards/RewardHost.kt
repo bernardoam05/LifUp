@@ -141,6 +141,7 @@ private fun DayReportCard(r: Reward.DayReport, dismiss: () -> Unit) {
     val (icon, color, title) = when {
         r.rest -> Triple(Icons.Rounded.Bedtime, c.purple, stringResource(R.string.report_rest))
         r.perfect -> Triple(Icons.Rounded.TaskAlt, c.green, stringResource(R.string.report_perfect))
+        r.passed -> Triple(Icons.Rounded.TaskAlt, c.accent, stringResource(R.string.report_passed))
         pen != null && pen.absorbedBy != null -> Triple(Icons.Rounded.TaskAlt, c.purple, stringResource(R.string.report_absorbed))
         else -> Triple(Icons.Rounded.Warning, c.red, stringResource(R.string.report_failed))
     }
@@ -152,13 +153,14 @@ private fun DayReportCard(r: Reward.DayReport, dismiss: () -> Unit) {
                 Line(stringResource(R.string.report_absorbed_by, content.shadowById[pen.absorbedBy]?.name?.local().orEmpty()), c.purple)
             } else {
                 Line(stringResource(R.string.report_loss, pen.xpLost, pen.goldLost), c.red)
-                Line(stringResource(R.string.report_penalty_quests, pen.quests), c.red)
+                if (pen.quests > 0) Line(stringResource(R.string.report_penalty_quests, pen.quests), c.red)
             }
         }
         r.streakSavedBy?.let { by ->
             val name = content.shadowById[by]?.name?.local() ?: content.itemById[by]?.name?.local() ?: by
             Line(stringResource(R.string.report_streak_saved, name), c.gold)
         }
+        if (r.streakRestored) Line(stringResource(R.string.report_streak_restored), c.gold)
         Line(stringResource(R.string.report_streak, r.streak), if (r.streak > 0) c.red else c.muted)
     }
 }
