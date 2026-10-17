@@ -190,16 +190,17 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.Bottom) {
-                    Text(p.name.ifBlank { stringResource(R.string.default_hunter) }.uppercase(), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                    // The name gives way first; the level never wraps.
+                    Text(p.name.ifBlank { stringResource(R.string.default_hunter) }.uppercase(), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.level_short, p.level), style = MaterialTheme.typography.labelMedium, color = Lif.colors.accent)
+                    Text(stringResource(R.string.level_short, p.level), style = MaterialTheme.typography.labelMedium, color = Lif.colors.accent, maxLines = 1, softWrap = false)
                 }
                 Spacer(Modifier.size(4.dp))
                 Bar(p.xp / Rules.xpForLevel(p.level).toFloat(), height = 5.dp)
                 Text("${p.xp} / ${Rules.xpForLevel(p.level)} XP", style = MaterialTheme.typography.labelSmall, color = Lif.colors.dim)
             }
             Spacer(Modifier.width(10.dp))
-            HudChip(Icons.Rounded.Paid, p.gold.toString(), Lif.colors.gold)
+            HudChip(Icons.Rounded.Paid, fmtCompact(p.gold.toLong()), Lif.colors.gold)
             Spacer(Modifier.width(8.dp))
             HudChip(Icons.Rounded.LocalFireDepartment, p.streak.toString(), if (p.streak > 0) Lif.colors.red else Lif.colors.dim)
             IconButton(onClick = openSettings) { Icon(Icons.Rounded.Settings, stringResource(R.string.settings), tint = Lif.colors.muted) }
@@ -233,7 +234,7 @@ private fun HudChip(icon: ImageVector, value: String, color: androidx.compose.ui
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, null, tint = color, modifier = Modifier.size(16.dp))
         Spacer(Modifier.width(3.dp))
-        Text(value, style = MaterialTheme.typography.labelLarge, color = Lif.colors.text)
+        Text(value, style = MaterialTheme.typography.labelLarge, color = Lif.colors.text, maxLines = 1, softWrap = false)
     }
 }
 

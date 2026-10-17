@@ -58,10 +58,18 @@ fun fmtNum(v: Double): String = if (abs(v - v.roundToInt()) < 0.05) v.roundToInt
 
 fun questTitle(q: Quest, lang: String) = q.title.text(lang)
 
+/** Short number for tight spots: 9 999, 12,3k, 10,0M. */
+fun fmtCompact(v: Long): String = when {
+    v < 10_000 -> v.toString()
+    v < 1_000_000 -> "%.1fk".format(v / 1_000.0).replace(".0k", "k")
+    else -> "%.1fM".format(v / 1_000_000.0)
+}
+
 /** Title of a mission definition, built-in or made in the Forge. */
 @Composable
 fun defTitle(s: com.lifup.app.domain.GameState, id: String): String =
-    (content.questDefById[id] ?: s.customDefs.firstOrNull { it.id == id })?.title?.local() ?: id
+    (content.questDefById[id] ?: s.customDefs.firstOrNull { it.id == id })?.title?.local()
+        ?: s.allQuests.firstOrNull { it.defId == id }?.title?.local() ?: id
 
 fun questDetail(q: Quest, lang: String, unitLabel: String = q.unit) =
     q.description.text(lang).replace("{target}", fmtNum(q.target)).replace("{unit}", unitLabel)
