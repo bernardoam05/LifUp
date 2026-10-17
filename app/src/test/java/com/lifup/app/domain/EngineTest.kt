@@ -124,13 +124,17 @@ class EngineTest {
         assertTrue(s.rewards.filterIsInstance<Reward.DayReport>().last().rest)
     }
 
-    @Test fun `penalty block window follows rigor`() {
+    @Test fun `penalty and its block last 24 hours`() {
         var s = fresh().let { it.copy(settings = it.settings.copy(blockOnPenalty = true)) }
         s = run(s, "2026-10-15T08:00")
-        assertEquals(at("2026-10-15T10:00"), s.penalty.blockStart)
-        assertEquals(at("2026-10-15T22:00"), s.penalty.blockEnd)
-        assertTrue(s.penaltyBlockActive(at("2026-10-15T12:00")))
-        assertFalse(s.penaltyBlockActive(at("2026-10-15T09:00")))
+        assertEquals(at("2026-10-15T08:00"), s.penalty.blockStart)
+        assertEquals(at("2026-10-16T08:00"), s.penalty.blockEnd)
+        assertTrue(s.penaltyBlockActive(at("2026-10-15T23:00")))
+        s = run(s, "2026-10-15T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
+        s = run(s, "2026-10-16T07:59")
+        assertTrue(s.penaltyBlockActive(at("2026-10-16T07:59")))
+        s = run(s, "2026-10-16T08:00")
+        assertFalse(s.penalty.active)
     }
 
     @Test fun `streak shield item saves the streak`() {
@@ -421,14 +425,12 @@ class EngineTest {
         assertEquals(QuestStatus.DONE, s.quests.first { it.id == q.id }.status)
     }
 
-    @Test fun `turning blocking on during a penalty schedules the block`() {
+    @Test fun `turning blocking on during a penalty blocks right away`() {
         var s = run(fresh(), "2026-10-15T08:00")
         assertTrue(s.penalty.active)
-        assertEquals(0L, s.penalty.blockEnd)
-        s = run(s, "2026-10-15T09:00") { setBlockOnPenalty(true) }
         assertFalse(s.penaltyBlockActive(at("2026-10-15T09:30")))
-        assertTrue(s.penaltyBlockActive(at("2026-10-15T11:00")))
-        assertFalse(s.penaltyBlockActive(at("2026-10-15T22:30")))
+        s = run(s, "2026-10-15T09:00") { setBlockOnPenalty(true) }
+        assertTrue(s.penaltyBlockActive(at("2026-10-15T09:30")))
     }
 
     @Test fun `portals always last longer than their mission takes`() {

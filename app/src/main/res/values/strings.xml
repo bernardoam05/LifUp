@@ -289,8 +289,8 @@
     <string name="rigor_easy">Easy</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Hard</string>
-    <string name="rigor_easy_info">A day counts with 60% of the missions. Below that you lose some XP and the streak; below 50% there is one penalty mission and blocking from 1 PM to 7 PM. 2 rest days a week.</string>
-    <string name="rigor_normal_info">A day counts with 75% of the missions. Below that you lose XP in proportion and the streak; below 50% up to 3 penalty missions and blocking from 10 AM to 10 PM. 1 rest day a week.</string>
+    <string name="rigor_easy_info">A day counts with 60% of the missions. Below that you lose some XP and the streak; below 50% there is one penalty mission and 24-hour blocking. 2 rest days a week.</string>
+    <string name="rigor_normal_info">A day counts with 75% of the missions. Below that you lose XP in proportion and the streak; below 50% up to 3 penalty missions and 24-hour blocking. 1 rest day a week.</string>
     <string name="rigor_hard_info">Only 100% counts. Double losses; below 50% up to 4 penalty missions and 24-hour blocking. No rest days.</string>
     <string name="auto_missions">Automatic mission count</string>
     <string name="auto_missions_info">Currently %1$d extra missions per day, plus the fixed ones.</string>

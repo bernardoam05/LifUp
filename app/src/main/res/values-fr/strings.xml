@@ -273,8 +273,8 @@
     <string name="rigor_easy">Facile</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Difficile</string>
-    <string name="rigor_easy_info">La journée compte avec 60 % des missions. En dessous tu perds un peu d\'XP et la série ; sous 50 % il y a une mission de pénalité et un blocage de 13 h à 19 h. 2 jours de repos par semaine.</string>
-    <string name="rigor_normal_info">La journée compte avec 75 % des missions. En dessous tu perds de l\'XP en proportion et la série ; sous 50 % jusqu\'à 3 missions de pénalité et un blocage de 10 h à 22 h. 1 jour de repos par semaine.</string>
+    <string name="rigor_easy_info">La journée compte avec 60 % des missions. En dessous tu perds un peu d\'XP et la série ; sous 50 % il y a une mission de pénalité et un blocage de 24 heures. 2 jours de repos par semaine.</string>
+    <string name="rigor_normal_info">La journée compte avec 75 % des missions. En dessous tu perds de l\'XP en proportion et la série ; sous 50 % jusqu\'à 3 missions de pénalité et un blocage de 24 heures. 1 jour de repos par semaine.</string>
     <string name="rigor_hard_info">Seul 100 % compte. Pertes doublées ; sous 50 % jusqu\'à 4 missions de pénalité et un blocage de 24 heures. Aucun jour de repos.</string>
     <string name="auto_missions">Nombre de missions auto</string>
     <string name="auto_missions_info">Actuellement %1$d missions bonus par jour, en plus des fixes.</string>

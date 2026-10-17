@@ -26,6 +26,7 @@ fun Tx.ensureDay() {
         )
     }
     s = s.copy(buffs = s.buffs.filter { it.expiresAt > ctx.now })
+    expirePenalty()
     settleFocus()
     ensureBoss()
     ensureShop()
@@ -55,8 +56,8 @@ private fun Tx.closeDay(day: LocalDate) {
         }
     }
 
-    // A penalty lasts one day: its missions only lift it early, and leftovers just expire.
-    s = s.copy(penalty = Penalty())
+    // A penalty lasts 24 hours: its missions only lift it early, and leftovers just expire.
+    expirePenalty()
     var penaltyInfo: PenaltyInfo? = null
     var streakSavedBy: String? = null
     var restored = false
@@ -128,8 +129,7 @@ private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<Penalt
         buildQuest(def, 1, QuestOrigin.PENALTY, "${def.id}_${s.nextId}_$i")
     }
     if (severe) {
-        val (blockStart, blockEnd) = if (s.settings.blockOnPenalty) penaltyBlockWindow() else 0L to 0L
-        s = s.copy(penalty = Penalty(active = true, quests = quests, blockStart = blockStart, blockEnd = blockEnd), nextId = s.nextId + 1)
+        s = s.copy(penalty = Penalty(active = true, quests = quests, blockStart = ctx.now, blockEnd = ctx.now + Rules.PENALTY_MS), nextId = s.nextId + 1)
     }
 
     var savedBy: String? = null
@@ -149,21 +149,12 @@ private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<Penalt
     return PenaltyInfo(failed, total, xpActuallyLost, goldLost, quests.size) to savedBy
 }
 
-/** Next app-block window for the current rigor: a fixed part of the day, or 24 h from now on hard. */
-private fun Tx.penaltyBlockWindow(): Pair<Long, Long> {
-    val (startH, endH) = when (s.settings.rigor) { Rigor.EASY -> 13 to 19; Rigor.NORMAL -> 10 to 22; Rigor.HARD -> return ctx.now to ctx.now + 24 * 3_600_000L }
-    val date = if (ctx.atHour(ctx.today, endH) <= ctx.now) ctx.today.plusDays(1) else ctx.today
-    return ctx.atHour(date, startH) to ctx.atHour(date, endH)
+/** Ends a penalty once its 24 hours are over. */
+fun Tx.expirePenalty() {
+    if (s.penalty.active && s.penalty.blockEnd <= ctx.now) s = s.copy(penalty = Penalty())
 }
 
-/** Turning blocking on during an active penalty schedules its window right away. */
-fun Tx.setBlockOnPenalty(on: Boolean) {
-    updateSettings { it.copy(blockOnPenalty = on) }
-    val p = s.penalty
-    if (!on || !p.active || p.blockEnd > ctx.now) return
-    val (start, end) = penaltyBlockWindow()
-    s = s.copy(penalty = p.copy(blockStart = start, blockEnd = end))
-}
+fun Tx.setBlockOnPenalty(on: Boolean) = updateSettings { it.copy(blockOnPenalty = on) }
 
 fun Tx.clearPenalty(cleared: Boolean) {
     if (!s.penalty.active) return

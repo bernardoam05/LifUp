@@ -288,8 +288,8 @@
     <string name="rigor_easy">Fácil</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Difícil</string>
-    <string name="rigor_easy_info">El día cuenta con el 60% de las misiones. Por debajo pierdes algo de XP y la racha; por debajo del 50% hay una misión de penalización y bloqueo de 13 h a 19 h. 2 días de descanso por semana.</string>
-    <string name="rigor_normal_info">El día cuenta con el 75% de las misiones. Por debajo pierdes XP proporcional y la racha; por debajo del 50% hasta 3 misiones de penalización y bloqueo de 10 h a 22 h. 1 día de descanso por semana.</string>
+    <string name="rigor_easy_info">El día cuenta con el 60% de las misiones. Por debajo pierdes algo de XP y la racha; por debajo del 50% hay una misión de penalización y bloqueo de 24 horas. 2 días de descanso por semana.</string>
+    <string name="rigor_normal_info">El día cuenta con el 75% de las misiones. Por debajo pierdes XP proporcional y la racha; por debajo del 50% hasta 3 misiones de penalización y bloqueo de 24 horas. 1 día de descanso por semana.</string>
     <string name="rigor_hard_info">Solo cuenta el 100%. Pérdidas dobles; por debajo del 50% hasta 4 misiones de penalización y bloqueo de 24 horas. Sin días de descanso.</string>
     <string name="auto_missions">Cantidad de misiones automática</string>
     <string name="auto_missions_info">Ahora mismo %1$d misiones extra al día, más las fijas.</string>

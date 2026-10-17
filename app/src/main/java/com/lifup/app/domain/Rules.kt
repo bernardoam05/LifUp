@@ -86,6 +86,9 @@ object Rules {
     /** Below this share the day is a bad one: penalty missions and app blocking. */
     const val SEVERE_RATIO = 0.5
 
+    /** A penalty, and its app block, lasts this long for every rigor. */
+    const val PENALTY_MS = 24 * 3_600_000L
+
     fun restDaysPerWeek(rigor: Rigor) = when (rigor) { Rigor.EASY -> 2; Rigor.NORMAL -> 1; Rigor.HARD -> 0 }
 
     /** Rest days must be called before this hour, not as a last-minute escape. */
