@@ -184,12 +184,13 @@ private fun MainScaffold(
             bottomBar = {
                 NavigationBar(containerColor = Lif.colors.panel, tonalElevation = 0.dp) {
                     Tab.entries.forEach { t ->
-                        val count = s.badge(t)
+                        // Hidden on the open tab: its new items are on screen, tagged "new" until you leave.
+                        val count = if (tab == t) 0 else s.badge(t)
                         NavigationBarItem(
                             selected = tab == t,
                             onClick = { goTo(t) },
                             icon = {
-                                BadgedBox(badge = { if (count > 0) Badge(containerColor = Lif.colors.green) { Text("$count") } }) {
+                                BadgedBox(badge = { if (count > 0) Badge(containerColor = Lif.colors.green, contentColor = Lif.colors.bg) { Text("$count") } }) {
                                     // The home tab gets a filled, slightly larger mark.
                                     if (t == Tab.TODAY) Box(Modifier.size(34.dp).clip(CircleShape).background(if (tab == t) Lif.colors.accent else Lif.colors.accent.copy(alpha = 0.18f)), contentAlignment = Alignment.Center) {
                                         Icon(t.icon, null, tint = if (tab == t) Lif.colors.bg else Lif.colors.accent)
