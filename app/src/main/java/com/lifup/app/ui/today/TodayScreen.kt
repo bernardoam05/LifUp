@@ -1,5 +1,8 @@
 package com.lifup.app.ui.today
 
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material.icons.rounded.LocalFireDepartment
@@ -276,18 +279,22 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
     if (def.season == null) upcomingSeason(content.bosses, LocalDate.now())?.let { SeasonTeaser(it) }
 }
 
-/** Missions marked done, with a flame marking the streak minimum; the flame lights up once it's reached. */
+/** Missions marked done, with a flame sitting on the bar at the streak minimum; it lights up once reached. */
 @Composable
 private fun GoalBar(goal: com.lifup.app.domain.DayGoal) {
     val p = Lif.colors
     val safe = goal.safe
-    BoxWithConstraints(Modifier.fillMaxWidth().height(22.dp)) {
+    BoxWithConstraints(Modifier.fillMaxWidth().height(18.dp), contentAlignment = Alignment.CenterStart) {
         val frac = goal.needed / goal.total.coerceAtLeast(1).toFloat()
-        Bar(goal.kept / goal.total.coerceAtLeast(1).toFloat(), if (safe) p.green else p.accent, modifier = Modifier.align(Alignment.BottomStart).padding(bottom = 2.dp))
-        Icon(
-            Icons.Rounded.LocalFireDepartment, stringResource(R.string.today_goal, goal.needed, goal.total),
-            tint = if (safe) p.red else p.dim,
-            modifier = Modifier.size(14.dp).offset(x = maxWidth * frac - 7.dp).align(Alignment.TopStart),
-        )
+        Bar(goal.kept / goal.total.coerceAtLeast(1).toFloat(), if (safe) p.green else p.accent)
+        Box(
+            Modifier.offset(x = maxWidth * frac - 9.dp).size(18.dp).clip(CircleShape).background(p.bg),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                Icons.Rounded.LocalFireDepartment, stringResource(R.string.today_goal, goal.needed, goal.total),
+                tint = if (safe) p.red else p.dim, modifier = Modifier.size(14.dp),
+            )
+        }
     }
 }
