@@ -13,6 +13,7 @@ import android.hardware.SensorManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -57,7 +58,10 @@ object AutoTracker {
 
     // ── Steps ─────────────────────────────────────────────────────────────────
 
-    /** Steps since boot, or null without the sensor or the permission. */
+    /**
+     * Steps since boot, or null without the sensor or the permission. Some sensors (Xiaomi) only
+     * report when a step happens, so a quiet read falls back to the last value seen this boot.
+     */
     suspend fun stepCounter(c: Context): Long? {
         if (!stepsAvailable(c)) return null
         val sm = c.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -72,40 +76,58 @@ object AutoTracker {
                     override fun onAccuracyChanged(s: Sensor?, a: Int) = Unit
                 }
                 sm.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_NORMAL, Handler(Looper.getMainLooper()))
+                sm.flush(listener) // nudges batching sensors into reporting their current value
                 cont.invokeOnCancellation { sm.unregisterListener(listener) }
             }
-        }
+        } ?: lastSeen(c)
     }
 
+    private fun prefs(c: Context) = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+
+    private fun bootAt() = System.currentTimeMillis() - SystemClock.elapsedRealtime()
+
+    private fun lastSeen(c: Context): Long? = prefs(c).takeIf { it.getLong("lastAt", 0) > bootAt() }?.getLong("last", 0)
+
     /**
-     * The hardware counter only knows "steps since boot", so we keep a per-day baseline:
-     * steps today = carried (before a reboot) + counter − baseline. A new day starts from the last
-     * known counter value when it was read shortly before midnight, otherwise from the current one.
+     * The hardware counter only knows "steps since boot", so every value seen goes through here to
+     * keep a per-day baseline: steps today = carried (before a reboot) + counter − baseline. A new day
+     * starts from the last value seen the day before, so steps walked before the first reading of
+     * the day still count. Returns (today's steps, yesterday's final steps or null).
      */
     @Synchronized
-    private fun stepsFor(c: Context, day: String, counter: Long): Int {
-        val p = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        var storedDay = p.getString("day", null)
+    private fun observe(c: Context, counter: Long): Pair<Int, Pair<String, Int>?> {
+        val p = prefs(c)
+        val today = LocalDate.now()
+        var day = p.getString("day", null)
         var base = p.getLong("base", counter)
         var carry = p.getLong("carry", 0)
-        val last = p.getLong("last", counter)
-        val lastAt = p.getLong("lastAt", 0)
-        val now = System.currentTimeMillis()
-        if (storedDay != null && day < storedDay) return 0 // reading for an older day than we track
-        if (storedDay != day) {
-            val recent = now - lastAt < 30 * 60_000 && counter >= last
-            base = if (recent) last else counter
-            carry = 0
-            storedDay = day
-        }
-        if (counter < last) { // device rebooted: counter restarted from zero
+        var last = p.getLong("last", counter)
+        val edit = p.edit()
+        if (day != null && p.getLong("lastAt", 0) <= bootAt()) { // rebooted: the counter restarted from zero
             carry += (last - base).coerceAtLeast(0)
-            base = 0
+            base = 0; last = 0
         }
-        val steps = (carry + counter - base).coerceAtLeast(0)
-        p.edit().putString("day", storedDay).putLong("base", base).putLong("carry", carry)
-            .putLong("last", counter).putLong("lastAt", now).apply()
-        return steps.toInt()
+        if (day != today.toString()) {
+            if (day != null) edit.putString("prevDay", day).putInt("prevSteps", (carry + last - base).coerceAtLeast(0).toInt())
+            base = if (day == today.minusDays(1).toString() && counter >= last) last else counter
+            carry = 0
+            day = today.toString()
+        }
+        val steps = (carry + counter - base).coerceAtLeast(0).toInt()
+        edit.putString("day", day).putLong("base", base).putLong("carry", carry)
+            .putLong("last", counter).putLong("lastAt", System.currentTimeMillis()).apply()
+        val prev = p.getString("prevDay", null)?.let { it to p.getInt("prevSteps", 0) }
+        return steps to prev
+    }
+
+    /** Steps for [day] from a fresh counter value: today's count, or the final count of the day before. */
+    private fun stepsFor(c: Context, day: String, counter: Long): Int? {
+        val (today, prev) = observe(c, counter)
+        return when (day) {
+            LocalDate.now().toString() -> today
+            prev?.first -> prev.second
+            else -> null
+        }
     }
 
     // ── Screen time ───────────────────────────────────────────────────────────
