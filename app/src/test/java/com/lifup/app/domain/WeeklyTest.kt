@@ -114,4 +114,18 @@ class WeeklyTest {
         s = run(s, "2026-10-14T09:06") { deleteCustomDef("core_pushups") }
         assertEquals(pushups, s.availableDefs(content).single { it.id == "core_pushups" })
     }
+
+    @Test fun `a daily mission kept on some days is offered as weekly`() {
+        val daily = train.copy(perWeek = null)
+        var s = run(run(GameState(onboarded = true), "2026-10-18T09:00"), "2026-10-18T09:05") { saveCustomDef(daily); addDefToToday(daily.id) }
+        val week = (19..25).map { "2026-10-$it" }
+        s = walk(s, week, doOn = setOf("2026-10-19", "2026-10-21", "2026-10-23"))
+        s = run(s, "2026-10-26T09:00")
+        assertEquals(WeeklyHint(daily.id, 3, 3, 7), s.weeklyHint)
+        s = run(s, "2026-10-26T09:05") { acceptWeeklyHint() }
+        assertEquals(3, s.defOf(daily.id, content)?.perWeek)
+        assertEquals(QuestOrigin.WEEKLY, s.train().origin)
+        assertTrue(s.weekly[daily.id]!!.trial)
+        assertEquals(null, s.weeklyHint)
+    }
 }

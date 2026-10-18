@@ -497,7 +497,7 @@
     <string name="perm_activity_why">Contar passos nas missões de caminhar e corridas.</string>
     <string name="guide_section">Como funciona</string>
     <string name="guide_daily_title">Missões diárias</string>
-    <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para o streak::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas e ganhas XP extra e um eco novo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja.</string>
+    <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para o streak::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas e ganhas XP extra e um eco novo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja. Se algo só cabe em alguns dias, torna-o semanal.</string>
     <string name="guide_streak_title">Streak e descanso</string>
     <string name="guide_streak">Sobe todos os dias::+1 por cada dia em que chegas ao mínimo.\nSegunda oportunidade::Perdeste-o? Um dia perfeito logo a seguir devolve-o (uma vez por semana).\nDias de descanso::Marca antes do meio-dia e o dia não conta nem a favor nem contra. 2 por semana no Fácil, 1 no Normal.\nProteção extra::O Escudo da Constância e alguns ecos salvam o streak por ti.</string>
     <string name="guide_penalty_title">Penalização</string>
@@ -625,4 +625,7 @@
     <string name="attr_focus_hint">Até 2. As missões deles saem mais vezes; as outras continuam a aparecer.</string>
     <string name="def_edited">Editada</string>
     <string name="def_reset">Repor original</string>
+    <string name="weekly_hint_text">Fizeste "%1$s" em %2$d de %3$d dias na semana passada. Passar a %4$d× por semana? Assim conta quando a fazes e só fica obrigatória quando já não dá para saltar.</string>
+    <string name="weekly_hint_yes">Passar a %1$d×</string>
+    <string name="weekly_hint_no">Não</string>
 </resources>

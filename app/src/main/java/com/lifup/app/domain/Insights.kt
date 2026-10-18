@@ -77,6 +77,7 @@ fun Tx.rollWeek() {
             )
         }
     }
+    suggestWeekly()
     s = s.copy(statsWeek = ctx.weekKey, weekStats = emptyMap(), lastWeekKept = if (logs.isEmpty()) s.lastWeekKept else kept)
 }
 

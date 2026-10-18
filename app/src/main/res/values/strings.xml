@@ -516,7 +516,7 @@
     <string name="perm_activity_why">Counting steps for walking missions and runs.</string>
     <string name="guide_section">How it works</string>
     <string name="guide_daily_title">Daily missions</string>
-    <string name="guide_daily">Fixed and drawn::1 fixed mission plus several drawn ones that change every day.\nStreak minimum::On Normal 75% of the missions is enough. 60% on Easy, 100% on Hard.\nPerfect day::Do them all for bonus XP and a new echo.\nDoesn\'t fit today?::Swap one drawn mission a day for free, or create your own in the Forge.</string>
+    <string name="guide_daily">Fixed and drawn::1 fixed mission plus several drawn ones that change every day.\nStreak minimum::On Normal 75% of the missions is enough. 60% on Easy, 100% on Hard.\nPerfect day::Do them all for bonus XP and a new echo.\nDoesn\'t fit today?::Swap one drawn mission a day for free, or create your own in the Forge. If something only fits some days, make it weekly.</string>
     <string name="guide_streak_title">Streak and rest</string>
     <string name="guide_streak">Grows every day::+1 for each day you reach the minimum.\nSecond chance::Lost it? A perfect day right after brings it back (once a week).\nRest days::Call one before noon and the day counts neither way. 2 a week on Easy, 1 on Normal.\nExtra protection::The Shield of Constancy and some echoes save your streak for you.</string>
     <string name="guide_penalty_title">Penalty</string>
@@ -644,4 +644,7 @@
     <string name="attr_focus_hint">Up to 2. Their missions come up more often; the others still appear.</string>
     <string name="def_edited">Edited</string>
     <string name="def_reset">Restore original</string>
+    <string name="weekly_hint_text">You did "%1$s" on %2$d of %3$d days last week. Make it %4$d× a week? Then it counts when you do it and only becomes required when you can\'t skip it anymore.</string>
+    <string name="weekly_hint_yes">Make it %1$d×</string>
+    <string name="weekly_hint_no">No</string>
 </resources>

@@ -1,5 +1,11 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.ui.defTitle
+import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.rounded.EventRepeat
+import com.lifup.app.domain.dismissWeeklyHint
+import com.lifup.app.domain.acceptWeeklyHint
+import com.lifup.app.domain.WeeklyHint
 import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.CircleShape
@@ -159,6 +165,8 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
 
         item { BossCard(s, now) { selected = it } }
 
+        s.weeklyHint?.let { h -> item(key = "weekly_hint") { WeeklyHintCard(s, h) } }
+
         item { SectionTitle(stringResource(R.string.daily_section)) { InfoButton(Guide.DAILY) } }
         items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
 
@@ -302,6 +310,26 @@ private fun GoalBar(goal: com.lifup.app.domain.DayGoal) {
                 Icons.Rounded.LocalFireDepartment, stringResource(R.string.today_goal, goal.needed, goal.total),
                 tint = if (safe) p.red else p.dim, modifier = Modifier.size(14.dp),
             )
+        }
+    }
+}
+
+/** Offers to turn a mission kept on only some days into an "N times a week" one. */
+@Composable
+private fun WeeklyHintCard(s: GameState, h: WeeklyHint) {
+    val p = Lif.colors
+    Panel(border = p.accent.copy(alpha = 0.6f), background = p.accent.copy(alpha = 0.06f)) {
+        Row(verticalAlignment = Alignment.Top) {
+            Icon(Icons.Rounded.EventRepeat, null, tint = p.accent)
+            Spacer(Modifier.width(10.dp))
+            Text(
+                stringResource(R.string.weekly_hint_text, defTitle(s, h.defId), h.done, h.days, h.perWeek),
+                style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f),
+            )
+        }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            TextButton(onClick = { act { dismissWeeklyHint() } }) { Text(stringResource(R.string.weekly_hint_no), color = p.muted) }
+            TextButton(onClick = { act { acceptWeeklyHint() } }) { Text(stringResource(R.string.weekly_hint_yes, h.perWeek), color = p.accent) }
         }
     }
 }

@@ -67,3 +67,36 @@ internal fun Tx.tallyWeekly(q: Quest, delta: Int) {
 /** The week's results of every weekly mission, for the report. */
 fun GameState.weekLines(week: String): List<WeekLine> =
     weekly.filter { it.value.week == week && it.value.goal > 0 }.map { (id, t) -> WeekLine(id, t.done, t.goal) }
+
+// ── Suggesting a weekly mission ───────────────────────────────────────────────
+
+@Serializable
+data class WeeklyHint(val defId: String, val perWeek: Int, val done: Int, val days: Int)
+
+/** At a week's end: a fixed everyday mission kept on some days but missed on others fits "N times a week". */
+internal fun Tx.suggestWeekly() {
+    if (s.weeklyHint != null) return
+    val hint = s.availableDefs(content)
+        .filter { it.kind == DefKind.CORE && !it.isWeekly() && it.auto == null && it.fromHour == null && it.daysOfWeek == null }
+        .filter { it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT && it.id !in s.weeklyHintsDismissed }
+        .mapNotNull { def -> s.weekStats[def.id]?.takeIf { it.total >= 5 && it.done in 1..it.total - 2 }?.let { def to it } }
+        .maxByOrNull { (_, st) -> st.total - st.done }
+        ?.let { (def, st) -> WeeklyHint(def.id, st.done.coerceIn(1, 6), st.done, st.total) }
+    if (hint != null) s = s.copy(weeklyHint = hint)
+}
+
+/** Turns the suggested mission weekly; today's instance stops counting for the day unless it was done. */
+fun Tx.acceptWeeklyHint() {
+    val h = s.weeklyHint ?: return
+    s = s.copy(weeklyHint = null)
+    val def = s.defOf(h.defId, content) ?: return
+    saveCustomDef(def.copy(perWeek = h.perWeek))
+    val today = s.quests.firstOrNull { it.defId == h.defId && it.origin == QuestOrigin.DAILY } ?: return
+    s = s.copy(quests = s.quests.map { if (it.id == today.id) it.copy(origin = QuestOrigin.WEEKLY, perWeek = h.perWeek) else it })
+    if (today.status == QuestStatus.DONE) s.weekly[h.defId]?.let { t -> s = s.copy(weekly = s.weekly + (h.defId to t.copy(done = t.done + 1))) }
+}
+
+fun Tx.dismissWeeklyHint() {
+    val h = s.weeklyHint ?: return
+    s = s.copy(weeklyHint = null, weeklyHintsDismissed = s.weeklyHintsDismissed + h.defId)
+}

@@ -325,6 +325,9 @@ data class GameState(
     val adapt: Map<String, Adapt> = emptyMap(),
     /** This week's tally of each "N times a week" mission, by definition id. */
     val weekly: Map<String, WeekTally> = emptyMap(),
+    /** A fixed mission done on only some days last week, offered as "N times a week". */
+    val weeklyHint: WeeklyHint? = null,
+    val weeklyHintsDismissed: Set<String> = emptySet(),
     /** Echoes gained since the Echoes tab was last seen: true = first copy, false = an extra copy. */
     val newEchoes: Map<String, Boolean> = emptyMap(),
     /** Items gained since the inventory was last seen. */

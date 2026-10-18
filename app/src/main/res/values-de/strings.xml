@@ -515,7 +515,7 @@
     <string name="perm_activity_why">Schritte für Geh-Missionen und Läufe zählen.</string>
     <string name="guide_section">So funktioniert es</string>
     <string name="guide_daily_title">Tägliche Missionen</string>
-    <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nStreak-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle und du bekommst Bonus-XP und ein neues Echo.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede.</string>
+    <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nStreak-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle und du bekommst Bonus-XP und ein neues Echo.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede. Passt etwas nur an manchen Tagen, mach es wöchentlich.</string>
     <string name="guide_streak_title">Streak und Ruhetage</string>
     <string name="guide_streak">Wächst jeden Tag::+1 für jeden Tag, an dem du das Minimum erreichst.\nZweite Chance::Verloren? Ein perfekter Tag direkt danach holt ihn zurück (einmal pro Woche).\nRuhetage::Melde ihn vor Mittag an und der Tag zählt weder dafür noch dagegen. 2 pro Woche auf Leicht, 1 auf Normal.\nExtra-Schutz::Der Schild der Beständigkeit und manche Echos retten deinen Streak für dich.</string>
     <string name="guide_penalty_title">Strafe</string>
@@ -643,4 +643,7 @@
     <string name="attr_focus_hint">Bis zu 2. Ihre Missionen kommen öfter; die anderen erscheinen weiterhin.</string>
     <string name="def_edited">Bearbeitet</string>
     <string name="def_reset">Original wiederherstellen</string>
+    <string name="weekly_hint_text">Du hast „%1$s“ letzte Woche an %2$d von %3$d Tagen gemacht. Auf %4$d× pro Woche umstellen? Dann zählt sie, wenn du sie machst, und wird erst Pflicht, wenn du sie nicht mehr auslassen kannst.</string>
+    <string name="weekly_hint_yes">Auf %1$d× umstellen</string>
+    <string name="weekly_hint_no">Nein</string>
 </resources>

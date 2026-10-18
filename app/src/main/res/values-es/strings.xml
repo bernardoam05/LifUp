@@ -515,7 +515,7 @@
     <string name="perm_activity_why">Contar pasos en misiones de caminar y carreras.</string>
     <string name="guide_section">Cómo funciona</string>
     <string name="guide_daily_title">Misiones diarias</string>
-    <string name="guide_daily">Fijas y sorteadas::1 misión fija y varias sorteadas que cambian cada día.\nMínimo para la racha::En Normal te basta con el 75% de las misiones. Un 60% en Fácil, 100% en Difícil.\nDía perfecto::Hazlas todas y ganas XP extra y un eco nuevo.\n¿Hoy no te encaja?::Cambia una sorteada al día gratis, o crea las tuyas en la Forja.</string>
+    <string name="guide_daily">Fijas y sorteadas::1 misión fija y varias sorteadas que cambian cada día.\nMínimo para la racha::En Normal te basta con el 75% de las misiones. Un 60% en Fácil, 100% en Difícil.\nDía perfecto::Hazlas todas y ganas XP extra y un eco nuevo.\n¿Hoy no te encaja?::Cambia una sorteada al día gratis, o crea las tuyas en la Forja. Si algo solo cabe algunos días, hazlo semanal.</string>
     <string name="guide_streak_title">Racha y descanso</string>
     <string name="guide_streak">Sube cada día::+1 por cada día que llegas al mínimo.\nSegunda oportunidad::¿La perdiste? Un día perfecto justo después la recupera (una vez por semana).\nDías de descanso::Márcalo antes del mediodía y ese día no cuenta ni a favor ni en contra. 2 por semana en Fácil, 1 en Normal.\nProtección extra::El Escudo de la Constancia y algunos ecos salvan tu racha por ti.</string>
     <string name="guide_penalty_title">Penalización</string>
@@ -643,4 +643,7 @@
     <string name="attr_focus_hint">Hasta 2. Sus misiones salen más a menudo; las demás siguen apareciendo.</string>
     <string name="def_edited">Editada</string>
     <string name="def_reset">Restaurar original</string>
+    <string name="weekly_hint_text">Hiciste "%1$s" %2$d de %3$d días la semana pasada. ¿Pasarla a %4$d× por semana? Así cuenta cuando la haces y solo es obligatoria cuando ya no puedes saltarla.</string>
+    <string name="weekly_hint_yes">Pasar a %1$d×</string>
+    <string name="weekly_hint_no">No</string>
 </resources>
