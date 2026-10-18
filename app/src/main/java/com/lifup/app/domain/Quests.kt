@@ -175,12 +175,16 @@ fun Tx.toggleFailed(id: String) {
     }
 }
 
-/** Counter progress for limit and manual quests; reaching the target auto-completes manual ones. */
-fun Tx.setProgress(id: String, value: Double) {
+/**
+ * Counter progress for limit and manual quests. Manual ones stop at the target; with [autoComplete]
+ * reaching it finishes the quest, otherwise the player confirms with "Complete".
+ */
+fun Tx.setProgress(id: String, value: Double, autoComplete: Boolean = true) {
     val q = s.allQuests.firstOrNull { it.id == id } ?: return
     if (q.status != QuestStatus.OPEN) return
-    updateQuest(id) { it.copy(progress = value.coerceAtLeast(0.0)) }
-    if (q.type != QuestType.LIMIT && q.type != QuestType.FORBIDDEN && value >= q.target) completeQuest(id)
+    val counted = q.type != QuestType.LIMIT && q.type != QuestType.FORBIDDEN
+    updateQuest(id) { it.copy(progress = if (counted) value.coerceIn(0.0, q.target) else value.coerceAtLeast(0.0)) }
+    if (counted && autoComplete && value >= q.target) completeQuest(id)
 }
 
 /** Older saves don't carry the flag on today's quests, so the definition decides too. */

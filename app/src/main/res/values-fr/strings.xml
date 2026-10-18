@@ -62,7 +62,7 @@
 
     <string name="today_progress">%1$d / %2$d missions</string>
     <string name="rest_day">Repos</string>
-    <string name="rest_day_info">Jour de repos : pas de pénalité ce soir, mais le streak n\'augmente pas non plus.</string>
+    <string name="rest_day_info">Jour de repos : pas de pénalité ce soir, mais la série n\'augmente pas non plus.</string>
     <string name="forge">Forge de missions</string>
     <string name="penalty_section">Pénalité</string>
     <string name="penalty_info">Fais ces missions pour la lever plus tôt.</string>
@@ -167,7 +167,7 @@
     <string name="hero_shadows">Échos</string>
     <string name="hero_achievements">Succès</string>
     <string name="hero_stats">Stats</string>
-    <string name="streak">Streak</string>
+    <string name="streak">Série</string>
     <string name="best_streak">Record</string>
     <string name="bosses">Boss</string>
     <string name="squad">Escouade</string>
@@ -198,7 +198,7 @@
     <string name="source_extraction">Éveillé après des jours parfaits, dans les portails ou avec de l\'Essence d\'écho.</string>
     <string name="source_shop">Vendue en boutique (rotation hebdo).</string>
     <string name="source_achievement">Récompense de succès.</string>
-    <string name="source_streak">Récompense de palier de streak.</string>
+    <string name="source_streak">Récompense de palier de série.</string>
     <string name="source_boss">Récompense pour avoir vaincu %1$s.</string>
     <string name="upgrade_capped">Niveau max : un écho ne peut pas dépasser ton niveau.</string>
     <string name="upgrade_cost">Évoluer : %1$d or · copies %2$d/%3$d</string>
@@ -213,7 +213,7 @@
     <string name="passive_boss">+%1$s de dégâts aux boss</string>
     <string name="passive_penalty">−%1$s de pertes de pénalité</string>
     <string name="passive_immunity">Absorbe une pénalité par semaine</string>
-    <string name="passive_streak">Sauve ton streak une fois par semaine</string>
+    <string name="passive_streak">Sauve ta série une fois par semaine</string>
     <string name="passive_shop">−%1$s sur les prix de la boutique</string>
     <string name="passive_focus">+%1$s de minutes de focus créditées</string>
     <string name="passive_daily">+%1$d XP par jour parfait</string>
@@ -241,7 +241,7 @@
     <string name="reward_copies">Copies : %1$d</string>
     <string name="reward_boss_title">Boss vaincu</string>
     <string name="reward_achievement_title">Succès</string>
-    <string name="reward_streak_title">Palier de streak</string>
+    <string name="reward_streak_title">Palier de série</string>
     <string name="days_in_a_row">%1$d jours d\'affilée</string>
     <string name="reward_chest_title">Coffre ouvert</string>
     <string name="report_title">Bilan · %1$s</string>
@@ -253,8 +253,8 @@
     <string name="report_absorbed_by">%1$s a absorbé la pénalité</string>
     <string name="report_loss">−%1$d XP · −%2$d or</string>
     <string name="report_penalty_quests">%1$d missions de pénalité à terminer</string>
-    <string name="report_streak_saved">Streak sauvé par %1$s</string>
-    <string name="report_streak">Streak : %1$d</string>
+    <string name="report_streak_saved">Série sauvée par %1$s</string>
+    <string name="report_streak">Série : %1$d</string>
     <string name="toast_level">Niveau %1$s !</string>
     <string name="toast_item_found">Trouvé : %1$s</string>
     <string name="toast_penalty_cleared">Pénalité levée</string>
@@ -631,4 +631,7 @@
     <string name="unit_meal">repas</string>
     <string name="unit_shower">douche</string>
     <string name="edit_mission_tomorrow">Modifier la mission · dès demain</string>
+    <string name="count_title">Combien jusqu\'ici ?</string>
+    <string name="manage_missions">Gérer les missions</string>
+    <string name="side_delete_paid">Supprimer cette tâche retire l\'XP et l\'or qu\'elle a rapportés.</string>
 </resources>

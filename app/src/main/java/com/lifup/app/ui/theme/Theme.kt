@@ -30,13 +30,15 @@ data class Palette(
     val border: Color = Color(0xFF262C3E),
     val text: Color = Color(0xFFE6E7EE),
     val muted: Color = Color(0xFF9497A8),
-    val dim: Color = Color(0xFF5F6375),
+    val dim: Color = Color(0xFF7A7F93),
     val accent: Color = Color(0xFF00D4FF),
     val red: Color = Color(0xFFEF4444),
     val gold: Color = Color(0xFFF5B342),
     val green: Color = Color(0xFF22C55E),
     val purple: Color = Color(0xFFA855F7),
     val blue: Color = Color(0xFF3B82F6),
+    /** Training missions: energetic without reading as danger, which red is kept for. */
+    val orange: Color = Color(0xFFFF8A4C),
 )
 
 /** Each hunter rank tints the interface with its own accent. */

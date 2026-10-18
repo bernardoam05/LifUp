@@ -71,11 +71,11 @@
    "de": "Schild der Beständigkeit"
   },
   "description": {
-   "pt": "Protege o teu streak uma vez. Gasta-se sozinho no próximo dia falhado.",
+   "pt": "Protege a tua sequência uma vez. Gasta-se sozinho no próximo dia falhado.",
    "en": "Protects your streak once. Used automatically on your next failed day.",
    "es": "Protege tu racha una vez. Se gasta solo en tu próximo día fallido.",
    "fr": "Protège ta série une fois. S'utilise automatiquement lors de ta prochaine journée ratée.",
-   "de": "Schützt deinen Streak einmal. Wird automatisch an deinem nächsten verpassten Tag verbraucht."
+   "de": "Schützt deine Serie einmal. Wird automatisch an deinem nächsten verpassten Tag verbraucht."
   }
  },
  {

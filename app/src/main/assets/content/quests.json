@@ -1728,11 +1728,11 @@
    "kind": "PENALTY",
    "type": "TRAINING",
    "title": {
-    "pt": "Penalização: Prancha do Sistema",
-    "en": "Penalty: System Plank",
-    "es": "Penalización: Plancha del Sistema",
-    "fr": "Pénalité : Gainage du Système",
-    "de": "Strafe: System-Plank"
+    "pt": "Penalização: Prancha Longa",
+    "en": "Penalty: Long Plank",
+    "es": "Penalización: Plancha Larga",
+    "fr": "Pénalité : Gainage Long",
+    "de": "Strafe: Lange Plank"
    },
    "description": {
     "pt": "3 min de prancha (acumulados)",

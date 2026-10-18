@@ -1,5 +1,7 @@
 package com.lifup.app.ui.today
 
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Tune
 import com.lifup.app.ui.defTitle
 import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.rounded.EventRepeat
@@ -104,6 +106,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
     val p = Lif.colors
     val now = rememberNow(1_000)
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
+    var confirmDelete by rememberSaveable { mutableStateOf<String?>(null) }
     LaunchedEffect(openQuest) {
         if (openQuest != null) { selected = openQuest; onQuestOpened() }
     }
@@ -151,34 +154,23 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
 
         s.portal?.let { portal ->
             item { SectionTitle(stringResource(R.string.portal_section)) { Text(fmtShort(portal.expiresAt - now), color = p.purple, style = MaterialTheme.typography.labelLarge); InfoButton(Guide.PORTAL) } }
-            item {
-                Panel(border = p.purple.copy(alpha = 0.6f), background = p.purple.copy(alpha = 0.06f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Rounded.AutoAwesome, null, tint = p.purple)
-                        Spacer(Modifier.width(8.dp))
-                        Text(stringResource(R.string.portal_info), style = MaterialTheme.typography.bodySmall, color = p.muted)
-                    }
-                }
-            }
             item(key = portal.quest.id) { QuestCard(portal.quest, s.timers[portal.quest.id], now) { selected = portal.quest.id } }
         }
 
-        item { BossCard(s, now) { selected = it } }
-
         s.weeklyHint?.let { h -> item(key = "weekly_hint") { WeeklyHintCard(s, h) } }
 
-        item {
-            SectionTitle(stringResource(R.string.daily_section)) {
-                IconButton(onClick = openForge, modifier = Modifier.size(28.dp)) { Icon(Icons.Rounded.Build, stringResource(R.string.forge), tint = p.dim, modifier = Modifier.size(18.dp)) }
-                InfoButton(Guide.DAILY)
-            }
-        }
+        item { SectionTitle(stringResource(R.string.daily_section)) { InfoButton(Guide.DAILY) } }
         items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
 
         if (s.weeklyQuests.isNotEmpty()) {
             item { SectionTitle(stringResource(R.string.weekly_section)) { InfoButton(Guide.WEEKLY) } }
             items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
         }
+        item {
+            GhostButton(stringResource(R.string.manage_missions), onClick = openForge, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Tune, color = p.accent)
+        }
+
+        item { BossCard(s, now) { selected = it } }
 
         if (s.extraQuests.isNotEmpty() || s.canAddExtra()) {
             item { SectionTitle(stringResource(R.string.extra_section)) { Text("${s.daily.extrasAdded}/${Rules.MAX_EXTRAS_PER_DAY}", color = p.dim, style = MaterialTheme.typography.labelMedium) } }
@@ -202,13 +194,20 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
                         !sq.done && s.sideRewardsLeft() == 0 -> Pill(stringResource(R.string.side_no_reward), p.gold)
                         else -> Pill("${sq.rank.name} · +${if (sq.done) sq.xpGained else sq.xp} XP", p.accent)
                     }
-                    IconButton(onClick = { act { removeSideQuest(sq.id) } }) { Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.delete), tint = p.dim) }
+                    // Deleting a paid side quest takes its XP back, so that one asks first.
+                    IconButton(onClick = { if (paid) confirmDelete = sq.id else act { removeSideQuest(sq.id) } }) { Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.delete), tint = p.dim) }
                 }
             }
         }
         if (s.sideQuests.isEmpty()) item { EmptyNote(stringResource(R.string.side_empty)) }
     }
 
+    confirmDelete?.let { id ->
+        com.lifup.app.ui.components.ConfirmDialog(
+            stringResource(R.string.delete), stringResource(R.string.side_delete_paid), stringResource(R.string.delete),
+            onConfirm = { act { removeSideQuest(id) }; confirmDelete = null }, onDismiss = { confirmDelete = null }, danger = true,
+        )
+    }
     selected?.let { id ->
         if (s.allQuests.any { it.id == id }) MissionSheet(s, id, onEdit = { defId -> selected = null; openDef(defId) }) { selected = null }
         else androidx.compose.runtime.LaunchedEffect(id) { selected = null }
@@ -262,37 +261,24 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
             Text(def.title.local(), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
             Pill(def.rank, if (def.rank == "S") p.red else p.gold)
         }
-        Spacer(Modifier.height(10.dp))
+        // Compact: name, health and the challenge in one line; the challenge's details open on tap.
+        Spacer(Modifier.height(8.dp))
         if (b.defeated) {
             Text(stringResource(R.string.boss_defeated, shadow?.name?.local().orEmpty()), style = MaterialTheme.typography.bodyMedium, color = p.green)
         } else {
-            Bar(b.hp / b.maxHp.toFloat(), tint, height = 10.dp)
-            Row(Modifier.padding(top = 4.dp)) {
-                Text("${b.hp} / ${b.maxHp} HP", style = MaterialTheme.typography.labelMedium, color = p.muted, modifier = Modifier.weight(1f))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Bar(b.hp / b.maxHp.toFloat(), tint, height = 8.dp, modifier = Modifier.weight(1f))
+                Spacer(Modifier.width(8.dp))
+                Text("${b.hp} / ${b.maxHp}", style = MaterialTheme.typography.labelMedium, color = p.muted)
             }
             val c = b.challenge
-            Spacer(Modifier.height(10.dp))
-            Panel(background = p.panelHigh, onClick = { onChallenge(c.id) }, padding = PaddingValues(12.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.boss_challenge).uppercase(), style = MaterialTheme.typography.labelMedium, color = p.gold, modifier = Modifier.weight(1f))
-                    Text(
-                        if (c.isSuccessful()) stringResource(R.string.boss_challenge_done) else "−${(Rules.BOSS_CHALLENGE_DAMAGE * 100).toInt()}% HP",
-                        style = MaterialTheme.typography.labelMedium, color = if (c.isSuccessful()) p.green else p.red,
-                    )
-                }
-                Text(questDetail(c, lang(), unitLabel(c.unit)), style = MaterialTheme.typography.bodySmall, color = p.muted)
-                if (c.status == QuestStatus.OPEN && c.progress > 0) {
-                    Spacer(Modifier.height(6.dp))
-                    Bar((c.progress / c.target).toFloat(), p.gold)
-                    Text("${fmtNum(c.progress)} / ${fmtNum(c.target)}", style = MaterialTheme.typography.labelSmall, color = p.dim)
-                }
-            }
-        }
-        if (shadow != null && !b.defeated) {
             Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Rounded.Groups, stringResource(R.string.boss_drop, ""), tint = p.dim, modifier = Modifier.size(14.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(shadow.name.text(lang()), style = MaterialTheme.typography.labelSmall, color = p.dim)
+                Text(stringResource(R.string.boss_challenge), style = MaterialTheme.typography.labelLarge, color = p.gold, modifier = Modifier.weight(1f))
+                Text(
+                    if (c.isSuccessful()) stringResource(R.string.boss_challenge_done) else "−${(Rules.BOSS_CHALLENGE_DAMAGE * 100).toInt()}% HP",
+                    style = MaterialTheme.typography.labelLarge, color = if (c.isSuccessful()) p.green else p.gold,
+                )
+                Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, null, tint = p.muted, modifier = Modifier.size(18.dp))
             }
         }
     }

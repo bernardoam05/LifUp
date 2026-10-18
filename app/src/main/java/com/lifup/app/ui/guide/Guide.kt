@@ -127,7 +127,7 @@ private fun Tone.color(): Color = when (this) {
 @Composable
 fun InfoButton(topic: Guide, s: GameState? = null) {
     var open by rememberSaveable { mutableStateOf(false) }
-    IconButton(onClick = { open = true }, modifier = Modifier.size(28.dp)) {
+    IconButton(onClick = { open = true }, modifier = Modifier.size(40.dp)) {
         Icon(Icons.AutoMirrored.Rounded.HelpOutline, stringResource(topic.title), tint = Lif.colors.dim, modifier = Modifier.size(18.dp))
     }
     if (open) GuideSheet(topic, s) { open = false }

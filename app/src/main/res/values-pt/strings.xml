@@ -62,7 +62,7 @@
 
     <string name="today_progress">%1$d / %2$d missões</string>
     <string name="rest_day">Descanso</string>
-    <string name="rest_day_info">Dia de descanso: sem penalização à meia-noite, mas o streak também não cresce.</string>
+    <string name="rest_day_info">Dia de descanso: sem penalização à meia-noite, mas a sequência também não cresce.</string>
     <string name="forge">Forja de missões</string>
     <string name="penalty_section">Penalização</string>
     <string name="penalty_info">Faz estas missões para a levantar mais cedo.</string>
@@ -71,9 +71,9 @@
     <string name="daily_section">Missões diárias</string>
     <string name="extra_section">Missões extra</string>
     <string name="add_extra">Missão extra</string>
-    <string name="side_section">Side quests</string>
+    <string name="side_section">Tarefas</string>
     <string name="side_hint">Uma tarefa para hoje…</string>
-    <string name="side_empty">Sem side quests. Junta pequenas tarefas para ganhar XP extra.</string>
+    <string name="side_empty">Sem tarefas. Junta pequenas tarefas para ganhar XP extra.</string>
     <string name="forbidden_keep">Mantém até à meia-noite</string>
     <string name="forbidden_broken">Falhada hoje</string>
     <string name="forbidden_fail">Falhei</string>
@@ -167,7 +167,7 @@
     <string name="hero_shadows">Ecos</string>
     <string name="hero_achievements">Conquistas</string>
     <string name="hero_stats">Estatísticas</string>
-    <string name="streak">Streak</string>
+    <string name="streak">Sequência</string>
     <string name="best_streak">Recorde</string>
     <string name="bosses">Bosses</string>
     <string name="squad">Esquadrão</string>
@@ -186,7 +186,7 @@
     <string name="stat_portals">Portais</string>
     <string name="stat_gold_earned">Ouro ganho</string>
     <string name="stat_penalties">Penalizações</string>
-    <string name="stat_side">Side quests</string>
+    <string name="stat_side">Tarefas</string>
     <string name="history">Histórico</string>
     <string name="history_empty">Os teus dias vão aparecer aqui.</string>
     <string name="day_rest">Descanso</string>
@@ -198,7 +198,7 @@
     <string name="source_extraction">Despertado após dias perfeitos, em portais ou com Essência de Eco.</string>
     <string name="source_shop">Vendida na loja (rotação semanal).</string>
     <string name="source_achievement">Recompensa de conquista.</string>
-    <string name="source_streak">Recompensa de marco de streak.</string>
+    <string name="source_streak">Recompensa de marco de sequência.</string>
     <string name="source_boss">Recompensa por venceres %1$s.</string>
     <string name="upgrade_capped">Nível máximo: um eco não passa o teu nível.</string>
     <string name="upgrade_cost">Evoluir: %1$d ouro · cópias %2$d/%3$d</string>
@@ -213,7 +213,7 @@
     <string name="passive_boss">+%1$s de dano a bosses</string>
     <string name="passive_penalty">−%1$s nas perdas por penalização</string>
     <string name="passive_immunity">Absorve uma penalização por semana</string>
-    <string name="passive_streak">Salva o streak uma vez por semana</string>
+    <string name="passive_streak">Salva a sequência uma vez por semana</string>
     <string name="passive_shop">−%1$s nos preços da loja</string>
     <string name="passive_focus">+%1$s nos minutos de foco creditados</string>
     <string name="passive_daily">+%1$d XP por cada dia perfeito</string>
@@ -241,7 +241,7 @@
     <string name="reward_copies">Cópias: %1$d</string>
     <string name="reward_boss_title">Boss derrotado</string>
     <string name="reward_achievement_title">Conquista</string>
-    <string name="reward_streak_title">Marco de streak</string>
+    <string name="reward_streak_title">Marco de sequência</string>
     <string name="days_in_a_row">%1$d dias seguidos</string>
     <string name="reward_chest_title">Baú aberto</string>
     <string name="report_title">Relatório · %1$s</string>
@@ -253,8 +253,8 @@
     <string name="report_absorbed_by">%1$s absorveu a penalização</string>
     <string name="report_loss">−%1$d XP · −%2$d ouro</string>
     <string name="report_penalty_quests">%1$d missões de penalização por cumprir</string>
-    <string name="report_streak_saved">Streak salvo por %1$s</string>
-    <string name="report_streak">Streak: %1$d</string>
+    <string name="report_streak_saved">Sequência salva por %1$s</string>
+    <string name="report_streak">Sequência: %1$d</string>
     <string name="toast_level">Nível %1$s!</string>
     <string name="toast_item_found">Encontraste: %1$s</string>
     <string name="toast_penalty_cleared">Penalização cumprida</string>
@@ -273,8 +273,8 @@
     <string name="rigor_easy">Fácil</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Difícil</string>
-    <string name="rigor_easy_info">O dia conta com 60% das missões. Abaixo disso perdes algum XP e o streak; abaixo de 50% há uma missão de penalização e bloqueio de 24 horas. 2 dias de descanso por semana.</string>
-    <string name="rigor_normal_info">O dia conta com 75% das missões. Abaixo disso perdes XP proporcional e o streak; abaixo de 50% até 3 missões de penalização e bloqueio de 24 horas. 1 dia de descanso por semana.</string>
+    <string name="rigor_easy_info">O dia conta com 60% das missões. Abaixo disso perdes algum XP e a sequência; abaixo de 50% há uma missão de penalização e bloqueio de 24 horas. 2 dias de descanso por semana.</string>
+    <string name="rigor_normal_info">O dia conta com 75% das missões. Abaixo disso perdes XP proporcional e a sequência; abaixo de 50% até 3 missões de penalização e bloqueio de 24 horas. 1 dia de descanso por semana.</string>
     <string name="rigor_hard_info">Só 100% conta. Perdas a dobrar; abaixo de 50% até 4 missões de penalização e bloqueio de 24 horas. Sem dias de descanso.</string>
     <string name="auto_missions">Número de missões automático</string>
     <string name="auto_missions_info">Neste momento %1$d missões sorteadas por dia, mais as fixas.</string>
@@ -282,8 +282,8 @@
     <string name="penalties">Penalizações</string>
     <string name="block_on_penalty">Bloquear apps nas penalizações</string>
     <string name="block_on_penalty_info">As apps bloqueadas fecham durante a janela de penalização.</string>
-    <string name="side_penalize">Side quests contam</string>
-    <string name="side_penalize_info">Side quests por fazer contam como falhas à meia-noite.</string>
+    <string name="side_penalize">Tarefas contam</string>
+    <string name="side_penalize_info">Tarefas por fazer contam como falhas à meia-noite.</string>
     <string name="notifications">Notificações</string>
     <string name="notifications_info">Portais, sessões terminadas, penalizações e um lembrete ao fim do dia.</string>
     <string name="reminder_hour">Hora do lembrete</string>
@@ -374,8 +374,8 @@
     <string name="notif_pomodoro_cycle">Ciclo Pomodoro %1$d</string>
     <string name="notif_penalty_title">Penalização aplicada</string>
     <string name="notif_penalty_text">As missões de ontem falharam. Cumpre %1$d missões de penalização.</string>
-    <string name="notif_reminder_title">Streak em risco</string>
-    <string name="notif_reminder_text">Faltam %1$d missões para manteres o streak hoje.</string>
+    <string name="notif_reminder_title">Sequência em risco</string>
+    <string name="notif_reminder_text">Faltam %1$d missões para manteres a sequência hoje.</string>
     <string name="block_focus_title">Foco em curso</string>
     <string name="block_penalty_title">Penalização ativa</string>
     <string name="block_penalty_text">Esta app está bloqueada. Cumpre primeiro as missões de penalização.</string>
@@ -396,7 +396,7 @@
     <string name="widget_today_name">Missões de hoje</string>
     <string name="widget_today_desc">Marca as missões do dia sem abrir a app.</string>
     <string name="widget_hero_name">Progresso</string>
-    <string name="widget_hero_desc">Rank, nível, streak, boss e as últimas semanas.</string>
+    <string name="widget_hero_desc">Rank, nível, sequência, boss e as últimas semanas.</string>
     <string name="unit_steps">passos</string>
     <string name="unit_flights">lanços</string>
     <string name="unit_servings">porções</string>
@@ -470,10 +470,10 @@
     <string name="side_rewards_left">recompensas hoje: %1$d/%2$d</string>
     <string name="side_no_reward">sem recompensa</string>
     <string name="rest_day_left">Descanso · %1$d</string>
-    <string name="today_goal">Streak com %1$d de %2$d · todas para dia perfeito</string>
-    <string name="streak_recovery">Faz um dia perfeito hoje para recuperar o streak de %1$d dias</string>
+    <string name="today_goal">Sequência com %1$d de %2$d · todas para dia perfeito</string>
+    <string name="streak_recovery">Faz um dia perfeito hoje para recuperar a sequência de %1$d dias</string>
     <string name="report_passed">Dia cumprido</string>
-    <string name="report_streak_restored">Streak recuperado</string>
+    <string name="report_streak_restored">Sequência recuperada</string>
     <string name="pomodoro_work_open">Foco · ciclo %1$d</string>
     <string name="pomodoro_break_open">Pausa · ciclo %1$d</string>
     <string name="session_elapsed">%1$s no total</string>
@@ -497,23 +497,23 @@
     <string name="perm_activity_why">Contar passos nas missões de caminhar e corridas.</string>
     <string name="guide_section">Como funciona</string>
     <string name="guide_daily_title">Missões diárias</string>
-    <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para o streak::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas e ganhas XP extra e um eco novo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja. Se algo só cabe em alguns dias, torna-o semanal.</string>
-    <string name="guide_streak_title">Streak e descanso</string>
-    <string name="guide_streak">Sobe todos os dias::+1 por cada dia em que chegas ao mínimo.\nSegunda oportunidade::Perdeste-o? Um dia perfeito logo a seguir devolve-o (uma vez por semana).\nDias de descanso::Marca antes do meio-dia e o dia não conta nem a favor nem contra. 2 por semana no Fácil, 1 no Normal.\nProteção extra::O Escudo da Constância e alguns ecos salvam o streak por ti.</string>
+    <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para a sequência::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas e ganhas XP extra e um eco novo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja. Se algo só cabe em alguns dias, torna-o semanal.</string>
+    <string name="guide_streak_title">Sequência e descanso</string>
+    <string name="guide_streak">Sobe todos os dias::+1 por cada dia em que chegas ao mínimo.\nSegunda oportunidade::Perdeste-a? Um dia perfeito logo a seguir devolve-a (uma vez por semana).\nDias de descanso::Marca antes do meio-dia e o dia não conta nem a favor nem contra. 2 por semana no Fácil, 1 no Normal.\nProteção extra::O Escudo da Constância e alguns ecos salvam a sequência por ti.</string>
     <string name="guide_penalty_title">Penalização</string>
     <string name="guide_penalty">Perda proporcional::Perdes XP e ouro conforme o que ficou por fazer. Quase lá custa quase nada.\n24 horas::Abaixo de 50% começa uma penalização com missões extra. Fá-las e acaba mais cedo.\nBloqueio de apps::Se quiseres, as tuas apps de distração ficam bloqueadas enquanto dura.</string>
-    <string name="guide_side_title">Side quests</string>
+    <string name="guide_side_title">Tarefas</string>
     <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro e ferem o boss.\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
     <string name="guide_boss_title">Boss semanal</string>
     <string name="guide_boss">Todo o XP é dano::Cada missão que fazes tira-lhe vida.\nDesafio do boss::Uma missão especial que lhe arranca 35% de uma vez.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nSe não…::No domingo à noite acaba — e vem outro.</string>
     <string name="guide_portal_title">Portais</string>
     <string name="guide_portal">Aparecem sozinhos::Entre as 8h e as 22h, até 2 por dia.\nRecompensa a dobrar::Uma missão maior, com o dobro de XP e ouro.\nNovo aliado::Concluí-lo pode trazer-te um eco.\nTempo contado::Dá sempre para a fazer, mas o portal fecha quando o tempo acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
-    <string name="guide_shadows">Onde os encontras::Dias perfeitos, bosses, portais, conquistas, marcos de streak e a loja.\nEsquadrão::Até 3 em campo, cada um com uma passiva: mais XP, mais ouro, mais dano, proteção.\nEvolução::Cópias repetidas e ouro sobem o nível do eco, até ao teu.</string>
+    <string name="guide_shadows">Onde os encontras::Dias perfeitos, bosses, portais, conquistas, marcos de sequência e a loja.\nEsquadrão::Até 3 em campo, cada um com uma passiva: mais XP, mais ouro, mais dano, proteção.\nEvolução::Cópias repetidas e ouro sobem o nível do eco, até ao teu.</string>
     <string name="guide_focus_title">Foco e Pomodoro</string>
     <string name="guide_focus">Liga a uma missão::Os minutos contam para ela. Uma sessão livre só conta nas estatísticas.\nO modo certo::Cada missão é de temporizador ou de Pomodoro, e só esse modo conta.\nPausas a sério::No Pomodoro só os minutos de foco contam, e nas pausas as apps ficam livres.\nSem limite::Conta até parares.\nSem desistências::Parar a meio perde os minutos; chegar ao fim vale +25% e ouro extra.</string>
     <string name="guide_shop_title">Loja</string>
-    <string name="guide_shop">Objetos::Trocar missões, proteger o streak, elixires de XP e ouro, baús.\nEcos à venda::3 por semana, renovam todas as segundas.\nInventário::O que compras fica guardado até o usares.</string>
+    <string name="guide_shop">Objetos::Trocar missões, proteger a sequência, elixires de XP e ouro, baús.\nEcos à venda::3 por semana, renovam todas as segundas.\nInventário::O que compras fica guardado até o usares.</string>
     <string name="auto_backups">Cópias automáticas</string>
     <string name="auto_backups_info">A app guarda uma cópia por dia dos últimos 7 dias. Com a cópia de segurança do Android ligada, também vão para a tua conta Google.</string>
     <string name="auto_backups_none">Ainda não há cópias.</string>
@@ -540,12 +540,12 @@
     <string name="adapt_down">Objetivo −%1$d%%: ajustado depois de alguns dias falhados.</string>
     <string name="show_all">Ver todas</string>
     <string name="show_less">Ver menos</string>
-    <string name="notif_reminder_safe_title">Streak garantido</string>
+    <string name="notif_reminder_safe_title">Sequência garantida</string>
     <string name="notif_reminder_safe_text">Faltam %1$d para um dia perfeito, com bónus de XP e um eco.</string>
     <string name="notif_bedtime_title">Hora de descansar</string>
     <string name="notif_bedtime_text">Confirma o check-in de dormir antes da meia-noite.</string>
-    <string name="widget_goal">Faltam %1$d para o streak</string>
-    <string name="widget_goal_safe">Streak garantido ✓</string>
+    <string name="widget_goal">Faltam %1$d para a sequência</string>
+    <string name="widget_goal_safe">Sequência garantida ✓</string>
     <string name="widget_hours_left">%1$d h até à meia-noite</string>
     <string name="widget_under_hour">menos de 1 h</string>
     <string name="a11y_decrease">Diminuir</string>
@@ -578,7 +578,7 @@
     <string name="options_none">nenhuma ativa</string>
     <string name="custom">Personalizar</string>
     <string name="gold">Ouro</string>
-    <string name="rigor_easy_short">60% das missões para o streak · 2 descansos por semana</string>
+    <string name="rigor_easy_short">60% das missões para a sequência · 2 descansos por semana</string>
     <string name="rigor_normal_short">75% das missões · 1 descanso por semana</string>
     <string name="rigor_hard_short">Todas as missões · sem descansos · perdas a dobrar</string>
     <string name="badge_new">NOVO</string>
@@ -631,4 +631,7 @@
     <string name="unit_meal">refeição</string>
     <string name="unit_shower">banho</string>
     <string name="edit_mission_tomorrow">Editar missão · conta a partir de amanhã</string>
+    <string name="count_title">Quantas já fizeste?</string>
+    <string name="manage_missions">Gerir missões</string>
+    <string name="side_delete_paid">Apagar esta tarefa tira o XP e o ouro que ela deu.</string>
 </resources>

@@ -93,7 +93,6 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null
             }
             Spacer(Modifier.width(8.dp))
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Pill(q.rank.name, color)
                 if (q.auto != null) Pill(stringResource(R.string.auto_badge), p.green)
                 if (q.xp > 0) Text("+${if (done) q.xpGained else q.xp} XP", style = MaterialTheme.typography.labelSmall, color = p.accent)
             }
@@ -106,7 +105,8 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null
             }
         }
         when (q.type) {
-            QuestType.FOCUS, QuestType.GPS, QuestType.TRAINING -> if (!done && (q.type != QuestType.TRAINING || q.auto != null)) {
+            // Hand-counted missions show their bar once something has been counted.
+            QuestType.FOCUS, QuestType.GPS, QuestType.TRAINING, QuestType.KNOWLEDGE -> if (!done && (q.type == QuestType.FOCUS || q.type == QuestType.GPS || q.auto != null || q.progress > 0)) {
                 Spacer(Modifier.height(8.dp))
                 Bar((q.progress / q.target).toFloat(), color)
                 Text("${fmtNum(q.progress)} / ${fmtNum(q.target)} $unit", style = MaterialTheme.typography.labelSmall, color = p.dim, modifier = Modifier.padding(top = 2.dp))

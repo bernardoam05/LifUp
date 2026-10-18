@@ -68,7 +68,7 @@
     <!-- Today -->
     <string name="today_progress">%1$d / %2$d misiones</string>
     <string name="rest_day">Descanso</string>
-    <string name="rest_day_info">Día de descanso: sin penalización esta noche, pero el streak tampoco crece.</string>
+    <string name="rest_day_info">Día de descanso: sin penalización esta noche, pero la racha tampoco crece.</string>
     <string name="forge">Forja de misiones</string>
     <string name="penalty_section">Penalización</string>
     <string name="penalty_info">Haz estas misiones para levantarla antes.</string>
@@ -178,7 +178,7 @@
     <string name="hero_shadows">Ecos</string>
     <string name="hero_achievements">Logros</string>
     <string name="hero_stats">Estadísticas</string>
-    <string name="streak">Streak</string>
+    <string name="streak">Racha</string>
     <string name="best_streak">Récord</string>
     <string name="bosses">Jefes</string>
     <string name="squad">Escuadrón</string>
@@ -210,7 +210,7 @@
     <string name="source_extraction">Se despierta tras días perfectos, en portales o con Esencia de Eco.</string>
     <string name="source_shop">Se vende en la tienda (rotación semanal).</string>
     <string name="source_achievement">Recompensa de logro.</string>
-    <string name="source_streak">Recompensa de hito de streak.</string>
+    <string name="source_streak">Recompensa de hito de racha.</string>
     <string name="source_boss">Recompensa por vencer %1$s.</string>
     <string name="upgrade_capped">Nivel máximo: un eco no puede superar tu nivel.</string>
     <string name="upgrade_cost">Evolucionar: %1$d oro · copias %2$d/%3$d</string>
@@ -225,7 +225,7 @@
     <string name="passive_boss">+%1$s de daño a jefes</string>
     <string name="passive_penalty">−%1$s en pérdidas por penalización</string>
     <string name="passive_immunity">Absorbe una penalización por semana</string>
-    <string name="passive_streak">Salva tu streak una vez por semana</string>
+    <string name="passive_streak">Salva tu racha una vez por semana</string>
     <string name="passive_shop">−%1$s en precios de la tienda</string>
     <string name="passive_focus">+%1$s en minutos de foco acreditados</string>
     <string name="passive_daily">+%1$d XP por cada día perfecto</string>
@@ -255,7 +255,7 @@
     <string name="reward_copies">Copias: %1$d</string>
     <string name="reward_boss_title">Jefe derrotado</string>
     <string name="reward_achievement_title">Logro</string>
-    <string name="reward_streak_title">Hito de streak</string>
+    <string name="reward_streak_title">Hito de racha</string>
     <string name="days_in_a_row">%1$d días seguidos</string>
     <string name="reward_chest_title">Cofre abierto</string>
     <string name="report_title">Informe · %1$s</string>
@@ -267,8 +267,8 @@
     <string name="report_absorbed_by">%1$s absorbió la penalización</string>
     <string name="report_loss">−%1$d XP · −%2$d oro</string>
     <string name="report_penalty_quests">%1$d misiones de penalización por cumplir</string>
-    <string name="report_streak_saved">Streak salvado por %1$s</string>
-    <string name="report_streak">Streak: %1$d</string>
+    <string name="report_streak_saved">Racha salvada por %1$s</string>
+    <string name="report_streak">Racha: %1$d</string>
     <string name="toast_level">¡Nivel %1$s!</string>
     <string name="toast_item_found">Encontraste: %1$s</string>
     <string name="toast_penalty_cleared">Penalización cumplida</string>
@@ -649,4 +649,7 @@
     <string name="unit_meal">comida</string>
     <string name="unit_shower">ducha</string>
     <string name="edit_mission_tomorrow">Editar misión · cuenta desde mañana</string>
+    <string name="count_title">¿Cuántas llevas?</string>
+    <string name="manage_missions">Gestionar misiones</string>
+    <string name="side_delete_paid">Borrar esta tarea quita el XP y el oro que dio.</string>
 </resources>

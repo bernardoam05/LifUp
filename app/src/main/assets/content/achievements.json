@@ -80,11 +80,11 @@
    "de": "Ungebrochene Kette"
   },
   "description": {
-   "pt": "Atinge um streak de {target} dias.",
+   "pt": "Atinge uma sequência de {target} dias.",
    "en": "Reach a {target}-day streak.",
    "es": "Alcanza una racha de {target} días.",
    "fr": "Atteins une série de {target} jours.",
-   "de": "Erreiche einen Streak von {target} Tagen."
+   "de": "Erreiche eine Serie von {target} Tagen."
   }
  },
  {

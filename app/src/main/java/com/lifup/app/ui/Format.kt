@@ -119,7 +119,7 @@ fun questIcon(type: QuestType): ImageVector = when (type) {
 }
 
 fun questColor(type: QuestType, p: Palette): Color = when (type) {
-    QuestType.TRAINING -> p.red
+    QuestType.TRAINING -> p.orange
     QuestType.KNOWLEDGE -> p.blue
     QuestType.FOCUS -> p.purple
     QuestType.GPS -> p.green
