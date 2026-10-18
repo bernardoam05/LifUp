@@ -330,9 +330,9 @@
     <string name="your_missions">Your missions</string>
     <string name="system_missions">Built-in missions</string>
     <string name="no_custom">No custom missions yet. Tap + to forge one.</string>
-    <string name="kind_core">Every day</string>
+    <string name="kind_core">Fixed</string>
     <string name="kind_pool">Random draw</string>
-    <string name="kind_core_info">Shows up every chosen day.</string>
+    <string name="kind_core_info">Always in your list, on the days or as often as you choose.</string>
     <string name="kind_pool_info">Joins the pool drawn for the daily missions.</string>
     <string name="new_mission">New mission</string>
     <string name="edit_mission">Edit mission</string>
@@ -611,4 +611,19 @@
     <string name="notif_timer_more">+%1$d more timers running</string>
     <string name="notif_boss_title">Last day: %1$s</string>
     <string name="notif_boss_text">The weekly boss ends tonight with %1$d HP left. The boss challenge takes 35%% at once.</string>
+    <string name="toast_week_goal">Week done: %1$s</string>
+    <string name="week_weekly_line">%1$s: %2$d/%3$d</string>
+    <string name="week_due">counts today</string>
+    <string name="week_trial">starts counting Monday</string>
+    <string name="week_met">week done</string>
+    <string name="week_free">optional today</string>
+    <string name="week_short">this week</string>
+    <string name="weekly_section">This week</string>
+    <string name="guide_weekly_title">Weekly missions</string>
+    <string name="guide_weekly_hook">For things you do a few times a week, on days that vary.</string>
+    <string name="guide_weekly">Optional::While there\'s room, it only counts if you do it, and then it boosts your day.\nCounts today::When the sessions left equal the days left until Sunday, it counts like a daily and takes a drawn mission\'s place.\nWeek done::Reach the goal for bonus gold. Extra sessions still give XP.\nNew week::It\'s never required in the week you add it. It starts counting on Monday.</string>
+    <string name="per_week_chip">%1$d× / week</string>
+    <string name="freq_days">Days of the week</string>
+    <string name="freq_weekly">Times per week</string>
+    <string name="freq_weekly_hint">Shows up every day. It only becomes required when you can\'t skip it anymore.</string>
 </resources>

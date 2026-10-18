@@ -13,11 +13,13 @@ fun Tx.ensureDay() {
     if (s.seed == 0L) s = s.copy(seed = ctx.rng.nextLong().takeIf { it != 0L } ?: 1L)
     if (s.day.isEmpty()) {
         s = s.copy(day = ctx.todayKey, daily = DailyFlags(ctx.todayKey), statsWeek = ctx.weekKey)
+        syncWeekly()
         s = s.copy(quests = generateDailyQuests(s, content, ctx.today))
     } else if (LocalDate.parse(s.day) < ctx.today) {
         // Only move forward: a clock set back (manual change, timezone hop) never re-closes a day.
         closeDay(LocalDate.parse(s.day))
         rollWeek()
+        syncWeekly()
         s = s.copy(
             day = ctx.todayKey,
             daily = DailyFlags(ctx.todayKey),
@@ -36,7 +38,7 @@ fun Tx.ensureDay() {
 }
 
 private fun Tx.closeDay(day: LocalDate) {
-    val daily = s.dailyQuests
+    val daily = s.countedQuests()
     val rest = s.daily.rest
     val sideFailed = if (s.settings.sidePenalize) s.sideQuests.count { !it.done && it.createdDay < ctx.todayKey } else 0
     val done = daily.count { it.isSuccessful() }

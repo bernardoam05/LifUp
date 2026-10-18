@@ -329,9 +329,9 @@
     <string name="your_missions">Deine Missionen</string>
     <string name="system_missions">Basis-Missionen</string>
     <string name="no_custom">Noch keine eigenen Missionen. Tippe auf +, um eine zu schmieden.</string>
-    <string name="kind_core">Jeden Tag</string>
+    <string name="kind_core">Fest</string>
     <string name="kind_pool">Zufall</string>
-    <string name="kind_core_info">Erscheint an jedem gewählten Tag.</string>
+    <string name="kind_core_info">Immer in deiner Liste, an den Tagen oder so oft, wie du wählst.</string>
     <string name="kind_pool_info">Kommt in den Pool für die tägliche Auslosung.</string>
     <string name="new_mission">Neue Mission</string>
     <string name="edit_mission">Mission bearbeiten</string>
@@ -610,4 +610,19 @@
     <string name="notif_timer_more">+%1$d weitere Timer laufen</string>
     <string name="notif_boss_title">Letzter Tag: %1$s</string>
     <string name="notif_boss_text">Der Wochenboss endet heute Nacht, noch %1$d HP. Die Boss-Herausforderung nimmt 35 %% auf einmal.</string>
+    <string name="toast_week_goal">Woche geschafft: %1$s</string>
+    <string name="week_weekly_line">%1$s: %2$d/%3$d</string>
+    <string name="week_due">zählt heute</string>
+    <string name="week_trial">zählt ab Montag</string>
+    <string name="week_met">Woche geschafft</string>
+    <string name="week_free">heute optional</string>
+    <string name="week_short">diese Woche</string>
+    <string name="weekly_section">Diese Woche</string>
+    <string name="guide_weekly_title">Wochenmissionen</string>
+    <string name="guide_weekly_hook">Für Dinge, die du ein paarmal pro Woche machst, an wechselnden Tagen.</string>
+    <string name="guide_weekly">Optional::Solange noch Luft ist, zählt sie nur, wenn du sie machst, und verbessert dann deinen Tag.\nZählt heute::Wenn so viele Male fehlen wie Tage bis Sonntag, zählt sie wie eine tägliche und ersetzt eine gezogene Mission.\nWoche geschafft::Erreichst du das Ziel, gibt es Bonusgold. Zusätzliche Male geben trotzdem XP.\nNeue Woche::In der Woche, in der du sie anlegst, ist sie nie Pflicht. Sie zählt ab Montag.</string>
+    <string name="per_week_chip">%1$d× / Woche</string>
+    <string name="freq_days">Wochentage</string>
+    <string name="freq_weekly">Mal pro Woche</string>
+    <string name="freq_weekly_hint">Erscheint jeden Tag. Pflicht wird sie erst, wenn du sie nicht mehr auslassen kannst.</string>
 </resources>

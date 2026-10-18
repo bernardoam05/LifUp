@@ -67,7 +67,7 @@ fun RewardHost(s: GameState) {
     val context = LocalContext.current
     val snackbar = LocalSnackbar.current
     val toast = s.rewards.firstOrNull { it is Reward.Toast } as Reward.Toast?
-    val toastText = toast?.let { toastMessage(it) }
+    val toastText = toast?.let { toastMessage(s, it) }
     LaunchedEffect(toast?.id) {
         if (toast != null && toastText != null) {
             snackbar.showSnackbar(toastText)
@@ -200,6 +200,10 @@ private fun WeekReportCard(s: GameState, r: Reward.WeekReport, dismiss: () -> Un
             val name = content.bossById[id]?.title?.local() ?: id
             Line(stringResource(if (r.bossDefeated) R.string.week_boss_won else R.string.week_boss_lost, name), if (r.bossDefeated) c.green else c.muted)
         }
+        r.weekly.forEach { w ->
+            val met = w.done >= w.goal
+            Line(stringResource(R.string.week_weekly_line, defTitle(s, w.defId), w.done, w.goal), if (met) c.green else c.gold)
+        }
         r.best?.let { Line(stringResource(R.string.week_best, defTitle(s, it), (r.bestRate * 100).roundToInt()), c.text) }
         r.worst?.let {
             Line(stringResource(R.string.week_worst, defTitle(s, it), (r.worstRate * 100).roundToInt()), c.gold)
@@ -229,7 +233,7 @@ private fun Line(text: String, color: Color = Lif.colors.text) {
 }
 
 @Composable
-private fun toastMessage(t: Reward.Toast): String {
+private fun toastMessage(s: GameState, t: Reward.Toast): String {
     val shadowName = content.shadowById[t.arg]?.name?.local() ?: t.arg
     val itemName = content.itemById[t.arg]?.name?.local() ?: t.arg
     return when (t.kind) {
@@ -245,6 +249,7 @@ private fun toastMessage(t: Reward.Toast): String {
         ToastKind.SHADOW_UPGRADED -> stringResource(R.string.toast_shadow_upgraded, shadowName)
         ToastKind.PASSIVE_FIRED -> stringResource(R.string.toast_passive_fired, shadowName)
         ToastKind.BUFF_ACTIVE -> stringResource(R.string.toast_buff, itemName)
+        ToastKind.WEEK_GOAL -> stringResource(R.string.toast_week_goal, defTitle(s, t.arg))
         ToastKind.BOSS_HIT -> ""
     }
 }

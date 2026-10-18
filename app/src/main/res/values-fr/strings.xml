@@ -313,9 +313,9 @@
     <string name="your_missions">Tes missions</string>
     <string name="system_missions">Missions de base</string>
     <string name="no_custom">Pas encore de missions perso. Touche + pour en forger une.</string>
-    <string name="kind_core">Tous les jours</string>
+    <string name="kind_core">Fixe</string>
     <string name="kind_pool">Tirage</string>
-    <string name="kind_core_info">Apparaît chaque jour choisi.</string>
+    <string name="kind_core_info">Toujours dans ta liste, les jours ou le nombre de fois que tu choisis.</string>
     <string name="kind_pool_info">Rejoint le tirage des missions quotidiennes.</string>
     <string name="new_mission">Nouvelle mission</string>
     <string name="edit_mission">Modifier la mission</string>
@@ -592,4 +592,19 @@
     <string name="notif_timer_more">+%1$d chronos en cours</string>
     <string name="notif_boss_title">Dernier jour : %1$s</string>
     <string name="notif_boss_text">Le boss de la semaine se termine ce soir, il reste %1$d PV. Le défi du boss en retire 35 %% d\'un coup.</string>
+    <string name="toast_week_goal">Semaine réussie : %1$s</string>
+    <string name="week_weekly_line">%1$s : %2$d/%3$d</string>
+    <string name="week_due">compte aujourd\'hui</string>
+    <string name="week_trial">compte à partir de lundi</string>
+    <string name="week_met">semaine réussie</string>
+    <string name="week_free">facultative aujourd\'hui</string>
+    <string name="week_short">cette semaine</string>
+    <string name="weekly_section">Cette semaine</string>
+    <string name="guide_weekly_title">Missions hebdomadaires</string>
+    <string name="guide_weekly_hook">Pour ce que tu fais quelques fois par semaine, à des jours variables.</string>
+    <string name="guide_weekly">Facultative::Tant qu\'il reste de la marge, elle ne compte que si tu la fais, et elle améliore alors ta journée.\nCompte aujourd\'hui::Quand il reste autant de fois que de jours jusqu\'à dimanche, elle compte comme une quotidienne et prend la place d\'une tirée au sort.\nSemaine réussie::Atteins l\'objectif pour de l\'or en bonus. Les fois en plus donnent quand même de l\'XP.\nNouvelle semaine::Elle n\'est jamais obligatoire la semaine où tu la crées. Elle compte à partir de lundi.</string>
+    <string name="per_week_chip">%1$d× / semaine</string>
+    <string name="freq_days">Jours de la semaine</string>
+    <string name="freq_weekly">Fois par semaine</string>
+    <string name="freq_weekly_hint">Apparaît tous les jours. Elle ne devient obligatoire que quand tu ne peux plus la sauter.</string>
 </resources>

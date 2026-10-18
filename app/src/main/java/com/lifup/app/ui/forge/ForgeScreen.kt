@@ -141,7 +141,8 @@ private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?) {
             if (def.scalingAmount > 0) Pill(
                 stringResource(R.string.scaling_chip, (if (def.descending) "−" else "+") + fmtNum(def.scalingAmount), def.scalingInterval), c.muted,
             )
-            def.daysOfWeek?.let { days -> Pill(days.sorted().joinToString(" ") { dayNames[it - 1] }, c.muted) }
+            def.daysOfWeek?.takeIf { def.perWeek == null }?.let { days -> Pill(days.sorted().joinToString(" ") { dayNames[it - 1] }, c.muted) }
+            def.perWeek?.let { Pill(stringResource(R.string.per_week_chip, it), c.accent) }
             Pill("+${def.baseXp} XP · +${def.baseGold}", c.accent)
             if (onEdit != null) Icon(Icons.Rounded.Edit, null, tint = c.muted, modifier = Modifier.size(16.dp))
         }
@@ -171,6 +172,8 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
     var addToday by rememberSaveable { mutableStateOf(existing == null) }
     var auto by rememberSaveable { mutableStateOf(existing?.auto) }
     var pomodoro by rememberSaveable { mutableStateOf(existing?.pomodoro ?: false) }
+    var weekly by rememberSaveable { mutableStateOf(existing?.perWeek != null) }
+    var perWeek by rememberSaveable { mutableStateOf(existing?.perWeek ?: 4) }
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
     val dayNames = stringArrayResourceCompat()
 
@@ -225,14 +228,26 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
             }
             Text("+${PRESETS[preset].xp} XP · +${PRESETS[preset].gold}", style = MaterialTheme.typography.labelMedium, color = c.accent)
             Text(stringResource(R.string.field_days), style = MaterialTheme.typography.labelLarge, color = c.muted)
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            // "N times a week" only makes sense for fixed missions you actively do.
+            val weeklyAllowed = core && type != QuestType.FORBIDDEN && type != QuestType.LIMIT
+            val isWeekly = weekly && weeklyAllowed
+            if (weeklyAllowed) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                FilterChip(selected = !weekly, onClick = { weekly = false }, label = { Text(stringResource(R.string.freq_days)) })
+                FilterChip(selected = weekly, onClick = { weekly = true }, label = { Text(stringResource(R.string.freq_weekly)) })
+            }
+            if (isWeekly) {
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    (1..6).forEach { n -> FilterChip(selected = perWeek == n, onClick = { perWeek = n }, label = { Text("$n×") }) }
+                }
+                Text(stringResource(R.string.freq_weekly_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
+            } else Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 (1..7).forEach { d -> FilterChip(selected = d in days, onClick = { if (d in days) days.remove(d) else days.add(d) }, label = { Text(dayNames[d - 1]) }) }
             }
             if (existing == null) Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(addToday, { addToday = it })
                 Text(stringResource(R.string.add_today), style = MaterialTheme.typography.bodyMedium)
             }
-            val valid = title.isNotBlank() && (target.toDoubleOrNull() ?: 0.0) > 0 && days.isNotEmpty()
+            val valid = title.isNotBlank() && (target.toDoubleOrNull() ?: 0.0) > 0 && (isWeekly || days.isNotEmpty())
             PrimaryButton(stringResource(R.string.save), onClick = {
                 val def = QuestDef(
                     id = existing?.id ?: "custom_${System.currentTimeMillis()}",
@@ -246,7 +261,8 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
                     unit = unit.trim(),
                     baseXp = PRESETS[preset].xp,
                     baseGold = PRESETS[preset].gold,
-                    daysOfWeek = days.sorted().takeIf { it.size < 7 },
+                    daysOfWeek = days.sorted().takeIf { it.size < 7 && !isWeekly },
+                    perWeek = perWeek.takeIf { isWeekly },
                     auto = auto,
                     pomodoro = pomodoro && type == QuestType.FOCUS,
                     descending = auto == AutoKind.SCREEN_TIME || auto == AutoKind.DISTRACTION_TIME,

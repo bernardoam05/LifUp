@@ -38,6 +38,9 @@ import com.lifup.app.domain.Quest
 import com.lifup.app.domain.QuestOrigin
 import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.QuestType
+import com.lifup.app.domain.WeekTally
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
 import com.lifup.app.domain.setProgress
 import com.lifup.app.domain.toggleFailed
 import com.lifup.app.ui.act
@@ -56,7 +59,7 @@ import com.lifup.app.ui.theme.Lif
 import com.lifup.app.ui.unitLabel
 
 @Composable
-fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, onClick: () -> Unit) {
+fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null, onClick: () -> Unit) {
     val p = Lif.colors
     val color = questColor(q.type, p)
     val done = q.status == QuestStatus.DONE
@@ -84,6 +87,7 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, onClick: () -> Unit) {
                     textDecoration = if (done) TextDecoration.LineThrough else null,
                 )
                 Text(questDetail(q, lang(), unit), style = MaterialTheme.typography.bodySmall, color = p.muted, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (q.perWeek != null && week != null) WeekProgress(q, week)
             }
             Spacer(Modifier.width(8.dp))
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -140,5 +144,27 @@ private fun LimitControls(q: Quest, unit: String, manual: Boolean) {
             IconButton(onClick = { act { setProgress(q.id, q.progress + step) } }) { Icon(Icons.Rounded.Add, stringResource(R.string.a11y_increase), tint = if (over) p.red else p.text) }
         }
         if (q.status == QuestStatus.FAILED) Icon(Icons.Rounded.Close, null, tint = p.red)
+    }
+}
+
+/** Dots for this week's sessions plus whether the mission counts today. */
+@Composable
+private fun WeekProgress(q: Quest, t: WeekTally) {
+    val p = Lif.colors
+    val (label, color) = when {
+        q.origin == QuestOrigin.DAILY -> R.string.week_due to p.red
+        t.trial -> R.string.week_trial to p.muted
+        t.goal > 0 && t.done >= t.goal -> R.string.week_met to p.green
+        else -> R.string.week_free to p.muted
+    }
+    Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+        if (t.goal > 0) {
+            repeat(maxOf(t.goal, t.done).coerceAtMost(7)) { i ->
+                Box(Modifier.padding(end = 3.dp).size(7.dp).background(if (i < t.done) p.green else p.border, CircleShape))
+            }
+            Spacer(Modifier.width(4.dp))
+            Text("${t.done}/${t.goal} · ", style = MaterialTheme.typography.labelSmall, color = p.muted)
+        }
+        Text(stringResource(label), style = MaterialTheme.typography.labelSmall, color = color, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }

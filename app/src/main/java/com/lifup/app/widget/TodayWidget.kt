@@ -28,6 +28,9 @@ import androidx.glance.layout.padding
 import androidx.glance.layout.width
 import com.lifup.app.LifUpApp
 import com.lifup.app.R
+import com.lifup.app.domain.WeekTally
+import com.lifup.app.domain.QuestOrigin
+import com.lifup.app.domain.countedQuests
 import com.lifup.app.domain.Ctx
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.Quest
@@ -72,16 +75,17 @@ class TodayWidget : GlanceAppWidget() {
 
 @Composable
 private fun Compact(context: Context, s: GameState) {
-    val goal = s.dayGoal().let { g -> g.copy(kept = s.dailyQuests.count { it.status == QuestStatus.DONE }) }
-    val done = s.dailyQuests.count { it.status == QuestStatus.DONE }
+    val counted = s.countedQuests()
+    val done = counted.count { it.status == QuestStatus.DONE }
+    val goal = s.dayGoal().copy(kept = done)
     Row(verticalAlignment = Alignment.CenterVertically, modifier = GlanceModifier.fillMaxWidth()) {
         Label(context.getString(R.string.tab_today).uppercase(), W_MUTED, 11, bold = true, modifier = GlanceModifier.defaultWeight())
         StreakChip(s.player.streak)
     }
     Spacer(GlanceModifier.height(6.dp))
-    Label("$done/${s.dailyQuests.size}", if (goal.safe) W_GREEN else W_TEXT, 30, bold = true)
+    Label("$done/${counted.size}", if (goal.safe) W_GREEN else W_TEXT, 30, bold = true)
     Spacer(GlanceModifier.height(6.dp))
-    Bar(done / s.dailyQuests.size.coerceAtLeast(1).toFloat(), if (goal.safe) W_GREEN else W_PURPLE)
+    Bar(done / counted.size.coerceAtLeast(1).toFloat(), if (goal.safe) W_GREEN else W_PURPLE)
     Spacer(GlanceModifier.height(4.dp))
     Label(if (goal.safe) context.getString(R.string.widget_goal_safe) else context.getString(R.string.widget_goal, goal.needed - goal.kept), if (goal.safe) W_GREEN else W_MUTED, 11)
 }
@@ -90,9 +94,9 @@ private fun Compact(context: Context, s: GameState) {
 private fun Full(context: Context, s: GameState, rows: Int) {
     val lang = Locale.getDefault().language
     val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
-    val goal = s.dayGoal().let { g -> g.copy(kept = s.dailyQuests.count { it.status == QuestStatus.DONE }) }
-    val daily = s.dailyQuests
+    val daily = s.countedQuests()
     val done = daily.count { it.status == QuestStatus.DONE }
+    val goal = s.dayGoal().copy(kept = done)
     Row(verticalAlignment = Alignment.CenterVertically, modifier = GlanceModifier.fillMaxWidth()) {
         Label(context.getString(R.string.tab_today).uppercase(), W_PURPLE, 12, bold = true)
         Spacer(GlanceModifier.width(8.dp))
@@ -112,9 +116,10 @@ private fun Full(context: Context, s: GameState, rows: Int) {
     }
     if (s.penalty.active) Label(context.getString(R.string.penalty_banner), W_RED, 11, bold = true)
     // Open missions first (penalty ones on top), finished ones after. Grouped: widgets cap children at 10.
-    val list = (s.penalty.quests.filter { it.status == QuestStatus.OPEN } + daily.sortedBy { it.status != QuestStatus.OPEN })
+    val list = s.penalty.quests.filter { it.status == QuestStatus.OPEN } +
+        (s.dailyQuests + s.weeklyQuests).sortedBy { it.status != QuestStatus.OPEN }
     Column(GlanceModifier.fillMaxWidth().padding(top = 6.dp)) {
-        list.take(minOf(rows, 8)).forEach { q -> MissionRow(context, q, lang, ctx.hour) }
+        list.take(minOf(rows, 8)).forEach { q -> MissionRow(context, q, lang, ctx.hour, s.weekly[q.defId]) }
         if (list.size > rows) Label("+${list.size - rows}", W_DIM, 11, modifier = GlanceModifier.padding(start = 34.dp))
     }
     if (rows > 3) s.boss?.takeIf { !it.defeated }?.let { b ->
@@ -126,7 +131,7 @@ private fun Full(context: Context, s: GameState, rows: Int) {
 }
 
 @Composable
-private fun MissionRow(context: Context, q: Quest, lang: String, hour: Int) {
+private fun MissionRow(context: Context, q: Quest, lang: String, hour: Int, week: WeekTally?) {
     val done = q.status == QuestStatus.DONE
     val failed = q.status == QuestStatus.FAILED
     val tickable = q.tickable(hour) || done
@@ -154,6 +159,10 @@ private fun MissionRow(context: Context, q: Quest, lang: String, hour: Int) {
         Spacer(GlanceModifier.width(10.dp))
         Column(GlanceModifier.defaultWeight().clickable(openLink(context, "quest/${q.id}"))) {
             Label(q.title.text(lang), if (done) W_DIM else W_TEXT, 13, bold = !done)
+            // Weekly missions show the week's count; red when skipping today would lose the week.
+            week?.takeIf { q.perWeek != null && it.goal > 0 }?.let { t ->
+                Label("${t.done}/${t.goal} " + context.getString(R.string.week_short), if (q.origin == QuestOrigin.DAILY && !done) W_RED else W_DIM, 10)
+            }
         }
         if (q.xp > 0 && !done) Label("+${q.xp}", W_PURPLE, 11)
     }

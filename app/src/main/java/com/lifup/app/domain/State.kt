@@ -7,7 +7,8 @@ import kotlinx.serialization.Serializable
 enum class Rigor { EASY, NORMAL, HARD }
 
 @Serializable
-enum class QuestOrigin { DAILY, EXTRA, PENALTY, BOSS, PORTAL }
+/** [WEEKLY]: an "N times a week" mission on a day it doesn't count yet (doing it still counts). */
+enum class QuestOrigin { DAILY, EXTRA, PENALTY, BOSS, PORTAL, WEEKLY }
 
 @Serializable
 enum class QuestStatus { OPEN, DONE, FAILED }
@@ -56,6 +57,8 @@ data class Quest(
     val fromHour: Int? = null,
     /** Target adjustment applied when the quest was built (see [Adapt]). */
     val adapt: Int = 0,
+    /** Weekly goal of an "N times a week" mission; null for everyday ones. */
+    val perWeek: Int? = null,
 )
 
 @Serializable
@@ -239,6 +242,7 @@ sealed interface Reward {
         val worstRate: Double = 0.0,
         val bossId: String? = null,
         val bossDefeated: Boolean = false,
+        val weekly: List<WeekLine> = emptyList(),
     ) : Reward
 
     @Serializable @SerialName("streak")
@@ -255,7 +259,7 @@ sealed interface Reward {
 @Serializable
 enum class ToastKind {
     LEVEL_UP, ITEM_FOUND, PENALTY_CLEARED, FOCUS_DONE, FOCUS_LOST, BOSS_ESCAPED, PORTAL_ESCAPED,
-    PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED,
+    PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED, WEEK_GOAL,
 }
 
 @Serializable
@@ -317,6 +321,8 @@ data class GameState(
     val statsWeek: String = "",
     val lastWeekKept: Int? = null,
     val adapt: Map<String, Adapt> = emptyMap(),
+    /** This week's tally of each "N times a week" mission, by definition id. */
+    val weekly: Map<String, WeekTally> = emptyMap(),
     /** Echoes gained since the Echoes tab was last seen: true = first copy, false = an extra copy. */
     val newEchoes: Map<String, Boolean> = emptyMap(),
     /** Items gained since the inventory was last seen. */
@@ -333,6 +339,7 @@ data class GameState(
     fun items(id: String) = inventory[id] ?: 0
     val dailyQuests get() = quests.filter { it.origin == QuestOrigin.DAILY }
     val extraQuests get() = quests.filter { it.origin == QuestOrigin.EXTRA }
+    val weeklyQuests get() = quests.filter { it.origin == QuestOrigin.WEEKLY }
 
     /** Every open quest of any origin, so progress sources (focus, GPS) can credit them all. */
     val allQuests: List<Quest>

@@ -17,7 +17,8 @@ fun Tx.recordMissions(daily: List<Quest>) {
     var stats = s.missionStats
     var week = s.weekStats
     var adapt = s.adapt
-    for (q in daily) {
+    // Weekly missions are judged by their week, not by single days.
+    for (q in daily.filter { it.perWeek == null }) {
         val ok = q.isSuccessful()
         stats = stats + (q.defId to (stats[q.defId] ?: MissionStat()).add(ok))
         week = week + (q.defId to (week[q.defId] ?: MissionStat()).add(ok))
@@ -42,7 +43,7 @@ data class DayGoal(val kept: Int, val needed: Int, val total: Int) {
 }
 
 fun GameState.dayGoal(): DayGoal {
-    val daily = dailyQuests
+    val daily = countedQuests()
     val needed = kotlin.math.ceil(daily.size * Rules.passRatio(settings.rigor) - 1e-9).toInt()
     return DayGoal(daily.count { it.isSuccessful() }, needed, daily.size)
 }
@@ -72,7 +73,7 @@ fun Tx.rollWeek() {
         reward {
             Reward.WeekReport(
                 it, s.statsWeek, kept, logs.count { l -> l.perfect }, logs.count { l -> l.rest }, logs.size, s.lastWeekKept,
-                best?.key, best?.value?.rate ?: 0.0, worst?.key, worst?.value?.rate ?: 0.0, boss?.bossId, boss?.defeated == true,
+                best?.key, best?.value?.rate ?: 0.0, worst?.key, worst?.value?.rate ?: 0.0, boss?.bossId, boss?.defeated == true, s.weekLines(s.statsWeek),
             )
         }
     }

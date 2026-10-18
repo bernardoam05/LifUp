@@ -42,6 +42,8 @@ data class QuestDef(
     val pomodoro: Boolean = false,
     /** Can only be completed from this hour until midnight (e.g. bedtime check-ins). */
     val fromHour: Int? = null,
+    /** Fixed missions only: done this many times a week on any days, instead of every day. */
+    val perWeek: Int? = null,
 )
 
 @Serializable

@@ -31,6 +31,8 @@ enum class HunterRank(val minLevel: Int, val color: Long) {
 object Rules {
     const val SQUAD_SIZE = 3
     const val MAX_EXTRAS_PER_DAY = 3
+    /** Bonus for reaching a weekly mission's goal, in multiples of the mission's gold. */
+    const val WEEK_GOAL_GOLD_MULT = 2
     /** Side quests that pay XP/gold per day; more can be ticked, as a plain to-do list. */
     const val SIDE_REWARDS_PER_DAY = 5
     const val FREE_SWAPS_PER_DAY = 1

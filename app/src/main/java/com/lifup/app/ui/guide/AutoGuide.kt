@@ -16,6 +16,7 @@ import kotlinx.coroutines.delay
 private fun topicsFor(tab: Tab, s: GameState): List<Guide> = when (tab) {
     Tab.TODAY -> listOfNotNull(
         Guide.DAILY,
+        Guide.WEEKLY.takeIf { s.weekly.isNotEmpty() },
         Guide.PENALTY.takeIf { s.penalty.active },
         Guide.PORTAL.takeIf { s.portal != null },
         Guide.BOSS,

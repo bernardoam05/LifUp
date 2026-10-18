@@ -55,6 +55,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.lifup.app.R
+import com.lifup.app.domain.countedQuests
 import com.lifup.app.domain.Ctx
 import com.lifup.app.domain.dayGoal
 import com.lifup.app.domain.GameState
@@ -101,14 +102,15 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
         if (openQuest != null) { selected = openQuest; onQuestOpened() }
     }
     val daily = s.dailyQuests
-    val done = daily.count { it.status == QuestStatus.DONE }
+    val counted = s.countedQuests()
+    val done = counted.count { it.status == QuestStatus.DONE }
 
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item {
             val ctx = Ctx(content, now)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // One line: the count that matters, with the date as a quiet suffix.
-                Text("$done / ${daily.size}", style = MaterialTheme.typography.headlineSmall)
+                Text("$done / ${counted.size}", style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.width(8.dp))
                 val date = LocalDate.parse(s.day.ifEmpty { LocalDate.now().toString() }).format(DateTimeFormatter.ofPattern("EEE, d MMM"))
                 Text(stringResource(R.string.today_count_suffix, date), style = MaterialTheme.typography.labelMedium, color = p.muted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
@@ -123,7 +125,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f)) {
-                    if (s.daily.rest || daily.isEmpty()) Bar(if (daily.isEmpty()) 0f else done / daily.size.toFloat(), p.purple)
+                    if (s.daily.rest || counted.isEmpty()) Bar(if (counted.isEmpty()) 0f else done / counted.size.toFloat(), p.purple)
                     else GoalBar(s.dayGoal().copy(kept = done))
                 }
                 InfoButton(Guide.STREAK)
@@ -158,7 +160,12 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
         item { BossCard(s, now) { selected = it } }
 
         item { SectionTitle(stringResource(R.string.daily_section)) { InfoButton(Guide.DAILY) } }
-        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now) { selected = q.id } }
+        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
+
+        if (s.weeklyQuests.isNotEmpty()) {
+            item { SectionTitle(stringResource(R.string.weekly_section)) { InfoButton(Guide.WEEKLY) } }
+            items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
+        }
 
         if (s.extraQuests.isNotEmpty() || s.canAddExtra()) {
             item { SectionTitle(stringResource(R.string.extra_section)) { Text("${s.daily.extrasAdded}/${Rules.MAX_EXTRAS_PER_DAY}", color = p.dim, style = MaterialTheme.typography.labelMedium) } }

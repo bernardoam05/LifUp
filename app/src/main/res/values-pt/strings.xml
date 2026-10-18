@@ -313,9 +313,9 @@
     <string name="your_missions">As tuas missões</string>
     <string name="system_missions">Missões base</string>
     <string name="no_custom">Ainda não tens missões tuas. Toca em + para forjar uma.</string>
-    <string name="kind_core">Todos os dias</string>
+    <string name="kind_core">Fixa</string>
     <string name="kind_pool">Sorteio</string>
-    <string name="kind_core_info">Aparece em todos os dias escolhidos.</string>
+    <string name="kind_core_info">Fica sempre na tua lista, nos dias ou nas vezes que escolheres.</string>
     <string name="kind_pool_info">Entra no sorteio das missões diárias.</string>
     <string name="new_mission">Nova missão</string>
     <string name="edit_mission">Editar missão</string>
@@ -592,4 +592,19 @@
     <string name="notif_timer_more">+%1$d cronómetros a contar</string>
     <string name="notif_boss_title">Último dia: %1$s</string>
     <string name="notif_boss_text">O boss da semana acaba esta noite e faltam %1$d HP. O desafio do boss tira 35%% de uma vez.</string>
+    <string name="toast_week_goal">Semana cumprida: %1$s</string>
+    <string name="week_weekly_line">%1$s: %2$d/%3$d</string>
+    <string name="week_due">conta hoje</string>
+    <string name="week_trial">começa a contar segunda</string>
+    <string name="week_met">semana cumprida</string>
+    <string name="week_free">opcional hoje</string>
+    <string name="week_short">esta semana</string>
+    <string name="weekly_section">Esta semana</string>
+    <string name="guide_weekly_title">Missões semanais</string>
+    <string name="guide_weekly_hook">Para o que fazes algumas vezes por semana, em dias que variam.</string>
+    <string name="guide_weekly">Opcional::Enquanto houver margem, só conta se a fizeres, e aí melhora o teu dia.\nConta hoje::Quando faltam tantas vezes como dias até domingo, conta como uma diária e ocupa o lugar de uma sorteada.\nSemana cumprida::Ao chegar à meta ganhas ouro extra. As vezes a mais dão XP na mesma.\nSemana nova::Na semana em que a crias nunca é obrigatória. Começa a contar na segunda.</string>
+    <string name="per_week_chip">%1$d× / semana</string>
+    <string name="freq_days">Dias da semana</string>
+    <string name="freq_weekly">Vezes por semana</string>
+    <string name="freq_weekly_hint">Aparece todos os dias. Só fica obrigatória quando já não dá para saltar mais.</string>
 </resources>

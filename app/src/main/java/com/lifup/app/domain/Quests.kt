@@ -28,6 +28,7 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         auto = def.auto,
         pomodoro = def.pomodoro,
         fromHour = def.fromHour,
+        perWeek = def.perWeek.takeIf { def.isWeekly() },
         adapt = step,
     )
 }
@@ -52,12 +53,16 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
     val defs = state.availableDefs(content)
     val dow = date.dayOfWeek.value
     val level = state.player.level
-    val core = defs.filter { it.kind == DefKind.CORE && (it.daysOfWeek == null || dow in it.daysOfWeek) }
+    val core = defs.filter { it.kind == DefKind.CORE && !it.isWeekly() && (it.daysOfWeek == null || dow in it.daysOfWeek) }
+    val weekly = defs.filter { it.isWeekly() }
+    // A weekly mission that is due takes a drawn mission's place.
+    val due = weekly.count { state.weekly[it.id]?.dueOn(date) == true }
     val seed = date.year * 10_000 + date.monthValue * 100 + date.dayOfMonth
     val pool = defs.filter { it.kind == DefKind.POOL && (it.daysOfWeek == null || dow in it.daysOfWeek) }
         .shuffled(Random(seed.toLong() xor state.seed))
-        .take(Rules.dailyPoolCount(level, state.settings))
-    return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, adapt = state.adapt[it.id]?.level ?: 0) }
+        .take((Rules.dailyPoolCount(level, state.settings) - due).coerceAtLeast(0))
+    return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, adapt = state.adapt[it.id]?.level ?: 0) } +
+        weekly.map { weeklyQuest(it, state.weekly[it.id], date, level, state.adapt[it.id]?.level ?: 0) }
 }
 
 internal fun Tx.updateQuestProgress(id: String, value: Double) = updateQuest(id) { it.copy(progress = value) }
@@ -88,7 +93,7 @@ fun Tx.completeQuest(id: String) {
             s.boss?.let { b -> damageBoss((b.maxHp * Rules.BOSS_CHALLENGE_DAMAGE).roundToInt()) }
         }
         QuestOrigin.PORTAL -> completePortal()
-        QuestOrigin.DAILY, QuestOrigin.EXTRA -> completeMission(q)
+        QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY -> completeMission(q)
     }
     stopTimer(id, record = true)
 }
@@ -108,6 +113,7 @@ private fun Tx.completeMission(q: Quest) {
     }
     val rec = s.records[q.defId] ?: QuestRecord()
     s = s.copy(records = s.records + (q.defId to rec.copy(count = rec.count + 1)))
+    tallyWeekly(q, +1)
     rollMissionDrop()
     if (q.origin == QuestOrigin.DAILY && s.allDailyDone()) rollExtraction()
 }
@@ -133,6 +139,7 @@ fun Tx.undoQuest(id: String) {
     healBoss(q.bossDamage)
     count(StatKey.QUESTS_COMPLETED, -1)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED, -1)
+    tallyWeekly(q, -1)
     updateQuest(id) {
         // Tracked minutes/km stay (they were really done); automatic missions restart and stop auto-filling.
         val tracked = it.auto == null && (it.type == QuestType.FOCUS || it.type == QuestType.GPS)
@@ -276,6 +283,7 @@ fun Tx.saveCustomDef(def: QuestDef) {
     val exists = s.customDefs.any { it.id == def.id }
     s = s.copy(customDefs = if (exists) s.customDefs.map { if (it.id == def.id) def else it } else s.customDefs + def)
     if (!exists) count(StatKey.CUSTOM_QUESTS)
+    syncWeekly()
 }
 
 fun Tx.deleteCustomDef(id: String) {
@@ -284,6 +292,7 @@ fun Tx.deleteCustomDef(id: String) {
 
 fun Tx.setDefEnabled(id: String, enabled: Boolean) {
     s = s.copy(disabledDefIds = if (enabled) s.disabledDefIds - id else s.disabledDefIds + id)
+    syncWeekly() // switching a weekly mission back on starts a new trial week
 }
 
 // ── Mission stopwatch ─────────────────────────────────────────────────────────

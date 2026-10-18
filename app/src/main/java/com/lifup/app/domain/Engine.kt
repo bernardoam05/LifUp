@@ -44,5 +44,7 @@ fun Tx.rename(name: String) {
 fun Tx.addDefToToday(defId: String) {
     val def = s.customDefs.firstOrNull { it.id == defId } ?: content.questDefById[defId] ?: return
     if (s.quests.any { it.defId == defId }) return
-    s = s.copy(quests = s.quests + buildQuest(def, s.player.level, QuestOrigin.DAILY))
+    syncWeekly()
+    val quest = if (def.isWeekly()) weeklyQuest(def, s.weekly[def.id], ctx.today, s.player.level) else buildQuest(def, s.player.level, QuestOrigin.DAILY)
+    s = s.copy(quests = s.quests + quest)
 }
