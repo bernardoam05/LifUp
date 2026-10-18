@@ -82,13 +82,13 @@ import com.lifup.app.ui.theme.Lif
 import com.lifup.app.ui.theme.LifUpTheme
 import com.lifup.app.ui.today.TodayScreen
 
-/** Bottom tabs in display order; Today sits in the middle and is where the app opens. */
+/** Bottom tabs in display order: collect and spend on the left, act and grow on the right, Today in the middle. */
 enum class Tab(val route: String, val icon: ImageVector, val label: Int) {
-    FOCUS("focus", Icons.Rounded.Psychology, R.string.tab_focus),
+    SHOP("shop", Icons.Rounded.Storefront, R.string.tab_shop),
     ECHOES("echoes", Icons.Rounded.AutoAwesome, R.string.hero_shadows),
     TODAY("today", Icons.Rounded.TaskAlt, R.string.tab_today),
+    FOCUS("focus", Icons.Rounded.Psychology, R.string.tab_focus),
     HERO("hero", Icons.Rounded.Person, R.string.tab_hero),
-    SHOP("shop", Icons.Rounded.Storefront, R.string.tab_shop),
 }
 
 /** What's new behind a tab: echoes gained, items gained. */
