@@ -223,7 +223,7 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
     val now = rememberNow(30_000)
     Column(Modifier.background(Lif.colors.panel).statusBarsPadding()) {
         Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            RankBadge(rank.name, accentRank(rank))
+            RankBadge(rank.label, accentRank(rank))
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.Bottom) {

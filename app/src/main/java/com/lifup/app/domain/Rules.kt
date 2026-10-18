@@ -20,6 +20,9 @@ enum class HunterRank(val minLevel: Int, val color: Long) {
 
     val next get() = entries.getOrNull(ordinal + 1)
 
+    /** What the player sees: the top rank reads "SS" (the enum keeps N so saves stay compatible). */
+    val label get() = if (this == N) "SS" else name
+
     companion object {
         fun of(level: Int) = entries.last { level >= it.minLevel }
     }

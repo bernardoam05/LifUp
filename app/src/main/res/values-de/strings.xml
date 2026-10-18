@@ -47,12 +47,12 @@
 
     <!-- Ranks -->
     <string name="rank_title_e">Neuling</string>
-    <string name="rank_title_d">Jägerlehrling</string>
-    <string name="rank_title_c">Meister des Willens</string>
-    <string name="rank_title_b">Echo-Wächter</string>
-    <string name="rank_title_a">Champion</string>
+    <string name="rank_title_d">Lehrling</string>
+    <string name="rank_title_c">Diszipliniert</string>
+    <string name="rank_title_b">Veteran</string>
+    <string name="rank_title_a">Meister</string>
     <string name="rank_title_s">Souverän</string>
-    <string name="rank_title_n">Lebende Legende</string>
+    <string name="rank_title_n">Legende</string>
     <string name="next_rank_at">Nächster Rang: %1$s auf Level %2$d</string>
     <string name="srank_normal">Gewöhnlich</string>
     <string name="srank_elite">Selten</string>

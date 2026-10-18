@@ -139,7 +139,7 @@ class HeroWidget : GlanceAppWidget() {
         provideContent {
             Card {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(rank.name, style = TextStyle(color = c(accent), fontWeight = FontWeight.Bold, fontSize = 26.sp))
+                    Text(rank.label, style = TextStyle(color = c(accent), fontWeight = FontWeight.Bold, fontSize = 26.sp))
                     Spacer(GlanceModifier.width(10.dp))
                     Column {
                         Text(s.player.name.ifBlank { context.getString(R.string.default_hunter) }.uppercase(), style = TextStyle(color = c(TEXT), fontWeight = FontWeight.Bold, fontSize = 14.sp), maxLines = 1)

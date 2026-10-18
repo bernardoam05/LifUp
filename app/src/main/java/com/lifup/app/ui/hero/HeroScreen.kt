@@ -111,12 +111,12 @@ private fun Profile(s: GameState) {
     val c = Lif.colors
     Panel {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            RankBadge(rank.name, accentRank(rank), 56.dp)
+            RankBadge(rank.label, accentRank(rank), 56.dp)
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(p.name.ifBlank { stringResource(R.string.default_hunter) }.uppercase(), style = MaterialTheme.typography.headlineSmall, maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 Text(stringResource(hunterTitle(rank)), style = MaterialTheme.typography.labelLarge, color = accentRank(rank))
-                rank.next?.let { Text(stringResource(R.string.next_rank_at, it.name, it.minLevel), style = MaterialTheme.typography.labelSmall, color = c.dim) }
+                rank.next?.let { Text(stringResource(R.string.next_rank_at, it.label, it.minLevel), style = MaterialTheme.typography.labelSmall, color = c.dim) }
             }
         }
         Spacer(Modifier.height(12.dp))

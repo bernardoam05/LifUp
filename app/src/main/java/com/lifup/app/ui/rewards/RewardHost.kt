@@ -105,7 +105,7 @@ fun RewardHost(s: GameState) {
                     Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
                     reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
                 }
-                is Reward.RankUp -> RewardCard(Icons.Rounded.MilitaryTech, accentRank(reward.rank), stringResource(R.string.reward_rank_title), "${reward.rank.name} · ${stringResource(hunterTitle(reward.rank))}", dismiss) {
+                is Reward.RankUp -> RewardCard(Icons.Rounded.MilitaryTech, accentRank(reward.rank), stringResource(R.string.reward_rank_title), "${reward.rank.label} · ${stringResource(hunterTitle(reward.rank))}", dismiss) {
                     Line(stringResource(R.string.reward_rank_text), Lif.colors.muted)
                 }
                 is Reward.ShadowGained -> {

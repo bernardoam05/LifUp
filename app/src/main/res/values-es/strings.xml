@@ -47,12 +47,12 @@
 
     <!-- Ranks -->
     <string name="rank_title_e">Novato</string>
-    <string name="rank_title_d">Cazador Aprendiz</string>
-    <string name="rank_title_c">Maestro de la Voluntad</string>
-    <string name="rank_title_b">Guardián de los Ecos</string>
-    <string name="rank_title_a">Campeón</string>
+    <string name="rank_title_d">Aprendiz</string>
+    <string name="rank_title_c">Disciplinado</string>
+    <string name="rank_title_b">Veterano</string>
+    <string name="rank_title_a">Maestro</string>
     <string name="rank_title_s">Soberano</string>
-    <string name="rank_title_n">Leyenda Viva</string>
+    <string name="rank_title_n">Leyenda</string>
     <string name="next_rank_at">Próximo rango: %1$s en el nivel %2$d</string>
     <string name="srank_normal">Común</string>
     <string name="srank_elite">Raro</string>

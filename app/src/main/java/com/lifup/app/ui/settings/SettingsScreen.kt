@@ -167,7 +167,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     FilterChip(selected = set.themeRank == null, onClick = { act { updateSettings { it.copy(themeRank = null) } } }, label = { Text(stringResource(R.string.theme_auto)) })
                     HunterRank.entries.filter { it.ordinal <= current.ordinal }.forEach { r ->
-                        FilterChip(selected = set.themeRank == r, onClick = { act { updateSettings { it.copy(themeRank = r) } } }, label = { Text(r.name, color = accentRank(r)) })
+                        FilterChip(selected = set.themeRank == r, onClick = { act { updateSettings { it.copy(themeRank = r) } } }, label = { Text(r.label, color = accentRank(r)) })
                     }
                 }
                 Text(stringResource(R.string.theme_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
