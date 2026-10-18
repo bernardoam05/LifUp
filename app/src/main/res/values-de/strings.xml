@@ -412,9 +412,9 @@
     <string name="tile_on">An</string>
     <string name="tile_off">Aus</string>
     <string name="widget_today_name">Heutige Missionen</string>
-    <string name="widget_today_desc">Deine Missionen, dein Streak und deine Strafe auf einen Blick.</string>
-    <string name="widget_hero_name">Jäger</string>
-    <string name="widget_hero_desc">Level, XP und der Wochenboss.</string>
+    <string name="widget_today_desc">Hake die Missionen des Tages ab, ohne die App zu öffnen.</string>
+    <string name="widget_hero_name">Fortschritt</string>
+    <string name="widget_hero_desc">Rang, Level, Streak, Boss und die letzten Wochen.</string>
     <string name="unit_steps">Schritte</string>
     <string name="unit_flights">Stockwerke</string>
     <string name="unit_servings">Portionen</string>
@@ -602,4 +602,12 @@
     <string name="badge_new">NEU</string>
     <string name="bought_item">Gekauft: %1$s</string>
     <string name="see_in_inventory">Ansehen</string>
+    <string name="widget_focus_name">Fokus</string>
+    <string name="widget_focus_desc">Starte eine Sitzung mit einem Tipp und sieh die Zeit.</string>
+    <string name="widget_focus_minutes">%1$d Min.</string>
+    <string name="widget_focus_left">noch %1$d Min.</string>
+    <string name="notif_timer_running">Timer läuft</string>
+    <string name="notif_timer_more">+%1$d weitere Timer laufen</string>
+    <string name="notif_boss_title">%1$s flieht heute Nacht</string>
+    <string name="notif_boss_text">Noch %1$d HP. Die Boss-Herausforderung nimmt 35 %% auf einmal.</string>
 </resources>

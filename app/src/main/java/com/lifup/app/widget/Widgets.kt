@@ -1,183 +1,128 @@
 package com.lifup.app.widget
 
-import com.lifup.app.domain.dayGoal
-import com.lifup.app.domain.Ctx
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.glance.appwidget.action.actionStartActivity as startActivityIntent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.GlanceId
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
+import androidx.glance.Image
+import androidx.glance.ImageProvider
+import androidx.glance.action.Action
 import androidx.glance.action.clickable
-import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.LinearProgressIndicator
-import androidx.glance.action.actionStartActivity
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
-import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.updateAll
 import androidx.glance.background
 import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.ColumnScope
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider as FixedColor
-import com.lifup.app.LifUpApp
+import androidx.glance.unit.ColorProvider
 import com.lifup.app.MainActivity
 import com.lifup.app.R
 import com.lifup.app.domain.GameState
-import com.lifup.app.domain.HunterRank
-import com.lifup.app.domain.QuestStatus
-import com.lifup.app.domain.Rules
-import com.lifup.app.domain.text
-import com.lifup.app.ui.theme.accentFor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Locale
 
-private val BG = Color(0xFF0B0D14)
-private val TEXT = Color(0xFFE6E7EE)
-private val MUTED = Color(0xFF9497A8)
-private val GREEN = Color(0xFF22C55E)
-private val RED = Color(0xFFEF4444)
+// Widget palette: the app's dark theme, fixed (widgets can't read the in-app theme).
+internal val W_BG = Color(0xFF0B0D14)
+internal val W_PANEL = Color(0xFF161A26)
+internal val W_TRACK = Color(0xFF262C3E)
+internal val W_TEXT = Color(0xFFE6E7EE)
+internal val W_MUTED = Color(0xFF9497A8)
+internal val W_DIM = Color(0xFF5B6075)
+internal val W_GREEN = Color(0xFF22C55E)
+internal val W_RED = Color(0xFFEF4444)
+internal val W_GOLD = Color(0xFFF59E0B)
+internal val W_PURPLE = Color(0xFFA855F7)
 
-private fun c(color: Color) = FixedColor(color)
+internal fun c(color: Color) = ColorProvider(color)
 
-/** Pushes fresh state to every placed widget, at most every few seconds. */
+/** Pushes fresh state to every placed widget; bursts of changes are coalesced into one update. */
 object Widgets {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    @Volatile private var last = 0L
+    private var pending: Job? = null
 
-    fun refresh(context: Context, @Suppress("UNUSED_PARAMETER") s: GameState) {
-        val now = System.currentTimeMillis()
-        if (now - last < 5_000) return
-        last = now
-        scope.launch {
+    fun refresh(context: Context, @Suppress("UNUSED_PARAMETER") s: GameState) = refreshSoon(context)
+
+    fun refreshSoon(context: Context, delayMs: Long = 600) {
+        pending?.cancel()
+        pending = scope.launch {
+            delay(delayMs)
             runCatching { TodayWidget().updateAll(context) }
+            runCatching { FocusWidget().updateAll(context) }
             runCatching { HeroWidget().updateAll(context) }
         }
     }
 }
 
-/** What the streak needs today and how long is left (refreshed on changes and every 30 min). */
+/** Opens the app on a deep link (lifup://today, lifup://quest/<id>, …). */
+internal fun openLink(context: Context, link: String): Action = actionStartActivity(
+    Intent(Intent.ACTION_VIEW, Uri.parse("lifup://$link"), context, MainActivity::class.java)
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP),
+)
+
 @Composable
-private fun GoalLine(context: Context, s: GameState) {
-    val goal = s.dayGoal()
-    val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
-    val hours = ((ctx.nextMidnight() - ctx.now) / 3_600_000L).toInt()
-    val left = if (hours < 1) context.getString(R.string.widget_under_hour) else context.getString(R.string.widget_hours_left, hours)
-    Text(
-        if (goal.safe) context.getString(R.string.widget_goal_safe) else context.getString(R.string.widget_goal, goal.needed - goal.kept) + " · " + left,
-        style = TextStyle(color = c(if (goal.safe) GREEN else if (hours < 3) RED else MUTED), fontSize = 12.sp),
-        maxLines = 1,
+internal fun WidgetCard(onClick: Action, content: @Composable ColumnScope.() -> Unit) {
+    Column(GlanceModifier.fillMaxSize().background(W_BG).cornerRadius(20.dp).padding(14.dp).clickable(onClick), content = content)
+}
+
+@Composable
+internal fun Icon(res: Int, tint: Color, size: Dp = 16.dp, modifier: GlanceModifier = GlanceModifier) {
+    Image(ImageProvider(res), null, modifier.size(size), colorFilter = ColorFilter.tint(c(tint)))
+}
+
+@Composable
+internal fun Bar(progress: Float, color: Color, height: Dp = 6.dp) {
+    LinearProgressIndicator(
+        progress = progress.coerceIn(0f, 1f),
+        modifier = GlanceModifier.fillMaxWidth().height(height).cornerRadius(height / 2),
+        color = c(color), backgroundColor = c(W_TRACK),
     )
 }
 
 @Composable
-private fun Card(content: @Composable () -> Unit) {
-    Column(
-        GlanceModifier.fillMaxSize().background(BG).cornerRadius(18.dp).padding(14.dp).clickable(actionStartActivity<MainActivity>()),
-    ) { content() }
+internal fun Label(text: String, color: Color = W_MUTED, size: Int = 12, bold: Boolean = false, modifier: GlanceModifier = GlanceModifier) {
+    Text(text, modifier, style = TextStyle(color = c(color), fontSize = size.sp, fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal), maxLines = 1)
 }
 
-class TodayWidget : GlanceAppWidget() {
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val s = LifUpApp.store.current
-        val lang = Locale.getDefault().language
-        val accent = accentFor(HunterRank.of(s.player.level))
-        provideContent {
-            Card {
-                val daily = s.dailyQuests
-                val done = daily.count { it.status == QuestStatus.DONE }
-                Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(context.getString(R.string.tab_today).uppercase(), style = TextStyle(color = c(accent), fontWeight = FontWeight.Bold, fontSize = 13.sp))
-                    Spacer(GlanceModifier.width(8.dp))
-                    Text("$done/${daily.size}", style = TextStyle(color = c(TEXT), fontWeight = FontWeight.Bold, fontSize = 13.sp))
-                    Spacer(GlanceModifier.defaultWeight())
-                    Text("🔥 ${s.player.streak}", style = TextStyle(color = c(TEXT), fontSize = 13.sp))
-                }
-                if (s.penalty.active) {
-                    Text(context.getString(R.string.penalty_banner), style = TextStyle(color = c(RED), fontSize = 12.sp, fontWeight = FontWeight.Bold))
-                }
-                if (!s.daily.rest && daily.isNotEmpty()) GoalLine(context, s)
-                Spacer(GlanceModifier.height(6.dp))
-                val shown = (s.penalty.quests.filter { it.status != QuestStatus.DONE } + daily.sortedBy { it.status == QuestStatus.DONE }).take(5)
-                shown.forEach { q ->
-                    val ok = q.status == QuestStatus.DONE
-                    Text(
-                        (if (ok) "✓ " else "• ") + q.title.text(lang),
-                        style = TextStyle(color = c(if (ok) GREEN else if (q.status == QuestStatus.FAILED) RED else TEXT), fontSize = 13.sp),
-                        maxLines = 1,
-                    )
-                }
-                if (daily.size > shown.size) Text("+${daily.size - shown.size}", style = TextStyle(color = c(MUTED), fontSize = 12.sp))
-            }
-        }
+/** Flame plus streak count, used in the widget headers. */
+@Composable
+internal fun StreakChip(streak: Int) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(R.drawable.ic_w_flame, if (streak > 0) W_RED else W_DIM, 14.dp)
+        Spacer(GlanceModifier.width(3.dp))
+        Label("$streak", W_TEXT, 13, bold = true)
     }
 }
 
-class HeroWidget : GlanceAppWidget() {
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val s = LifUpApp.store.current
-        val lang = Locale.getDefault().language
-        val rank = HunterRank.of(s.player.level)
-        val accent = accentFor(rank)
-        provideContent {
-            Card {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(rank.label, style = TextStyle(color = c(accent), fontWeight = FontWeight.Bold, fontSize = 26.sp))
-                    Spacer(GlanceModifier.width(10.dp))
-                    Column {
-                        Text(s.player.name.ifBlank { context.getString(R.string.default_hunter) }.uppercase(), style = TextStyle(color = c(TEXT), fontWeight = FontWeight.Bold, fontSize = 14.sp), maxLines = 1)
-                        Text(context.getString(R.string.level_n, s.player.level) + " · 🔥 ${s.player.streak}", style = TextStyle(color = c(MUTED), fontSize = 12.sp))
-                    }
-                }
-                Spacer(GlanceModifier.height(8.dp))
-                LinearProgressIndicator(
-                    progress = s.player.xp / Rules.xpForLevel(s.player.level).toFloat(),
-                    modifier = GlanceModifier.fillMaxWidth().height(6.dp),
-                    color = c(accent), backgroundColor = c(Color(0xFF262C3E)),
-                )
-                s.boss?.let { b ->
-                    val def = LifUpApp.store.content.bossById[b.bossId]
-                    val openBoss = startActivityIntent(
-                        Intent(Intent.ACTION_VIEW, Uri.parse("lifup://boss"), context, MainActivity::class.java)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                    )
-                    Spacer(GlanceModifier.height(10.dp))
-                    Column(GlanceModifier.fillMaxWidth().clickable(openBoss)) {
-                        Text(def?.title?.text(lang).orEmpty(), style = TextStyle(color = c(if (b.defeated) GREEN else RED), fontSize = 12.sp, fontWeight = FontWeight.Bold), maxLines = 1)
-                        if (!b.defeated) LinearProgressIndicator(
-                            progress = b.hp / b.maxHp.toFloat(),
-                            modifier = GlanceModifier.fillMaxWidth().height(5.dp),
-                            color = c(RED), backgroundColor = c(Color(0xFF262C3E)),
-                        )
-                    }
-                }
-            }
+/** Rounded tinted square with a letter, like the app's rank badge. */
+@Composable
+internal fun RankBadge(label: String, color: Color, size: Dp) {
+    Box(GlanceModifier.size(size).background(color).cornerRadius(12.dp).padding(2.dp), contentAlignment = Alignment.Center) {
+        Box(GlanceModifier.fillMaxSize().background(W_BG).cornerRadius(10.dp), contentAlignment = Alignment.Center) {
+            Label(label, color, if (label.length > 1) 16 else 20, bold = true)
         }
     }
 }
-
-class TodayWidgetReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = TodayWidget()
-}
-
-class HeroWidgetReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = HeroWidget()
-}
-

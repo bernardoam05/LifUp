@@ -151,6 +151,15 @@ private fun MainScaffold(
             pager.scrollToPage(Tab.TODAY.ordinal)
             openQuest = s.boss?.challenge?.id
         }
+        // From widgets: open one mission, or prepare a focus session for it.
+        if (deepLink?.startsWith("quest/") == true) {
+            pager.scrollToPage(Tab.TODAY.ordinal)
+            openQuest = deepLink.removePrefix("quest/")
+        }
+        if (deepLink?.startsWith("focus/") == true) {
+            com.lifup.app.ui.focus.FocusPrep.questId = deepLink.removePrefix("focus/")
+            pager.scrollToPage(Tab.FOCUS.ordinal)
+        }
         if (deepLink != null) onDeepLinkConsumed()
     }
     // Leaving a tab marks its novelties as seen.

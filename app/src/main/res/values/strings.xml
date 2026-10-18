@@ -413,9 +413,9 @@
     <string name="tile_on">On</string>
     <string name="tile_off">Off</string>
     <string name="widget_today_name">Today\'s missions</string>
-    <string name="widget_today_desc">Your missions, streak and penalty at a glance.</string>
-    <string name="widget_hero_name">Hunter</string>
-    <string name="widget_hero_desc">Level, XP and the weekly boss.</string>
+    <string name="widget_today_desc">Tick off today\'s missions without opening the app.</string>
+    <string name="widget_hero_name">Progress</string>
+    <string name="widget_hero_desc">Rank, level, streak, boss and recent weeks.</string>
     <string name="unit_steps">steps</string>
     <string name="unit_flights">flights</string>
     <string name="unit_servings">servings</string>
@@ -603,4 +603,12 @@
     <string name="badge_new">NEW</string>
     <string name="bought_item">You bought %1$s</string>
     <string name="see_in_inventory">See</string>
+    <string name="widget_focus_name">Focus</string>
+    <string name="widget_focus_desc">Start a session in one tap and watch the clock.</string>
+    <string name="widget_focus_minutes">%1$d min</string>
+    <string name="widget_focus_left">%1$d min left</string>
+    <string name="notif_timer_running">Timer running</string>
+    <string name="notif_timer_more">+%1$d more timers running</string>
+    <string name="notif_boss_title">%1$s escapes tonight</string>
+    <string name="notif_boss_text">%1$d HP left. The boss challenge takes 35%% at once.</string>
 </resources>

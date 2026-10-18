@@ -30,6 +30,7 @@ import com.lifup.app.R
 import com.lifup.app.domain.FocusSession
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.Pomodoro
+import com.lifup.app.domain.text
 import com.lifup.app.domain.elapsedMinutes
 import com.lifup.app.domain.endsAt
 import com.lifup.app.domain.penaltyBlockActive
@@ -104,6 +105,8 @@ class SessionService : Service() {
     private var player: MediaPlayer? = null
     private var playingAmbient: String? = null
     private var lastPhase: Pomodoro.Phase? = null
+    /** What the ongoing notification currently shows; it's only re-posted when this changes. */
+    private var postedKey: String? = null
     private val launchable = HashMap<String, Boolean>()
 
     @Volatile var plan: BlockPlan? = null
@@ -179,8 +182,13 @@ class SessionService : Service() {
                 }
                 lastPhase = phase
             }
-            val nm = getSystemService(NOTIFICATION_SERVICE) as android.app.NotificationManager
-            nm.notify(Notifications.ID_SESSION, buildNotification())
+            val key = notificationKey()
+            if (key != postedKey) {
+                postedKey = key
+                val nm = getSystemService(NOTIFICATION_SERVICE) as android.app.NotificationManager
+                nm.notify(Notifications.ID_SESSION, buildNotification())
+                com.lifup.app.widget.Widgets.refreshSoon(this@SessionService)
+            }
             handler.postDelayed(this, 15_000)
         }
     }
@@ -344,24 +352,46 @@ class SessionService : Service() {
 
     // ── Notification ──────────────────────────────────────────────────────────
 
+    private fun notificationKey(): String {
+        val s = store.current
+        val f = s.focus ?: return "penalty:${s.penalty.blockEnd}"
+        val phase = f.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(System.currentTimeMillis())) }
+        return "focus:${f.startedAt}:${phase?.work}:${phase?.cycle}"
+    }
+
+    /** Counts down on its own (chronometer), so it never needs re-posting just to tick. */
     private fun buildNotification(): Notification {
         val s = store.current
         val now = System.currentTimeMillis()
         val f = s.focus
-        val (title, end) = when {
-            f != null -> getString(R.string.session_focus_title) to f.endsAt()
-            else -> getString(R.string.session_penalty_title) to s.penalty.blockEnd
+        val phase = f?.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(now)) }
+        val title = when {
+            f == null -> getString(R.string.session_penalty_title)
+            phase == null -> getString(R.string.session_focus_title)
+            phase.work -> getString(R.string.pomodoro_work_open, phase.cycle)
+            else -> getString(R.string.pomodoro_break_open, phase.cycle)
         }
-        val min = ((end - now) / 60_000).coerceAtLeast(0)
-        val text = if (min >= 60) getString(R.string.session_left_h, min / 60, min % 60) else getString(R.string.session_left_m, min)
-        return NotificationCompat.Builder(this, Notifications.CH_SESSION)
+        val end = when {
+            f == null -> s.penalty.blockEnd
+            phase != null -> f.startedAt + (phase.endsAtMin * 60_000).toLong()
+            else -> f.endsAt()
+        }
+        val countUp = f?.open == true && phase == null
+        val mission = f?.questId?.let { id -> s.allQuests.firstOrNull { it.id == id } }
+        val b = NotificationCompat.Builder(this, Notifications.CH_SESSION)
             .setSmallIcon(R.drawable.ic_stat_lifup)
             .setContentTitle(title)
-            .setContentText(text)
+            .setContentText(mission?.title?.text(java.util.Locale.getDefault().language))
             .setOngoing(true)
             .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .setUsesChronometer(true)
+            .setChronometerCountDown(!countUp)
+            .setWhen(if (countUp) f!!.startedAt else end)
             .setContentIntent(Notifications.openApp(this, "focus"))
-            .build()
+        // A "no quitting" session can't be stopped from here: that choice costs minutes and stays in the app.
+        if (f != null && !f.strict) b.addAction(0, getString(R.string.stop), NotificationActionReceiver.intent(this, NotificationActionReceiver.STOP_FOCUS))
+        return b.build()
     }
 }
 

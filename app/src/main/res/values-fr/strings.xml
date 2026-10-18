@@ -394,9 +394,9 @@
     <string name="tile_on">Activé</string>
     <string name="tile_off">Désactivé</string>
     <string name="widget_today_name">Missions du jour</string>
-    <string name="widget_today_desc">Tes missions, ton streak et ta pénalité en un coup d\'œil.</string>
-    <string name="widget_hero_name">Chasseur</string>
-    <string name="widget_hero_desc">Niveau, XP et le boss hebdo.</string>
+    <string name="widget_today_desc">Coche les missions du jour sans ouvrir l\'app.</string>
+    <string name="widget_hero_name">Progression</string>
+    <string name="widget_hero_desc">Rang, niveau, série, boss et les dernières semaines.</string>
     <string name="unit_steps">pas</string>
     <string name="unit_flights">étages</string>
     <string name="unit_servings">portions</string>
@@ -584,4 +584,12 @@
     <string name="badge_new">NOUVEAU</string>
     <string name="bought_item">Tu as acheté %1$s</string>
     <string name="see_in_inventory">Voir</string>
+    <string name="widget_focus_name">Focus</string>
+    <string name="widget_focus_desc">Lance une session en un geste et suis le temps.</string>
+    <string name="widget_focus_minutes">%1$d min</string>
+    <string name="widget_focus_left">encore %1$d min</string>
+    <string name="notif_timer_running">Chrono en cours</string>
+    <string name="notif_timer_more">+%1$d chronos en cours</string>
+    <string name="notif_boss_title">%1$s s\'enfuit ce soir</string>
+    <string name="notif_boss_text">Il reste %1$d PV. Le défi du boss en retire 35 %% d\'un coup.</string>
 </resources>

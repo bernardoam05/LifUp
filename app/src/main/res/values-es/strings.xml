@@ -412,9 +412,9 @@
     <string name="tile_on">Activado</string>
     <string name="tile_off">Desactivado</string>
     <string name="widget_today_name">Misiones de hoy</string>
-    <string name="widget_today_desc">Tus misiones, streak y penalización de un vistazo.</string>
-    <string name="widget_hero_name">Cazador</string>
-    <string name="widget_hero_desc">Nivel, XP y el jefe semanal.</string>
+    <string name="widget_today_desc">Marca las misiones del día sin abrir la app.</string>
+    <string name="widget_hero_name">Progreso</string>
+    <string name="widget_hero_desc">Rango, nivel, racha, jefe y las últimas semanas.</string>
     <string name="unit_steps">pasos</string>
     <string name="unit_flights">tramos</string>
     <string name="unit_servings">raciones</string>
@@ -602,4 +602,12 @@
     <string name="badge_new">NUEVO</string>
     <string name="bought_item">Has comprado %1$s</string>
     <string name="see_in_inventory">Ver</string>
+    <string name="widget_focus_name">Foco</string>
+    <string name="widget_focus_desc">Empieza una sesión con un toque y mira el tiempo.</string>
+    <string name="widget_focus_minutes">%1$d min</string>
+    <string name="widget_focus_left">faltan %1$d min</string>
+    <string name="notif_timer_running">Cronómetro en marcha</string>
+    <string name="notif_timer_more">+%1$d cronómetros en marcha</string>
+    <string name="notif_boss_title">%1$s escapa esta noche</string>
+    <string name="notif_boss_text">Le quedan %1$d HP. El desafío del jefe quita un 35%% de golpe.</string>
 </resources>

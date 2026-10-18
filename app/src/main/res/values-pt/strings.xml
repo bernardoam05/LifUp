@@ -394,9 +394,9 @@
     <string name="tile_on">Ligado</string>
     <string name="tile_off">Desligado</string>
     <string name="widget_today_name">Missões de hoje</string>
-    <string name="widget_today_desc">As tuas missões, streak e penalização num relance.</string>
-    <string name="widget_hero_name">Caçador</string>
-    <string name="widget_hero_desc">Nível, XP e o boss semanal.</string>
+    <string name="widget_today_desc">Marca as missões do dia sem abrir a app.</string>
+    <string name="widget_hero_name">Progresso</string>
+    <string name="widget_hero_desc">Rank, nível, streak, boss e as últimas semanas.</string>
     <string name="unit_steps">passos</string>
     <string name="unit_flights">lanços</string>
     <string name="unit_servings">porções</string>
@@ -584,4 +584,12 @@
     <string name="badge_new">NOVO</string>
     <string name="bought_item">Compraste %1$s</string>
     <string name="see_in_inventory">Ver</string>
+    <string name="widget_focus_name">Foco</string>
+    <string name="widget_focus_desc">Começa uma sessão num toque e vê o tempo a contar.</string>
+    <string name="widget_focus_minutes">%1$d min</string>
+    <string name="widget_focus_left">faltam %1$d min</string>
+    <string name="notif_timer_running">Cronómetro a contar</string>
+    <string name="notif_timer_more">+%1$d cronómetros a contar</string>
+    <string name="notif_boss_title">%1$s foge esta noite</string>
+    <string name="notif_boss_text">Faltam %1$d HP. O desafio do boss tira 35%% de uma vez.</string>
 </resources>

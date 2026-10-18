@@ -15,7 +15,7 @@ import com.lifup.app.MainActivity
 import com.lifup.app.R
 
 object Notifications {
-    const val CH_SESSION = "session"
+    const val CH_SESSION = "session_quiet"
     const val CH_EVENTS = "events"
     const val CH_REMINDERS = "reminders"
 
@@ -28,13 +28,16 @@ object Notifications {
     private const val ID_BEDTIME = 2006
     private const val ID_REMINDER = 2004
     private const val ID_POMODORO = 2005
+    private const val ID_TIMER = 1340
+    private const val ID_BOSS = 2007
 
     fun createChannels(context: Context) {
         val nm = context.getSystemService(NotificationManager::class.java)
+        nm.deleteNotificationChannel("session")
         nm.createNotificationChannels(
             listOf(
-                NotificationChannel(CH_SESSION, context.getString(R.string.channel_session), NotificationManager.IMPORTANCE_DEFAULT).apply {
-                    setSound(null, null); enableVibration(false)
+                NotificationChannel(CH_SESSION, context.getString(R.string.channel_session), NotificationManager.IMPORTANCE_LOW).apply {
+                    setSound(null, null); enableVibration(false); setShowBadge(false)
                 },
                 NotificationChannel(CH_EVENTS, context.getString(R.string.channel_events), NotificationManager.IMPORTANCE_HIGH),
                 NotificationChannel(CH_REMINDERS, context.getString(R.string.channel_reminders), NotificationManager.IMPORTANCE_DEFAULT),
@@ -117,6 +120,30 @@ object Notifications {
             .build()
         runCatching { nm.notify(ID_RUN, n) }
     }
+
+    /** Ongoing stopwatch for a mission timer started in the app, with pause and finish buttons. */
+    fun missionTimer(context: Context, questId: String?, title: String, startedAt: Long, others: Int) {
+        val nm = NotificationManagerCompat.from(context)
+        if (questId == null || !canPost(context)) { nm.cancel(ID_TIMER); return }
+        val n = NotificationCompat.Builder(context, CH_SESSION)
+            .setSmallIcon(R.drawable.ic_stat_lifup)
+            .setContentTitle(title)
+            .setContentText(if (others > 0) context.getString(R.string.notif_timer_more, others) else context.getString(R.string.notif_timer_running))
+            .setOngoing(true)
+            .setSilent(true)
+            .setUsesChronometer(true)
+            .setWhen(startedAt)
+            .setContentIntent(openApp(context, "quest/$questId"))
+            .addAction(0, context.getString(R.string.a11y_pause), NotificationActionReceiver.intent(context, NotificationActionReceiver.PAUSE_TIMER, questId))
+            .addAction(0, context.getString(R.string.complete), NotificationActionReceiver.intent(context, NotificationActionReceiver.FINISH_TIMER, questId))
+            .build()
+        runCatching { nm.notify(ID_TIMER, n) }
+    }
+
+    fun bossLastDay(context: Context, boss: String, hp: Int) = post(
+        context, ID_BOSS, CH_REMINDERS, context.getString(R.string.notif_boss_title, boss),
+        context.getString(R.string.notif_boss_text, hp), "boss",
+    )
 
     fun cancelReminder(context: Context) = NotificationManagerCompat.from(context).cancel(ID_REMINDER)
 }

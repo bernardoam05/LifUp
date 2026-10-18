@@ -15,20 +15,20 @@ import com.lifup.app.ui.AppRoot
 import com.lifup.app.ui.Feedback
 
 class MainActivity : ComponentActivity() {
-    /** Tab requested by a deep link (lifup://today, focus, hero, shop). */
+    /** Deep link target: a tab (lifup://today), or a tab plus an id (lifup://quest/<id>, lifup://focus/<id>). */
     private val deepLink = mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(0), navigationBarStyle = SystemBarStyle.dark(0))
-        deepLink.value = intent?.data?.host
+        deepLink.value = intent?.data?.let { (it.host ?: "") + (it.path ?: "") }
         Feedback.warmUp(this)
         setContent { AppRoot(deepLink.value) { deepLink.value = null } }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        deepLink.value = intent.data?.host
+        deepLink.value = intent.data?.let { (it.host ?: "") + (it.path ?: "") }
     }
 
     override fun onStart() {

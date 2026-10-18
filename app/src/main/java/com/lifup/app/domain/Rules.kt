@@ -98,6 +98,9 @@ object Rules {
     /** A mission needs this many days in a week to be called best or worst. */
     const val WEEK_MIN_SAMPLES = 3
 
+    /** Sunday hour for the "boss escapes tonight" nudge. */
+    const val BOSS_NUDGE_HOUR = 18
+
     /** Nudge for an open bedtime check-in, in minutes after midnight (22:30). */
     const val BEDTIME_NUDGE_MIN = 22 * 60 + 30
 

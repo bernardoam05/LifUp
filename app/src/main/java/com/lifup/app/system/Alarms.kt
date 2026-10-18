@@ -3,6 +3,7 @@ package com.lifup.app.system
 import com.lifup.app.domain.openBedtime
 import com.lifup.app.domain.dayGoal
 import com.lifup.app.domain.Rules
+import com.lifup.app.domain.text
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -45,6 +46,11 @@ object Alarms {
             val at = ctx.atHour(ctx.today, s.settings.reminderHour)
             if (at > now) candidates += at
         }
+        // Sunday evening nudge while the weekly boss is still standing.
+        if (s.settings.notifications && ctx.today.dayOfWeek == java.time.DayOfWeek.SUNDAY && s.boss?.defeated == false) {
+            val at = ctx.atHour(ctx.today, Rules.BOSS_NUDGE_HOUR)
+            if (at > now) candidates += at
+        }
         if (s.settings.notifications && s.openBedtime() != null) {
             val at = ctx.atHour(ctx.today, 0) + Rules.BEDTIME_NUDGE_MIN * 60_000L
             if (at > now) candidates += at
@@ -78,6 +84,14 @@ object Alarms {
         if (ctx.hour >= s.settings.reminderHour && !reminderSentToday(context, ctx.todayKey)) {
             prefs.edit().putString("reminder", ctx.todayKey).apply()
             if (!s.allDailyDone()) Notifications.reminder(context, s.dayGoal())
+        }
+        val boss = s.boss
+        if (ctx.today.dayOfWeek == java.time.DayOfWeek.SUNDAY && ctx.hour >= Rules.BOSS_NUDGE_HOUR && boss != null && !boss.defeated &&
+            prefs.getString("boss", "") != ctx.weekKey
+        ) {
+            prefs.edit().putString("boss", ctx.weekKey).apply()
+            val name = LifUpApp.store.content.bossById[boss.bossId]?.title?.let { it.text(java.util.Locale.getDefault().language) }.orEmpty()
+            Notifications.bossLastDay(context, name, boss.hp)
         }
         val minute = ctx.dateTime.hour * 60 + ctx.dateTime.minute
         if (minute >= Rules.BEDTIME_NUDGE_MIN && prefs.getString("bedtime", "") != ctx.todayKey) {
