@@ -32,7 +32,7 @@ import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 
-/** Reads steps (hardware step counter) and screen time (usage stats) for automatic quests. */
+/** Reads steps (hardware step counter and Play services history) and screen time (usage stats) for automatic quests. */
 object AutoTracker {
     private const val PREFS = "auto_tracker"
 
@@ -50,7 +50,7 @@ object AutoTracker {
         val usage = if (Permissions.usageAccess(c)) runCatching { screenMinutes(c, start, end, s.settings.blockedApps.toSet()) }.getOrNull() else null
         return AutoReading(
             day = day.toString(),
-            steps = stepCounter(c)?.let { stepsFor(c, day.toString(), it) },
+            steps = listOfNotNull(stepCounter(c)?.let { stepsFor(c, day.toString(), it) }, StepHistory.steps(c, day)).maxOrNull(),
             screenMinutes = usage?.first,
             distractionMinutes = usage?.second?.takeIf { s.settings.blockedApps.isNotEmpty() },
         )
