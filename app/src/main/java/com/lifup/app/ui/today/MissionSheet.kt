@@ -1,5 +1,6 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.domain.text
 import com.lifup.app.domain.defOf
 import android.Manifest
 import android.os.Build
@@ -109,6 +110,7 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                 }
             }
             Text(questDetail(q, lang(), unit), style = MaterialTheme.typography.bodyLarge, color = p.text)
+            q.prompt?.let { Text(it.text(lang()), style = MaterialTheme.typography.bodyMedium, color = p.accent) }
             if (q.xp > 0 || q.gold > 0) {
                 Text(stringResource(R.string.rewards_line, q.xp, q.gold), style = MaterialTheme.typography.labelLarge, color = p.accent)
             }

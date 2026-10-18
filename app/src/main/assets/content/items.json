@@ -182,11 +182,11 @@
   "cost": 500,
   "effect": "CHEST",
   "name": {
-   "pt": "Baú do Caçador",
-   "en": "Hunter's Chest",
-   "es": "Cofre del Cazador",
-   "fr": "Coffre du Chasseur",
-   "de": "Jägertruhe"
+   "pt": "Baú do Herói",
+   "en": "Hero's Chest",
+   "es": "Cofre del Héroe",
+   "fr": "Coffre du Héros",
+   "de": "Heldentruhe"
   },
   "description": {
    "pt": "Pode conter ouro, XP ou um item raro.",

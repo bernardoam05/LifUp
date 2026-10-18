@@ -59,6 +59,8 @@ data class Quest(
     val adapt: Int = 0,
     /** Weekly goal of an "N times a week" mission; null for everyday ones. */
     val perWeek: Int? = null,
+    /** Today's suggestion for an open-ended mission. */
+    val prompt: L10n? = null,
 )
 
 @Serializable

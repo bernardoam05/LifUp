@@ -7,11 +7,13 @@ import kotlin.random.Random
 fun roundTarget(value: Double, unit: String): Double =
     if (unit == "km") (value * 10).roundToInt() / 10.0 else value.roundToInt().toDouble()
 
-fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.id, adapt: Int = 0): Quest {
+/** [day] picks the day's prompt for missions that have them. */
+fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.id, adapt: Int = 0, day: LocalDate? = null): Quest {
     val step = if (def.adaptable()) adapt else 0
     val mult = Rules.tierMultiplier(level) * (1 + Rules.ADAPT_STEP / 2 * step)
     val steps = (level - 1) / def.scalingInterval.coerceAtLeast(1)
-    val raw = (def.baseTarget + steps * (if (def.descending) -def.scalingAmount else def.scalingAmount)) * adaptFactor(def.type, step)
+    val scaled = def.baseTarget + steps * (if (def.descending) -def.scalingAmount else def.scalingAmount)
+    val raw = (def.maxTarget?.let { scaled.coerceAtMost(it) } ?: scaled) * adaptFactor(def.type, step)
     val min = if (def.type == QuestType.FORBIDDEN || def.type == QuestType.LIMIT) 0.0 else 1.0
     return Quest(
         id = id,
@@ -29,6 +31,7 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         pomodoro = def.pomodoro,
         fromHour = def.fromHour,
         perWeek = def.perWeek.takeIf { def.isWeekly() },
+        prompt = day?.let { def.promptOn(it) },
         adapt = step,
     )
 }
@@ -71,9 +74,12 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
         state.settings.focusAttrs,
         Random(seed.toLong() xor state.seed),
     )
-    return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, adapt = state.adapt[it.id]?.level ?: 0) } +
+    return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, adapt = state.adapt[it.id]?.level ?: 0, day = date) } +
         weekly.map { weeklyQuest(it, state.weekly[it.id], date, level, state.adapt[it.id]?.level ?: 0) }
 }
+
+/** The same prompt all day, a different one most days. */
+fun QuestDef.promptOn(day: LocalDate): L10n? = prompts?.takeIf { it.isNotEmpty() }?.let { it[Math.floorMod(day.toEpochDay() + id.hashCode(), it.size.toLong()).toInt()] }
 
 internal fun Tx.updateQuestProgress(id: String, value: Double) = updateQuest(id) { it.copy(progress = value) }
 
@@ -213,7 +219,7 @@ fun Tx.swapQuest(id: String): Boolean {
         .randomOrNull(ctx.rng) ?: return false
     if (free) s = s.copy(daily = s.daily.copy(swapsUsed = s.daily.swapsUsed + 1))
     else { addItem("pergaminho_troca", -1); count(StatKey.ITEMS_USED) }
-    s = s.copy(quests = s.quests.map { if (it.id == id) buildQuest(replacement, s.player.level, QuestOrigin.DAILY) else it })
+    s = s.copy(quests = s.quests.map { if (it.id == id) buildQuest(replacement, s.player.level, QuestOrigin.DAILY, day = ctx.today) else it })
     s = s.copy(timers = s.timers - id)
     return true
 }
@@ -228,7 +234,7 @@ fun Tx.addExtraQuest(): Boolean {
         .randomOrNull(ctx.rng) ?: return false
     val n = s.daily.extrasAdded + 1
     s = s.copy(
-        quests = s.quests + buildQuest(def, s.player.level, QuestOrigin.EXTRA, "extra_${n}_${def.id}"),
+        quests = s.quests + buildQuest(def, s.player.level, QuestOrigin.EXTRA, "extra_${n}_${def.id}", day = ctx.today),
         daily = s.daily.copy(extrasAdded = n),
     )
     return true

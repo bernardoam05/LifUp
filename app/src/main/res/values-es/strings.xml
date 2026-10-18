@@ -19,7 +19,7 @@
     <string name="all">Todas</string>
     <string name="weekly">semanal</string>
     <string name="automatic">Automático</string>
-    <string name="default_hunter">Cazador</string>
+    <string name="default_hunter">Héroe</string>
     <string name="level_short">Nv %1$d</string>
     <string name="level_n">Nivel %1$d</string>
     <string name="tier_n">Grado %1$d de %2$d</string>
@@ -283,7 +283,7 @@
 
     <!-- Settings -->
     <string name="profile">Perfil</string>
-    <string name="hunter_name">Nombre del cazador</string>
+    <string name="hunter_name">Tu nombre</string>
     <string name="difficulty">Dificultad</string>
     <string name="rigor_easy">Fácil</string>
     <string name="rigor_normal">Normal</string>
@@ -646,4 +646,6 @@
     <string name="weekly_hint_text">Hiciste "%1$s" %2$d de %3$d días la semana pasada. ¿Pasarla a %4$d× por semana? Así cuenta cuando la haces y solo es obligatoria cuando ya no puedes saltarla.</string>
     <string name="weekly_hint_yes">Pasar a %1$d×</string>
     <string name="weekly_hint_no">No</string>
+    <string name="unit_meal">comida</string>
+    <string name="unit_shower">ducha</string>
 </resources>

@@ -52,9 +52,10 @@ class WeeklyTest {
         s = run(s, "2026-10-19T10:00") { completeQuest(s.train().id) }
         assertEquals(5, s.dayGoal().total)
         assertEquals(1, s.weekly[train.id]?.done)
+        val kept = s.countedQuests().count { it.isSuccessful() } // includes avoid missions, kept by default
         s = run(s, "2026-10-20T09:00")
         assertEquals(5, s.dayLog.last().total)
-        assertEquals(1, s.dayLog.last().done)
+        assertEquals(kept, s.dayLog.last().done)
     }
 
     @Test fun `it becomes due when it can't be skipped anymore and takes a drawn slot`() {

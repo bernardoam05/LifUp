@@ -46,7 +46,7 @@ fun Tx.syncWeekly() {
 
 /** Today's instance of a weekly mission: counts for the day only when due. */
 fun weeklyQuest(def: QuestDef, tally: WeekTally?, day: LocalDate, level: Int, adapt: Int = 0): Quest =
-    buildQuest(def, level, if (tally?.dueOn(day) == true) QuestOrigin.DAILY else QuestOrigin.WEEKLY, adapt = adapt)
+    buildQuest(def, level, if (tally?.dueOn(day) == true) QuestOrigin.DAILY else QuestOrigin.WEEKLY, adapt = adapt, day = day)
 
 /** The missions that count for today: the daily ones plus weekly ones already done. */
 fun GameState.countedQuests(): List<Quest> = dailyQuests + weeklyQuests.filter { it.isSuccessful() }

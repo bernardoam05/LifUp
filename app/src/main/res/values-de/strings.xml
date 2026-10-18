@@ -19,7 +19,7 @@
     <string name="all">Alle</string>
     <string name="weekly">wöchentlich</string>
     <string name="automatic">Automatisch</string>
-    <string name="default_hunter">Jäger</string>
+    <string name="default_hunter">Held</string>
     <string name="level_short">Lv %1$d</string>
     <string name="level_n">Level %1$d</string>
     <string name="tier_n">Stufe %1$d von %2$d</string>
@@ -283,7 +283,7 @@
 
     <!-- Settings -->
     <string name="profile">Profil</string>
-    <string name="hunter_name">Jägername</string>
+    <string name="hunter_name">Dein Name</string>
     <string name="difficulty">Schwierigkeit</string>
     <string name="rigor_easy">Leicht</string>
     <string name="rigor_normal">Normal</string>
@@ -646,4 +646,6 @@
     <string name="weekly_hint_text">Du hast „%1$s“ letzte Woche an %2$d von %3$d Tagen gemacht. Auf %4$d× pro Woche umstellen? Dann zählt sie, wenn du sie machst, und wird erst Pflicht, wenn du sie nicht mehr auslassen kannst.</string>
     <string name="weekly_hint_yes">Auf %1$d× umstellen</string>
     <string name="weekly_hint_no">Nein</string>
+    <string name="unit_meal">Mahlzeit</string>
+    <string name="unit_shower">Dusche</string>
 </resources>

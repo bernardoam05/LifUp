@@ -46,6 +46,10 @@ data class QuestDef(
     val perWeek: Int? = null,
     /** Family for the daily draw and attribute growth; null = from the type. */
     val group: DrawGroup? = null,
+    /** Ceiling for the level-scaled target (before adaptive adjustments). */
+    val maxTarget: Double? = null,
+    /** Rotating suggestions for open-ended missions; one is picked per day. */
+    val prompts: List<L10n>? = null,
 )
 
 @Serializable

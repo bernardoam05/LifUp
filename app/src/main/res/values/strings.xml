@@ -20,7 +20,7 @@
     <string name="all">All</string>
     <string name="weekly">weekly</string>
     <string name="automatic">Automatic</string>
-    <string name="default_hunter">Hunter</string>
+    <string name="default_hunter">Hero</string>
     <string name="level_short">Lv %1$d</string>
     <string name="level_n">Level %1$d</string>
     <string name="tier_n">Tier %1$d of %2$d</string>
@@ -284,7 +284,7 @@
 
     <!-- Settings -->
     <string name="profile">Profile</string>
-    <string name="hunter_name">Hunter name</string>
+    <string name="hunter_name">Your name</string>
     <string name="difficulty">Difficulty</string>
     <string name="rigor_easy">Easy</string>
     <string name="rigor_normal">Normal</string>
@@ -647,4 +647,6 @@
     <string name="weekly_hint_text">You did "%1$s" on %2$d of %3$d days last week. Make it %4$d× a week? Then it counts when you do it and only becomes required when you can\'t skip it anymore.</string>
     <string name="weekly_hint_yes">Make it %1$d×</string>
     <string name="weekly_hint_no">No</string>
+    <string name="unit_meal">meal</string>
+    <string name="unit_shower">shower</string>
 </resources>

@@ -44,4 +44,17 @@ class DrawTest {
         }
         assertTrue(families.all { it >= 4 } && families.average() > 4.8)
     }
+
+    @Test fun `scaled targets stop at their cap`() {
+        val pushups = content.questDefById.getValue("core_pushups")
+        assertEquals(40.0, buildQuest(pushups, 100, QuestOrigin.DAILY).target, 0.0)
+        assertEquals(15.0, buildQuest(pushups, 1, QuestOrigin.DAILY).target, 0.0)
+    }
+
+    @Test fun `open-ended missions get one prompt per day that changes across days`() {
+        val journal = content.questDefById.getValue("pool_journal")
+        val day = java.time.LocalDate.of(2026, 10, 19)
+        assertEquals(journal.promptOn(day), buildQuest(journal, 1, QuestOrigin.DAILY, day = day).prompt)
+        assertEquals(6, (0L until 6).map { journal.promptOn(day.plusDays(it)) }.toSet().size)
+    }
 }

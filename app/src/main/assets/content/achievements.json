@@ -14,11 +14,11 @@
    "shadowId": "shadow_wisp"
   },
   "title": {
-   "pt": "Caçador Incansável",
-   "en": "Tireless Hunter",
-   "es": "Cazador Incansable",
-   "fr": "Chasseur Infatigable",
-   "de": "Unermüdlicher Jäger"
+   "pt": "Incansável",
+   "en": "Tireless",
+   "es": "Incansable",
+   "fr": "Infatigable",
+   "de": "Unermüdlich"
   },
   "description": {
    "pt": "Completa {target} missões.",

@@ -18,7 +18,7 @@
     <string name="all">Todas</string>
     <string name="weekly">semanal</string>
     <string name="automatic">Automático</string>
-    <string name="default_hunter">Caçador</string>
+    <string name="default_hunter">Herói</string>
     <string name="level_short">Nv %1$d</string>
     <string name="level_n">Nível %1$d</string>
     <string name="tier_n">Patamar %1$d de %2$d</string>
@@ -268,7 +268,7 @@
     <string name="toast_buff">%1$s ativo</string>
 
     <string name="profile">Perfil</string>
-    <string name="hunter_name">Nome do caçador</string>
+    <string name="hunter_name">O teu nome</string>
     <string name="difficulty">Dificuldade</string>
     <string name="rigor_easy">Fácil</string>
     <string name="rigor_normal">Normal</string>
@@ -628,4 +628,6 @@
     <string name="weekly_hint_text">Fizeste "%1$s" em %2$d de %3$d dias na semana passada. Passar a %4$d× por semana? Assim conta quando a fazes e só fica obrigatória quando já não dá para saltar.</string>
     <string name="weekly_hint_yes">Passar a %1$d×</string>
     <string name="weekly_hint_no">Não</string>
+    <string name="unit_meal">refeição</string>
+    <string name="unit_shower">banho</string>
 </resources>

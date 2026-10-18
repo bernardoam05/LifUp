@@ -91,6 +91,8 @@ fun unitLabel(unit: String): String = when (unit.lowercase()) {
     "episode" -> stringResource(R.string.unit_episode)
     "things" -> stringResource(R.string.unit_things)
     "person" -> stringResource(R.string.unit_person)
+    "meal" -> stringResource(R.string.unit_meal)
+    "shower" -> stringResource(R.string.unit_shower)
     else -> unit
 }
 

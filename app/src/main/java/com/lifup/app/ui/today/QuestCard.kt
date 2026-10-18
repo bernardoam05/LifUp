@@ -1,5 +1,6 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.domain.text
 import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.draw.scale
@@ -87,6 +88,7 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null
                     textDecoration = if (done) TextDecoration.LineThrough else null,
                 )
                 Text(questDetail(q, lang(), unit), style = MaterialTheme.typography.bodySmall, color = p.muted, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (!done) q.prompt?.let { Text(it.text(lang()), style = MaterialTheme.typography.bodySmall, color = p.accent, maxLines = 2, overflow = TextOverflow.Ellipsis) }
                 if (q.perWeek != null && week != null) WeekProgress(q, week)
             }
             Spacer(Modifier.width(8.dp))

@@ -5,11 +5,11 @@
    "kind": "CORE",
    "type": "TRAINING",
    "title": {
-    "pt": "Preparação Física: Força",
-    "en": "Physical Training: Strength",
-    "es": "Preparación Física: Fuerza",
-    "fr": "Entraînement Physique : Force",
-    "de": "Körpertraining: Kraft"
+    "pt": "Punhos de Ferro",
+    "en": "Iron Fists",
+    "es": "Puños de Hierro",
+    "fr": "Poings d'Acier",
+    "de": "Eiserne Fäuste"
    },
    "description": {
     "pt": "Realiza {target} flexões.",
@@ -23,18 +23,19 @@
    "scalingInterval": 5,
    "unit": "reps",
    "baseXp": 50,
-   "baseGold": 10
+   "baseGold": 10,
+   "maxTarget": 40
   },
   {
    "id": "core_squats",
    "kind": "POOL",
    "type": "TRAINING",
    "title": {
-    "pt": "Preparação Física: Pernas",
-    "en": "Physical Training: Legs",
-    "es": "Preparación Física: Piernas",
-    "fr": "Entraînement Physique : Jambes",
-    "de": "Körpertraining: Beine"
+    "pt": "Pernas de Aço",
+    "en": "Legs of Steel",
+    "es": "Piernas de Acero",
+    "fr": "Jambes d'Acier",
+    "de": "Stahlbeine"
    },
    "description": {
     "pt": "Realiza {target} agachamentos.",
@@ -48,18 +49,19 @@
    "scalingInterval": 5,
    "unit": "reps",
    "baseXp": 50,
-   "baseGold": 10
+   "baseGold": 10,
+   "maxTarget": 50
   },
   {
    "id": "core_reading",
    "kind": "POOL",
    "type": "KNOWLEDGE",
    "title": {
-    "pt": "Treino Mental: Leitura",
-    "en": "Mental Training: Reading",
-    "es": "Entrenamiento Mental: Lectura",
-    "fr": "Entraînement Mental : Lecture",
-    "de": "Geistestraining: Lesen"
+    "pt": "Páginas do Dia",
+    "en": "Daily Pages",
+    "es": "Páginas del Día",
+    "fr": "Pages du Jour",
+    "de": "Seiten des Tages"
    },
    "description": {
     "pt": "Lê {target} páginas de um livro útil.",
@@ -73,7 +75,8 @@
    "scalingInterval": 10,
    "unit": "pages",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "maxTarget": 25
   },
   {
    "id": "core_water",
@@ -81,11 +84,11 @@
    "type": "TRAINING",
    "group": "HEALTH",
    "title": {
-    "pt": "Sobrevivência: Hidratação",
-    "en": "Survival: Hydration",
-    "es": "Supervivencia: Hidratación",
-    "fr": "Survie : Hydratation",
-    "de": "Überleben: Flüssigkeit"
+    "pt": "Hidratação",
+    "en": "Hydration",
+    "es": "Hidratación",
+    "fr": "Hydratation",
+    "de": "Trinkroutine"
    },
    "description": {
     "pt": "Bebe {target} copos de água.",
@@ -106,11 +109,11 @@
    "kind": "POOL",
    "type": "GPS",
    "title": {
-    "pt": "Missão de Caçador: Corrida",
-    "en": "Hunter Mission: Run",
-    "es": "Misión de Cazador: Carrera",
-    "fr": "Mission de Chasseur : Course",
-    "de": "Jägermission: Laufen"
+    "pt": "Corrida",
+    "en": "The Run",
+    "es": "La Carrera",
+    "fr": "La Course",
+    "de": "Der Lauf"
    },
    "description": {
     "pt": "Corre {target} km.",
@@ -124,7 +127,8 @@
    "scalingInterval": 5,
    "unit": "km",
    "baseXp": 100,
-   "baseGold": 30
+   "baseGold": 30,
+   "maxTarget": 6
   },
   {
    "id": "pool_plank",
@@ -149,18 +153,19 @@
    "scalingInterval": 5,
    "unit": "s",
    "baseXp": 60,
-   "baseGold": 15
+   "baseGold": 15,
+   "maxTarget": 180
   },
   {
    "id": "pool_meditate",
    "kind": "POOL",
    "type": "FOCUS",
    "title": {
-    "pt": "Treino de Mana",
-    "en": "Mana Training",
-    "es": "Entrenamiento de Maná",
-    "fr": "Entraînement de Mana",
-    "de": "Mana-Training"
+    "pt": "Mente Quieta",
+    "en": "Quiet Mind",
+    "es": "Mente Serena",
+    "fr": "Esprit Calme",
+    "de": "Ruhiger Geist"
    },
    "description": {
     "pt": "Medita em silêncio por {target} min.",
@@ -174,7 +179,52 @@
    "scalingInterval": 10,
    "unit": "min",
    "baseXp": 40,
-   "baseGold": 15
+   "baseGold": 15,
+   "maxTarget": 20,
+   "prompts": [
+    {
+     "pt": "Hoje: conta as respirações de 1 a 10 e recomeça.",
+     "en": "Today: count breaths from 1 to 10, then start over.",
+     "es": "Hoy: cuenta las respiraciones del 1 al 10 y vuelve a empezar.",
+     "fr": "Aujourd'hui : compte tes respirations de 1 à 10, puis recommence.",
+     "de": "Heute: Zähle die Atemzüge von 1 bis 10 und beginne von vorn."
+    },
+    {
+     "pt": "Hoje: percorre o corpo dos pés à cabeça.",
+     "en": "Today: scan your body from feet to head.",
+     "es": "Hoy: recorre el cuerpo de los pies a la cabeza.",
+     "fr": "Aujourd'hui : parcours ton corps des pieds à la tête.",
+     "de": "Heute: Geh deinen Körper von den Füßen bis zum Kopf durch."
+    },
+    {
+     "pt": "Hoje: repara só nos sons à tua volta.",
+     "en": "Today: notice only the sounds around you.",
+     "es": "Hoy: fíjate solo en los sonidos a tu alrededor.",
+     "fr": "Aujourd'hui : écoute seulement les sons autour de toi.",
+     "de": "Heute: Achte nur auf die Geräusche um dich herum."
+    },
+    {
+     "pt": "Hoje: de olhos abertos, fixa um ponto.",
+     "en": "Today: eyes open, rest your gaze on one point.",
+     "es": "Hoy: con los ojos abiertos, fija la mirada en un punto.",
+     "fr": "Aujourd'hui : les yeux ouverts, fixe un point.",
+     "de": "Heute: mit offenen Augen einen Punkt fixieren."
+    },
+    {
+     "pt": "Hoje: deixa os pensamentos passar como nuvens.",
+     "en": "Today: let thoughts drift by like clouds.",
+     "es": "Hoy: deja pasar los pensamientos como nubes.",
+     "fr": "Aujourd'hui : laisse passer tes pensées comme des nuages.",
+     "de": "Heute: Lass Gedanken wie Wolken vorbeiziehen."
+    },
+    {
+     "pt": "Hoje: respira um pouco mais devagar a cada minuto.",
+     "en": "Today: breathe a little slower each minute.",
+     "es": "Hoy: respira un poco más despacio cada minuto.",
+     "fr": "Aujourd'hui : respire un peu plus lentement chaque minute.",
+     "de": "Heute: Atme jede Minute ein wenig langsamer."
+    }
+   ]
   },
   {
    "id": "pool_social",
@@ -238,44 +288,19 @@
     "de": "Klimmzüge"
    },
    "description": {
-    "pt": "Realiza {target} elevações.",
-    "en": "Perform {target} pull-ups.",
-    "es": "Haz {target} dominadas.",
-    "fr": "Fais {target} tractions.",
-    "de": "Mache {target} Klimmzüge."
+    "pt": "Realiza {target} elevações (sem barra: remadas invertidas debaixo de uma mesa firme).",
+    "en": "Do {target} pull-ups (no bar: inverted rows under a sturdy table).",
+    "es": "Haz {target} dominadas (sin barra: remo invertido bajo una mesa firme).",
+    "fr": "Fais {target} tractions (sans barre : rowing inversé sous une table solide).",
+    "de": "Mache {target} Klimmzüge (ohne Stange: umgekehrtes Rudern unter einem stabilen Tisch)."
    },
    "baseTarget": 5,
    "scalingAmount": 1,
    "scalingInterval": 10,
    "unit": "reps",
    "baseXp": 90,
-   "baseGold": 25
-  },
-  {
-   "id": "pool_screentime",
-   "kind": "POOL",
-   "type": "LIMIT",
-   "title": {
-    "pt": "Desintoxicação Digital",
-    "en": "Digital Detox",
-    "es": "Desintoxicación Digital",
-    "fr": "Détox Numérique",
-    "de": "Digital Detox"
-   },
-   "description": {
-    "pt": "Limita o tempo de ecrã (lazer) a {target} h.",
-    "en": "Limit screen time (leisure) to {target} h.",
-    "es": "Limita el tiempo de pantalla (ocio) a {target} h.",
-    "fr": "Limite le temps d'écran (loisirs) à {target} h.",
-    "de": "Begrenze die Bildschirmzeit (Freizeit) auf {target} Std."
-   },
-   "baseTarget": 2,
-   "scalingAmount": 0.1,
-   "scalingInterval": 10,
-   "unit": "h",
-   "baseXp": 60,
-   "baseGold": 15,
-   "descending": true
+   "baseGold": 25,
+   "maxTarget": 15
   },
   {
    "id": "pool_stretching",
@@ -301,7 +326,8 @@
    "scalingInterval": 10,
    "unit": "min",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "maxTarget": 25
   },
   {
    "id": "pool_deepwork",
@@ -326,7 +352,8 @@
    "scalingInterval": 10,
    "unit": "min",
    "baseXp": 100,
-   "baseGold": 30
+   "baseGold": 30,
+   "maxTarget": 90
   },
   {
    "id": "pool_coldshower",
@@ -385,11 +412,11 @@
    "kind": "POOL",
    "type": "KNOWLEDGE",
    "title": {
-    "pt": "Conhecimento Arcano",
-    "en": "Arcane Knowledge",
-    "es": "Conocimiento Arcano",
-    "fr": "Savoir Arcanique",
-    "de": "Arkanes Wissen"
+    "pt": "Outra Língua",
+    "en": "Another Tongue",
+    "es": "Otra Lengua",
+    "fr": "Une Autre Langue",
+    "de": "Neue Sprache"
    },
    "description": {
     "pt": "Estuda um idioma {target} min.",
@@ -428,7 +455,8 @@
    "scalingInterval": 5,
    "unit": "reps",
    "baseXp": 80,
-   "baseGold": 25
+   "baseGold": 25,
+   "maxTarget": 35
   },
   {
    "id": "pool_cook",
@@ -436,11 +464,11 @@
    "type": "TRAINING",
    "group": "HEALTH",
    "title": {
-    "pt": "Refeição de Caçador",
-    "en": "Hunter's Meal",
-    "es": "Comida de Cazador",
-    "fr": "Repas du Chasseur",
-    "de": "Jägermahl"
+    "pt": "Cozinha Própria",
+    "en": "Home Cooking",
+    "es": "Cocina Propia",
+    "fr": "Fait Maison",
+    "de": "Selbst Gekocht"
    },
    "description": {
     "pt": "Cozinha a tua própria refeição saudável.",
@@ -479,18 +507,62 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "prompts": [
+    {
+     "pt": "Hoje: o que andas a adiar, e porquê?",
+     "en": "Today: what are you putting off, and why?",
+     "es": "Hoy: ¿qué estás posponiendo y por qué?",
+     "fr": "Aujourd'hui : qu'est-ce que tu repousses, et pourquoi ?",
+     "de": "Heute: Was schiebst du auf, und warum?"
+    },
+    {
+     "pt": "Hoje: o que correu bem esta semana e o que repetias?",
+     "en": "Today: what went well this week, and what would you repeat?",
+     "es": "Hoy: ¿qué salió bien esta semana y qué repetirías?",
+     "fr": "Aujourd'hui : qu'est-ce qui a bien marché cette semaine, et que referais-tu ?",
+     "de": "Heute: Was lief diese Woche gut, und was würdest du wiederholen?"
+    },
+    {
+     "pt": "Hoje: uma conversa que te ficou na cabeça.",
+     "en": "Today: a conversation that stuck with you.",
+     "es": "Hoy: una conversación que se te quedó en la cabeza.",
+     "fr": "Aujourd'hui : une conversation qui t'est restée en tête.",
+     "de": "Heute: ein Gespräch, das dir nicht aus dem Kopf geht."
+    },
+    {
+     "pt": "Hoje: o que farias se não tivesses medo de falhar?",
+     "en": "Today: what would you do if you weren't afraid to fail?",
+     "es": "Hoy: ¿qué harías si no tuvieras miedo a fallar?",
+     "fr": "Aujourd'hui : que ferais-tu si tu n'avais pas peur d'échouer ?",
+     "de": "Heute: Was würdest du tun, wenn du keine Angst vorm Scheitern hättest?"
+    },
+    {
+     "pt": "Hoje: o que te deu energia e o que ta tirou?",
+     "en": "Today: what gave you energy, and what drained it?",
+     "es": "Hoy: ¿qué te dio energía y qué te la quitó?",
+     "fr": "Aujourd'hui : qu'est-ce qui t'a donné de l'énergie, et qu'est-ce qui te l'a prise ?",
+     "de": "Heute: Was hat dir Energie gegeben, und was hat sie dir geraubt?"
+    },
+    {
+     "pt": "Hoje: uma decisão que tens pela frente, prós e contras.",
+     "en": "Today: a decision ahead of you, pros and cons.",
+     "es": "Hoy: una decisión que tienes por delante, pros y contras.",
+     "fr": "Aujourd'hui : une décision à prendre, pour et contre.",
+     "de": "Heute: eine anstehende Entscheidung, Pro und Contra."
+    }
+   ]
   },
   {
    "id": "pool_pomodoro_basic",
    "kind": "POOL",
    "type": "FOCUS",
    "title": {
-    "pt": "Técnica de Caçador: Foco Cíclico",
-    "en": "Hunter Technique: Cyclic Focus",
-    "es": "Técnica de Cazador: Concentración Cíclica",
-    "fr": "Technique de Chasseur : Focus Cyclique",
-    "de": "Jägertechnik: Zyklischer Fokus"
+    "pt": "Ciclos de Foco",
+    "en": "Focus Cycles",
+    "es": "Ciclos de Foco",
+    "fr": "Cycles de Concentration",
+    "de": "Fokuszyklen"
    },
    "description": {
     "pt": "Completa {target} min de foco (ciclos Pomodoro contam).",
@@ -505,32 +577,6 @@
    "unit": "min",
    "baseXp": 80,
    "baseGold": 25,
-   "pomodoro": true
-  },
-  {
-   "id": "pool_pomodoro_adv",
-   "kind": "POOL",
-   "type": "FOCUS",
-   "title": {
-    "pt": "Técnica de Caçador: Maestria Temporal",
-    "en": "Hunter Technique: Temporal Mastery",
-    "es": "Técnica de Cazador: Maestría Temporal",
-    "fr": "Technique de Chasseur : Maîtrise du Temps",
-    "de": "Jägertechnik: Zeitbeherrschung"
-   },
-   "description": {
-    "pt": "Completa {target} min de foco (ciclos Pomodoro contam).",
-    "en": "Complete {target} min of focus (Pomodoro cycles count).",
-    "es": "Completa {target} min de concentración (los ciclos Pomodoro cuentan).",
-    "fr": "Accomplis {target} min de focus (les cycles Pomodoro comptent).",
-    "de": "Absolviere {target} Min. Fokus (Pomodoro-Zyklen zählen)."
-   },
-   "baseTarget": 100,
-   "scalingAmount": 0,
-   "scalingInterval": 1,
-   "unit": "min",
-   "baseXp": 160,
-   "baseGold": 50,
    "pomodoro": true
   },
   {
@@ -557,33 +603,8 @@
    "unit": "steps",
    "baseXp": 70,
    "baseGold": 20,
-   "auto": "STEPS"
-  },
-  {
-   "id": "pool_steps_big",
-   "kind": "POOL",
-   "type": "TRAINING",
-   "title": {
-    "pt": "Maratonista Urbano",
-    "en": "Urban Marathoner",
-    "es": "Maratoniano Urbano",
-    "fr": "Marathonien Urbain",
-    "de": "Stadtmarathonläufer"
-   },
-   "description": {
-    "pt": "Chega aos {target} passos hoje (contados automaticamente).",
-    "en": "Reach {target} steps today (counted automatically).",
-    "es": "Llega a {target} pasos hoy (contados automáticamente).",
-    "fr": "Atteins {target} pas aujourd'hui (comptés automatiquement).",
-    "de": "Erreiche heute {target} Schritte (automatisch gezählt)."
-   },
-   "baseTarget": 10000,
-   "scalingAmount": 1000,
-   "scalingInterval": 10,
-   "unit": "steps",
-   "baseXp": 120,
-   "baseGold": 35,
-   "auto": "STEPS"
+   "auto": "STEPS",
+   "maxTarget": 12000
   },
   {
    "id": "pool_screen_limit",
@@ -662,7 +683,8 @@
    "scalingInterval": 5,
    "unit": "reps",
    "baseXp": 70,
-   "baseGold": 20
+   "baseGold": 20,
+   "maxTarget": 300
   },
   {
    "id": "pool_lunges",
@@ -687,7 +709,8 @@
    "scalingInterval": 5,
    "unit": "reps",
    "baseXp": 60,
-   "baseGold": 15
+   "baseGold": 15,
+   "maxTarget": 50
   },
   {
    "id": "pool_dips",
@@ -712,7 +735,8 @@
    "scalingInterval": 5,
    "unit": "reps",
    "baseXp": 60,
-   "baseGold": 15
+   "baseGold": 15,
+   "maxTarget": 35
   },
   {
    "id": "pool_mobility",
@@ -738,7 +762,8 @@
    "scalingInterval": 10,
    "unit": "min",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "maxTarget": 20
   },
   {
    "id": "pool_stairs",
@@ -764,7 +789,8 @@
    "scalingInterval": 10,
    "unit": "flights",
    "baseXp": 60,
-   "baseGold": 15
+   "baseGold": 15,
+   "maxTarget": 20
   },
   {
    "id": "pool_hike",
@@ -778,19 +804,20 @@
     "de": "Expedition"
    },
    "description": {
-    "pt": "Percorre {target} km a pé.",
-    "en": "Cover {target} km on foot.",
-    "es": "Recorre {target} km a pie.",
-    "fr": "Parcours {target} km à pied.",
-    "de": "Lege {target} km zu Fuß zurück."
+    "pt": "Percorre {target} km a pé, de seguida.",
+    "en": "Walk {target} km in one go.",
+    "es": "Recorre {target} km a pie, de una vez.",
+    "fr": "Marche {target} km d'une traite.",
+    "de": "Gehe {target} km am Stück."
    },
-   "baseTarget": 8,
-   "scalingAmount": 0.5,
+   "baseTarget": 5,
+   "scalingAmount": 0.25,
    "scalingInterval": 10,
    "unit": "km",
    "baseXp": 150,
    "baseGold": 45,
-   "auto": "WALK_DISTANCE"
+   "auto": "WALK_DISTANCE",
+   "maxTarget": 7
   },
   {
    "id": "pool_veggies",
@@ -841,7 +868,8 @@
    "scalingInterval": 10,
    "unit": "min",
    "baseXp": 60,
-   "baseGold": 15
+   "baseGold": 15,
+   "maxTarget": 40
   },
   {
    "id": "pool_creative",
@@ -866,7 +894,51 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 70,
-   "baseGold": 20
+   "baseGold": 20,
+   "prompts": [
+    {
+     "pt": "Hoje: só 3 cores, 3 notas ou 3 frases.",
+     "en": "Today: only 3 colours, 3 notes or 3 sentences.",
+     "es": "Hoy: solo 3 colores, 3 notas o 3 frases.",
+     "fr": "Aujourd'hui : seulement 3 couleurs, 3 notes ou 3 phrases.",
+     "de": "Heute: nur 3 Farben, 3 Töne oder 3 Sätze."
+    },
+    {
+     "pt": "Hoje: refaz algo antigo teu, melhor.",
+     "en": "Today: redo something old of yours, better.",
+     "es": "Hoy: rehaz algo antiguo tuyo, mejor.",
+     "fr": "Aujourd'hui : refais quelque chose d'ancien, en mieux.",
+     "de": "Heute: Mach etwas Altes von dir neu, nur besser."
+    },
+    {
+     "pt": "Hoje: inspira-te no que vês da janela.",
+     "en": "Today: take inspiration from what you see out the window.",
+     "es": "Hoy: inspírate en lo que ves por la ventana.",
+     "fr": "Aujourd'hui : inspire-toi de ce que tu vois par la fenêtre.",
+     "de": "Heute: Lass dich vom Blick aus dem Fenster inspirieren."
+    },
+    {
+     "pt": "Hoje: 10 ideias rápidas, sem julgar nenhuma.",
+     "en": "Today: 10 quick ideas, judging none of them.",
+     "es": "Hoy: 10 ideas rápidas, sin juzgar ninguna.",
+     "fr": "Aujourd'hui : 10 idées rapides, sans en juger aucune.",
+     "de": "Heute: 10 schnelle Ideen, ohne eine zu bewerten."
+    },
+    {
+     "pt": "Hoje: imita um estilo que admiras.",
+     "en": "Today: imitate a style you admire.",
+     "es": "Hoy: imita un estilo que admires.",
+     "fr": "Aujourd'hui : imite un style que tu admires.",
+     "de": "Heute: Ahme einen Stil nach, den du bewunderst."
+    },
+    {
+     "pt": "Hoje: algo que fique acabado nesta sessão.",
+     "en": "Today: something you finish in this session.",
+     "es": "Hoy: algo que quede terminado en esta sesión.",
+     "fr": "Aujourd'hui : quelque chose de fini en une séance.",
+     "de": "Heute: etwas, das in dieser Sitzung fertig wird."
+    }
+   ]
   },
   {
    "id": "pool_breathing",
@@ -991,7 +1063,51 @@
    "scalingInterval": 1,
    "unit": "things",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "prompts": [
+    {
+     "pt": "Hoje: inclui uma pessoa, e diz-lhe.",
+     "en": "Today: include a person, and tell them.",
+     "es": "Hoy: incluye a una persona, y díselo.",
+     "fr": "Aujourd'hui : inclus une personne, et dis-le-lui.",
+     "de": "Heute: Nimm eine Person dazu, und sag es ihr."
+    },
+    {
+     "pt": "Hoje: uma coisa pequena que costumas ignorar.",
+     "en": "Today: a small thing you usually overlook.",
+     "es": "Hoy: una cosa pequeña que sueles ignorar.",
+     "fr": "Aujourd'hui : une petite chose que tu ignores d'habitude.",
+     "de": "Heute: eine Kleinigkeit, die du sonst übersiehst."
+    },
+    {
+     "pt": "Hoje: algo do teu corpo ou da tua saúde.",
+     "en": "Today: something about your body or health.",
+     "es": "Hoy: algo de tu cuerpo o tu salud.",
+     "fr": "Aujourd'hui : quelque chose de ton corps ou de ta santé.",
+     "de": "Heute: etwas an deinem Körper oder deiner Gesundheit."
+    },
+    {
+     "pt": "Hoje: algo difícil que te ensinou alguma coisa.",
+     "en": "Today: something hard that taught you something.",
+     "es": "Hoy: algo difícil que te enseñó algo.",
+     "fr": "Aujourd'hui : quelque chose de dur qui t'a appris quelque chose.",
+     "de": "Heute: etwas Schweres, das dich etwas gelehrt hat."
+    },
+    {
+     "pt": "Hoje: um lugar de que gostas.",
+     "en": "Today: a place you love.",
+     "es": "Hoy: un lugar que te gusta.",
+     "fr": "Aujourd'hui : un endroit que tu aimes.",
+     "de": "Heute: ein Ort, den du magst."
+    },
+    {
+     "pt": "Hoje: algo que tens e que antes desejavas.",
+     "en": "Today: something you have now that you once wished for.",
+     "es": "Hoy: algo que tienes y que antes deseabas.",
+     "fr": "Aujourd'hui : quelque chose que tu as et que tu désirais avant.",
+     "de": "Heute: etwas, das du hast und dir früher gewünscht hast."
+    }
+   ]
   },
   {
    "id": "pool_contact",
@@ -1075,11 +1191,11 @@
    "type": "TRAINING",
    "group": "HEALTH",
    "title": {
-    "pt": "Descanso do Caçador",
-    "en": "Hunter's Rest",
-    "es": "Descanso del Cazador",
-    "fr": "Repos du Chasseur",
-    "de": "Jägerruhe"
+    "pt": "Deitar a Horas",
+    "en": "Lights Out",
+    "es": "A la Cama a su Hora",
+    "fr": "Couvre-Feu",
+    "de": "Zapfenstreich"
    },
    "description": {
     "pt": "Confirma quando te fores deitar, entre as 21h e a meia-noite. Se não confirmares antes da meia-noite, falha.",
@@ -1113,6 +1229,390 @@
     "es": "Nada de comida rápida ni snacks procesados hoy.",
     "fr": "Pas de fast-food ni de snacks transformés aujourd'hui.",
     "de": "Heute kein Fast Food und keine verarbeiteten Snacks."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 60,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_abs",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Núcleo de Pedra",
+    "en": "Stone Core",
+    "es": "Núcleo de Piedra",
+    "fr": "Noyau de Pierre",
+    "de": "Steinerner Kern"
+   },
+   "description": {
+    "pt": "Faz {target} abdominais.",
+    "en": "Do {target} crunches.",
+    "es": "Haz {target} abdominales.",
+    "fr": "Fais {target} abdominaux.",
+    "de": "Mache {target} Crunches."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 50,
+   "baseGold": 12,
+   "maxTarget": 50
+  },
+  {
+   "id": "pool_glutes",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "A Ponte",
+    "en": "The Bridge",
+    "es": "El Puente",
+    "fr": "Le Pont",
+    "de": "Die Brücke"
+   },
+   "description": {
+    "pt": "Faz {target} pontes de glúteos.",
+    "en": "Do {target} glute bridges.",
+    "es": "Haz {target} puentes de glúteo.",
+    "fr": "Fais {target} ponts fessiers.",
+    "de": "Mache {target} Glute Bridges."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 45,
+   "baseGold": 12,
+   "maxTarget": 50
+  },
+  {
+   "id": "pool_sideplank",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Flanco Firme",
+    "en": "Iron Flank",
+    "es": "Flanco Firme",
+    "fr": "Flanc d'Acier",
+    "de": "Eiserne Flanke"
+   },
+   "description": {
+    "pt": "Prancha lateral: {target} s de cada lado.",
+    "en": "Side plank: {target} s on each side.",
+    "es": "Plancha lateral: {target} s por cada lado.",
+    "fr": "Planche latérale : {target} s de chaque côté.",
+    "de": "Seitstütz: {target} s pro Seite."
+   },
+   "baseTarget": 30,
+   "scalingAmount": 5,
+   "scalingInterval": 5,
+   "unit": "s",
+   "baseXp": 55,
+   "baseGold": 14,
+   "maxTarget": 90
+  },
+  {
+   "id": "pool_stroll",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Passeio",
+    "en": "Stroll",
+    "es": "Paseo",
+    "fr": "Balade",
+    "de": "Spaziergang"
+   },
+   "description": {
+    "pt": "Caminha {target} min sem pressa, de preferência sem auriculares.",
+    "en": "Walk for {target} min, unhurried, ideally without earphones.",
+    "es": "Camina {target} min sin prisa, mejor sin auriculares.",
+    "fr": "Marche {target} min sans te presser, idéalement sans écouteurs.",
+    "de": "Geh {target} Min. ohne Eile spazieren, am besten ohne Kopfhörer."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 10,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10,
+   "maxTarget": 40
+  },
+  {
+   "id": "pool_active_breaks",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Pausas Ativas",
+    "en": "Active Breaks",
+    "es": "Pausas Activas",
+    "fr": "Pauses Actives",
+    "de": "Aktive Pausen"
+   },
+   "description": {
+    "pt": "Levanta-te e mexe-te 2 min, {target} vezes ao longo do dia.",
+    "en": "Get up and move for 2 min, {target} times through the day.",
+    "es": "Levántate y muévete 2 min, {target} veces a lo largo del día.",
+    "fr": "Lève-toi et bouge 2 min, {target} fois dans la journée.",
+    "de": "Steh auf und beweg dich 2 Min., {target}-mal über den Tag."
+   },
+   "baseTarget": 4,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 35,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_daylight",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Luz do Dia",
+    "en": "Daylight",
+    "es": "Luz del Día",
+    "fr": "Lumière du Jour",
+    "de": "Tageslicht"
+   },
+   "description": {
+    "pt": "{target} min ao ar livre, de preferência de manhã.",
+    "en": "{target} min outdoors, ideally in the morning.",
+    "es": "{target} min al aire libre, mejor por la mañana.",
+    "fr": "{target} min dehors, idéalement le matin.",
+    "de": "{target} Min. draußen, am besten morgens."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_mindful_meal",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Refeição Presente",
+    "en": "Present Meal",
+    "es": "Comida Presente",
+    "fr": "Repas Présent",
+    "de": "Achtsame Mahlzeit"
+   },
+   "description": {
+    "pt": "Come {target} refeição sem ecrãs, devagar.",
+    "en": "Eat {target} meal without screens, slowly.",
+    "es": "Come {target} comida sin pantallas, despacio.",
+    "fr": "Prends {target} repas sans écran, lentement.",
+    "de": "Iss {target} Mahlzeit ohne Bildschirm, langsam."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "meal",
+   "baseXp": 35,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_winddown",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Desligar",
+    "en": "Wind Down",
+    "es": "Desconectar",
+    "fr": "Décompresser",
+    "de": "Abschalten"
+   },
+   "description": {
+    "pt": "Sem ecrãs na última meia hora antes de dormir.",
+    "en": "No screens in the last half hour before sleep.",
+    "es": "Sin pantallas la última media hora antes de dormir.",
+    "fr": "Pas d'écran la dernière demi-heure avant de dormir.",
+    "de": "Keine Bildschirme in der letzten halben Stunde vor dem Schlafen."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 50,
+   "baseGold": 12
+  },
+  {
+   "id": "pool_explain",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Ensinar para Aprender",
+    "en": "Teach to Learn",
+    "es": "Enseñar para Aprender",
+    "fr": "Enseigner pour Apprendre",
+    "de": "Lehren, um zu lernen"
+   },
+   "description": {
+    "pt": "Escolhe {target} coisa que estás a aprender e explica-a por escrito em 5 frases simples.",
+    "en": "Pick {target} thing you are learning and explain it in writing in 5 simple sentences.",
+    "es": "Elige {target} cosa que estés aprendiendo y explícala por escrito en 5 frases sencillas.",
+    "fr": "Choisis {target} chose que tu apprends et explique-la par écrit en 5 phrases simples.",
+    "de": "Wähle {target} Sache, die du gerade lernst, und erkläre sie schriftlich in 5 einfachen Sätzen."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 45,
+   "baseGold": 12
+  },
+  {
+   "id": "pool_puzzle",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Enigma",
+    "en": "Riddle",
+    "es": "Enigma",
+    "fr": "Énigme",
+    "de": "Rätsel"
+   },
+   "description": {
+    "pt": "{target} min de xadrez, sudoku ou outro jogo de lógica.",
+    "en": "{target} min of chess, sudoku or another logic game.",
+    "es": "{target} min de ajedrez, sudoku u otro juego de lógica.",
+    "fr": "{target} min d'échecs, de sudoku ou d'un autre jeu de logique.",
+    "de": "{target} Min. Schach, Sudoku oder ein anderes Logikspiel."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 35,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_kindness",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Gesto Gentil",
+    "en": "Kind Gesture",
+    "es": "Gesto Amable",
+    "fr": "Geste Gentil",
+    "de": "Freundliche Geste"
+   },
+   "description": {
+    "pt": "Faz {target} coisa por alguém sem que te peçam.",
+    "en": "Do {target} thing for someone without being asked.",
+    "es": "Haz {target} cosa por alguien sin que te lo pidan.",
+    "fr": "Fais {target} chose pour quelqu'un sans qu'on te le demande.",
+    "de": "Tu {target} Sache für jemanden, ohne darum gebeten zu werden."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_nosnooze",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "title": {
+    "pt": "Ao Primeiro Toque",
+    "en": "First Alarm",
+    "es": "Al Primer Toque",
+    "fr": "Au Premier Réveil",
+    "de": "Beim ersten Klingeln"
+   },
+   "description": {
+    "pt": "Levanta-te ao primeiro alarme, sem adiar.",
+    "en": "Get up at the first alarm, no snoozing.",
+    "es": "Levántate con la primera alarma, sin posponer.",
+    "fr": "Lève-toi au premier réveil, sans répéter.",
+    "de": "Steh beim ersten Wecker auf, ohne Schlummern."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 50,
+   "baseGold": 12
+  },
+  {
+   "id": "pool_nobuy",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "title": {
+    "pt": "Carteira Fechada",
+    "en": "Closed Wallet",
+    "es": "Cartera Cerrada",
+    "fr": "Portefeuille Fermé",
+    "de": "Geschlossene Geldbörse"
+   },
+   "description": {
+    "pt": "Nenhuma compra por impulso hoje, só o necessário.",
+    "en": "No impulse buys today, only what you need.",
+    "es": "Ninguna compra por impulso hoy, solo lo necesario.",
+    "fr": "Aucun achat impulsif aujourd'hui, seulement le nécessaire.",
+    "de": "Heute keine Spontankäufe, nur das Nötige."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 50,
+   "baseGold": 15
+  },
+  {
+   "id": "pool_nocaffeine",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "title": {
+    "pt": "Tarde sem Cafeína",
+    "en": "Caffeine-Free Afternoon",
+    "es": "Tarde sin Cafeína",
+    "fr": "Après-midi sans Caféine",
+    "de": "Koffeinfreier Nachmittag"
+   },
+   "description": {
+    "pt": "Nada de café, chá preto ou energéticos depois das 15h.",
+    "en": "No coffee, black tea or energy drinks after 3 pm.",
+    "es": "Nada de café, té negro o bebidas energéticas después de las 15h.",
+    "fr": "Ni café, ni thé noir, ni boisson énergisante après 15 h.",
+    "de": "Kein Kaffee, Schwarztee oder Energydrink nach 15 Uhr."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 45,
+   "baseGold": 12
+  },
+  {
+   "id": "pool_nocomplain",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "title": {
+    "pt": "Sem Queixas",
+    "en": "No Complaints",
+    "es": "Sin Quejas",
+    "fr": "Zéro Plainte",
+    "de": "Keine Klagen"
+   },
+   "description": {
+    "pt": "Passa o dia sem te queixares em voz alta.",
+    "en": "Go through the day without complaining out loud.",
+    "es": "Pasa el día sin quejarte en voz alta.",
+    "fr": "Passe la journée sans te plaindre à voix haute.",
+    "de": "Verbring den Tag, ohne laut zu klagen."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
