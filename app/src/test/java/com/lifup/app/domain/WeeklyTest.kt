@@ -102,4 +102,16 @@ class WeeklyTest {
         assertFalse(s.weekly[train.id]!!.trial)
         assertNotNull(run(s, "2026-10-26T09:00").weekly[train.id]?.takeIf { it.goal == 2 })
     }
+
+    @Test fun `an edited built-in mission replaces the original until it is reset`() {
+        var s = run(GameState(onboarded = true), "2026-10-14T09:00")
+        val pushups = content.questDefById.getValue("core_pushups")
+        s = run(s, "2026-10-14T09:05") { saveCustomDef(pushups.copy(perWeek = 3)) }
+        val defs = s.availableDefs(content).filter { it.id == "core_pushups" }
+        assertEquals(listOf(3), defs.map { it.perWeek })
+        assertEquals(pushups.title, defs.single().title) // translations kept
+        assertEquals(0L, s.count(StatKey.CUSTOM_QUESTS))
+        s = run(s, "2026-10-14T09:06") { deleteCustomDef("core_pushups") }
+        assertEquals(pushups, s.availableDefs(content).single { it.id == "core_pushups" })
+    }
 }

@@ -1,5 +1,7 @@
 package com.lifup.app.ui.forge
 
+import androidx.compose.material3.TextButton
+import com.lifup.app.domain.defOf
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -95,8 +97,9 @@ fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
         LazyColumn(contentPadding = PaddingValues(16.dp, 0.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.navigationBarsPadding()) {
             item { Text(stringResource(R.string.forge_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted) }
             item { SectionTitle(stringResource(R.string.your_missions)) }
-            if (s.customDefs.isEmpty()) item { EmptyNote(stringResource(R.string.no_custom)) }
-            items(s.customDefs, key = { it.id }) { def -> DefRow(def, enabled = def.id !in s.disabledDefIds, onEdit = { onEdit(def.id) }) }
+            val own = s.customDefs.filter { content.questDefById[it.id] == null }
+            if (own.isEmpty()) item { EmptyNote(stringResource(R.string.no_custom)) }
+            items(own, key = { it.id }) { def -> DefRow(def, enabled = def.id !in s.disabledDefIds, onEdit = { onEdit(def.id) }) }
             // System missions grouped by type so it's clear what each family does.
             QuestType.entries.forEach { type ->
                 val defs = content.quests.filter { it.type == type }
@@ -106,7 +109,11 @@ fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
                         Text("${defs.count { it.id !in s.disabledDefIds }}/${defs.size}", color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium)
                     }
                 }
-                items(defs, key = { it.id }) { def -> DefRow(def, enabled = def.id !in s.disabledDefIds, onEdit = null) }
+                items(defs, key = { it.id }) { def ->
+                    // Built-in missions show the player's edited copy when there is one.
+                    val shown = s.defOf(def.id, content) ?: def
+                    DefRow(shown, enabled = def.id !in s.disabledDefIds, onEdit = { onEdit(def.id) }, edited = shown !== def)
+                }
             }
         }
     }
@@ -114,7 +121,7 @@ fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?) {
+private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?, edited: Boolean = false) {
     val c = Lif.colors
     val color = questColor(def.type, c)
     val unit = unitLabel(def.unit)
@@ -144,6 +151,7 @@ private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?) {
             def.daysOfWeek?.takeIf { def.perWeek == null }?.let { days -> Pill(days.sorted().joinToString(" ") { dayNames[it - 1] }, c.muted) }
             def.perWeek?.let { Pill(stringResource(R.string.per_week_chip, it), c.accent) }
             Pill("+${def.baseXp} XP · +${def.baseGold}", c.accent)
+            if (edited) Pill(stringResource(R.string.def_edited), c.gold)
             if (onEdit != null) Icon(Icons.Rounded.Edit, null, tint = c.muted, modifier = Modifier.size(16.dp))
         }
     }
@@ -156,7 +164,9 @@ private val PRESETS = listOf(Preset(R.string.preset_easy, 30, 8), Preset(R.strin
 @Composable
 fun DefEditorScreen(id: String?, onBack: () -> Unit) {
     val s = gameState()
-    val existing = s.customDefs.firstOrNull { it.id == id }
+    val existing = id?.let { s.defOf(it, content) }
+    val builtIn = id != null && content.questDefById[id] != null
+    val edited = builtIn && s.customDefs.any { it.id == id }
     val c = Lif.colors
     val lang = lang()
     var title by rememberSaveable { mutableStateOf(existing?.title?.text(lang).orEmpty()) }
@@ -167,7 +177,9 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
     var unit by rememberSaveable { mutableStateOf(existing?.unit ?: "reps") }
     var scaling by rememberSaveable { mutableStateOf(existing?.scalingAmount?.let(::fmtNum) ?: "0") }
     var interval by rememberSaveable { mutableStateOf((existing?.scalingInterval ?: 5).toString()) }
-    var preset by rememberSaveable { mutableStateOf(PRESETS.indexOfFirst { it.xp == existing?.baseXp }.takeIf { it >= 0 } ?: 1) }
+    // -1 keeps an existing mission's own reward until a preset is picked.
+    var preset by rememberSaveable { mutableStateOf(PRESETS.indexOfFirst { it.xp == existing?.baseXp }.takeIf { it >= 0 } ?: if (existing != null) -1 else 1) }
+    val reward = PRESETS.getOrNull(preset)?.let { it.xp to it.gold } ?: ((existing?.baseXp ?: 0) to (existing?.baseGold ?: 0))
     val days = remember { mutableStateListOf<Int>().apply { addAll(existing?.daysOfWeek ?: (1..7).toList()) } }
     var addToday by rememberSaveable { mutableStateOf(existing == null) }
     var auto by rememberSaveable { mutableStateOf(existing?.auto) }
@@ -179,7 +191,8 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
 
     Column(Modifier.fillMaxSize().statusBarsPadding()) {
         TopBar(stringResource(if (existing == null) R.string.new_mission else R.string.edit_mission), onBack) {
-            if (existing != null) IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.delete), tint = c.red) }
+            if (existing != null && !builtIn) IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.delete), tint = c.red) }
+            if (edited) TextButton(onClick = { act { deleteCustomDef(existing!!.id) }; onBack() }) { Text(stringResource(R.string.def_reset), color = c.gold) }
         }
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             OutlinedTextField(title, { title = it.take(60) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.field_title)) }, singleLine = true)
@@ -226,7 +239,7 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 PRESETS.forEachIndexed { i, p -> FilterChip(selected = preset == i, onClick = { preset = i }, label = { Text(stringResource(p.label)) }) }
             }
-            Text("+${PRESETS[preset].xp} XP · +${PRESETS[preset].gold}", style = MaterialTheme.typography.labelMedium, color = c.accent)
+            Text("+${reward.first} XP · +${reward.second}", style = MaterialTheme.typography.labelMedium, color = c.accent)
             Text(stringResource(R.string.field_days), style = MaterialTheme.typography.labelLarge, color = c.muted)
             // "N times a week" only makes sense for fixed missions you actively do.
             val weeklyAllowed = core && type != QuestType.FORBIDDEN && type != QuestType.LIMIT
@@ -249,23 +262,25 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
             }
             val valid = title.isNotBlank() && (target.toDoubleOrNull() ?: 0.0) > 0 && (isWeekly || days.isNotEmpty())
             PrimaryButton(stringResource(R.string.save), onClick = {
-                val def = QuestDef(
-                    id = existing?.id ?: "custom_${System.currentTimeMillis()}",
+                // Untouched texts keep their translations; anything else becomes the player's own text.
+                val keepTitle = existing != null && title.trim() == existing.title.text(lang)
+                val keepDescription = existing != null && description.trim() == existing.description.text(lang)
+                val def = (existing ?: QuestDef("custom_${System.currentTimeMillis()}", DefKind.CORE, type, plainText(""), plainText(""), 1.0, baseXp = 0, baseGold = 0)).copy(
                     kind = if (core) DefKind.CORE else DefKind.POOL,
                     type = type,
-                    title = plainText(title.trim()),
-                    description = plainText(description.trim().ifEmpty { "{target} {unit}" }),
+                    title = if (keepTitle) existing!!.title else plainText(title.trim()),
+                    description = if (keepDescription) existing!!.description else plainText(description.trim().ifEmpty { "{target} {unit}" }),
                     baseTarget = target.toDoubleOrNull() ?: 1.0,
                     scalingAmount = scaling.toDoubleOrNull() ?: 0.0,
                     scalingInterval = (interval.toIntOrNull() ?: 5).coerceAtLeast(1),
                     unit = unit.trim(),
-                    baseXp = PRESETS[preset].xp,
-                    baseGold = PRESETS[preset].gold,
+                    baseXp = reward.first,
+                    baseGold = reward.second,
                     daysOfWeek = days.sorted().takeIf { it.size < 7 && !isWeekly },
                     perWeek = perWeek.takeIf { isWeekly },
                     auto = auto,
                     pomodoro = pomodoro && type == QuestType.FOCUS,
-                    descending = auto == AutoKind.SCREEN_TIME || auto == AutoKind.DISTRACTION_TIME,
+                    descending = if (builtIn) existing!!.descending else auto == AutoKind.SCREEN_TIME || auto == AutoKind.DISTRACTION_TIME,
                 )
                 val today = addToday
                 act { saveCustomDef(def); if (today) addDefToToday(def.id) }

@@ -326,7 +326,7 @@
     <string name="reset_confirm">Erase everything</string>
 
     <!-- Forge -->
-    <string name="forge_info">Create your own missions or turn built-in missions off. Changes apply to tomorrow\'s list.</string>
+    <string name="forge_info">Create your own missions, or edit and switch off the built-in ones. Changes apply to tomorrow\'s list.</string>
     <string name="your_missions">Your missions</string>
     <string name="system_missions">Built-in missions</string>
     <string name="no_custom">No custom missions yet. Tap + to forge one.</string>
@@ -642,4 +642,6 @@
     <string name="attr_focus_title">Attribute focus</string>
     <string name="attr_focus_question">Which attributes do you want to grow?</string>
     <string name="attr_focus_hint">Up to 2. Their missions come up more often; the others still appear.</string>
+    <string name="def_edited">Edited</string>
+    <string name="def_reset">Restore original</string>
 </resources>

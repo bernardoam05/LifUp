@@ -42,10 +42,17 @@ fun Quest.isSuccessful(): Boolean = when {
     else -> false
 }
 
-fun GameState.availableDefs(content: Content): List<QuestDef> =
-    (content.quests + customDefs).filter {
+/** A mission definition as the player has it: their edited copy of a built-in one wins. */
+fun GameState.defOf(id: String, content: Content): QuestDef? = customDefs.firstOrNull { it.id == id } ?: content.questDefById[id]
+
+fun GameState.isEditedBuiltIn(id: String, content: Content) = content.questDefById[id] != null && customDefs.any { it.id == id }
+
+fun GameState.availableDefs(content: Content): List<QuestDef> {
+    val edited = customDefs.associateBy { it.id }
+    return (content.quests.map { edited[it.id] ?: it } + customDefs.filter { content.questDefById[it.id] == null }).filter {
         it.id !in disabledDefIds && (it.auto != AutoKind.DISTRACTION_TIME || settings.blockedApps.isNotEmpty())
     }
+}
 
 fun GameState.allDailyDone(): Boolean = dailyQuests.isNotEmpty() && dailyQuests.all { it.isSuccessful() }
 
@@ -196,7 +203,7 @@ fun Tx.creditGps(questId: String, km: Double) {
 /** Swap an open daily pool mission. One free swap per day, then a Swap Scroll. */
 fun Tx.swapQuest(id: String): Boolean {
     val q = s.dailyQuests.firstOrNull { it.id == id } ?: return false
-    val def = (content.questDefById[q.defId] ?: s.customDefs.firstOrNull { it.id == q.defId }) ?: return false
+    val def = s.defOf(q.defId, content) ?: return false
     if (q.status != QuestStatus.OPEN || def.kind != DefKind.POOL) return false
     val free = s.daily.swapsUsed < Rules.FREE_SWAPS_PER_DAY
     if (!free && s.items("pergaminho_troca") == 0) return false
@@ -285,7 +292,7 @@ fun Tx.removeSideQuest(id: String) {
 fun Tx.saveCustomDef(def: QuestDef) {
     val exists = s.customDefs.any { it.id == def.id }
     s = s.copy(customDefs = if (exists) s.customDefs.map { if (it.id == def.id) def else it } else s.customDefs + def)
-    if (!exists) count(StatKey.CUSTOM_QUESTS)
+    if (!exists && content.questDefById[def.id] == null) count(StatKey.CUSTOM_QUESTS)
     syncWeekly()
 }
 

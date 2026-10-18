@@ -1,5 +1,6 @@
 package com.lifup.app.ui.hero
 
+import com.lifup.app.domain.defOf
 import com.lifup.app.ui.guide.InfoButton
 import com.lifup.app.ui.guide.Guide
 import androidx.compose.foundation.layout.Arrangement
@@ -139,7 +140,7 @@ private fun QuestPicker(s: GameState, itemId: String, onDismiss: () -> Unit) {
     val swap = item.effect == ItemEffect.SWAP_QUEST
     val quests = s.dailyQuests.filter { q ->
         q.status == QuestStatus.OPEN && q.origin == QuestOrigin.DAILY &&
-            (!swap || (content.questDefById[q.defId] ?: s.customDefs.firstOrNull { it.id == q.defId })?.kind == DefKind.POOL)
+            (!swap || s.defOf(q.defId, content)?.kind == DefKind.POOL)
     }
     val context = LocalContext.current
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = Lif.colors.panel) {

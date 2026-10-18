@@ -44,7 +44,7 @@ fun Tx.rename(name: String) {
 
 /** Puts a (custom) definition into today's list right away instead of waiting for tomorrow. */
 fun Tx.addDefToToday(defId: String) {
-    val def = s.customDefs.firstOrNull { it.id == defId } ?: content.questDefById[defId] ?: return
+    val def = s.defOf(defId, content) ?: return
     if (s.quests.any { it.defId == defId }) return
     syncWeekly()
     val quest = if (def.isWeekly()) weeklyQuest(def, s.weekly[def.id], ctx.today, s.player.level) else buildQuest(def, s.player.level, QuestOrigin.DAILY)

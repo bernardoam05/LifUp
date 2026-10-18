@@ -325,7 +325,7 @@
     <string name="reset_confirm">Borrar todo</string>
 
     <!-- Forge -->
-    <string name="forge_info">Crea tus propias misiones o desactiva las base. Los cambios se aplican a la lista de mañana.</string>
+    <string name="forge_info">Crea tus misiones, o edita y desactiva las básicas. Los cambios se aplican a la lista de mañana.</string>
     <string name="your_missions">Tus misiones</string>
     <string name="system_missions">Misiones base</string>
     <string name="no_custom">Aún no tienes misiones propias. Toca + para forjar una.</string>
@@ -641,4 +641,6 @@
     <string name="attr_focus_title">Foco de atributos</string>
     <string name="attr_focus_question">¿Qué atributos quieres desarrollar?</string>
     <string name="attr_focus_hint">Hasta 2. Sus misiones salen más a menudo; las demás siguen apareciendo.</string>
+    <string name="def_edited">Editada</string>
+    <string name="def_reset">Restaurar original</string>
 </resources>

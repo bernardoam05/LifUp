@@ -325,7 +325,7 @@
     <string name="reset_confirm">Alles löschen</string>
 
     <!-- Forge -->
-    <string name="forge_info">Erstelle eigene Missionen oder schalte Basis-Missionen ab. Änderungen gelten für die Liste von morgen.</string>
+    <string name="forge_info">Erstelle eigene Missionen oder bearbeite und deaktiviere die eingebauten. Änderungen gelten ab der Liste von morgen.</string>
     <string name="your_missions">Deine Missionen</string>
     <string name="system_missions">Basis-Missionen</string>
     <string name="no_custom">Noch keine eigenen Missionen. Tippe auf +, um eine zu schmieden.</string>
@@ -641,4 +641,6 @@
     <string name="attr_focus_title">Attributfokus</string>
     <string name="attr_focus_question">Welche Attribute willst du entwickeln?</string>
     <string name="attr_focus_hint">Bis zu 2. Ihre Missionen kommen öfter; die anderen erscheinen weiterhin.</string>
+    <string name="def_edited">Bearbeitet</string>
+    <string name="def_reset">Original wiederherstellen</string>
 </resources>

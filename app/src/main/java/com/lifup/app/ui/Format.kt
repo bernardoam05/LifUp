@@ -1,5 +1,6 @@
 package com.lifup.app.ui
 
+import com.lifup.app.domain.defOf
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.DirectionsRun
@@ -68,7 +69,7 @@ fun fmtCompact(v: Long): String = when {
 /** Title of a mission definition, built-in or made in the Forge. */
 @Composable
 fun defTitle(s: com.lifup.app.domain.GameState, id: String): String =
-    (content.questDefById[id] ?: s.customDefs.firstOrNull { it.id == id })?.title?.local()
+    s.defOf(id, content)?.title?.local()
         ?: s.allQuests.firstOrNull { it.defId == id }?.title?.local() ?: id
 
 fun questDetail(q: Quest, lang: String, unitLabel: String = q.unit) =

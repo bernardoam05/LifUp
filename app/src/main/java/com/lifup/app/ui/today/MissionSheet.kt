@@ -1,5 +1,6 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.domain.defOf
 import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -173,7 +174,7 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                 else PrimaryButton(stringResource(R.string.complete), onClick = complete, modifier = Modifier.fillMaxWidth(), enabled = available, icon = Icons.Rounded.Check)
             }
 
-            val def = content.questDefById[q.defId] ?: s.customDefs.firstOrNull { it.id == q.defId }
+            val def = s.defOf(q.defId, content)
             if (open && q.origin == QuestOrigin.DAILY && def?.kind == DefKind.POOL) {
                 val free = s.daily.swapsUsed < Rules.FREE_SWAPS_PER_DAY
                 val scrolls = s.items("pergaminho_troca")

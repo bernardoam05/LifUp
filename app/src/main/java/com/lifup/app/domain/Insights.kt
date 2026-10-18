@@ -22,7 +22,7 @@ fun Tx.recordMissions(daily: List<Quest>) {
         val ok = q.isSuccessful()
         stats = stats + (q.defId to (stats[q.defId] ?: MissionStat()).add(ok))
         week = week + (q.defId to (week[q.defId] ?: MissionStat()).add(ok))
-        val def = content.questDefById[q.defId] ?: s.customDefs.firstOrNull { it.id == q.defId }
+        val def = s.defOf(q.defId, content)
         if (def?.adaptable() == true) adapt = adapt + (q.defId to (adapt[q.defId] ?: Adapt()).next(ok))
     }
     s = s.copy(missionStats = stats, weekStats = week, adapt = adapt)

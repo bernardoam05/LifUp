@@ -55,4 +55,4 @@ fun drawBalanced(defs: List<QuestDef>, count: Int, focus: Set<Attr>, rng: Random
 
 /** The family a quest belongs to, from its definition when there is one. */
 fun Tx.groupOf(q: Quest): DrawGroup =
-    (content.questDefById[q.defId] ?: s.customDefs.firstOrNull { it.id == q.defId })?.drawGroup() ?: groupOf(q.type)
+    s.defOf(q.defId, content)?.drawGroup() ?: groupOf(q.type)
