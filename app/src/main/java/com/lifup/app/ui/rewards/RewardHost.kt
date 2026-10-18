@@ -1,5 +1,7 @@
 package com.lifup.app.ui.rewards
 
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateListOf
 import kotlin.math.roundToInt
 import com.lifup.app.ui.defTitle
 import androidx.compose.material.icons.rounded.CalendarMonth
@@ -73,16 +75,27 @@ fun RewardHost(s: GameState) {
         }
     }
 
+    val revealed = remember { mutableStateListOf<Long>() }
     val reward = s.rewards.firstOrNull { it !is Reward.Toast } ?: return
     LaunchedEffect(reward.id) {
         when (reward) {
             is Reward.LevelUp, is Reward.RankUp, is Reward.StreakMilestone -> Feedback.play(context, Sfx.LEVEL)
             is Reward.BossDefeated, is Reward.AchievementUnlocked -> Feedback.play(context, Sfx.VICTORY)
-            is Reward.ShadowGained -> Feedback.play(context, Sfx.SHADOW)
+            // Copies get a small cue; new common/rare echoes a bright one; rarer new echoes play during their reveal.
+            is Reward.ShadowGained -> when {
+                !reward.isNew -> Feedback.play(context, Sfx.QUEST)
+                content.shadowById[reward.shadowId]?.deservesReveal() != true -> Feedback.play(context, Sfx.ECHO_NEW)
+                else -> Unit
+            }
             is Reward.DayReport -> if (reward.penalty != null && reward.penalty.absorbedBy == null) Feedback.play(context, Sfx.PENALTY)
             else -> Unit
         }
-        Feedback.buzz(context, strong = true)
+        Feedback.buzz(context, strong = !(reward is Reward.ShadowGained && !reward.isNew))
+    }
+    val revealDef = (reward as? Reward.ShadowGained)?.takeIf { it.isNew && it.id !in revealed }?.let { content.shadowById[it.shadowId] }?.takeIf { it.deservesReveal() }
+    if (revealDef != null) {
+        EchoReveal(revealDef) { revealed += reward.id }
+        return
     }
     val dismiss = { act { dismissReward(reward.id) } }
     Dialog(onDismissRequest = dismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {

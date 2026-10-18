@@ -12,7 +12,7 @@ import com.lifup.app.R
 enum class Sfx(val res: Int, val volume: Float = 0.8f) {
     LEVEL(R.raw.level_up_ding), VICTORY(R.raw.victory_chime), PENALTY(R.raw.penalty_alarm), SHADOW(R.raw.shadow_captured),
     // Everyday cues stay short and quiet (Kenney UI/RPG audio, CC0).
-    QUEST(R.raw.sfx_quest_done, 0.7f), TICK(R.raw.sfx_tick, 0.6f), COINS(R.raw.sfx_coins), FOCUS(R.raw.sfx_focus_done),
+    QUEST(R.raw.sfx_quest_done, 0.7f), COINS(R.raw.sfx_coins), FOCUS(R.raw.sfx_focus_done), ECHO_NEW(R.raw.sfx_echo_new),
 }
 
 /** Sound effects and haptics, both respecting the user's settings. */

@@ -11,7 +11,7 @@ import com.lifup.app.domain.GameState
 import com.lifup.app.domain.StatKey
 
 /**
- * Small sounds for everyday actions, driven by the stat counters so every way of finishing a mission,
+ * Small cues for everyday actions, driven by the stat counters so every way of finishing a mission,
  * ticking a side quest, buying or ending a focus session is covered. One cue per change, most important first.
  */
 @Composable
@@ -26,7 +26,7 @@ fun SoundCues(s: GameState) {
         when {
             now[0] > prev[0] -> { Feedback.play(context, Sfx.FOCUS); Feedback.buzz(context, strong = true) }
             now[1] > prev[1] -> { Feedback.play(context, Sfx.QUEST); Feedback.buzz(context) }
-            now[2] > prev[2] -> { Feedback.play(context, Sfx.TICK); Feedback.buzz(context) }
+            now[2] > prev[2] -> Feedback.buzz(context) // side quests are small and frequent: touch only, no sound
             now[3] > prev[3] -> Feedback.play(context, Sfx.COINS)
         }
     }
