@@ -630,4 +630,5 @@
     <string name="weekly_hint_no">Não</string>
     <string name="unit_meal">refeição</string>
     <string name="unit_shower">banho</string>
+    <string name="edit_mission_tomorrow">Editar missão · conta a partir de amanhã</string>
 </resources>

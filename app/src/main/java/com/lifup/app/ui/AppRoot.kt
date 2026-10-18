@@ -120,6 +120,7 @@ fun AppRoot(deepLink: String?, onDeepLinkConsumed: () -> Unit) {
                         s, deepLink, onDeepLinkConsumed,
                         openSettings = { nav.navigate("settings") },
                         openForge = { nav.navigate("forge") },
+                        openDef = { nav.navigate("forge/$it") },
                     )
                 }
                 composable("settings") { SettingsScreen(onBack = { nav.popBackStack() }, openForge = { nav.navigate("forge") }) }
@@ -139,6 +140,7 @@ private fun MainScaffold(
     onDeepLinkConsumed: () -> Unit,
     openSettings: () -> Unit,
     openForge: () -> Unit,
+    openDef: (String) -> Unit,
 ) {
     val pager = rememberPagerState(initialPage = Tab.TODAY.ordinal) { Tab.entries.size }
     val scope = rememberCoroutineScope()
@@ -210,7 +212,7 @@ private fun MainScaffold(
             // Swipe between tabs; the bottom bar follows the pager.
             HorizontalPager(pager, Modifier.padding(padding).fillMaxSize(), beyondViewportPageCount = 1) { page ->
                 when (Tab.entries[page]) {
-                    Tab.TODAY -> TodayScreen(s, openForge, openQuest) { openQuest = null }
+                    Tab.TODAY -> TodayScreen(s, openForge, openDef, openQuest) { openQuest = null }
                     Tab.FOCUS -> FocusScreen(s)
                     Tab.ECHOES -> com.lifup.app.ui.hero.EchoesScreen(s)
                     Tab.HERO -> HeroScreen(s)

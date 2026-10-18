@@ -100,7 +100,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @Composable
-fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, onQuestOpened: () -> Unit = {}) {
+fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, openQuest: String? = null, onQuestOpened: () -> Unit = {}) {
     val p = Lif.colors
     val now = rememberNow(1_000)
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
@@ -167,7 +167,12 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
 
         s.weeklyHint?.let { h -> item(key = "weekly_hint") { WeeklyHintCard(s, h) } }
 
-        item { SectionTitle(stringResource(R.string.daily_section)) { InfoButton(Guide.DAILY) } }
+        item {
+            SectionTitle(stringResource(R.string.daily_section)) {
+                IconButton(onClick = openForge, modifier = Modifier.size(28.dp)) { Icon(Icons.Rounded.Build, stringResource(R.string.forge), tint = p.dim, modifier = Modifier.size(18.dp)) }
+                InfoButton(Guide.DAILY)
+            }
+        }
         items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
 
         if (s.weeklyQuests.isNotEmpty()) {
@@ -205,7 +210,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openQuest: String? = null, 
     }
 
     selected?.let { id ->
-        if (s.allQuests.any { it.id == id }) MissionSheet(s, id) { selected = null }
+        if (s.allQuests.any { it.id == id }) MissionSheet(s, id, onEdit = { defId -> selected = null; openDef(defId) }) { selected = null }
         else androidx.compose.runtime.LaunchedEffect(id) { selected = null }
     }
 }

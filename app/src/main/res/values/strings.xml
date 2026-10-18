@@ -649,4 +649,5 @@
     <string name="weekly_hint_no">No</string>
     <string name="unit_meal">meal</string>
     <string name="unit_shower">shower</string>
+    <string name="edit_mission_tomorrow">Edit mission · applies from tomorrow</string>
 </resources>

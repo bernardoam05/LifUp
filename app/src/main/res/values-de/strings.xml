@@ -648,4 +648,5 @@
     <string name="weekly_hint_no">Nein</string>
     <string name="unit_meal">Mahlzeit</string>
     <string name="unit_shower">Dusche</string>
+    <string name="edit_mission_tomorrow">Mission bearbeiten · gilt ab morgen</string>
 </resources>

@@ -1,5 +1,8 @@
 package com.lifup.app.ui.today
 
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.rounded.Edit
 import com.lifup.app.domain.text
 import com.lifup.app.domain.defOf
 import android.Manifest
@@ -83,7 +86,7 @@ import com.lifup.app.ui.unitLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
+fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = null, onDismiss: () -> Unit) {
     val q = s.allQuests.firstOrNull { it.id == questId } ?: return
     val p = Lif.colors
     val context = LocalContext.current
@@ -186,13 +189,21 @@ fun MissionSheet(s: GameState, questId: String, onDismiss: () -> Unit) {
                     enabled = free || scrolls > 0, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.SwapHoriz,
                 )
             }
-            if (q.status == QuestStatus.DONE && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA)) {
+            if (q.status == QuestStatus.DONE && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY)) {
                 GhostButton(stringResource(R.string.undo), onClick = { act { undoQuest(q.id) }; onDismiss() }, modifier = Modifier.fillMaxWidth(), icon = Icons.AutoMirrored.Rounded.Undo, color = p.muted)
             }
             OutlinedTextField(
                 value = note, onValueChange = { note = it.take(500) },
                 label = { Text(stringResource(R.string.note)) }, modifier = Modifier.fillMaxWidth(), minLines = 2,
             )
+            // Edits change the mission from tomorrow on, so today's target can't be lowered to finish it.
+            if (onEdit != null && def != null && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY)) {
+                TextButton(onClick = { onEdit(def.id) }, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Rounded.Edit, null, tint = p.muted, modifier = Modifier.size(16.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.edit_mission_tomorrow), color = p.muted, style = MaterialTheme.typography.labelLarge)
+                }
+            }
             Spacer(Modifier.height(4.dp))
         }
     }
