@@ -147,6 +147,8 @@ data class Settings(
     val rigor: Rigor = Rigor.NORMAL,
     /** null = automatic by rigor and level. */
     val dailyPoolOverride: Int? = null,
+    /** Attributes the player wants to grow most: their missions come up twice as often. */
+    val focusAttrs: Set<Attr> = emptySet(),
     val blockOnPenalty: Boolean = false,
     val sidePenalize: Boolean = false,
     val sound: Boolean = true,

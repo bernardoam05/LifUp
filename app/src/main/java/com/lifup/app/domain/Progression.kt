@@ -53,8 +53,8 @@ fun Tx.gainGold(base: Int, boosted: Boolean = true): Int {
     return amount
 }
 
-fun Tx.gainAttributes(type: QuestType?) {
-    val g = Rules.attrGain(type)
+fun Tx.gainAttributes(group: DrawGroup?) {
+    val g = Rules.attrGain(group)
     val a = s.player.attrXp
     s = s.copy(player = s.player.copy(attrXp = Attributes(a.str + g.str, a.agi + g.agi, a.int + g.int, a.vit + g.vit)))
 }

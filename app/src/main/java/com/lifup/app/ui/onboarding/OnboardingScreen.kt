@@ -79,6 +79,8 @@ import com.lifup.app.LifUpApp
 import com.lifup.app.R
 import com.lifup.app.data.LegacyImport
 import com.lifup.app.domain.Rigor
+import com.lifup.app.domain.Attr
+import com.lifup.app.ui.FocusPicker
 import com.lifup.app.domain.finishOnboarding
 import com.lifup.app.ui.act
 import com.lifup.app.ui.components.GhostButton
@@ -94,6 +96,7 @@ fun OnboardingScreen() {
     var page by rememberSaveable { mutableIntStateOf(0) }
     var name by rememberSaveable { mutableStateOf("") }
     var rigor by rememberSaveable { mutableStateOf(Rigor.NORMAL) }
+    var focus by rememberSaveable { mutableStateOf(emptySet<Attr>()) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val legacy = remember { LegacyImport.readAsyncStorage(context) }
@@ -136,6 +139,8 @@ fun OnboardingScreen() {
                         OutlinedTextField(name, { name = it.take(24) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.hunter_name)) }, singleLine = true)
                         Text(stringResource(R.string.difficulty), style = MaterialTheme.typography.titleMedium)
                         Rigor.entries.forEach { r -> RigorCard(r, rigor == r) { rigor = r } }
+                        Text(stringResource(R.string.attr_focus_question), style = MaterialTheme.typography.titleMedium)
+                        FocusPicker(focus) { focus = it }
                         Text(stringResource(R.string.onb_change_later), style = MaterialTheme.typography.bodySmall, color = c.dim)
                     }
                 }
@@ -153,8 +158,8 @@ fun OnboardingScreen() {
                 if (page < 2) page++
                 else {
                     if (Build.VERSION.SDK_INT >= 33) notif.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    val n = name; val r = rigor
-                    act { finishOnboarding(n, r) }
+                    val n = name; val r = rigor; val f = focus
+                    act { finishOnboarding(n, r, f) }
                 }
             })
         }

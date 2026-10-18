@@ -53,7 +53,7 @@ class EngineTest {
 
     @Test fun `perfect day grows streak and binds a shadow`() {
         var s = fresh()
-        s = run(s, "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
+        s = run(s, "2026-10-14T22:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         assertTrue(s.daily.extractionDone)
         assertEquals(1, s.shadows.size)
         assertTrue(s.rewards.any { it is Reward.ShadowGained })
@@ -261,7 +261,7 @@ class EngineTest {
     @Test fun `extra missions unlock after the daily set`() {
         var s = fresh()
         assertFalse(s.canAddExtra())
-        s = run(s, "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } ; addExtraQuest() }
+        s = run(s, "2026-10-14T22:00") { s.dailyQuests.forEach { completeQuest(it.id) } ; addExtraQuest() }
         assertEquals(1, s.extraQuests.size)
     }
 
@@ -354,13 +354,13 @@ class EngineTest {
 
     @Test fun `extra missions can be undone`() {
         var s = fresh()
-        s = run(s, "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
-        s = run(s, "2026-10-14T12:01") { addExtraQuest() }
+        s = run(s, "2026-10-14T22:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
+        s = run(s, "2026-10-14T22:01") { addExtraQuest() }
         val extra = s.extraQuests.single()
-        s = run(s, "2026-10-14T12:02") { completeQuest(extra.id) }
+        s = run(s, "2026-10-14T22:02") { completeQuest(extra.id) }
         val gold = s.player.gold
         assertEquals(QuestStatus.DONE, s.quests.first { it.id == extra.id }.status)
-        s = run(s, "2026-10-14T12:03") { undoQuest(extra.id) }
+        s = run(s, "2026-10-14T22:03") { undoQuest(extra.id) }
         assertEquals(QuestStatus.OPEN, s.quests.first { it.id == extra.id }.status)
         assertTrue(s.player.gold < gold)
     }

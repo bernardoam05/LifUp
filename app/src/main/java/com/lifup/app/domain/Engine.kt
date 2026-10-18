@@ -21,8 +21,10 @@ fun Tx.dismissReward(id: Long) {
     s = s.copy(rewards = s.rewards.filterNot { it.id == id })
 }
 
-fun Tx.finishOnboarding(name: String, rigor: Rigor) {
-    s = s.copy(onboarded = true, player = s.player.copy(name = name.trim().take(24)), settings = s.settings.copy(rigor = rigor))
+fun Tx.finishOnboarding(name: String, rigor: Rigor, focus: Set<Attr> = emptySet()) {
+    s = s.copy(onboarded = true, player = s.player.copy(name = name.trim().take(24)), settings = s.settings.copy(rigor = rigor, focusAttrs = focus))
+    // Today's list was drawn before the choices: redraw it while nothing has been done yet.
+    if (s.quests.none { it.status != QuestStatus.OPEN }) s = s.copy(quests = generateDailyQuests(s, content, ctx.today))
 }
 
 fun Tx.updateSettings(f: (Settings) -> Settings) {

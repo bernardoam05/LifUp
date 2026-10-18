@@ -44,6 +44,8 @@ data class QuestDef(
     val fromHour: Int? = null,
     /** Fixed missions only: done this many times a week on any days, instead of every day. */
     val perWeek: Int? = null,
+    /** Family for the daily draw and attribute growth; null = from the type. */
+    val group: DrawGroup? = null,
 )
 
 @Serializable

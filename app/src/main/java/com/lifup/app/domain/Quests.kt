@@ -58,9 +58,12 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
     // A weekly mission that is due takes a drawn mission's place.
     val due = weekly.count { state.weekly[it.id]?.dueOn(date) == true }
     val seed = date.year * 10_000 + date.monthValue * 100 + date.dayOfMonth
-    val pool = defs.filter { it.kind == DefKind.POOL && (it.daysOfWeek == null || dow in it.daysOfWeek) }
-        .shuffled(Random(seed.toLong() xor state.seed))
-        .take((Rules.dailyPoolCount(level, state.settings) - due).coerceAtLeast(0))
+    val pool = drawBalanced(
+        defs.filter { it.kind == DefKind.POOL && (it.daysOfWeek == null || dow in it.daysOfWeek) },
+        (Rules.dailyPoolCount(level, state.settings) - due).coerceAtLeast(0),
+        state.settings.focusAttrs,
+        Random(seed.toLong() xor state.seed),
+    )
     return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, adapt = state.adapt[it.id]?.level ?: 0) } +
         weekly.map { weeklyQuest(it, state.weekly[it.id], date, level, state.adapt[it.id]?.level ?: 0) }
 }
@@ -103,7 +106,7 @@ private fun Tx.completeMission(q: Quest) {
     if (doubled) s = s.copy(doubleXpNext = false)
     val (xp, dealt) = gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.type)
     val gold = gainGold(q.gold)
-    gainAttributes(q.type)
+    gainAttributes(groupOf(q))
     updateQuest(q.id) { it.copy(status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt) }
     count(StatKey.QUESTS_COMPLETED)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED)

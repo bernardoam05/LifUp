@@ -625,4 +625,20 @@
     <string name="freq_days">Días de la semana</string>
     <string name="freq_weekly">Veces por semana</string>
     <string name="freq_weekly_hint">Aparece todos los días. Solo se vuelve obligatoria cuando ya no puedes saltarla más.</string>
+    <string name="attr_str">Fuerza</string>
+    <string name="attr_agi">Agilidad</string>
+    <string name="attr_int">Inteligencia</string>
+    <string name="attr_vit">Vitalidad</string>
+    <string name="attr_str_short">FUE</string>
+    <string name="attr_agi_short">AGI</string>
+    <string name="attr_int_short">INT</string>
+    <string name="attr_vit_short">VIT</string>
+    <string name="attr_str_what">ejercicio</string>
+    <string name="attr_agi_what">movimiento</string>
+    <string name="attr_int_what">foco y estudio</string>
+    <string name="attr_vit_what">salud y autocontrol</string>
+    <string name="attr_focus_balanced">Equilibrado</string>
+    <string name="attr_focus_title">Foco de atributos</string>
+    <string name="attr_focus_question">¿Qué atributos quieres desarrollar?</string>
+    <string name="attr_focus_hint">Hasta 2. Sus misiones salen más a menudo; las demás siguen apareciendo.</string>
 </resources>

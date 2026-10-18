@@ -135,6 +135,10 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                     act { updateSettings { it.copy(dailyPoolOverride = if (on) null else Rules.dailyPoolCount(s.player.level, it)) } }
                 }
                 if (!auto) Stepper(set.dailyPoolOverride!!, { v -> act { updateSettings { it.copy(dailyPoolOverride = v) } } }, 1..10, stringResource(R.string.extra_daily_missions))
+                Spacer(Modifier.height(12.dp))
+                Text(stringResource(R.string.attr_focus_title), style = MaterialTheme.typography.titleSmall)
+                Spacer(Modifier.height(4.dp))
+                com.lifup.app.ui.FocusPicker(set.focusAttrs) { f -> act { updateSettings { it.copy(focusAttrs = f) } } }
             }
 
             SectionTitle(stringResource(R.string.penalties)) { com.lifup.app.ui.guide.InfoButton(com.lifup.app.ui.guide.Guide.PENALTY) }

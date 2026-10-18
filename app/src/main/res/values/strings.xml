@@ -626,4 +626,20 @@
     <string name="freq_days">Days of the week</string>
     <string name="freq_weekly">Times per week</string>
     <string name="freq_weekly_hint">Shows up every day. It only becomes required when you can\'t skip it anymore.</string>
+    <string name="attr_str">Strength</string>
+    <string name="attr_agi">Agility</string>
+    <string name="attr_int">Intellect</string>
+    <string name="attr_vit">Vitality</string>
+    <string name="attr_str_short">STR</string>
+    <string name="attr_agi_short">AGI</string>
+    <string name="attr_int_short">INT</string>
+    <string name="attr_vit_short">VIT</string>
+    <string name="attr_str_what">exercise</string>
+    <string name="attr_agi_what">movement</string>
+    <string name="attr_int_what">focus and study</string>
+    <string name="attr_vit_what">health and self-control</string>
+    <string name="attr_focus_balanced">Balanced</string>
+    <string name="attr_focus_title">Attribute focus</string>
+    <string name="attr_focus_question">Which attributes do you want to grow?</string>
+    <string name="attr_focus_hint">Up to 2. Their missions come up more often; the others still appear.</string>
 </resources>

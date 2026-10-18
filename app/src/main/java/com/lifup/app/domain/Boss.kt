@@ -147,7 +147,7 @@ fun Tx.completePortal() {
     val q = p.quest
     gainXp(q.xp, q.type)
     gainGold(q.gold)
-    gainAttributes(q.type)
+    gainAttributes(groupOf(q))
     s = s.copy(portal = null)
     count(StatKey.PORTALS_CLEARED)
     count(StatKey.QUESTS_COMPLETED)

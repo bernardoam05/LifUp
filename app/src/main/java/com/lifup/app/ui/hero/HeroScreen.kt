@@ -69,6 +69,9 @@ import com.lifup.app.ui.components.Panel
 import com.lifup.app.ui.components.Pill
 import com.lifup.app.ui.components.RankBadge
 import com.lifup.app.ui.components.SectionTitle
+import com.lifup.app.domain.Attr
+import com.lifup.app.ui.attrColor
+import com.lifup.app.ui.attrShort
 import com.lifup.app.ui.components.StatTile
 import com.lifup.app.ui.content
 import com.lifup.app.ui.hunterTitle
@@ -121,9 +124,9 @@ private fun Profile(s: GameState) {
         }
         Spacer(Modifier.height(12.dp))
         val a = p.attrXp
-        listOf(
-            Triple("STR", a.str, c.red), Triple("AGI", a.agi, c.green), Triple("INT", a.int, c.blue), Triple("VIT", a.vit, c.gold),
-        ).forEach { (label, xp, color) ->
+        listOf(Attr.STR to a.str, Attr.AGI to a.agi, Attr.INT to a.int, Attr.VIT to a.vit).forEach { (attr, xp) ->
+            val label = attrShort(attr)
+            val color = attrColor(attr)
             val level = Rules.attrLevel(xp)
             // Progress toward the next attribute point.
             val cur = (level - 10) * (level - 10) * 5

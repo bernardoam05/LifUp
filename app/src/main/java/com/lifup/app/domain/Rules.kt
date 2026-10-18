@@ -121,12 +121,19 @@ object Rules {
     /** Rest days must be called before this hour, not as a last-minute escape. */
     const val REST_DEADLINE_HOUR = 12
 
-    fun attrGain(type: QuestType?): Attributes = when (type) {
-        QuestType.TRAINING -> Attributes(str = 12, vit = 6)
-        QuestType.GPS -> Attributes(agi = 12, vit = 6)
-        QuestType.KNOWLEDGE, QuestType.FOCUS -> Attributes(int = 12)
-        else -> Attributes(3, 3, 3, 3)
+    fun attrGain(group: DrawGroup?): Attributes = when (group) {
+        DrawGroup.STRENGTH -> Attributes(str = 12, vit = 6)
+        DrawGroup.MOVEMENT -> Attributes(agi = 12, vit = 6)
+        DrawGroup.MIND -> Attributes(int = 12)
+        DrawGroup.HEALTH -> Attributes(vit = 15)
+        DrawGroup.SELF_CONTROL -> Attributes(int = 4, vit = 11)
+        null -> Attributes(3, 3, 3, 3)
     }
+
+    /** Draw weight multiplier for the families of the player's focus attributes. */
+    const val FOCUS_WEIGHT = 2.5
+    /** Each mission drawn from a family multiplies that family's weight by this for the rest of the day. */
+    const val REPEAT_DECAY = 0.2
 
     // ── Shadows ───────────────────────────────────────────────────────────────
 
