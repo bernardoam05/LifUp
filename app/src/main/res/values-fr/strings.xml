@@ -634,4 +634,7 @@
     <string name="count_title">Combien jusqu\'ici ?</string>
     <string name="manage_missions">Gérer les missions</string>
     <string name="side_delete_paid">Supprimer cette tâche retire l\'XP et l\'or qu\'elle a rapportés.</string>
+    <string name="how_to">Comment faire ?</string>
+    <string name="note_add">Ajouter une note</string>
+    <string name="note_hint">Ta note pour cette mission, gardée pour la prochaine fois (ex. : l\'app que tu utilises, ta routine).</string>
 </resources>

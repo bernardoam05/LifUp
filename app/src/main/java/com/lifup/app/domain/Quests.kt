@@ -48,6 +48,9 @@ fun Quest.isSuccessful(): Boolean = when {
 /** A mission definition as the player has it: their edited copy of a built-in one wins. */
 fun GameState.defOf(id: String, content: Content): QuestDef? = customDefs.firstOrNull { it.id == id } ?: content.questDefById[id]
 
+/** The "how to" for a mission or a boss challenge, looked up live so content updates reach old saves. */
+fun GameState.tipFor(q: Quest, content: Content): L10n? = defOf(q.defId, content)?.tip ?: content.bossById[q.defId]?.tip
+
 fun GameState.isEditedBuiltIn(id: String, content: Content) = content.questDefById[id] != null && customDefs.any { it.id == id }
 
 fun GameState.availableDefs(content: Content): List<QuestDef> {

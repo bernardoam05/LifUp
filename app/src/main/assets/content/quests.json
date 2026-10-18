@@ -76,7 +76,14 @@
    "unit": "pages",
    "baseXp": 40,
    "baseGold": 10,
-   "maxTarget": 25
+   "maxTarget": 25,
+   "tip": {
+    "pt": "Qualquer livro que te ensine algo serve, em papel ou e-reader. 10 páginas são cerca de 15 minutos.",
+    "en": "Any book that teaches you something works, paper or e-reader. 10 pages take about 15 minutes.",
+    "es": "Vale cualquier libro que te enseñe algo, en papel o e-reader. 10 páginas son unos 15 minutos.",
+    "fr": "N'importe quel livre qui t'apprend quelque chose, papier ou liseuse. 10 pages, c'est environ 15 minutes.",
+    "de": "Jedes Buch, das dir etwas beibringt, auf Papier oder E-Reader. 10 Seiten dauern etwa 15 Minuten."
+   }
   },
   {
    "id": "core_water",
@@ -128,7 +135,14 @@
    "unit": "km",
    "baseXp": 100,
    "baseGold": 30,
-   "maxTarget": 6
+   "maxTarget": 6,
+   "tip": {
+    "pt": "Usa \"Começar corrida\" nesta missão: conta a distância pelos passos. Se nunca corres, alterna 1 min a correr e 1 a andar.",
+    "en": "Use \"Start run\" in this mission: distance comes from your steps. New to running? Alternate 1 min running, 1 min walking.",
+    "es": "Usa \"Empezar carrera\" en esta misión: la distancia sale de tus pasos. ¿Nunca corres? Alterna 1 min corriendo y 1 andando.",
+    "fr": "Utilise « Démarrer la course » dans cette mission : la distance vient de tes pas. Débutant ? Alterne 1 min de course et 1 de marche.",
+    "de": "Nutze „Lauf starten“ in dieser Mission: die Strecke kommt aus deinen Schritten. Neu? Wechsle 1 Min. Laufen und 1 Min. Gehen."
+   }
   },
   {
    "id": "pool_plank",
@@ -224,7 +238,14 @@
      "fr": "Aujourd'hui : respire un peu plus lentement chaque minute.",
      "de": "Heute: Atme jede Minute ein wenig langsamer."
     }
-   ]
+   ],
+   "tip": {
+    "pt": "Senta-te confortável e usa o Foco da app como temporizador. Distrair-te faz parte: volta à respiração.",
+    "en": "Sit comfortably and use the app's Focus as a timer. Getting distracted is part of it: come back to the breath.",
+    "es": "Siéntate cómodo y usa el Foco de la app como temporizador. Distraerse es parte: vuelve a la respiración.",
+    "fr": "Assieds-toi confortablement et utilise le Focus de l'app comme minuteur. Se distraire en fait partie : reviens au souffle.",
+    "de": "Setz dich bequem hin und nutze den Fokus der App als Timer. Abschweifen gehört dazu: kehr zum Atem zurück."
+   }
   },
   {
    "id": "pool_social",
@@ -249,7 +270,14 @@
    "scalingInterval": 1,
    "unit": "h",
    "baseXp": 80,
-   "baseGold": 20
+   "baseGold": 20,
+   "tip": {
+    "pt": "Sai das redes no telemóvel ou põe-nas na lista de bloqueio do Foco durante essas horas.",
+    "en": "Log out of social apps on your phone or add them to the Focus block list for those hours.",
+    "es": "Cierra sesión en las redes del móvil o ponlas en la lista de bloqueo del Foco durante esas horas.",
+    "fr": "Déconnecte-toi des réseaux sur ton téléphone ou ajoute-les à la liste de blocage du Focus pendant ces heures.",
+    "de": "Melde dich von Social Apps ab oder setz sie für diese Stunden auf die Sperrliste im Fokus."
+   }
   },
   {
    "id": "pool_sugar",
@@ -353,7 +381,14 @@
    "unit": "min",
    "baseXp": 100,
    "baseGold": 30,
-   "maxTarget": 90
+   "maxTarget": 90,
+   "tip": {
+    "pt": "Telemóvel noutra divisão e uma só tarefa definida antes de começar. Usa o Foco com bloqueio de apps.",
+    "en": "Phone in another room and one task chosen before you start. Use Focus with app blocking.",
+    "es": "Móvil en otra habitación y una sola tarea elegida antes de empezar. Usa el Foco con bloqueo de apps.",
+    "fr": "Téléphone dans une autre pièce et une seule tâche choisie avant de commencer. Utilise le Focus avec blocage d'apps.",
+    "de": "Handy in einen anderen Raum und vorher genau eine Aufgabe wählen. Nutze den Fokus mit App-Sperre."
+   }
   },
   {
    "id": "pool_coldshower",
@@ -379,7 +414,14 @@
    "scalingInterval": 1,
    "unit": "shower",
    "baseXp": 80,
-   "baseGold": 20
+   "baseGold": 20,
+   "tip": {
+    "pt": "Começa morno e acaba com 30 a 60 s de água fria. Respira devagar pelo nariz.",
+    "en": "Start warm and finish with 30 to 60 s of cold water. Breathe slowly through your nose.",
+    "es": "Empieza templado y acaba con 30 a 60 s de agua fría. Respira despacio por la nariz.",
+    "fr": "Commence tiède et finis par 30 à 60 s d'eau froide. Respire lentement par le nez.",
+    "de": "Fang warm an und ende mit 30 bis 60 s kaltem Wasser. Atme langsam durch die Nase."
+   }
   },
   {
    "id": "pool_walking",
@@ -430,7 +472,14 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 50,
-   "baseGold": 15
+   "baseGold": 15,
+   "tip": {
+    "pt": "Ex.: Anki ou Drops para palavras, Duolingo para lições curtas, ou uma série com legendas na língua.",
+    "en": "E.g. Anki or Drops for words, Duolingo for short lessons, or a show with subtitles in the language.",
+    "es": "Ej.: Anki o Drops para palabras, Duolingo para lecciones cortas, o una serie con subtítulos en el idioma.",
+    "fr": "Ex. : Anki ou Drops pour le vocabulaire, Duolingo pour des leçons courtes, ou une série sous-titrée dans la langue.",
+    "de": "Z. B. Anki oder Drops für Vokabeln, Duolingo für kurze Lektionen oder eine Serie mit Untertiteln in der Sprache."
+   }
   },
   {
    "id": "pool_burpees",
@@ -577,7 +626,14 @@
    "unit": "min",
    "baseXp": 80,
    "baseGold": 25,
-   "pomodoro": true
+   "pomodoro": true,
+   "tip": {
+    "pt": "Começa no separador Foco em modo Pomodoro: as pausas são automáticas e as apps ficam livres nelas.",
+    "en": "Start it from the Focus tab in Pomodoro mode: breaks are automatic and apps are free during them.",
+    "es": "Empieza en la pestaña Foco en modo Pomodoro: las pausas son automáticas y las apps quedan libres en ellas.",
+    "fr": "Lance-le depuis l'onglet Focus en mode Pomodoro : les pauses sont automatiques et les apps libres pendant celles-ci.",
+    "de": "Starte im Fokus-Tab im Pomodoro-Modus: Pausen laufen automatisch, und in ihnen sind Apps frei."
+   }
   },
   {
    "id": "pool_steps",
@@ -658,7 +714,14 @@
    "baseXp": 80,
    "baseGold": 25,
    "descending": true,
-   "auto": "DISTRACTION_TIME"
+   "auto": "DISTRACTION_TIME",
+   "tip": {
+    "pt": "As apps de distração são as que escolhes no Foco para bloquear. A app mede o tempo nelas sozinha.",
+    "en": "Distraction apps are the ones you pick in Focus to block. The app measures time in them by itself.",
+    "es": "Las apps de distracción son las que eliges en Foco para bloquear. La app mide el tiempo en ellas sola.",
+    "fr": "Les apps de distraction sont celles que tu choisis dans Focus pour les bloquer. L'app mesure le temps toute seule.",
+    "de": "Ablenkungs-Apps sind die, die du im Fokus zum Sperren wählst. Die App misst die Zeit darin selbst."
+   }
   },
   {
    "id": "pool_jumprope",
@@ -684,7 +747,14 @@
    "unit": "reps",
    "baseXp": 70,
    "baseGold": 20,
-   "maxTarget": 300
+   "maxTarget": 300,
+   "tip": {
+    "pt": "Sem corda, saltos no lugar contam. Aterra na ponta dos pés, com os joelhos ligeiramente fletidos.",
+    "en": "No rope? Jumping in place counts. Land on the balls of your feet, knees slightly bent.",
+    "es": "Sin cuerda, los saltos en el sitio cuentan. Aterriza con la punta de los pies, rodillas algo flexionadas.",
+    "fr": "Sans corde, les sauts sur place comptent. Atterris sur l'avant du pied, genoux légèrement fléchis.",
+    "de": "Ohne Seil zählen Sprünge auf der Stelle. Lande auf den Fußballen, Knie leicht gebeugt."
+   }
   },
   {
    "id": "pool_lunges",
@@ -763,7 +833,14 @@
    "unit": "min",
    "baseXp": 40,
    "baseGold": 10,
-   "maxTarget": 20
+   "maxTarget": 20,
+   "tip": {
+    "pt": "Ex.: rotações de ancas, gato-vaca, círculos de ombros. Um vídeo curto de mobilidade ajuda.",
+    "en": "E.g. hip circles, cat-cow, shoulder circles. A short mobility video helps.",
+    "es": "Ej.: rotaciones de cadera, gato-vaca, círculos de hombros. Un vídeo corto de movilidad ayuda.",
+    "fr": "Ex. : rotations de hanches, chat-vache, cercles d'épaules. Une courte vidéo de mobilité aide.",
+    "de": "Z. B. Hüftkreisen, Katze-Kuh, Schulterkreisen. Ein kurzes Mobility-Video hilft."
+   }
   },
   {
    "id": "pool_stairs",
@@ -869,7 +946,14 @@
    "unit": "min",
    "baseXp": 60,
    "baseGold": 15,
-   "maxTarget": 40
+   "maxTarget": 40,
+   "tip": {
+    "pt": "Escolhe uma parte pequena e concreta (um acorde, um atalho, um passo) e repete-a até sair melhor.",
+    "en": "Pick one small, concrete piece (a chord, a shortcut, a move) and repeat it until it gets better.",
+    "es": "Elige una parte pequeña y concreta (un acorde, un atajo, un paso) y repítela hasta que salga mejor.",
+    "fr": "Choisis un petit élément concret (un accord, un raccourci, un geste) et répète-le jusqu'à ce qu'il s'améliore.",
+    "de": "Wähle ein kleines, konkretes Stück (ein Akkord, ein Shortcut, eine Bewegung) und wiederhole es, bis es besser klappt."
+   }
   },
   {
    "id": "pool_creative",
@@ -963,7 +1047,14 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 30,
-   "baseGold": 8
+   "baseGold": 8,
+   "tip": {
+    "pt": "Inspira 4 s, segura 4 s, expira 4 s, segura 4 s. Conta pelos dedos se te perderes.",
+    "en": "Breathe in 4 s, hold 4 s, out 4 s, hold 4 s. Count on your fingers if you lose track.",
+    "es": "Inspira 4 s, retén 4 s, espira 4 s, retén 4 s. Cuenta con los dedos si te pierdes.",
+    "fr": "Inspire 4 s, bloque 4 s, expire 4 s, bloque 4 s. Compte sur tes doigts si tu te perds.",
+    "de": "Atme 4 s ein, halte 4 s, atme 4 s aus, halte 4 s. Zähl an den Fingern mit, wenn du dich verlierst."
+   }
   },
   {
    "id": "pool_plan",
@@ -988,7 +1079,14 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "tip": {
+    "pt": "Escreve as 3 coisas mais importantes de amanhã e a hora de cada uma. Mais do que isso raramente se cumpre.",
+    "en": "Write tomorrow's 3 most important things and a time for each. More than that rarely gets done.",
+    "es": "Escribe las 3 cosas más importantes de mañana y una hora para cada una. Más que eso rara vez se cumple.",
+    "fr": "Écris les 3 choses les plus importantes de demain et une heure pour chacune. Au-delà, c'est rarement fait.",
+    "de": "Schreib die 3 wichtigsten Dinge für morgen und je eine Uhrzeit auf. Mehr wird selten geschafft."
+   }
   },
   {
    "id": "pool_article",
@@ -1013,7 +1111,14 @@
    "scalingInterval": 1,
    "unit": "article",
    "baseXp": 35,
-   "baseGold": 10
+   "baseGold": 10,
+   "tip": {
+    "pt": "Ex.: um capítulo de livro, um artigo longo da Wikipédia ou de uma revista. Evita feeds e notícias rápidas.",
+    "en": "E.g. a book chapter, a long Wikipedia or magazine article. Skip feeds and quick news.",
+    "es": "Ej.: un capítulo de libro, un artículo largo de Wikipedia o de una revista. Evita feeds y noticias rápidas.",
+    "fr": "Ex. : un chapitre de livre, un long article de Wikipédia ou de magazine. Évite les fils et les brèves.",
+    "de": "Z. B. ein Buchkapitel oder ein langer Wikipedia- oder Magazinartikel. Keine Feeds oder Kurznachrichten."
+   }
   },
   {
    "id": "pool_podcast",
@@ -1038,7 +1143,14 @@
    "scalingInterval": 1,
    "unit": "episode",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "tip": {
+    "pt": "Ex.: podcasts de ciência, história ou do teu trabalho. Escreve a ideia na nota desta missão.",
+    "en": "E.g. science, history or work-related podcasts. Write the idea in this mission's note.",
+    "es": "Ej.: pódcasts de ciencia, historia o de tu trabajo. Escribe la idea en la nota de esta misión.",
+    "fr": "Ex. : podcasts de science, d'histoire ou liés à ton travail. Écris l'idée dans la note de cette mission.",
+    "de": "Z. B. Podcasts über Wissenschaft, Geschichte oder deinen Beruf. Schreib die Idee in die Notiz dieser Mission."
+   }
   },
   {
    "id": "pool_gratitude",
@@ -1132,7 +1244,14 @@
    "scalingInterval": 1,
    "unit": "person",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "tip": {
+    "pt": "Uma mensagem simples chega: \"Lembrei-me de ti, como estás?\". Uma chamada vale ainda mais.",
+    "en": "A simple message is enough: \"Thought of you, how are you?\". A call is worth even more.",
+    "es": "Basta un mensaje simple: \"Me acordé de ti, ¿cómo estás?\". Una llamada vale aún más.",
+    "fr": "Un message simple suffit : « J'ai pensé à toi, comment vas-tu ? ». Un appel vaut encore plus.",
+    "de": "Eine einfache Nachricht reicht: „Hab an dich gedacht, wie geht’s?“. Ein Anruf zählt noch mehr."
+   }
   },
   {
    "id": "pool_tidy",
@@ -1444,7 +1563,14 @@
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 50,
-   "baseGold": 12
+   "baseGold": 12,
+   "tip": {
+    "pt": "Deixa o telemóvel a carregar longe da cama e troca-o por um livro ou música calma.",
+    "en": "Leave your phone charging away from the bed and swap it for a book or calm music.",
+    "es": "Deja el móvil cargando lejos de la cama y cámbialo por un libro o música tranquila.",
+    "fr": "Laisse ton téléphone charger loin du lit et remplace-le par un livre ou une musique calme.",
+    "de": "Lass das Handy weit weg vom Bett laden und nimm stattdessen ein Buch oder ruhige Musik."
+   }
   },
   {
    "id": "pool_explain",
@@ -1469,7 +1595,14 @@
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 45,
-   "baseGold": 12
+   "baseGold": 12,
+   "tip": {
+    "pt": "Se não consegues explicar com palavras simples, encontraste o que ainda não percebes. Volta lá.",
+    "en": "If you can't explain it in plain words, you've found what you don't understand yet. Go back to it.",
+    "es": "Si no puedes explicarlo con palabras sencillas, has encontrado lo que aún no entiendes. Vuelve a ello.",
+    "fr": "Si tu n'arrives pas à l'expliquer simplement, tu as trouvé ce que tu ne comprends pas encore. Reviens-y.",
+    "de": "Wenn du es nicht einfach erklären kannst, hast du gefunden, was du noch nicht verstehst. Geh noch mal ran."
+   }
   },
   {
    "id": "pool_puzzle",
@@ -1494,7 +1627,14 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 35,
-   "baseGold": 10
+   "baseGold": 10,
+   "tip": {
+    "pt": "Ex.: Lichess (xadrez grátis), um sudoku de papel ou palavras cruzadas.",
+    "en": "E.g. Lichess (free chess), a paper sudoku or a crossword.",
+    "es": "Ej.: Lichess (ajedrez gratis), un sudoku en papel o un crucigrama.",
+    "fr": "Ex. : Lichess (échecs gratuits), un sudoku papier ou des mots croisés.",
+    "de": "Z. B. Lichess (kostenloses Schach), ein Sudoku auf Papier oder ein Kreuzworträtsel."
+   }
   },
   {
    "id": "pool_kindness",

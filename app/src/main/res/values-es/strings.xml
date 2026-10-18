@@ -652,4 +652,7 @@
     <string name="count_title">¿Cuántas llevas?</string>
     <string name="manage_missions">Gestionar misiones</string>
     <string name="side_delete_paid">Borrar esta tarea quita el XP y el oro que dio.</string>
+    <string name="how_to">¿Cómo hacerlo?</string>
+    <string name="note_add">Añadir nota</string>
+    <string name="note_hint">Tu nota para esta misión: se guarda para la próxima vez (ej.: la app que usas, tu rutina).</string>
 </resources>

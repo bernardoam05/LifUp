@@ -653,4 +653,7 @@
     <string name="count_title">How many so far?</string>
     <string name="manage_missions">Manage missions</string>
     <string name="side_delete_paid">Deleting this side quest takes back the XP and gold it gave.</string>
+    <string name="how_to">How to?</string>
+    <string name="note_add">Add a note</string>
+    <string name="note_hint">Your note for this mission, kept for next time (e.g. the app you use, your routine).</string>
 </resources>

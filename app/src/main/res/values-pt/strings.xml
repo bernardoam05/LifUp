@@ -634,4 +634,7 @@
     <string name="count_title">Quantas já fizeste?</string>
     <string name="manage_missions">Gerir missões</string>
     <string name="side_delete_paid">Apagar esta tarefa tira o XP e o ouro que ela deu.</string>
+    <string name="how_to">Como fazer?</string>
+    <string name="note_add">Adicionar nota</string>
+    <string name="note_hint">A tua nota para esta missão: fica guardada para a próxima vez (ex.: a app que usas, a tua rotina).</string>
 </resources>

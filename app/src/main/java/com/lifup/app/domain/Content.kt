@@ -50,6 +50,8 @@ data class QuestDef(
     val maxTarget: Double? = null,
     /** Rotating suggestions for open-ended missions; one is picked per day. */
     val prompts: List<L10n>? = null,
+    /** How to go about it, for missions where that isn't obvious. */
+    val tip: L10n? = null,
 )
 
 @Serializable
@@ -69,6 +71,8 @@ data class BossDef(
     val description: L10n,
     val shadowId: String,
     val season: Season? = null,
+    /** How to go about the challenge. */
+    val tip: L10n? = null,
 )
 
 @Serializable

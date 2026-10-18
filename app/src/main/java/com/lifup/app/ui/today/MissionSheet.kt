@@ -1,5 +1,14 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.domain.tipFor
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.material.icons.rounded.MonetizationOn
+import androidx.compose.material.icons.rounded.ExpandMore
+import androidx.compose.material.icons.rounded.ExpandLess
+import androidx.compose.material.icons.automirrored.rounded.Notes
+import androidx.compose.material.icons.rounded.Lightbulb
+import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
 import com.lifup.app.domain.Quest
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
@@ -131,10 +140,8 @@ fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = nu
 
             Details(s, q)
             if (open && q.timeable()) Stopwatch(q, timer, now)
-            OutlinedTextField(
-                value = note, onValueChange = { note = it.take(500) },
-                label = { Text(stringResource(R.string.note)) }, modifier = Modifier.fillMaxWidth(), minLines = 2,
-            )
+            s.tipFor(q, content)?.let { TipRow(it.text(lang())) }
+            NoteRow(note) { note = it }
             // Edits change the mission from tomorrow on, so today's target can't be lowered to finish it.
             if (onEdit != null && def != null && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY)) {
                 TextButton(onClick = { onEdit(def.id) }, modifier = Modifier.fillMaxWidth()) {
@@ -164,10 +171,7 @@ private fun SheetHeader(q: Quest) {
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(questTitle(q, lang()), style = MaterialTheme.typography.titleLarge)
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Pill(stringResource(questTypeName(q.type)), color)
-                Pill(q.rank.name, color)
-            }
+            Pill(stringResource(questTypeName(q.type)), color)
         }
     }
 }
@@ -241,7 +245,16 @@ private fun Details(s: GameState, q: Quest) {
     val p = Lif.colors
     val context = LocalContext.current
     val record = s.records[q.defId]
-    if (q.xp > 0 || q.gold > 0) Text(stringResource(R.string.rewards_line, q.xp, q.gold), style = MaterialTheme.typography.labelLarge, color = p.accent)
+    if (q.xp > 0 || q.gold > 0) Row(verticalAlignment = Alignment.CenterVertically) {
+        // XP follows the theme; gold is always gold, like the coin at the top.
+        Text("+${q.xp} XP", style = MaterialTheme.typography.labelLarge, color = p.accent)
+        if (q.gold > 0) {
+            Spacer(Modifier.width(12.dp))
+            Icon(Icons.Rounded.MonetizationOn, null, tint = p.gold, modifier = Modifier.size(16.dp))
+            Spacer(Modifier.width(4.dp))
+            Text("+${q.gold}", style = MaterialTheme.typography.labelLarge, color = p.gold)
+        }
+    }
     if (s.doubleXpNext && q.status == QuestStatus.OPEN && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA)) {
         Text(stringResource(R.string.double_xp_active), style = MaterialTheme.typography.labelMedium, color = p.gold)
     }
@@ -256,6 +269,39 @@ private fun Details(s: GameState, q: Quest) {
         stringResource(if (q.adapt > 0) R.string.adapt_up else R.string.adapt_down, kotlin.math.abs(q.adapt) * 10),
         style = MaterialTheme.typography.bodySmall, color = p.muted,
     )
+}
+
+/** A folded "How to?" line: one tap shows the tip, so the sheet stays short. */
+@Composable
+private fun TipRow(tip: String) {
+    val p = Lif.colors
+    var open by remember { mutableStateOf(false) }
+    FoldRow(Icons.Rounded.Lightbulb, stringResource(R.string.how_to), open) { open = !open }
+    AnimatedVisibility(open) { Text(tip, style = MaterialTheme.typography.bodyMedium, color = p.text, modifier = Modifier.padding(start = 26.dp)) }
+}
+
+/** The player's own note for this mission, kept for next time; folded to one line until tapped. */
+@Composable
+private fun NoteRow(note: String, onChange: (String) -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    FoldRow(Icons.AutoMirrored.Rounded.Notes, note.takeIf { it.isNotBlank() && !open } ?: stringResource(R.string.note_add), open) { open = !open }
+    AnimatedVisibility(open) {
+        OutlinedTextField(
+            value = note, onValueChange = { onChange(it.take(500)) },
+            placeholder = { Text(stringResource(R.string.note_hint)) }, modifier = Modifier.fillMaxWidth(), minLines = 2,
+        )
+    }
+}
+
+@Composable
+private fun FoldRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, open: Boolean, onClick: () -> Unit) {
+    val p = Lif.colors
+    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+        Icon(icon, null, tint = p.muted, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(8.dp))
+        Text(label, style = MaterialTheme.typography.bodyMedium, color = p.muted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+        Icon(if (open) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = p.muted)
+    }
 }
 
 /** Stopwatch, kept in the state so it survives the app being closed. */

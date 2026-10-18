@@ -22,7 +22,14 @@
    "fr": "Tabata : enchaîne {target} rounds de 20 s d'effort maximal + 10 s de repos. Choisis un seul exercice avant de commencer (burpees, sauts ou sprints) et garde l'intensité maximale à chaque round.",
    "de": "Tabata: Absolviere {target} Runden mit 20 s maximaler Anstrengung + 10 s Pause. Lege vor dem Start eine einzige Übung fest (Burpees, Sprünge oder Sprints) und halte in jeder Runde die maximale Intensität."
   },
-  "shadowId": "quest_boss_goblin_warlord"
+  "shadowId": "quest_boss_goblin_warlord",
+  "tip": {
+   "pt": "Usa um temporizador de intervalos (procura \"Tabata timer\"). Escolhe um exercício que consigas manter com boa técnica.",
+   "en": "Use an interval timer (search \"Tabata timer\"). Pick an exercise you can keep up with good form.",
+   "es": "Usa un temporizador de intervalos (busca \"Tabata timer\"). Elige un ejercicio que puedas mantener con buena técnica.",
+   "fr": "Utilise un minuteur d'intervalles (cherche « Tabata timer »). Choisis un exercice que tu tiens avec une bonne technique.",
+   "de": "Nutze einen Intervall-Timer (such nach „Tabata Timer“). Wähle eine Übung, die du sauber durchhältst."
+  }
  },
  {
   "id": "boss_cave_spider_matriarch",
@@ -47,7 +54,14 @@
    "fr": "Technique Feynman : active le mode Focus pendant {target} min et explique par écrit (ou à voix haute enregistrée) un concept que tu apprends, comme à un débutant — sans consulter de sources pendant l'explication.",
    "de": "Feynman-Technik: Aktiviere den Fokus-Modus für {target} Min. und erkläre schriftlich (oder laut aufgenommen) ein Konzept, das du gerade lernst, als würdest du es einem Anfänger beibringen — ohne dabei Quellen zu nutzen."
   },
-  "shadowId": "quest_boss_cave_spider_matriarch"
+  "shadowId": "quest_boss_cave_spider_matriarch",
+  "tip": {
+   "pt": "Escreve como se fosse para alguém de 12 anos. Onde tiveres de parar para pensar, é aí que tens de estudar.",
+   "en": "Write as if for a 12-year-old. Wherever you have to stop and think is where you need to study.",
+   "es": "Escribe como para alguien de 12 años. Donde tengas que parar a pensar, ahí es donde debes estudiar.",
+   "fr": "Écris comme pour un enfant de 12 ans. Là où tu dois t'arrêter pour réfléchir, c'est là qu'il faut étudier.",
+   "de": "Schreib, als wäre es für eine 12-Jährige. Wo du anhalten und nachdenken musst, musst du noch lernen."
+  }
  },
  {
   "id": "boss_ant_worker_prime",
@@ -72,7 +86,14 @@
    "fr": "Parcours d'exploration : fais {target} km sur un chemin jamais emprunté, en choisissant ta route sur le moment (aucun itinéraire prévu). Note 3 nouveautés découvertes en chemin.",
    "de": "Entdeckerroute: Lege {target} km auf einem Weg zurück, den du noch nie gegangen bist, und wähle die Richtung spontan (keine feste Route). Notiere 3 neue Dinge, die du unterwegs entdeckt hast."
   },
-  "shadowId": "quest_boss_ant_worker_prime"
+  "shadowId": "quest_boss_ant_worker_prime",
+  "tip": {
+   "pt": "Abre o registo de distância da missão antes de sair. Em cada cruzamento, vira para onde nunca foste.",
+   "en": "Open the mission's distance log before you leave. At every crossing, turn where you've never been.",
+   "es": "Abre el registro de distancia de la misión antes de salir. En cada cruce, gira hacia donde nunca fuiste.",
+   "fr": "Ouvre le suivi de distance de la mission avant de partir. À chaque carrefour, tourne là où tu n'es jamais allé.",
+   "de": "Öffne vor dem Losgehen die Streckenerfassung der Mission. Bieg an jeder Kreuzung dorthin ab, wo du nie warst."
+  }
  },
  {
   "id": "boss_stone_golem_shard",
@@ -97,7 +118,14 @@
    "fr": "Essaie une nouvelle pratique physique (yoga, capoeira, callisthénie, tai-chi ou une autre jamais testée) : suis un tutoriel et pratique {target} min sans interruption, mode Focus actif. À la fin, refais les mouvements sans guide.",
    "de": "Probiere eine neue körperliche Praxis aus (Yoga, Capoeira, Calisthenics, Tai Chi oder etwas, das du noch nie probiert hast): Folge einem Tutorial und übe {target} Min. ohne Unterbrechung bei aktivem Fokus-Modus. Wiederhole die Bewegungen am Ende ohne Anleitung."
   },
-  "shadowId": "quest_boss_stone_golem_shard"
+  "shadowId": "quest_boss_stone_golem_shard",
+  "tip": {
+   "pt": "Ex.: procura no YouTube \"yoga para iniciantes\" ou \"calistenia iniciante 20 min\" e segue do princípio ao fim.",
+   "en": "E.g. search YouTube for \"yoga for beginners\" or \"beginner calisthenics 20 min\" and follow it start to finish.",
+   "es": "Ej.: busca en YouTube \"yoga para principiantes\" o \"calistenia principiante 20 min\" y síguelo de principio a fin.",
+   "fr": "Ex. : cherche sur YouTube « yoga débutant » ou « calisthénie débutant 20 min » et suis-le du début à la fin.",
+   "de": "Z. B. such auf YouTube „Yoga für Anfänger“ oder „Calisthenics Anfänger 20 Min“ und mach es von Anfang bis Ende mit."
+  }
  },
  {
   "id": "boss_stringsinger",
@@ -122,7 +150,14 @@
    "fr": "Guitare : {target} min de pratique avec métronome (3 accords + 1 rythme de base).",
    "de": "Gitarre: {target} Min. Üben mit Metronom (3 Akkorde + 1 Grundrhythmus)."
   },
-  "shadowId": "quest_boss_stringsinger"
+  "shadowId": "quest_boss_stringsinger",
+  "tip": {
+   "pt": "Começa devagar no metrónomo (60 bpm) e só sobe quando as mudanças de acorde saírem limpas.",
+   "en": "Start slow on the metronome (60 bpm) and only speed up once the chord changes are clean.",
+   "es": "Empieza despacio con el metrónomo (60 bpm) y solo sube cuando los cambios de acorde salgan limpios.",
+   "fr": "Commence lentement au métronome (60 bpm) et n'accélère que quand les changements d'accords sont propres.",
+   "de": "Fang langsam mit dem Metronom an (60 bpm) und werde erst schneller, wenn die Akkordwechsel sauber sind."
+  }
  },
  {
   "id": "boss_polyglot_trial",
@@ -147,7 +182,14 @@
    "fr": "Langue : apprends {target} mots + écris 5 phrases qui les utilisent.",
    "de": "Sprache: Lerne {target} Wörter + schreibe 5 Sätze, in denen du sie verwendest."
   },
-  "shadowId": "quest_boss_polyglot_trial"
+  "shadowId": "quest_boss_polyglot_trial",
+  "tip": {
+   "pt": "Ex.: um baralho de palavras frequentes no Anki ou no Drops. Confirma as frases no DeepL ou no LanguageTool.",
+   "en": "E.g. a frequent-words deck in Anki or Drops. Check your sentences with DeepL or LanguageTool.",
+   "es": "Ej.: un mazo de palabras frecuentes en Anki o Drops. Comprueba las frases en DeepL o LanguageTool.",
+   "fr": "Ex. : un paquet de mots fréquents dans Anki ou Drops. Vérifie tes phrases avec DeepL ou LanguageTool.",
+   "de": "Z. B. ein Deck mit häufigen Wörtern in Anki oder Drops. Prüf deine Sätze mit DeepL oder LanguageTool."
+  }
  },
  {
   "id": "boss_culinary_ritual",
@@ -172,7 +214,14 @@
    "fr": "Cuisine : prépare 1 repas sain + 1 accompagnement (fait maison).",
    "de": "Kochen: Bereite 1 gesunde Mahlzeit + 1 Beilage zu (von Grund auf)."
   },
-  "shadowId": "quest_boss_culinary_ritual"
+  "shadowId": "quest_boss_culinary_ritual",
+  "tip": {
+   "pt": "\"Do zero\" quer dizer sem pré-cozinhados. Algo simples conta: arroz, legumes salteados e uma proteína.",
+   "en": "\"From scratch\" means nothing ready-made. Simple counts: rice, stir-fried veg and a protein.",
+   "es": "\"Desde cero\" significa sin precocinados. Algo sencillo cuenta: arroz, verduras salteadas y una proteína.",
+   "fr": "« Fait maison » veut dire sans plats préparés. Simple, ça compte : riz, légumes sautés et une protéine.",
+   "de": "„Selbst gemacht“ heißt ohne Fertigprodukte. Einfaches zählt: Reis, gebratenes Gemüse und Eiweiß."
+  }
  },
  {
   "id": "boss_memory_labyrinth",
@@ -197,7 +246,14 @@
    "fr": "Mémoire : {target} min de focus pour créer un palais mental de 12 lieux et revoir les associations 2 fois en silence.",
    "de": "Gedächtnis: {target} Min. Fokus, um einen Gedächtnispalast mit 12 Orten zu bauen und die Verknüpfungen 2 Mal in Stille zu wiederholen."
   },
-  "shadowId": "quest_boss_memory_labyrinth"
+  "shadowId": "quest_boss_memory_labyrinth",
+  "tip": {
+   "pt": "Usa uma casa que conheces bem: 12 sítios por ordem (porta, sofá, mesa…). Liga cada coisa a decorar a um sítio com uma imagem absurda.",
+   "en": "Use a house you know well: 12 spots in order (door, sofa, table…). Tie each item to a spot with an absurd image.",
+   "es": "Usa una casa que conozcas bien: 12 lugares en orden (puerta, sofá, mesa…). Une cada cosa a un lugar con una imagen absurda.",
+   "fr": "Prends une maison que tu connais bien : 12 endroits dans l'ordre (porte, canapé, table…). Associe chaque élément à un endroit avec une image absurde.",
+   "de": "Nimm ein Haus, das du gut kennst: 12 Orte der Reihe nach (Tür, Sofa, Tisch…). Verknüpf jedes Element mit einem Ort durch ein absurdes Bild."
+  }
  },
  {
   "id": "boss_new_frontier",
@@ -222,7 +278,14 @@
    "fr": "Essaie du nouveau : 1 cours court (20–30 min) + 3 notes sur ce que tu as appris.",
    "de": "Probiere etwas Neues: 1 kurze Lektion (20–30 Min.) + 3 Notizen zu dem, was du gelernt hast."
   },
-  "shadowId": "quest_boss_new_frontier"
+  "shadowId": "quest_boss_new_frontier",
+  "tip": {
+   "pt": "Ex.: uma aula gratuita no YouTube, Coursera ou Khan Academy sobre algo de que nunca percebeste nada.",
+   "en": "E.g. a free class on YouTube, Coursera or Khan Academy about something you know nothing about.",
+   "es": "Ej.: una clase gratis en YouTube, Coursera o Khan Academy sobre algo de lo que no sepas nada.",
+   "fr": "Ex. : un cours gratuit sur YouTube, Coursera ou Khan Academy sur un sujet que tu ne connais pas du tout.",
+   "de": "Z. B. ein kostenloser Kurs auf YouTube, Coursera oder Khan Academy über etwas, von dem du keine Ahnung hast."
+  }
  },
  {
   "id": "boss_artisan_trial",
@@ -247,7 +310,14 @@
    "fr": "Fabrique un petit truc : 1 objet utile (ex. : support, organiseur, rapiéçage).",
    "de": "Baue etwas Kleines: 1 nützlichen Gegenstand (z. B. Ständer, Organizer, Flicken)."
   },
-  "shadowId": "quest_boss_artisan_trial"
+  "shadowId": "quest_boss_artisan_trial",
+  "tip": {
+   "pt": "Olha à tua volta: um cabo sem suporte, uma gaveta desarrumada, uma peça rasgada. Usa o que já tens em casa.",
+   "en": "Look around: a cable with no holder, a messy drawer, a torn piece of clothing. Use what you already have.",
+   "es": "Mira a tu alrededor: un cable sin soporte, un cajón desordenado, una prenda rota. Usa lo que ya tienes en casa.",
+   "fr": "Regarde autour de toi : un câble sans support, un tiroir en désordre, un vêtement déchiré. Utilise ce que tu as déjà.",
+   "de": "Schau dich um: ein Kabel ohne Halter, eine unordentliche Schublade, ein gerissenes Kleidungsstück. Nutze, was du schon hast."
+  }
  },
  {
   "id": "boss_wind_walker",
@@ -272,7 +342,14 @@
    "fr": "Fais {target} min d'étirements dynamiques continus (balancés de jambes, rotations d'épaules, cercles de hanches) sans pause de plus de 30 s. Mode Focus actif.",
    "de": "Mache {target} Min. durchgehendes dynamisches Dehnen (Beinschwünge, Schulterkreisen, Hüftkreisen) ohne Pausen von mehr als 30 s. Fokus-Modus aktiv."
   },
-  "shadowId": "quest_boss_wind_walker"
+  "shadowId": "quest_boss_wind_walker",
+  "tip": {
+   "pt": "Encadeia 6 a 8 movimentos de 1 minuto e repete o circuito. Uma lista escrita evita pausas a pensar.",
+   "en": "Chain 6 to 8 one-minute moves and repeat the circuit. A written list avoids pauses to think.",
+   "es": "Encadena 6 a 8 movimientos de 1 minuto y repite el circuito. Una lista escrita evita pausas para pensar.",
+   "fr": "Enchaîne 6 à 8 mouvements d'une minute et répète le circuit. Une liste écrite évite les pauses pour réfléchir.",
+   "de": "Reih 6 bis 8 einminütige Bewegungen aneinander und wiederhole den Zirkel. Eine Liste verhindert Denkpausen."
+  }
  },
  {
   "id": "boss_tarantula",
@@ -297,7 +374,14 @@
    "fr": "Marche maîtrisée : parcours {target} km sur un itinéraire défini à l'avance (aucun détour), sans musique ni téléphone.",
    "de": "Kontrollierter Marsch: Lege {target} km auf einer vorab festgelegten Route zurück (keine Abweichungen), ohne Musik und ohne Handy."
   },
-  "shadowId": "quest_boss_tarantula"
+  "shadowId": "quest_boss_tarantula",
+  "tip": {
+   "pt": "Decide o percurso antes de sair (num mapa) e deixa o telemóvel no bolso com o registo de distância a contar.",
+   "en": "Pick the route on a map before leaving and keep your phone in your pocket with the distance log running.",
+   "es": "Decide el recorrido en un mapa antes de salir y deja el móvil en el bolsillo con el registro de distancia activo.",
+   "fr": "Choisis l'itinéraire sur une carte avant de partir et garde le téléphone en poche avec le suivi de distance actif.",
+   "de": "Leg die Route vorher auf einer Karte fest und lass das Handy mit laufender Streckenerfassung in der Tasche."
+  }
  },
  {
   "id": "boss_cold_philosopher",
@@ -322,7 +406,14 @@
    "fr": "Analyse d'un vrai problème : définis un problème perso concret que tu repousses. Explore le contexte et les avis opposés pendant {target} min (mode Focus actif) et termine par une décision écrite.",
    "de": "Echte Problemanalyse: Benenne ein konkretes persönliches Problem, das du vor dir herschiebst. Recherchiere Hintergründe und gegensätzliche Meinungen {target} Min. lang (Fokus-Modus aktiv) und schließe mit einer schriftlichen Entscheidung ab."
   },
-  "shadowId": "quest_boss_cold_philosopher"
+  "shadowId": "quest_boss_cold_philosopher",
+  "tip": {
+   "pt": "Escreve o problema numa frase, lista os argumentos a favor e contra, e acaba com \"Decidi … e o primeiro passo é …\".",
+   "en": "Write the problem in one sentence, list arguments for and against, and end with \"I decided … and the first step is …\".",
+   "es": "Escribe el problema en una frase, enumera argumentos a favor y en contra, y termina con \"Decidí … y el primer paso es …\".",
+   "fr": "Écris le problème en une phrase, liste les arguments pour et contre, et termine par « J'ai décidé … et la première étape est … ».",
+   "de": "Schreib das Problem in einem Satz auf, liste Pro und Contra und ende mit „Ich habe entschieden … und der erste Schritt ist …“."
+  }
  },
  {
   "id": "boss_digital_craftsman",
@@ -347,7 +438,14 @@
    "fr": "Construis un truc numérique de zéro en {target} min : une page web simple, un script utile, une présentation structurée ou un prototype. Le résultat doit être fonctionnel ou présentable à la fin.",
    "de": "Baue in {target} Min. etwas Digitales von Grund auf: eine einfache Webseite, ein nützliches Skript, eine strukturierte Präsentation oder einen Prototyp. Das Ergebnis muss am Ende funktionsfähig oder vorzeigbar sein."
   },
-  "shadowId": "quest_boss_digital_craftsman"
+  "shadowId": "quest_boss_digital_craftsman",
+  "tip": {
+   "pt": "Escolhe algo que acabes no tempo: uma página com um formulário, um script que renomeia ficheiros, 5 diapositivos.",
+   "en": "Pick something you can finish in time: a page with a form, a script that renames files, 5 slides.",
+   "es": "Elige algo que termines a tiempo: una página con un formulario, un script que renombra archivos, 5 diapositivas.",
+   "fr": "Choisis quelque chose que tu finis à temps : une page avec un formulaire, un script qui renomme des fichiers, 5 diapos.",
+   "de": "Wähl etwas, das du rechtzeitig fertig bekommst: eine Seite mit Formular, ein Skript zum Umbenennen von Dateien, 5 Folien."
+  }
  },
  {
   "id": "boss_stoic_challenge",
@@ -372,7 +470,14 @@
    "fr": "Inconfort volontaire : {target} min d'entraînement physique dans un vrai froid (dehors par temps froid, ou fenêtres ouvertes). Mode Focus actif. Note comment tu te sentais avant et après.",
    "de": "Freiwilliges Unbehagen: {target} Min. körperliches Training in echter Kälte (draußen in der Kälte oder bei offenen Fenstern). Fokus-Modus aktiv. Halte fest, wie du dich davor und danach gefühlt hast."
   },
-  "shadowId": "quest_boss_stoic_challenge"
+  "shadowId": "quest_boss_stoic_challenge",
+  "tip": {
+   "pt": "Começa por aquecer dentro de casa e não vás além do que é seguro. O objetivo é desconforto, não risco.",
+   "en": "Warm up indoors first and never go beyond what is safe. The goal is discomfort, not risk.",
+   "es": "Calienta primero en casa y no vayas más allá de lo seguro. El objetivo es incomodidad, no riesgo.",
+   "fr": "Échauffe-toi d'abord à l'intérieur et ne dépasse jamais ce qui est sûr. Le but est l'inconfort, pas le risque.",
+   "de": "Wärm dich zuerst drinnen auf und geh nie über das Sichere hinaus. Ziel ist Unbehagen, nicht Risiko."
+  }
  },
  {
   "id": "boss_titan_ape",
@@ -422,7 +527,14 @@
    "fr": "Active le mode Focus pendant {target} min : fais des cycles de respiration Wim Hof (30 respirations profondes + rétention) et termine par 5 min de méditation silencieuse.",
    "de": "Aktiviere den Fokus-Modus für {target} Min.: Mache Wim-Hof-Atemzyklen (30 tiefe Atemzüge + Atem anhalten) und schließe mit 5 Min. stiller Meditation ab."
   },
-  "shadowId": "quest_boss_astral_drake"
+  "shadowId": "quest_boss_astral_drake",
+  "tip": {
+   "pt": "Faz sentado ou deitado, nunca na água nem a conduzir. Se ficares tonto, volta a respirar normalmente.",
+   "en": "Do it sitting or lying down, never in water or while driving. If you get dizzy, breathe normally again.",
+   "es": "Hazlo sentado o tumbado, nunca en el agua ni conduciendo. Si te mareas, vuelve a respirar con normalidad.",
+   "fr": "Fais-le assis ou allongé, jamais dans l'eau ni en conduisant. Si tu as la tête qui tourne, respire normalement.",
+   "de": "Mach es im Sitzen oder Liegen, nie im Wasser oder beim Fahren. Wird dir schwindlig, atme wieder normal."
+  }
  },
  {
   "id": "boss_storm_bringer",
@@ -447,7 +559,14 @@
    "fr": "Sprint de compétence : choisis une micro-compétence précise à apprendre. Étudie-la en mode Focus pendant {target} min et pratique-la aussitôt 15 min de plus — sans changer de sujet avant d'avoir fini.",
    "de": "Skill-Sprint: Wähle eine konkrete Mikro-Fähigkeit, die du lernen willst. Lerne sie {target} Min. im Fokus-Modus und übe sie direkt danach weitere 15 Min. — ohne zu einem anderen Thema zu wechseln, bevor du fertig bist."
   },
-  "shadowId": "quest_boss_storm_bringer"
+  "shadowId": "quest_boss_storm_bringer",
+  "tip": {
+   "pt": "Micro quer dizer pequena: um atalho de teclado, um nó, um passo de dança, uma fórmula do Excel.",
+   "en": "Micro means small: a keyboard shortcut, a knot, a dance step, a spreadsheet formula.",
+   "es": "Micro significa pequeña: un atajo de teclado, un nudo, un paso de baile, una fórmula de Excel.",
+   "fr": "Micro veut dire petite : un raccourci clavier, un nœud, un pas de danse, une formule de tableur.",
+   "de": "Mikro heißt klein: ein Tastenkürzel, ein Knoten, ein Tanzschritt, eine Tabellenformel."
+  }
  },
  {
   "id": "boss_chrono_master",
@@ -472,7 +591,14 @@
    "fr": "Timeboxing : {target} min de focus (l'équivalent de 3 blocs Pomodoro de 25 min). Exécute avec des pauses de 5 min entre les blocs.",
    "de": "Timeboxing: {target} Min. Fokus (entspricht 3 Pomodoro-Blöcken à 25 Min.). Führe es mit 5 Min. Pause zwischen den Blöcken durch."
   },
-  "shadowId": "quest_boss_chrono_master"
+  "shadowId": "quest_boss_chrono_master",
+  "tip": {
+   "pt": "Começa no separador Foco em modo Pomodoro com 25/5: os ciclos e as pausas contam sozinhos.",
+   "en": "Start it from the Focus tab in Pomodoro mode with 25/5: cycles and breaks count by themselves.",
+   "es": "Empieza en la pestaña Foco en modo Pomodoro con 25/5: los ciclos y las pausas cuentan solos.",
+   "fr": "Lance-le depuis l'onglet Focus en mode Pomodoro 25/5 : les cycles et les pauses se comptent tout seuls.",
+   "de": "Starte im Fokus-Tab im Pomodoro-Modus mit 25/5: Zyklen und Pausen zählen von selbst."
+  }
  },
  {
   "id": "boss_star_breaker",
@@ -497,7 +623,14 @@
    "fr": "Exploration documentée : parcours {target} km à pied sur un itinéraire inédit. Pendant la marche, repère et consigne (par écrit ou en photo) au moins 3 éléments nouveaux que tu n'avais jamais remarqués.",
    "de": "Dokumentierte Erkundung: Lege {target} km zu Fuß auf einer noch nie gegangenen Route zurück. Finde unterwegs mindestens 3 neue Dinge, die dir noch nie aufgefallen sind, und halte sie fest (schriftlich oder per Foto)."
   },
-  "shadowId": "quest_boss_star_breaker"
+  "shadowId": "quest_boss_star_breaker",
+  "tip": {
+   "pt": "Tira fotos às 3 descobertas e escreve-as na nota da missão quando voltares.",
+   "en": "Take photos of the 3 finds and write them in the mission's note when you get back.",
+   "es": "Haz fotos de los 3 descubrimientos y escríbelos en la nota de la misión al volver.",
+   "fr": "Prends en photo les 3 découvertes et écris-les dans la note de la mission à ton retour.",
+   "de": "Fotografier die 3 Entdeckungen und schreib sie nach der Rückkehr in die Notiz der Mission."
+  }
  },
  {
   "id": "boss_blood_knight",
@@ -522,7 +655,14 @@
    "fr": "Pur corps-à-corps. {target} répétitions de musculation (soulevé de terre/squats).",
    "de": "Reiner Nahkampf. {target} Wiederholungen Gewichtheben (Kreuzheben/Kniebeugen)."
   },
-  "shadowId": "quest_boss_blood_knight"
+  "shadowId": "quest_boss_blood_knight",
+  "tip": {
+   "pt": "Sem ginásio, uma mochila com livros serve para agachamentos e peso morto. Técnica antes de carga.",
+   "en": "No gym? A backpack full of books works for squats and deadlifts. Form before load.",
+   "es": "Sin gimnasio, una mochila con libros sirve para sentadillas y peso muerto. Técnica antes que carga.",
+   "fr": "Pas de salle ? Un sac à dos rempli de livres suffit pour les squats et le soulevé de terre. La technique avant la charge.",
+   "de": "Kein Studio? Ein Rucksack voller Bücher reicht für Kniebeugen und Kreuzheben. Technik vor Gewicht."
+  }
  },
  {
   "id": "boss_lich_king",
@@ -547,7 +687,14 @@
    "fr": "Focus d'endurance : {target} min assis, immobile, sans distractions.",
    "de": "Standhafter Fokus: {target} Min. regungslos sitzen, ohne Ablenkungen."
   },
-  "shadowId": "quest_boss_lich_king"
+  "shadowId": "quest_boss_lich_king",
+  "tip": {
+   "pt": "Usa o Foco com bloqueio de apps e o telemóvel virado para baixo. Podes dividir em blocos de 25 min.",
+   "en": "Use Focus with app blocking and your phone face down. You can split it into 25-minute blocks.",
+   "es": "Usa el Foco con bloqueo de apps y el móvil boca abajo. Puedes dividirlo en bloques de 25 min.",
+   "fr": "Utilise le Focus avec blocage d'apps et le téléphone face cachée. Tu peux découper en blocs de 25 min.",
+   "de": "Nutze den Fokus mit App-Sperre und das Handy umgedreht. Du kannst es in 25-Minuten-Blöcke teilen."
+  }
  },
  {
   "id": "season_halloween",
@@ -634,6 +781,13 @@
   "season": {
    "from": "12-29",
    "to": "01-04"
+  },
+  "tip": {
+   "pt": "Para cada objetivo, escreve como vais medir se o cumpriste. O que vais cortar conta tanto como o que vais começar.",
+   "en": "For each goal, write how you'll measure it. What you'll cut matters as much as what you'll start.",
+   "es": "Para cada objetivo, escribe cómo medirás si lo cumples. Lo que vas a dejar cuenta tanto como lo que vas a empezar.",
+   "fr": "Pour chaque objectif, écris comment tu le mesureras. Ce que tu arrêtes compte autant que ce que tu commences.",
+   "de": "Schreib zu jedem Ziel, wie du es misst. Was du weglässt, zählt so viel wie das, was du anfängst."
   }
  },
  {
