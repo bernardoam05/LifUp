@@ -211,7 +211,7 @@
     <string name="source_shop">Se vende en la tienda (rotación semanal).</string>
     <string name="source_achievement">Recompensa de logro.</string>
     <string name="source_streak">Recompensa de hito de streak.</string>
-    <string name="source_boss">La suelta el jefe %1$s.</string>
+    <string name="source_boss">Recompensa por vencer %1$s.</string>
     <string name="upgrade_capped">Nivel máximo: un eco no puede superar tu nivel.</string>
     <string name="upgrade_cost">Evolucionar: %1$d oro · copias %2$d/%3$d</string>
     <string name="equip">Equipar</string>
@@ -274,7 +274,7 @@
     <string name="toast_penalty_cleared">Penalización cumplida</string>
     <string name="toast_focus_done">Foco completado: %1$s min</string>
     <string name="toast_focus_lost">Sin rendirse: %1$s min perdidos</string>
-    <string name="toast_boss_escaped">%1$s escapó</string>
+    <string name="toast_boss_escaped">Se acabó el tiempo: %1$s quedó sin vencer</string>
     <string name="toast_portal_escaped">El portal se cerró</string>
     <string name="toast_portal_cleared">¡Portal superado!</string>
     <string name="toast_shadow_upgraded">%1$s evolucionó</string>
@@ -437,7 +437,7 @@
     <string name="buy">Comprar</string>
     <string name="buy_confirm_title">Confirmar compra</string>
     <string name="buy_confirm_text">¿Comprar %1$s por %2$d de oro? Te quedarán %3$d.</string>
-    <string name="toast_boss_revived">%1$s se ha levantado: la misión deshecha ya no cuenta</string>
+    <string name="toast_boss_revived">%1$s ha recuperado vida: la misión deshecha ya no cuenta</string>
     <string name="auto_walk">Distancia a pie (pasos)</string>
     <string name="body">Cuerpo</string>
     <string name="height">Altura</string>
@@ -523,7 +523,7 @@
     <string name="guide_side_title">Misiones secundarias</string>
     <string name="guide_side">Libres::Escribe cualquier tarea, sin objetivos ni reglas.\n5 con recompensa::Las 5 primeras que completes cada día dan XP y oro, y hieren al jefe.\nDespués de eso::Siguen funcionando como lista de tareas.\nSin trampas::Desmarcar o borrar te quita la recompensa.</string>
     <string name="guide_boss_title">Jefe semanal</string>
-    <string name="guide_boss">Todo el XP es daño::Cada misión que haces le quita vida.\nDesafío del jefe::Una misión especial que le arranca un 35% de golpe.\nBotín::Derrótalo y ganas XP, oro, un cofre y su eco.\nSi no…::El domingo por la noche huye, y llega otro.</string>
+    <string name="guide_boss">Todo el XP es daño::Cada misión que haces le quita vida.\nDesafío del jefe::Una misión especial que le arranca un 35% de golpe.\nBotín::Derrótalo y ganas XP, oro, un cofre y su eco.\nSi no…::El domingo por la noche termina, y llega otro.</string>
     <string name="guide_portal_title">Portales</string>
     <string name="guide_portal">Aparecen solos::Entre las 8:00 y las 22:00, hasta 2 al día.\nRecompensa doble::Una misión más grande, con el doble de XP y oro.\nNuevo aliado::Completarlo puede despertar un eco.\nContra el reloj::Siempre hay tiempo de sobra, pero el portal se cierra cuando se acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
@@ -547,8 +547,8 @@
     <string name="week_better">+%1$d días que la semana pasada</string>
     <string name="week_worse">%1$d días menos que la semana pasada</string>
     <string name="week_same">Igual que la semana pasada</string>
-    <string name="week_boss_won">Derrotaste a %1$s</string>
-    <string name="week_boss_lost">%1$s escapó</string>
+    <string name="week_boss_won">Vencido: %1$s</string>
+    <string name="week_boss_lost">Sin vencer: %1$s</string>
     <string name="week_best">Más cumplida: %1$s (%2$d%%)</string>
     <string name="week_worst">Menos cumplida: %1$s (%2$d%%)</string>
     <string name="week_suggest">Si no encaja en tu día, cámbiala o desactívala en la Forja.</string>
@@ -608,6 +608,6 @@
     <string name="widget_focus_left">faltan %1$d min</string>
     <string name="notif_timer_running">Cronómetro en marcha</string>
     <string name="notif_timer_more">+%1$d cronómetros en marcha</string>
-    <string name="notif_boss_title">%1$s escapa esta noche</string>
-    <string name="notif_boss_text">Le quedan %1$d HP. El desafío del jefe quita un 35%% de golpe.</string>
+    <string name="notif_boss_title">Último día: %1$s</string>
+    <string name="notif_boss_text">El jefe de la semana termina esta noche y le quedan %1$d HP. El desafío del jefe quita un 35%% de golpe.</string>
 </resources>

@@ -199,7 +199,7 @@
     <string name="source_shop">Vendida na loja (rotação semanal).</string>
     <string name="source_achievement">Recompensa de conquista.</string>
     <string name="source_streak">Recompensa de marco de streak.</string>
-    <string name="source_boss">Largada pelo boss %1$s.</string>
+    <string name="source_boss">Recompensa por venceres %1$s.</string>
     <string name="upgrade_capped">Nível máximo: um eco não passa o teu nível.</string>
     <string name="upgrade_cost">Evoluir: %1$d ouro · cópias %2$d/%3$d</string>
     <string name="equip">Equipar</string>
@@ -260,7 +260,7 @@
     <string name="toast_penalty_cleared">Penalização cumprida</string>
     <string name="toast_focus_done">Foco concluído: %1$s min</string>
     <string name="toast_focus_lost">Sem desistências: desististe, %1$s min perdidos</string>
-    <string name="toast_boss_escaped">%1$s escapou</string>
+    <string name="toast_boss_escaped">Tempo esgotado: %1$s ficou por vencer</string>
     <string name="toast_portal_escaped">O portal fechou-se</string>
     <string name="toast_portal_cleared">Portal fechado!</string>
     <string name="toast_shadow_upgraded">%1$s evoluiu</string>
@@ -419,7 +419,7 @@
     <string name="buy">Comprar</string>
     <string name="buy_confirm_title">Confirmar compra</string>
     <string name="buy_confirm_text">Comprar %1$s por %2$d de ouro? Ficas com %3$d.</string>
-    <string name="toast_boss_revived">%1$s levantou-se: a missão desfeita já não conta</string>
+    <string name="toast_boss_revived">%1$s recuperou vida: a missão desfeita já não conta</string>
     <string name="auto_walk">Distância a pé (passos)</string>
     <string name="body">Corpo</string>
     <string name="height">Altura</string>
@@ -505,7 +505,7 @@
     <string name="guide_side_title">Side quests</string>
     <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro e ferem o boss.\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
     <string name="guide_boss_title">Boss semanal</string>
-    <string name="guide_boss">Todo o XP é dano::Cada missão que fazes tira-lhe vida.\nDesafio do boss::Uma missão especial que lhe arranca 35% de uma vez.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nSe não…::No domingo à noite foge — e vem outro.</string>
+    <string name="guide_boss">Todo o XP é dano::Cada missão que fazes tira-lhe vida.\nDesafio do boss::Uma missão especial que lhe arranca 35% de uma vez.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nSe não…::No domingo à noite acaba — e vem outro.</string>
     <string name="guide_portal_title">Portais</string>
     <string name="guide_portal">Aparecem sozinhos::Entre as 8h e as 22h, até 2 por dia.\nRecompensa a dobrar::Uma missão maior, com o dobro de XP e ouro.\nNovo aliado::Concluí-lo pode trazer-te um eco.\nTempo contado::Dá sempre para a fazer, mas o portal fecha quando o tempo acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
@@ -529,8 +529,8 @@
     <string name="week_better">+%1$d dias que na semana passada</string>
     <string name="week_worse">%1$d dias a menos que na semana passada</string>
     <string name="week_same">Igual à semana passada</string>
-    <string name="week_boss_won">Derrotaste %1$s</string>
-    <string name="week_boss_lost">%1$s escapou</string>
+    <string name="week_boss_won">Vencido: %1$s</string>
+    <string name="week_boss_lost">Ficou por vencer: %1$s</string>
     <string name="week_best">Mais cumprida: %1$s (%2$d%%)</string>
     <string name="week_worst">Menos cumprida: %1$s (%2$d%%)</string>
     <string name="week_suggest">Se não encaixa no teu dia, troca-a ou desativa-a na Forja.</string>
@@ -590,6 +590,6 @@
     <string name="widget_focus_left">faltam %1$d min</string>
     <string name="notif_timer_running">Cronómetro a contar</string>
     <string name="notif_timer_more">+%1$d cronómetros a contar</string>
-    <string name="notif_boss_title">%1$s foge esta noite</string>
-    <string name="notif_boss_text">Faltam %1$d HP. O desafio do boss tira 35%% de uma vez.</string>
+    <string name="notif_boss_title">Último dia: %1$s</string>
+    <string name="notif_boss_text">O boss da semana acaba esta noite e faltam %1$d HP. O desafio do boss tira 35%% de uma vez.</string>
 </resources>

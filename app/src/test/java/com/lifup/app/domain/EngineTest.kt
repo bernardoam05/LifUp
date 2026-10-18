@@ -441,6 +441,7 @@ class EngineTest {
             val needed = p.quest.estimatedMinutes(s.settings, content)
             assertTrue(needed <= Rules.PORTAL_MAX_TASK_MIN)
             assertNull(p.quest.auto)
+            assertEquals(DefKind.PORTAL, content.questDefById[p.quest.defId]?.kind)
             assertTrue((p.expiresAt - p.opensAt) / 60_000.0 >= needed * 1.5)
         }
     }

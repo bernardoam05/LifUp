@@ -1264,5 +1264,432 @@
    "baseXp": 0,
    "baseGold": 0
   }
+ ],
+ "portal": [
+  {
+   "id": "portal_pushups",
+   "kind": "PORTAL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Investida",
+    "en": "Onslaught",
+    "es": "Embestida",
+    "fr": "Assaut",
+    "de": "Ansturm"
+   },
+   "description": {
+    "pt": "Faz {target} flexões, em quantas séries precisares.",
+    "en": "Do {target} push-ups, in as many sets as you need.",
+    "es": "Haz {target} flexiones, en las series que necesites.",
+    "fr": "Fais {target} pompes, en autant de séries que nécessaire.",
+    "de": "Mache {target} Liegestütze, in so vielen Sätzen wie nötig."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 50,
+   "baseGold": 15
+  },
+  {
+   "id": "portal_squats",
+   "kind": "PORTAL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Fundações",
+    "en": "Foundations",
+    "es": "Cimientos",
+    "fr": "Fondations",
+    "de": "Fundament"
+   },
+   "description": {
+    "pt": "Faz {target} agachamentos.",
+    "en": "Do {target} squats.",
+    "es": "Haz {target} sentadillas.",
+    "fr": "Fais {target} squats.",
+    "de": "Mache {target} Kniebeugen."
+   },
+   "baseTarget": 30,
+   "scalingAmount": 2,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 45,
+   "baseGold": 12
+  },
+  {
+   "id": "portal_plank",
+   "kind": "PORTAL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Muralha",
+    "en": "Rampart",
+    "es": "Muralla",
+    "fr": "Rempart",
+    "de": "Bollwerk"
+   },
+   "description": {
+    "pt": "Aguenta {target} s em prancha (podes dividir em 2 vezes).",
+    "en": "Hold a plank for {target} s (you may split it in 2).",
+    "es": "Aguanta {target} s en plancha (puedes dividirlo en 2).",
+    "fr": "Tiens la planche {target} s (tu peux couper en 2).",
+    "de": "Halte {target} s im Unterarmstütz (du darfst in 2 Teile teilen)."
+   },
+   "baseTarget": 60,
+   "scalingAmount": 5,
+   "scalingInterval": 5,
+   "unit": "s",
+   "baseXp": 45,
+   "baseGold": 12
+  },
+  {
+   "id": "portal_burpees",
+   "kind": "PORTAL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Rajada",
+    "en": "Burst",
+    "es": "Ráfaga",
+    "fr": "Rafale",
+    "de": "Feuerstoß"
+   },
+   "description": {
+    "pt": "Faz {target} burpees.",
+    "en": "Do {target} burpees.",
+    "es": "Haz {target} burpees.",
+    "fr": "Fais {target} burpees.",
+    "de": "Mache {target} Burpees."
+   },
+   "baseTarget": 12,
+   "scalingAmount": 1,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 55,
+   "baseGold": 15
+  },
+  {
+   "id": "portal_wallsit",
+   "kind": "PORTAL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Sentinela",
+    "en": "Sentinel",
+    "es": "Centinela",
+    "fr": "Sentinelle",
+    "de": "Wächter"
+   },
+   "description": {
+    "pt": "Fica {target} s sentado contra a parede, sem cadeira.",
+    "en": "Hold a wall sit for {target} s.",
+    "es": "Aguanta {target} s sentado contra la pared, sin silla.",
+    "fr": "Tiens {target} s en chaise contre le mur.",
+    "de": "Halte {target} s den Wandsitz."
+   },
+   "baseTarget": 45,
+   "scalingAmount": 5,
+   "scalingInterval": 5,
+   "unit": "s",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "portal_jacks",
+   "kind": "PORTAL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Faísca",
+    "en": "Spark",
+    "es": "Chispa",
+    "fr": "Étincelle",
+    "de": "Funke"
+   },
+   "description": {
+    "pt": "Faz {target} polichinelos.",
+    "en": "Do {target} jumping jacks.",
+    "es": "Haz {target} saltos de tijera.",
+    "fr": "Fais {target} jumping jacks.",
+    "de": "Mache {target} Hampelmänner."
+   },
+   "baseTarget": 50,
+   "scalingAmount": 5,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 35,
+   "baseGold": 10
+  },
+  {
+   "id": "portal_stretch",
+   "kind": "PORTAL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Desentorpecer",
+    "en": "Loosen Up",
+    "es": "Desentumecer",
+    "fr": "Délier le Corps",
+    "de": "Lockerung"
+   },
+   "description": {
+    "pt": "{target} min de alongamentos: pescoço, ombros, costas e pernas.",
+    "en": "{target} min of stretching: neck, shoulders, back and legs.",
+    "es": "{target} min de estiramientos: cuello, hombros, espalda y piernas.",
+    "fr": "{target} min d'étirements : nuque, épaules, dos et jambes.",
+    "de": "{target} Min. Dehnen: Nacken, Schultern, Rücken und Beine."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 35,
+   "baseGold": 10
+  },
+  {
+   "id": "portal_tidy",
+   "kind": "PORTAL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Limpar o Terreno",
+    "en": "Clear the Ground",
+    "es": "Despejar el Terreno",
+    "fr": "Dégager le Terrain",
+    "de": "Gelände räumen"
+   },
+   "description": {
+    "pt": "{target} min a arrumar a zona onde estás agora.",
+    "en": "{target} min tidying the spot you're in right now.",
+    "es": "{target} min ordenando la zona donde estás ahora.",
+    "fr": "{target} min à ranger l'endroit où tu es.",
+    "de": "{target} Min. den Platz aufräumen, an dem du gerade bist."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 35,
+   "baseGold": 10
+  },
+  {
+   "id": "portal_water",
+   "kind": "PORTAL",
+   "type": "TRAINING",
+   "title": {
+    "pt": "Reabastecer",
+    "en": "Refill",
+    "es": "Recarga",
+    "fr": "Ravitaillement",
+    "de": "Nachschub"
+   },
+   "description": {
+    "pt": "Bebe {target} copos de água e enche a garrafa para depois.",
+    "en": "Drink {target} glasses of water and refill your bottle for later.",
+    "es": "Bebe {target} vasos de agua y llena la botella para luego.",
+    "fr": "Bois {target} verres d'eau et remplis ta gourde pour plus tard.",
+    "de": "Trinke {target} Gläser Wasser und fülle deine Flasche für später."
+   },
+   "baseTarget": 2,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "glasses",
+   "baseXp": 20,
+   "baseGold": 6
+  },
+  {
+   "id": "portal_breathing",
+   "kind": "PORTAL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Fôlego",
+    "en": "Second Wind",
+    "es": "Aliento",
+    "fr": "Second Souffle",
+    "de": "Durchatmen"
+   },
+   "description": {
+    "pt": "{target} min de respiração em caixa: inspira 4 s, segura 4, expira 4, segura 4.",
+    "en": "{target} min of box breathing: in 4 s, hold 4, out 4, hold 4.",
+    "es": "{target} min de respiración en caja: inspira 4 s, retén 4, espira 4, retén 4.",
+    "fr": "{target} min de respiration carrée : inspire 4 s, bloque 4, expire 4, bloque 4.",
+    "de": "{target} Min. Box-Atmung: 4 s ein, 4 halten, 4 aus, 4 halten."
+   },
+   "baseTarget": 5,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 30,
+   "baseGold": 8
+  },
+  {
+   "id": "portal_meditate",
+   "kind": "PORTAL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Silêncio",
+    "en": "Stillness",
+    "es": "Silencio",
+    "fr": "Silence",
+    "de": "Stille"
+   },
+   "description": {
+    "pt": "{target} min sentado, de olhos fechados, só a respirar.",
+    "en": "{target} min sitting with your eyes closed, just breathing.",
+    "es": "{target} min sentado, con los ojos cerrados, solo respirando.",
+    "fr": "{target} min assis, les yeux fermés, à simplement respirer.",
+    "de": "{target} Min. mit geschlossenen Augen sitzen und nur atmen."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "portal_strike",
+   "kind": "PORTAL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Golpe Certeiro",
+    "en": "Clean Strike",
+    "es": "Golpe Certero",
+    "fr": "Coup Net",
+    "de": "Gezielter Schlag"
+   },
+   "description": {
+    "pt": "{target} min de foco numa tarefa que andas a adiar.",
+    "en": "{target} min of focus on a task you've been putting off.",
+    "es": "{target} min de foco en una tarea que llevas posponiendo.",
+    "fr": "{target} min de concentration sur une tâche que tu repousses.",
+    "de": "{target} Min. Fokus auf eine Aufgabe, die du vor dir herschiebst."
+   },
+   "baseTarget": 25,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 60,
+   "baseGold": 18
+  },
+  {
+   "id": "portal_backlog",
+   "kind": "PORTAL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Despachar",
+    "en": "Clear the Backlog",
+    "es": "Despachar",
+    "fr": "Liquider",
+    "de": "Abarbeiten"
+   },
+   "description": {
+    "pt": "{target} min a despachar pendências pequenas: mensagens, emails, papéis.",
+    "en": "{target} min clearing small to-dos: messages, emails, paperwork.",
+    "es": "{target} min despachando pendientes pequeños: mensajes, correos, papeles.",
+    "fr": "{target} min à liquider les petites tâches : messages, mails, papiers.",
+    "de": "{target} Min. Kleinkram erledigen: Nachrichten, Mails, Papierkram."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 45,
+   "baseGold": 12
+  },
+  {
+   "id": "portal_read",
+   "kind": "PORTAL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Pergaminho",
+    "en": "Scroll",
+    "es": "Pergamino",
+    "fr": "Parchemin",
+    "de": "Schriftrolle"
+   },
+   "description": {
+    "pt": "Lê {target} páginas de um livro.",
+    "en": "Read {target} pages of a book.",
+    "es": "Lee {target} páginas de un libro.",
+    "fr": "Lis {target} pages d'un livre.",
+    "de": "Lies {target} Seiten in einem Buch."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 1,
+   "scalingInterval": 10,
+   "unit": "pages",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "portal_learn",
+   "kind": "PORTAL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Fragmento de Saber",
+    "en": "Shard of Knowledge",
+    "es": "Fragmento de Saber",
+    "fr": "Fragment de Savoir",
+    "de": "Wissenssplitter"
+   },
+   "description": {
+    "pt": "{target} min a aprender algo novo (vídeo ou artigo) e anota 1 ideia.",
+    "en": "{target} min learning something new (video or article) and note 1 idea.",
+    "es": "{target} min aprendiendo algo nuevo (vídeo o artículo) y anota 1 idea.",
+    "fr": "{target} min à apprendre quelque chose (vidéo ou article) et note 1 idée.",
+    "de": "{target} Min. etwas Neues lernen (Video oder Artikel) und 1 Idee notieren."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "portal_gratitude",
+   "kind": "PORTAL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Tesouro do Dia",
+    "en": "Today's Treasure",
+    "es": "Tesoro del Día",
+    "fr": "Trésor du Jour",
+    "de": "Schatz des Tages"
+   },
+   "description": {
+    "pt": "Escreve {target} coisas boas que te aconteceram hoje.",
+    "en": "Write down {target} good things that happened to you today.",
+    "es": "Escribe {target} cosas buenas que te han pasado hoy.",
+    "fr": "Écris {target} bonnes choses qui te sont arrivées aujourd'hui.",
+    "de": "Schreibe {target} gute Dinge auf, die dir heute passiert sind."
+   },
+   "baseTarget": 3,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "things",
+   "baseXp": 30,
+   "baseGold": 8
+  },
+  {
+   "id": "portal_signal",
+   "kind": "PORTAL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Sinal",
+    "en": "Signal",
+    "es": "Señal",
+    "fr": "Signal",
+    "de": "Signal"
+   },
+   "description": {
+    "pt": "Manda mensagem a {target} pessoa de quem gostas e com quem não falas há algum tempo.",
+    "en": "Message {target} person you like and haven't talked to in a while.",
+    "es": "Escribe a {target} persona que aprecias y con quien no hablas hace tiempo.",
+    "fr": "Écris à {target} personne que tu apprécies et à qui tu n'as pas parlé depuis un moment.",
+    "de": "Schreib {target} Person, die du magst und länger nicht gesprochen hast."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "person",
+   "baseXp": 35,
+   "baseGold": 10
+  }
  ]
 }

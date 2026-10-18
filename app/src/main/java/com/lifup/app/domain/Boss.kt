@@ -105,10 +105,7 @@ fun Tx.rollPortal() {
 }
 
 fun Tx.openPortal() {
-    val types = setOf(QuestType.TRAINING, QuestType.KNOWLEDGE, QuestType.FOCUS, QuestType.GPS)
-    val quest = s.availableDefs(content)
-        // Automatic missions add up the whole day's steps, so they can't be a timed challenge.
-        .filter { it.kind == DefKind.POOL && it.type in types && it.fromHour == null && it.auto == null }
+    val quest = content.portalQuests
         .map { portalQuest(it) }
         .filter { it.estimatedMinutes(s.settings, content) <= Rules.PORTAL_MAX_TASK_MIN }
         .randomOrNull(ctx.rng) ?: return
@@ -124,7 +121,7 @@ fun Tx.openPortal() {
 
 private fun Tx.portalQuest(def: QuestDef): Quest {
     val base = buildQuest(def, s.player.level, QuestOrigin.PORTAL, "portal_${s.nextId}")
-    return base.copy(target = roundTarget(base.target * 1.5, base.unit), xp = base.xp * 2, gold = base.gold * 2)
+    return base.copy(xp = base.xp * 2, gold = base.gold * 2)
 }
 
 /** Rough wall-clock minutes a quest takes; Pomodoro breaks included. */

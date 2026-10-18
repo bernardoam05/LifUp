@@ -15,7 +15,7 @@ fun plainText(text: String): L10n = mapOf("_" to text)
 enum class QuestType { TRAINING, KNOWLEDGE, FOCUS, GPS, FORBIDDEN, LIMIT }
 
 @Serializable
-enum class DefKind { CORE, POOL, PENALTY }
+enum class DefKind { CORE, POOL, PENALTY, PORTAL }
 
 /** Sources that fill a quest's progress on their own. */
 @Serializable
@@ -134,11 +134,13 @@ data class AchievementDef(
 )
 
 @Serializable
-private data class QuestCatalog(val quests: List<QuestDef>, val penalty: List<QuestDef>)
+private data class QuestCatalog(val quests: List<QuestDef>, val penalty: List<QuestDef>, val portal: List<QuestDef> = emptyList())
 
 class Content(
     val quests: List<QuestDef>,
     val penaltyQuests: List<QuestDef>,
+    /** Hand-picked short missions that can be done on the spot when a portal opens. */
+    val portalQuests: List<QuestDef> = emptyList(),
     val bosses: List<BossDef>,
     val shadows: List<ShadowDef>,
     val items: List<ItemDef>,
@@ -147,7 +149,7 @@ class Content(
     val shadowById = shadows.associateBy { it.id }
     val itemById = items.associateBy { it.id }
     val bossById = bosses.associateBy { it.id }
-    val questDefById = (quests + penaltyQuests).associateBy { it.id }
+    val questDefById = (quests + penaltyQuests + portalQuests).associateBy { it.id }
     val achievementById = achievements.associateBy { it.id }
 
     fun shadowPool(vararg types: SourceType): List<ShadowDef> = shadows.filter { it.source.type in types }
@@ -161,6 +163,7 @@ class Content(
             return Content(
                 quests = q.quests,
                 penaltyQuests = q.penalty,
+                portalQuests = q.portal,
                 bosses = json.decodeFromString(read("bosses.json")),
                 shadows = json.decodeFromString(read("shadows.json")),
                 items = json.decodeFromString(read("items.json")),

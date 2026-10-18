@@ -199,7 +199,7 @@
     <string name="source_shop">Vendue en boutique (rotation hebdo).</string>
     <string name="source_achievement">Récompense de succès.</string>
     <string name="source_streak">Récompense de palier de streak.</string>
-    <string name="source_boss">Lâchée par le boss %1$s.</string>
+    <string name="source_boss">Récompense pour avoir vaincu %1$s.</string>
     <string name="upgrade_capped">Niveau max : un écho ne peut pas dépasser ton niveau.</string>
     <string name="upgrade_cost">Évoluer : %1$d or · copies %2$d/%3$d</string>
     <string name="equip">Équiper</string>
@@ -260,7 +260,7 @@
     <string name="toast_penalty_cleared">Pénalité levée</string>
     <string name="toast_focus_done">Focus terminé : %1$s min</string>
     <string name="toast_focus_lost">Sans abandon rompu : %1$s min perdues</string>
-    <string name="toast_boss_escaped">%1$s s\'est échappé</string>
+    <string name="toast_boss_escaped">Temps écoulé : %1$s n\'a pas été vaincu</string>
     <string name="toast_portal_escaped">Le portail s\'est fermé</string>
     <string name="toast_portal_cleared">Portail nettoyé !</string>
     <string name="toast_shadow_upgraded">%1$s a évolué</string>
@@ -419,7 +419,7 @@
     <string name="buy">Acheter</string>
     <string name="buy_confirm_title">Confirmer l\'achat</string>
     <string name="buy_confirm_text">Acheter %1$s pour %2$d d\'or ? Il t\'en restera %3$d.</string>
-    <string name="toast_boss_revived">%1$s s\'est relevé : la mission annulée ne compte plus</string>
+    <string name="toast_boss_revived">%1$s a regagné de la vie : la mission annulée ne compte plus</string>
     <string name="auto_walk">Distance à pied (pas)</string>
     <string name="body">Corps</string>
     <string name="height">Taille</string>
@@ -505,7 +505,7 @@
     <string name="guide_side_title">Quêtes secondaires</string>
     <string name="guide_side">Libres::Écris n\'importe quelle tâche, sans objectifs ni règles.\n5 avec récompense::Les 5 premières terminées chaque jour donnent de l\'XP et de l\'or, et blessent le boss.\nEnsuite::Elles continuent de servir de liste de tâches.\nPas de triche::Décocher ou supprimer reprend la récompense.</string>
     <string name="guide_boss_title">Boss hebdomadaire</string>
-    <string name="guide_boss">Tout l\'XP est un dégât::Chaque mission que tu accomplis lui retire de la vie.\nDéfi du boss::Une mission spéciale qui lui arrache 35 % d\'un coup.\nButin::Bats-le pour de l\'XP, de l\'or, un coffre et son écho.\nSinon…::Dimanche soir, il s\'enfuit, et un autre arrive.</string>
+    <string name="guide_boss">Tout l\'XP est un dégât::Chaque mission que tu accomplis lui retire de la vie.\nDéfi du boss::Une mission spéciale qui lui arrache 35 % d\'un coup.\nButin::Bats-le pour de l\'XP, de l\'or, un coffre et son écho.\nSinon…::Dimanche soir, il se termine, et un autre arrive.</string>
     <string name="guide_portal_title">Portails</string>
     <string name="guide_portal">Ils apparaissent seuls::Entre 8 h et 22 h, jusqu\'à 2 par jour.\nRécompense double::Une mission plus grosse, avec deux fois plus d\'XP et d\'or.\nNouvel allié::La terminer peut te donner un écho.\nContre la montre::Tu as toujours le temps, mais le portail se ferme quand il est écoulé.</string>
     <string name="guide_shadows_title">Échos</string>
@@ -529,8 +529,8 @@
     <string name="week_better">+%1$d jours par rapport à la semaine dernière</string>
     <string name="week_worse">%1$d jours de moins que la semaine dernière</string>
     <string name="week_same">Comme la semaine dernière</string>
-    <string name="week_boss_won">Tu as vaincu %1$s</string>
-    <string name="week_boss_lost">%1$s s\'est enfui</string>
+    <string name="week_boss_won">Vaincu : %1$s</string>
+    <string name="week_boss_lost">Non vaincu : %1$s</string>
     <string name="week_best">La plus tenue : %1$s (%2$d %%)</string>
     <string name="week_worst">La moins tenue : %1$s (%2$d %%)</string>
     <string name="week_suggest">Si elle ne colle pas à ta journée, échange-la ou désactive-la dans la Forge.</string>
@@ -590,6 +590,6 @@
     <string name="widget_focus_left">encore %1$d min</string>
     <string name="notif_timer_running">Chrono en cours</string>
     <string name="notif_timer_more">+%1$d chronos en cours</string>
-    <string name="notif_boss_title">%1$s s\'enfuit ce soir</string>
-    <string name="notif_boss_text">Il reste %1$d PV. Le défi du boss en retire 35 %% d\'un coup.</string>
+    <string name="notif_boss_title">Dernier jour : %1$s</string>
+    <string name="notif_boss_text">Le boss de la semaine se termine ce soir, il reste %1$d PV. Le défi du boss en retire 35 %% d\'un coup.</string>
 </resources>

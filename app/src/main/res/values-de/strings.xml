@@ -211,7 +211,7 @@
     <string name="source_shop">Im Shop erhältlich (wöchentlicher Wechsel).</string>
     <string name="source_achievement">Belohnung für einen Erfolg.</string>
     <string name="source_streak">Belohnung für einen Streak-Meilenstein.</string>
-    <string name="source_boss">Beute vom Boss %1$s.</string>
+    <string name="source_boss">Belohnung für den Sieg über %1$s.</string>
     <string name="upgrade_capped">Max. Level: ein Echo kann dein Level nicht übersteigen.</string>
     <string name="upgrade_cost">Entwickeln: %1$d Gold · Kopien %2$d/%3$d</string>
     <string name="equip">Ausrüsten</string>
@@ -274,7 +274,7 @@
     <string name="toast_penalty_cleared">Strafe aufgehoben</string>
     <string name="toast_focus_done">Fokus beendet: %1$s min</string>
     <string name="toast_focus_lost">Kein Aufgeben gescheitert: %1$s min verloren</string>
-    <string name="toast_boss_escaped">%1$s ist entkommen</string>
+    <string name="toast_boss_escaped">Zeit abgelaufen: %1$s wurde nicht besiegt</string>
     <string name="toast_portal_escaped">Das Portal hat sich geschlossen</string>
     <string name="toast_portal_cleared">Portal bezwungen!</string>
     <string name="toast_shadow_upgraded">%1$s hat sich entwickelt</string>
@@ -437,7 +437,7 @@
     <string name="buy">Kaufen</string>
     <string name="buy_confirm_title">Kauf bestätigen</string>
     <string name="buy_confirm_text">%1$s für %2$d Gold kaufen? Dir bleiben %3$d.</string>
-    <string name="toast_boss_revived">%1$s ist wieder aufgestanden: die rückgängig gemachte Mission zählt nicht mehr</string>
+    <string name="toast_boss_revived">%1$s hat Leben zurückgewonnen: die rückgängig gemachte Mission zählt nicht mehr</string>
     <string name="auto_walk">Gehstrecke (Schritte)</string>
     <string name="body">Körper</string>
     <string name="height">Größe</string>
@@ -523,7 +523,7 @@
     <string name="guide_side_title">Nebenquests</string>
     <string name="guide_side">Freie::Schreib jede beliebige Aufgabe, ohne Ziele und Regeln.\n5 mit Belohnung::Die ersten 5 erledigten pro Tag geben XP und Gold und verletzen den Boss.\nDanach::Sie funktionieren weiter als To-do-Liste.\nKein Schummeln::Abhaken rückgängig machen oder Löschen nimmt die Belohnung zurück.</string>
     <string name="guide_boss_title">Wochenboss</string>
-    <string name="guide_boss">Alle XP sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben.\nBoss-Challenge::Eine Spezialmission, die ihm auf einen Schlag 35 % abzieht.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nWenn nicht …::Sonntagnacht flieht er, und ein neuer kommt.</string>
+    <string name="guide_boss">Alle XP sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben.\nBoss-Challenge::Eine Spezialmission, die ihm auf einen Schlag 35 % abzieht.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nWenn nicht …::Sonntagnacht endet er, und ein neuer kommt.</string>
     <string name="guide_portal_title">Portale</string>
     <string name="guide_portal">Sie erscheinen von selbst::Zwischen 8 und 22 Uhr, bis zu 2 pro Tag.\nDoppelte Belohnung::Eine größere Mission mit doppelt so viel XP und Gold.\nNeuer Verbündeter::Sie abzuschließen kann dir ein Echo bringen.\nAuf Zeit::Die Zeit reicht immer, aber das Portal schließt sich, wenn sie abläuft.</string>
     <string name="guide_shadows_title">Echos</string>
@@ -547,8 +547,8 @@
     <string name="week_better">+%1$d Tage gegenüber letzter Woche</string>
     <string name="week_worse">%1$d Tage weniger als letzte Woche</string>
     <string name="week_same">Wie letzte Woche</string>
-    <string name="week_boss_won">Du hast %1$s besiegt</string>
-    <string name="week_boss_lost">%1$s ist entkommen</string>
+    <string name="week_boss_won">Besiegt: %1$s</string>
+    <string name="week_boss_lost">Nicht besiegt: %1$s</string>
     <string name="week_best">Am häufigsten: %1$s (%2$d %%)</string>
     <string name="week_worst">Am seltensten: %1$s (%2$d %%)</string>
     <string name="week_suggest">Wenn sie nicht in deinen Tag passt, tausche sie oder schalte sie in der Schmiede ab.</string>
@@ -608,6 +608,6 @@
     <string name="widget_focus_left">noch %1$d Min.</string>
     <string name="notif_timer_running">Timer läuft</string>
     <string name="notif_timer_more">+%1$d weitere Timer laufen</string>
-    <string name="notif_boss_title">%1$s flieht heute Nacht</string>
-    <string name="notif_boss_text">Noch %1$d HP. Die Boss-Herausforderung nimmt 35 %% auf einmal.</string>
+    <string name="notif_boss_title">Letzter Tag: %1$s</string>
+    <string name="notif_boss_text">Der Wochenboss endet heute Nacht, noch %1$d HP. Die Boss-Herausforderung nimmt 35 %% auf einmal.</string>
 </resources>

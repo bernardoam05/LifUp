@@ -212,7 +212,7 @@
     <string name="source_shop">Sold in the shop (weekly rotation).</string>
     <string name="source_achievement">Achievement reward.</string>
     <string name="source_streak">Streak milestone reward.</string>
-    <string name="source_boss">Dropped by the boss %1$s.</string>
+    <string name="source_boss">Reward for beating %1$s.</string>
     <string name="upgrade_capped">Max level: an echo can\'t pass your level.</string>
     <string name="upgrade_cost">Evolve: %1$d gold · copies %2$d/%3$d</string>
     <string name="equip">Equip</string>
@@ -275,7 +275,7 @@
     <string name="toast_penalty_cleared">Penalty cleared</string>
     <string name="toast_focus_done">Focus complete: %1$s min</string>
     <string name="toast_focus_lost">No quitting: you gave up, %1$s min lost</string>
-    <string name="toast_boss_escaped">%1$s escaped</string>
+    <string name="toast_boss_escaped">Time\'s up: %1$s was not beaten</string>
     <string name="toast_portal_escaped">The portal closed</string>
     <string name="toast_portal_cleared">Portal cleared!</string>
     <string name="toast_shadow_upgraded">%1$s evolved</string>
@@ -438,7 +438,7 @@
     <string name="buy">Buy</string>
     <string name="buy_confirm_title">Confirm purchase</string>
     <string name="buy_confirm_text">Buy %1$s for %2$d gold? You will have %3$d left.</string>
-    <string name="toast_boss_revived">%1$s got back up: the undone mission no longer counts</string>
+    <string name="toast_boss_revived">%1$s regained health: the undone mission no longer counts</string>
     <string name="auto_walk">Walked distance (steps)</string>
     <string name="body">Body</string>
     <string name="height">Height</string>
@@ -524,7 +524,7 @@
     <string name="guide_side_title">Side quests</string>
     <string name="guide_side">Free-form::Write any task, no targets or rules.\n5 with rewards::The first 5 finished each day give XP and gold and hurt the boss.\nAfter that::They keep working as a to-do list.\nNo cheating::Unticking or deleting takes the reward back.</string>
     <string name="guide_boss_title">Weekly boss</string>
-    <string name="guide_boss">All XP is damage::Every mission you do takes its health.\nBoss challenge::A special mission that rips off 35% at once.\nLoot::Beat it for XP, gold, a chest and its echo.\nIf not…::On Sunday night it escapes — and another one comes.</string>
+    <string name="guide_boss">All XP is damage::Every mission you do takes its health.\nBoss challenge::A special mission that rips off 35% at once.\nLoot::Beat it for XP, gold, a chest and its echo.\nIf not…::On Sunday night it ends — and another one comes.</string>
     <string name="guide_portal_title">Portals</string>
     <string name="guide_portal">They show up on their own::Between 8 AM and 10 PM, up to 2 a day.\nDouble rewards::A bigger mission with twice the XP and gold.\nNew ally::Clearing it may bring you an echo.\nOn the clock::There\'s always enough time, but the portal closes when it runs out.</string>
     <string name="guide_shadows_title">Echoes</string>
@@ -548,8 +548,8 @@
     <string name="week_better">+%1$d days on last week</string>
     <string name="week_worse">%1$d fewer days than last week</string>
     <string name="week_same">Same as last week</string>
-    <string name="week_boss_won">You beat %1$s</string>
-    <string name="week_boss_lost">%1$s escaped</string>
+    <string name="week_boss_won">Beaten: %1$s</string>
+    <string name="week_boss_lost">Not beaten: %1$s</string>
     <string name="week_best">Most kept: %1$s (%2$d%%)</string>
     <string name="week_worst">Least kept: %1$s (%2$d%%)</string>
     <string name="week_suggest">If it doesn\'t fit your day, swap it or turn it off in the Forge.</string>
@@ -609,6 +609,6 @@
     <string name="widget_focus_left">%1$d min left</string>
     <string name="notif_timer_running">Timer running</string>
     <string name="notif_timer_more">+%1$d more timers running</string>
-    <string name="notif_boss_title">%1$s escapes tonight</string>
-    <string name="notif_boss_text">%1$d HP left. The boss challenge takes 35%% at once.</string>
+    <string name="notif_boss_title">Last day: %1$s</string>
+    <string name="notif_boss_text">The weekly boss ends tonight with %1$d HP left. The boss challenge takes 35%% at once.</string>
 </resources>
