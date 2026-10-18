@@ -174,6 +174,7 @@ private fun MainScaffold(
             }
         }
         RewardHost(s)
+        SoundCues(s)
         com.lifup.app.ui.guide.AutoGuide(s, Tab.entries[pager.settledPage])
     }
 }

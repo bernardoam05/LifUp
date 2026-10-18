@@ -9,7 +9,11 @@ import android.os.VibratorManager
 import com.lifup.app.LifUpApp
 import com.lifup.app.R
 
-enum class Sfx(val res: Int) { LEVEL(R.raw.level_up_ding), VICTORY(R.raw.victory_chime), PENALTY(R.raw.penalty_alarm), SHADOW(R.raw.shadow_captured) }
+enum class Sfx(val res: Int, val volume: Float = 0.8f) {
+    LEVEL(R.raw.level_up_ding), VICTORY(R.raw.victory_chime), PENALTY(R.raw.penalty_alarm), SHADOW(R.raw.shadow_captured),
+    // Everyday cues stay short and quiet (Kenney UI/RPG audio, CC0).
+    QUEST(R.raw.sfx_quest_done, 0.7f), TICK(R.raw.sfx_tick, 0.6f), COINS(R.raw.sfx_coins), FOCUS(R.raw.sfx_focus_done),
+}
 
 /** Sound effects and haptics, both respecting the user's settings. */
 object Feedback {
@@ -17,7 +21,7 @@ object Feedback {
     private val ids = mutableMapOf<Sfx, Int>()
 
     private fun pool(context: Context): SoundPool = pool ?: SoundPool.Builder()
-        .setMaxStreams(2)
+        .setMaxStreams(3)
         .setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build())
         .build().also { p ->
             pool = p
@@ -29,7 +33,7 @@ object Feedback {
     fun play(context: Context, sfx: Sfx) {
         if (!LifUpApp.store.current.settings.sound) return
         val p = pool(context)
-        ids[sfx]?.let { p.play(it, 0.8f, 0.8f, 1, 0, 1f) }
+        ids[sfx]?.let { p.play(it, sfx.volume, sfx.volume, 1, 0, 1f) }
     }
 
     fun buzz(context: Context, strong: Boolean = false) {

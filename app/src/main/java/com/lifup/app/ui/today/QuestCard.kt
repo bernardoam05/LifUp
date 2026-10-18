@@ -1,5 +1,10 @@
 package com.lifup.app.ui.today
 
+import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.draw.scale
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -65,7 +70,11 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, onClick: () -> Unit) {
     val unit = unitLabel(q.unit)
     Panel(border = border, onClick = onClick, padding = androidx.compose.foundation.layout.PaddingValues(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (done) IconBadge(Icons.Rounded.CheckCircle, p.green) else IconBadge(questIcon(q.type), if (failed) p.red else color)
+            // The check pops in with a little bounce when a mission is finished.
+            val pop by animateFloatAsState(if (done) 1f else 0.85f, spring(dampingRatio = 0.35f, stiffness = 400f), label = "pop")
+            Box(Modifier.scale(if (done) pop else 1f)) {
+                if (done) IconBadge(Icons.Rounded.CheckCircle, p.green) else IconBadge(questIcon(q.type), if (failed) p.red else color)
+            }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f).alpha(if (done) 0.6f else 1f)) {
                 Text(

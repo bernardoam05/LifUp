@@ -45,3 +45,7 @@ Com o mesmo package (`com.lifup.app`) e a mesma chave, a app instala por cima da
 ## Línguas
 
 UI em pt, en, es, fr, de (`res/values-*/strings.xml`). Conteúdo (missões, sombras, bosses) em pt e en; as outras línguas usam o inglês.
+
+## Credits
+
+- UI sound effects: [Kenney](https://kenney.nl) — Interface Sounds and RPG Audio (CC0).
