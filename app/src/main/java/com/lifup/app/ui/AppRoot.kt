@@ -1,5 +1,13 @@
 package com.lifup.app.ui
 
+import com.lifup.app.ui.hero.HeroNav
+import com.lifup.app.domain.markItemsSeen
+import com.lifup.app.domain.markEchoesSeen
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Badge
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Arrangement
@@ -74,11 +82,20 @@ import com.lifup.app.ui.theme.Lif
 import com.lifup.app.ui.theme.LifUpTheme
 import com.lifup.app.ui.today.TodayScreen
 
+/** Bottom tabs in display order; Today sits in the middle and is where the app opens. */
 enum class Tab(val route: String, val icon: ImageVector, val label: Int) {
-    TODAY("today", Icons.Rounded.TaskAlt, R.string.tab_today),
     FOCUS("focus", Icons.Rounded.Psychology, R.string.tab_focus),
+    ECHOES("echoes", Icons.Rounded.AutoAwesome, R.string.hero_shadows),
+    TODAY("today", Icons.Rounded.TaskAlt, R.string.tab_today),
     HERO("hero", Icons.Rounded.Person, R.string.tab_hero),
     SHOP("shop", Icons.Rounded.Storefront, R.string.tab_shop),
+}
+
+/** What's new behind a tab: echoes gained, items gained. */
+private fun GameState.badge(t: Tab): Int = when (t) {
+    Tab.ECHOES -> newEchoes.size
+    Tab.HERO -> newItems.size
+    else -> 0
 }
 
 val LocalSnackbar = staticCompositionLocalOf { SnackbarHostState() }
@@ -123,7 +140,7 @@ private fun MainScaffold(
     openSettings: () -> Unit,
     openForge: () -> Unit,
 ) {
-    val pager = rememberPagerState { Tab.entries.size }
+    val pager = rememberPagerState(initialPage = Tab.TODAY.ordinal) { Tab.entries.size }
     val scope = rememberCoroutineScope()
     val tab = Tab.entries[pager.currentPage]
     val goTo: (Tab) -> Unit = { t -> scope.launch { pager.animateScrollToPage(t.ordinal) } }
@@ -136,6 +153,16 @@ private fun MainScaffold(
         }
         if (deepLink != null) onDeepLinkConsumed()
     }
+    // Leaving a tab marks its novelties as seen.
+    var lastPage by remember { mutableStateOf(pager.settledPage) }
+    LaunchedEffect(pager.settledPage) {
+        when (Tab.entries[lastPage]) {
+            Tab.ECHOES -> act { markEchoesSeen() }
+            Tab.HERO -> if (HeroNav.section == 0) act { markItemsSeen() }
+            else -> Unit
+        }
+        lastPage = pager.settledPage
+    }
     val snackbar = remember { SnackbarHostState() }
     CompositionLocalProvider(LocalSnackbar provides snackbar, LocalTabSwitcher provides goTo) {
         Scaffold(
@@ -146,10 +173,18 @@ private fun MainScaffold(
             bottomBar = {
                 NavigationBar(containerColor = Lif.colors.panel, tonalElevation = 0.dp) {
                     Tab.entries.forEach { t ->
+                        val count = s.badge(t)
                         NavigationBarItem(
                             selected = tab == t,
                             onClick = { goTo(t) },
-                            icon = { Icon(t.icon, null) },
+                            icon = {
+                                BadgedBox(badge = { if (count > 0) Badge(containerColor = Lif.colors.green) { Text("$count") } }) {
+                                    // The home tab gets a filled, slightly larger mark.
+                                    if (t == Tab.TODAY) Box(Modifier.size(34.dp).clip(CircleShape).background(if (tab == t) Lif.colors.accent else Lif.colors.accent.copy(alpha = 0.18f)), contentAlignment = Alignment.Center) {
+                                        Icon(t.icon, null, tint = if (tab == t) Lif.colors.bg else Lif.colors.accent)
+                                    } else Icon(t.icon, null)
+                                }
+                            },
                             label = { Text(stringResource(t.label).uppercase(), style = MaterialTheme.typography.labelMedium) },
                             colors = NavigationBarItemDefaults.colors(
                                 selectedIconColor = Lif.colors.accent,
@@ -168,6 +203,7 @@ private fun MainScaffold(
                 when (Tab.entries[page]) {
                     Tab.TODAY -> TodayScreen(s, openForge, openQuest) { openQuest = null }
                     Tab.FOCUS -> FocusScreen(s)
+                    Tab.ECHOES -> com.lifup.app.ui.hero.EchoesScreen(s)
                     Tab.HERO -> HeroScreen(s)
                     Tab.SHOP -> ShopScreen(s)
                 }

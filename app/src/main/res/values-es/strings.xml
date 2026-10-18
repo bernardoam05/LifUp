@@ -599,4 +599,7 @@
     <string name="rigor_easy_short">60% de las misiones para la racha · 2 descansos por semana</string>
     <string name="rigor_normal_short">75% de las misiones · 1 descanso por semana</string>
     <string name="rigor_hard_short">Todas las misiones · sin descansos · pérdidas dobles</string>
+    <string name="badge_new">NUEVO</string>
+    <string name="bought_item">Has comprado %1$s</string>
+    <string name="see_in_inventory">Ver</string>
 </resources>

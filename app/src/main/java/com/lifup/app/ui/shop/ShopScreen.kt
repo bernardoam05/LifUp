@@ -1,5 +1,11 @@
 package com.lifup.app.ui.shop
 
+import com.lifup.app.ui.hero.HeroNav
+import com.lifup.app.ui.Tab
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SnackbarDuration
 import com.lifup.app.ui.guide.InfoButton
 import com.lifup.app.ui.guide.Guide
 import androidx.compose.foundation.layout.Arrangement
@@ -70,23 +76,11 @@ import com.lifup.app.ui.theme.Lif
 
 @Composable
 fun ShopScreen(s: GameState) {
-    var tab by rememberSaveable { mutableIntStateOf(0) }
-    var pickFor by rememberSaveable { mutableStateOf<String?>(null) }
     var shadowInfo by rememberSaveable { mutableStateOf<String?>(null) }
     var buying by rememberSaveable { mutableStateOf<String?>(null) }
     val now = rememberNow(30_000)
     val context = LocalContext.current
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        item {
-            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                listOf(R.string.shop, R.string.inventory).forEachIndexed { i, label ->
-                    SegmentedButton(selected = tab == i, onClick = { tab = i }, shape = SegmentedButtonDefaults.itemShape(i, 2)) {
-                        Text(if (i == 1) "${stringResource(label)} (${s.inventory.values.sum()})" else stringResource(label))
-                    }
-                }
-            }
-        }
-        if (tab == 0) {
             item { SectionTitle(stringResource(R.string.shadow_offers)) { Text(stringResource(R.string.weekly), color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium); InfoButton(Guide.SHOP) } }
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -105,36 +99,7 @@ fun ShopScreen(s: GameState) {
             }
             item { SectionTitle(stringResource(R.string.items)) }
             items(content.items, key = { it.id }) { item -> ShopRow(s, item, now) { buying = "item:${item.id}" } }
-        } else {
-            val owned = content.items.filter { s.items(it.id) > 0 }
-            val buffs = s.buffs.filter { it.expiresAt > now }
-            if (buffs.isNotEmpty() || s.doubleXpNext) {
-                item { SectionTitle(stringResource(R.string.active_effects)) }
-                if (s.doubleXpNext) item { Pill(stringResource(R.string.double_xp_active), Lif.colors.gold) }
-                items(buffs, key = { it.itemId }) { b ->
-                    Panel {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconBadge(itemIcon(b.itemId), Lif.colors.accent, 32.dp)
-                            Spacer(Modifier.width(10.dp))
-                            Text(content.itemById[b.itemId]?.name?.local().orEmpty(), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
-                            Text(fmtShort(b.expiresAt - now), style = MaterialTheme.typography.labelMedium, color = Lif.colors.accent)
-                        }
-                    }
-                }
-            }
-            item { SectionTitle(stringResource(R.string.inventory)) }
-            if (owned.isEmpty()) item { EmptyNote(stringResource(R.string.inventory_empty)) }
-            items(owned, key = { it.id }) { item ->
-                InventoryRow(s, item) {
-                    when (item.effect) {
-                        ItemEffect.COMPLETE_QUEST, ItemEffect.SWAP_QUEST -> pickFor = item.id
-                        else -> { act { useItem(item.id) }; Feedback.buzz(context) }
-                    }
-                }
-            }
-        }
     }
-    pickFor?.let { itemId -> QuestPicker(s, itemId) { pickFor = null } }
     shadowInfo?.let { ShadowSheet(s, it, reveal = true) { shadowInfo = null } }
     buying?.let { key -> BuyConfirm(s, key, now) { buying = null } }
 }
@@ -148,6 +113,11 @@ private fun BuyConfirm(s: GameState, key: String, now: Long, onDismiss: () -> Un
     val item = if (kind == "item") content.itemById[id] else null
     val name = shadow?.name?.local() ?: item?.name?.local() ?: return onDismiss()
     val cost = s.price(content, shadow?.let { Rules.shopShadowPrice(it.rank) } ?: item!!.cost, now)
+    val snackbar = com.lifup.app.ui.LocalSnackbar.current
+    val goTo = com.lifup.app.ui.LocalTabSwitcher.current
+    val scope = rememberCoroutineScope()
+    val boughtMsg = stringResource(R.string.bought_item, name)
+    val seeLabel = stringResource(R.string.see_in_inventory)
     ConfirmDialog(
         title = stringResource(R.string.buy_confirm_title),
         text = stringResource(R.string.buy_confirm_text, name, cost, s.player.gold - cost),
@@ -155,6 +125,11 @@ private fun BuyConfirm(s: GameState, key: String, now: Long, onDismiss: () -> Un
         onConfirm = {
             act { if (shadow != null) buyShadow(id) else buyItem(id) }
             Feedback.buzz(context)
+            // Items land in the Hero tab's inventory: offer a shortcut there.
+            if (item != null) scope.launch {
+                val r = snackbar.showSnackbar(boughtMsg, actionLabel = seeLabel, duration = SnackbarDuration.Short)
+                if (r == SnackbarResult.ActionPerformed) { HeroNav.section = 0; goTo(Tab.HERO) }
+            }
         },
         onDismiss = onDismiss,
     )
@@ -188,49 +163,3 @@ private fun ShopRow(s: GameState, item: ItemDef, now: Long, onBuy: () -> Unit) {
     }
 }
 
-@Composable
-private fun InventoryRow(s: GameState, item: ItemDef, onUse: () -> Unit) {
-    val c = Lif.colors
-    val passive = item.effect == ItemEffect.STREAK_SHIELD || item.effect == ItemEffect.SPELL_BREAKER
-    val usable = when (item.effect) {
-        ItemEffect.REMOVE_PENALTY -> s.penalty.active
-        ItemEffect.DOUBLE_NEXT_XP -> !s.doubleXpNext
-        else -> !passive
-    }
-    Panel {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconBadge(itemIcon(item.id), c.accent)
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
-                Text("${item.name.local()}  ×${s.items(item.id)}", style = MaterialTheme.typography.titleMedium)
-                Text(item.description.local(), style = MaterialTheme.typography.bodySmall, color = c.muted)
-            }
-            if (passive) Text(stringResource(R.string.automatic), style = MaterialTheme.typography.labelMedium, color = c.dim)
-            else TextButton(onClick = onUse, enabled = usable) { Text(stringResource(R.string.use).uppercase()) }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun QuestPicker(s: GameState, itemId: String, onDismiss: () -> Unit) {
-    val item = content.itemById[itemId] ?: return
-    val swap = item.effect == ItemEffect.SWAP_QUEST
-    val quests = s.dailyQuests.filter { q ->
-        q.status == QuestStatus.OPEN && q.origin == QuestOrigin.DAILY &&
-            (!swap || (content.questDefById[q.defId] ?: s.customDefs.firstOrNull { it.id == q.defId })?.kind == DefKind.POOL)
-    }
-    val context = LocalContext.current
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = Lif.colors.panel) {
-        Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.pick_quest), style = MaterialTheme.typography.titleLarge)
-            if (quests.isEmpty()) EmptyNote(stringResource(R.string.no_open_quests))
-            quests.forEach { q ->
-                Panel(onClick = { act { useItem(itemId, q.id) }; Feedback.buzz(context); onDismiss() }) {
-                    Text(questTitle(q, lang()), style = MaterialTheme.typography.titleMedium)
-                    Text("+${q.xp} XP · +${q.gold}", style = MaterialTheme.typography.labelSmall, color = Lif.colors.accent)
-                }
-            }
-        }
-    }
-}

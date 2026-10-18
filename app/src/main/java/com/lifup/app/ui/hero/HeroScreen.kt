@@ -78,42 +78,29 @@ import com.lifup.app.ui.shadowRankColor
 import com.lifup.app.ui.shadowRankName
 import com.lifup.app.ui.theme.Lif
 
+/** Lets other screens open the Hero tab on a given section (e.g. the inventory after a purchase). */
+object HeroNav { var section by mutableIntStateOf(0) }
+
 @Composable
 fun HeroScreen(s: GameState) {
-    var tab by rememberSaveable { mutableIntStateOf(0) }
-    var openShadow by rememberSaveable { mutableStateOf<String?>(null) }
-    var filter by rememberSaveable { mutableStateOf<ShadowRank?>(null) }
     var openAchievement by rememberSaveable { mutableStateOf<String?>(null) }
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item { Profile(s) }
         item {
             SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(top = 8.dp)) {
-                listOf(R.string.hero_shadows, R.string.hero_achievements, R.string.hero_stats).forEachIndexed { i, label ->
-                    SegmentedButton(selected = tab == i, onClick = { tab = i }, shape = SegmentedButtonDefaults.itemShape(i, 3)) { Text(stringResource(label)) }
+                listOf(R.string.inventory, R.string.hero_achievements, R.string.hero_stats).forEachIndexed { i, label ->
+                    SegmentedButton(selected = HeroNav.section == i, onClick = { HeroNav.section = i }, shape = SegmentedButtonDefaults.itemShape(i, 3)) {
+                        Text(stringResource(label), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
                 }
             }
         }
-        when (tab) {
-            0 -> {
-                item { Squad(s) { openShadow = it } }
-                item {
-                    SectionTitle(stringResource(R.string.collection)) {
-                        Text("${s.shadows.size}/${content.shadows.size}", color = Lif.colors.muted, style = MaterialTheme.typography.labelMedium)
-                    }
-                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        FilterChip(selected = filter == null, onClick = { filter = null }, label = { Text(stringResource(R.string.all)) })
-                        ShadowRank.entries.forEach { r ->
-                            FilterChip(selected = filter == r, onClick = { filter = if (filter == r) null else r }, label = { Text(stringResource(shadowRankName(r))) })
-                        }
-                    }
-                }
-                item { Collection(s, filter) { openShadow = it } }
-            }
+        when (HeroNav.section) {
+            0 -> item { InventorySection(s) }
             1 -> items(content.achievements, key = { it.id }) { def -> AchievementRow(s, def) { openAchievement = def.id } }
             else -> item { Stats(s) }
         }
     }
-    openShadow?.let { ShadowSheet(s, it) { openShadow = null } }
     openAchievement?.let { id -> content.achievements.firstOrNull { it.id == id }?.let { AchievementSheet(s, it) { openAchievement = null } } }
 }
 
@@ -157,7 +144,7 @@ private fun Profile(s: GameState) {
 }
 
 @Composable
-private fun Squad(s: GameState, onOpen: (String) -> Unit) {
+internal fun Squad(s: GameState, onOpen: (String) -> Unit) {
     val c = Lif.colors
     val passives = s.passives(content, System.currentTimeMillis())
     SectionTitle(stringResource(R.string.squad)) { Text("${s.squad.size}/${Rules.SQUAD_SIZE}", color = c.muted, style = MaterialTheme.typography.labelMedium); InfoButton(Guide.SHADOWS) }
@@ -190,12 +177,17 @@ private fun Squad(s: GameState, onOpen: (String) -> Unit) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun Collection(s: GameState, filter: ShadowRank?, onOpen: (String) -> Unit) {
+internal fun Collection(s: GameState, filter: ShadowRank?, onOpen: (String) -> Unit) {
     val list = content.shadows.filter { filter == null || it.rank == filter }
         .sortedWith(compareByDescending<ShadowDef> { s.owned(it.id) != null }.thenByDescending { it.rank.ordinal })
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), maxItemsInEachRow = 4) {
         list.forEach { def ->
-            Box(Modifier.weight(1f)) { ShadowTile(def, s.owned(def.id)?.level, inSquad = def.id in s.squad, onClick = { onOpen(def.id) }) }
+            Box(Modifier.weight(1f)) {
+                ShadowTile(def, s.owned(def.id)?.level, inSquad = def.id in s.squad, onClick = { onOpen(def.id) })
+                s.newEchoes[def.id]?.let { first ->
+                    Pill(if (first) stringResource(R.string.badge_new) else "+1", Lif.colors.green, modifier = Modifier.align(Alignment.TopEnd).padding(4.dp))
+                }
+            }
         }
         repeat((4 - list.size % 4) % 4) { Spacer(Modifier.weight(1f)) }
     }

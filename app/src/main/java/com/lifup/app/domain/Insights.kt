@@ -81,6 +81,14 @@ fun Tx.rollWeek() {
 
 // ── Guides ────────────────────────────────────────────────────────────────────
 
+fun Tx.markEchoesSeen() {
+    if (s.newEchoes.isNotEmpty()) s = s.copy(newEchoes = emptyMap())
+}
+
+fun Tx.markItemsSeen() {
+    if (s.newItems.isNotEmpty()) s = s.copy(newItems = emptySet())
+}
+
 fun Tx.markGuideSeen(id: String) {
     if (id !in s.seenGuides) s = s.copy(seenGuides = s.seenGuides + id)
 }

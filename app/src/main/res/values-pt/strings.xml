@@ -581,4 +581,7 @@
     <string name="rigor_easy_short">60% das missões para o streak · 2 descansos por semana</string>
     <string name="rigor_normal_short">75% das missões · 1 descanso por semana</string>
     <string name="rigor_hard_short">Todas as missões · sem descansos · perdas a dobrar</string>
+    <string name="badge_new">NOVO</string>
+    <string name="bought_item">Compraste %1$s</string>
+    <string name="see_in_inventory">Ver</string>
 </resources>

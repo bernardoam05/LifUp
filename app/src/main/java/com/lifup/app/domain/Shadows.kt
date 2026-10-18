@@ -72,6 +72,7 @@ fun Tx.gainShadow(id: String, source: SourceType) {
     s = if (existing == null) s.copy(shadows = s.shadows + OwnedShadow(id))
     else s.copy(shadows = s.shadows.map { if (it.id == id) it.copy(copies = it.copies + 1) else it })
     reward { Reward.ShadowGained(it, id, existing == null, (existing?.copies ?: -1) + 1, source) }
+    s = s.copy(newEchoes = s.newEchoes + (id to (existing == null || s.newEchoes[id] == true)))
 }
 
 fun Tx.randomShadow(pool: List<ShadowDef>, rank: ShadowRank): ShadowDef? {

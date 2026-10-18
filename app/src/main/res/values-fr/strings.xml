@@ -581,4 +581,7 @@
     <string name="rigor_easy_short">60 % des missions pour la série · 2 jours de repos par semaine</string>
     <string name="rigor_normal_short">75 % des missions · 1 jour de repos par semaine</string>
     <string name="rigor_hard_short">Toutes les missions · aucun repos · pertes doublées</string>
+    <string name="badge_new">NOUVEAU</string>
+    <string name="bought_item">Tu as acheté %1$s</string>
+    <string name="see_in_inventory">Voir</string>
 </resources>

@@ -299,7 +299,11 @@ class Tx(var s: GameState, val ctx: Ctx) {
 
     fun addItem(id: String, qty: Int = 1) {
         val n = (s.items(id) + qty).coerceAtLeast(0)
-        s = s.copy(inventory = if (n == 0) s.inventory - id else s.inventory + (id to n))
+        s = s.copy(
+            inventory = if (n == 0) s.inventory - id else s.inventory + (id to n),
+            // Gains are flagged as new until the inventory is looked at; used-up items drop the flag.
+            newItems = if (qty > 0) s.newItems + id else if (n == 0) s.newItems - id else s.newItems,
+        )
     }
 
     fun toast(kind: ToastKind, arg: String = "") = reward { Reward.Toast(it, kind, arg) }

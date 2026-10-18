@@ -600,4 +600,7 @@
     <string name="rigor_easy_short">60% of missions keeps the streak · 2 rest days a week</string>
     <string name="rigor_normal_short">75% of missions · 1 rest day a week</string>
     <string name="rigor_hard_short">Every mission · no rest days · double losses</string>
+    <string name="badge_new">NEW</string>
+    <string name="bought_item">You bought %1$s</string>
+    <string name="see_in_inventory">See</string>
 </resources>

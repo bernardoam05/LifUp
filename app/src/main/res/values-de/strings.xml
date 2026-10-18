@@ -599,4 +599,7 @@
     <string name="rigor_easy_short">60 % der Missionen für den Streak · 2 Ruhetage pro Woche</string>
     <string name="rigor_normal_short">75 % der Missionen · 1 Ruhetag pro Woche</string>
     <string name="rigor_hard_short">Alle Missionen · keine Ruhetage · doppelte Verluste</string>
+    <string name="badge_new">NEU</string>
+    <string name="bought_item">Gekauft: %1$s</string>
+    <string name="see_in_inventory">Ansehen</string>
 </resources>

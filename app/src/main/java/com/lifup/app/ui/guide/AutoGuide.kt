@@ -23,7 +23,8 @@ private fun topicsFor(tab: Tab, s: GameState): List<Guide> = when (tab) {
         Guide.SIDE,
     )
     Tab.FOCUS -> listOf(Guide.FOCUS)
-    Tab.HERO -> listOf(Guide.SHADOWS)
+    Tab.ECHOES -> listOf(Guide.SHADOWS)
+    Tab.HERO -> emptyList()
     Tab.SHOP -> listOf(Guide.SHOP)
 }
 

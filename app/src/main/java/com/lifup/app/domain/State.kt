@@ -317,6 +317,10 @@ data class GameState(
     val statsWeek: String = "",
     val lastWeekKept: Int? = null,
     val adapt: Map<String, Adapt> = emptyMap(),
+    /** Echoes gained since the Echoes tab was last seen: true = first copy, false = an extra copy. */
+    val newEchoes: Map<String, Boolean> = emptyMap(),
+    /** Items gained since the inventory was last seen. */
+    val newItems: Set<String> = emptySet(),
     /** Guides already shown automatically. */
     val seenGuides: Set<String> = emptySet(),
     val passiveCooldowns: Map<Passive, Long> = emptyMap(),

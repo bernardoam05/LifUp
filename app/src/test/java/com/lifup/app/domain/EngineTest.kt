@@ -627,6 +627,18 @@ class EngineTest {
         assertTrue(bet.player.gold >= plain.player.gold + 4)
     }
 
+    @Test fun `new echoes and items stay flagged until seen`() {
+        var s = run(fresh(), "2026-10-14T10:00") { gainShadow("auto_pawn", SourceType.SHOP); addItem("pergaminho_troca") }
+        assertEquals(true, s.newEchoes["auto_pawn"])
+        assertTrue("pergaminho_troca" in s.newItems)
+        s = run(s, "2026-10-14T10:01") { gainShadow("auto_pawn", SourceType.SHOP) }
+        assertEquals(true, s.newEchoes["auto_pawn"])
+        s = run(s, "2026-10-14T10:02") { markEchoesSeen(); markItemsSeen() }
+        assertTrue(s.newEchoes.isEmpty() && s.newItems.isEmpty())
+        s = run(s, "2026-10-14T10:03") { gainShadow("auto_pawn", SourceType.SHOP) }
+        assertEquals(false, s.newEchoes["auto_pawn"])
+    }
+
     @Test fun `state survives json round trip`() {
         var s = run(fresh(), "2026-10-14T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
         s = run(s, "2026-10-15T08:00")
