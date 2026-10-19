@@ -2,6 +2,7 @@ package com.lifup.app.system
 
 import com.lifup.app.domain.openBedtime
 import com.lifup.app.domain.dayGoal
+import com.lifup.app.domain.limitsNearing
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.text
 import android.app.AlarmManager
@@ -99,6 +100,19 @@ object Alarms {
                 prefs.edit().putString("bedtime", ctx.todayKey).apply()
                 Notifications.bedtime(context)
             }
+        }
+    }
+
+    /** Once a day per mission: a measured limit (screen or distraction time) is about to break. */
+    fun maybeWarnLimits(context: Context, s: GameState) {
+        if (!s.settings.notifications || s.daily.rest) return
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val lang = java.util.Locale.getDefault().language
+        s.limitsNearing().forEach { (q, left) ->
+            val key = "limit_${q.auto}"
+            if (prefs.getString(key, "") == s.day) return@forEach
+            prefs.edit().putString(key, s.day).apply()
+            Notifications.limitNearing(context, q.auto!!.ordinal, q.title.text(lang), left)
         }
     }
 }

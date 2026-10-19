@@ -16,9 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lifup.app.R
 import com.lifup.app.domain.Attr
+import com.lifup.app.domain.Rules.MAX_FOCUS_ATTRS
 import com.lifup.app.ui.theme.Lif
-
-const val MAX_FOCUS_ATTRS = 2
 
 @Composable
 fun attrShort(a: Attr): String = stringResource(when (a) {
@@ -50,29 +49,50 @@ private fun attrWhatRes(a: Attr) = when (a) {
     Attr.VIT -> R.string.attr_vit_what
 }
 
-/** "Balanced" or up to [MAX_FOCUS_ATTRS] attributes, each with the kind of missions it brings. */
+/**
+ * "Balanced", up to [MAX_FOCUS_ATTRS] attributes, each with the kind of missions it brings, or (when
+ * [catchUp] isn't null) "Catch up", which follows the attributes that fell behind ([lagging] today).
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FocusPicker(selected: Set<Attr>, onChange: (Set<Attr>) -> Unit) {
+fun FocusPicker(
+    selected: Set<Attr>, onChange: (Set<Attr>) -> Unit,
+    catchUp: Boolean? = null, lagging: Set<Attr> = emptySet(), onCatchUp: (Boolean) -> Unit = {},
+) {
     val c = Lif.colors
+    val auto = catchUp == true
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        FilterChip(selected = selected.isEmpty(), onClick = { onChange(emptySet()) }, label = { Text(stringResource(R.string.attr_focus_balanced)) })
+        FilterChip(selected = selected.isEmpty() && !auto, onClick = { onCatchUp(false); onChange(emptySet()) }, label = { Text(stringResource(R.string.attr_focus_balanced)) })
+        if (catchUp != null) FilterChip(
+            selected = auto,
+            onClick = { onCatchUp(!auto) },
+            label = { ChipLabel(stringResource(R.string.attr_focus_catchup), stringResource(R.string.attr_focus_catchup_what), if (auto) c.accent else c.text) },
+            colors = FilterChipDefaults.filterChipColors(selectedContainerColor = c.accent.copy(alpha = 0.15f)),
+        )
         Attr.entries.forEach { a ->
-            val on = a in selected
+            val on = a in selected && !auto
             val color = attrColor(a)
             FilterChip(
                 selected = on,
-                enabled = on || selected.size < MAX_FOCUS_ATTRS,
-                onClick = { onChange(if (on) selected - a else selected + a) },
-                label = {
-                    Column(Modifier.padding(vertical = 4.dp)) {
-                        Text(stringResource(attrNameRes(a)), color = if (on) color else c.text)
-                        Text(stringResource(attrWhatRes(a)), style = MaterialTheme.typography.labelSmall, color = c.muted)
-                    }
-                },
+                enabled = on || auto || selected.size < MAX_FOCUS_ATTRS,
+                onClick = { onCatchUp(false); onChange(if (on) selected - a else if (auto) setOf(a) else selected + a) },
+                label = { ChipLabel(stringResource(attrNameRes(a)), stringResource(attrWhatRes(a)), if (on) color else c.text) },
                 colors = FilterChipDefaults.filterChipColors(selectedContainerColor = color.copy(alpha = 0.15f)),
             )
         }
     }
-    Text(stringResource(R.string.attr_focus_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
+    val hint = when {
+        !auto -> stringResource(R.string.attr_focus_hint)
+        lagging.isEmpty() -> stringResource(R.string.attr_focus_catchup_even)
+        else -> stringResource(R.string.attr_focus_catchup_now, lagging.map { stringResource(attrNameRes(it)) }.joinToString(", "))
+    }
+    Text(hint, style = MaterialTheme.typography.bodySmall, color = c.muted)
+}
+
+@Composable
+private fun ChipLabel(name: String, what: String, color: Color) {
+    Column(Modifier.padding(vertical = 4.dp)) {
+        Text(name, color = color)
+        Text(what, style = MaterialTheme.typography.labelSmall, color = Lif.colors.muted)
+    }
 }

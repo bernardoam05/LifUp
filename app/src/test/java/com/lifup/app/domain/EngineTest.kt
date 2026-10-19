@@ -333,7 +333,8 @@ class EngineTest {
 
     @Test fun `walk distance missions follow daily steps and keep logged distance`() {
         var s = fresh()
-        val q = buildQuest(content.questDefById.getValue("pool_walking"), 1, QuestOrigin.EXTRA, "walk_test")
+        val walk = QuestDef("walk_def", DefKind.POOL, QuestType.GPS, plainText("walk"), plainText(""), 5.0, unit = "km", baseXp = 70, baseGold = 20, auto = AutoKind.WALK_DISTANCE)
+        val q = buildQuest(walk, 1, QuestOrigin.EXTRA, "walk_test")
         s = s.copy(quests = s.quests + q)
         s = run(s, "2026-10-14T10:00") { logDistance(q.id, 2.0); applyAuto(AutoReading("2026-10-14", steps = 1_000)) }
         assertEquals(2.0, s.quests.first { it.id == q.id }.progress, 1e-9)
@@ -679,5 +680,34 @@ class EngineTest {
         val s = run(fresh(), "2026-10-14T10:00") { openPortal() }.let { st -> run(st, "2026-10-14T10:10") { completeQuest(st.portal!!.quest.id) } }
         assertEquals(null, s.achievements["portals"])
         assertTrue(s.rewards.none { it is Reward.Toast && it.kind == ToastKind.ACHIEVEMENT })
+    }
+
+    @Test fun `gold from won no-quitting sessions stops at the daily cap`() {
+        var s = run(fresh(), "2026-10-14T10:00") { startFocus(FocusSession(0, 150, strict = true)) }
+        s = run(s, "2026-10-14T12:30") { settleFocus() }
+        assertEquals(30, s.daily.focusGold)
+        s = run(s, "2026-10-14T13:00") { startFocus(FocusSession(0, 60, strict = true)) }
+        val before = s.player.gold
+        s = run(s, "2026-10-14T14:00") { settleFocus() }
+        assertEquals(Rules.STRICT_GOLD_MAX_PER_DAY, s.daily.focusGold)
+        assertEquals(Rules.STRICT_GOLD_MAX_PER_DAY - 30, s.player.gold - before)
+        // A new day starts a new allowance.
+        s = run(s, "2026-10-15T10:00") { startFocus(FocusSession(0, 25, strict = true)) }
+        s = run(s, "2026-10-15T10:25") { settleFocus() }
+        assertEquals(5, s.daily.focusGold)
+    }
+
+    @Test fun `measured limits warn when a quarter or 20 minutes are left`() {
+        val screen = buildQuest(content.questDefById.getValue("pool_screen_limit"), 1, QuestOrigin.EXTRA, "scr")
+        assertEquals(4.0, screen.target, 0.0)
+        fun near(progress: Double) = GameState(quests = listOf(screen.copy(progress = progress))).limitsNearing()
+        assertTrue(near(2.9).isEmpty())
+        assertEquals(60, near(3.0).single().second)
+        assertEquals(6, near(3.9).single().second)
+        assertTrue(near(4.1).isEmpty()) // already broken
+        val short = screen.copy(target = 1.0)
+        assertEquals(19, GameState(quests = listOf(short.copy(progress = 41 / 60.0))).limitsNearing().single().second)
+        assertTrue(GameState(quests = listOf(short.copy(progress = 0.5))).limitsNearing().isEmpty())
+        assertTrue(GameState(quests = listOf(screen.copy(progress = 3.5, autoOff = true))).limitsNearing().isEmpty())
     }
 }

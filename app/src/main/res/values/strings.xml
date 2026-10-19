@@ -137,7 +137,7 @@
     </plurals>
     <string name="choose_apps">Choose apps</string>
     <string name="strict_mode">No quitting</string>
-    <string name="strict_info">Stop early and you lose the minutes. Finish and they count +25%, plus bonus gold.</string>
+    <string name="strict_info">Stop early and you lose the minutes. Finish and they count +25%, plus bonus gold (up to 3 h a day).</string>
     <string name="ambient">Ambient sound</string>
     <string name="ambient_none">Silence</string>
     <string name="ambient_rain">Rain</string>
@@ -642,6 +642,12 @@
     <string name="attr_focus_title">Attribute focus</string>
     <string name="attr_focus_question">Which attributes do you want to grow?</string>
     <string name="attr_focus_hint">Up to 2. Their missions come up more often; the others still appear.</string>
+    <string name="attr_focus_catchup">Catch up</string>
+    <string name="attr_focus_catchup_what">lifts the ones left behind</string>
+    <string name="attr_focus_catchup_now">Today lifting: %1$s</string>
+    <string name="attr_focus_catchup_even">They\'re even for now: everything comes up equally.</string>
+    <string name="notif_limit_title">%1$s: almost at the limit</string>
+    <string name="notif_limit_text">%1$d min left. Go over the limit and the mission fails.</string>
     <string name="def_edited">Edited</string>
     <string name="def_reset">Restore original</string>
     <string name="weekly_hint_text">You did "%1$s" on %2$d of %3$d days last week. Make it %4$d× a week? Then it counts when you do it and only becomes required when you can\'t skip it anymore.</string>

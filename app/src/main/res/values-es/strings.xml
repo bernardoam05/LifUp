@@ -136,7 +136,7 @@
     </plurals>
     <string name="choose_apps">Elegir apps</string>
     <string name="strict_mode">Sin rendirse</string>
-    <string name="strict_info">Si paras antes del final pierdes los minutos. Si llegas al final, valen +25% y ganas oro extra.</string>
+    <string name="strict_info">Si paras antes del final pierdes los minutos. Si llegas al final, valen +25% y ganas oro extra (hasta 3 h al día).</string>
     <string name="ambient">Sonido ambiente</string>
     <string name="ambient_none">Silencio</string>
     <string name="ambient_rain">Lluvia</string>
@@ -641,6 +641,12 @@
     <string name="attr_focus_title">Foco de atributos</string>
     <string name="attr_focus_question">¿Qué atributos quieres desarrollar?</string>
     <string name="attr_focus_hint">Hasta 2. Sus misiones salen más a menudo; las demás siguen apareciendo.</string>
+    <string name="attr_focus_catchup">Ponerse al día</string>
+    <string name="attr_focus_catchup_what">impulsa los que se quedaron atrás</string>
+    <string name="attr_focus_catchup_now">Hoy impulsando: %1$s</string>
+    <string name="attr_focus_catchup_even">Por ahora están igualados: todo sale por igual.</string>
+    <string name="notif_limit_title">%1$s: casi en el límite</string>
+    <string name="notif_limit_text">Quedan %1$d min. Si pasas el límite, la misión falla.</string>
     <string name="def_edited">Editada</string>
     <string name="def_reset">Restaurar original</string>
     <string name="weekly_hint_text">Hiciste "%1$s" %2$d de %3$d días la semana pasada. ¿Pasarla a %4$d× por semana? Así cuenta cuando la haces y solo es obligatoria cuando ya no puedes saltarla.</string>

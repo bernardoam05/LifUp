@@ -57,4 +57,49 @@ class DrawTest {
         assertEquals(journal.promptOn(day), buildQuest(journal, 1, QuestOrigin.DAILY, day = day).prompt)
         assertEquals(6, (0L until 6).map { journal.promptOn(day.plusDays(it)) }.toSet().size)
     }
+
+    @Test fun `yesterday's missions come up less often without changing family shares`() {
+        val days = 4000
+        var repeats = 0
+        var plain = 0
+        val families = mutableMapOf<DrawGroup, Int>()
+        repeat(days) { seed ->
+            val yesterday = drawBalanced(pool, 3, emptySet(), Random(seed))
+            val ids = yesterday.map { it.id }.toSet()
+            val today = drawBalanced(pool, 3, emptySet(), Random(seed + days), recent = ids)
+            repeats += today.count { it.id in ids }
+            plain += drawBalanced(pool, 3, emptySet(), Random(seed + days)).count { it.id in ids }
+            today.forEach { families.merge(it.drawGroup(), 1, Int::plus) }
+        }
+        println("repeats from yesterday: $plain -> $repeats")
+        assertTrue(repeats < plain * 0.5)
+        families.values.forEach { assertTrue(it / (3.0 * days) in 0.12..0.30) }
+    }
+
+    @Test fun `missions already in today's list count for the repeat decay`() {
+        val strength = pool.filter { it.drawGroup() == DrawGroup.STRENGTH }.take(2)
+        val share = (0 until 4000).count { drawBalanced(pool - strength.toSet(), 1, emptySet(), Random(it), taken = strength).single().drawGroup() == DrawGroup.STRENGTH } / 4000.0
+        assertTrue("$share", share < 0.03)
+    }
+
+    @Test fun `catch up lifts the attributes that fell behind`() {
+        assertEquals(emptySet<Attr>(), Attributes().lagging())
+        assertEquals(setOf(Attr.AGI, Attr.STR), Attributes(str = 50, agi = 20, int = 120, vit = 300).lagging())
+        assertEquals(setOf(Attr.INT), Attributes(str = 100, agi = 100, int = 40, vit = 100).lagging())
+        val s = GameState(player = Player(attrXp = Attributes(str = 50, agi = 20, int = 120, vit = 300)), settings = Settings(focusAttrs = setOf(Attr.VIT), catchUp = true))
+        assertEquals(setOf(Attr.AGI, Attr.STR), s.drawFocus())
+        assertEquals(setOf(Attr.VIT), s.copy(settings = s.settings.copy(catchUp = false)).drawFocus())
+    }
+
+    @Test fun `catalog has full texts, no duplicate titles and every family has room to vary`() {
+        val all = content.quests + content.portalQuests
+        all.forEach { q ->
+            listOf(q.title, q.description).forEach { l -> listOf("pt", "en", "es", "fr", "de").forEach { assertTrue("${q.id} $it", l.text(it).isNotBlank()) } }
+            if (q.baseTarget > 1 || q.scalingAmount > 0) assertTrue(q.id, "{target}" in q.description.text("pt"))
+        }
+        listOf("pt", "en").forEach { lang -> assertEquals(lang, content.quests.size, content.quests.map { it.title.text(lang) }.toSet().size) }
+        val sizes = pool.groupingBy { it.drawGroup() }.eachCount()
+        println("family sizes: $sizes")
+        DrawGroup.entries.forEach { assertTrue("$it ${sizes[it]}", sizes.getValue(it) >= 12) }
+    }
 }

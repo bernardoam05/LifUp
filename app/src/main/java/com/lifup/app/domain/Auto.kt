@@ -1,5 +1,7 @@
 package com.lifup.app.domain
 
+import kotlin.math.roundToInt
+
 /** Device measurements for one day. A null field means that source isn't available (no sensor or permission). */
 data class AutoReading(
     val day: String,
@@ -37,3 +39,15 @@ fun Tx.applyAuto(r: AutoReading) {
         }
     }
 }
+
+/**
+ * Measured limits close to breaking: still within the limit but with a quarter of it, or 20 min,
+ * left (whichever is more), so a 15-minute refresh still catches them in time. Paired with minutes left.
+ */
+fun GameState.limitsNearing(): List<Pair<Quest, Int>> = allQuests
+    .filter { it.type == QuestType.LIMIT && it.auto != null && !it.autoOff && it.status == QuestStatus.OPEN }
+    .mapNotNull { q ->
+        val left = q.target - q.progress
+        q.takeIf { left >= 0 && left <= maxOf(q.target * Rules.LIMIT_WARN_SHARE, Rules.LIMIT_WARN_MIN / 60.0) }
+            ?.let { it to (left * 60).roundToInt() }
+    }

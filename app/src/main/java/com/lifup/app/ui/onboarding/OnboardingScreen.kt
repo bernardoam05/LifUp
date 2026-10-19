@@ -140,7 +140,7 @@ fun OnboardingScreen() {
                         Text(stringResource(R.string.difficulty), style = MaterialTheme.typography.titleMedium)
                         Rigor.entries.forEach { r -> RigorCard(r, rigor == r) { rigor = r } }
                         Text(stringResource(R.string.attr_focus_question), style = MaterialTheme.typography.titleMedium)
-                        FocusPicker(focus) { focus = it }
+                        FocusPicker(focus, { focus = it })
                         Text(stringResource(R.string.onb_change_later), style = MaterialTheme.typography.bodySmall, color = c.dim)
                     }
                 }

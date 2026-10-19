@@ -343,11 +343,11 @@
     "de": "Beweglichkeit"
    },
    "description": {
-    "pt": "Sessão de alongamentos por {target} min.",
-    "en": "Stretching session for {target} min.",
-    "es": "Sesión de estiramientos de {target} min.",
-    "fr": "Séance d'étirements de {target} min.",
-    "de": "Dehneinheit für {target} Min."
+    "pt": "{target} min de alongamentos lentos ou ioga, 30 s em cada posição.",
+    "en": "{target} min of slow stretching or yoga, 30 s per position.",
+    "es": "{target} min de estiramientos lentos o yoga, 30 s por postura.",
+    "fr": "{target} min d'étirements lents ou de yoga, 30 s par posture.",
+    "de": "{target} Min. langsames Dehnen oder Yoga, 30 s pro Position."
    },
    "baseTarget": 15,
    "scalingAmount": 1,
@@ -422,32 +422,6 @@
     "fr": "Commence tiède et finis par 30 à 60 s d'eau froide. Respire lentement par le nez.",
     "de": "Fang warm an und ende mit 30 bis 60 s kaltem Wasser. Atme langsam durch die Nase."
    }
-  },
-  {
-   "id": "pool_walking",
-   "kind": "POOL",
-   "type": "GPS",
-   "title": {
-    "pt": "Patrulha Ligeira",
-    "en": "Light Patrol",
-    "es": "Patrulla Ligera",
-    "fr": "Patrouille Légère",
-    "de": "Leichte Patrouille"
-   },
-   "description": {
-    "pt": "Caminha {target} km hoje.",
-    "en": "Walk {target} km today.",
-    "es": "Camina {target} km hoy.",
-    "fr": "Marche {target} km aujourd'hui.",
-    "de": "Gehe heute {target} km zu Fuß."
-   },
-   "baseTarget": 5,
-   "scalingAmount": 0,
-   "scalingInterval": 1,
-   "unit": "km",
-   "baseXp": 70,
-   "baseGold": 20,
-   "auto": "WALK_DISTANCE"
   },
   {
    "id": "pool_language",
@@ -821,11 +795,11 @@
     "de": "Gelenkmobilität"
    },
    "description": {
-    "pt": "{target} min de mobilidade: ancas, ombros, coluna.",
-    "en": "{target} min of mobility: hips, shoulders, spine.",
-    "es": "{target} min de movilidad: caderas, hombros, columna.",
-    "fr": "{target} min de mobilité : hanches, épaules, colonne.",
-    "de": "{target} Min. Mobilität: Hüfte, Schultern, Wirbelsäule."
+    "pt": "{target} min de mobilidade em movimento: círculos de ancas, ombros e coluna.",
+    "en": "{target} min of moving mobility: hip, shoulder and spine circles.",
+    "es": "{target} min de movilidad en movimiento: círculos de cadera, hombros y columna.",
+    "fr": "{target} min de mobilité en mouvement : cercles de hanches, d'épaules et de colonne.",
+    "de": "{target} Min. Mobilität in Bewegung: Kreise mit Hüfte, Schultern und Wirbelsäule."
    },
    "baseTarget": 10,
    "scalingAmount": 1,
@@ -887,14 +861,20 @@
     "fr": "Marche {target} km d'une traite.",
     "de": "Gehe {target} km am Stück."
    },
-   "baseTarget": 5,
+   "baseTarget": 4,
    "scalingAmount": 0.25,
    "scalingInterval": 10,
    "unit": "km",
    "baseXp": 150,
    "baseGold": 45,
-   "auto": "WALK_DISTANCE",
-   "maxTarget": 7
+   "maxTarget": 7,
+   "tip": {
+    "pt": "Abre a missão e carrega em começar antes de saíres: conta a caminhada de seguida. Também podes registar os km à mão.",
+    "en": "Open the mission and tap start before you head out: it measures the walk in one go. You can also log the km by hand.",
+    "es": "Abre la misión y pulsa empezar antes de salir: mide la caminata de una vez. También puedes anotar los km a mano.",
+    "fr": "Ouvre la mission et appuie sur démarrer avant de partir : elle mesure la marche d'une traite. Tu peux aussi noter les km à la main.",
+    "de": "Öffne die Mission und tippe vor dem Losgehen auf Start: Sie misst den Weg am Stück. Du kannst die km auch von Hand eintragen."
+   }
   },
   {
    "id": "pool_veggies",
@@ -1760,6 +1740,645 @@
    "unit": "",
    "baseXp": 60,
    "baseGold": 15
+  },
+  {
+   "id": "pool_workout",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Sessão de Treino",
+    "en": "Training Session",
+    "es": "Sesión de Entrenamiento",
+    "fr": "Séance d'Entraînement",
+    "de": "Trainingseinheit"
+   },
+   "description": {
+    "pt": "{target} min de treino à tua escolha: ginásio, aula ou em casa.",
+    "en": "{target} min of training of your choice: gym, class or at home.",
+    "es": "{target} min de entrenamiento a tu elección: gimnasio, clase o en casa.",
+    "fr": "{target} min d'entraînement au choix : salle, cours ou à la maison.",
+    "de": "{target} Min. Training nach Wahl: Studio, Kurs oder zu Hause."
+   },
+   "baseTarget": 30,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 100,
+   "baseGold": 30,
+   "tip": {
+    "pt": "Conta só o tempo a treinar. Sem plano? 4 voltas de 10 flexões, 15 agachamentos, 30 s de prancha e 10 afundos.",
+    "en": "Only count time spent training. No plan? 4 rounds of 10 push-ups, 15 squats, 30 s plank and 10 lunges.",
+    "es": "Cuenta solo el tiempo entrenando. ¿Sin plan? 4 vueltas de 10 flexiones, 15 sentadillas, 30 s de plancha y 10 zancadas.",
+    "fr": "Ne compte que le temps d'entraînement. Pas de plan ? 4 tours de 10 pompes, 15 squats, 30 s de gainage et 10 fentes.",
+    "de": "Zähl nur die Trainingszeit. Kein Plan? 4 Runden: 10 Liegestütze, 15 Kniebeugen, 30 s Plank, 10 Ausfallschritte."
+   }
+  },
+  {
+   "id": "pool_wallsit",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Cadeira Invisível",
+    "en": "Invisible Chair",
+    "es": "Silla Invisible",
+    "fr": "Chaise Invisible",
+    "de": "Unsichtbarer Stuhl"
+   },
+   "description": {
+    "pt": "Fica {target} s sentado contra a parede, sem cadeira.",
+    "en": "Hold a wall sit for {target} s.",
+    "es": "Aguanta {target} s sentado contra la pared, sin silla.",
+    "fr": "Tiens {target} s assis contre le mur, sans chaise.",
+    "de": "Halte {target} s den Wandsitz."
+   },
+   "baseTarget": 45,
+   "scalingAmount": 5,
+   "scalingInterval": 5,
+   "unit": "s",
+   "baseXp": 45,
+   "baseGold": 12,
+   "maxTarget": 120,
+   "tip": {
+    "pt": "Costas coladas à parede e joelhos a 90°, por cima dos tornozelos. Podes dividir em 2 ou 3 vezes.",
+    "en": "Back flat on the wall, knees at 90° above the ankles. You can split it into 2 or 3 holds.",
+    "es": "Espalda pegada a la pared y rodillas a 90°, sobre los tobillos. Puedes dividirlo en 2 o 3 veces.",
+    "fr": "Dos collé au mur, genoux à 90° au-dessus des chevilles. Tu peux le faire en 2 ou 3 fois.",
+    "de": "Rücken flach an der Wand, Knie im 90°-Winkel über den Knöcheln. Du kannst es auf 2 oder 3 Mal aufteilen."
+   }
+  },
+  {
+   "id": "pool_pike",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Flexões em Pico",
+    "en": "Pike Push-ups",
+    "es": "Flexiones en Pica",
+    "fr": "Pompes Piquées",
+    "de": "Pike-Liegestütze"
+   },
+   "description": {
+    "pt": "Faz {target} flexões em pico (ancas no ar, em V invertido) para os ombros.",
+    "en": "Do {target} pike push-ups (hips up, upside-down V) for your shoulders.",
+    "es": "Haz {target} flexiones en pica (cadera arriba, en V invertida) para los hombros.",
+    "fr": "Fais {target} pompes piquées (hanches en l'air, en V inversé) pour les épaules.",
+    "de": "Mache {target} Pike-Liegestütze (Hüfte hoch, umgekehrtes V) für die Schultern."
+   },
+   "baseTarget": 8,
+   "scalingAmount": 1,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 60,
+   "baseGold": 15,
+   "maxTarget": 20,
+   "tip": {
+    "pt": "Mãos à largura dos ombros e ancas bem altas; baixa a cabeça entre as mãos. Se custar muito, dobra os joelhos.",
+    "en": "Hands shoulder-width, hips high; lower your head between your hands. Too hard? Bend your knees.",
+    "es": "Manos al ancho de los hombros y cadera bien alta; baja la cabeza entre las manos. ¿Muy difícil? Dobla las rodillas.",
+    "fr": "Mains écartées de la largeur des épaules, hanches hautes ; descends la tête entre les mains. Trop dur ? Plie les genoux.",
+    "de": "Hände schulterbreit, Hüfte hoch; senke den Kopf zwischen die Hände. Zu schwer? Beuge die Knie."
+   }
+  },
+  {
+   "id": "pool_calves",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Gémeos de Bronze",
+    "en": "Bronze Calves",
+    "es": "Gemelos de Bronce",
+    "fr": "Mollets de Bronze",
+    "de": "Waden aus Bronze"
+   },
+   "description": {
+    "pt": "Faz {target} elevações de gémeos: em pé, sobe para a ponta dos pés.",
+    "en": "Do {target} calf raises: standing, rise onto your toes.",
+    "es": "Haz {target} elevaciones de gemelos: de pie, sube a la punta de los pies.",
+    "fr": "Fais {target} élévations des mollets : debout, monte sur la pointe des pieds.",
+    "de": "Mache {target} Wadenheben: im Stehen auf die Zehenspitzen."
+   },
+   "baseTarget": 30,
+   "scalingAmount": 3,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 35,
+   "baseGold": 10,
+   "maxTarget": 80,
+   "tip": {
+    "pt": "Num degrau, com os calcanhares a descer abaixo do degrau, rende mais. Sobe devagar e pára 1 s lá em cima.",
+    "en": "On a step, letting your heels drop below it, works better. Rise slowly and pause 1 s at the top.",
+    "es": "En un escalón, dejando bajar los talones, rinde más. Sube despacio y para 1 s arriba.",
+    "fr": "Sur une marche, talons sous le niveau de la marche, c'est plus efficace. Monte lentement et marque 1 s en haut.",
+    "de": "Auf einer Stufe, mit den Fersen unter Stufenhöhe, wirkt es besser. Langsam hoch und oben 1 s halten."
+   }
+  },
+  {
+   "id": "pool_backext",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Dorso Forte",
+    "en": "Strong Back",
+    "es": "Espalda Fuerte",
+    "fr": "Dos Solide",
+    "de": "Starker Rücken"
+   },
+   "description": {
+    "pt": "Faz {target} extensões lombares, deitado de barriga para baixo.",
+    "en": "Do {target} back extensions, lying face down.",
+    "es": "Haz {target} extensiones lumbares, tumbado boca abajo.",
+    "fr": "Fais {target} extensions du dos, allongé sur le ventre.",
+    "de": "Mache {target} Rückenstrecker in Bauchlage."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 1,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 45,
+   "baseGold": 12,
+   "maxTarget": 35,
+   "tip": {
+    "pt": "Levanta o peito e as pernas ao mesmo tempo, segura 2 s e desce devagar. Olha para o chão, não para a frente.",
+    "en": "Lift chest and legs together, hold 2 s and lower slowly. Look at the floor, not ahead.",
+    "es": "Levanta pecho y piernas a la vez, aguanta 2 s y baja despacio. Mira al suelo, no al frente.",
+    "fr": "Lève la poitrine et les jambes ensemble, tiens 2 s et redescends lentement. Regarde le sol, pas devant toi.",
+    "de": "Brust und Beine gleichzeitig heben, 2 s halten, langsam senken. Blick zum Boden, nicht nach vorn."
+   }
+  },
+  {
+   "id": "pool_climbers",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Escaladores",
+    "en": "Mountain Climbers",
+    "es": "Escaladores",
+    "fr": "Grimpeurs",
+    "de": "Bergsteiger"
+   },
+   "description": {
+    "pt": "Faz {target} escaladores, contando cada perna.",
+    "en": "Do {target} mountain climbers, counting each leg.",
+    "es": "Haz {target} escaladores, contando cada pierna.",
+    "fr": "Fais {target} mountain climbers, en comptant chaque jambe.",
+    "de": "Mache {target} Bergsteiger, jedes Bein zählt."
+   },
+   "baseTarget": 30,
+   "scalingAmount": 3,
+   "scalingInterval": 5,
+   "unit": "reps",
+   "baseXp": 50,
+   "baseGold": 12,
+   "maxTarget": 80
+  },
+  {
+   "id": "pool_sport",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Em Jogo",
+    "en": "Game On",
+    "es": "En Juego",
+    "fr": "En Jeu",
+    "de": "Im Spiel"
+   },
+   "description": {
+    "pt": "{target} min de um desporto: futebol, padel, natação, escalada, artes marciais…",
+    "en": "{target} min of a sport: football, padel, swimming, climbing, martial arts…",
+    "es": "{target} min de un deporte: fútbol, pádel, natación, escalada, artes marciales…",
+    "fr": "{target} min d'un sport : foot, padel, natation, escalade, arts martiaux…",
+    "de": "{target} Min. Sport: Fußball, Padel, Schwimmen, Klettern, Kampfsport…"
+   },
+   "baseTarget": 30,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 90,
+   "baseGold": 25,
+   "tip": {
+    "pt": "Conta o tempo em jogo ou em aula, não o caminho. Sem companhia, natação ou escalada fazem-se sozinho.",
+    "en": "Count time playing or in class, not the trip. No partner? Swimming or climbing work solo.",
+    "es": "Cuenta el tiempo jugando o en clase, no el trayecto. ¿Sin compañía? Natación o escalada se hacen solo.",
+    "fr": "Compte le temps de jeu ou de cours, pas le trajet. Sans partenaire ? La natation ou l'escalade se font seul.",
+    "de": "Zähl die Spiel- oder Kurszeit, nicht den Weg. Niemand dabei? Schwimmen oder Klettern gehen auch allein."
+   }
+  },
+  {
+   "id": "pool_bike",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Pedalada",
+    "en": "Ride",
+    "es": "Pedalada",
+    "fr": "Coup de Pédale",
+    "de": "Radtour"
+   },
+   "description": {
+    "pt": "{target} min de bicicleta, na rua ou estática.",
+    "en": "{target} min on a bike, outdoors or stationary.",
+    "es": "{target} min de bicicleta, en la calle o estática.",
+    "fr": "{target} min de vélo, dehors ou d'appartement.",
+    "de": "{target} Min. Rad fahren, draußen oder auf dem Heimtrainer."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 10,
+   "unit": "min",
+   "baseXp": 70,
+   "baseGold": 20,
+   "maxTarget": 45
+  },
+  {
+   "id": "pool_dance",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Ritmo",
+    "en": "Rhythm",
+    "es": "Ritmo",
+    "fr": "Rythme",
+    "de": "Rhythmus"
+   },
+   "description": {
+    "pt": "Dança {target} min ao som de música de que gostes.",
+    "en": "Dance for {target} min to music you like.",
+    "es": "Baila {target} min con música que te guste.",
+    "fr": "Danse {target} min sur une musique que tu aimes.",
+    "de": "Tanze {target} Min. zu Musik, die du magst."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 1,
+   "scalingInterval": 10,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10,
+   "maxTarget": 20,
+   "tip": {
+    "pt": "Não precisa de técnica: três ou quatro músicas seguidas, sempre a mexer.",
+    "en": "No technique needed: three or four songs in a row, always moving.",
+    "es": "No hace falta técnica: tres o cuatro canciones seguidas, sin parar.",
+    "fr": "Pas besoin de technique : trois ou quatre morceaux d'affilée, sans t'arrêter.",
+    "de": "Technik ist egal: drei, vier Lieder am Stück, immer in Bewegung."
+   }
+  },
+  {
+   "id": "pool_balance",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Equilíbrio",
+    "en": "Balance",
+    "es": "Equilibrio",
+    "fr": "Équilibre",
+    "de": "Gleichgewicht"
+   },
+   "description": {
+    "pt": "Equilibra-te num pé só, {target} s de cada lado.",
+    "en": "Balance on one foot, {target} s on each side.",
+    "es": "Mantén el equilibrio sobre un pie, {target} s cada lado.",
+    "fr": "Tiens en équilibre sur un pied, {target} s de chaque côté.",
+    "de": "Balanciere auf einem Bein, {target} s pro Seite."
+   },
+   "baseTarget": 30,
+   "scalingAmount": 5,
+   "scalingInterval": 5,
+   "unit": "s",
+   "baseXp": 35,
+   "baseGold": 10,
+   "maxTarget": 60,
+   "tip": {
+    "pt": "Perto de uma parede, para te apoiares se precisares. Fácil demais? Fecha os olhos ou fica em cima de uma almofada.",
+    "en": "Stand near a wall in case you need it. Too easy? Close your eyes or stand on a cushion.",
+    "es": "Cerca de una pared por si la necesitas. ¿Muy fácil? Cierra los ojos o súbete a un cojín.",
+    "fr": "Près d'un mur au cas où. Trop facile ? Ferme les yeux ou tiens-toi sur un coussin.",
+    "de": "Nah an einer Wand, falls du Halt brauchst. Zu leicht? Augen zu oder auf ein Kissen stellen."
+   }
+  },
+  {
+   "id": "pool_highknees",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Pés Rápidos",
+    "en": "Quick Feet",
+    "es": "Pies Rápidos",
+    "fr": "Pieds Rapides",
+    "de": "Schnelle Füße"
+   },
+   "description": {
+    "pt": "{target} s de skipping alto (joelhos à altura da anca), em blocos como quiseres.",
+    "en": "{target} s of high knees (knees to hip height), in blocks as you like.",
+    "es": "{target} s de skipping alto (rodillas a la altura de la cadera), en bloques como quieras.",
+    "fr": "{target} s de montées de genoux (à hauteur de hanche), en blocs comme tu veux.",
+    "de": "{target} s Kniehebelauf (Knie auf Hüfthöhe), in Blöcken nach Wahl."
+   },
+   "baseTarget": 60,
+   "scalingAmount": 10,
+   "scalingInterval": 5,
+   "unit": "s",
+   "baseXp": 45,
+   "baseGold": 12,
+   "maxTarget": 180
+  },
+  {
+   "id": "pool_protein",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Proteína em Cada Prato",
+    "en": "Protein on Every Plate",
+    "es": "Proteína en Cada Plato",
+    "fr": "Protéines à Chaque Repas",
+    "de": "Eiweiß auf jedem Teller"
+   },
+   "description": {
+    "pt": "Inclui uma fonte de proteína em {target} refeições.",
+    "en": "Include a protein source in {target} meals.",
+    "es": "Incluye una fuente de proteína en {target} comidas.",
+    "fr": "Mets une source de protéines dans {target} repas.",
+    "de": "Nimm in {target} Mahlzeiten eine Eiweißquelle dazu."
+   },
+   "baseTarget": 3,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 40,
+   "baseGold": 10,
+   "tip": {
+    "pt": "Ovos, iogurte grego, leguminosas, peixe, carne ou tofu. Mais ou menos a palma da tua mão por refeição.",
+    "en": "Eggs, Greek yogurt, legumes, fish, meat or tofu. About the size of your palm per meal.",
+    "es": "Huevos, yogur griego, legumbres, pescado, carne o tofu. Más o menos la palma de tu mano por comida.",
+    "fr": "Œufs, yaourt grec, légumineuses, poisson, viande ou tofu. Environ la paume de ta main par repas.",
+    "de": "Eier, griechischer Joghurt, Hülsenfrüchte, Fisch, Fleisch oder Tofu. Etwa eine Handfläche pro Mahlzeit."
+   }
+  },
+  {
+   "id": "pool_floss",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Sorriso Blindado",
+    "en": "Armored Smile",
+    "es": "Sonrisa Blindada",
+    "fr": "Sourire Blindé",
+    "de": "Gepanzertes Lächeln"
+   },
+   "description": {
+    "pt": "Usa fio dentário antes de dormir.",
+    "en": "Floss before bed.",
+    "es": "Usa hilo dental antes de dormir.",
+    "fr": "Passe le fil dentaire avant de dormir.",
+    "de": "Benutze vor dem Schlafen Zahnseide."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 25,
+   "baseGold": 6
+  },
+  {
+   "id": "pool_bed",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Cama Feita",
+    "en": "Bed Made",
+    "es": "Cama Hecha",
+    "fr": "Lit Fait",
+    "de": "Bett Gemacht"
+   },
+   "description": {
+    "pt": "Faz a cama logo depois de te levantares.",
+    "en": "Make your bed right after you get up.",
+    "es": "Haz la cama nada más levantarte.",
+    "fr": "Fais ton lit dès que tu te lèves.",
+    "de": "Mach dein Bett direkt nach dem Aufstehen."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 20,
+   "baseGold": 6
+  },
+  {
+   "id": "pool_eyes",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Olhos Descansados",
+    "en": "Rested Eyes",
+    "es": "Ojos Descansados",
+    "fr": "Yeux Reposés",
+    "de": "Ausgeruhte Augen"
+   },
+   "description": {
+    "pt": "{target} vezes ao longo do dia, tira os olhos do ecrã e olha para longe durante 20 s.",
+    "en": "{target} times during the day, look away from the screen at something far for 20 s.",
+    "es": "{target} veces a lo largo del día, aparta la vista de la pantalla y mira lejos durante 20 s.",
+    "fr": "{target} fois dans la journée, quitte l'écran des yeux et regarde au loin pendant 20 s.",
+    "de": "{target}-mal am Tag den Blick vom Bildschirm lösen und 20 s in die Ferne schauen."
+   },
+   "baseTarget": 5,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 30,
+   "baseGold": 8,
+   "tip": {
+    "pt": "A regra 20-20-20: a cada 20 min de ecrã, 20 s a olhar para algo a uns 6 m. Uma janela é perfeita.",
+    "en": "The 20-20-20 rule: every 20 min of screen, 20 s looking at something about 6 m away. A window is perfect.",
+    "es": "La regla 20-20-20: cada 20 min de pantalla, 20 s mirando algo a unos 6 m. Una ventana es perfecta.",
+    "fr": "La règle 20-20-20 : toutes les 20 min d'écran, 20 s à regarder quelque chose à environ 6 m. Une fenêtre, c'est parfait.",
+    "de": "Die 20-20-20-Regel: alle 20 Min. Bildschirm 20 s auf etwas in etwa 6 m Entfernung schauen. Ein Fenster ist ideal."
+   }
+  },
+  {
+   "id": "pool_early_dinner",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Jantar Cedo",
+    "en": "Early Dinner",
+    "es": "Cena Temprana",
+    "fr": "Dîner Tôt",
+    "de": "Frühes Abendessen"
+   },
+   "description": {
+    "pt": "Janta pelo menos 2 h antes de te deitares.",
+    "en": "Have dinner at least 2 h before going to bed.",
+    "es": "Cena al menos 2 h antes de acostarte.",
+    "fr": "Dîne au moins 2 h avant de te coucher.",
+    "de": "Iss mindestens 2 Std. vor dem Schlafengehen zu Abend."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 40,
+   "baseGold": 10
+  },
+  {
+   "id": "pool_hardfirst",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Primeiro o Difícil",
+    "en": "Hardest First",
+    "es": "Primero lo Difícil",
+    "fr": "D'abord le Plus Dur",
+    "de": "Das Schwerste Zuerst"
+   },
+   "description": {
+    "pt": "Começa o dia pela tarefa que mais andas a adiar, antes de qualquer outra.",
+    "en": "Start the day with the task you have been putting off most, before anything else.",
+    "es": "Empieza el día por la tarea que más estás aplazando, antes que cualquier otra.",
+    "fr": "Commence la journée par la tâche que tu repousses le plus, avant toute autre.",
+    "de": "Beginne den Tag mit der Aufgabe, die du am längsten aufschiebst, vor allem anderen."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 60,
+   "baseGold": 15,
+   "tip": {
+    "pt": "Escolhe-a na noite anterior. Conta se trabalhares nela 15 min: o mais difícil é arrancar.",
+    "en": "Pick it the night before. It counts if you work on it for 15 min: starting is the hard part.",
+    "es": "Elígela la noche anterior. Cuenta si trabajas en ella 15 min: lo difícil es arrancar.",
+    "fr": "Choisis-la la veille. Ça compte si tu y travailles 15 min : le plus dur, c'est de commencer.",
+    "de": "Wähle sie am Abend vorher. Es zählt, wenn du 15 Min. daran arbeitest: Anfangen ist das Schwerste."
+   }
+  },
+  {
+   "id": "pool_noalcohol",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Mente Sóbria",
+    "en": "Sober Mind",
+    "es": "Mente Sobria",
+    "fr": "Esprit Sobre",
+    "de": "Klarer Kopf"
+   },
+   "description": {
+    "pt": "Nada de álcool hoje.",
+    "en": "No alcohol today.",
+    "es": "Nada de alcohol hoy.",
+    "fr": "Pas d'alcool aujourd'hui.",
+    "de": "Heute kein Alkohol."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 45,
+   "baseGold": 12
+  },
+  {
+   "id": "pool_nonews",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Jejum de Notícias",
+    "en": "News Fast",
+    "es": "Ayuno de Noticias",
+    "fr": "Jeûne d'Infos",
+    "de": "Nachrichtenfasten"
+   },
+   "description": {
+    "pt": "Sem notícias nem scroll de notícias hoje.",
+    "en": "No news and no news scrolling today.",
+    "es": "Sin noticias ni scroll de noticias hoy.",
+    "fr": "Pas d'actus ni de défilement d'actus aujourd'hui.",
+    "de": "Heute keine Nachrichten und kein Nachrichten-Scrollen."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 45,
+   "baseGold": 12,
+   "tip": {
+    "pt": "Se for mesmo importante, alguém te conta.",
+    "en": "If it really matters, someone will tell you.",
+    "es": "Si es de verdad importante, alguien te lo contará.",
+    "fr": "Si c'est vraiment important, quelqu'un te le dira.",
+    "de": "Wenn es wirklich wichtig ist, erzählt es dir jemand."
+   }
+  },
+  {
+   "id": "pool_nointerrupt",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Ouvir Até ao Fim",
+    "en": "Hear Them Out",
+    "es": "Escuchar Hasta el Final",
+    "fr": "Écouter Jusqu'au Bout",
+    "de": "Ausreden Lassen"
+   },
+   "description": {
+    "pt": "Hoje não interrompes ninguém enquanto fala.",
+    "en": "Today you don't interrupt anyone while they're speaking.",
+    "es": "Hoy no interrumpes a nadie mientras habla.",
+    "fr": "Aujourd'hui, tu ne coupes la parole à personne.",
+    "de": "Heute unterbrichst du niemanden beim Reden."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 50,
+   "baseGold": 12
+  },
+  {
+   "id": "pool_nolatesnack",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Cozinha Fechada",
+    "en": "Kitchen Closed",
+    "es": "Cocina Cerrada",
+    "fr": "Cuisine Fermée",
+    "de": "Küche Geschlossen"
+   },
+   "description": {
+    "pt": "Depois de jantar, não comes mais nada.",
+    "en": "After dinner, nothing more to eat.",
+    "es": "Después de cenar, no comes nada más.",
+    "fr": "Après le dîner, tu ne manges plus rien.",
+    "de": "Nach dem Abendessen isst du nichts mehr."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 45,
+   "baseGold": 12
   }
  ],
  "penalty": [

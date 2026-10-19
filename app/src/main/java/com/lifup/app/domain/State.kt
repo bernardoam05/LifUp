@@ -163,6 +163,8 @@ data class Settings(
     val dailyPoolOverride: Int? = null,
     /** Attributes the player wants to grow most: their missions come up twice as often. */
     val focusAttrs: Set<Attr> = emptySet(),
+    /** "Catch up": the focus follows the attributes that fell behind, worked out every day. */
+    val catchUp: Boolean = false,
     val blockOnPenalty: Boolean = false,
     /** Silences the phone (Do Not Disturb) during focus phases, when the system allows it. */
     val dndFocus: Boolean = false,
@@ -194,6 +196,8 @@ data class DailyFlags(
     val rest: Boolean = false,
     /** Highest step count read today; added to the lifetime total when the day closes. */
     val steps: Int = 0,
+    /** Gold paid today by finished "no quitting" focus sessions, which has a daily cap. */
+    val focusGold: Int = 0,
 )
 
 @Serializable

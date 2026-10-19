@@ -127,7 +127,7 @@
     </plurals>
     <string name="choose_apps">Escolher apps</string>
     <string name="strict_mode">Sem desistências</string>
-    <string name="strict_info">Se parares antes do fim perdes os minutos. Se chegares ao fim, valem +25% e ganhas ouro extra.</string>
+    <string name="strict_info">Se parares antes do fim perdes os minutos. Se chegares ao fim, valem +25% e ganhas ouro extra (até 3 h por dia).</string>
     <string name="ambient">Som ambiente</string>
     <string name="ambient_none">Silêncio</string>
     <string name="ambient_rain">Chuva</string>
@@ -623,6 +623,12 @@
     <string name="attr_focus_title">Foco de atributos</string>
     <string name="attr_focus_question">Que atributos queres desenvolver?</string>
     <string name="attr_focus_hint">Até 2. As missões deles saem mais vezes; as outras continuam a aparecer.</string>
+    <string name="attr_focus_catchup">Pôr em dia</string>
+    <string name="attr_focus_catchup_what">puxa pelos que ficaram para trás</string>
+    <string name="attr_focus_catchup_now">Hoje a puxar por: %1$s</string>
+    <string name="attr_focus_catchup_even">Para já estão equilibrados: sai tudo por igual.</string>
+    <string name="notif_limit_title">%1$s: quase no limite</string>
+    <string name="notif_limit_text">Restam %1$d min. Se passares o limite, a missão falha.</string>
     <string name="def_edited">Editada</string>
     <string name="def_reset">Repor original</string>
     <string name="weekly_hint_text">Fizeste "%1$s" em %2$d de %3$d dias na semana passada. Passar a %4$d× por semana? Assim conta quando a fazes e só fica obrigatória quando já não dá para saltar.</string>

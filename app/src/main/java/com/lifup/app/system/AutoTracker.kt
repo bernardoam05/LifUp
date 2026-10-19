@@ -174,7 +174,7 @@ object AutoTracker {
         val s = store.current
         if (s.run?.running == true) stepCounter(c)?.let { n -> store.dispatch { runCheckpoint(n) } }
         val reading = read(c, LocalDate.now(), s)
-        store.dispatch { applyAuto(reading) }
+        Alarms.maybeWarnLimits(c, store.dispatch { applyAuto(reading) })
     }
 
     /** Dispatches [action] after recording the final values of a day that is about to close. */

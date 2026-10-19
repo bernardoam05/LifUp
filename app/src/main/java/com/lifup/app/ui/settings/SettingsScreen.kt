@@ -2,6 +2,7 @@ package com.lifup.app.ui.settings
 
 import com.lifup.app.domain.daysToNextMission
 import com.lifup.app.domain.drawnCount
+import com.lifup.app.domain.lagging
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.foundation.clickable
@@ -149,7 +150,11 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 Spacer(Modifier.height(12.dp))
                 Text(stringResource(R.string.attr_focus_title), style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(4.dp))
-                com.lifup.app.ui.FocusPicker(set.focusAttrs) { f -> act { updateSettings { it.copy(focusAttrs = f) } } }
+                com.lifup.app.ui.FocusPicker(
+                    set.focusAttrs, { f -> act { updateSettings { it.copy(focusAttrs = f) } } },
+                    catchUp = set.catchUp, lagging = s.player.attrXp.lagging(),
+                    onCatchUp = { on -> act { updateSettings { it.copy(catchUp = on) } } },
+                )
             }
 
             FoldSection(stringResource(R.string.penalties), trailing = { com.lifup.app.ui.guide.InfoButton(com.lifup.app.ui.guide.Guide.PENALTY) }) {

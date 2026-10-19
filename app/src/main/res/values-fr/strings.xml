@@ -127,7 +127,7 @@
     </plurals>
     <string name="choose_apps">Choisir des apps</string>
     <string name="strict_mode">Sans abandon</string>
-    <string name="strict_info">Arrête avant la fin et tu perds les minutes. Va jusqu\'au bout : elles comptent +25 % et tu gagnes de l\'or en plus.</string>
+    <string name="strict_info">Arrête avant la fin et tu perds les minutes. Va jusqu\'au bout : elles comptent +25 % et tu gagnes de l\'or en plus (jusqu\'à 3 h par jour).</string>
     <string name="ambient">Son d\'ambiance</string>
     <string name="ambient_none">Silence</string>
     <string name="ambient_rain">Pluie</string>
@@ -623,6 +623,12 @@
     <string name="attr_focus_title">Attributs prioritaires</string>
     <string name="attr_focus_question">Quels attributs veux-tu développer ?</string>
     <string name="attr_focus_hint">Jusqu\'à 2. Leurs missions sortent plus souvent ; les autres apparaissent toujours.</string>
+    <string name="attr_focus_catchup">Rattrapage</string>
+    <string name="attr_focus_catchup_what">relance ceux qui sont à la traîne</string>
+    <string name="attr_focus_catchup_now">Aujourd\'hui en renfort : %1$s</string>
+    <string name="attr_focus_catchup_even">Pour l\'instant ils sont à égalité : tout sort autant.</string>
+    <string name="notif_limit_title">%1$s : presque à la limite</string>
+    <string name="notif_limit_text">Il reste %1$d min. Au-delà de la limite, la mission échoue.</string>
     <string name="def_edited">Modifiée</string>
     <string name="def_reset">Rétablir l\'original</string>
     <string name="weekly_hint_text">Tu as fait « %1$s » %2$d jours sur %3$d la semaine dernière. La passer à %4$d× par semaine ? Elle compte quand tu la fais et ne devient obligatoire que quand tu ne peux plus la sauter.</string>

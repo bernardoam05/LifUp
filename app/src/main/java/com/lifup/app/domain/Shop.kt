@@ -144,7 +144,15 @@ private fun Tx.finishFocus(f: FocusSession, minutes: Double, completed: Boolean)
     f.pomodoro?.let { count(StatKey.POMODORO_CYCLES, Pomodoro.completedCycles(it, f.elapsedMinutes(ctx.now)).toLong()) }
     // "No quitting" is a bet: finishing pays the minutes +25% and some gold.
     val won = completed && f.strict
-    if (won) gainGold((minutes / Rules.STRICT_GOLD_EVERY_MIN).toInt(), boosted = false)
+    if (won) payFocusGold((minutes / Rules.STRICT_GOLD_EVERY_MIN).toInt())
     creditFocus(if (won) minutes * Rules.STRICT_BONUS else minutes, f.questId, pomodoro = f.pomodoro != null)
     toast(ToastKind.FOCUS_DONE, minutes.roundToInt().toString())
+}
+
+/** Gold for a won "no quitting" session, up to the day's cap so a timer left running can't farm it. */
+private fun Tx.payFocusGold(amount: Int) {
+    val paid = amount.coerceAtMost(Rules.STRICT_GOLD_MAX_PER_DAY - s.daily.focusGold).coerceAtLeast(0)
+    if (paid == 0) return
+    gainGold(paid, boosted = false)
+    s = s.copy(daily = s.daily.copy(focusGold = s.daily.focusGold + paid))
 }

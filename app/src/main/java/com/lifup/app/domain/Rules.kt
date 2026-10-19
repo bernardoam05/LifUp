@@ -113,6 +113,11 @@ object Rules {
     /** A finished "no quitting" session credits its minutes ×1.25 and 1 gold per 5 minutes. */
     const val STRICT_BONUS = 1.25
     const val STRICT_GOLD_EVERY_MIN = 5.0
+    /** Daily cap on that gold: 3 hours' worth. */
+    const val STRICT_GOLD_MAX_PER_DAY = 36
+    /** A measured limit warns once a day when this share of it, or this many minutes, is left. */
+    const val LIMIT_WARN_SHARE = 0.25
+    const val LIMIT_WARN_MIN = 20
 
     /** Sessions without a set end still stop by themselves after this long. */
     const val OPEN_SESSION_MAX_MIN = 480
@@ -138,6 +143,9 @@ object Rules {
     const val FOCUS_WEIGHT = 2.5
     /** Each mission drawn from a family multiplies that family's weight by this for the rest of the day. */
     const val REPEAT_DECAY = 0.2
+    /** Within its family, a mission drawn yesterday weighs this much against the others. */
+    const val RECENT_WEIGHT = 0.3
+    const val MAX_FOCUS_ATTRS = 2
 
     // ── Shadows ───────────────────────────────────────────────────────────────
 

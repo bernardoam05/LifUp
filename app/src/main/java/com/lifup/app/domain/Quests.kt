@@ -75,8 +75,9 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
         defs.filter { it.kind == DefKind.POOL && (it.daysOfWeek == null || dow in it.daysOfWeek) },
         // Automatic counts stop at the day's ceiling; a count set by hand is the player's call.
         ((if (state.settings.dailyPoolOverride != null) state.drawnCount() else minOf(state.drawnCount(), Rules.MAX_DAY_MISSIONS - core.size)) - due).coerceAtLeast(0),
-        state.settings.focusAttrs,
+        state.drawFocus(),
         Random(seed.toLong() xor state.seed),
+        recent = if (state.day == date.minusDays(1).toString()) state.dailyQuests.map { it.defId }.toSet() else emptySet(),
     )
     return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, adapt = state.adapt[it.id]?.level ?: 0, day = date) } +
         weekly.map { weeklyQuest(it, state.weekly[it.id], date, level, state.adapt[it.id]?.level ?: 0) }
@@ -224,9 +225,7 @@ fun Tx.swapQuest(id: String): Boolean {
     val free = s.daily.swapsUsed < Rules.FREE_SWAPS_PER_DAY
     if (!free && s.items("pergaminho_troca") == 0) return false
     val used = s.quests.map { it.defId }.toSet()
-    val replacement = s.availableDefs(content)
-        .filter { it.kind == DefKind.POOL && it.id !in used }
-        .randomOrNull(ctx.rng) ?: return false
+    val replacement = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used }) ?: return false
     if (free) s = s.copy(daily = s.daily.copy(swapsUsed = s.daily.swapsUsed + 1))
     else { addItem("pergaminho_troca", -1); count(StatKey.ITEMS_USED) }
     s = s.copy(quests = s.quests.map { if (it.id == id) buildQuest(replacement, s.player.level, QuestOrigin.DAILY, day = ctx.today) else it })
@@ -234,14 +233,17 @@ fun Tx.swapQuest(id: String): Boolean {
     return true
 }
 
+/** One more mission for today, balanced against the families already in today's list. */
+private fun Tx.drawOne(defs: List<QuestDef>): QuestDef? =
+    drawBalanced(defs, 1, s.drawFocus(), ctx.rng, taken = s.quests.mapNotNull { s.defOf(it.defId, content) }).firstOrNull()
+
 fun GameState.canAddExtra() = allDailyDone() && daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY
 
 fun Tx.addExtraQuest(): Boolean {
     if (!s.canAddExtra()) return false
     val used = s.quests.map { it.defId }.toSet()
-    val def = s.availableDefs(content)
-        .filter { it.kind == DefKind.POOL && it.id !in used && it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT }
-        .randomOrNull(ctx.rng) ?: return false
+    val def = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT })
+        ?: return false
     val n = s.daily.extrasAdded + 1
     s = s.copy(
         quests = s.quests + buildQuest(def, s.player.level, QuestOrigin.EXTRA, "extra_${n}_${def.id}", day = ctx.today),

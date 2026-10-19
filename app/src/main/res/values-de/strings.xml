@@ -136,7 +136,7 @@
     </plurals>
     <string name="choose_apps">Apps wählen</string>
     <string name="strict_mode">Kein Aufgeben</string>
-    <string name="strict_info">Wenn du vorzeitig stoppst, verlierst du die Minuten. Wenn du durchhältst, zählen sie +25 % und du bekommst Extra-Gold.</string>
+    <string name="strict_info">Wenn du vorzeitig stoppst, verlierst du die Minuten. Wenn du durchhältst, zählen sie +25 % und du bekommst Extra-Gold (bis zu 3 Std. am Tag).</string>
     <string name="ambient">Umgebungsklang</string>
     <string name="ambient_none">Stille</string>
     <string name="ambient_rain">Regen</string>
@@ -641,6 +641,12 @@
     <string name="attr_focus_title">Attributfokus</string>
     <string name="attr_focus_question">Welche Attribute willst du entwickeln?</string>
     <string name="attr_focus_hint">Bis zu 2. Ihre Missionen kommen öfter; die anderen erscheinen weiterhin.</string>
+    <string name="attr_focus_catchup">Aufholen</string>
+    <string name="attr_focus_catchup_what">zieht die Nachzügler hoch</string>
+    <string name="attr_focus_catchup_now">Heute im Fokus: %1$s</string>
+    <string name="attr_focus_catchup_even">Im Moment sind sie ausgeglichen: alles kommt gleich oft.</string>
+    <string name="notif_limit_title">%1$s: fast am Limit</string>
+    <string name="notif_limit_text">Noch %1$d Min. Gehst du darüber, scheitert die Mission.</string>
     <string name="def_edited">Bearbeitet</string>
     <string name="def_reset">Original wiederherstellen</string>
     <string name="weekly_hint_text">Du hast „%1$s“ letzte Woche an %2$d von %3$d Tagen gemacht. Auf %4$d× pro Woche umstellen? Dann zählt sie, wenn du sie machst, und wird erst Pflicht, wenn du sie nicht mehr auslassen kannst.</string>

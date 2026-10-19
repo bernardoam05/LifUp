@@ -30,6 +30,7 @@ object Notifications {
     private const val ID_POMODORO = 2005
     private const val ID_TIMER = 1340
     private const val ID_BOSS = 2007
+    private const val ID_LIMIT = 2010
 
     fun createChannels(context: Context) {
         val nm = context.getSystemService(NotificationManager::class.java)
@@ -143,6 +144,11 @@ object Notifications {
     fun bossLastDay(context: Context, boss: String, hp: Int) = post(
         context, ID_BOSS, CH_REMINDERS, context.getString(R.string.notif_boss_title, boss),
         context.getString(R.string.notif_boss_text, hp), "boss",
+    )
+
+    fun limitNearing(context: Context, slot: Int, quest: String, minutesLeft: Int) = post(
+        context, ID_LIMIT + slot, CH_REMINDERS, context.getString(R.string.notif_limit_title, quest),
+        context.getString(R.string.notif_limit_text, minutesLeft), "today",
     )
 
     fun cancelReminder(context: Context) = NotificationManagerCompat.from(context).cancel(ID_REMINDER)
