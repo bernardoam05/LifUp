@@ -66,10 +66,10 @@ fun Tx.tryWeeklyPassive(passive: Passive): ShadowDef? {
     return shadow
 }
 
-fun Tx.gainShadow(id: String, source: SourceType) {
+fun Tx.gainShadow(id: String, source: SourceType, origin: EchoOrigin, ref: String? = null) {
     if (content.shadowById[id] == null) return
     val existing = s.owned(id)
-    s = if (existing == null) s.copy(shadows = s.shadows + OwnedShadow(id))
+    s = if (existing == null) s.copy(shadows = s.shadows + OwnedShadow(id, origin = origin, originRef = ref, obtainedOn = ctx.todayKey))
     else s.copy(shadows = s.shadows.map { if (it.id == id) it.copy(copies = it.copies + 1) else it })
     reward { Reward.ShadowGained(it, id, existing == null, (existing?.copies ?: -1) + 1, source) }
     s = s.copy(newEchoes = s.newEchoes + (id to (existing == null || s.newEchoes[id] == true)))
@@ -86,7 +86,7 @@ fun Tx.rollExtraction() {
     s = s.copy(daily = s.daily.copy(extractionDone = true))
     val luck = s.passives(content, ctx.now).luck
     val rank = Rules.extractionRank(s.player.level, ctx.rng.nextDouble() / (1 + luck))
-    randomShadow(content.shadowPool(SourceType.EXTRACTION), rank)?.let { gainShadow(it.id, SourceType.EXTRACTION) }
+    randomShadow(content.shadowPool(SourceType.EXTRACTION), rank)?.let { gainShadow(it.id, SourceType.EXTRACTION, EchoOrigin.PERFECT_DAY) }
 }
 
 data class UpgradeCost(val gold: Int, val copies: Int, val levelCapped: Boolean)
@@ -108,6 +108,12 @@ fun Tx.upgradeShadow(id: String): Boolean {
     count(StatKey.GOLD_SPENT, cost.gold.toLong())
     toast(ToastKind.SHADOW_UPGRADED, id)
     return true
+}
+
+/** With a full squad, [inId] takes [outId]'s place. */
+fun Tx.swapSquad(outId: String, inId: String) {
+    if (s.owned(inId) == null || outId !in s.squad || inId in s.squad) return
+    s = s.copy(squad = s.squad.map { if (it == outId) inId else it })
 }
 
 fun Tx.toggleSquad(id: String) {

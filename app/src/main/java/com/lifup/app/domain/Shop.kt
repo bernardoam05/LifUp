@@ -33,7 +33,7 @@ fun Tx.buyShadow(id: String): Boolean {
     if (s.player.gold < cost) return false
     s = s.copy(player = s.player.copy(gold = s.player.gold - cost))
     count(StatKey.GOLD_SPENT, cost.toLong())
-    gainShadow(id, SourceType.SHOP)
+    gainShadow(id, SourceType.SHOP, EchoOrigin.SHOP)
     return true
 }
 
@@ -60,7 +60,7 @@ fun Tx.useItem(id: String, questId: String? = null): Boolean {
         }
         ItemEffect.SHADOW_ESSENCE -> {
             val pool = content.shadowPool(SourceType.EXTRACTION, SourceType.SHOP)
-            randomShadow(pool, Rules.essenceRank(ctx.rng.nextDouble()))?.let { gainShadow(it.id, SourceType.EXTRACTION) } != null
+            randomShadow(pool, Rules.essenceRank(ctx.rng.nextDouble()))?.let { gainShadow(it.id, SourceType.EXTRACTION, EchoOrigin.ESSENCE) } != null
         }
         ItemEffect.SWAP_QUEST -> {
             // swapQuest spends the free daily swap first and consumes the scroll itself afterwards.

@@ -107,7 +107,19 @@ data class BossSpoils(val xp: Int, val gold: Int)
 data class PortalState(val quest: Quest, val opensAt: Long, val expiresAt: Long)
 
 @Serializable
-data class OwnedShadow(val id: String, val level: Int = 1, val copies: Int = 0)
+data class OwnedShadow(
+    val id: String,
+    val level: Int = 1,
+    val copies: Int = 0,
+    /** How and when this echo first joined: null on saves from before it was recorded. */
+    val origin: EchoOrigin? = null,
+    /** The boss, achievement or streak length behind [origin]. */
+    val originRef: String? = null,
+    val obtainedOn: String? = null,
+)
+
+@Serializable
+enum class EchoOrigin { PERFECT_DAY, PORTAL, ESSENCE, SHOP, ACHIEVEMENT, STREAK, BOSS }
 
 @Serializable
 data class Buff(val itemId: String, val stat: String, val value: Double, val expiresAt: Long)
@@ -152,6 +164,8 @@ data class Settings(
     /** Attributes the player wants to grow most: their missions come up twice as often. */
     val focusAttrs: Set<Attr> = emptySet(),
     val blockOnPenalty: Boolean = false,
+    /** Silences the phone (Do Not Disturb) during focus phases, when the system allows it. */
+    val dndFocus: Boolean = false,
     val sidePenalize: Boolean = false,
     val sound: Boolean = true,
     val vibration: Boolean = true,
@@ -178,6 +192,8 @@ data class DailyFlags(
     val extractionDone: Boolean = false,
     val sideRewarded: Int = 0,
     val rest: Boolean = false,
+    /** Highest step count read today; added to the lifetime total when the day closes. */
+    val steps: Int = 0,
 )
 
 @Serializable
@@ -212,7 +228,7 @@ sealed interface Reward {
     data class BossDefeated(override val id: Long, val bossId: String, val xp: Int, val gold: Int, val items: List<String>) : Reward
 
     @Serializable @SerialName("achievement")
-    data class AchievementUnlocked(override val id: Long, val achievementId: String, val tier: Int, val gold: Int) : Reward
+    data class AchievementUnlocked(override val id: Long, val achievementId: String, val tier: Int, val gold: Int, val items: List<String> = emptyList(), val shadowId: String? = null) : Reward
 
     @Serializable @SerialName("day")
     data class DayReport(
@@ -263,7 +279,7 @@ sealed interface Reward {
 @Serializable
 enum class ToastKind {
     LEVEL_UP, ITEM_FOUND, PENALTY_CLEARED, FOCUS_DONE, FOCUS_LOST, BOSS_ESCAPED, PORTAL_ESCAPED,
-    PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED, WEEK_GOAL,
+    PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED, WEEK_GOAL, ACHIEVEMENT,
 }
 
 @Serializable

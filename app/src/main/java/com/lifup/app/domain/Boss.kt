@@ -72,7 +72,7 @@ private fun Tx.defeatBoss() {
     loot.forEach { addItem(it) }
     s = s.copy(boss = s.boss?.copy(spoils = BossSpoils(xp, gold), lootGiven = true))
     reward { Reward.BossDefeated(it, def.id, xp, gold, loot) }
-    if (!b.lootGiven) gainShadow(def.shadowId, SourceType.BOSS)
+    if (!b.lootGiven) gainShadow(def.shadowId, SourceType.BOSS, EchoOrigin.BOSS, def.id)
 }
 
 /** Gives back HP removed by an undone quest. A boss that fell to it comes back and takes its XP and gold back. */
@@ -155,6 +155,6 @@ fun Tx.completePortal() {
     val luck = s.passives(content, ctx.now).luck
     if (ctx.rng.nextDouble() < 0.2 * (1 + luck)) {
         val rank = Rules.extractionRank(s.player.level, ctx.rng.nextDouble() / (1 + luck))
-        randomShadow(content.shadowPool(SourceType.EXTRACTION), rank)?.let { gainShadow(it.id, SourceType.EXTRACTION) }
+        randomShadow(content.shadowPool(SourceType.EXTRACTION), rank)?.let { gainShadow(it.id, SourceType.EXTRACTION, EchoOrigin.PORTAL) }
     }
 }

@@ -7,6 +7,8 @@ fun GameState.statValue(key: StatKey): Long = when (key) {
     StatKey.MAX_SHADOW_LEVEL -> (shadows.maxOfOrNull { it.level } ?: 0).toLong()
     StatKey.SQUAD_FULL -> if (squad.size >= Rules.SQUAD_SIZE) 1 else 0
     StatKey.GPS_KM -> count(StatKey.GPS_METERS) / 1000
+    // Today's steps count before the day closes, so the total moves while you walk.
+    StatKey.STEPS -> count(StatKey.STEPS) + daily.steps
     else -> count(key)
 }
 
@@ -46,8 +48,13 @@ fun Tx.checkAchievements() {
             s = s.copy(achievements = s.achievements + (def.id to tier), player = s.player.copy(gold = s.player.gold + gold))
             count(StatKey.GOLD_EARNED, gold.toLong())
             val t = tier
-            reward { Reward.AchievementUnlocked(it, def.id, t, gold) }
-            def.shadowReward?.takeIf { it.tier == t }?.let { gainShadow(it.shadowId, SourceType.ACHIEVEMENT) }
+            val shadow = def.shadowReward?.takeIf { it.tier == t }?.shadowId
+            val items = if (t >= Rules.ACHIEVEMENT_CHEST_TIER) listOf(Rules.ACHIEVEMENT_CHEST) else emptyList()
+            items.forEach { addItem(it) }
+            // A "first time" unlock is a quiet notice; real milestones get their card.
+            if (def.tiers[t - 1] <= 1 && shadow == null) toast(ToastKind.ACHIEVEMENT, def.id)
+            else reward { Reward.AchievementUnlocked(it, def.id, t, gold, items, shadow) }
+            shadow?.let { gainShadow(it, SourceType.ACHIEVEMENT, EchoOrigin.ACHIEVEMENT, def.id) }
         }
     }
 }

@@ -629,14 +629,14 @@ class EngineTest {
     }
 
     @Test fun `new echoes and items stay flagged until seen`() {
-        var s = run(fresh(), "2026-10-14T10:00") { gainShadow("auto_pawn", SourceType.SHOP); addItem("pergaminho_troca") }
+        var s = run(fresh(), "2026-10-14T10:00") { gainShadow("auto_pawn", SourceType.SHOP, EchoOrigin.SHOP); addItem("pergaminho_troca") }
         assertEquals(true, s.newEchoes["auto_pawn"])
         assertTrue("pergaminho_troca" in s.newItems)
-        s = run(s, "2026-10-14T10:01") { gainShadow("auto_pawn", SourceType.SHOP) }
+        s = run(s, "2026-10-14T10:01") { gainShadow("auto_pawn", SourceType.SHOP, EchoOrigin.SHOP) }
         assertEquals(true, s.newEchoes["auto_pawn"])
         s = run(s, "2026-10-14T10:02") { markEchoesSeen(); markItemsSeen() }
         assertTrue(s.newEchoes.isEmpty() && s.newItems.isEmpty())
-        s = run(s, "2026-10-14T10:03") { gainShadow("auto_pawn", SourceType.SHOP) }
+        s = run(s, "2026-10-14T10:03") { gainShadow("auto_pawn", SourceType.SHOP, EchoOrigin.SHOP) }
         assertEquals(false, s.newEchoes["auto_pawn"])
     }
 
@@ -646,5 +646,38 @@ class EngineTest {
         val text = Content.json.encodeToString(s)
         val back = Content.json.decodeFromString<GameState>(text)
         assertEquals(s, back)
+    }
+
+    @Test fun `an echo remembers how and when it first joined`() {
+        var s = run(fresh(), "2026-10-14T10:00") { gainShadow("auto_pawn", SourceType.SHOP, EchoOrigin.SHOP) }
+        s = run(s, "2026-10-15T10:00") { gainShadow("auto_pawn", SourceType.EXTRACTION, EchoOrigin.PORTAL) }
+        val pawn = s.owned("auto_pawn")!!
+        assertEquals(EchoOrigin.SHOP, pawn.origin)
+        assertEquals("2026-10-14", pawn.obtainedOn)
+        assertEquals(1, pawn.copies)
+    }
+
+    @Test fun `a full squad swaps one member for the new echo`() {
+        val ids = content.shadows.take(4).map { it.id }
+        var s = run(fresh(), "2026-10-14T10:00") { ids.forEach { gainShadow(it, SourceType.SHOP, EchoOrigin.SHOP) }; ids.take(3).forEach { toggleSquad(it) } }
+        s = run(s, "2026-10-14T10:01") { toggleSquad(ids[3]) }
+        assertEquals(ids.take(3), s.squad) // full: equipping alone does nothing
+        s = run(s, "2026-10-14T10:02") { swapSquad(ids[1], ids[3]) }
+        assertEquals(listOf(ids[0], ids[3], ids[2]), s.squad)
+    }
+
+    @Test fun `steps add up across days into the lifetime total`() {
+        var s = run(fresh(), "2026-10-14T18:00") { applyAuto(AutoReading("2026-10-14", steps = 4_000)); applyAuto(AutoReading("2026-10-14", steps = 7_500)) }
+        assertEquals(7_500L, s.statValue(StatKey.STEPS))
+        s = run(run(s, "2026-10-15T09:00"), "2026-10-15T09:01") { applyAuto(AutoReading("2026-10-15", steps = 1_000)) }
+        assertEquals(7_500L, s.count(StatKey.STEPS))
+        assertEquals(8_500L, s.statValue(StatKey.STEPS))
+    }
+
+    @Test fun `first-time achievements are a quiet notice, milestones get a card`() {
+        val s = run(fresh(), "2026-10-14T10:00") { openPortal() }.let { st -> run(st, "2026-10-14T10:10") { completeQuest(st.portal!!.quest.id) } }
+        assertTrue(s.rewards.any { it is Reward.Toast && it.kind == ToastKind.ACHIEVEMENT && it.arg == "portals" })
+        assertTrue(s.rewards.none { it is Reward.AchievementUnlocked && it.achievementId == "portals" })
+        assertEquals(1, s.achievements["portals"])
     }
 }

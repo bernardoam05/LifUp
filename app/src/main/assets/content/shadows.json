@@ -1305,5 +1305,117 @@
    "fr": "Dragonnet d'Ombre",
    "de": "Schattendrachenjunges"
   }
+ },
+ {
+  "id": "dawn_warden",
+  "rank": "ELITE",
+  "shadowClass": "SPIRIT",
+  "passive": "DAILY_BONUS",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Vigia da Aurora",
+   "en": "Dawn Warden",
+   "es": "Vigía del Alba",
+   "fr": "Veilleur de l'Aube",
+   "de": "Wächter der Morgenröte"
+  }
+ },
+ {
+  "id": "shieldbreaker",
+  "rank": "KNIGHT",
+  "shadowClass": "WARRIOR",
+  "passive": "BOSS_DAMAGE",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Quebra-Escudos",
+   "en": "Shieldbreaker",
+   "es": "Rompescudos",
+   "fr": "Brise-Bouclier",
+   "de": "Schildbrecher"
+  }
+ },
+ {
+  "id": "threshold_keeper",
+  "rank": "ELITE",
+  "shadowClass": "ELEMENTAL",
+  "passive": "SHADOW_LUCK",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Guardião do Limiar",
+   "en": "Threshold Keeper",
+   "es": "Guardián del Umbral",
+   "fr": "Gardien du Seuil",
+   "de": "Hüter der Schwelle"
+  }
+ },
+ {
+  "id": "diligent_artisan",
+  "rank": "ELITE",
+  "shadowClass": "ARTISAN",
+  "passive": "GOLD_BOOST",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Artífice Diligente",
+   "en": "Diligent Artisan",
+   "es": "Artífice Diligente",
+   "fr": "Artisan Assidu",
+   "de": "Fleißiger Handwerker"
+  }
+ },
+ {
+  "id": "pilgrim",
+  "rank": "KNIGHT",
+  "shadowClass": "EXPLORER",
+  "passive": "EXPLORER_XP",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Peregrino",
+   "en": "Pilgrim",
+   "es": "Peregrino",
+   "fr": "Pèlerin",
+   "de": "Pilger"
+  }
+ },
+ {
+  "id": "silent_monk",
+  "rank": "KNIGHT",
+  "shadowClass": "MAGE",
+  "passive": "FOCUS_MASTERY",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Monge do Silêncio",
+   "en": "Silent Monk",
+   "es": "Monje del Silencio",
+   "fr": "Moine du Silence",
+   "de": "Mönch der Stille"
+  }
+ },
+ {
+  "id": "sleep_warden",
+  "rank": "ELITE",
+  "shadowClass": "SPIRIT",
+  "passive": "PENALTY_REDUCE",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Guardião do Sono",
+   "en": "Sleep Warden",
+   "es": "Guardián del Sueño",
+   "fr": "Gardien du Sommeil",
+   "de": "Hüter des Schlafs"
+  }
  }
 ]

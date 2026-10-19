@@ -71,9 +71,9 @@
     <string name="daily_section">Missions quotidiennes</string>
     <string name="extra_section">Missions bonus</string>
     <string name="add_extra">Mission bonus</string>
-    <string name="side_section">Quêtes annexes</string>
+    <string name="side_section">Tâches</string>
     <string name="side_hint">Une tâche pour aujourd\'hui…</string>
-    <string name="side_empty">Aucune quête annexe. Ajoute de petites tâches pour gagner de l\'XP bonus.</string>
+    <string name="side_empty">Aucune tâche. Ajoute de petites tâches du jour pour gagner de l\'XP bonus.</string>
     <string name="forbidden_keep">Tenu jusqu\'à minuit</string>
     <string name="forbidden_broken">Raté aujourd\'hui</string>
     <string name="forbidden_fail">J\'ai craqué</string>
@@ -186,7 +186,7 @@
     <string name="stat_portals">Portails</string>
     <string name="stat_gold_earned">Or gagné</string>
     <string name="stat_penalties">Pénalités</string>
-    <string name="stat_side">Quêtes annexes</string>
+    <string name="stat_side">Tâches</string>
     <string name="history">Historique</string>
     <string name="history_empty">Tes journées s\'afficheront ici.</string>
     <string name="day_rest">Repos</string>
@@ -209,7 +209,7 @@
     <string name="passive_gold">+%1$s or</string>
     <string name="passive_training">+%1$s XP sur les missions d\'entraînement</string>
     <string name="passive_mind">+%1$s XP sur les missions de savoir et de focus</string>
-    <string name="passive_explorer">+%1$s XP sur les missions GPS</string>
+    <string name="passive_explorer">+%1$s XP sur les missions de distance</string>
     <string name="passive_boss">+%1$s de dégâts aux boss</string>
     <string name="passive_penalty">−%1$s de pertes de pénalité</string>
     <string name="passive_immunity">Absorbe une pénalité par semaine</string>
@@ -282,8 +282,8 @@
     <string name="penalties">Pénalités</string>
     <string name="block_on_penalty">Bloquer des apps pendant les pénalités</string>
     <string name="block_on_penalty_info">Tes apps bloquées se ferment pendant la plage de pénalité.</string>
-    <string name="side_penalize">Quêtes annexes comptées</string>
-    <string name="side_penalize_info">Les quêtes annexes non faites comptent comme des échecs à minuit.</string>
+    <string name="side_penalize">Les tâches comptent</string>
+    <string name="side_penalize_info">Les tâches non faites comptent comme des échecs à minuit.</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_info">Portails, sessions terminées, pénalités et un rappel le soir.</string>
     <string name="reminder_hour">Heure du rappel</string>
@@ -502,7 +502,7 @@
     <string name="guide_streak">Monte chaque jour::+1 pour chaque jour où tu atteins le minimum.\nSeconde chance::Perdue ? Une journée parfaite juste après la ramène (une fois par semaine).\nJours de repos::Déclare-le avant midi et la journée ne compte ni pour ni contre toi. 2 par semaine en Facile, 1 en Normal.\nProtection en plus::Le Bouclier de Constance et certains échos sauvent ta série à ta place.</string>
     <string name="guide_penalty_title">Pénalité</string>
     <string name="guide_penalty">Perte proportionnelle::Tu perds de l\'XP et de l\'or selon ce qui reste à faire. Presque réussi ne coûte presque rien.\n24 heures::Sous 50 %, une pénalité démarre avec des missions en plus. Fais-les et elle se termine plus tôt.\nBlocage d\'apps::Si tu veux, tes apps qui distraient restent bloquées pendant la pénalité.</string>
-    <string name="guide_side_title">Quêtes secondaires</string>
+    <string name="guide_side_title">Tâches</string>
     <string name="guide_side">Libres::Écris n\'importe quelle tâche, sans objectifs ni règles.\n5 avec récompense::Les 5 premières terminées chaque jour donnent de l\'XP et de l\'or, et blessent le boss.\nEnsuite::Elles continuent de servir de liste de tâches.\nPas de triche::Décocher ou supprimer reprend la récompense.</string>
     <string name="guide_boss_title">Boss hebdomadaire</string>
     <string name="guide_boss">Tout l\'XP est un dégât::Chaque mission que tu accomplis lui retire de la vie.\nDéfi du boss::Une mission spéciale qui lui arrache 35 % d\'un coup.\nButin::Bats-le pour de l\'XP, de l\'or, un coffre et son écho.\nSinon…::Dimanche soir, il se termine, et un autre arrive.</string>
@@ -637,4 +637,22 @@
     <string name="how_to">Comment faire ?</string>
     <string name="note_add">Ajouter une note</string>
     <string name="note_hint">Ta note pour cette mission, gardée pour la prochaine fois (ex. : l\'app que tu utilises, ta routine).</string>
+    <string name="toast_achievement">Succès : %1$s · +%2$d or</string>
+    <string name="reward_echo">+ écho : %1$s</string>
+    <string name="origin_line">Obtenu le %1$s · %2$s</string>
+    <string name="origin_perfect_day">lors d\'une journée parfaite</string>
+    <string name="origin_portal">dans un portail</string>
+    <string name="origin_essence">avec une Essence d\'Écho</string>
+    <string name="origin_shop">acheté à la boutique</string>
+    <string name="origin_achievement">succès %1$s</string>
+    <string name="origin_streak">série de %1$d jours</string>
+    <string name="origin_boss">tu as vaincu %1$s</string>
+    <string name="squad_swap">Échanger</string>
+    <string name="squad_swap_title">Qui quitte l\'escouade ?</string>
+    <string name="stat_steps">Pas</string>
+    <string name="timer_goal">Objectif : %1$s</string>
+    <string name="timer_reached">Temps atteint : tu peux valider</string>
+    <string name="dnd_focus">Ne pas déranger</string>
+    <string name="dnd_focus_info">Met le téléphone en silence pendant le focus ; les pauses le rétablissent.</string>
+    <string name="dnd_focus_needs">Nécessite l\'accès « Ne pas déranger » dans les réglages Android.</string>
 </resources>

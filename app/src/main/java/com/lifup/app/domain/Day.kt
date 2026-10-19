@@ -61,6 +61,7 @@ private fun Tx.closeDay(day: LocalDate) {
     }
 
     if (!rest) recordMissions(daily)
+    count(StatKey.STEPS, s.daily.steps.toLong())
 
     // A penalty lasts 24 hours: its missions only lift it early, and leftovers just expire.
     expirePenalty()
@@ -105,7 +106,7 @@ private fun Tx.setStreak(value: Int) {
         if (m.gold > 0) gainGold(m.gold, boosted = false)
         m.items.forEach { addItem(it) }
         reward { Reward.StreakMilestone(it, m.days, m.gold, m.items) }
-        m.shadowId?.let { gainShadow(it, SourceType.STREAK) }
+        m.shadowId?.let { gainShadow(it, SourceType.STREAK, EchoOrigin.STREAK, m.days.toString()) }
     }
 }
 

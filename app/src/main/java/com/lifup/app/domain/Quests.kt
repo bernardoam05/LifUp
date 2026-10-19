@@ -126,6 +126,7 @@ private fun Tx.completeMission(q: Quest) {
     updateQuest(q.id) { it.copy(status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt) }
     count(StatKey.QUESTS_COMPLETED)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED)
+    if (q.fromHour != null) count(StatKey.BEDTIMES_KEPT)
     when (ctx.hour) {
         in 0..3 -> count(StatKey.NIGHT_QUESTS)
         in 4..6 -> count(StatKey.EARLY_QUESTS)
@@ -158,6 +159,7 @@ fun Tx.undoQuest(id: String) {
     healBoss(q.bossDamage)
     count(StatKey.QUESTS_COMPLETED, -1)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED, -1)
+    if (q.fromHour != null) count(StatKey.BEDTIMES_KEPT, -1)
     tallyWeekly(q, -1)
     updateQuest(id) {
         // Tracked minutes/km stay (they were really done); automatic missions restart and stop auto-filling.

@@ -1,5 +1,15 @@
 package com.lifup.app.ui.hero
 
+import com.lifup.app.domain.swapSquad
+import com.lifup.app.domain.EchoOrigin
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,6 +62,8 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
     val known = owned != null || reveal
     val c = Lif.colors
     val color = shadowRankColor(def.rank)
+    var swapping by remember { mutableStateOf(false) }
+    if (swapping) SwapDialog(s, id) { swapping = false }
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = c.panel) {
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -73,7 +85,8 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
                     Text(stringResource(R.string.next_level_value, passiveText(def.passive, Rules.passiveValue(def, level + 1))), style = MaterialTheme.typography.labelSmall, color = c.dim)
                 }
             }
-            Text(
+            owned?.origin?.let { Text(originText(owned), style = MaterialTheme.typography.labelMedium, color = c.text) }
+            if (owned?.origin == null) Text(
                 when (def.source.type) {
                     SourceType.EXTRACTION -> stringResource(R.string.source_extraction)
                     SourceType.SHOP -> stringResource(R.string.source_shop)
@@ -93,16 +106,62 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
                     style = MaterialTheme.typography.labelMedium, color = if (canUpgrade) c.text else c.dim,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // A full squad offers a swap instead of a disabled button.
+                    val full = !inSquad && s.squad.size >= Rules.SQUAD_SIZE
                     GhostButton(
-                        stringResource(if (inSquad) R.string.unequip else R.string.equip),
-                        onClick = { act { toggleSquad(id) } },
-                        enabled = inSquad || s.squad.size < Rules.SQUAD_SIZE,
+                        stringResource(if (inSquad) R.string.unequip else if (full) R.string.squad_swap else R.string.equip),
+                        onClick = { if (full) swapping = true else act { toggleSquad(id) } },
                         modifier = Modifier.weight(1f),
-                        icon = if (inSquad) Icons.Rounded.GroupRemove else Icons.Rounded.GroupAdd,
+                        icon = if (inSquad) Icons.Rounded.GroupRemove else if (full) Icons.Rounded.SwapHoriz else Icons.Rounded.GroupAdd,
                     )
                     PrimaryButton(stringResource(R.string.upgrade), onClick = { act { upgradeShadow(id) } }, enabled = canUpgrade, modifier = Modifier.weight(1f), icon = Icons.Rounded.ArrowUpward)
                 }
             }
         }
     }
+}
+
+/** "Obtained 18 Oct · Defeated X": when and how this echo first joined. */
+@Composable
+private fun originText(o: com.lifup.app.domain.OwnedShadow): String {
+    val ref = o.originRef.orEmpty()
+    val how = when (o.origin) {
+        EchoOrigin.PERFECT_DAY -> stringResource(R.string.origin_perfect_day)
+        EchoOrigin.PORTAL -> stringResource(R.string.origin_portal)
+        EchoOrigin.ESSENCE -> stringResource(R.string.origin_essence)
+        EchoOrigin.SHOP -> stringResource(R.string.origin_shop)
+        EchoOrigin.ACHIEVEMENT -> stringResource(R.string.origin_achievement, content.achievementById[ref]?.title?.local().orEmpty())
+        EchoOrigin.STREAK -> stringResource(R.string.origin_streak, ref.toIntOrNull() ?: 0)
+        EchoOrigin.BOSS -> stringResource(R.string.origin_boss, content.bossById[ref]?.title?.local().orEmpty())
+        null -> ""
+    }
+    val date = o.obtainedOn?.let { java.time.LocalDate.parse(it).format(java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy")) }
+    return if (date != null) stringResource(R.string.origin_line, date, how) else how
+}
+
+/** Picks which squad member steps out for the new echo. */
+@Composable
+private fun SwapDialog(s: GameState, inId: String, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.squad_swap_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                s.squad.mapNotNull { content.shadowById[it] }.forEach { out ->
+                    Panel(onClick = { act { swapSquad(out.id, inId) }; onDismiss() }, padding = PaddingValues(10.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            EchoEmblem(out, known = true, size = 36.dp)
+                            Spacer(Modifier.width(10.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(out.name.local(), style = MaterialTheme.typography.titleSmall)
+                                Text(passiveText(out.passive, Rules.passiveValue(out, s.owned(out.id)?.level ?: 1)), style = MaterialTheme.typography.labelSmall, color = Lif.colors.muted)
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }

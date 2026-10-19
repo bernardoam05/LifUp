@@ -1,5 +1,8 @@
 package com.lifup.app.ui.hero
 
+import com.lifup.app.domain.defOf
+import com.lifup.app.ui.fmtCompact
+import com.lifup.app.ui.fmtNum
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.runtime.remember
 import androidx.compose.material3.TextButton
@@ -241,7 +244,7 @@ private fun AchievementRow(s: GameState, def: com.lifup.app.domain.AchievementDe
             Spacer(Modifier.height(6.dp))
             Bar(value / target.toFloat(), c.gold)
             Row {
-                Text("$value / $target", style = MaterialTheme.typography.labelSmall, color = c.dim, modifier = Modifier.weight(1f))
+                Text("${fmtCompact(value)} / ${fmtCompact(target)}", style = MaterialTheme.typography.labelSmall, color = c.dim, modifier = Modifier.weight(1f))
                 val shadowNext = def.shadowReward?.tier == tier + 1
                 Text(
                     stringResource(if (shadowNext) R.string.achievement_next_shadow else R.string.achievement_next, com.lifup.app.domain.achievementGold(tier + 1)),
@@ -257,25 +260,26 @@ private fun AchievementRow(s: GameState, def: com.lifup.app.domain.AchievementDe
 private fun Stats(s: GameState) {
     val c = Lif.colors
     val tiles = listOf(
-        R.string.stat_quests to s.count(StatKey.QUESTS_COMPLETED),
-        R.string.stat_perfect to s.count(StatKey.PERFECT_DAYS),
-        R.string.stat_focus_h to s.count(StatKey.FOCUS_MINUTES) / 60,
-        R.string.stat_sessions to s.count(StatKey.FOCUS_SESSIONS),
-        R.string.stat_km to s.statValue(StatKey.GPS_KM),
-        R.string.stat_portals to s.count(StatKey.PORTALS_CLEARED),
-        R.string.stat_gold_earned to s.count(StatKey.GOLD_EARNED),
-        R.string.stat_penalties to s.count(StatKey.PENALTIES_TAKEN),
-        R.string.stat_side to s.count(StatKey.SIDE_COMPLETED),
+        R.string.stat_quests to s.count(StatKey.QUESTS_COMPLETED).toString(),
+        R.string.stat_perfect to s.count(StatKey.PERFECT_DAYS).toString(),
+        // Half an hour shows as 0.5, not 0.
+        R.string.stat_focus_h to fmtNum(s.count(StatKey.FOCUS_MINUTES) / 60.0),
+        R.string.stat_sessions to s.count(StatKey.FOCUS_SESSIONS).toString(),
+        R.string.stat_steps to fmtCompact(s.statValue(StatKey.STEPS)),
+        R.string.stat_portals to s.count(StatKey.PORTALS_CLEARED).toString(),
+        R.string.stat_gold_earned to fmtCompact(s.count(StatKey.GOLD_EARNED)),
+        R.string.stat_penalties to s.count(StatKey.PENALTIES_TAKEN).toString(),
+        R.string.stat_side to s.count(StatKey.SIDE_COMPLETED).toString(),
     )
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), maxItemsInEachRow = 3) {
-        tiles.forEach { (label, value) -> StatTile(stringResource(label), value.toString(), modifier = Modifier.weight(1f)) }
+        tiles.forEach { (label, value) -> StatTile(stringResource(label), value, modifier = Modifier.weight(1f)) }
     }
     SectionTitle(stringResource(R.string.history))
     ActivityCalendar(s)
     Spacer(Modifier.height(8.dp))
     s.dayLog.takeLast(7).reversed().forEach { d ->
         Row(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
-            Text(d.day, style = MaterialTheme.typography.labelMedium, color = c.muted, modifier = Modifier.weight(1f))
+            Text(java.time.LocalDate.parse(d.day).format(java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM")), style = MaterialTheme.typography.labelMedium, color = c.muted, modifier = Modifier.weight(1f))
             Text(
                 when {
                     d.rest -> stringResource(R.string.day_rest)
@@ -295,7 +299,8 @@ private fun Stats(s: GameState) {
 @Composable
 private fun MissionRates(s: GameState) {
     val c = Lif.colors
-    val stats = s.missionStats.entries.filter { it.value.total > 0 }.sortedWith(compareBy({ it.value.rate }, { -it.value.total }))
+    // Missions removed from the app have no name left to show.
+    val stats = s.missionStats.entries.filter { it.value.total > 0 && s.defOf(it.key, content) != null }.sortedWith(compareBy({ it.value.rate }, { -it.value.total }))
     if (stats.isEmpty()) return
     var all by remember { mutableStateOf(false) }
     SectionTitle(stringResource(R.string.mission_rates))

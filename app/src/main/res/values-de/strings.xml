@@ -77,9 +77,9 @@
     <string name="daily_section">Tägliche Missionen</string>
     <string name="extra_section">Extra-Missionen</string>
     <string name="add_extra">Extra-Mission</string>
-    <string name="side_section">Nebenquests</string>
+    <string name="side_section">Aufgaben</string>
     <string name="side_hint">Eine Aufgabe für heute…</string>
-    <string name="side_empty">Keine Nebenquests. Füge kleine Aufgaben für Bonus-XP hinzu.</string>
+    <string name="side_empty">Keine Aufgaben. Füge kleine Aufgaben für Bonus-XP hinzu.</string>
     <string name="forbidden_keep">Bis Mitternacht halten</string>
     <string name="forbidden_broken">Heute gebrochen</string>
     <string name="forbidden_fail">Ausgerutscht</string>
@@ -197,7 +197,7 @@
     <string name="stat_portals">Portale</string>
     <string name="stat_gold_earned">Gold verdient</string>
     <string name="stat_penalties">Strafen</string>
-    <string name="stat_side">Nebenquests</string>
+    <string name="stat_side">Aufgaben</string>
     <string name="history">Verlauf</string>
     <string name="history_empty">Deine Tage erscheinen hier.</string>
     <string name="day_rest">Ruhe</string>
@@ -221,7 +221,7 @@
     <string name="passive_gold">+%1$s Gold</string>
     <string name="passive_training">+%1$s XP bei Trainingsmissionen</string>
     <string name="passive_mind">+%1$s XP bei Wissens- und Fokusmissionen</string>
-    <string name="passive_explorer">+%1$s XP bei GPS-Missionen</string>
+    <string name="passive_explorer">+%1$s XP bei Streckenmissionen</string>
     <string name="passive_boss">+%1$s Schaden an Bossen</string>
     <string name="passive_penalty">−%1$s Strafverluste</string>
     <string name="passive_immunity">Absorbiert eine Strafe pro Woche</string>
@@ -297,8 +297,8 @@
     <string name="penalties">Strafen</string>
     <string name="block_on_penalty">Apps bei Strafen sperren</string>
     <string name="block_on_penalty_info">Deine gesperrten Apps schließen sich während des Strafzeitfensters.</string>
-    <string name="side_penalize">Nebenquests zählen</string>
-    <string name="side_penalize_info">Unerledigte Nebenquests zählen um Mitternacht als gescheitert.</string>
+    <string name="side_penalize">Aufgaben zählen</string>
+    <string name="side_penalize_info">Unerledigte Aufgaben zählen um Mitternacht als gescheitert.</string>
     <string name="notifications">Benachrichtigungen</string>
     <string name="notifications_info">Portale, beendete Sessions, Strafen und eine Erinnerung am Abend.</string>
     <string name="reminder_hour">Erinnerungszeit</string>
@@ -520,7 +520,7 @@
     <string name="guide_streak">Wächst jeden Tag::+1 für jeden Tag, an dem du das Minimum erreichst.\nZweite Chance::Verloren? Ein perfekter Tag direkt danach holt sie zurück (einmal pro Woche).\nRuhetage::Melde ihn vor Mittag an und der Tag zählt weder dafür noch dagegen. 2 pro Woche auf Leicht, 1 auf Normal.\nExtra-Schutz::Der Schild der Beständigkeit und manche Echos retten deine Serie für dich.</string>
     <string name="guide_penalty_title">Strafe</string>
     <string name="guide_penalty">Anteiliger Verlust::Du verlierst XP und Gold je nach dem, was offen blieb. Fast geschafft kostet fast nichts.\n24 Stunden::Unter 50 % beginnt eine Strafe mit Extra-Missionen. Erledige sie und sie endet früher.\nApp-Sperre::Wenn du willst, bleiben deine Ablenkungs-Apps gesperrt, solange sie dauert.</string>
-    <string name="guide_side_title">Nebenquests</string>
+    <string name="guide_side_title">Aufgaben</string>
     <string name="guide_side">Freie::Schreib jede beliebige Aufgabe, ohne Ziele und Regeln.\n5 mit Belohnung::Die ersten 5 erledigten pro Tag geben XP und Gold und verletzen den Boss.\nDanach::Sie funktionieren weiter als To-do-Liste.\nKein Schummeln::Abhaken rückgängig machen oder Löschen nimmt die Belohnung zurück.</string>
     <string name="guide_boss_title">Wochenboss</string>
     <string name="guide_boss">Alle XP sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben.\nBoss-Challenge::Eine Spezialmission, die ihm auf einen Schlag 35 % abzieht.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nWenn nicht …::Sonntagnacht endet er, und ein neuer kommt.</string>
@@ -655,4 +655,22 @@
     <string name="how_to">Wie geht das?</string>
     <string name="note_add">Notiz hinzufügen</string>
     <string name="note_hint">Deine Notiz zu dieser Mission, gespeichert fürs nächste Mal (z. B. die App, die du nutzt, deine Routine).</string>
+    <string name="toast_achievement">Erfolg: %1$s · +%2$d Gold</string>
+    <string name="reward_echo">+ Echo: %1$s</string>
+    <string name="origin_line">Erhalten am %1$s · %2$s</string>
+    <string name="origin_perfect_day">an einem perfekten Tag</string>
+    <string name="origin_portal">in einem Portal</string>
+    <string name="origin_essence">mit Echo-Essenz</string>
+    <string name="origin_shop">im Shop gekauft</string>
+    <string name="origin_achievement">Erfolg %1$s</string>
+    <string name="origin_streak">%1$d-Tage-Serie</string>
+    <string name="origin_boss">%1$s besiegt</string>
+    <string name="squad_swap">Tauschen</string>
+    <string name="squad_swap_title">Wer verlässt den Trupp?</string>
+    <string name="stat_steps">Schritte</string>
+    <string name="timer_goal">Ziel: %1$s</string>
+    <string name="timer_reached">Zeit erreicht: du kannst abschließen</string>
+    <string name="dnd_focus">Nicht stören</string>
+    <string name="dnd_focus_info">Schaltet das Handy beim Fokus stumm; in Pausen wieder normal.</string>
+    <string name="dnd_focus_needs">Braucht Zugriff auf „Nicht stören“ in den Android-Einstellungen.</string>
 </resources>

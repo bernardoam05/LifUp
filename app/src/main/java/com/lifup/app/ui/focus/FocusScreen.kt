@@ -293,6 +293,7 @@ private fun SessionSetup(s: GameState) {
     val summary = listOfNotNull(
         stringResource(R.string.block_apps).takeIf { blocking },
         stringResource(R.string.strict_mode).takeIf { strict && !open },
+        stringResource(R.string.dnd_focus).takeIf { set.dndFocus },
         ambient?.let { stringResource(ambientName(it)) },
     ).joinToString(" · ").ifEmpty { stringResource(R.string.options_none) }
     var more by rememberSaveable { mutableStateOf(false) }
@@ -315,6 +316,7 @@ private fun SessionSetup(s: GameState) {
                 TextButton(onClick = { pickApps = true }) { Text(stringResource(R.string.choose_apps).uppercase()) }
             }
             ToggleRow(stringResource(R.string.strict_mode), stringResource(if (open) R.string.strict_open_info else R.string.strict_info), strict && !open, enabled = !open) { strict = it }
+            DndToggle(set.dndFocus)
         }
         SectionTitle(stringResource(R.string.ambient))
         AmbientChips(ambient) { ambient = it }
@@ -429,5 +431,20 @@ fun ToggleRow(title: String, subtitle: String, checked: Boolean, enabled: Boolea
         }
         Spacer(Modifier.width(8.dp))
         Switch(checked = checked, onCheckedChange = onChange, enabled = enabled)
+    }
+}
+
+/** Do Not Disturb while focusing; the first time, Android asks for "Do Not Disturb access". */
+@Composable
+private fun DndToggle(on: Boolean) {
+    val context = LocalContext.current
+    val tick = rememberResumeTick()
+    val granted = remember(tick) { com.lifup.app.system.FocusDnd.granted(context) }
+    ToggleRow(stringResource(R.string.dnd_focus), stringResource(if (granted || !on) R.string.dnd_focus_info else R.string.dnd_focus_needs), on) { v ->
+        act { updateSettings { it.copy(dndFocus = v) } }
+        if (v && !granted) com.lifup.app.system.FocusDnd.openAccess(context)
+    }
+    if (on && !granted) TextButton(onClick = { com.lifup.app.system.FocusDnd.openAccess(context) }) {
+        Text(stringResource(R.string.grant_permissions).uppercase(), color = Lif.colors.gold)
     }
 }

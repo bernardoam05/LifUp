@@ -1,5 +1,6 @@
 package com.lifup.app.ui.hero
 
+import com.lifup.app.ui.fmtCount
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,7 +51,7 @@ fun tierColor(tier: Int): Color {
 
 @Composable
 fun AchievementDef.text(target: Long) =
-    (descriptionOne?.takeIf { target == 1L } ?: description).local().replace("{target}", target.toString())
+    (descriptionOne?.takeIf { target == 1L } ?: description).local().replace("{target}", fmtCount(target))
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,7 +103,7 @@ private fun TierRow(def: AchievementDef, tier: Int, target: Long, value: Long, r
         if (next) {
             Spacer(Modifier.size(6.dp))
             Bar(value / target.toFloat(), c.gold)
-            Text("$value / $target", style = MaterialTheme.typography.labelSmall, color = c.dim)
+            Text("${com.lifup.app.ui.fmtCompact(value)} / ${com.lifup.app.ui.fmtCompact(target)}", style = MaterialTheme.typography.labelSmall, color = c.dim)
         }
     }
 }

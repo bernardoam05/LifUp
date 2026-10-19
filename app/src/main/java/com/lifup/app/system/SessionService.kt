@@ -76,6 +76,7 @@ class SessionService : Service() {
                 }
                 needed(s, now) -> running?.handler?.post { running.refresh() }
                 running != null -> running.handler.post { running.stopSelf() }
+                else -> FocusDnd.set(context, false) // a session that ended while the app was gone
             }
         }
 
@@ -140,6 +141,7 @@ class SessionService : Service() {
         removeOverlay()
         stopAmbient()
         releaseWakeLock()
+        FocusDnd.set(this, false)
         super.onDestroy()
     }
 
@@ -174,6 +176,9 @@ class SessionService : Service() {
             }
             if (!needed(s, now)) { stopSelf(); return }
             if (s.blockPlan(now) != plan) refresh()
+            // Silence during focus phases only: Pomodoro breaks let notifications through.
+            val working = f != null && f.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(now)).work } != false
+            FocusDnd.set(this@SessionService, s.settings.dndFocus && working)
             f?.pomodoro?.let { p ->
                 val phase = Pomodoro.phaseAt(p, f.elapsedMinutes(now))
                 val prev = lastPhase

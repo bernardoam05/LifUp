@@ -132,6 +132,8 @@ fun RewardHost(s: GameState) {
                     RewardCard(Icons.Rounded.EmojiEvents, Lif.colors.gold, stringResource(R.string.reward_achievement_title), def?.title?.local().orEmpty(), dismiss) {
                         Line(stringResource(R.string.tier_n, reward.tier, def?.tiers?.size ?: reward.tier), Lif.colors.muted)
                         Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
+                        reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
+                        reward.shadowId?.let { content.shadowById[it] }?.let { Line(stringResource(R.string.reward_echo, it.name.local()), Lif.colors.purple) }
                     }
                 }
                 is Reward.StreakMilestone -> RewardCard(Icons.Rounded.LocalFireDepartment, Lif.colors.red, stringResource(R.string.reward_streak_title), stringResource(R.string.days_in_a_row, reward.days), dismiss) {
@@ -250,6 +252,7 @@ private fun toastMessage(s: GameState, t: Reward.Toast): String {
         ToastKind.PASSIVE_FIRED -> stringResource(R.string.toast_passive_fired, shadowName)
         ToastKind.BUFF_ACTIVE -> stringResource(R.string.toast_buff, itemName)
         ToastKind.WEEK_GOAL -> stringResource(R.string.toast_week_goal, defTitle(s, t.arg))
+        ToastKind.ACHIEVEMENT -> stringResource(R.string.toast_achievement, content.achievementById[t.arg]?.title?.local().orEmpty(), com.lifup.app.domain.achievementGold(1))
         ToastKind.BOSS_HIT -> ""
     }
 }

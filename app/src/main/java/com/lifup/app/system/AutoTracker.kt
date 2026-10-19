@@ -173,7 +173,6 @@ object AutoTracker {
         val store = LifUpApp.store
         val s = store.current
         if (s.run?.running == true) stepCounter(c)?.let { n -> store.dispatch { runCheckpoint(n) } }
-        if (s.allQuests.none { it.auto != null }) return
         val reading = read(c, LocalDate.now(), s)
         store.dispatch { applyAuto(reading) }
     }
@@ -188,7 +187,6 @@ object AutoTracker {
     /** Before a day closes, record its final values so the close-out judges them correctly. */
     suspend fun readBeforeClose(c: Context, s: GameState): AutoReading? {
         if (s.day.isEmpty() || s.day >= LocalDate.now().toString()) return null
-        if (s.allQuests.none { it.auto != null }) return null
         return read(c, LocalDate.parse(s.day), s)
     }
 }

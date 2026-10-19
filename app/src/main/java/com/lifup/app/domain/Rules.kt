@@ -199,6 +199,9 @@ object Rules {
     }
 
     val ACHIEVEMENT_GOLD = intArrayOf(50, 150, 400, 1000, 2500)
+    /** From this tier on, an achievement also gives a chest. */
+    const val ACHIEVEMENT_CHEST_TIER = 3
+    const val ACHIEVEMENT_CHEST = "bau_cacador"
 
     /** Days of history kept for the activity calendar (a bit over a year). */
     const val DAY_LOG_DAYS = 371

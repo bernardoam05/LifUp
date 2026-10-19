@@ -1,5 +1,6 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.ui.components.Bar
 import com.lifup.app.domain.tipFor
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material.icons.rounded.MonetizationOn
@@ -308,11 +309,22 @@ private fun FoldRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label
 @Composable
 private fun Stopwatch(q: Quest, timer: com.lifup.app.domain.MissionTimer?, now: Long) {
     val p = Lif.colors
+    val elapsed = timer?.elapsed(now) ?: 0
+    // Timed missions ("20 min", "90 s") measure against their target and turn green once it's reached.
+    val goalMs = when (q.unit) { "min" -> q.target * 60_000; "s" -> q.target * 1_000; else -> null }?.toLong()
+    val reached = goalMs != null && elapsed >= goalMs
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(fmtDuration(timer?.elapsed(now) ?: 0), style = MaterialTheme.typography.headlineMedium, color = if (timer?.running == true) p.accent else p.text, modifier = Modifier.weight(1f))
+        Text(fmtDuration(elapsed), style = MaterialTheme.typography.headlineMedium, color = if (reached) p.green else if (timer?.running == true) p.accent else p.text, modifier = Modifier.weight(1f))
         if (timer?.running == true) IconButton(onClick = { act { pauseTimer(q.id) } }) { Icon(Icons.Rounded.Pause, stringResource(R.string.a11y_pause)) }
         else IconButton(onClick = { act { startTimer(q.id) } }) { Icon(Icons.Rounded.PlayArrow, stringResource(R.string.a11y_start), tint = p.accent) }
         IconButton(onClick = { act { resetTimer(q.id) } }, enabled = timer != null) { Icon(Icons.Rounded.RestartAlt, stringResource(R.string.a11y_reset)) }
+    }
+    if (goalMs != null) {
+        Bar((elapsed / goalMs.toFloat()).coerceAtMost(1f), if (reached) p.green else p.accent)
+        Text(
+            if (reached) stringResource(R.string.timer_reached) else stringResource(R.string.timer_goal, fmtDuration(goalMs)),
+            style = MaterialTheme.typography.labelMedium, color = if (reached) p.green else p.muted,
+        )
     }
 }
 

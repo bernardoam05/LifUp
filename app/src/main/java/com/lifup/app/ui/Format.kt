@@ -60,10 +60,13 @@ fun fmtNum(v: Double): String = if (abs(v - v.roundToInt()) < 0.05) v.roundToInt
 fun questTitle(q: Quest, lang: String) = q.title.text(lang)
 
 /** Short number for tight spots: 9 999, 12,3k, 10,0M. */
+/** Whole counts with the locale's thousands separator: 2 000 000 steps reads better than 2000000. */
+fun fmtCount(v: Long): String = java.text.NumberFormat.getIntegerInstance().format(v)
+
 fun fmtCompact(v: Long): String = when {
     v < 10_000 -> v.toString()
-    v < 1_000_000 -> "%.1fk".format(v / 1_000.0).replace(".0k", "k")
-    else -> "%.1fM".format(v / 1_000_000.0)
+    v < 1_000_000 -> "%.1fk".format(v / 1_000.0).replace(Regex("[.,]0k$"), "k")
+    else -> "%.1fM".format(v / 1_000_000.0).replace(Regex("[.,]0M$"), "M")
 }
 
 /** Title of a mission definition, built-in or made in the Forge. */

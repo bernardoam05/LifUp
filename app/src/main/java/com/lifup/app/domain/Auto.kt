@@ -14,6 +14,7 @@ data class AutoReading(
  */
 fun Tx.applyAuto(r: AutoReading) {
     if (r.day != s.day) return
+    r.steps?.takeIf { it > s.daily.steps }?.let { s = s.copy(daily = s.daily.copy(steps = it)) }
     s.allQuests.filter { it.auto != null && !it.autoOff && it.status == QuestStatus.OPEN }.forEach { q ->
         val value = when (q.auto) {
             AutoKind.STEPS -> r.steps?.toDouble()

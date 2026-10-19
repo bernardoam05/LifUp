@@ -1775,16 +1775,16 @@
     "de": "Strafe: Cardio"
    },
    "description": {
-    "pt": "20 min de corrida contínua",
-    "en": "20 min of continuous running",
-    "es": "20 min de carrera continua",
-    "fr": "20 min de course continue",
-    "de": "20 Min. durchgehend laufen"
+    "pt": "{target} min de corrida contínua",
+    "en": "{target} min of continuous running",
+    "es": "{target} min de carrera continua",
+    "fr": "{target} min de course continue",
+    "de": "{target} Min. durchgehend laufen"
    },
-   "baseTarget": 1,
+   "baseTarget": 20,
    "scalingAmount": 0,
    "scalingInterval": 1,
-   "unit": "",
+   "unit": "min",
    "baseXp": 0,
    "baseGold": 0
   },
@@ -1800,16 +1800,16 @@
     "de": "Strafe: Kniebeugen"
    },
    "description": {
-    "pt": "50 agachamentos consecutivos",
-    "en": "50 consecutive squats",
-    "es": "50 sentadillas seguidas",
-    "fr": "50 squats d'affilée",
-    "de": "50 Kniebeugen am Stück"
+    "pt": "{target} agachamentos seguidos",
+    "en": "{target} consecutive squats",
+    "es": "{target} sentadillas seguidas",
+    "fr": "{target} squats d'affilée",
+    "de": "{target} Kniebeugen am Stück"
    },
-   "baseTarget": 1,
+   "baseTarget": 50,
    "scalingAmount": 0,
    "scalingInterval": 1,
-   "unit": "",
+   "unit": "reps",
    "baseXp": 0,
    "baseGold": 0
   },
@@ -1850,16 +1850,16 @@
     "de": "Strafe: Disziplinarlektüre"
    },
    "description": {
-    "pt": "15 páginas (livro não-ficção)",
-    "en": "15 pages of a non-fiction book",
-    "es": "15 páginas de un libro de no ficción",
-    "fr": "15 pages d'un livre non fictif",
-    "de": "15 Seiten eines Sachbuchs"
+    "pt": "{target} páginas de um livro de não-ficção",
+    "en": "{target} pages of a non-fiction book",
+    "es": "{target} páginas de un libro de no ficción",
+    "fr": "{target} pages d'un livre documentaire",
+    "de": "{target} Seiten eines Sachbuchs"
    },
-   "baseTarget": 1,
+   "baseTarget": 15,
    "scalingAmount": 0,
    "scalingInterval": 1,
-   "unit": "",
+   "unit": "pages",
    "baseXp": 0,
    "baseGold": 0
   },
@@ -1875,16 +1875,16 @@
     "de": "Strafe: Lange Plank"
    },
    "description": {
-    "pt": "3 min de prancha (acumulados)",
-    "en": "3 min of plank (accumulated)",
-    "es": "3 min de plancha (acumulados)",
-    "fr": "3 min de gainage (cumulées)",
-    "de": "3 Min. Plank (insgesamt)"
+    "pt": "{target} min de prancha (podes dividir)",
+    "en": "{target} min of plank (you can split it)",
+    "es": "{target} min de plancha (puedes dividirla)",
+    "fr": "{target} min de gainage (tu peux fractionner)",
+    "de": "{target} Min. Plank (aufteilbar)"
    },
-   "baseTarget": 1,
+   "baseTarget": 3,
    "scalingAmount": 0,
    "scalingInterval": 1,
-   "unit": "",
+   "unit": "min",
    "baseXp": 0,
    "baseGold": 0
   },
@@ -1900,16 +1900,16 @@
     "de": "Strafe: Liegestütze"
    },
    "description": {
-    "pt": "30 flexões de execução lenta",
-    "en": "30 slow push-ups",
-    "es": "30 flexiones lentas",
-    "fr": "30 pompes lentes",
-    "de": "30 langsame Liegestütze"
+    "pt": "{target} flexões lentas",
+    "en": "{target} slow push-ups",
+    "es": "{target} flexiones lentas",
+    "fr": "{target} pompes lentes",
+    "de": "{target} langsame Liegestütze"
    },
-   "baseTarget": 1,
+   "baseTarget": 30,
    "scalingAmount": 0,
    "scalingInterval": 1,
-   "unit": "",
+   "unit": "reps",
    "baseXp": 0,
    "baseGold": 0
   }

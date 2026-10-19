@@ -57,6 +57,10 @@
    "es": "Cierra un día con todas las misiones cumplidas.",
    "fr": "Boucle une journée avec toutes les missions accomplies.",
    "de": "Beende einen Tag mit allen erledigten Missionen."
+  },
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "dawn_warden"
   }
  },
  {
@@ -144,6 +148,10 @@
    "es": "Termina una sesión de concentración.",
    "fr": "Termine une session de focus.",
    "de": "Beende eine Fokus-Session."
+  },
+  "shadowReward": {
+   "tier": 3,
+   "shadowId": "silent_monk"
   }
  },
  {
@@ -228,6 +236,10 @@
    "es": "Derrota a un jefe semanal.",
    "fr": "Bats un boss hebdomadaire.",
    "de": "Besiege einen Wochen-Boss."
+  },
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "shieldbreaker"
   }
  },
  {
@@ -289,6 +301,10 @@
    "es": "Cierra un portal antes de que expire.",
    "fr": "Ferme un portail avant qu'il n'expire.",
    "de": "Schließe ein Portal, bevor es abläuft."
+  },
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "threshold_keeper"
   }
  },
  {
@@ -481,11 +497,15 @@
    "de": "Nebenjob"
   },
   "description": {
-   "pt": "Completa {target} side quests.",
+   "pt": "Completa {target} tarefas.",
    "en": "Complete {target} side quests.",
-   "es": "Completa {target} misiones secundarias.",
-   "fr": "Termine {target} quêtes secondaires.",
-   "de": "Schließe {target} Nebenquests ab."
+   "es": "Completa {target} tareas.",
+   "fr": "Termine {target} tâches.",
+   "de": "Erledige {target} Aufgaben."
+  },
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "diligent_artisan"
   }
  },
  {
@@ -520,11 +540,11 @@
  },
  {
   "id": "gps_km",
-  "stat": "GPS_KM",
+  "stat": "STEPS",
   "tiers": [
-   10,
-   100,
-   500
+   50000,
+   500000,
+   2000000
   ],
   "title": {
    "pt": "Andarilho",
@@ -534,11 +554,15 @@
    "de": "Wanderer"
   },
   "description": {
-   "pt": "Percorre {target} km com o GPS.",
-   "en": "Cover {target} km with GPS tracking.",
-   "es": "Recorre {target} km con seguimiento GPS.",
-   "fr": "Parcours {target} km avec le GPS.",
-   "de": "Lege {target} km mit GPS-Tracking zurück."
+   "pt": "Dá {target} passos no total.",
+   "en": "Walk {target} steps in total.",
+   "es": "Da {target} pasos en total.",
+   "fr": "Fais {target} pas au total.",
+   "de": "Gehe insgesamt {target} Schritte."
+  },
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "pilgrim"
   }
  },
  {
@@ -601,31 +625,36 @@
  },
  {
   "id": "night_owl",
-  "stat": "NIGHT_QUESTS",
+  "stat": "BEDTIMES_KEPT",
   "tiers": [
    1,
-   10
+   10,
+   50
   ],
   "title": {
-   "pt": "Coruja",
-   "en": "Night Owl",
-   "es": "Búho Nocturno",
-   "fr": "Oiseau de Nuit",
-   "de": "Nachteule"
+   "pt": "Descanso Sagrado",
+   "en": "Sacred Rest",
+   "es": "Descanso Sagrado",
+   "fr": "Repos Sacré",
+   "de": "Heilige Ruhe"
   },
   "description": {
-   "pt": "Completa {target} missões entre a meia-noite e as 4h.",
-   "en": "Complete {target} missions between midnight and 4 AM.",
-   "es": "Completa {target} misiones entre la medianoche y las 4:00.",
-   "fr": "Termine {target} missions entre minuit et 4h.",
-   "de": "Schließe {target} Missionen zwischen Mitternacht und 4 Uhr ab."
+   "pt": "Deita-te a horas {target} vezes.",
+   "en": "Go to bed on time {target} times.",
+   "es": "Acuéstate a tu hora {target} veces.",
+   "fr": "Couche-toi à l'heure {target} fois.",
+   "de": "Geh {target}-mal pünktlich ins Bett."
   },
   "descriptionOne": {
-   "pt": "Completa uma missão entre a meia-noite e as 4h.",
-   "en": "Complete a mission between midnight and 4 AM.",
-   "es": "Completa una misión entre la medianoche y las 4:00.",
-   "fr": "Termine une mission entre minuit et 4h.",
-   "de": "Schließe eine Mission zwischen Mitternacht und 4 Uhr ab."
+   "pt": "Deita-te a horas uma vez.",
+   "en": "Go to bed on time once.",
+   "es": "Acuéstate a tu hora una vez.",
+   "fr": "Couche-toi à l'heure une fois.",
+   "de": "Geh einmal pünktlich ins Bett."
+  },
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "sleep_warden"
   }
  },
  {
@@ -656,35 +685,6 @@
    "es": "Completa una misión antes de las 7:00.",
    "fr": "Termine une mission avant 7h.",
    "de": "Schließe eine Mission vor 7 Uhr ab."
-  }
- },
- {
-  "id": "resistance",
-  "stat": "BLOCKED_ATTEMPTS",
-  "tiers": [
-   1,
-   50
-  ],
-  "title": {
-   "pt": "Tentação",
-   "en": "Temptation",
-   "es": "Tentación",
-   "fr": "Tentation",
-   "de": "Versuchung"
-  },
-  "description": {
-   "pt": "Bate {target} vezes no bloqueio de apps.",
-   "en": "Hit the app block {target} times.",
-   "es": "Choca {target} veces con el bloqueo de apps.",
-   "fr": "Heurte le blocage d'apps {target} fois.",
-   "de": "Stoße {target} Mal auf die App-Sperre."
-  },
-  "descriptionOne": {
-   "pt": "Bate uma vez no bloqueio de apps.",
-   "en": "Hit the app block once.",
-   "es": "Choca una vez con el bloqueo de apps.",
-   "fr": "Heurte le blocage d'apps une fois.",
-   "de": "Stoße einmal auf die App-Sperre."
   }
  },
  {

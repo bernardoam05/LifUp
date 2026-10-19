@@ -209,7 +209,7 @@
     <string name="passive_gold">+%1$s ouro</string>
     <string name="passive_training">+%1$s XP em missões de treino</string>
     <string name="passive_mind">+%1$s XP em missões de conhecimento e foco</string>
-    <string name="passive_explorer">+%1$s XP em missões GPS</string>
+    <string name="passive_explorer">+%1$s XP em missões de distância</string>
     <string name="passive_boss">+%1$s de dano a bosses</string>
     <string name="passive_penalty">−%1$s nas perdas por penalização</string>
     <string name="passive_immunity">Absorve uma penalização por semana</string>
@@ -637,4 +637,22 @@
     <string name="how_to">Como fazer?</string>
     <string name="note_add">Adicionar nota</string>
     <string name="note_hint">A tua nota para esta missão: fica guardada para a próxima vez (ex.: a app que usas, a tua rotina).</string>
+    <string name="toast_achievement">Conquista: %1$s · +%2$d ouro</string>
+    <string name="reward_echo">+ eco: %1$s</string>
+    <string name="origin_line">Obtido a %1$s · %2$s</string>
+    <string name="origin_perfect_day">num dia perfeito</string>
+    <string name="origin_portal">num portal</string>
+    <string name="origin_essence">com Essência de Eco</string>
+    <string name="origin_shop">comprado na loja</string>
+    <string name="origin_achievement">conquista %1$s</string>
+    <string name="origin_streak">sequência de %1$d dias</string>
+    <string name="origin_boss">venceste %1$s</string>
+    <string name="squad_swap">Trocar</string>
+    <string name="squad_swap_title">Quem sai do esquadrão?</string>
+    <string name="stat_steps">Passos</string>
+    <string name="timer_goal">Objetivo: %1$s</string>
+    <string name="timer_reached">Tempo cumprido: podes concluir</string>
+    <string name="dnd_focus">Não incomodar</string>
+    <string name="dnd_focus_info">Silencia o telemóvel durante o foco; nas pausas volta ao normal.</string>
+    <string name="dnd_focus_needs">Precisa do acesso a «Não incomodar» nas definições do Android.</string>
 </resources>

@@ -222,7 +222,7 @@
     <string name="passive_gold">+%1$s gold</string>
     <string name="passive_training">+%1$s XP on training missions</string>
     <string name="passive_mind">+%1$s XP on knowledge and focus missions</string>
-    <string name="passive_explorer">+%1$s XP on GPS missions</string>
+    <string name="passive_explorer">+%1$s XP on distance missions</string>
     <string name="passive_boss">+%1$s damage to bosses</string>
     <string name="passive_penalty">−%1$s penalty losses</string>
     <string name="passive_immunity">Absorbs one penalty per week</string>
@@ -656,4 +656,22 @@
     <string name="how_to">How to?</string>
     <string name="note_add">Add a note</string>
     <string name="note_hint">Your note for this mission, kept for next time (e.g. the app you use, your routine).</string>
+    <string name="toast_achievement">Achievement: %1$s · +%2$d gold</string>
+    <string name="reward_echo">+ echo: %1$s</string>
+    <string name="origin_line">Obtained %1$s · %2$s</string>
+    <string name="origin_perfect_day">on a perfect day</string>
+    <string name="origin_portal">in a portal</string>
+    <string name="origin_essence">with Echo Essence</string>
+    <string name="origin_shop">bought in the shop</string>
+    <string name="origin_achievement">achievement %1$s</string>
+    <string name="origin_streak">%1$d-day streak</string>
+    <string name="origin_boss">defeated %1$s</string>
+    <string name="squad_swap">Swap</string>
+    <string name="squad_swap_title">Who leaves the squad?</string>
+    <string name="stat_steps">Steps</string>
+    <string name="timer_goal">Goal: %1$s</string>
+    <string name="timer_reached">Time reached: you can complete it</string>
+    <string name="dnd_focus">Do not disturb</string>
+    <string name="dnd_focus_info">Silences your phone while you focus; breaks bring it back to normal.</string>
+    <string name="dnd_focus_needs">Needs Do Not Disturb access in Android settings.</string>
 </resources>

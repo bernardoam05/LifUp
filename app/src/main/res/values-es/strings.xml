@@ -77,9 +77,9 @@
     <string name="daily_section">Misiones diarias</string>
     <string name="extra_section">Misiones extra</string>
     <string name="add_extra">Misión extra</string>
-    <string name="side_section">Misiones secundarias</string>
+    <string name="side_section">Tareas</string>
     <string name="side_hint">Una tarea para hoy…</string>
-    <string name="side_empty">Sin misiones secundarias. Añade pequeñas tareas para ganar XP extra.</string>
+    <string name="side_empty">Sin tareas. Añade pequeñas tareas del día para ganar XP extra.</string>
     <string name="forbidden_keep">Mantener hasta medianoche</string>
     <string name="forbidden_broken">Fallada hoy</string>
     <string name="forbidden_fail">Fallé</string>
@@ -197,7 +197,7 @@
     <string name="stat_portals">Portales</string>
     <string name="stat_gold_earned">Oro ganado</string>
     <string name="stat_penalties">Penalizaciones</string>
-    <string name="stat_side">Secundarias</string>
+    <string name="stat_side">Tareas</string>
     <string name="history">Historial</string>
     <string name="history_empty">Tus días aparecerán aquí.</string>
     <string name="day_rest">Descanso</string>
@@ -221,7 +221,7 @@
     <string name="passive_gold">+%1$s oro</string>
     <string name="passive_training">+%1$s XP en misiones de entrenamiento</string>
     <string name="passive_mind">+%1$s XP en misiones de conocimiento y foco</string>
-    <string name="passive_explorer">+%1$s XP en misiones GPS</string>
+    <string name="passive_explorer">+%1$s XP en misiones de distancia</string>
     <string name="passive_boss">+%1$s de daño a jefes</string>
     <string name="passive_penalty">−%1$s en pérdidas por penalización</string>
     <string name="passive_immunity">Absorbe una penalización por semana</string>
@@ -297,8 +297,8 @@
     <string name="penalties">Penalizaciones</string>
     <string name="block_on_penalty">Bloquear apps en penalizaciones</string>
     <string name="block_on_penalty_info">Tus apps bloqueadas se cierran durante la ventana de penalización.</string>
-    <string name="side_penalize">Las secundarias cuentan</string>
-    <string name="side_penalize_info">Las misiones secundarias pendientes cuentan como fallos a medianoche.</string>
+    <string name="side_penalize">Las tareas cuentan</string>
+    <string name="side_penalize_info">Las tareas pendientes cuentan como fallos a medianoche.</string>
     <string name="notifications">Notificaciones</string>
     <string name="notifications_info">Portales, sesiones terminadas, penalizaciones y un recordatorio por la noche.</string>
     <string name="reminder_hour">Hora del recordatorio</string>
@@ -520,7 +520,7 @@
     <string name="guide_streak">Sube cada día::+1 por cada día que llegas al mínimo.\nSegunda oportunidad::¿La perdiste? Un día perfecto justo después la recupera (una vez por semana).\nDías de descanso::Márcalo antes del mediodía y ese día no cuenta ni a favor ni en contra. 2 por semana en Fácil, 1 en Normal.\nProtección extra::El Escudo de la Constancia y algunos ecos salvan tu racha por ti.</string>
     <string name="guide_penalty_title">Penalización</string>
     <string name="guide_penalty">Pérdida proporcional::Pierdes XP y oro según lo que quedó sin hacer. Casi lograrlo casi no cuesta nada.\n24 horas::Por debajo del 50% empieza una penalización con misiones extra. Hazlas y termina antes.\nBloqueo de apps::Si quieres, tus apps de distracción quedan bloqueadas mientras dure.</string>
-    <string name="guide_side_title">Misiones secundarias</string>
+    <string name="guide_side_title">Tareas</string>
     <string name="guide_side">Libres::Escribe cualquier tarea, sin objetivos ni reglas.\n5 con recompensa::Las 5 primeras que completes cada día dan XP y oro, y hieren al jefe.\nDespués de eso::Siguen funcionando como lista de tareas.\nSin trampas::Desmarcar o borrar te quita la recompensa.</string>
     <string name="guide_boss_title">Jefe semanal</string>
     <string name="guide_boss">Todo el XP es daño::Cada misión que haces le quita vida.\nDesafío del jefe::Una misión especial que le arranca un 35% de golpe.\nBotín::Derrótalo y ganas XP, oro, un cofre y su eco.\nSi no…::El domingo por la noche termina, y llega otro.</string>
@@ -655,4 +655,22 @@
     <string name="how_to">¿Cómo hacerlo?</string>
     <string name="note_add">Añadir nota</string>
     <string name="note_hint">Tu nota para esta misión: se guarda para la próxima vez (ej.: la app que usas, tu rutina).</string>
+    <string name="toast_achievement">Logro: %1$s · +%2$d de oro</string>
+    <string name="reward_echo">+ eco: %1$s</string>
+    <string name="origin_line">Obtenido el %1$s · %2$s</string>
+    <string name="origin_perfect_day">en un día perfecto</string>
+    <string name="origin_portal">en un portal</string>
+    <string name="origin_essence">con Esencia de Eco</string>
+    <string name="origin_shop">comprado en la tienda</string>
+    <string name="origin_achievement">logro %1$s</string>
+    <string name="origin_streak">racha de %1$d días</string>
+    <string name="origin_boss">venciste a %1$s</string>
+    <string name="squad_swap">Cambiar</string>
+    <string name="squad_swap_title">¿Quién sale del escuadrón?</string>
+    <string name="stat_steps">Pasos</string>
+    <string name="timer_goal">Objetivo: %1$s</string>
+    <string name="timer_reached">Tiempo cumplido: puedes completarla</string>
+    <string name="dnd_focus">No molestar</string>
+    <string name="dnd_focus_info">Silencia el móvil durante el foco; en las pausas vuelve a la normalidad.</string>
+    <string name="dnd_focus_needs">Necesita acceso a «No molestar» en los ajustes de Android.</string>
 </resources>

@@ -66,7 +66,7 @@ fun Tx.rollWeek() {
     val kept = logs.count { it.passed || it.perfect }
     // Weeks with nothing logged (app unused) produce no report.
     if (logs.isNotEmpty() && ChronoUnit.DAYS.between(end, ctx.today) < 7) {
-        val rated = s.weekStats.filter { it.value.total >= Rules.WEEK_MIN_SAMPLES }
+        val rated = s.weekStats.filter { it.value.total >= Rules.WEEK_MIN_SAMPLES && s.defOf(it.key, content) != null }
         val best = rated.maxByOrNull { it.value.rate }
         val worst = rated.minByOrNull { it.value.rate }?.takeIf { it.key != best?.key }
         val boss = s.boss?.takeIf { it.weekKey == s.statsWeek }
