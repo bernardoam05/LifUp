@@ -677,4 +677,12 @@
     <string name="load_max">Du bist beim Maximum von %1$d Missionen pro Tag.</string>
     <string name="toast_load_up">Beständigkeit: ab morgen hast du %1$d gezogene Missionen.</string>
     <string name="toast_load_down">Verpasster Tag: ab morgen hast du %1$d gezogene Missionen.</string>
+    <string name="reward_achievements_n">%1$d Erfolge</string>
+    <string name="reason_perfect_day">Belohnung für den perfekten Tag</string>
+    <string name="reason_portal">Im Portal gefunden</string>
+    <string name="reason_essence">Durch Echo-Essenz erweckt</string>
+    <string name="reason_shop">Im Shop gekauft</string>
+    <string name="reason_achievement">Belohnung für den Erfolg %1$s</string>
+    <string name="reason_streak">Belohnung für eine %1$d-Tage-Serie</string>
+    <string name="reason_boss">Belohnung für den Sieg über %1$s</string>
 </resources>

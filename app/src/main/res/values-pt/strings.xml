@@ -659,4 +659,12 @@
     <string name="load_max">Já estás no máximo de %1$d missões por dia.</string>
     <string name="toast_load_up">Consistência: a partir de amanhã tens %1$d missões sorteadas.</string>
     <string name="toast_load_down">Dia falhado: a partir de amanhã tens %1$d missões sorteadas.</string>
+    <string name="reward_achievements_n">%1$d conquistas</string>
+    <string name="reason_perfect_day">Recompensa do dia perfeito</string>
+    <string name="reason_portal">Encontrado no portal</string>
+    <string name="reason_essence">Despertado pela Essência de Eco</string>
+    <string name="reason_shop">Comprado na loja</string>
+    <string name="reason_achievement">Recompensa da conquista %1$s</string>
+    <string name="reason_streak">Recompensa da sequência de %1$d dias</string>
+    <string name="reason_boss">Recompensa por venceres %1$s</string>
 </resources>

@@ -71,7 +71,7 @@ fun Tx.gainShadow(id: String, source: SourceType, origin: EchoOrigin, ref: Strin
     val existing = s.owned(id)
     s = if (existing == null) s.copy(shadows = s.shadows + OwnedShadow(id, origin = origin, originRef = ref, obtainedOn = ctx.todayKey))
     else s.copy(shadows = s.shadows.map { if (it.id == id) it.copy(copies = it.copies + 1) else it })
-    reward { Reward.ShadowGained(it, id, existing == null, (existing?.copies ?: -1) + 1, source) }
+    reward { Reward.ShadowGained(it, id, existing == null, (existing?.copies ?: -1) + 1, source, origin, ref) }
     s = s.copy(newEchoes = s.newEchoes + (id to (existing == null || s.newEchoes[id] == true)))
 }
 

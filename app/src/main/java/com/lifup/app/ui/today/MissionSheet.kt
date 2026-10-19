@@ -1,5 +1,7 @@
 package com.lifup.app.ui.today
 
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalView
 import com.lifup.app.ui.components.Bar
 import com.lifup.app.domain.tipFor
 import androidx.compose.ui.text.style.TextOverflow
@@ -104,6 +106,12 @@ import com.lifup.app.ui.unitLabel
 fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = null, onDismiss: () -> Unit) {
     val q = s.allQuests.firstOrNull { it.id == questId } ?: return
     val p = Lif.colors
+    // Counting reps or timing a plank: the screen stays on while the mission is open.
+    val view = LocalView.current
+    DisposableEffect(view) {
+        view.keepScreenOn = true
+        onDispose { view.keepScreenOn = false }
+    }
     val now = rememberNow(1_000)
     val unit = unitLabel(q.unit)
     val open = q.status == QuestStatus.OPEN

@@ -678,4 +678,12 @@
     <string name="load_max">You are at the maximum of %1$d missions a day.</string>
     <string name="toast_load_up">Consistency: from tomorrow you get %1$d drawn missions.</string>
     <string name="toast_load_down">Missed day: from tomorrow you get %1$d drawn missions.</string>
+    <string name="reward_achievements_n">%1$d achievements</string>
+    <string name="reason_perfect_day">Perfect day reward</string>
+    <string name="reason_portal">Found in the portal</string>
+    <string name="reason_essence">Awakened by Echo Essence</string>
+    <string name="reason_shop">Bought in the shop</string>
+    <string name="reason_achievement">Reward for the achievement %1$s</string>
+    <string name="reason_streak">Reward for a %1$d-day streak</string>
+    <string name="reason_boss">Reward for defeating %1$s</string>
 </resources>

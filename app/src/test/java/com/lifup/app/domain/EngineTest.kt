@@ -344,7 +344,8 @@ class EngineTest {
     @Test fun `gold earned includes achievement gold and old saves are corrected once`() {
         var s = run(fresh(), "2026-10-14T10:00") { openPortal() }
         val portal = s.portal!!.quest
-        s = run(s, "2026-10-14T10:10") { completeQuest(portal.id) } // first portal unlocks an achievement
+        // Creating a first mission in the Forge unlocks an achievement that pays gold.
+        s = run(s, "2026-10-14T10:10") { completeQuest(portal.id); saveCustomDef(QuestDef("custom_x", DefKind.CORE, QuestType.TRAINING, plainText("x"), plainText(""), 1.0, baseXp = 10, baseGold = 5)) }
         assertTrue(s.achievements.isNotEmpty())
         assertEquals(s.player.gold.toLong(), s.count(StatKey.GOLD_EARNED))
         val old = s.copy(version = 1, counters = s.counters + (StatKey.GOLD_EARNED to portal.gold.toLong()))
@@ -674,10 +675,9 @@ class EngineTest {
         assertEquals(8_500L, s.statValue(StatKey.STEPS))
     }
 
-    @Test fun `first-time achievements are a quiet notice, milestones get a card`() {
+    @Test fun `achievements need a few repeats before the first tier`() {
         val s = run(fresh(), "2026-10-14T10:00") { openPortal() }.let { st -> run(st, "2026-10-14T10:10") { completeQuest(st.portal!!.quest.id) } }
-        assertTrue(s.rewards.any { it is Reward.Toast && it.kind == ToastKind.ACHIEVEMENT && it.arg == "portals" })
-        assertTrue(s.rewards.none { it is Reward.AchievementUnlocked && it.achievementId == "portals" })
-        assertEquals(1, s.achievements["portals"])
+        assertEquals(null, s.achievements["portals"])
+        assertTrue(s.rewards.none { it is Reward.Toast && it.kind == ToastKind.ACHIEVEMENT })
     }
 }

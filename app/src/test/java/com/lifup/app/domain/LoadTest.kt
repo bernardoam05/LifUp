@@ -54,4 +54,19 @@ class LoadTest {
         val old = GameState(onboarded = true, player = Player(level = 30))
         assertEquals(Rules.BASE_DRAWN + 1, Engine.run(old, ctx(start, 8)).drawnCount())
     }
+
+    @Test fun `recovery day with an avoid mission left unmarked restores the streak and counts the day`() {
+        var s = play("KKKM") // streak 3, then a miss: tomorrow can recover it
+        val recoverDay = start.plusDays(4)
+        assertEquals(0, s.player.streak)
+        assertEquals(3, s.recovery?.streak)
+        // Make sure today has an avoid mission, then do everything else and leave it untouched.
+        s = Engine.run(s, ctx(recoverDay, 9), action = { if (this.s.dailyQuests.none { it.type == QuestType.FORBIDDEN }) addDefToToday("pool_social") })
+        s = Engine.run(s, ctx(recoverDay, 22), action = { this.s.dailyQuests.filter { it.type != QuestType.FORBIDDEN }.forEach { completeQuest(it.id) } })
+        s = Engine.run(s, ctx(recoverDay.plusDays(1), 8))
+        val report = s.rewards.filterIsInstance<Reward.DayReport>().last()
+        assertEquals(true, report.perfect)
+        assertEquals(true, report.streakRestored)
+        assertEquals(4, s.player.streak)
+    }
 }

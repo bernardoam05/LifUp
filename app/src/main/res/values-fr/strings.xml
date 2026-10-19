@@ -659,4 +659,12 @@
     <string name="load_max">Tu es au maximum de %1$d missions par jour.</string>
     <string name="toast_load_up">Régularité : dès demain tu as %1$d missions tirées.</string>
     <string name="toast_load_down">Jour manqué : dès demain tu as %1$d missions tirées.</string>
+    <string name="reward_achievements_n">%1$d succès</string>
+    <string name="reason_perfect_day">Récompense de la journée parfaite</string>
+    <string name="reason_portal">Trouvé dans le portail</string>
+    <string name="reason_essence">Éveillé par l\'Essence d\'Écho</string>
+    <string name="reason_shop">Acheté à la boutique</string>
+    <string name="reason_achievement">Récompense du succès %1$s</string>
+    <string name="reason_streak">Récompense pour une série de %1$d jours</string>
+    <string name="reason_boss">Récompense pour avoir vaincu %1$s</string>
 </resources>

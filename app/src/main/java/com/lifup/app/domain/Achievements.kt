@@ -55,9 +55,7 @@ fun Tx.checkAchievements() {
             val shadow = def.shadowReward?.takeIf { it.tier == t }?.shadowId
             val items = if (t >= Rules.ACHIEVEMENT_CHEST_TIER) listOf(Rules.ACHIEVEMENT_CHEST) else emptyList()
             items.forEach { addItem(it) }
-            // A "first time" unlock is a quiet notice; real milestones get their card.
-            if (def.tiers[t - 1] <= 1 && shadow == null) toast(ToastKind.ACHIEVEMENT, def.id)
-            else reward { Reward.AchievementUnlocked(it, def.id, t, gold, items, shadow) }
+            reward { Reward.AchievementUnlocked(it, def.id, t, gold, items, shadow) }
             shadow?.let { gainShadow(it, SourceType.ACHIEVEMENT, EchoOrigin.ACHIEVEMENT, def.id) }
         }
     }

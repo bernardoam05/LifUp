@@ -97,7 +97,9 @@ fun RewardHost(s: GameState) {
         EchoReveal(revealDef) { revealed += reward.id }
         return
     }
-    val dismiss = { act { dismissReward(reward.id) } }
+    // Achievements unlocked by the same action share one card instead of queueing up.
+    val batch = if (reward is Reward.AchievementUnlocked) s.rewards.filterIsInstance<Reward.AchievementUnlocked>() else listOf(reward)
+    val dismiss = { act { batch.forEach { dismissReward(it.id) } } }
     Dialog(onDismissRequest = dismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(Modifier.padding(24.dp)) {
             when (reward) {
@@ -119,6 +121,7 @@ fun RewardHost(s: GameState) {
                             Line(stringResource(shadowRankName(def.rank)), shadowRankColor(def.rank))
                             Line(passiveText(def.passive, Rules.passiveValue(def, s.owned(def.id)?.level ?: 1)), Lif.colors.accent)
                             if (!reward.isNew) Line(stringResource(R.string.reward_copies, reward.copies), Lif.colors.muted)
+                            reward.origin?.let { Line(echoReason(it, reward.originRef), Lif.colors.text) }
                         }
                     }
                 }
@@ -127,15 +130,7 @@ fun RewardHost(s: GameState) {
                     Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
                     reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
                 }
-                is Reward.AchievementUnlocked -> {
-                    val def = content.achievementById[reward.achievementId]
-                    RewardCard(Icons.Rounded.EmojiEvents, Lif.colors.gold, stringResource(R.string.reward_achievement_title), def?.title?.local().orEmpty(), dismiss) {
-                        Line(stringResource(R.string.tier_n, reward.tier, def?.tiers?.size ?: reward.tier), Lif.colors.muted)
-                        Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
-                        reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
-                        reward.shadowId?.let { content.shadowById[it] }?.let { Line(stringResource(R.string.reward_echo, it.name.local()), Lif.colors.purple) }
-                    }
-                }
+                is Reward.AchievementUnlocked -> AchievementCard(batch.filterIsInstance<Reward.AchievementUnlocked>(), dismiss)
                 is Reward.StreakMilestone -> RewardCard(Icons.Rounded.LocalFireDepartment, Lif.colors.red, stringResource(R.string.reward_streak_title), stringResource(R.string.days_in_a_row, reward.days), dismiss) {
                     if (reward.gold > 0) Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
                     reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
@@ -257,4 +252,35 @@ private fun toastMessage(s: GameState, t: Reward.Toast): String {
         ToastKind.ACHIEVEMENT -> stringResource(R.string.toast_achievement, content.achievementById[t.arg]?.title?.local().orEmpty(), com.lifup.app.domain.achievementGold(1))
         ToastKind.BOSS_HIT -> ""
     }
+}
+
+/** One card for every achievement unlocked at once: each with its tier, then the rewards summed up. */
+@Composable
+private fun AchievementCard(unlocked: List<Reward.AchievementUnlocked>, dismiss: () -> Unit) {
+    val first = content.achievementById[unlocked.first().achievementId]
+    val title = if (unlocked.size == 1) first?.title?.local().orEmpty() else stringResource(R.string.reward_achievements_n, unlocked.size)
+    RewardCard(Icons.Rounded.EmojiEvents, Lif.colors.gold, stringResource(R.string.reward_achievement_title), title, dismiss) {
+        unlocked.forEach { a ->
+            val def = content.achievementById[a.achievementId]
+            val tier = stringResource(R.string.tier_n, a.tier, def?.tiers?.size ?: a.tier)
+            Line(if (unlocked.size == 1) tier else "${def?.title?.local().orEmpty()} · $tier", Lif.colors.muted)
+        }
+        Line(stringResource(R.string.reward_gold, unlocked.sumOf { it.gold }), Lif.colors.gold)
+        unlocked.flatMap { it.items }.groupingBy { it }.eachCount().forEach { (id, n) ->
+            Line("+ " + content.itemById[id]?.name?.local().orEmpty() + if (n > 1) " ×$n" else "")
+        }
+        unlocked.mapNotNull { a -> a.shadowId?.let { content.shadowById[it] } }.forEach { Line(stringResource(R.string.reward_echo, it.name.local()), Lif.colors.purple) }
+    }
+}
+
+/** Why this echo arrived: the perfect day, the boss, the achievement… */
+@Composable
+private fun echoReason(origin: com.lifup.app.domain.EchoOrigin, ref: String?): String = when (origin) {
+    com.lifup.app.domain.EchoOrigin.PERFECT_DAY -> stringResource(R.string.reason_perfect_day)
+    com.lifup.app.domain.EchoOrigin.PORTAL -> stringResource(R.string.reason_portal)
+    com.lifup.app.domain.EchoOrigin.ESSENCE -> stringResource(R.string.reason_essence)
+    com.lifup.app.domain.EchoOrigin.SHOP -> stringResource(R.string.reason_shop)
+    com.lifup.app.domain.EchoOrigin.ACHIEVEMENT -> stringResource(R.string.reason_achievement, content.achievementById[ref]?.title?.local().orEmpty())
+    com.lifup.app.domain.EchoOrigin.STREAK -> stringResource(R.string.reason_streak, ref?.toIntOrNull() ?: 0)
+    com.lifup.app.domain.EchoOrigin.BOSS -> stringResource(R.string.reason_boss, content.bossById[ref]?.title?.local().orEmpty())
 }

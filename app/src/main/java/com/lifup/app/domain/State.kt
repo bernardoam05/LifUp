@@ -222,7 +222,15 @@ sealed interface Reward {
     data class RankUp(override val id: Long, val rank: HunterRank) : Reward
 
     @Serializable @SerialName("shadow")
-    data class ShadowGained(override val id: Long, val shadowId: String, val isNew: Boolean, val copies: Int, val source: SourceType) : Reward
+    data class ShadowGained(
+        override val id: Long,
+        val shadowId: String,
+        val isNew: Boolean,
+        val copies: Int,
+        val source: SourceType,
+        val origin: EchoOrigin? = null,
+        val originRef: String? = null,
+    ) : Reward
 
     @Serializable @SerialName("boss")
     data class BossDefeated(override val id: Long, val bossId: String, val xp: Int, val gold: Int, val items: List<String>) : Reward
