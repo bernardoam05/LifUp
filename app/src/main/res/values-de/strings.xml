@@ -292,7 +292,7 @@
     <string name="rigor_normal_info">Ein Tag zählt mit 75 % der Missionen. Darunter verlierst du anteilig XP und die Serie; unter 50 % bis zu 3 Strafmissionen und eine 24-Stunden-Sperre. 1 Ruhetag pro Woche.</string>
     <string name="rigor_hard_info">Nur 100 % zählen. Doppelte Verluste; unter 50 % bis zu 4 Strafmissionen und eine 24-Stunden-Sperre. Keine Ruhetage.</string>
     <string name="auto_missions">Missionsanzahl automatisch</string>
-    <string name="auto_missions_info">Aktuell %1$d Extra-Missionen pro Tag, plus die festen.</string>
+    <string name="auto_missions_info">Aktuell %1$d gezogene Missionen pro Tag, plus die festen.</string>
     <string name="extra_daily_missions">Extra-Missionen pro Tag</string>
     <string name="penalties">Strafen</string>
     <string name="block_on_penalty">Apps bei Strafen sperren</string>
@@ -673,4 +673,8 @@
     <string name="dnd_focus">Nicht stören</string>
     <string name="dnd_focus_info">Schaltet das Handy beim Fokus stumm; in Pausen wieder normal.</string>
     <string name="dnd_focus_needs">Braucht Zugriff auf „Nicht stören“ in den Android-Einstellungen.</string>
+    <string name="load_next">Eine mehr nach je 7 geschafften Tagen in Folge (noch %1$d), bis %2$d Missionen insgesamt; eine weniger pro verpasstem Tag.</string>
+    <string name="load_max">Du bist beim Maximum von %1$d Missionen pro Tag.</string>
+    <string name="toast_load_up">Beständigkeit: ab morgen hast du %1$d gezogene Missionen.</string>
+    <string name="toast_load_down">Verpasster Tag: ab morgen hast du %1$d gezogene Missionen.</string>
 </resources>

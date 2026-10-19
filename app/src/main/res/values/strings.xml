@@ -293,7 +293,7 @@
     <string name="rigor_normal_info">A day counts with 75% of the missions. Below that you lose XP in proportion and the streak; below 50% up to 3 penalty missions and 24-hour blocking. 1 rest day a week.</string>
     <string name="rigor_hard_info">Only 100% counts. Double losses; below 50% up to 4 penalty missions and 24-hour blocking. No rest days.</string>
     <string name="auto_missions">Automatic mission count</string>
-    <string name="auto_missions_info">Currently %1$d extra missions per day, plus the fixed ones.</string>
+    <string name="auto_missions_info">Currently %1$d drawn missions per day, plus the fixed ones.</string>
     <string name="extra_daily_missions">Extra missions per day</string>
     <string name="penalties">Penalties</string>
     <string name="block_on_penalty">Block apps during penalties</string>
@@ -674,4 +674,8 @@
     <string name="dnd_focus">Do not disturb</string>
     <string name="dnd_focus_info">Silences your phone while you focus; breaks bring it back to normal.</string>
     <string name="dnd_focus_needs">Needs Do Not Disturb access in Android settings.</string>
+    <string name="load_next">One more after every 7 kept days in a row (%1$d to go), up to %2$d missions in total; one less per missed day.</string>
+    <string name="load_max">You are at the maximum of %1$d missions a day.</string>
+    <string name="toast_load_up">Consistency: from tomorrow you get %1$d drawn missions.</string>
+    <string name="toast_load_down">Missed day: from tomorrow you get %1$d drawn missions.</string>
 </resources>

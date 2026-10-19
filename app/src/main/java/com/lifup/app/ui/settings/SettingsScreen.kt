@@ -1,5 +1,7 @@
 package com.lifup.app.ui.settings
 
+import com.lifup.app.domain.daysToNextMission
+import com.lifup.app.domain.drawnCount
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.foundation.clickable
@@ -135,9 +137,14 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 Text(stringResource(rigorInfo(set.rigor)), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
                 Spacer(Modifier.height(8.dp))
                 val auto = set.dailyPoolOverride == null
-                ToggleRow(stringResource(R.string.auto_missions), stringResource(R.string.auto_missions_info, Rules.dailyPoolCount(s.player.level, set.copy(dailyPoolOverride = null))), auto) { on ->
-                    act { updateSettings { it.copy(dailyPoolOverride = if (on) null else Rules.dailyPoolCount(s.player.level, it)) } }
-                }
+                val autoCount = s.copy(settings = set.copy(dailyPoolOverride = null)).drawnCount()
+                val next = s.copy(settings = set.copy(dailyPoolOverride = null)).daysToNextMission()
+                ToggleRow(
+                    stringResource(R.string.auto_missions),
+                    stringResource(R.string.auto_missions_info, autoCount) + " " +
+                        (next?.let { stringResource(R.string.load_next, it, Rules.MAX_DAY_MISSIONS) } ?: stringResource(R.string.load_max, Rules.MAX_DAY_MISSIONS)),
+                    auto,
+                ) { on -> act { updateSettings { it.copy(dailyPoolOverride = if (on) null else autoCount) } } }
                 if (!auto) Stepper(set.dailyPoolOverride!!, { v -> act { updateSettings { it.copy(dailyPoolOverride = v) } } }, 1..10, stringResource(R.string.extra_daily_missions))
                 Spacer(Modifier.height(12.dp))
                 Text(stringResource(R.string.attr_focus_title), style = MaterialTheme.typography.titleSmall)

@@ -81,9 +81,13 @@ object Rules {
         else -> QuestRank.E
     }
 
-    /** Drawn missions per day; rigor only changes the consequences, not the workload. */
-    fun dailyPoolCount(level: Int, settings: Settings): Int = settings.dailyPoolOverride?.coerceIn(0, 10)
-        ?: minOf(3 + level / 25, 4) // at most 1 fixed + 4 drawn; more is opt-in
+    // Drawn missions per day (see MissionLoad); rigor only changes the consequences, not the workload.
+    const val BASE_DRAWN = 3
+    const val MAX_LOAD = 4
+    /** Kept days in a row for one more drawn mission. */
+    const val LOAD_STEP_DAYS = 7
+    /** Ceiling on the day's missions (fixed, drawn and due weekly) unless set by hand. */
+    const val MAX_DAY_MISSIONS = 7
 
     /** Share of the day's missions that keeps the streak and avoids the penalty. */
     fun passRatio(rigor: Rigor) = when (rigor) { Rigor.EASY -> 0.6; Rigor.NORMAL -> 0.75; Rigor.HARD -> 1.0 }

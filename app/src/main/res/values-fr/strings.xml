@@ -277,7 +277,7 @@
     <string name="rigor_normal_info">La journée compte avec 75 % des missions. En dessous tu perds de l\'XP en proportion et la série ; sous 50 % jusqu\'à 3 missions de pénalité et un blocage de 24 heures. 1 jour de repos par semaine.</string>
     <string name="rigor_hard_info">Seul 100 % compte. Pertes doublées ; sous 50 % jusqu\'à 4 missions de pénalité et un blocage de 24 heures. Aucun jour de repos.</string>
     <string name="auto_missions">Nombre de missions auto</string>
-    <string name="auto_missions_info">Actuellement %1$d missions bonus par jour, en plus des fixes.</string>
+    <string name="auto_missions_info">Actuellement %1$d missions tirées par jour, en plus des fixes.</string>
     <string name="extra_daily_missions">Missions bonus par jour</string>
     <string name="penalties">Pénalités</string>
     <string name="block_on_penalty">Bloquer des apps pendant les pénalités</string>
@@ -655,4 +655,8 @@
     <string name="dnd_focus">Ne pas déranger</string>
     <string name="dnd_focus_info">Met le téléphone en silence pendant le focus ; les pauses le rétablissent.</string>
     <string name="dnd_focus_needs">Nécessite l\'accès « Ne pas déranger » dans les réglages Android.</string>
+    <string name="load_next">Une de plus tous les 7 jours réussis d\'affilée (encore %1$d), jusqu\'à %2$d missions au total ; une de moins par jour manqué.</string>
+    <string name="load_max">Tu es au maximum de %1$d missions par jour.</string>
+    <string name="toast_load_up">Régularité : dès demain tu as %1$d missions tirées.</string>
+    <string name="toast_load_down">Jour manqué : dès demain tu as %1$d missions tirées.</string>
 </resources>

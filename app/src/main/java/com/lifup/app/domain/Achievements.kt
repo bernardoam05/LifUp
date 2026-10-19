@@ -35,6 +35,10 @@ fun Tx.migrateState() {
         val needed = p?.let { it.opensAt + ((it.quest.estimatedMinutes(s.settings, content) * 1.5).toLong() + 30) * 60_000L }
         s = s.copy(portal = if (p != null && needed != null && needed > p.expiresAt) p.copy(expiresAt = needed) else p, version = 4)
     }
+    if (s.version < 5) {
+        // Missions used to grow with level (4 drawn from level 25): keep what players already had.
+        s = s.copy(load = MissionLoad(extra = if (s.player.level >= 25) 1 else 0), version = 5)
+    }
 }
 
 /** Unlocks every tier whose target has been reached. Rewards are paid unboosted to avoid feedback loops. */

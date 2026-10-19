@@ -655,4 +655,8 @@
     <string name="dnd_focus">Não incomodar</string>
     <string name="dnd_focus_info">Silencia o telemóvel durante o foco; nas pausas volta ao normal.</string>
     <string name="dnd_focus_needs">Precisa do acesso a «Não incomodar» nas definições do Android.</string>
+    <string name="load_next">Sobe uma a cada 7 dias cumpridos seguidos (faltam %1$d), até %2$d missões no total; desce uma por dia falhado.</string>
+    <string name="load_max">Já estás no máximo de %1$d missões por dia.</string>
+    <string name="toast_load_up">Consistência: a partir de amanhã tens %1$d missões sorteadas.</string>
+    <string name="toast_load_down">Dia falhado: a partir de amanhã tens %1$d missões sorteadas.</string>
 </resources>

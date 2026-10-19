@@ -279,7 +279,7 @@ sealed interface Reward {
 @Serializable
 enum class ToastKind {
     LEVEL_UP, ITEM_FOUND, PENALTY_CLEARED, FOCUS_DONE, FOCUS_LOST, BOSS_ESCAPED, PORTAL_ESCAPED,
-    PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED, WEEK_GOAL, ACHIEVEMENT,
+    PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED, WEEK_GOAL, ACHIEVEMENT, LOAD_UP, LOAD_DOWN,
 }
 
 @Serializable
@@ -343,6 +343,7 @@ data class GameState(
     val adapt: Map<String, Adapt> = emptyMap(),
     /** This week's tally of each "N times a week" mission, by definition id. */
     val weekly: Map<String, WeekTally> = emptyMap(),
+    val load: MissionLoad = MissionLoad(),
     /** A fixed mission done on only some days last week, offered as "N times a week". */
     val weeklyHint: WeeklyHint? = null,
     val weeklyHintsDismissed: Set<String> = emptySet(),

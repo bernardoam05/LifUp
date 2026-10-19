@@ -252,6 +252,8 @@ private fun toastMessage(s: GameState, t: Reward.Toast): String {
         ToastKind.PASSIVE_FIRED -> stringResource(R.string.toast_passive_fired, shadowName)
         ToastKind.BUFF_ACTIVE -> stringResource(R.string.toast_buff, itemName)
         ToastKind.WEEK_GOAL -> stringResource(R.string.toast_week_goal, defTitle(s, t.arg))
+        ToastKind.LOAD_UP -> stringResource(R.string.toast_load_up, t.arg.toIntOrNull() ?: 0)
+        ToastKind.LOAD_DOWN -> stringResource(R.string.toast_load_down, t.arg.toIntOrNull() ?: 0)
         ToastKind.ACHIEVEMENT -> stringResource(R.string.toast_achievement, content.achievementById[t.arg]?.title?.local().orEmpty(), com.lifup.app.domain.achievementGold(1))
         ToastKind.BOSS_HIT -> ""
     }

@@ -73,7 +73,8 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
     val seed = date.year * 10_000 + date.monthValue * 100 + date.dayOfMonth
     val pool = drawBalanced(
         defs.filter { it.kind == DefKind.POOL && (it.daysOfWeek == null || dow in it.daysOfWeek) },
-        (Rules.dailyPoolCount(level, state.settings) - due).coerceAtLeast(0),
+        // Automatic counts stop at the day's ceiling; a count set by hand is the player's call.
+        ((if (state.settings.dailyPoolOverride != null) state.drawnCount() else minOf(state.drawnCount(), Rules.MAX_DAY_MISSIONS - core.size)) - due).coerceAtLeast(0),
         state.settings.focusAttrs,
         Random(seed.toLong() xor state.seed),
     )

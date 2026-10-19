@@ -292,7 +292,7 @@
     <string name="rigor_normal_info">El día cuenta con el 75% de las misiones. Por debajo pierdes XP proporcional y la racha; por debajo del 50% hasta 3 misiones de penalización y bloqueo de 24 horas. 1 día de descanso por semana.</string>
     <string name="rigor_hard_info">Solo cuenta el 100%. Pérdidas dobles; por debajo del 50% hasta 4 misiones de penalización y bloqueo de 24 horas. Sin días de descanso.</string>
     <string name="auto_missions">Cantidad de misiones automática</string>
-    <string name="auto_missions_info">Ahora mismo %1$d misiones extra al día, más las fijas.</string>
+    <string name="auto_missions_info">Ahora mismo %1$d misiones sorteadas al día, más las fijas.</string>
     <string name="extra_daily_missions">Misiones extra al día</string>
     <string name="penalties">Penalizaciones</string>
     <string name="block_on_penalty">Bloquear apps en penalizaciones</string>
@@ -673,4 +673,8 @@
     <string name="dnd_focus">No molestar</string>
     <string name="dnd_focus_info">Silencia el móvil durante el foco; en las pausas vuelve a la normalidad.</string>
     <string name="dnd_focus_needs">Necesita acceso a «No molestar» en los ajustes de Android.</string>
+    <string name="load_next">Sube una cada 7 días cumplidos seguidos (faltan %1$d), hasta %2$d misiones en total; baja una por día fallado.</string>
+    <string name="load_max">Ya estás en el máximo de %1$d misiones al día.</string>
+    <string name="toast_load_up">Constancia: desde mañana tienes %1$d misiones sorteadas.</string>
+    <string name="toast_load_down">Día fallado: desde mañana tienes %1$d misiones sorteadas.</string>
 </resources>
