@@ -215,7 +215,7 @@ private fun MainScaffold(
                 when (Tab.entries[page]) {
                     Tab.TODAY -> TodayScreen(s, openForge, openDef, openQuest) { openQuest = null }
                     Tab.FOCUS -> FocusScreen(s)
-                    Tab.ECHOES -> com.lifup.app.ui.hero.EchoesScreen(s)
+                    Tab.ECHOES -> com.lifup.app.ui.hero.EchoesScreen(s, active = pager.settledPage == page)
                     Tab.HERO -> HeroScreen(s)
                     Tab.SHOP -> ShopScreen(s)
                 }

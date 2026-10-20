@@ -180,6 +180,10 @@
     <string name="bosses">Bosses</string>
     <string name="squad">Squad</string>
     <string name="collection">Collection</string>
+    <string name="favorites">Favourites</string>
+    <string name="favorites_empty">No favourites yet: open an echo and tap the star.</string>
+    <string name="favorite_add">Add to favourites</string>
+    <string name="favorite_remove">Remove from favourites</string>
     <string name="squad_xp">XP +%1$d%%</string>
     <string name="squad_week">This week: %1$s</string>
     <string name="squad_total">All time: %1$s</string>

@@ -179,6 +179,10 @@
     <string name="bosses">Bosse</string>
     <string name="squad">Trupp</string>
     <string name="collection">Sammlung</string>
+    <string name="favorites">Favoriten</string>
+    <string name="favorites_empty">Noch keine Favoriten: Öffne ein Echo und tippe auf den Stern.</string>
+    <string name="favorite_add">Zu Favoriten hinzufügen</string>
+    <string name="favorite_remove">Aus Favoriten entfernen</string>
     <string name="squad_xp">XP +%1$d%%</string>
     <string name="squad_week">Diese Woche: %1$s</string>
     <string name="squad_total">Insgesamt: %1$s</string>

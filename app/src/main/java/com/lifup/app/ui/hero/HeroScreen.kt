@@ -34,6 +34,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.FilterChip
@@ -202,13 +203,22 @@ internal fun squadGainText(g: com.lifup.app.domain.SquadGain): String? {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun Collection(s: GameState, filter: ShadowRank?, onOpen: (String) -> Unit) {
-    val list = content.shadows.filter { filter == null || it.rank == filter }
-        .sortedWith(compareByDescending<ShadowDef> { s.owned(it.id) != null }.thenByDescending { it.rank.ordinal })
+internal fun Collection(s: GameState, filter: ShadowRank?, favorites: Set<String>, favOnly: Boolean, onOpen: (String) -> Unit) {
+    // [favorites] is the order's snapshot; the star on each tile follows the live state.
+    val list = content.shadows.filter { (filter == null || it.rank == filter) && (!favOnly || it.id in favorites) }
+        .sortedWith(compareByDescending<ShadowDef> { it.id in favorites }.thenByDescending { s.owned(it.id) != null }.thenByDescending { it.rank.ordinal })
+    if (favOnly && list.isEmpty()) {
+        Text(stringResource(R.string.favorites_empty), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+        return
+    }
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), maxItemsInEachRow = 4) {
         list.forEach { def ->
             Box(Modifier.weight(1f)) {
                 ShadowTile(def, s.owned(def.id)?.level, inSquad = def.id in s.squad, onClick = { onOpen(def.id) })
+                if (def.id in s.favoriteEchoes) Icon(
+                    Icons.Rounded.Star, null, tint = Lif.colors.gold,
+                    modifier = Modifier.align(Alignment.TopStart).padding(6.dp).size(16.dp),
+                )
                 s.newEchoes[def.id]?.let { first ->
                     Pill(if (first) stringResource(R.string.badge_new) else "+1", Lif.colors.green, modifier = Modifier.align(Alignment.TopEnd).padding(4.dp))
                 }

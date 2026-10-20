@@ -1,6 +1,11 @@
 package com.lifup.app.ui.hero
 
 import com.lifup.app.domain.swapSquad
+import com.lifup.app.domain.toggleFavoriteEcho
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import com.lifup.app.domain.EchoOrigin
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.rounded.SwapHoriz
@@ -74,6 +79,16 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Pill(stringResource(shadowRankName(def.rank)), color)
                         if (owned != null) Pill(stringResource(R.string.level_short, owned.level), color, filled = true)
+                    }
+                }
+                if (owned != null) {
+                    val fav = id in s.favoriteEchoes
+                    IconButton(onClick = { act { toggleFavoriteEcho(id) } }) {
+                        Icon(
+                            if (fav) Icons.Rounded.Star else Icons.Rounded.StarBorder,
+                            stringResource(if (fav) R.string.favorite_remove else R.string.favorite_add),
+                            tint = if (fav) c.gold else c.muted,
+                        )
                     }
                 }
             }

@@ -131,3 +131,8 @@ fun Tx.toggleSquad(id: String) {
         else -> s.copy(squad = s.squad + id)
     }
 }
+
+fun Tx.toggleFavoriteEcho(id: String) {
+    if (s.owned(id) == null) return
+    s = s.copy(favoriteEchoes = if (id in s.favoriteEchoes) s.favoriteEchoes - id else s.favoriteEchoes + id)
+}

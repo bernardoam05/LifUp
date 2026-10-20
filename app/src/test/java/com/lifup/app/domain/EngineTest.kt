@@ -791,4 +791,12 @@ class EngineTest {
         assertEquals(MissionStat(0, 1), s.habitWindow(ids.first(), day, 30))
         assertNull(s.habitOn(ids.first(), day.minusDays(1)))
     }
+
+    @Test fun `only owned echoes can be favourites, and starring again removes them`() {
+        var s = fresh().let { it.copy(shadows = it.shadows + OwnedShadow("astral_eclipse")) }
+        s = run(s, "2026-10-14T10:00") { toggleFavoriteEcho("astral_eclipse"); toggleFavoriteEcho("lvl_thousandth") }
+        assertEquals(setOf("astral_eclipse"), s.favoriteEchoes)
+        s = run(s, "2026-10-14T10:01") { toggleFavoriteEcho("astral_eclipse") }
+        assertTrue(s.favoriteEchoes.isEmpty())
+    }
 }

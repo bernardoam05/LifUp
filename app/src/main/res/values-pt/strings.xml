@@ -168,6 +168,10 @@
     <string name="bosses">Bosses</string>
     <string name="squad">Esquadrão</string>
     <string name="collection">Coleção</string>
+    <string name="favorites">Favoritos</string>
+    <string name="favorites_empty">Ainda sem favoritos: abre um eco e toca na estrela.</string>
+    <string name="favorite_add">Adicionar aos favoritos</string>
+    <string name="favorite_remove">Tirar dos favoritos</string>
     <string name="squad_xp">XP +%1$d%%</string>
     <string name="squad_week">Esta semana: %1$s</string>
     <string name="squad_total">Desde sempre: %1$s</string>

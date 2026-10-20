@@ -382,6 +382,8 @@ data class GameState(
     val weeklyHintsDismissed: Set<String> = emptySet(),
     /** Echoes gained since the Echoes tab was last seen: true = first copy, false = an extra copy. */
     val newEchoes: Map<String, Boolean> = emptyMap(),
+    /** Echoes the player starred: listed first in the collection. */
+    val favoriteEchoes: Set<String> = emptySet(),
     /** Items gained since the inventory was last seen. */
     val newItems: Set<String> = emptySet(),
     /** Guides already shown automatically. */
