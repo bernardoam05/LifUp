@@ -73,7 +73,8 @@
     <string name="side_section">Tarefas</string>
     <string name="side_hint">Uma tarefa para hoje…</string>
     <string name="side_empty">Sem tarefas. Junta pequenas tarefas para ganhar XP extra.</string>
-    <string name="forbidden_keep">Mantém até à meia-noite</string>
+    <string name="forbidden_keep">Conta sozinha à meia-noite</string>
+    <string name="avoid_info">Não precisas de marcar nada: à meia-noite conta como cumprida. Se falhares, toca em "Falhei".</string>
     <string name="forbidden_broken">Falhada hoje</string>
     <string name="forbidden_fail">Falhei</string>
     <string name="forbidden_undo">Afinal não</string>

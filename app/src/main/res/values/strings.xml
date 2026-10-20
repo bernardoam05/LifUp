@@ -80,7 +80,8 @@
     <string name="side_section">Side quests</string>
     <string name="side_hint">A task for today…</string>
     <string name="side_empty">No side quests. Add small tasks for bonus XP.</string>
-    <string name="forbidden_keep">Kept until midnight</string>
+    <string name="forbidden_keep">Counts by itself at midnight</string>
+    <string name="avoid_info">Nothing to tick: at midnight it counts as kept. If you slip, tap "I slipped" so the day stays honest.</string>
     <string name="forbidden_broken">Broken today</string>
     <string name="forbidden_fail">I slipped</string>
     <string name="forbidden_undo">Undo</string>

@@ -73,7 +73,8 @@
     <string name="side_section">Tâches</string>
     <string name="side_hint">Une tâche pour aujourd\'hui…</string>
     <string name="side_empty">Aucune tâche. Ajoute de petites tâches du jour pour gagner de l\'XP bonus.</string>
-    <string name="forbidden_keep">Tenu jusqu\'à minuit</string>
+    <string name="forbidden_keep">Compte toute seule à minuit</string>
+    <string name="avoid_info">Rien à cocher : à minuit, elle compte comme tenue. Si tu craques, touche « J\'ai craqué ».</string>
     <string name="forbidden_broken">Raté aujourd\'hui</string>
     <string name="forbidden_fail">J\'ai craqué</string>
     <string name="forbidden_undo">Annuler</string>

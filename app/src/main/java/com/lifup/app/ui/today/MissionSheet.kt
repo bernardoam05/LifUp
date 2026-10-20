@@ -127,6 +127,8 @@ fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = nu
             SheetHeader(q)
             Text(questDetail(q, lang(), unit), style = MaterialTheme.typography.bodyLarge, color = p.text)
             q.prompt?.let { Text(it.text(lang()), style = MaterialTheme.typography.bodyMedium, color = p.accent) }
+            // Avoid missions pass by themselves: say so, and what to do on a slip.
+            if (q.type == QuestType.FORBIDDEN && open) Text(stringResource(R.string.avoid_info), style = MaterialTheme.typography.bodySmall, color = p.muted)
             if (q.auto != null && q.autoOff) Text(stringResource(R.string.auto_off), style = MaterialTheme.typography.bodySmall, color = p.gold)
             else if (q.auto != null) AutoInfo(q.auto, s)
 

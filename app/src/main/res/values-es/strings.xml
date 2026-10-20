@@ -79,7 +79,8 @@
     <string name="side_section">Tareas</string>
     <string name="side_hint">Una tarea para hoy…</string>
     <string name="side_empty">Sin tareas. Añade pequeñas tareas del día para ganar XP extra.</string>
-    <string name="forbidden_keep">Mantener hasta medianoche</string>
+    <string name="forbidden_keep">Cuenta sola a medianoche</string>
+    <string name="avoid_info">No hace falta marcar nada: a medianoche cuenta como cumplida. Si fallas, toca "Fallé".</string>
     <string name="forbidden_broken">Fallada hoy</string>
     <string name="forbidden_fail">Fallé</string>
     <string name="forbidden_undo">Deshacer</string>

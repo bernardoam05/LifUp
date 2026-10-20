@@ -79,7 +79,8 @@
     <string name="side_section">Aufgaben</string>
     <string name="side_hint">Eine Aufgabe für heute…</string>
     <string name="side_empty">Keine Aufgaben. Füge kleine Aufgaben für Bonus-XP hinzu.</string>
-    <string name="forbidden_keep">Bis Mitternacht halten</string>
+    <string name="forbidden_keep">Zählt um Mitternacht von selbst</string>
+    <string name="avoid_info">Nichts abzuhaken: Um Mitternacht zählt sie als geschafft. Wenn du ausrutschst, tippe auf „Ausgerutscht“.</string>
     <string name="forbidden_broken">Heute gebrochen</string>
     <string name="forbidden_fail">Ausgerutscht</string>
     <string name="forbidden_undo">Doch nicht</string>
