@@ -73,6 +73,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.shadow
+import androidx.compose.foundation.layout.height
 import androidx.compose.ui.res.pluralStringResource
 import com.lifup.app.domain.FlameKind
 import com.lifup.app.domain.flame
@@ -312,7 +314,6 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
 private fun StreakFlame(s: GameState) {
     val c = Lif.colors
     val flame = s.flame()
-    val context = LocalContext.current
     var shown by remember { mutableStateOf(flame.kind) }
     val bump = remember { Animatable(1f) }
     val burst = remember { Animatable(1f) }
@@ -332,16 +333,16 @@ private fun StreakFlame(s: GameState) {
         FlameKind.SAFE -> c.orange
         FlameKind.PERFECT -> c.gold
     }
-    val goal = s.dayGoal()
-    val explain = when (flame.kind) {
-        FlameKind.REST -> stringResource(R.string.flame_rest)
-        FlameKind.RECOVERING -> pluralStringResource(R.plurals.flame_recovering, flame.days, flame.days)
-        FlameKind.PENDING -> stringResource(R.string.flame_pending, goal.kept, goal.needed)
-        FlameKind.SAFE -> pluralStringResource(R.plurals.flame_safe, flame.days, flame.days)
-        FlameKind.PERFECT -> pluralStringResource(R.plurals.flame_perfect, flame.days, flame.days)
-    }
+    var open by remember { mutableStateOf(false) }
+    LaunchedEffect(open) { if (open) { kotlinx.coroutines.delay(6_000); open = false } }
+    if (open) androidx.compose.ui.window.Popup(
+        alignment = Alignment.TopEnd,
+        offset = androidx.compose.ui.unit.IntOffset(0, with(androidx.compose.ui.platform.LocalDensity.current) { 32.dp.roundToPx() }),
+        onDismissRequest = { open = false },
+        properties = androidx.compose.ui.window.PopupProperties(focusable = true),
+    ) { FlameCard(s, flame, color) { open = false } }
     Row(
-        Modifier.clip(RoundedCornerShape(8.dp)).clickable { android.widget.Toast.makeText(context, explain, android.widget.Toast.LENGTH_LONG).show() }.padding(horizontal = 2.dp, vertical = 4.dp),
+        Modifier.clip(RoundedCornerShape(8.dp)).clickable { open = !open }.padding(horizontal = 2.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -359,6 +360,47 @@ private fun StreakFlame(s: GameState) {
         Spacer(Modifier.width(3.dp))
         AnimatedContent(flame.days, transitionSpec = { (slideInVertically { it } + fadeIn()) togetherWith (slideOutVertically { -it } + fadeOut()) }, label = "days") { d ->
             Text(d.toString(), style = MaterialTheme.typography.labelLarge, color = Lif.colors.text, maxLines = 1, softWrap = false)
+        }
+    }
+}
+
+/** What the flame means today: its state, what to do next and today's missions against the streak's minimum. */
+@Composable
+private fun FlameCard(s: GameState, flame: com.lifup.app.domain.Flame, color: Color, onClose: () -> Unit) {
+    val c = Lif.colors
+    val goal = s.dayGoal()
+    val (title, body) = when (flame.kind) {
+        FlameKind.REST -> R.string.flame_title_rest to stringResource(R.string.flame_rest)
+        FlameKind.RECOVERING -> R.string.flame_title_recovering to stringResource(R.string.flame_recovering)
+        FlameKind.PENDING -> R.string.flame_title_pending to (goal.needed - goal.kept).let { pluralStringResource(R.plurals.flame_pending, it, it) }
+        FlameKind.SAFE -> R.string.flame_title_safe to stringResource(R.string.flame_safe)
+        FlameKind.PERFECT -> R.string.flame_title_perfect to stringResource(R.string.flame_perfect)
+    }
+    Column(
+        Modifier.padding(end = 8.dp).width(280.dp).shadow(12.dp, RoundedCornerShape(16.dp)).clip(RoundedCornerShape(16.dp))
+            .background(c.panelHigh).border(1.dp, color.copy(alpha = 0.6f), RoundedCornerShape(16.dp)).clickable(onClick = onClose).padding(14.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(Modifier.size(36.dp).background(color.copy(alpha = 0.16f), CircleShape), contentAlignment = Alignment.Center) {
+                Icon(if (flame.kind == FlameKind.REST) Icons.Rounded.Bedtime else Icons.Rounded.LocalFireDepartment, null, tint = color, modifier = Modifier.size(22.dp))
+            }
+            Spacer(Modifier.width(10.dp))
+            Column {
+                Text(stringResource(title), style = MaterialTheme.typography.titleSmall, color = color)
+                Text(pluralStringResource(R.plurals.flame_days, flame.days, flame.days), style = MaterialTheme.typography.labelMedium, color = c.muted)
+            }
+        }
+        Text(body, style = MaterialTheme.typography.bodySmall, color = c.text)
+        if (goal.total > 0 && flame.kind != FlameKind.REST) {
+            // Today's missions, with a tick where the streak starts to count.
+            Box(Modifier.fillMaxWidth()) {
+                Bar(goal.kept / goal.total.toFloat(), color, height = 6.dp)
+                Box(Modifier.fillMaxWidth(goal.needed / goal.total.toFloat()).height(6.dp), contentAlignment = Alignment.CenterEnd) {
+                    Box(Modifier.width(2.dp).height(10.dp).background(c.text))
+                }
+            }
+            Text(stringResource(R.string.flame_progress, goal.kept, goal.total), style = MaterialTheme.typography.labelSmall, color = c.dim)
         }
     }
 }

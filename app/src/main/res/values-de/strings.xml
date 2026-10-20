@@ -183,17 +183,11 @@
     <string name="favorites_empty">Noch keine Favoriten: Öffne ein Echo und tippe auf den Stern.</string>
     <string name="favorite_add">Zu Favoriten hinzufügen</string>
     <string name="favorite_remove">Aus Favoriten entfernen</string>
-    <string name="squad_xp">XP +%1$d%%</string>
-    <string name="squad_week">Diese Woche: %1$s</string>
-    <string name="squad_total">Insgesamt: %1$s</string>
+    <string name="squad_total_label">Insgesamt</string>
+    <string name="squad_week_label">Diese Woche</string>
     <string name="squad_gain_gold">+%1$s Gold</string>
     <string name="squad_gain_saves">hat dich %1$d× gerettet</string>
     <string name="week_squad">Trupp: %1$s</string>
-    <string name="squad_gold">Gold +%1$d%%</string>
-    <string name="squad_boss">Bossschaden +%1$d%%</string>
-    <string name="squad_penalty">Strafe −%1$d%%</string>
-    <string name="squad_focus">Fokus +%1$d%%</string>
-    <string name="squad_luck">Glück +%1$d%%</string>
     <string name="stat_quests">Missionen</string>
     <string name="stat_perfect">Perfekte Tage</string>
     <string name="stat_focus_h">Fokusstunden</string>
@@ -236,12 +230,12 @@
     <string name="passive_focus">+%1$s angerechnete Fokusminuten</string>
     <string name="passive_daily">+%1$d XP für jeden perfekten Tag</string>
     <string name="passive_luck">+%1$s Glück für Beute und seltene Echos</string>
-    <string name="luck_odds_echo">Nur mit diesem Echo (ohne → mit):</string>
-    <string name="luck_odds_squad">Glück deines Trupps (ohne → mit):</string>
-    <string name="luck_item">Gegenstand nach einer Mission: %1$s → %2$s</string>
-    <string name="luck_portal">Echo beim Schließen eines Portals: %1$s → %2$s</string>
-    <string name="luck_rank">Gefundenes Echo %1$s oder besser: %2$s → %3$s</string>
-    <string name="luck_rank_top">Gefundenes Echo %1$s: %2$s → %3$s</string>
+    <string name="luck_odds_echo">Nur mit diesem Echo (ohne → mit)</string>
+    <string name="luck_odds_squad">Glück des Trupps (ohne → mit)</string>
+    <string name="luck_item">Gegenstand nach einer Mission</string>
+    <string name="luck_portal">Echo beim Schließen eines Portals</string>
+    <string name="luck_rank">Gefundenes Echo %1$s oder besser</string>
+    <string name="luck_rank_top">Gefundenes Echo %1$s</string>
     <string name="passive_all">Verstärkt die anderen Passiven des Trupps um %1$s</string>
 
     <!-- Shop -->
@@ -503,20 +497,24 @@
     <string name="rest_day_left">Ruhetag · %1$d</string>
     <string name="today_goal">Serie mit %1$d von %2$d · alle für einen perfekten Tag</string>
     <string name="streak_recovery">Mach heute einen perfekten Tag, um deine Serie von %1$d Tagen zurückzuholen</string>
-    <string name="flame_rest">Ruhetag: Die Serie bleibt, wie sie ist.</string>
-    <plurals name="flame_recovering">
-        <item quantity="one">Gestern verloren: Ein perfekter Tag heute bringt deine Serie von %1$d Tag zurück.</item>
-        <item quantity="other">Gestern verloren: Ein perfekter Tag heute bringt deine Serie von %1$d Tagen zurück.</item>
+    <string name="flame_rest">Heute bleibt die Serie, wie sie ist.</string>
+    <string name="flame_title_rest">Ruhetag</string>
+    <string name="flame_title_recovering">Wird zurückgeholt</string>
+    <string name="flame_title_pending">Zählt noch nicht</string>
+    <string name="flame_title_safe">Serie gesichert</string>
+    <string name="flame_title_perfect">Bisher perfekt</string>
+    <string name="flame_progress">%1$d von %2$d Missionen heute · die Markierung ist die Serie</string>
+    <plurals name="flame_days">
+        <item quantity="one">Serie von %1$d Tag</item>
+        <item quantity="other">Serie von %1$d Tagen</item>
     </plurals>
-    <string name="flame_pending">Serie: %1$d von %2$d Missionen erledigt, damit heute zählt.</string>
-    <plurals name="flame_safe">
-        <item quantity="one">Serie gesichert: %1$d Tag heute Nacht. Schaffe alle für einen perfekten Tag.</item>
-        <item quantity="other">Serie gesichert: %1$d Tage heute Nacht. Schaffe alle für einen perfekten Tag.</item>
+    <string name="flame_recovering">Gestern verloren. Ein perfekter Tag heute holt sie zurück.</string>
+    <plurals name="flame_pending">
+        <item quantity="one">Noch %1$d Mission, dann zählt heute.</item>
+        <item quantity="other">Noch %1$d Missionen, dann zählt heute.</item>
     </plurals>
-    <plurals name="flame_perfect">
-        <item quantity="one">Alle geschafft: %1$d Tag heute Nacht, und ein perfekter Tag, wenn es bis Mitternacht hält.</item>
-        <item quantity="other">Alle geschafft: %1$d Tage heute Nacht, und ein perfekter Tag, wenn es bis Mitternacht hält.</item>
-    </plurals>
+    <string name="flame_safe">Heute zählt schon. Schaffe alle für einen perfekten Tag: Bonus-XP und ein Echo.</string>
+    <string name="flame_perfect">Alle geschafft. Um Mitternacht wird es ein perfekter Tag, wenn die Vermeiden-Missionen halten.</string>
     <string name="report_passed">Tag geschafft</string>
     <string name="report_streak_restored">Serie zurückgeholt</string>
     <string name="pomodoro_work_open">Fokus · Zyklus %1$d</string>

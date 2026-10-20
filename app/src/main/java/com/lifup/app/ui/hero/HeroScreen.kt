@@ -76,6 +76,7 @@ import com.lifup.app.ui.components.SectionTitle
 import com.lifup.app.domain.Attr
 import com.lifup.app.ui.attrColor
 import com.lifup.app.ui.fmtCount
+import com.lifup.app.ui.passiveText
 import com.lifup.app.domain.habitOn
 import com.lifup.app.domain.habitWindow
 import androidx.compose.material.icons.rounded.ExpandLess
@@ -173,39 +174,76 @@ internal fun Squad(s: GameState, onOpen: (String) -> Unit) {
             }
         }
     }
-    fun pct(v: Double) = (v * 100).toInt()
-    val active = buildList {
-        if (passives.xp > 0) add(stringResource(R.string.squad_xp, pct(passives.xp)))
-        if (passives.gold > 0) add(stringResource(R.string.squad_gold, pct(passives.gold)))
-        if (passives.bossDamage > 0) add(stringResource(R.string.squad_boss, pct(passives.bossDamage)))
-        if (passives.penaltyReduce > 0) add(stringResource(R.string.squad_penalty, pct(passives.penaltyReduce)))
-        if (passives.focusMastery > 0) add(stringResource(R.string.squad_focus, pct(passives.focusMastery)))
-        if (passives.luck > 0) add(stringResource(R.string.squad_luck, pct(passives.luck)))
-        if (passives.immunity) add(stringResource(R.string.passive_immunity))
-        if (passives.streakProtect) add(stringResource(R.string.passive_streak))
-    }
-    if (active.isNotEmpty()) Text(active.joinToString(" · "), style = MaterialTheme.typography.labelMedium, color = c.accent, modifier = Modifier.padding(top = 6.dp))
-    if (passives.luck > 0) Column(Modifier.padding(top = 4.dp)) { LuckOddsLines(s.player.level, passives.luck, R.string.luck_odds_squad) }
-    // What those percentages actually came to.
-    squadGainText(s.squadWeek)?.let { Text(stringResource(R.string.squad_week, it), style = MaterialTheme.typography.labelMedium, color = c.text, modifier = Modifier.padding(top = 4.dp)) }
-    squadGainText(s.squadTotal)?.let { Text(stringResource(R.string.squad_total, it), style = MaterialTheme.typography.labelMedium, color = c.muted) }
+    if (s.squad.isNotEmpty()) SquadEffects(s, passives.luck)
 }
 
-/** What a given luck does to the chances it touches, without it → with it, at the player's level. */
+/**
+ * Under the squad: what its passives do (one chip per effect, in the effect's colour), what they
+ * actually brought this week and overall, and, with luck, the chances it changes.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun SquadEffects(s: GameState, luck: Double) {
+    val c = Lif.colors
+    val members = s.squad.mapNotNull { id -> content.shadowById[id]?.let { it to (s.owned(id)?.level ?: 1) } }
+    val amp = 1 + members.filter { it.first.passive == com.lifup.app.domain.Passive.ALL_BOOST }.sumOf { (d, l) -> Rules.passiveValue(d, l) }
+    val effects = members.groupBy { it.first.passive }.map { (passive, ds) ->
+        val sum = ds.sumOf { (d, l) -> Rules.passiveValue(d, l) }
+        passive to if (passive == com.lifup.app.domain.Passive.ALL_BOOST) sum else sum * amp
+    }
+    Panel(Modifier.padding(top = 8.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            effects.forEach { (passive, value) -> Pill(passiveText(passive, value), passiveColor(passive)) }
+        }
+        if (!s.squadTotal.isEmpty()) {
+            Spacer(Modifier.height(12.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                GainColumn(stringResource(R.string.squad_week_label), s.squadWeek, Modifier.weight(1f))
+                GainColumn(stringResource(R.string.squad_total_label), s.squadTotal, Modifier.weight(1f))
+            }
+        }
+        if (luck > 0) {
+            Spacer(Modifier.height(12.dp))
+            LuckOddsLines(s.player.level, luck, R.string.luck_odds_squad)
+        }
+    }
+}
+
+/** One period of what the squad brought: XP, gold and saves, each in its colour, or a dash. */
+@Composable
+private fun GainColumn(label: String, g: com.lifup.app.domain.SquadGain, modifier: Modifier) {
+    val c = Lif.colors
+    Column(modifier.clip(RoundedCornerShape(10.dp)).background(c.panelHigh).padding(10.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(label.uppercase(), style = MaterialTheme.typography.labelSmall, color = c.dim)
+        if (g.isEmpty()) Text("—", style = MaterialTheme.typography.titleMedium, color = c.dim)
+        if (g.xp > 0) Text("+${fmtCount(g.xp.toLong())} XP", style = MaterialTheme.typography.titleMedium, color = c.accent)
+        if (g.gold > 0) Text(stringResource(R.string.squad_gain_gold, fmtCount(g.gold.toLong())), style = MaterialTheme.typography.titleMedium, color = c.gold)
+        if (g.saves > 0) Text(stringResource(R.string.squad_gain_saves, g.saves), style = MaterialTheme.typography.labelMedium, color = c.green)
+    }
+}
+
+/** What a given luck does to the chances it touches, as a table: without it → with it, at the player's level. */
 @Composable
 internal fun LuckOddsLines(level: Int, luck: Double, title: Int) {
     val c = Lif.colors
     val base = com.lifup.app.domain.luckOdds(level, 0.0)
     val lucky = com.lifup.app.domain.luckOdds(level, luck)
     fun pct(v: Double) = com.lifup.app.ui.fmtNum(v * 100) + "%"
-    val style = MaterialTheme.typography.labelSmall
-    Text(stringResource(title), style = style, color = c.dim)
-    Text(stringResource(R.string.luck_item, pct(base.item), pct(lucky.item)), style = style, color = c.text)
-    Text(stringResource(R.string.luck_portal, pct(base.portalEcho), pct(lucky.portalEcho)), style = style, color = c.text)
+    Text(stringResource(title).uppercase(), style = MaterialTheme.typography.labelSmall, color = c.dim)
+    Spacer(Modifier.height(4.dp))
+    @Composable
+    fun row(label: String, from: Double, to: Double) = Row(Modifier.fillMaxWidth().padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(label, style = MaterialTheme.typography.bodySmall, color = c.text, modifier = Modifier.weight(1f))
+        Text(pct(from), style = MaterialTheme.typography.labelMedium, color = c.dim)
+        Text("  →  ", style = MaterialTheme.typography.labelMedium, color = c.dim)
+        Text(pct(to), style = MaterialTheme.typography.labelMedium, color = c.purple)
+    }
+    row(stringResource(R.string.luck_item), base.item, lucky.item)
+    row(stringResource(R.string.luck_portal), base.portalEcho, lucky.portalEcho)
     // The two best ranks reachable at this level say the most.
     lucky.atLeast.keys.sortedDescending().take(2).sorted().forEach { r ->
         val line = if (r == ShadowRank.entries.last()) R.string.luck_rank_top else R.string.luck_rank
-        Text(stringResource(line, stringResource(com.lifup.app.ui.shadowRankName(r)), pct(base.atLeast[r] ?: 0.0), pct(lucky.atLeast.getValue(r))), style = style, color = c.text)
+        row(stringResource(line, stringResource(com.lifup.app.ui.shadowRankName(r))), base.atLeast[r] ?: 0.0, lucky.atLeast.getValue(r))
     }
 }
 

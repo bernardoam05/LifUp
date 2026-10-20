@@ -184,17 +184,11 @@
     <string name="favorites_empty">No favourites yet: open an echo and tap the star.</string>
     <string name="favorite_add">Add to favourites</string>
     <string name="favorite_remove">Remove from favourites</string>
-    <string name="squad_xp">XP +%1$d%%</string>
-    <string name="squad_week">This week: %1$s</string>
-    <string name="squad_total">All time: %1$s</string>
+    <string name="squad_total_label">All time</string>
+    <string name="squad_week_label">This week</string>
     <string name="squad_gain_gold">+%1$s gold</string>
     <string name="squad_gain_saves">saved you %1$d×</string>
     <string name="week_squad">Squad: %1$s</string>
-    <string name="squad_gold">Gold +%1$d%%</string>
-    <string name="squad_boss">Boss damage +%1$d%%</string>
-    <string name="squad_penalty">Penalty −%1$d%%</string>
-    <string name="squad_focus">Focus +%1$d%%</string>
-    <string name="squad_luck">Luck +%1$d%%</string>
     <string name="stat_quests">Missions</string>
     <string name="stat_perfect">Perfect days</string>
     <string name="stat_focus_h">Focus hours</string>
@@ -237,12 +231,12 @@
     <string name="passive_focus">+%1$s focus minutes credited</string>
     <string name="passive_daily">+%1$d XP for each perfect day</string>
     <string name="passive_luck">+%1$s luck for drops and rare echoes</string>
-    <string name="luck_odds_echo">This echo alone (without → with):</string>
-    <string name="luck_odds_squad">Your squad\'s luck (without → with):</string>
-    <string name="luck_item">Item after a mission: %1$s → %2$s</string>
-    <string name="luck_portal">Echo when clearing a portal: %1$s → %2$s</string>
-    <string name="luck_rank">Found echo %1$s or better: %2$s → %3$s</string>
-    <string name="luck_rank_top">Found echo %1$s: %2$s → %3$s</string>
+    <string name="luck_odds_echo">This echo alone (without → with)</string>
+    <string name="luck_odds_squad">Your squad\'s luck (without → with)</string>
+    <string name="luck_item">Item after a mission</string>
+    <string name="luck_portal">Echo when clearing a portal</string>
+    <string name="luck_rank">Found echo %1$s or better</string>
+    <string name="luck_rank_top">Found echo %1$s</string>
     <string name="passive_all">Amplifies the squad\'s other passives by %1$s</string>
 
     <!-- Shop -->
@@ -504,20 +498,24 @@
     <string name="rest_day_left">Rest · %1$d</string>
     <string name="today_goal">Streak needs %1$d of %2$d · all of them for a perfect day</string>
     <string name="streak_recovery">Make today perfect to get your %1$d-day streak back</string>
-    <string name="flame_rest">Rest day: the streak stays as it is.</string>
-    <plurals name="flame_recovering">
-        <item quantity="one">Lost yesterday: a perfect day today brings back your %1$d-day streak.</item>
-        <item quantity="other">Lost yesterday: a perfect day today brings back your %1$d-day streak.</item>
+    <string name="flame_rest">The streak stays as it is today.</string>
+    <string name="flame_title_rest">Rest day</string>
+    <string name="flame_title_recovering">Recovering</string>
+    <string name="flame_title_pending">Not counted yet</string>
+    <string name="flame_title_safe">Streak secured</string>
+    <string name="flame_title_perfect">Perfect so far</string>
+    <string name="flame_progress">%1$d of %2$d missions today · the mark is the streak</string>
+    <plurals name="flame_days">
+        <item quantity="one">%1$d-day streak</item>
+        <item quantity="other">%1$d-day streak</item>
     </plurals>
-    <string name="flame_pending">Streak: %1$d of %2$d missions done for today to count.</string>
-    <plurals name="flame_safe">
-        <item quantity="one">Streak secured: %1$d day tonight. Do them all for a perfect day.</item>
-        <item quantity="other">Streak secured: %1$d days tonight. Do them all for a perfect day.</item>
+    <string name="flame_recovering">Lost yesterday. A perfect day today brings it back.</string>
+    <plurals name="flame_pending">
+        <item quantity="one">%1$d more mission and today counts.</item>
+        <item quantity="other">%1$d more missions and today counts.</item>
     </plurals>
-    <plurals name="flame_perfect">
-        <item quantity="one">Every mission kept: %1$d day tonight, and a perfect day if it holds until midnight.</item>
-        <item quantity="other">Every mission kept: %1$d days tonight, and a perfect day if it holds until midnight.</item>
-    </plurals>
+    <string name="flame_safe">Today already counts. Do them all for a perfect day: bonus XP and an echo.</string>
+    <string name="flame_perfect">All kept. At midnight it becomes a perfect day, if the avoid missions hold.</string>
     <string name="report_passed">Day kept</string>
     <string name="report_streak_restored">Streak recovered</string>
     <string name="pomodoro_work_open">Focus · cycle %1$d</string>
