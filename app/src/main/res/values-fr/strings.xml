@@ -335,8 +335,8 @@
     <string name="field_target">Objectif</string>
     <string name="field_unit">Unité</string>
     <string name="field_scaling">Hausse</string>
-    <string name="field_interval">Tous les N niveaux</string>
-    <string name="field_scaling_hint">L\'objectif augmente de la \"hausse\" tous les N niveaux.</string>
+    <string name="field_interval">Toutes les N réussites</string>
+    <string name="field_scaling_hint">Après N réussites (en manquant au plus 1 sur 5), l\'objectif monte de la \"hausse\" ; si tu manques plus que tu ne tiens, il baisse. Pour les hebdomadaires, chaque semaine atteinte compte.</string>
     <string name="field_reward">Récompense</string>
     <string name="preset_easy">Facile</string>
     <string name="preset_medium">Moyenne</string>
@@ -354,7 +354,7 @@
     <string name="onb_intro">Chaque jour, tu reçois des missions. Termine-les pour gagner de l\'XP, de l\'or et des échos. Ignore-les et tu en paieras le prix.</string>
     <string name="onb_how">Comment ça marche</string>
     <string name="onb_f_missions">Missions quotidiennes</string>
-    <string name="onb_f_missions_text">Des habitudes fixes plus un tirage quotidien. Les objectifs augmentent avec ton niveau.</string>
+    <string name="onb_f_missions_text">Des habitudes fixes plus un tirage quotidien. Chaque objectif grandit à mesure que tu le tiens.</string>
     <string name="onb_f_penalty">Pénalités</string>
     <string name="onb_f_penalty_text">À minuit, les missions ratées coûtent de l\'XP et de l\'or, ajoutent des missions de pénalité et peuvent bloquer tes apps de distraction.</string>
     <string name="onb_f_focus">Focus</string>
@@ -421,7 +421,7 @@
     <string name="auto_info">Compté automatiquement : %1$s. Mis à jour toutes les 15 min et à chaque ouverture ; la journée se clôt avec la valeur finale.</string>
     <string name="auto_missing">Le comptage automatique est désactivé sur ce téléphone. En attendant, coche-la à la main.</string>
     <string name="auto_enable">Activer</string>
-    <string name="scaling_chip">%1$s tous les %2$d nv</string>
+    <string name="scaling_chip">%1$s toutes les %2$d×</string>
     <string name="field_auto">Suivi automatique</string>
     <string name="auto_none">Aucun</string>
     <string name="field_auto_hint">La progression se remplit toute seule depuis le téléphone ; type et unité sont fixés pour toi.</string>
@@ -579,9 +579,16 @@
     <string name="habit_none_yet">Chaque jour où cette mission sort s\'ajoute ici à minuit. Le dernier carré, c\'est aujourd\'hui, en direct.</string>
     <string name="habit_recent">30 derniers jours : %1$d sur %2$d</string>
     <string name="habit_trend">30 derniers jours : %1$d sur %2$d (%3$d %%) · 30 d\'avant : %4$d %%</string>
-    <string name="adapt_level">Objectif ajusté %1$s %%</string>
-    <string name="adapt_up">Objectif +%1$d %% : tu as tenu cette mission plusieurs jours d\'affilée.</string>
-    <string name="adapt_down">Objectif −%1$d %% : ajusté après quelques jours manqués.</string>
+    <string name="prog_from">Départ : %1$s</string>
+    <string name="prog_max">Objectif maximal atteint</string>
+    <plurals name="prog_next">
+        <item quantity="one">Monte après encore %d réussite</item>
+        <item quantity="other">Monte après encore %d réussites</item>
+    </plurals>
+    <plurals name="prog_next_weeks">
+        <item quantity="one">Monte après encore %d semaine atteinte</item>
+        <item quantity="other">Monte après encore %d semaines atteintes</item>
+    </plurals>
     <string name="show_all">Tout voir</string>
     <string name="show_less">Voir moins</string>
     <string name="notif_reminder_safe_title">Série assurée</string>

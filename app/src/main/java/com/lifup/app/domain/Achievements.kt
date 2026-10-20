@@ -44,6 +44,7 @@ fun Tx.migrateState() {
         fun stamp(q: Quest) = q.copy(group = q.group ?: s.defOf(q.defId, content)?.drawGroup())
         s = s.copy(quests = s.quests.map(::stamp), penalty = s.penalty.copy(quests = s.penalty.quests.map(::stamp)), version = 6)
     }
+    if (s.version < 7) migrateToMissionSteps()
 }
 
 /** Unlocks every tier whose target has been reached. Rewards are paid unboosted to avoid feedback loops. */

@@ -565,30 +565,53 @@ class EngineTest {
         assertEquals(at("2026-10-14T10:55"), s.blockPlan(at("2026-10-14T10:31"))!!.until)
     }
 
-    @Test fun `targets adapt to what the user keeps`() {
-        var s = fresh()
+    @Test fun `targets grow with the mission's own record, not the level`() {
+        var s = fresh().let { it.copy(player = it.player.copy(level = 60)) }
         val def = content.questDefById.getValue("core_pushups")
-        val base = buildQuest(def, 1, QuestOrigin.DAILY).target
-        // Five kept days in a row raise the target one step.
-        repeat(5) { d ->
+        assertEquals(def.baseTarget, buildQuest(def, 60, QuestOrigin.DAILY).target, 0.0)
+        // Three kept days (its cadence) raise the target one step.
+        repeat(3) { d ->
             val day = java.time.LocalDate.parse("2026-10-14").plusDays(d.toLong())
             s = run(s, "${day}T08:00")
             s = run(s, "${day}T12:00") { s.dailyQuests.filter { it.defId == def.id }.forEach { completeQuest(it.id) } }
         }
-        s = run(s, "2026-10-19T08:00")
+        s = run(s, "2026-10-17T08:00")
         assertEquals(1, s.adapt[def.id]!!.level)
         val q = s.dailyQuests.first { it.defId == def.id }
-        assertEquals(1, q.adapt)
-        assertTrue(q.target > base)
+        assertEquals(def.baseTarget + def.scalingAmount, q.target, 0.0)
+        assertEquals(3, s.keepsToNextStep(def))
         // Three misses bring it back down.
-        listOf("2026-10-20", "2026-10-21", "2026-10-22").forEach { s = run(s, "${it}T08:00") }
-        assertEquals(0, s.adapt[def.id]!!.level)
-        assertEquals(5, s.missionStats[def.id]!!.done)
+        listOf("2026-10-18", "2026-10-19", "2026-10-20").forEach { s = run(s, "${it}T08:00") }
+        assertEquals(0, s.adapt[def.id]?.level ?: 0)
+        assertEquals(3, s.missionStats[def.id]!!.done)
     }
 
-    @Test fun `limits get stricter when kept`() {
-        assertTrue(adaptFactor(QuestType.LIMIT, 1) < 1.0)
-        assertTrue(adaptFactor(QuestType.TRAINING, 1) > 1.0)
+    @Test fun `a miss means more keeps before the next step`() {
+        val def = content.questDefById.getValue("core_pushups")
+        val afterMiss = Adapt().next(false, def)
+        assertEquals(4, fresh().copy(adapt = mapOf(def.id to afterMiss)).keepsToNextStep(def))
+        val climbed = (1..4).fold(afterMiss) { a, _ -> a.next(true, def) }
+        assertEquals(1, climbed.level)
+    }
+
+    @Test fun `limits get stricter when kept and targets stop at their cap`() {
+        val limit = content.questDefById.getValue("pool_screen_limit")
+        assertTrue(limit.targetAt(1) < limit.baseTarget)
+        assertEquals(limit.maxTarget!!, limit.targetAt(100), 0.0)
+        val pushups = content.questDefById.getValue("core_pushups")
+        assertEquals(40.0, pushups.targetAt(100), 0.0)
+        assertEquals(pushups.baseTarget / 2, pushups.targetAt(-100), 0.0)
+        assertNull(fresh().copy(adapt = mapOf(pushups.id to Adapt(25))).keepsToNextStep(pushups))
+    }
+
+    @Test fun `old saves keep the targets they had`() {
+        val old = fresh().let { it.copy(version = 6, player = it.player.copy(level = 30), adapt = mapOf("pool_plank" to Adapt(1))) }
+        val s = run(old, "2026-10-14T10:00")
+        // Pushups were 15 + 2 every 5 levels: 25 at level 30, now 10 steps of 1.
+        assertEquals(10, s.stepOf("core_pushups"))
+        // Plank: 60 + 5×5 = 85, +10% = 93.5 → the nearest 10 s step is 90.
+        assertEquals(90.0, content.questDefById.getValue("pool_plank").targetAt(s.stepOf("pool_plank")), 0.0)
+        assertEquals(7, s.version)
     }
 
     @Test fun `a new week sums up the last one`() {

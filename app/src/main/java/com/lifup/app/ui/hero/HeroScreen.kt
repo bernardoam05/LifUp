@@ -81,6 +81,9 @@ import com.lifup.app.ui.passiveText
 import com.lifup.app.ui.icon
 import com.lifup.app.domain.availableDefs
 import com.lifup.app.domain.isWeekly
+import com.lifup.app.domain.progresses
+import com.lifup.app.domain.roundTarget
+import com.lifup.app.domain.targetAt
 import androidx.compose.foundation.layout.fillMaxHeight
 import com.lifup.app.ui.color
 import com.lifup.app.domain.habitOn
@@ -521,8 +524,8 @@ private fun MissionRates(s: GameState) {
                         Text(defTitle(s, def.id), style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             Text(androidx.compose.ui.res.pluralStringResource(R.plurals.rate_times, st.total, st.done, st.total), style = MaterialTheme.typography.labelSmall, color = c.muted)
-                            s.adapt[def.id]?.level?.takeIf { it != 0 }?.let { lvl ->
-                                Pill(stringResource(R.string.adapt_level, (if (lvl > 0) "+" else "") + lvl * 10), c.dim)
+                            s.adapt[def.id]?.level?.takeIf { it != 0 && def.progresses() }?.let { step ->
+                                Pill("${fmtNum(def.baseTarget)} → ${fmtNum(roundTarget(def.targetAt(step), def.unit))}", c.dim)
                             }
                         }
                     }

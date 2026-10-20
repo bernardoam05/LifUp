@@ -45,10 +45,10 @@ class DrawTest {
         assertTrue(families.all { it >= 4 } && families.average() > 4.8)
     }
 
-    @Test fun `scaled targets stop at their cap`() {
+    @Test fun `targets follow the step and stop at their cap`() {
         val pushups = content.questDefById.getValue("core_pushups")
-        assertEquals(40.0, buildQuest(pushups, 100, QuestOrigin.DAILY).target, 0.0)
-        assertEquals(15.0, buildQuest(pushups, 1, QuestOrigin.DAILY).target, 0.0)
+        assertEquals(40.0, buildQuest(pushups, 100, QuestOrigin.DAILY, step = 100).target, 0.0)
+        assertEquals(15.0, buildQuest(pushups, 100, QuestOrigin.DAILY).target, 0.0)
     }
 
     @Test fun `open-ended missions get one prompt per day that changes across days`() {

@@ -4,16 +4,16 @@ import java.time.LocalDate
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-fun roundTarget(value: Double, unit: String): Double =
-    if (unit == "km") (value * 10).roundToInt() / 10.0 else value.roundToInt().toDouble()
+fun roundTarget(value: Double, unit: String): Double = when (unit) {
+    "km" -> (value * 10).roundToInt() / 10.0
+    "h" -> (value * 4).roundToInt() / 4.0
+    else -> value.roundToInt().toDouble()
+}
 
-/** [day] picks the day's prompt for missions that have them. */
-fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.id, adapt: Int = 0, day: LocalDate? = null): Quest {
-    val step = if (def.adaptable()) adapt else 0
-    val adaptMult = 1 + Rules.ADAPT_STEP / 2 * step
-    val steps = (level - 1) / def.scalingInterval.coerceAtLeast(1)
-    val scaled = def.baseTarget + steps * (if (def.descending) -def.scalingAmount else def.scalingAmount)
-    val raw = (def.maxTarget?.let { scaled.coerceAtMost(it) } ?: scaled) * adaptFactor(def.type, step)
+/** [level] sets the reward; the target follows the mission's own progression [step]. [day] picks the day's prompt. */
+fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.id, step: Int = 0, day: LocalDate? = null): Quest {
+    val at = if (def.progresses()) step else 0
+    val reward = def.rewardAt(at)
     val min = if (def.type == QuestType.FORBIDDEN || def.type == QuestType.LIMIT) 0.0 else 1.0
     return Quest(
         id = id,
@@ -23,9 +23,9 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         title = def.title,
         description = def.description,
         unit = def.unit,
-        target = roundTarget(raw.coerceAtLeast(min), def.unit).coerceAtLeast(min),
-        xp = (def.baseXp * Rules.xpMultiplier(level) * adaptMult).roundToInt(),
-        gold = (def.baseGold * Rules.tierMultiplier(level) * adaptMult).roundToInt(),
+        target = roundTarget(def.targetAt(at).coerceAtLeast(min), def.unit).coerceAtLeast(min),
+        xp = (def.baseXp * Rules.xpMultiplier(level) * reward).roundToInt(),
+        gold = (def.baseGold * Rules.tierMultiplier(level) * reward).roundToInt(),
         rank = Rules.questRank(def.baseXp),
         auto = def.auto,
         pomodoro = def.pomodoro,
@@ -33,7 +33,7 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         perWeek = def.perWeek.takeIf { def.isWeekly() },
         prompt = day?.let { def.promptOn(it) },
         group = def.drawGroup(),
-        adapt = step,
+        adapt = at,
     )
 }
 
@@ -87,8 +87,8 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
         Random(seed.toLong() xor state.seed),
         recent = if (state.day == date.minusDays(1).toString()) state.dailyQuests.map { it.defId }.toSet() else emptySet(),
     )
-    return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, adapt = state.adapt[it.id]?.level ?: 0, day = date) } +
-        weekly.map { weeklyQuest(it, state.weekly[it.id], date, level, state.adapt[it.id]?.level ?: 0) }
+    return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, step = state.stepOf(it.id), day = date) } +
+        weekly.map { weeklyQuest(it, state.weekly[it.id], date, level, state.stepOf(it.id)) }
 }
 
 /** The same prompt all day, a different one most days. */
@@ -244,7 +244,7 @@ fun Tx.swapQuest(id: String): Boolean {
     val replacement = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.offeredAt(ctx.hour) }) ?: return false
     if (free) s = s.copy(daily = s.daily.copy(swapsUsed = s.daily.swapsUsed + 1))
     else { addItem("pergaminho_troca", -1); count(StatKey.ITEMS_USED) }
-    s = s.copy(quests = s.quests.map { if (it.id == id) buildQuest(replacement, s.player.level, QuestOrigin.DAILY, day = ctx.today) else it })
+    s = s.copy(quests = s.quests.map { if (it.id == id) buildQuest(replacement, s.player.level, QuestOrigin.DAILY, step = s.stepOf(replacement.id), day = ctx.today) else it })
     s = s.copy(timers = s.timers - id)
     return true
 }
@@ -265,7 +265,7 @@ fun Tx.addExtraQuest(): Boolean {
         ?: return false
     val n = s.daily.extrasAdded + 1
     s = s.copy(
-        quests = s.quests + buildQuest(def, s.player.level, QuestOrigin.EXTRA, "extra_${n}_${def.id}", day = ctx.today),
+        quests = s.quests + buildQuest(def, s.player.level, QuestOrigin.EXTRA, "extra_${n}_${def.id}", s.stepOf(def.id), ctx.today),
         daily = s.daily.copy(extrasAdded = n),
     )
     return true

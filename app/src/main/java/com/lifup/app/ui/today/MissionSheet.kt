@@ -22,6 +22,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.rounded.Edit
 import com.lifup.app.domain.text
 import com.lifup.app.domain.defOf
+import com.lifup.app.domain.QuestDef
+import com.lifup.app.domain.isWeekly
+import com.lifup.app.domain.keepsToNextStep
+import com.lifup.app.domain.progresses
+import androidx.compose.ui.res.pluralStringResource
 import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -285,10 +290,18 @@ private fun Details(s: GameState, q: Quest) {
         },
         style = MaterialTheme.typography.labelMedium, color = p.muted,
     )
-    if (q.adapt != 0) Text(
-        stringResource(if (q.adapt > 0) R.string.adapt_up else R.string.adapt_down, kotlin.math.abs(q.adapt) * 10),
-        style = MaterialTheme.typography.bodySmall, color = p.muted,
+    s.defOf(q.defId, content)?.takeIf { it.progresses() && q.origin != QuestOrigin.PENALTY && q.origin != QuestOrigin.PORTAL }?.let { ProgressLine(s, q, it) }
+}
+
+/** Where the target started and how many keeps until it grows again. */
+@Composable
+private fun ProgressLine(s: GameState, q: Quest, def: QuestDef) {
+    val next = s.keepsToNextStep(def)
+    val parts = listOfNotNull(
+        if (q.adapt != 0) stringResource(R.string.prog_from, "${fmtNum(def.baseTarget)} ${unitLabel(def.unit)}".trim()) else null,
+        if (next == null) stringResource(R.string.prog_max) else pluralStringResource(if (def.isWeekly()) R.plurals.prog_next_weeks else R.plurals.prog_next, next, next),
     )
+    Text(parts.joinToString(" · "), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
 }
 
 /** A folded "How to?" line: one tap shows the tip, so the sheet stays short. */

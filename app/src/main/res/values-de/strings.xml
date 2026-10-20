@@ -351,8 +351,8 @@
     <string name="field_target">Ziel</string>
     <string name="field_unit">Einheit</string>
     <string name="field_scaling">Zuwachs</string>
-    <string name="field_interval">Alle N Level</string>
-    <string name="field_scaling_hint">Das Ziel wächst alle N Level um den \"Zuwachs\".</string>
+    <string name="field_interval">Alle N Erfolge</string>
+    <string name="field_scaling_hint">Nach N Erfolgen (höchstens 1 von 5 verpasst) steigt das Ziel um den \"Zuwachs\"; verpasst du öfter, als du schaffst, sinkt es. Bei Wochenmissionen zählt jede geschaffte Woche.</string>
     <string name="field_reward">Belohnung</string>
     <string name="preset_easy">Leicht</string>
     <string name="preset_medium">Mittel</string>
@@ -371,7 +371,7 @@
     <string name="onb_intro">Jeden Tag bekommst du Missionen. Erledige sie für XP, Gold und Echos. Ignorier sie und zahl den Preis.</string>
     <string name="onb_how">So funktioniert\'s</string>
     <string name="onb_f_missions">Tägliche Missionen</string>
-    <string name="onb_f_missions_text">Feste Gewohnheiten plus eine tägliche Auslosung. Die Ziele wachsen mit deinem Level.</string>
+    <string name="onb_f_missions_text">Feste Gewohnheiten plus eine tägliche Auslosung. Jedes Ziel wächst, während du es schaffst.</string>
     <string name="onb_f_penalty">Strafen</string>
     <string name="onb_f_penalty_text">Um Mitternacht kosten gescheiterte Missionen XP und Gold, bringen Strafmissionen und können deine Ablenkungs-Apps sperren.</string>
     <string name="onb_f_focus">Fokus</string>
@@ -439,7 +439,7 @@
     <string name="auto_info">Automatisch gezählt: %1$s. Aktualisiert alle 15 Min. und beim Öffnen der App; der Tag schließt mit dem Endwert.</string>
     <string name="auto_missing">Die automatische Zählung ist auf diesem Handy aus. Bis du sie aktivierst, hake manuell ab.</string>
     <string name="auto_enable">Aktivieren</string>
-    <string name="scaling_chip">%1$s alle %2$d Lv</string>
+    <string name="scaling_chip">%1$s alle %2$d×</string>
     <string name="field_auto">Automatische Erfassung</string>
     <string name="auto_none">Keine</string>
     <string name="field_auto_hint">Der Fortschritt füllt sich vom Handy aus; Typ und Einheit werden für dich gesetzt.</string>
@@ -597,9 +597,16 @@
     <string name="habit_none_yet">Jeder Tag mit dieser Mission kommt um Mitternacht hierher. Das letzte Feld ist heute, live.</string>
     <string name="habit_recent">Letzte 30 Tage: %1$d von %2$d</string>
     <string name="habit_trend">Letzte 30 Tage: %1$d von %2$d (%3$d %%) · 30 davor: %4$d %%</string>
-    <string name="adapt_level">Ziel angepasst %1$s %%</string>
-    <string name="adapt_up">Ziel +%1$d %%: Du hast diese Mission mehrere Tage in Folge geschafft.</string>
-    <string name="adapt_down">Ziel −%1$d %%: angepasst nach ein paar verpassten Tagen.</string>
+    <string name="prog_from">Start bei %1$s</string>
+    <string name="prog_max">Höchstes Ziel erreicht</string>
+    <plurals name="prog_next">
+        <item quantity="one">Steigt nach %d weiteren Erfolg</item>
+        <item quantity="other">Steigt nach %d weiteren Erfolgen</item>
+    </plurals>
+    <plurals name="prog_next_weeks">
+        <item quantity="one">Steigt nach %d weiteren geschafften Woche</item>
+        <item quantity="other">Steigt nach %d weiteren geschafften Wochen</item>
+    </plurals>
     <string name="show_all">Alle anzeigen</string>
     <string name="show_less">Weniger anzeigen</string>
     <string name="notif_reminder_safe_title">Serie gesichert</string>

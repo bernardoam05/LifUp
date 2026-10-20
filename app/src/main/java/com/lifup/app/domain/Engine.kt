@@ -47,6 +47,6 @@ fun Tx.addDefToToday(defId: String) {
     val def = s.defOf(defId, content) ?: return
     if (s.quests.any { it.defId == defId }) return
     syncWeekly()
-    val quest = if (def.isWeekly()) weeklyQuest(def, s.weekly[def.id], ctx.today, s.player.level) else buildQuest(def, s.player.level, QuestOrigin.DAILY)
+    val quest = if (def.isWeekly()) weeklyQuest(def, s.weekly[def.id], ctx.today, s.player.level, s.stepOf(def.id)) else buildQuest(def, s.player.level, QuestOrigin.DAILY, step = s.stepOf(def.id))
     s = s.copy(quests = s.quests + quest)
 }

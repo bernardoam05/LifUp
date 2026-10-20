@@ -29,7 +29,9 @@ data class QuestDef(
     val title: L10n,
     val description: L10n,
     val baseTarget: Double,
+    /** What one progression step adds to the target (or takes off a limit); 0 = a fixed target. */
     val scalingAmount: Double = 0.0,
+    /** Keeps needed for a step (weeks met, for weekly missions). */
     val scalingInterval: Int = 1,
     val unit: String = "",
     val baseXp: Int,
@@ -48,7 +50,7 @@ data class QuestDef(
     val perWeek: Int? = null,
     /** Family for the daily draw and attribute growth; null = from the type. */
     val group: DrawGroup? = null,
-    /** Ceiling for the level-scaled target (before adaptive adjustments). */
+    /** The hardest the target gets: a ceiling, or the floor for limits. */
     val maxTarget: Double? = null,
     /** Rotating suggestions for open-ended missions; one is picked per day. */
     val prompts: List<L10n>? = null,

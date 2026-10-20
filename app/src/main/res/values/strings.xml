@@ -352,8 +352,8 @@
     <string name="field_target">Goal</string>
     <string name="field_unit">Unit</string>
     <string name="field_scaling">Increase</string>
-    <string name="field_interval">Every N levels</string>
-    <string name="field_scaling_hint">The goal grows by \"increase\" every N levels.</string>
+    <string name="field_interval">Every N successes</string>
+    <string name="field_scaling_hint">After N successes (missing at most 1 in 5) the goal rises by the \"increase\"; if you miss more than you keep, it drops. Weekly missions count each week met.</string>
     <string name="field_reward">Reward</string>
     <string name="preset_easy">Easy</string>
     <string name="preset_medium">Medium</string>
@@ -372,7 +372,7 @@
     <string name="onb_intro">Every day you get missions. Complete them to gain XP, gold and echoes. Ignore them and pay the price.</string>
     <string name="onb_how">How it works</string>
     <string name="onb_f_missions">Daily missions</string>
-    <string name="onb_f_missions_text">Fixed habits plus a daily draw. Their goals grow as you level up.</string>
+    <string name="onb_f_missions_text">Fixed habits plus a daily draw. Each goal grows as you keep it.</string>
     <string name="onb_f_penalty">Penalties</string>
     <string name="onb_f_penalty_text">At midnight, failed missions cost XP and gold, add penalty missions and can block your distracting apps.</string>
     <string name="onb_f_focus">Focus</string>
@@ -440,7 +440,7 @@
     <string name="auto_info">Counted automatically: %1$s. Updates every 15 min and whenever you open the app; the day closes with the final value.</string>
     <string name="auto_missing">The automatic count is off on this phone. Until you enable it, mark it manually.</string>
     <string name="auto_enable">Enable</string>
-    <string name="scaling_chip">%1$s every %2$d lv</string>
+    <string name="scaling_chip">%1$s every %2$d×</string>
     <string name="field_auto">Automatic tracking</string>
     <string name="auto_none">None</string>
     <string name="field_auto_hint">Progress fills in by itself from the phone; type and unit are set for you.</string>
@@ -598,9 +598,16 @@
     <string name="habit_none_yet">Each day this mission comes up is added here at midnight. The last square is today, live.</string>
     <string name="habit_recent">Last 30 days: %1$d of %2$d</string>
     <string name="habit_trend">Last 30 days: %1$d of %2$d (%3$d%%) · the 30 before: %4$d%%</string>
-    <string name="adapt_level">Target adjusted %1$s%%</string>
-    <string name="adapt_up">Target +%1$d%%: you\'ve kept this mission several days in a row.</string>
-    <string name="adapt_down">Target −%1$d%%: adjusted after a few missed days.</string>
+    <string name="prog_from">Started at %1$s</string>
+    <string name="prog_max">Top goal reached</string>
+    <plurals name="prog_next">
+        <item quantity="one">Goes up after %d more success</item>
+        <item quantity="other">Goes up after %d more successes</item>
+    </plurals>
+    <plurals name="prog_next_weeks">
+        <item quantity="one">Goes up after %d more week met</item>
+        <item quantity="other">Goes up after %d more weeks met</item>
+    </plurals>
     <string name="show_all">Show all</string>
     <string name="show_less">Show less</string>
     <string name="notif_reminder_safe_title">Streak secured</string>

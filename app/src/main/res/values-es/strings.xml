@@ -351,8 +351,8 @@
     <string name="field_target">Objetivo</string>
     <string name="field_unit">Unidad</string>
     <string name="field_scaling">Aumento</string>
-    <string name="field_interval">Cada N niveles</string>
-    <string name="field_scaling_hint">El objetivo crece según el \"aumento\" cada N niveles.</string>
+    <string name="field_interval">Cada N veces cumplidas</string>
+    <string name="field_scaling_hint">Tras N veces cumplidas (fallando como mucho 1 de cada 5), el objetivo sube el \"aumento\"; si fallas más de lo que cumples, baja. En las semanales cuenta cada semana cumplida.</string>
     <string name="field_reward">Recompensa</string>
     <string name="preset_easy">Fácil</string>
     <string name="preset_medium">Media</string>
@@ -371,7 +371,7 @@
     <string name="onb_intro">Cada día recibes misiones. Cúmplelas para ganar XP, oro y ecos. Ignóralas y paga el precio.</string>
     <string name="onb_how">Cómo funciona</string>
     <string name="onb_f_missions">Misiones diarias</string>
-    <string name="onb_f_missions_text">Hábitos fijos más un sorteo diario. Sus objetivos crecen con tu nivel.</string>
+    <string name="onb_f_missions_text">Hábitos fijos más un sorteo diario. Cada objetivo crece a medida que lo cumples.</string>
     <string name="onb_f_penalty">Penalizaciones</string>
     <string name="onb_f_penalty_text">A medianoche, las misiones falladas cuestan XP y oro, añaden misiones de penalización y pueden bloquear tus apps de distracción.</string>
     <string name="onb_f_focus">Foco</string>
@@ -439,7 +439,7 @@
     <string name="auto_info">Conteo automático: %1$s. Se actualiza cada 15 min y cada vez que abres la app; el día cierra con el valor final.</string>
     <string name="auto_missing">El conteo automático está desactivado en este teléfono. Hasta que lo actives, márcala a mano.</string>
     <string name="auto_enable">Activar</string>
-    <string name="scaling_chip">%1$s cada %2$d nv</string>
+    <string name="scaling_chip">%1$s cada %2$d×</string>
     <string name="field_auto">Seguimiento automático</string>
     <string name="auto_none">Ninguno</string>
     <string name="field_auto_hint">El progreso se rellena solo desde el teléfono; el tipo y la unidad se fijan solos.</string>
@@ -597,9 +597,16 @@
     <string name="habit_none_yet">Cada día que sale esta misión se añade aquí a medianoche. El último cuadro es hoy, en directo.</string>
     <string name="habit_recent">Últimos 30 días: %1$d de %2$d</string>
     <string name="habit_trend">Últimos 30 días: %1$d de %2$d (%3$d%%) · 30 anteriores: %4$d%%</string>
-    <string name="adapt_level">Objetivo ajustado %1$s%%</string>
-    <string name="adapt_up">Objetivo +%1$d%%: has cumplido esta misión varios días seguidos.</string>
-    <string name="adapt_down">Objetivo −%1$d%%: ajustado tras unos días fallados.</string>
+    <string name="prog_from">Empezó en %1$s</string>
+    <string name="prog_max">Objetivo máximo alcanzado</string>
+    <plurals name="prog_next">
+        <item quantity="one">Sube tras cumplirla %d vez más</item>
+        <item quantity="other">Sube tras cumplirla %d veces más</item>
+    </plurals>
+    <plurals name="prog_next_weeks">
+        <item quantity="one">Sube tras %d semana cumplida más</item>
+        <item quantity="other">Sube tras %d semanas cumplidas más</item>
+    </plurals>
     <string name="show_all">Ver todas</string>
     <string name="show_less">Ver menos</string>
     <string name="notif_reminder_safe_title">Racha asegurada</string>

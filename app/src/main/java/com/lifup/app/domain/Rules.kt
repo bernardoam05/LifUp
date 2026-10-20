@@ -113,11 +113,16 @@ object Rules {
     /** Below this share the day is a bad one: penalty missions and app blocking. */
     const val SEVERE_RATIO = 0.5
 
-    /** Adaptive targets: 10% steps, up after 5 kept days in a row, down after 3 misses, at most ±3 steps. */
-    const val ADAPT_STEP = 0.1
-    const val ADAPT_UP_AFTER = 5
-    const val ADAPT_DOWN_AFTER = 3
-    const val ADAPT_MAX = 3
+    /**
+     * Mission progression: a step up after the mission's N keeps since the last change, with at least this many
+     * keeps per miss (80%); a step down after 3+ misses that outnumber the keeps; never more than 3 steps below the base.
+     */
+    const val PROG_KEEPS_PER_MISS = 4
+    const val PROG_DOWN_MISSES = 3
+    const val PROG_MIN_STEP = -3
+    /** The reward follows the target: half its relative change, within these bounds. */
+    const val PROG_REWARD_MIN = -0.15
+    const val PROG_REWARD_MAX = 0.5
 
     /** A mission needs this many days in a week to be called best or worst. */
     const val WEEK_MIN_SAMPLES = 3

@@ -180,7 +180,7 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
     var target by rememberSaveable { mutableStateOf(existing?.baseTarget?.let(::fmtNum) ?: "10") }
     var unit by rememberSaveable { mutableStateOf(existing?.unit ?: "reps") }
     var scaling by rememberSaveable { mutableStateOf(existing?.scalingAmount?.let(::fmtNum) ?: "0") }
-    var interval by rememberSaveable { mutableStateOf((existing?.scalingInterval ?: 5).toString()) }
+    var interval by rememberSaveable { mutableStateOf((existing?.scalingInterval ?: 3).toString()) }
     // -1 keeps an existing mission's own reward until a preset is picked.
     var preset by rememberSaveable { mutableStateOf(PRESETS.indexOfFirst { it.xp == existing?.baseXp }.takeIf { it >= 0 } ?: if (existing != null) -1 else 1) }
     val reward = PRESETS.getOrNull(preset)?.let { it.xp to it.gold } ?: ((existing?.baseXp ?: 0) to (existing?.baseGold ?: 0))
@@ -276,7 +276,7 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
                     description = if (keepDescription) existing!!.description else plainText(description.trim().ifEmpty { "{target} {unit}" }),
                     baseTarget = target.toDoubleOrNull() ?: 1.0,
                     scalingAmount = scaling.toDoubleOrNull() ?: 0.0,
-                    scalingInterval = (interval.toIntOrNull() ?: 5).coerceAtLeast(1),
+                    scalingInterval = (interval.toIntOrNull() ?: 3).coerceAtLeast(1),
                     unit = unit.trim(),
                     baseXp = reward.first,
                     baseGold = reward.second,

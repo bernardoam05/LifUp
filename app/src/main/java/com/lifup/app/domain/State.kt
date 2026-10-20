@@ -318,7 +318,7 @@ data class MissionStat(val done: Int = 0, val total: Int = 0) {
     fun add(success: Boolean) = MissionStat(done + if (success) 1 else 0, total + 1)
 }
 
-/** Target adjustment for one mission: [level] steps of 10%, moved by runs of wins or losses. */
+/** A mission's progression: [level] steps of its increase, and the keeps ([wins]) and misses ([losses]) since the last change. */
 @Serializable
 data class Adapt(val level: Int = 0, val wins: Int = 0, val losses: Int = 0)
 

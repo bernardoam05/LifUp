@@ -29,8 +29,13 @@ internal fun Tx.recordWeekly(week: String) {
     val lines = s.weekLines(week)
     if (lines.isEmpty()) return
     var history = s.weeklyHistory
-    lines.forEach { l -> history = history + (l.defId to ((history[l.defId] ?: emptyList()) + WeekMark(week, l.done, l.goal)).takeLast(Rules.WEEKLY_HISTORY_WEEKS)) }
-    s = s.copy(weeklyHistory = history)
+    var adapt = s.adapt
+    lines.forEach { l ->
+        history = history + (l.defId to ((history[l.defId] ?: emptyList()) + WeekMark(week, l.done, l.goal)).takeLast(Rules.WEEKLY_HISTORY_WEEKS))
+        // Weekly missions progress by the week: a met goal is a keep.
+        s.defOf(l.defId, content)?.takeIf { it.progresses() }?.let { def -> adapt = adapt + (def.id to (adapt[def.id] ?: Adapt()).next(l.done >= l.goal, def)) }
+    }
+    s = s.copy(weeklyHistory = history, adapt = adapt)
 }
 
 /** A weekly mission's result, for the weekly report. */
@@ -60,8 +65,8 @@ fun Tx.syncWeekly() {
 }
 
 /** Today's instance of a weekly mission: counts for the day only when due. */
-fun weeklyQuest(def: QuestDef, tally: WeekTally?, day: LocalDate, level: Int, adapt: Int = 0): Quest =
-    buildQuest(def, level, if (tally?.dueOn(day) == true) QuestOrigin.DAILY else QuestOrigin.WEEKLY, adapt = adapt, day = day)
+fun weeklyQuest(def: QuestDef, tally: WeekTally?, day: LocalDate, level: Int, step: Int = 0): Quest =
+    buildQuest(def, level, if (tally?.dueOn(day) == true) QuestOrigin.DAILY else QuestOrigin.WEEKLY, step = step, day = day)
 
 /** The missions that count for today: the daily ones plus weekly ones already done. */
 fun GameState.countedQuests(): List<Quest> = dailyQuests + weeklyQuests.filter { it.isSuccessful() }

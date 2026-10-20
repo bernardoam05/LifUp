@@ -3,14 +3,32 @@ package com.lifup.app.domain
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-// ── Mission stats and adaptive targets ────────────────────────────────────────
+// ── Mission stats and progression ─────────────────────────────────────────────
 
-/** Missions whose target can sensibly grow or shrink (counts, minutes, distance, limits). */
-fun QuestDef.adaptable() = type != QuestType.FORBIDDEN && fromHour == null && baseTarget >= 2
+/** Missions whose target moves with how they go: those with an increase (never avoid missions or check-ins). */
+fun QuestDef.progresses() = scalingAmount > 0 && type != QuestType.FORBIDDEN && fromHour == null
 
-/** Target multiplier for an adapt level: harder means more, except for limits where harder means less. */
-fun adaptFactor(type: QuestType, level: Int) =
-    if (type == QuestType.LIMIT) 1 - Rules.ADAPT_STEP * level else 1 + Rules.ADAPT_STEP * level
+/** The target after [step] steps: within the cap, and never eased by more than half the base. */
+fun QuestDef.targetAt(step: Int): Double {
+    if (!progresses()) return baseTarget
+    return if (descending) (baseTarget - step * scalingAmount).coerceAtLeast(minOf(maxTarget ?: 0.0, baseTarget)).coerceAtMost(baseTarget * 1.5)
+    else (baseTarget + step * scalingAmount).coerceAtMost(maxOf(maxTarget ?: Double.MAX_VALUE, baseTarget)).coerceAtLeast(baseTarget / 2)
+}
+
+/** Reward multiplier for a grown (or eased) target. */
+fun QuestDef.rewardAt(step: Int): Double {
+    val change = (targetAt(step) - baseTarget) / baseTarget * (if (descending) -1 else 1)
+    return 1 + (change / 2).coerceIn(Rules.PROG_REWARD_MIN, Rules.PROG_REWARD_MAX)
+}
+
+fun GameState.stepOf(id: String) = adapt[id]?.level ?: 0
+
+/** Keeps still needed for the next step up; null at the cap or for fixed targets. */
+fun GameState.keepsToNextStep(def: QuestDef): Int? {
+    val a = adapt[def.id] ?: Adapt()
+    if (!def.progresses() || def.targetAt(a.level + 1) == def.targetAt(a.level)) return null
+    return (maxOf(def.scalingInterval, Rules.PROG_KEEPS_PER_MISS * a.losses) - a.wins).coerceAtLeast(1)
+}
 
 /** Records a closed day's daily missions and nudges each one's target toward what the user really does. */
 fun Tx.recordMissions(daily: List<Quest>, day: LocalDate) {
@@ -26,7 +44,7 @@ fun Tx.recordMissions(daily: List<Quest>, day: LocalDate) {
         val mark = if (ok) day.toEpochDay() else -day.toEpochDay()
         days = days + (q.defId to ((days[q.defId] ?: emptyList()) + mark).takeLast(Rules.HABIT_DAYS_KEPT))
         val def = s.defOf(q.defId, content)
-        if (def?.adaptable() == true) adapt = adapt + (q.defId to (adapt[q.defId] ?: Adapt()).next(ok))
+        if (def?.progresses() == true) adapt = adapt + (q.defId to (adapt[q.defId] ?: Adapt()).next(ok, def))
     }
     s = s.copy(missionStats = stats, missionDays = days, weekStats = week, adapt = adapt)
 }
@@ -44,11 +62,17 @@ fun GameState.habitOn(id: String, day: LocalDate): Boolean? {
     return missionDays[id]?.lastOrNull { kotlin.math.abs(it) == e }?.let { it > 0 }
 }
 
-private fun Adapt.next(ok: Boolean): Adapt = when {
-    ok && wins + 1 >= Rules.ADAPT_UP_AFTER -> Adapt((level + 1).coerceAtMost(Rules.ADAPT_MAX), 0, 0)
-    ok -> copy(wins = wins + 1, losses = 0)
-    losses + 1 >= Rules.ADAPT_DOWN_AFTER -> Adapt((level - 1).coerceAtLeast(-Rules.ADAPT_MAX), 0, 0)
-    else -> copy(wins = 0, losses = losses + 1)
+/** One more result for a mission's progression (see [Rules.PROG_KEEPS_PER_MISS]). */
+internal fun Adapt.next(ok: Boolean, def: QuestDef): Adapt {
+    val kept = wins + if (ok) 1 else 0
+    val missed = losses + if (ok) 0 else 1
+    val canRise = def.targetAt(level + 1) != def.targetAt(level)
+    val canDrop = level > Rules.PROG_MIN_STEP && def.targetAt(level - 1) != def.targetAt(level)
+    return when {
+        ok && canRise && kept >= def.scalingInterval && kept >= Rules.PROG_KEEPS_PER_MISS * missed -> Adapt(level + 1)
+        !ok && canDrop && missed >= Rules.PROG_DOWN_MISSES && missed > kept -> Adapt(level - 1)
+        else -> Adapt(level, kept, missed)
+    }
 }
 
 // ── Today's goal ──────────────────────────────────────────────────────────────
