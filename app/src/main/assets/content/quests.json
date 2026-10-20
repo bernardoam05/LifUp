@@ -855,26 +855,27 @@
     "de": "Expedition"
    },
    "description": {
-    "pt": "Percorre {target} km a pé, de seguida.",
-    "en": "Walk {target} km in one go.",
-    "es": "Recorre {target} km a pie, de una vez.",
-    "fr": "Marche {target} km d'une traite.",
-    "de": "Gehe {target} km am Stück."
+    "pt": "Caminha {target} km ao longo do dia, aos bocados ou de uma vez.",
+    "en": "Walk {target} km over the day, in bits or all at once.",
+    "es": "Camina {target} km a lo largo del día, a ratos o de una vez.",
+    "fr": "Marche {target} km dans la journée, par morceaux ou d'une traite.",
+    "de": "Gehe über den Tag verteilt {target} km, in Etappen oder am Stück."
    },
-   "baseTarget": 4,
+   "baseTarget": 7,
    "scalingAmount": 0.25,
    "scalingInterval": 10,
    "unit": "km",
    "baseXp": 150,
    "baseGold": 45,
-   "maxTarget": 7,
+   "maxTarget": 10,
    "tip": {
-    "pt": "Abre a missão e carrega em começar antes de saíres: conta a caminhada de seguida. Também podes registar os km à mão.",
-    "en": "Open the mission and tap start before you head out: it measures the walk in one go. You can also log the km by hand.",
-    "es": "Abre la misión y pulsa empezar antes de salir: mide la caminata de una vez. También puedes anotar los km a mano.",
-    "fr": "Ouvre la mission et appuie sur démarrer avant de partir : elle mesure la marche d'une traite. Tu peux aussi noter les km à la main.",
-    "de": "Öffne die Mission und tippe vor dem Losgehen auf Start: Sie misst den Weg am Stück. Du kannst die km auch von Hand eintragen."
-   }
+    "pt": "Conta pelos passos do dia, por isso cada ida a pé soma. Uma volta grande ao fim da tarde resolve o que faltar.",
+    "en": "It counts from the day's steps, so every walk adds up. A long loop in the evening covers what's left.",
+    "es": "Cuenta por los pasos del día, así que cada paseo suma. Una vuelta larga por la tarde cubre lo que falte.",
+    "fr": "Ça compte avec les pas de la journée, donc chaque trajet à pied s'ajoute. Une grande boucle le soir comble le reste.",
+    "de": "Es zählt über die Schritte des Tages, also zählt jeder Weg zu Fuß. Eine große Runde am Abend holt den Rest."
+   },
+   "auto": "WALK_DISTANCE"
   },
   {
    "id": "pool_veggies",
@@ -2394,11 +2395,11 @@
     "de": "Strafe: Cardio"
    },
    "description": {
-    "pt": "{target} min de corrida contínua",
-    "en": "{target} min of continuous running",
-    "es": "{target} min de carrera continua",
-    "fr": "{target} min de course continue",
-    "de": "{target} Min. durchgehend laufen"
+    "pt": "{target} min de corrida ou caminhada rápida, em blocos se precisares",
+    "en": "{target} min of running or brisk walking, in blocks if you need",
+    "es": "{target} min de carrera o caminata rápida, por bloques si lo necesitas",
+    "fr": "{target} min de course ou de marche rapide, en plusieurs fois si besoin",
+    "de": "{target} Min. Laufen oder zügiges Gehen, bei Bedarf in Etappen"
    },
    "baseTarget": 20,
    "scalingAmount": 0,
@@ -2419,11 +2420,11 @@
     "de": "Strafe: Kniebeugen"
    },
    "description": {
-    "pt": "{target} agachamentos seguidos",
-    "en": "{target} consecutive squats",
-    "es": "{target} sentadillas seguidas",
-    "fr": "{target} squats d'affilée",
-    "de": "{target} Kniebeugen am Stück"
+    "pt": "{target} agachamentos, em séries se precisares",
+    "en": "{target} squats, in sets if you need",
+    "es": "{target} sentadillas, por series si lo necesitas",
+    "fr": "{target} squats, en plusieurs séries si besoin",
+    "de": "{target} Kniebeugen, bei Bedarf in Sätzen"
    },
    "baseTarget": 50,
    "scalingAmount": 0,

@@ -101,6 +101,8 @@ private fun Tx.closeDay(day: LocalDate) {
 
     s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null, rest, passed && !rest)).takeLast(Rules.DAY_LOG_DAYS))
     reward { Reward.DayReport(it, day.toString(), done, daily.size, perfect && !rest, rest, s.player.streak, bonusXp, penaltyInfo, streakSavedBy, passed && !rest, restored) }
+    // The perfect day's echo comes once the day is closed: avoid and limit missions can still break until midnight.
+    if (perfect && !rest) rollExtraction()
 }
 
 private fun Tx.setStreak(value: Int) {

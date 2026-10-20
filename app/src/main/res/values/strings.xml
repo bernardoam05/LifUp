@@ -237,6 +237,12 @@
     <string name="passive_focus">+%1$s focus minutes credited</string>
     <string name="passive_daily">+%1$d XP for each perfect day</string>
     <string name="passive_luck">+%1$s luck for drops and rare echoes</string>
+    <string name="luck_odds_echo">This echo alone (without → with):</string>
+    <string name="luck_odds_squad">Your squad\'s luck (without → with):</string>
+    <string name="luck_item">Item after a mission: %1$s → %2$s</string>
+    <string name="luck_portal">Echo when clearing a portal: %1$s → %2$s</string>
+    <string name="luck_rank">Found echo %1$s or better: %2$s → %3$s</string>
+    <string name="luck_rank_top">Found echo %1$s: %2$s → %3$s</string>
     <string name="passive_all">Amplifies the squad\'s other passives by %1$s</string>
 
     <!-- Shop -->
@@ -498,6 +504,20 @@
     <string name="rest_day_left">Rest · %1$d</string>
     <string name="today_goal">Streak needs %1$d of %2$d · all of them for a perfect day</string>
     <string name="streak_recovery">Make today perfect to get your %1$d-day streak back</string>
+    <string name="flame_rest">Rest day: the streak stays as it is.</string>
+    <plurals name="flame_recovering">
+        <item quantity="one">Lost yesterday: a perfect day today brings back your %1$d-day streak.</item>
+        <item quantity="other">Lost yesterday: a perfect day today brings back your %1$d-day streak.</item>
+    </plurals>
+    <string name="flame_pending">Streak: %1$d of %2$d missions done for today to count.</string>
+    <plurals name="flame_safe">
+        <item quantity="one">Streak secured: %1$d day tonight. Do them all for a perfect day.</item>
+        <item quantity="other">Streak secured: %1$d days tonight. Do them all for a perfect day.</item>
+    </plurals>
+    <plurals name="flame_perfect">
+        <item quantity="one">Every mission kept: %1$d day tonight, and a perfect day if it holds until midnight.</item>
+        <item quantity="other">Every mission kept: %1$d days tonight, and a perfect day if it holds until midnight.</item>
+    </plurals>
     <string name="report_passed">Day kept</string>
     <string name="report_streak_restored">Streak recovered</string>
     <string name="pomodoro_work_open">Focus · cycle %1$d</string>
@@ -522,7 +542,7 @@
     <string name="perm_activity_why">Counting steps for walking missions and runs.</string>
     <string name="guide_section">How it works</string>
     <string name="guide_daily_title">Daily missions</string>
-    <string name="guide_daily">Fixed and drawn::1 fixed mission plus several drawn ones that change every day.\nStreak minimum::On Normal 75% of the missions is enough. 60% on Easy, 100% on Hard.\nPerfect day::Do them all for bonus XP and a new echo.\nDoesn\'t fit today?::Swap one drawn mission a day for free, or create your own in the Forge. If something only fits some days, make it weekly.</string>
+    <string name="guide_daily">Fixed and drawn::1 fixed mission plus several drawn ones that change every day.\nStreak minimum::On Normal 75% of the missions is enough. 60% on Easy, 100% on Hard.\nPerfect day::Do them all: at midnight you get bonus XP and a new echo. Avoid missions count once they last the whole day.\nDoesn\'t fit today?::Swap one drawn mission a day for free, or create your own in the Forge. If something only fits some days, make it weekly.</string>
     <string name="guide_streak_title">Streak and rest</string>
     <string name="guide_streak">Grows every day::+1 for each day you reach the minimum.\nSecond chance::Lost it? A perfect day right after brings it back (once a week).\nRest days::Call one before noon and the day counts neither way. 2 a week on Easy, 1 on Normal.\nExtra protection::The Shield of Constancy and some echoes save your streak for you.</string>
     <string name="guide_penalty_title">Penalty</string>

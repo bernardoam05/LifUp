@@ -55,10 +55,11 @@ class EngineTest {
     @Test fun `perfect day grows streak and binds a shadow`() {
         var s = fresh()
         s = run(s, "2026-10-14T22:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
-        assertTrue(s.daily.extractionDone)
-        assertEquals(1, s.shadows.size)
-        assertTrue(s.rewards.any { it is Reward.ShadowGained })
+        // The echo waits for midnight: avoid missions could still break.
+        assertTrue(s.shadows.isEmpty())
         s = run(s, "2026-10-15T08:00")
+        assertEquals(1, s.shadows.count { it.origin == EchoOrigin.PERFECT_DAY })
+        assertTrue(s.rewards.any { it is Reward.ShadowGained })
         assertEquals(1, s.player.streak)
         val report = s.rewards.filterIsInstance<Reward.DayReport>().last()
         assertTrue(report.perfect)
@@ -798,5 +799,41 @@ class EngineTest {
         assertEquals(setOf("astral_eclipse"), s.favoriteEchoes)
         s = run(s, "2026-10-14T10:01") { toggleFavoriteEcho("astral_eclipse") }
         assertTrue(s.favoriteEchoes.isEmpty())
+    }
+
+    @Test fun `a broken avoid mission at night means no perfect day echo`() {
+        val avoid = buildQuest(content.questDefById.getValue("pool_nonews"), 1, QuestOrigin.DAILY, "avoid_test")
+        var s = fresh().let { it.copy(quests = it.quests + avoid) }
+        s = run(s, "2026-10-14T22:00") { s.dailyQuests.filter { it.id != avoid.id }.forEach { completeQuest(it.id) } }
+        assertEquals(FlameKind.PERFECT, s.flame().kind)
+        s = run(s, "2026-10-14T23:30") { toggleFailed(avoid.id) }
+        assertEquals(FlameKind.SAFE, s.flame().kind)
+        s = run(s, "2026-10-15T08:00")
+        assertTrue(s.shadows.none { it.origin == EchoOrigin.PERFECT_DAY })
+    }
+
+    @Test fun `the flame shows how today stands`() {
+        var s = fresh()
+        assertEquals(Flame(FlameKind.PENDING, 0), s.flame())
+        // Complete missions one by one until the day counts, leaving at least one open.
+        val open = s.dailyQuests.filter { it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT }
+        for (q in open.dropLast(1)) {
+            if (s.dayGoal().safe) break
+            s = run(s, "2026-10-14T22:00") { completeQuest(q.id) }
+        }
+        assertEquals(FlameKind.SAFE, s.flame().kind)
+        assertEquals(1, s.flame().days)
+        val recovering = s.copy(recovery = StreakRecovery(12, s.day))
+        assertEquals(Flame(FlameKind.RECOVERING, 12), recovering.copy(quests = fresh().quests).flame())
+        assertEquals(FlameKind.REST, s.copy(daily = s.daily.copy(rest = true)).flame().kind)
+    }
+
+    @Test fun `luck raises the chances it touches`() {
+        val base = luckOdds(30, 0.0)
+        val lucky = luckOdds(30, 0.3)
+        assertEquals(0.2, base.portalEcho, 1e-9)
+        assertEquals(0.26, lucky.portalEcho, 1e-9)
+        assertEquals(0.45, base.atLeast.getValue(ShadowRank.KNIGHT), 0.01)
+        assertTrue(lucky.atLeast.getValue(ShadowRank.MARSHAL) > base.atLeast.getValue(ShadowRank.MARSHAL))
     }
 }

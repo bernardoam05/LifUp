@@ -224,6 +224,12 @@
     <string name="passive_focus">+%1$s nos minutos de foco creditados</string>
     <string name="passive_daily">+%1$d XP por cada dia perfeito</string>
     <string name="passive_luck">+%1$s de sorte em drops e ecos raros</string>
+    <string name="luck_odds_echo">Só com este eco (sem → com):</string>
+    <string name="luck_odds_squad">Sorte do teu esquadrão (sem → com):</string>
+    <string name="luck_item">Item depois de uma missão: %1$s → %2$s</string>
+    <string name="luck_portal">Eco ao fechar um portal: %1$s → %2$s</string>
+    <string name="luck_rank">Eco encontrado %1$s ou melhor: %2$s → %3$s</string>
+    <string name="luck_rank_top">Eco encontrado %1$s: %2$s → %3$s</string>
     <string name="passive_all">Amplifica em %1$s as outras passivas do esquadrão</string>
 
     <string name="shop">Loja</string>
@@ -479,6 +485,20 @@
     <string name="rest_day_left">Descanso · %1$d</string>
     <string name="today_goal">Sequência com %1$d de %2$d · todas para dia perfeito</string>
     <string name="streak_recovery">Faz um dia perfeito hoje para recuperar a sequência de %1$d dias</string>
+    <string name="flame_rest">Dia de descanso: a sequência fica como está.</string>
+    <plurals name="flame_recovering">
+        <item quantity="one">Perdeste-a ontem: um dia perfeito hoje devolve-te a sequência de %1$d dia.</item>
+        <item quantity="other">Perdeste-a ontem: um dia perfeito hoje devolve-te a sequência de %1$d dias.</item>
+    </plurals>
+    <string name="flame_pending">Sequência: %1$d de %2$d missões feitas para hoje contar.</string>
+    <plurals name="flame_safe">
+        <item quantity="one">Sequência garantida: %1$d dia esta noite. Faz todas para um dia perfeito.</item>
+        <item quantity="other">Sequência garantida: %1$d dias esta noite. Faz todas para um dia perfeito.</item>
+    </plurals>
+    <plurals name="flame_perfect">
+        <item quantity="one">Todas cumpridas: %1$d dia esta noite, e dia perfeito se aguentar até à meia-noite.</item>
+        <item quantity="other">Todas cumpridas: %1$d dias esta noite, e dia perfeito se aguentar até à meia-noite.</item>
+    </plurals>
     <string name="report_passed">Dia cumprido</string>
     <string name="report_streak_restored">Sequência recuperada</string>
     <string name="pomodoro_work_open">Foco · ciclo %1$d</string>
@@ -503,7 +523,7 @@
     <string name="perm_activity_why">Contar passos nas missões de caminhar e corridas.</string>
     <string name="guide_section">Como funciona</string>
     <string name="guide_daily_title">Missões diárias</string>
-    <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para a sequência::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas e ganhas XP extra e um eco novo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja. Se algo só cabe em alguns dias, torna-o semanal.</string>
+    <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para a sequência::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas: à meia-noite ganhas XP extra e um eco novo. As de evitar contam quando aguentam o dia todo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja. Se algo só cabe em alguns dias, torna-o semanal.</string>
     <string name="guide_streak_title">Sequência e descanso</string>
     <string name="guide_streak">Sobe todos os dias::+1 por cada dia em que chegas ao mínimo.\nSegunda oportunidade::Perdeste-a? Um dia perfeito logo a seguir devolve-a (uma vez por semana).\nDias de descanso::Marca antes do meio-dia e o dia não conta nem a favor nem contra. 2 por semana no Fácil, 1 no Normal.\nProteção extra::O Escudo da Constância e alguns ecos salvam a sequência por ti.</string>
     <string name="guide_penalty_title">Penalização</string>

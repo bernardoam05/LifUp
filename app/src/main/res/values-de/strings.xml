@@ -236,6 +236,12 @@
     <string name="passive_focus">+%1$s angerechnete Fokusminuten</string>
     <string name="passive_daily">+%1$d XP für jeden perfekten Tag</string>
     <string name="passive_luck">+%1$s Glück für Beute und seltene Echos</string>
+    <string name="luck_odds_echo">Nur mit diesem Echo (ohne → mit):</string>
+    <string name="luck_odds_squad">Glück deines Trupps (ohne → mit):</string>
+    <string name="luck_item">Gegenstand nach einer Mission: %1$s → %2$s</string>
+    <string name="luck_portal">Echo beim Schließen eines Portals: %1$s → %2$s</string>
+    <string name="luck_rank">Gefundenes Echo %1$s oder besser: %2$s → %3$s</string>
+    <string name="luck_rank_top">Gefundenes Echo %1$s: %2$s → %3$s</string>
     <string name="passive_all">Verstärkt die anderen Passiven des Trupps um %1$s</string>
 
     <!-- Shop -->
@@ -497,6 +503,20 @@
     <string name="rest_day_left">Ruhetag · %1$d</string>
     <string name="today_goal">Serie mit %1$d von %2$d · alle für einen perfekten Tag</string>
     <string name="streak_recovery">Mach heute einen perfekten Tag, um deine Serie von %1$d Tagen zurückzuholen</string>
+    <string name="flame_rest">Ruhetag: Die Serie bleibt, wie sie ist.</string>
+    <plurals name="flame_recovering">
+        <item quantity="one">Gestern verloren: Ein perfekter Tag heute bringt deine Serie von %1$d Tag zurück.</item>
+        <item quantity="other">Gestern verloren: Ein perfekter Tag heute bringt deine Serie von %1$d Tagen zurück.</item>
+    </plurals>
+    <string name="flame_pending">Serie: %1$d von %2$d Missionen erledigt, damit heute zählt.</string>
+    <plurals name="flame_safe">
+        <item quantity="one">Serie gesichert: %1$d Tag heute Nacht. Schaffe alle für einen perfekten Tag.</item>
+        <item quantity="other">Serie gesichert: %1$d Tage heute Nacht. Schaffe alle für einen perfekten Tag.</item>
+    </plurals>
+    <plurals name="flame_perfect">
+        <item quantity="one">Alle geschafft: %1$d Tag heute Nacht, und ein perfekter Tag, wenn es bis Mitternacht hält.</item>
+        <item quantity="other">Alle geschafft: %1$d Tage heute Nacht, und ein perfekter Tag, wenn es bis Mitternacht hält.</item>
+    </plurals>
     <string name="report_passed">Tag geschafft</string>
     <string name="report_streak_restored">Serie zurückgeholt</string>
     <string name="pomodoro_work_open">Fokus · Zyklus %1$d</string>
@@ -521,7 +541,7 @@
     <string name="perm_activity_why">Schritte für Geh-Missionen und Läufe zählen.</string>
     <string name="guide_section">So funktioniert es</string>
     <string name="guide_daily_title">Tägliche Missionen</string>
-    <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nSerien-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle und du bekommst Bonus-XP und ein neues Echo.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede. Passt etwas nur an manchen Tagen, mach es wöchentlich.</string>
+    <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nSerien-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle: Um Mitternacht gibt es Bonus-XP und ein neues Echo. Vermeiden-Missionen zählen, wenn sie den ganzen Tag halten.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede. Passt etwas nur an manchen Tagen, mach es wöchentlich.</string>
     <string name="guide_streak_title">Serie und Ruhetage</string>
     <string name="guide_streak">Wächst jeden Tag::+1 für jeden Tag, an dem du das Minimum erreichst.\nZweite Chance::Verloren? Ein perfekter Tag direkt danach holt sie zurück (einmal pro Woche).\nRuhetage::Melde ihn vor Mittag an und der Tag zählt weder dafür noch dagegen. 2 pro Woche auf Leicht, 1 auf Normal.\nExtra-Schutz::Der Schild der Beständigkeit und manche Echos retten deine Serie für dich.</string>
     <string name="guide_penalty_title">Strafe</string>

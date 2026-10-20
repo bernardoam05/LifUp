@@ -224,6 +224,12 @@
     <string name="passive_focus">+%1$s de minutes de focus créditées</string>
     <string name="passive_daily">+%1$d XP par jour parfait</string>
     <string name="passive_luck">+%1$s de chance pour le butin et les échos rares</string>
+    <string name="luck_odds_echo">Avec cet écho seul (sans → avec) :</string>
+    <string name="luck_odds_squad">Chance de ton escouade (sans → avec) :</string>
+    <string name="luck_item">Objet après une mission : %1$s → %2$s</string>
+    <string name="luck_portal">Écho en fermant un portail : %1$s → %2$s</string>
+    <string name="luck_rank">Écho trouvé %1$s ou mieux : %2$s → %3$s</string>
+    <string name="luck_rank_top">Écho trouvé %1$s : %2$s → %3$s</string>
     <string name="passive_all">Amplifie de %1$s les autres passifs de l\'escouade</string>
 
     <string name="shop">Boutique</string>
@@ -479,6 +485,20 @@
     <string name="rest_day_left">Repos · %1$d</string>
     <string name="today_goal">Série avec %1$d sur %2$d · toutes pour une journée parfaite</string>
     <string name="streak_recovery">Fais une journée parfaite aujourd\'hui pour récupérer ta série de %1$d jours</string>
+    <string name="flame_rest">Jour de repos : la série reste telle quelle.</string>
+    <plurals name="flame_recovering">
+        <item quantity="one">Perdue hier : une journée parfaite aujourd\'hui te rend ta série de %1$d jour.</item>
+        <item quantity="other">Perdue hier : une journée parfaite aujourd\'hui te rend ta série de %1$d jours.</item>
+    </plurals>
+    <string name="flame_pending">Série : %1$d sur %2$d missions faites pour qu\'aujourd\'hui compte.</string>
+    <plurals name="flame_safe">
+        <item quantity="one">Série assurée : %1$d jour ce soir. Fais-les toutes pour une journée parfaite.</item>
+        <item quantity="other">Série assurée : %1$d jours ce soir. Fais-les toutes pour une journée parfaite.</item>
+    </plurals>
+    <plurals name="flame_perfect">
+        <item quantity="one">Toutes tenues : %1$d jour ce soir, et journée parfaite si ça tient jusqu\'à minuit.</item>
+        <item quantity="other">Toutes tenues : %1$d jours ce soir, et journée parfaite si ça tient jusqu\'à minuit.</item>
+    </plurals>
     <string name="report_passed">Journée validée</string>
     <string name="report_streak_restored">Série récupérée</string>
     <string name="pomodoro_work_open">Focus · cycle %1$d</string>
@@ -503,7 +523,7 @@
     <string name="perm_activity_why">Compter les pas pour les missions de marche et les courses.</string>
     <string name="guide_section">Comment ça marche</string>
     <string name="guide_daily_title">Missions quotidiennes</string>
-    <string name="guide_daily">Fixes et tirées au sort::1 mission fixe et plusieurs tirées au sort, qui changent chaque jour.\nMinimum pour la série::En Normal, 75 % des missions suffisent. 60 % en Facile, 100 % en Difficile.\nJournée parfaite::Fais-les toutes et gagne de l\'XP bonus et un nouvel écho.\nÇa ne passe pas aujourd\'hui ?::Change une tirée au sort par jour gratuitement, ou crée les tiennes dans la Forge. Si quelque chose ne tient que certains jours, rends-le hebdomadaire.</string>
+    <string name="guide_daily">Fixes et tirées au sort::1 mission fixe et plusieurs tirées au sort, qui changent chaque jour.\nMinimum pour la série::En Normal, 75 % des missions suffisent. 60 % en Facile, 100 % en Difficile.\nJournée parfaite::Fais-les toutes : à minuit tu gagnes de l\'XP bonus et un nouvel écho. Les missions à éviter comptent si elles tiennent toute la journée.\nÇa ne passe pas aujourd\'hui ?::Change une tirée au sort par jour gratuitement, ou crée les tiennes dans la Forge. Si quelque chose ne tient que certains jours, rends-le hebdomadaire.</string>
     <string name="guide_streak_title">Série et repos</string>
     <string name="guide_streak">Monte chaque jour::+1 pour chaque jour où tu atteins le minimum.\nSeconde chance::Perdue ? Une journée parfaite juste après la ramène (une fois par semaine).\nJours de repos::Déclare-le avant midi et la journée ne compte ni pour ni contre toi. 2 par semaine en Facile, 1 en Normal.\nProtection en plus::Le Bouclier de Constance et certains échos sauvent ta série à ta place.</string>
     <string name="guide_penalty_title">Pénalité</string>

@@ -185,9 +185,28 @@ internal fun Squad(s: GameState, onOpen: (String) -> Unit) {
         if (passives.streakProtect) add(stringResource(R.string.passive_streak))
     }
     if (active.isNotEmpty()) Text(active.joinToString(" · "), style = MaterialTheme.typography.labelMedium, color = c.accent, modifier = Modifier.padding(top = 6.dp))
+    if (passives.luck > 0) Column(Modifier.padding(top = 4.dp)) { LuckOddsLines(s.player.level, passives.luck, R.string.luck_odds_squad) }
     // What those percentages actually came to.
     squadGainText(s.squadWeek)?.let { Text(stringResource(R.string.squad_week, it), style = MaterialTheme.typography.labelMedium, color = c.text, modifier = Modifier.padding(top = 4.dp)) }
     squadGainText(s.squadTotal)?.let { Text(stringResource(R.string.squad_total, it), style = MaterialTheme.typography.labelMedium, color = c.muted) }
+}
+
+/** What a given luck does to the chances it touches, without it → with it, at the player's level. */
+@Composable
+internal fun LuckOddsLines(level: Int, luck: Double, title: Int) {
+    val c = Lif.colors
+    val base = com.lifup.app.domain.luckOdds(level, 0.0)
+    val lucky = com.lifup.app.domain.luckOdds(level, luck)
+    fun pct(v: Double) = com.lifup.app.ui.fmtNum(v * 100) + "%"
+    val style = MaterialTheme.typography.labelSmall
+    Text(stringResource(title), style = style, color = c.dim)
+    Text(stringResource(R.string.luck_item, pct(base.item), pct(lucky.item)), style = style, color = c.text)
+    Text(stringResource(R.string.luck_portal, pct(base.portalEcho), pct(lucky.portalEcho)), style = style, color = c.text)
+    // The two best ranks reachable at this level say the most.
+    lucky.atLeast.keys.sortedDescending().take(2).sorted().forEach { r ->
+        val line = if (r == ShadowRank.entries.last()) R.string.luck_rank_top else R.string.luck_rank
+        Text(stringResource(line, stringResource(com.lifup.app.ui.shadowRankName(r)), pct(base.atLeast[r] ?: 0.0), pct(lucky.atLeast.getValue(r))), style = style, color = c.text)
+    }
 }
 
 /** "+340 XP · +55 gold · saved you 1×", or null when the squad brought nothing. */

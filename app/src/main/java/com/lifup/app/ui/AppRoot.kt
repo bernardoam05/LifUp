@@ -52,6 +52,31 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.rounded.Bedtime
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import com.lifup.app.domain.FlameKind
+import com.lifup.app.domain.flame
+import com.lifup.app.domain.dayGoal
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -251,7 +276,7 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
             Spacer(Modifier.width(10.dp))
             HudChip(Icons.Rounded.Paid, fmtCompact(p.gold.toLong()), Lif.colors.gold)
             Spacer(Modifier.width(8.dp))
-            HudChip(Icons.Rounded.LocalFireDepartment, p.streak.toString(), if (p.streak > 0) Lif.colors.red else Lif.colors.dim)
+            StreakFlame(s)
             IconButton(onClick = openSettings) { Icon(Icons.Rounded.Settings, stringResource(R.string.settings), tint = Lif.colors.muted) }
         }
         if (s.penalty.active) {
@@ -274,6 +299,66 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * The streak in the HUD, coloured by how today stands (see [FlameKind]): an ember until the day
+ * counts, lit once it does (with tonight's number), gold when every mission is kept, a flickering
+ * blue while a lost streak can still be recovered. Getting hotter plays a burst; a tap explains it.
+ */
+@Composable
+private fun StreakFlame(s: GameState) {
+    val c = Lif.colors
+    val flame = s.flame()
+    val context = LocalContext.current
+    var shown by remember { mutableStateOf(flame.kind) }
+    val bump = remember { Animatable(1f) }
+    val burst = remember { Animatable(1f) }
+    LaunchedEffect(flame.kind) {
+        if (flame.kind > shown && flame.kind >= FlameKind.SAFE) {
+            launch { burst.snapTo(0f); burst.animateTo(1f, tween(800)) }
+            bump.animateTo(1.8f, tween(160))
+            bump.animateTo(1f, spring(dampingRatio = 0.3f, stiffness = 300f))
+        }
+        shown = flame.kind
+    }
+    val flicker by rememberInfiniteTransition(label = "flame").animateFloat(0.35f, 1f, infiniteRepeatable(tween(650), RepeatMode.Reverse), label = "flicker")
+    val color = when (flame.kind) {
+        FlameKind.REST -> c.purple
+        FlameKind.RECOVERING -> c.blue
+        FlameKind.PENDING -> c.dim
+        FlameKind.SAFE -> c.orange
+        FlameKind.PERFECT -> c.gold
+    }
+    val goal = s.dayGoal()
+    val explain = when (flame.kind) {
+        FlameKind.REST -> stringResource(R.string.flame_rest)
+        FlameKind.RECOVERING -> pluralStringResource(R.plurals.flame_recovering, flame.days, flame.days)
+        FlameKind.PENDING -> stringResource(R.string.flame_pending, goal.kept, goal.needed)
+        FlameKind.SAFE -> pluralStringResource(R.plurals.flame_safe, flame.days, flame.days)
+        FlameKind.PERFECT -> pluralStringResource(R.plurals.flame_perfect, flame.days, flame.days)
+    }
+    Row(
+        Modifier.clip(RoundedCornerShape(8.dp)).clickable { android.widget.Toast.makeText(context, explain, android.widget.Toast.LENGTH_LONG).show() }.padding(horizontal = 2.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            if (flame.kind == FlameKind.PERFECT) Box(Modifier.size(24.dp).background(Brush.radialGradient(listOf(color.copy(alpha = 0.45f), Color.Transparent)), CircleShape))
+            if (burst.value < 1f) Box(
+                Modifier.size(16.dp).graphicsLayer { scaleX = 1 + 2.2f * burst.value; scaleY = 1 + 2.2f * burst.value; alpha = 1 - burst.value }
+                    .border(2.dp, color, CircleShape),
+            )
+            Icon(
+                if (flame.kind == FlameKind.REST) Icons.Rounded.Bedtime else Icons.Rounded.LocalFireDepartment, null,
+                tint = color.copy(alpha = if (flame.kind == FlameKind.RECOVERING) flicker else 1f),
+                modifier = Modifier.size(16.dp).graphicsLayer { scaleX = bump.value; scaleY = bump.value },
+            )
+        }
+        Spacer(Modifier.width(3.dp))
+        AnimatedContent(flame.days, transitionSpec = { (slideInVertically { it } + fadeIn()) togetherWith (slideOutVertically { -it } + fadeOut()) }, label = "days") { d ->
+            Text(d.toString(), style = MaterialTheme.typography.labelLarge, color = Lif.colors.text, maxLines = 1, softWrap = false)
         }
     }
 }

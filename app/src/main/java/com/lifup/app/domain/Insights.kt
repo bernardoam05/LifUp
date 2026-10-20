@@ -64,6 +64,31 @@ fun GameState.dayGoal(): DayGoal {
     return DayGoal(daily.count { it.isSuccessful() }, needed, daily.size)
 }
 
+// ── The streak flame ──────────────────────────────────────────────────────────
+
+/**
+ * How today stands for the streak, from cold to hot: a rest day, a lost streak waiting for its
+ * perfect recovery day, not yet safe, safe (the streak grows tonight), or every mission kept.
+ */
+enum class FlameKind { REST, RECOVERING, PENDING, SAFE, PERFECT }
+
+/** The flame's state and the streak it shows: tonight's, once today already counts. */
+data class Flame(val kind: FlameKind, val days: Int)
+
+fun GameState.flame(): Flame {
+    if (daily.rest) return Flame(FlameKind.REST, player.streak)
+    val goal = dayGoal()
+    val perfect = goal.total > 0 && goal.kept == goal.total
+    val rec = recovery?.takeIf { it.day == day }
+    return when {
+        rec != null && perfect -> Flame(FlameKind.PERFECT, rec.streak + 1)
+        rec != null -> Flame(FlameKind.RECOVERING, rec.streak)
+        perfect -> Flame(FlameKind.PERFECT, player.streak + 1)
+        goal.total > 0 && goal.safe -> Flame(FlameKind.SAFE, player.streak + 1)
+        else -> Flame(FlameKind.PENDING, player.streak)
+    }
+}
+
 /** An open bedtime check-in that the user should be nudged about. */
 fun GameState.openBedtime(): Quest? = dailyQuests.firstOrNull { it.fromHour != null && it.status == QuestStatus.OPEN }
 

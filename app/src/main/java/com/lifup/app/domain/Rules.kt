@@ -201,6 +201,11 @@ object Rules {
 
     fun shopShadowPrice(rank: ShadowRank) = intArrayOf(800, 1500, 3000, 6000, 12000)[rank.ordinal]
 
+    /** Chances that luck multiplies: an item after a mission (essence part of it) and an echo from a portal. */
+    const val MISSION_DROP_CHANCE = 0.09
+    const val MISSION_ESSENCE_CHANCE = 0.03
+    const val PORTAL_ECHO_CHANCE = 0.2
+
     fun extractionRank(level: Int, roll: Double): ShadowRank = when {
         level >= 26 -> when {
             roll < 0.02 -> ShadowRank.MARSHAL

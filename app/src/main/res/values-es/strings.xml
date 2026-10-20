@@ -236,6 +236,12 @@
     <string name="passive_focus">+%1$s en minutos de foco acreditados</string>
     <string name="passive_daily">+%1$d XP por cada día perfecto</string>
     <string name="passive_luck">+%1$s de suerte en botín y ecos raros</string>
+    <string name="luck_odds_echo">Solo con este eco (sin → con):</string>
+    <string name="luck_odds_squad">Suerte de tu escuadrón (sin → con):</string>
+    <string name="luck_item">Objeto tras una misión: %1$s → %2$s</string>
+    <string name="luck_portal">Eco al cerrar un portal: %1$s → %2$s</string>
+    <string name="luck_rank">Eco encontrado %1$s o mejor: %2$s → %3$s</string>
+    <string name="luck_rank_top">Eco encontrado %1$s: %2$s → %3$s</string>
     <string name="passive_all">Amplifica en %1$s las demás pasivas del escuadrón</string>
 
     <!-- Shop -->
@@ -497,6 +503,20 @@
     <string name="rest_day_left">Descanso · %1$d</string>
     <string name="today_goal">Racha con %1$d de %2$d · todas para un día perfecto</string>
     <string name="streak_recovery">Haz un día perfecto hoy para recuperar tu racha de %1$d días</string>
+    <string name="flame_rest">Día de descanso: la racha se queda como está.</string>
+    <plurals name="flame_recovering">
+        <item quantity="one">La perdiste ayer: un día perfecto hoy te devuelve la racha de %1$d día.</item>
+        <item quantity="other">La perdiste ayer: un día perfecto hoy te devuelve la racha de %1$d días.</item>
+    </plurals>
+    <string name="flame_pending">Racha: %1$d de %2$d misiones hechas para que hoy cuente.</string>
+    <plurals name="flame_safe">
+        <item quantity="one">Racha asegurada: %1$d día esta noche. Hazlas todas para un día perfecto.</item>
+        <item quantity="other">Racha asegurada: %1$d días esta noche. Hazlas todas para un día perfecto.</item>
+    </plurals>
+    <plurals name="flame_perfect">
+        <item quantity="one">Todas cumplidas: %1$d día esta noche, y día perfecto si aguanta hasta medianoche.</item>
+        <item quantity="other">Todas cumplidas: %1$d días esta noche, y día perfecto si aguanta hasta medianoche.</item>
+    </plurals>
     <string name="report_passed">Día cumplido</string>
     <string name="report_streak_restored">Racha recuperada</string>
     <string name="pomodoro_work_open">Foco · ciclo %1$d</string>
@@ -521,7 +541,7 @@
     <string name="perm_activity_why">Contar pasos en misiones de caminar y carreras.</string>
     <string name="guide_section">Cómo funciona</string>
     <string name="guide_daily_title">Misiones diarias</string>
-    <string name="guide_daily">Fijas y sorteadas::1 misión fija y varias sorteadas que cambian cada día.\nMínimo para la racha::En Normal te basta con el 75% de las misiones. Un 60% en Fácil, 100% en Difícil.\nDía perfecto::Hazlas todas y ganas XP extra y un eco nuevo.\n¿Hoy no te encaja?::Cambia una sorteada al día gratis, o crea las tuyas en la Forja. Si algo solo cabe algunos días, hazlo semanal.</string>
+    <string name="guide_daily">Fijas y sorteadas::1 misión fija y varias sorteadas que cambian cada día.\nMínimo para la racha::En Normal te basta con el 75% de las misiones. Un 60% en Fácil, 100% en Difícil.\nDía perfecto::Hazlas todas: a medianoche ganas XP extra y un eco nuevo. Las de evitar cuentan cuando aguantan todo el día.\n¿Hoy no te encaja?::Cambia una sorteada al día gratis, o crea las tuyas en la Forja. Si algo solo cabe algunos días, hazlo semanal.</string>
     <string name="guide_streak_title">Racha y descanso</string>
     <string name="guide_streak">Sube cada día::+1 por cada día que llegas al mínimo.\nSegunda oportunidad::¿La perdiste? Un día perfecto justo después la recupera (una vez por semana).\nDías de descanso::Márcalo antes del mediodía y ese día no cuenta ni a favor ni en contra. 2 por semana en Fácil, 1 en Normal.\nProtección extra::El Escudo de la Constancia y algunos ecos salvan tu racha por ti.</string>
     <string name="guide_penalty_title">Penalización</string>

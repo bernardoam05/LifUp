@@ -136,3 +136,15 @@ fun Tx.toggleFavoriteEcho(id: String) {
     if (s.owned(id) == null) return
     s = s.copy(favoriteEchoes = if (id in s.favoriteEchoes) s.favoriteEchoes - id else s.favoriteEchoes + id)
 }
+
+/** The chances luck changes, for showing them: an item after a mission, an echo from a portal, and a found echo's rank. */
+data class LuckOdds(val item: Double, val portalEcho: Double, val atLeast: Map<ShadowRank, Double>)
+
+fun luckOdds(level: Int, luck: Double): LuckOdds {
+    val k = 1 + luck
+    // Found echoes roll their rank with the roll divided by (1 + luck): sample it rather than restate the table.
+    val samples = 2000
+    val ranks = (0 until samples).map { Rules.extractionRank(level, (it + 0.5) / samples / k) }
+    val atLeast = ShadowRank.entries.drop(1).associateWith { r -> ranks.count { it >= r } / samples.toDouble() }.filterValues { it > 0 }
+    return LuckOdds((Rules.MISSION_DROP_CHANCE * k).coerceAtMost(1.0), (Rules.PORTAL_ECHO_CHANCE * k).coerceAtMost(1.0), atLeast)
+}

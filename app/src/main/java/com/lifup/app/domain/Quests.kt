@@ -150,15 +150,14 @@ private fun Tx.completeMission(q: Quest) {
     s = s.copy(records = s.records + (q.defId to rec.copy(count = rec.count + 1)))
     tallyWeekly(q, +1)
     rollMissionDrop()
-    if (q.origin == QuestOrigin.DAILY && s.allDailyDone()) rollExtraction()
 }
 
 private fun Tx.rollMissionDrop() {
     val luck = 1 + s.passives(content, ctx.now).luck
     val roll = ctx.rng.nextDouble()
     val item = when {
-        roll < 0.03 * luck -> "essencia_sombria"
-        roll < 0.09 * luck -> "bau_cacador"
+        roll < Rules.MISSION_ESSENCE_CHANCE * luck -> "essencia_sombria"
+        roll < Rules.MISSION_DROP_CHANCE * luck -> "bau_cacador"
         else -> null
     } ?: return
     addItem(item)

@@ -153,7 +153,7 @@ fun Tx.completePortal() {
     count(StatKey.QUESTS_COMPLETED)
     toast(ToastKind.PORTAL_CLEARED)
     val luck = s.passives(content, ctx.now).luck
-    if (ctx.rng.nextDouble() < 0.2 * (1 + luck)) {
+    if (ctx.rng.nextDouble() < Rules.PORTAL_ECHO_CHANCE * (1 + luck)) {
         val rank = Rules.extractionRank(s.player.level, ctx.rng.nextDouble() / (1 + luck))
         randomShadow(content.shadowPool(SourceType.EXTRACTION), rank)?.let { gainShadow(it.id, SourceType.EXTRACTION, EchoOrigin.PORTAL) }
     }

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -98,6 +99,10 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
                 Text(passiveText(def.passive, Rules.passiveValue(def, level)), style = MaterialTheme.typography.titleMedium, color = c.accent)
                 if (owned != null && Rules.passiveValue(def, level) > 0) {
                     Text(stringResource(R.string.next_level_value, passiveText(def.passive, Rules.passiveValue(def, level + 1))), style = MaterialTheme.typography.labelSmall, color = c.dim)
+                }
+                if (def.passive == com.lifup.app.domain.Passive.SHADOW_LUCK) {
+                    Spacer(Modifier.height(6.dp))
+                    LuckOddsLines(s.player.level, Rules.passiveValue(def, level), R.string.luck_odds_echo)
                 }
             }
             owned?.origin?.let { Text(originText(owned), style = MaterialTheme.typography.labelMedium, color = c.text) }
