@@ -74,6 +74,11 @@ import com.lifup.app.ui.components.RankBadge
 import com.lifup.app.ui.components.SectionTitle
 import com.lifup.app.domain.Attr
 import com.lifup.app.ui.attrColor
+import com.lifup.app.ui.fmtCount
+import com.lifup.app.domain.habitOn
+import com.lifup.app.domain.habitWindow
+import androidx.compose.material.icons.rounded.ExpandLess
+import androidx.compose.material.icons.rounded.ExpandMore
 import com.lifup.app.ui.attrShort
 import com.lifup.app.ui.components.StatTile
 import com.lifup.app.ui.content
@@ -179,6 +184,20 @@ internal fun Squad(s: GameState, onOpen: (String) -> Unit) {
         if (passives.streakProtect) add(stringResource(R.string.passive_streak))
     }
     if (active.isNotEmpty()) Text(active.joinToString(" · "), style = MaterialTheme.typography.labelMedium, color = c.accent, modifier = Modifier.padding(top = 6.dp))
+    // What those percentages actually came to.
+    squadGainText(s.squadWeek)?.let { Text(stringResource(R.string.squad_week, it), style = MaterialTheme.typography.labelMedium, color = c.text, modifier = Modifier.padding(top = 4.dp)) }
+    squadGainText(s.squadTotal)?.let { Text(stringResource(R.string.squad_total, it), style = MaterialTheme.typography.labelMedium, color = c.muted) }
+}
+
+/** "+340 XP · +55 gold · saved you 1×", or null when the squad brought nothing. */
+@Composable
+internal fun squadGainText(g: com.lifup.app.domain.SquadGain): String? {
+    if (g.isEmpty()) return null
+    return buildList {
+        if (g.xp > 0) add("+${fmtCount(g.xp.toLong())} XP")
+        if (g.gold > 0) add(stringResource(R.string.squad_gain_gold, fmtCount(g.gold.toLong())))
+        if (g.saves > 0) add(stringResource(R.string.squad_gain_saves, g.saves))
+    }.joinToString(" · ")
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -303,20 +322,51 @@ private fun MissionRates(s: GameState) {
     val stats = s.missionStats.entries.filter { it.value.total > 0 && s.defOf(it.key, content) != null }.sortedWith(compareBy({ it.value.rate }, { -it.value.total }))
     if (stats.isEmpty()) return
     var all by remember { mutableStateOf(false) }
+    var open by remember { mutableStateOf<String?>(null) }
     SectionTitle(stringResource(R.string.mission_rates))
     Panel {
         (if (all) stats else stats.take(6)).forEach { (id, st) ->
             val pct = (st.rate * 100).roundToInt()
             val color = when { pct >= 75 -> c.green; pct >= 50 -> c.gold; else -> c.red }
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp).clickable { open = if (open == id) null else id }) {
                 Text(defTitle(s, id), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 Text("$pct% · ${st.done}/${st.total}", style = MaterialTheme.typography.labelMedium, color = color)
+                Icon(if (open == id) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = c.dim, modifier = Modifier.size(18.dp))
             }
             Bar(st.rate.toFloat(), color, height = 4.dp, modifier = Modifier.padding(top = 2.dp))
             s.adapt[id]?.level?.takeIf { it != 0 }?.let { lvl ->
                 Text(stringResource(R.string.adapt_level, (if (lvl > 0) "+" else "") + lvl * 10), style = MaterialTheme.typography.labelSmall, color = c.dim)
             }
+            if (open == id) HabitHistory(s, id)
         }
         if (stats.size > 6) TextButton(onClick = { all = !all }) { Text(stringResource(if (all) R.string.show_less else R.string.show_all).uppercase()) }
+    }
+}
+
+/**
+ * One mission over time: the last 30 days as a strip, oldest first (kept, missed, or not drawn
+ * that day), and those 30 days against the 30 before, to see whether it's getting better.
+ */
+@Composable
+private fun HabitHistory(s: GameState, id: String) {
+    val c = Lif.colors
+    val today = java.time.LocalDate.now()
+    Column(Modifier.padding(top = 8.dp, bottom = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            for (back in Rules.HABIT_STRIP_DAYS - 1 downTo 0) {
+                val color = when (s.habitOn(id, today.minusDays(back.toLong()))) { true -> c.green; false -> c.red; null -> c.border }
+                Box(Modifier.weight(1f).aspectRatio(1f).clip(RoundedCornerShape(2.dp)).background(color))
+            }
+        }
+        val recent = s.habitWindow(id, today, 30)
+        val before = s.habitWindow(id, today.minusDays(30), 30)
+        val text = when {
+            recent.total == 0 -> stringResource(R.string.habit_none_yet)
+            before.total == 0 -> stringResource(R.string.habit_recent, recent.done, recent.total)
+            else -> stringResource(R.string.habit_trend, recent.done, recent.total, (recent.rate * 100).roundToInt(), (before.rate * 100).roundToInt())
+        }
+        val up = before.total > 0 && recent.total > 0 && recent.rate > before.rate
+        val down = before.total > 0 && recent.total > 0 && recent.rate < before.rate
+        Text(text, style = MaterialTheme.typography.labelSmall, color = if (up) c.green else if (down) c.gold else c.muted)
     }
 }

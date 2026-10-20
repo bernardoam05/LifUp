@@ -13,8 +13,9 @@ fun adaptFactor(type: QuestType, level: Int) =
     if (type == QuestType.LIMIT) 1 - Rules.ADAPT_STEP * level else 1 + Rules.ADAPT_STEP * level
 
 /** Records a closed day's daily missions and nudges each one's target toward what the user really does. */
-fun Tx.recordMissions(daily: List<Quest>) {
+fun Tx.recordMissions(daily: List<Quest>, day: LocalDate) {
     var stats = s.missionStats
+    var days = s.missionDays
     var week = s.weekStats
     var adapt = s.adapt
     // Weekly missions are judged by their week, not by single days.
@@ -22,10 +23,25 @@ fun Tx.recordMissions(daily: List<Quest>) {
         val ok = q.isSuccessful()
         stats = stats + (q.defId to (stats[q.defId] ?: MissionStat()).add(ok))
         week = week + (q.defId to (week[q.defId] ?: MissionStat()).add(ok))
+        val mark = if (ok) day.toEpochDay() else -day.toEpochDay()
+        days = days + (q.defId to ((days[q.defId] ?: emptyList()) + mark).takeLast(Rules.HABIT_DAYS_KEPT))
         val def = s.defOf(q.defId, content)
         if (def?.adaptable() == true) adapt = adapt + (q.defId to (adapt[q.defId] ?: Adapt()).next(ok))
     }
-    s = s.copy(missionStats = stats, weekStats = week, adapt = adapt)
+    s = s.copy(missionStats = stats, missionDays = days, weekStats = week, adapt = adapt)
+}
+
+/** How a mission went on the days it came up in the [days] days up to [end] (inclusive). */
+fun GameState.habitWindow(id: String, end: LocalDate, days: Int): MissionStat {
+    val from = end.toEpochDay() - days + 1
+    return missionDays[id].orEmpty().filter { kotlin.math.abs(it) in from..end.toEpochDay() }
+        .fold(MissionStat()) { st, m -> st.add(m > 0) }
+}
+
+/** Whether a mission was kept (true), missed (false) or didn't come up (null) on [day]. */
+fun GameState.habitOn(id: String, day: LocalDate): Boolean? {
+    val e = day.toEpochDay()
+    return missionDays[id]?.lastOrNull { kotlin.math.abs(it) == e }?.let { it > 0 }
 }
 
 private fun Adapt.next(ok: Boolean): Adapt = when {
@@ -73,12 +89,12 @@ fun Tx.rollWeek() {
         reward {
             Reward.WeekReport(
                 it, s.statsWeek, kept, logs.count { l -> l.perfect }, logs.count { l -> l.rest }, logs.size, s.lastWeekKept,
-                best?.key, best?.value?.rate ?: 0.0, worst?.key, worst?.value?.rate ?: 0.0, boss?.bossId, boss?.defeated == true, s.weekLines(s.statsWeek),
+                best?.key, best?.value?.rate ?: 0.0, worst?.key, worst?.value?.rate ?: 0.0, boss?.bossId, boss?.defeated == true, s.weekLines(s.statsWeek), s.squadWeek,
             )
         }
     }
     suggestWeekly()
-    s = s.copy(statsWeek = ctx.weekKey, weekStats = emptyMap(), lastWeekKept = if (logs.isEmpty()) s.lastWeekKept else kept)
+    s = s.copy(statsWeek = ctx.weekKey, weekStats = emptyMap(), lastWeekKept = if (logs.isEmpty()) s.lastWeekKept else kept, squadWeek = SquadGain())
 }
 
 // ── Guides ────────────────────────────────────────────────────────────────────

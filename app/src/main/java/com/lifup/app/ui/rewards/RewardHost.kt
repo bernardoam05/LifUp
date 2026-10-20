@@ -197,6 +197,7 @@ private fun WeekReportCard(s: GameState, r: Reward.WeekReport, dismiss: () -> Un
             val name = content.bossById[id]?.title?.local() ?: id
             Line(stringResource(if (r.bossDefeated) R.string.week_boss_won else R.string.week_boss_lost, name), if (r.bossDefeated) c.green else c.muted)
         }
+        com.lifup.app.ui.hero.squadGainText(r.squad)?.let { Line(stringResource(R.string.week_squad, it), c.purple) }
         r.weekly.forEach { w ->
             val met = w.done >= w.goal
             Line(stringResource(R.string.week_weekly_line, defTitle(s, w.defId), w.done, w.goal), if (met) c.green else c.gold)

@@ -130,10 +130,15 @@ fun Tx.completeQuest(id: String) {
 private fun Tx.completeMission(q: Quest) {
     val doubled = s.doubleXpNext
     if (doubled) s = s.copy(doubleXpNext = false)
-    val (xp, dealt) = gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.type)
-    val gold = gainGold(q.gold)
+    var xp = 0
+    var dealt = 0
+    var gold = 0
+    val squad = squadDuring {
+        gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.type).let { (x, d) -> xp = x; dealt = d }
+        gold = gainGold(q.gold)
+    }
     gainAttributes(groupOf(q))
-    updateQuest(q.id) { it.copy(status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt) }
+    updateQuest(q.id) { it.copy(status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt, squad = squad) }
     count(StatKey.QUESTS_COMPLETED)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED)
     if (q.fromHour != null) count(StatKey.BEDTIMES_KEPT)
@@ -167,6 +172,7 @@ fun Tx.undoQuest(id: String) {
     loseXp(q.xpGained)
     refundGold(q.goldGained)
     healBoss(q.bossDamage)
+    squadAdded(SquadGain() - q.squad)
     count(StatKey.QUESTS_COMPLETED, -1)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED, -1)
     if (q.fromHour != null) count(StatKey.BEDTIMES_KEPT, -1)
@@ -175,7 +181,7 @@ fun Tx.undoQuest(id: String) {
         // Tracked minutes/km stay (they were really done); automatic missions restart and stop auto-filling.
         val tracked = it.auto == null && (it.type == QuestType.FOCUS || it.type == QuestType.GPS)
         val progress = if (tracked) it.progress.coerceAtMost(it.target * 0.99) else 0.0
-        it.copy(status = QuestStatus.OPEN, xpGained = 0, goldGained = 0, bossDamage = 0, progress = progress, autoOff = it.auto != null)
+        it.copy(status = QuestStatus.OPEN, xpGained = 0, goldGained = 0, bossDamage = 0, squad = SquadGain(), progress = progress, autoOff = it.auto != null)
     }
 }
 
@@ -286,12 +292,17 @@ fun Tx.completeSideQuest(id: String) {
         updateSide(id) { it.copy(done = true) }
         return
     }
-    val (xp, dealt) = gainXpTracked(sq.xp, null)
-    val gold = gainGold(sq.gold)
+    var xp = 0
+    var dealt = 0
+    var gold = 0
+    val squad = squadDuring {
+        gainXpTracked(sq.xp, null).let { (x, d) -> xp = x; dealt = d }
+        gold = gainGold(sq.gold)
+    }
     gainAttributes(null)
     count(StatKey.SIDE_COMPLETED)
     s = s.copy(daily = s.daily.copy(sideRewarded = s.daily.sideRewarded + 1))
-    updateSide(id) { it.copy(done = true, xpGained = xp, goldGained = gold, bossDamage = dealt) }
+    updateSide(id) { it.copy(done = true, xpGained = xp, goldGained = gold, bossDamage = dealt, squad = squad) }
 }
 
 /** Unticks a side quest and takes back exactly what it paid. */
@@ -301,10 +312,11 @@ fun Tx.undoSideQuest(id: String) {
         loseXp(sq.xpGained)
         refundGold(sq.goldGained)
         healBoss(sq.bossDamage)
+        squadAdded(SquadGain() - sq.squad)
         count(StatKey.SIDE_COMPLETED, -1)
         s = s.copy(daily = s.daily.copy(sideRewarded = (s.daily.sideRewarded - 1).coerceAtLeast(0)))
     }
-    updateSide(id) { it.copy(done = false, xpGained = 0, goldGained = 0, bossDamage = 0) }
+    updateSide(id) { it.copy(done = false, xpGained = 0, goldGained = 0, bossDamage = 0, squad = SquadGain()) }
 }
 
 /** Deleting a finished side quest also removes its rewards, so create-tick-delete can't farm XP. */

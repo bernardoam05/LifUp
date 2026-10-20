@@ -180,6 +180,11 @@
     <string name="squad">Trupp</string>
     <string name="collection">Sammlung</string>
     <string name="squad_xp">XP +%1$d%%</string>
+    <string name="squad_week">Diese Woche: %1$s</string>
+    <string name="squad_total">Insgesamt: %1$s</string>
+    <string name="squad_gain_gold">+%1$s Gold</string>
+    <string name="squad_gain_saves">hat dich %1$d× gerettet</string>
+    <string name="week_squad">Trupp: %1$s</string>
     <string name="squad_gold">Gold +%1$d%%</string>
     <string name="squad_boss">Bossschaden +%1$d%%</string>
     <string name="squad_penalty">Strafe −%1$d%%</string>
@@ -550,6 +555,9 @@
     <string name="week_worst">Am seltensten: %1$s (%2$d %%)</string>
     <string name="week_suggest">Wenn sie nicht in deinen Tag passt, tausche sie oder schalte sie in der Schmiede ab.</string>
     <string name="mission_rates">Geschaffte Missionen</string>
+    <string name="habit_none_yet">Der Verlauf beginnt heute: Er erscheint hier, sobald die Mission kommt.</string>
+    <string name="habit_recent">Letzte 30 Tage: %1$d von %2$d</string>
+    <string name="habit_trend">Letzte 30 Tage: %1$d von %2$d (%3$d %%) · 30 davor: %4$d %%</string>
     <string name="adapt_level">Ziel angepasst %1$s %%</string>
     <string name="adapt_up">Ziel +%1$d %%: Du hast diese Mission mehrere Tage in Folge geschafft.</string>
     <string name="adapt_down">Ziel −%1$d %%: angepasst nach ein paar verpassten Tagen.</string>

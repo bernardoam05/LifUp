@@ -169,6 +169,11 @@
     <string name="squad">Esquadrão</string>
     <string name="collection">Coleção</string>
     <string name="squad_xp">XP +%1$d%%</string>
+    <string name="squad_week">Esta semana: %1$s</string>
+    <string name="squad_total">Desde sempre: %1$s</string>
+    <string name="squad_gain_gold">+%1$s ouro</string>
+    <string name="squad_gain_saves">salvou-te %1$d×</string>
+    <string name="week_squad">Esquadrão: %1$s</string>
     <string name="squad_gold">Ouro +%1$d%%</string>
     <string name="squad_boss">Dano a bosses +%1$d%%</string>
     <string name="squad_penalty">Penalização −%1$d%%</string>
@@ -532,6 +537,9 @@
     <string name="week_worst">Menos cumprida: %1$s (%2$d%%)</string>
     <string name="week_suggest">Se não encaixa no teu dia, troca-a ou desativa-a na Forja.</string>
     <string name="mission_rates">Missões cumpridas</string>
+    <string name="habit_none_yet">O histórico conta a partir de hoje: aparece aqui quando a missão sair.</string>
+    <string name="habit_recent">Últimos 30 dias: %1$d de %2$d</string>
+    <string name="habit_trend">Últimos 30 dias: %1$d de %2$d (%3$d%%) · 30 antes: %4$d%%</string>
     <string name="adapt_level">Objetivo ajustado %1$s%%</string>
     <string name="adapt_up">Objetivo +%1$d%%: tens cumprido esta missão vários dias seguidos.</string>
     <string name="adapt_down">Objetivo −%1$d%%: ajustado depois de alguns dias falhados.</string>

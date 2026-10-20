@@ -20,6 +20,7 @@ fun Tx.buyItem(id: String): Boolean {
     val cost = s.price(content, item.cost, ctx.now)
     if (s.player.gold < cost) return false
     s = s.copy(player = s.player.copy(gold = s.player.gold - cost))
+    squadAdded(SquadGain(gold = item.cost - cost))
     if (left != null) s = s.copy(shop = s.shop.copy(stock = s.shop.stock + (id to left - 1)))
     addItem(id)
     count(StatKey.GOLD_SPENT, cost.toLong())
@@ -32,6 +33,7 @@ fun Tx.buyShadow(id: String): Boolean {
     val cost = s.price(content, Rules.shopShadowPrice(def.rank), ctx.now)
     if (s.player.gold < cost) return false
     s = s.copy(player = s.player.copy(gold = s.player.gold - cost))
+    squadAdded(SquadGain(gold = Rules.shopShadowPrice(def.rank) - cost))
     count(StatKey.GOLD_SPENT, cost.toLong())
     gainShadow(id, SourceType.SHOP, EchoOrigin.SHOP)
     return true

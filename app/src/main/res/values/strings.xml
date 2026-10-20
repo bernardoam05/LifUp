@@ -181,6 +181,11 @@
     <string name="squad">Squad</string>
     <string name="collection">Collection</string>
     <string name="squad_xp">XP +%1$d%%</string>
+    <string name="squad_week">This week: %1$s</string>
+    <string name="squad_total">All time: %1$s</string>
+    <string name="squad_gain_gold">+%1$s gold</string>
+    <string name="squad_gain_saves">saved you %1$d×</string>
+    <string name="week_squad">Squad: %1$s</string>
     <string name="squad_gold">Gold +%1$d%%</string>
     <string name="squad_boss">Boss damage +%1$d%%</string>
     <string name="squad_penalty">Penalty −%1$d%%</string>
@@ -551,6 +556,9 @@
     <string name="week_worst">Least kept: %1$s (%2$d%%)</string>
     <string name="week_suggest">If it doesn\'t fit your day, swap it or turn it off in the Forge.</string>
     <string name="mission_rates">Missions kept</string>
+    <string name="habit_none_yet">History starts from today: it shows here once the mission comes up.</string>
+    <string name="habit_recent">Last 30 days: %1$d of %2$d</string>
+    <string name="habit_trend">Last 30 days: %1$d of %2$d (%3$d%%) · the 30 before: %4$d%%</string>
     <string name="adapt_level">Target adjusted %1$s%%</string>
     <string name="adapt_up">Target +%1$d%%: you\'ve kept this mission several days in a row.</string>
     <string name="adapt_down">Target −%1$d%%: adjusted after a few missed days.</string>

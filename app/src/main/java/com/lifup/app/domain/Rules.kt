@@ -121,6 +121,9 @@ object Rules {
 
     /** A mission needs this many days in a week to be called best or worst. */
     const val WEEK_MIN_SAMPLES = 3
+    /** Days of history kept per mission (enough for two months of a daily one). */
+    const val HABIT_DAYS_KEPT = 90
+    const val HABIT_STRIP_DAYS = 30
 
     /** Sunday hour for the "boss escapes tonight" nudge. */
     const val BOSS_NUDGE_HOUR = 18

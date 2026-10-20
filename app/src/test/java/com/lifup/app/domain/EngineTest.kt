@@ -768,4 +768,27 @@ class EngineTest {
         val blind = run(s, "2026-10-14T10:00") { setScreenMeasurable(false) }
         assertTrue(blind.availableDefs(content).none { it.auto == AutoKind.SCREEN_TIME || it.auto == AutoKind.DISTRACTION_TIME })
     }
+
+    @Test fun `the squad's share of xp and gold is counted and undone with the mission`() {
+        var s = fresh().let { it.copy(shadows = it.shadows + OwnedShadow("astral_eclipse"), squad = listOf("astral_eclipse")) }
+        val q = s.dailyQuests.first { it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT && it.fromHour == null }
+        s = run(s, "2026-10-14T10:00") { completeQuest(q.id) }
+        val done = s.quests.first { it.id == q.id }
+        assertTrue(done.squad.xp > 0)
+        assertEquals(done.xpGained - q.xp, done.squad.xp)
+        assertEquals(done.squad, s.squadWeek)
+        s = run(s, "2026-10-14T10:05") { undoQuest(q.id) }
+        assertEquals(SquadGain(), s.squadWeek)
+        assertEquals(SquadGain(), s.squadTotal)
+    }
+
+    @Test fun `each mission keeps its recent days for the habit history`() {
+        var s = fresh()
+        val ids = s.dailyQuests.filter { it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT }.map { it.defId }
+        s = run(s, "2026-10-15T09:00")
+        val day = java.time.LocalDate.of(2026, 10, 14)
+        ids.forEach { assertEquals(false, s.habitOn(it, day)) }
+        assertEquals(MissionStat(0, 1), s.habitWindow(ids.first(), day, 30))
+        assertNull(s.habitOn(ids.first(), day.minusDays(1)))
+    }
 }

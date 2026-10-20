@@ -60,7 +60,7 @@ private fun Tx.closeDay(day: LocalDate) {
         }
     }
 
-    if (!rest) recordMissions(daily)
+    if (!rest) recordMissions(daily, day)
     count(StatKey.STEPS, s.daily.steps.toLong())
 
     // A penalty lasts 24 hours: its missions only lift it early, and leftovers just expire.
@@ -75,7 +75,9 @@ private fun Tx.closeDay(day: LocalDate) {
         passed -> {
             if (perfect) {
                 val dailyBonus = s.passives(content, ctx.now).dailyBonus.roundToInt()
-                bonusXp += gainXp(dailyBonus, boosted = false)
+                val bonus = gainXp(dailyBonus, boosted = false)
+                bonusXp += bonus
+                squadAdded(SquadGain(xp = bonus))
                 count(StatKey.PERFECT_DAYS)
                 if (hadPenaltyBefore) count(StatKey.COMEBACKS)
             }
@@ -116,6 +118,7 @@ private fun Tx.setStreak(value: Int) {
 private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<PenaltyInfo, String?> {
     tryWeeklyPassive(Passive.PENALTY_IMMUNITY)?.let { shadow ->
         toast(ToastKind.PASSIVE_FIRED, shadow.id)
+        squadAdded(SquadGain(saves = 1))
         return PenaltyInfo(failed, total, 0, 0, 0, absorbedBy = shadow.id) to shadow.id
     }
     val rigor = s.settings.rigor
@@ -123,9 +126,12 @@ private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<Penalt
     val mult = when (rigor) { Rigor.EASY -> 0.3; Rigor.NORMAL -> 1.0; Rigor.HARD -> 2.0 }
     val reduce = s.passives(content, ctx.now).penaltyReduce
     // Loss follows the share left undone, so a near miss costs little.
-    val base = Rules.penaltyBase(s.player.level) * mult * (1 - ratio) * (1 - reduce)
+    val full = Rules.penaltyBase(s.player.level) * mult * (1 - ratio)
+    val base = full * (1 - reduce)
     // XP lost follows mission XP past the top tier; gold lost stays with the gold economy.
-    val xpLost = floor(base * Rules.xpMultiplier(s.player.level) / Rules.tierMultiplier(s.player.level)).toInt()
+    val xpScale = Rules.xpMultiplier(s.player.level) / Rules.tierMultiplier(s.player.level)
+    val xpLost = floor(base * xpScale).toInt()
+    squadAdded(SquadGain(xp = floor(full * xpScale).toInt() - xpLost, gold = floor(full).toInt() - floor(base).toInt()))
     val goldLost = loseGold(floor(base).toInt())
     val xpActuallyLost = minOf(xpLost, s.player.xp)
     loseXp(xpLost)
@@ -148,7 +154,7 @@ private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<Penalt
     if (streak > 0) {
         val shadow = tryWeeklyPassive(Passive.STREAK_PROTECT)
         when {
-            shadow != null -> { savedBy = shadow.id; toast(ToastKind.PASSIVE_FIRED, shadow.id) }
+            shadow != null -> { savedBy = shadow.id; toast(ToastKind.PASSIVE_FIRED, shadow.id); squadAdded(SquadGain(saves = 1)) }
             s.items("escudo_constancia") > 0 -> { addItem("escudo_constancia", -1); count(StatKey.ITEMS_USED); savedBy = "escudo_constancia" }
             else -> {
                 setStreak(0)

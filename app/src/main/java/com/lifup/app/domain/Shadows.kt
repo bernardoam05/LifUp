@@ -15,6 +15,9 @@ data class Passives(
     val luck: Double = 0.0,
     val immunity: Boolean = false,
     val streakProtect: Boolean = false,
+    /** The parts of [xp] and [gold] that come from item buffs rather than the squad. */
+    val buffXp: Double = 0.0,
+    val buffGold: Double = 0.0,
 ) {
     fun xpFor(type: QuestType?): Double = xp + when (type) {
         QuestType.TRAINING -> trainingXp
@@ -40,9 +43,13 @@ fun GameState.passives(content: Content, now: Long): Passives {
     val amp = 1 + (totals[Passive.ALL_BOOST] ?: 0.0)
     fun v(p: Passive) = (totals[p] ?: 0.0) * amp
     val live = buffs.filter { it.expiresAt > now }
+    val buffXp = live.filter { it.stat == "xp" }.sumOf { it.value }
+    val buffGold = live.filter { it.stat == "gold" }.sumOf { it.value }
     return Passives(
-        xp = v(Passive.XP_BOOST) + live.filter { it.stat == "xp" }.sumOf { it.value },
-        gold = v(Passive.GOLD_BOOST) + live.filter { it.stat == "gold" }.sumOf { it.value },
+        xp = v(Passive.XP_BOOST) + buffXp,
+        gold = v(Passive.GOLD_BOOST) + buffGold,
+        buffXp = buffXp,
+        buffGold = buffGold,
         trainingXp = v(Passive.TRAINING_XP),
         mindXp = v(Passive.MIND_XP),
         explorerXp = v(Passive.EXPLORER_XP),

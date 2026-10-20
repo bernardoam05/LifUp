@@ -54,6 +54,8 @@ data class Quest(
     val pomodoro: Boolean = false,
     /** Boss HP this quest removed, given back if it is undone. */
     val bossDamage: Int = 0,
+    /** What the squad's passives added when it was completed, taken back on undo. */
+    val squad: SquadGain = SquadGain(),
     val fromHour: Int? = null,
     /** Target adjustment applied when the quest was built (see [Adapt]). */
     val adapt: Int = 0,
@@ -77,7 +79,16 @@ data class SideQuest(
     val xpGained: Int = 0,
     val goldGained: Int = 0,
     val bossDamage: Int = 0,
+    val squad: SquadGain = SquadGain(),
 )
+
+/** XP and gold the squad's passives added (or saved), and the times one saved a streak or a penalty. */
+@Serializable
+data class SquadGain(val xp: Int = 0, val gold: Int = 0, val saves: Int = 0) {
+    operator fun plus(o: SquadGain) = SquadGain(xp + o.xp, gold + o.gold, saves + o.saves)
+    operator fun minus(o: SquadGain) = SquadGain(xp - o.xp, gold - o.gold, saves - o.saves)
+    fun isEmpty() = xp <= 0 && gold <= 0 && saves <= 0
+}
 
 @Serializable
 data class Penalty(
@@ -277,6 +288,7 @@ sealed interface Reward {
         val bossId: String? = null,
         val bossDefeated: Boolean = false,
         val weekly: List<WeekLine> = emptyList(),
+        val squad: SquadGain = SquadGain(),
     ) : Reward
 
     @Serializable @SerialName("streak")
@@ -350,6 +362,8 @@ data class GameState(
     val recovery: StreakRecovery? = null,
     val recoveryWeek: String = "",
     val missionStats: Map<String, MissionStat> = emptyMap(),
+    /** Each mission's recent days: epoch day, positive when kept and negative when missed (newest last). */
+    val missionDays: Map<String, List<Long>> = emptyMap(),
     val weekStats: Map<String, MissionStat> = emptyMap(),
     /** Week [weekStats] and the weekly report refer to. */
     val statsWeek: String = "",
@@ -360,6 +374,9 @@ data class GameState(
     val load: MissionLoad = MissionLoad(),
     /** Whether the phone lets the app read screen time (usage access); limits aren't drawn without it. */
     val screenMeasurable: Boolean = true,
+    /** What the squad brought this week (for the weekly report) and since always. */
+    val squadWeek: SquadGain = SquadGain(),
+    val squadTotal: SquadGain = SquadGain(),
     /** A fixed mission done on only some days last week, offered as "N times a week". */
     val weeklyHint: WeeklyHint? = null,
     val weeklyHintsDismissed: Set<String> = emptySet(),

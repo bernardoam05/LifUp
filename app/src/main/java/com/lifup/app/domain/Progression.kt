@@ -5,8 +5,11 @@ import kotlin.math.roundToInt
 /** Adds XP with squad/buff multipliers, handles level-ups, rank-ups and (optionally) boss damage. Returns XP gained. */
 fun Tx.gainXp(base: Int, type: QuestType? = null, hitsBoss: Boolean = true, boosted: Boolean = true): Int {
     if (base <= 0) return 0
-    val mult = if (boosted) 1 + s.passives(content, ctx.now).xpFor(type) else 1.0
+    val passives = s.passives(content, ctx.now)
+    val mult = if (boosted) 1 + passives.xpFor(type) else 1.0
     val amount = (base * mult).roundToInt()
+    // The squad's share: what this paid beyond what item buffs alone would have.
+    if (boosted) squadAdded(SquadGain(xp = amount - (base * (1 + passives.buffXp)).roundToInt()))
     var p = s.player
     var xp = p.xp + amount
     var level = p.level
@@ -63,10 +66,26 @@ private fun Tx.levelEcho(level: Int): ShadowDef? {
 
 fun Tx.gainGold(base: Int, boosted: Boolean = true): Int {
     if (base <= 0) return 0
-    val amount = if (boosted) (base * (1 + s.passives(content, ctx.now).gold)).roundToInt() else base
+    val passives = s.passives(content, ctx.now)
+    val amount = if (boosted) (base * (1 + passives.gold)).roundToInt() else base
+    if (boosted) squadAdded(SquadGain(gold = amount - (base * (1 + passives.buffGold)).roundToInt()))
     s = s.copy(player = s.player.copy(gold = s.player.gold + amount))
     count(StatKey.GOLD_EARNED, amount.toLong())
     return amount
+}
+
+/** Adds to what the squad brought this week and overall; a negative gain takes it back (undo). */
+fun Tx.squadAdded(g: SquadGain) {
+    if (g == SquadGain()) return
+    fun SquadGain.clamped() = SquadGain(xp.coerceAtLeast(0), gold.coerceAtLeast(0), saves.coerceAtLeast(0))
+    s = s.copy(squadWeek = (s.squadWeek + g).clamped(), squadTotal = (s.squadTotal + g).clamped())
+}
+
+/** Runs [block] and returns what the squad added during it. */
+inline fun Tx.squadDuring(block: () -> Unit): SquadGain {
+    val before = s.squadTotal
+    block()
+    return s.squadTotal - before
 }
 
 fun Tx.gainAttributes(group: DrawGroup?) {
