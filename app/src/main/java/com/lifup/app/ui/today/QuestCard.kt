@@ -60,7 +60,7 @@ import com.lifup.app.ui.theme.Lif
 import com.lifup.app.ui.unitLabel
 
 @Composable
-fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null, onClick: () -> Unit) {
+fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null, xp: Int = q.xp, onClick: () -> Unit) {
     val p = Lif.colors
     val color = q.color(p)
     val done = q.status == QuestStatus.DONE
@@ -94,7 +94,7 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null
             Spacer(Modifier.width(8.dp))
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 if (q.auto != null) Pill(stringResource(R.string.auto_badge), p.green)
-                if (q.xp > 0) Text("+${if (done) q.xpGained else q.xp} XP", style = MaterialTheme.typography.labelSmall, color = p.accent)
+                if (q.xp > 0) Text("+${if (done) q.xpGained else xp} XP", style = MaterialTheme.typography.labelSmall, color = p.accent)
             }
         }
         if (timer != null && !done) {

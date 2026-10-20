@@ -42,6 +42,8 @@ data class QuestDef(
     val pomodoro: Boolean = false,
     /** Can only be completed from this hour until midnight (e.g. bedtime check-ins). */
     val fromHour: Int? = null,
+    /** Too late to start from this hour on (morning or all-day missions): not handed out as an extra or a swap. */
+    val untilHour: Int? = null,
     /** Fixed missions only: done this many times a week on any days, instead of every day. */
     val perWeek: Int? = null,
     /** Family for the daily draw and attribute growth; null = from the type. */

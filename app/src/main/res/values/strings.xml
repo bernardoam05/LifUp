@@ -77,6 +77,7 @@
     <string name="daily_section">Daily missions</string>
     <string name="extra_section">Extra missions</string>
     <string name="add_extra">Extra mission</string>
+    <string name="extra_locked">Finish this extra to ask for another.</string>
     <string name="side_section">Side quests</string>
     <string name="side_hint">A task for today…</string>
     <string name="side_empty">No side quests. Add small tasks for bonus XP.</string>

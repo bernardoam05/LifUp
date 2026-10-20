@@ -70,6 +70,7 @@
     <string name="daily_section">Missions quotidiennes</string>
     <string name="extra_section">Missions bonus</string>
     <string name="add_extra">Mission bonus</string>
+    <string name="extra_locked">Termine cette mission en plus pour en demander une autre.</string>
     <string name="side_section">Tâches</string>
     <string name="side_hint">Une tâche pour aujourd\'hui…</string>
     <string name="side_empty">Aucune tâche. Ajoute de petites tâches du jour pour gagner de l\'XP bonus.</string>

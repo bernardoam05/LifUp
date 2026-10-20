@@ -76,6 +76,7 @@
     <string name="daily_section">Tägliche Missionen</string>
     <string name="extra_section">Extra-Missionen</string>
     <string name="add_extra">Extra-Mission</string>
+    <string name="extra_locked">Schaffe diese Zusatzmission, um eine weitere anzufordern.</string>
     <string name="side_section">Aufgaben</string>
     <string name="side_hint">Eine Aufgabe für heute…</string>
     <string name="side_empty">Keine Aufgaben. Füge kleine Aufgaben für Bonus-XP hinzu.</string>

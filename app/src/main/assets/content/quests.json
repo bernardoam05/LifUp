@@ -109,7 +109,8 @@
    "scalingInterval": 1,
    "unit": "glasses",
    "baseXp": 10,
-   "baseGold": 5
+   "baseGold": 5,
+   "untilHour": 16
   },
   {
    "id": "pool_run",
@@ -505,7 +506,8 @@
    "scalingInterval": 1,
    "unit": "meal",
    "baseXp": 60,
-   "baseGold": 15
+   "baseGold": 15,
+   "untilHour": 20
   },
   {
    "id": "pool_journal",
@@ -634,7 +636,8 @@
    "baseXp": 70,
    "baseGold": 20,
    "auto": "STEPS",
-   "maxTarget": 12000
+   "maxTarget": 12000,
+   "untilHour": 20
   },
   {
    "id": "pool_screen_limit",
@@ -875,7 +878,8 @@
     "fr": "Ça compte avec les pas de la journée, donc chaque trajet à pied s'ajoute. Une grande boucle le soir comble le reste.",
     "de": "Es zählt über die Schritte des Tages, also zählt jeder Weg zu Fuß. Eine große Runde am Abend holt den Rest."
    },
-   "auto": "WALK_DISTANCE"
+   "auto": "WALK_DISTANCE",
+   "untilHour": 17
   },
   {
    "id": "pool_veggies",
@@ -901,7 +905,8 @@
    "scalingInterval": 1,
    "unit": "servings",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "untilHour": 17
   },
   {
    "id": "pool_skill",
@@ -1466,7 +1471,8 @@
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 35,
-   "baseGold": 10
+   "baseGold": 10,
+   "untilHour": 16
   },
   {
    "id": "pool_daylight",
@@ -1492,7 +1498,8 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "untilHour": 17
   },
   {
    "id": "pool_mindful_meal",
@@ -1518,7 +1525,8 @@
    "scalingInterval": 1,
    "unit": "meal",
    "baseXp": 35,
-   "baseGold": 10
+   "baseGold": 10,
+   "untilHour": 21
   },
   {
    "id": "pool_winddown",
@@ -2124,7 +2132,8 @@
     "es": "Huevos, yogur griego, legumbres, pescado, carne o tofu. Más o menos la palma de tu mano por comida.",
     "fr": "Œufs, yaourt grec, légumineuses, poisson, viande ou tofu. Environ la paume de ta main par repas.",
     "de": "Eier, griechischer Joghurt, Hülsenfrüchte, Fisch, Fleisch oder Tofu. Etwa eine Handfläche pro Mahlzeit."
-   }
+   },
+   "untilHour": 16
   },
   {
    "id": "pool_floss",
@@ -2176,7 +2185,8 @@
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 20,
-   "baseGold": 6
+   "baseGold": 6,
+   "untilHour": 12
   },
   {
    "id": "pool_eyes",
@@ -2209,7 +2219,8 @@
     "es": "La regla 20-20-20: cada 20 min de pantalla, 20 s mirando algo a unos 6 m. Una ventana es perfecta.",
     "fr": "La règle 20-20-20 : toutes les 20 min d'écran, 20 s à regarder quelque chose à environ 6 m. Une fenêtre, c'est parfait.",
     "de": "Die 20-20-20-Regel: alle 20 Min. Bildschirm 20 s auf etwas in etwa 6 m Entfernung schauen. Ein Fenster ist ideal."
-   }
+   },
+   "untilHour": 17
   },
   {
    "id": "pool_early_dinner",
@@ -2235,7 +2246,8 @@
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 40,
-   "baseGold": 10
+   "baseGold": 10,
+   "untilHour": 19
   },
   {
    "id": "pool_hardfirst",
@@ -2268,7 +2280,8 @@
     "es": "Elígela la noche anterior. Cuenta si trabajas en ella 15 min: lo difícil es arrancar.",
     "fr": "Choisis-la la veille. Ça compte si tu y travailles 15 min : le plus dur, c'est de commencer.",
     "de": "Wähle sie am Abend vorher. Es zählt, wenn du 15 Min. daran arbeitest: Anfangen ist das Schwerste."
-   }
+   },
+   "untilHour": 12
   },
   {
    "id": "pool_noalcohol",

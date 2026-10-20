@@ -89,6 +89,8 @@ import com.lifup.app.ui.components.Pill
 import com.lifup.app.ui.components.PrimaryButton
 import com.lifup.app.ui.components.rememberNow
 import com.lifup.app.ui.content
+import com.lifup.app.domain.goldPreview
+import com.lifup.app.domain.xpPreview
 import com.lifup.app.ui.focus.usesPomodoro
 import com.lifup.app.ui.fmtDuration
 import com.lifup.app.ui.fmtNum
@@ -263,12 +265,14 @@ private fun Details(s: GameState, q: Quest) {
     val record = s.records[q.defId]
     if (q.xp > 0 || q.gold > 0) Row(verticalAlignment = Alignment.CenterVertically) {
         // XP follows the theme; gold is always gold, like the coin at the top.
-        Text("+${q.xp} XP", style = MaterialTheme.typography.labelLarge, color = p.accent)
+        val done = q.status == QuestStatus.DONE
+        val now = System.currentTimeMillis()
+        Text("+${if (done) q.xpGained else s.xpPreview(q, content, now)} XP", style = MaterialTheme.typography.labelLarge, color = p.accent)
         if (q.gold > 0) {
             Spacer(Modifier.width(12.dp))
             Icon(Icons.Rounded.MonetizationOn, null, tint = p.gold, modifier = Modifier.size(16.dp))
             Spacer(Modifier.width(4.dp))
-            Text("+${q.gold}", style = MaterialTheme.typography.labelLarge, color = p.gold)
+            Text("+${if (done) q.goldGained else s.goldPreview(q, content, now)}", style = MaterialTheme.typography.labelLarge, color = p.gold)
         }
     }
     if (s.doubleXpNext && q.status == QuestStatus.OPEN && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA)) {

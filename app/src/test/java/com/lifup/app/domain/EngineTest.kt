@@ -267,6 +267,17 @@ class EngineTest {
         assertEquals(1, s.extraQuests.size)
     }
 
+    @Test fun `extras come one at a time and skip missions too late for the hour`() {
+        var s = run(fresh(), "2026-10-14T23:00") { s.dailyQuests.forEach { completeQuest(it.id) } ; addExtraQuest() ; addExtraQuest() }
+        assertEquals(1, s.extraQuests.size)
+        assertFalse(s.canAddExtra())
+        assertTrue(content.questDefById.getValue(s.extraQuests.single().defId).offeredAt(23))
+        s = run(s, "2026-10-14T23:01") { completeQuest(s.extraQuests.single().id) }
+        assertTrue(s.canAddExtra())
+        assertFalse(content.questDefById.getValue("pool_bed").offeredAt(23))
+        assertTrue(content.questDefById.getValue("pool_bed").offeredAt(8))
+    }
+
     @Test fun `portal opens and closes with rewards`() {
         var s = run(fresh(), "2026-10-14T10:00") { openPortal() }
         val portal = s.portal!!

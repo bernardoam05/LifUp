@@ -76,6 +76,8 @@ import com.lifup.app.domain.Rules
 import com.lifup.app.domain.addExtraQuest
 import com.lifup.app.domain.addSideQuest
 import com.lifup.app.domain.canAddExtra
+import com.lifup.app.domain.extraOpen
+import com.lifup.app.domain.xpPreview
 import com.lifup.app.domain.completeSideQuest
 import com.lifup.app.domain.isSuccessful
 import com.lifup.app.domain.removeSideQuest
@@ -156,25 +158,27 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
 
         s.portal?.let { portal ->
             item { SectionTitle(stringResource(R.string.portal_section)) { Text(fmtShort(portal.expiresAt - now), color = p.purple, style = MaterialTheme.typography.labelLarge); InfoButton(Guide.PORTAL) } }
-            item(key = portal.quest.id) { QuestCard(portal.quest, s.timers[portal.quest.id], now) { selected = portal.quest.id } }
+            item(key = portal.quest.id) { QuestCard(portal.quest, s.timers[portal.quest.id], now, xp = s.xpPreview(portal.quest, content, now)) { selected = portal.quest.id } }
         }
 
         s.weeklyHint?.let { h -> item(key = "weekly_hint") { WeeklyHintCard(s, h) } }
 
         item { SectionTitle(stringResource(R.string.daily_section)) { ManageAction(openForge); InfoButton(Guide.DAILY) } }
-        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
+        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now)) { selected = q.id } }
 
         if (s.weeklyQuests.isNotEmpty()) {
             item { SectionTitle(stringResource(R.string.weekly_section)) { InfoButton(Guide.WEEKLY) } }
-            items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
+            items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now)) { selected = q.id } }
         }
         item { BossCard(s, now) { selected = it } }
 
         if (s.extraQuests.isNotEmpty() || s.canAddExtra()) {
             item { SectionTitle(stringResource(R.string.extra_section)) { Text("${s.daily.extrasAdded}/${Rules.MAX_EXTRAS_PER_DAY}", color = p.dim, style = MaterialTheme.typography.labelMedium) } }
-            items(s.extraQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now) { selected = q.id } }
+            items(s.extraQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, xp = s.xpPreview(q, content, now)) { selected = q.id } }
             if (s.canAddExtra()) item {
                 GhostButton(stringResource(R.string.add_extra), onClick = { act { addExtraQuest() } }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Add, color = p.accent)
+            } else if (s.extraOpen() && s.daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY) item {
+                Text(stringResource(R.string.extra_locked), color = p.dim, style = MaterialTheme.typography.bodySmall, modifier = Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             }
         }
 

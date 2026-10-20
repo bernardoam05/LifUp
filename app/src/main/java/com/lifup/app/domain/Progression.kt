@@ -64,6 +64,15 @@ private fun Tx.levelEcho(level: Int): ShadowDef? {
     return fresh.filter { it.rank == rank }.ifEmpty { fresh }.ifEmpty { pool.filter { it.rank == rank } }.randomOrNull(ctx.rng)
 }
 
+/** What a mission pays if completed now, boosts included, so the card shows the real number before it's done. */
+fun GameState.xpPreview(q: Quest, content: Content, now: Long): Int =
+    if (q.origin.boosted()) (q.xp * (1 + passives(content, now).xpFor(q.type))).roundToInt() else q.xp
+
+fun GameState.goldPreview(q: Quest, content: Content, now: Long): Int =
+    if (q.origin.boosted()) (q.gold * (1 + passives(content, now).gold)).roundToInt() else q.gold
+
+private fun QuestOrigin.boosted() = this == QuestOrigin.DAILY || this == QuestOrigin.EXTRA || this == QuestOrigin.WEEKLY || this == QuestOrigin.PORTAL
+
 fun Tx.gainGold(base: Int, boosted: Boolean = true): Int {
     if (base <= 0) return 0
     val passives = s.passives(content, ctx.now)

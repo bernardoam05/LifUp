@@ -230,6 +230,9 @@ fun Tx.creditGps(questId: String, km: Double) {
     if (next >= q.target) completeQuest(questId)
 }
 
+/** Whether it still makes sense to hand this mission out mid-day at [hour]. */
+fun QuestDef.offeredAt(hour: Int) = untilHour == null || hour < untilHour
+
 /** Swap an open daily pool mission. One free swap per day, then a Swap Scroll. */
 fun Tx.swapQuest(id: String): Boolean {
     val q = s.dailyQuests.firstOrNull { it.id == id } ?: return false
@@ -238,7 +241,7 @@ fun Tx.swapQuest(id: String): Boolean {
     val free = s.daily.swapsUsed < Rules.FREE_SWAPS_PER_DAY
     if (!free && s.items("pergaminho_troca") == 0) return false
     val used = s.quests.map { it.defId }.toSet()
-    val replacement = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used }) ?: return false
+    val replacement = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.offeredAt(ctx.hour) }) ?: return false
     if (free) s = s.copy(daily = s.daily.copy(swapsUsed = s.daily.swapsUsed + 1))
     else { addItem("pergaminho_troca", -1); count(StatKey.ITEMS_USED) }
     s = s.copy(quests = s.quests.map { if (it.id == id) buildQuest(replacement, s.player.level, QuestOrigin.DAILY, day = ctx.today) else it })
@@ -250,12 +253,15 @@ fun Tx.swapQuest(id: String): Boolean {
 private fun Tx.drawOne(defs: List<QuestDef>): QuestDef? =
     drawBalanced(defs, 1, s.drawFocus(), ctx.rng, taken = s.quests.mapNotNull { s.defOf(it.defId, content) }).firstOrNull()
 
-fun GameState.canAddExtra() = allDailyDone() && daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY
+/** Extras come one at a time: the next one only once the last is done, so they can't be cherry-picked. */
+fun GameState.canAddExtra() = allDailyDone() && daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY && !extraOpen()
+
+fun GameState.extraOpen() = extraQuests.any { it.status == QuestStatus.OPEN }
 
 fun Tx.addExtraQuest(): Boolean {
     if (!s.canAddExtra()) return false
     val used = s.quests.map { it.defId }.toSet()
-    val def = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT })
+    val def = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT && it.offeredAt(ctx.hour) })
         ?: return false
     val n = s.daily.extrasAdded + 1
     s = s.copy(

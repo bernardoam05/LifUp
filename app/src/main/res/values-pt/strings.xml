@@ -70,6 +70,7 @@
     <string name="daily_section">Missões diárias</string>
     <string name="extra_section">Missões extra</string>
     <string name="add_extra">Missão extra</string>
+    <string name="extra_locked">Cumpre esta extra para pedires outra.</string>
     <string name="side_section">Tarefas</string>
     <string name="side_hint">Uma tarefa para hoje…</string>
     <string name="side_empty">Sem tarefas. Junta pequenas tarefas para ganhar XP extra.</string>
