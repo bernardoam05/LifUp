@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarBorder
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
@@ -55,17 +57,18 @@ fun EchoesScreen(s: GameState, active: Boolean = true) {
         item { Squad(s) { openShadow = it } }
         item {
             SectionTitle(stringResource(R.string.collection)) {
+                IconButton(onClick = { pick(filter, !favOnly) }, modifier = Modifier.size(32.dp)) {
+                    Icon(
+                        if (favOnly) Icons.Rounded.Star else Icons.Rounded.StarBorder, stringResource(R.string.favorites),
+                        tint = if (favOnly) Lif.colors.gold else Lif.colors.muted, modifier = Modifier.size(20.dp),
+                    )
+                }
                 Text("${s.shadows.size}/${content.shadows.size}", color = Lif.colors.muted, style = MaterialTheme.typography.labelMedium)
             }
             Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                FilterChip(selected = filter == null && !favOnly, onClick = { pick(null, false) }, label = { Text(stringResource(R.string.all)) })
-                FilterChip(
-                    selected = favOnly, onClick = { pick(null, !favOnly) },
-                    leadingIcon = { Icon(Icons.Rounded.Star, null, tint = Lif.colors.gold, modifier = Modifier.size(16.dp)) },
-                    label = { Text(stringResource(R.string.favorites)) },
-                )
+                FilterChip(selected = filter == null, onClick = { pick(null, favOnly) }, label = { Text(stringResource(R.string.all)) })
                 ShadowRank.entries.forEach { r ->
-                    FilterChip(selected = filter == r, onClick = { pick(if (filter == r) null else r, false) }, label = { Text(stringResource(shadowRankName(r))) })
+                    FilterChip(selected = filter == r, onClick = { pick(if (filter == r) null else r, favOnly) }, label = { Text(stringResource(shadowRankName(r))) })
                 }
             }
         }
