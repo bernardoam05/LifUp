@@ -129,4 +129,10 @@ class WeeklyTest {
         assertTrue(s.weekly[daily.id]!!.trial)
         assertEquals(null, s.weeklyHint)
     }
+
+    @Test fun `each closed week is filed into the mission's history`() {
+        val s = walk(withWeekly(), listOf("2026-10-15", "2026-10-16", "2026-10-17", "2026-10-18", "2026-10-19"), doOn = setOf("2026-10-15"))
+        assertEquals(listOf(WeekMark("2026-10-12", done = 1, goal = 2)), s.weeklyHistory[train.id])
+        assertFalse(s.weeklyHistory.getValue(train.id).single().met)
+    }
 }

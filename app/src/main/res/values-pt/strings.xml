@@ -559,6 +559,10 @@
     <string name="week_worst">Menos cumprida: %1$s (%2$d%%)</string>
     <string name="week_suggest">Se não encaixa no teu dia, troca-a ou desativa-a na Forja.</string>
     <string name="mission_rates">Missões cumpridas</string>
+    <string name="weekly_rates">Missões semanais</string>
+    <string name="weekly_rates_hint">Uma barra por semana; a última é esta, em tempo real.</string>
+    <string name="weekly_goals_met">Meta cumprida em %1$d de %2$d semanas</string>
+    <string name="weekly_no_history">As semanas passadas aparecem aqui a partir de segunda.</string>
     <string name="recent_days">Últimos 7 dias</string>
     <string name="recent_days_kept">%1$d de %2$d contaram</string>
     <string name="mission_rates_hint">As mais fracas primeiro. Toca numa para ver os últimos 30 dias.</string>

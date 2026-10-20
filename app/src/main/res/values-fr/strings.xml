@@ -559,6 +559,10 @@
     <string name="week_worst">La moins tenue : %1$s (%2$d %%)</string>
     <string name="week_suggest">Si elle ne colle pas à ta journée, échange-la ou désactive-la dans la Forge.</string>
     <string name="mission_rates">Missions tenues</string>
+    <string name="weekly_rates">Missions hebdomadaires</string>
+    <string name="weekly_rates_hint">Une barre par semaine ; la dernière, c\'est celle-ci, en direct.</string>
+    <string name="weekly_goals_met">Objectif atteint %1$d semaines sur %2$d</string>
+    <string name="weekly_no_history">Les semaines passées apparaissent ici à partir de lundi.</string>
     <string name="recent_days">7 derniers jours</string>
     <string name="recent_days_kept">%1$d sur %2$d comptés</string>
     <string name="mission_rates_hint">Les plus faibles d\'abord. Touche-en une pour voir ses 30 derniers jours.</string>

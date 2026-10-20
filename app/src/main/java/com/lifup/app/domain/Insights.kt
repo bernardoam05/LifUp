@@ -101,6 +101,7 @@ fun Tx.rollWeek() {
         s = s.copy(statsWeek = ctx.weekKey)
         return
     }
+    recordWeekly(s.statsWeek)
     val start = LocalDate.parse(s.statsWeek)
     val end = start.plusDays(6)
     val logs = s.dayLog.filter { LocalDate.parse(it.day) in start..end }

@@ -371,6 +371,8 @@ data class GameState(
     val adapt: Map<String, Adapt> = emptyMap(),
     /** This week's tally of each "N times a week" mission, by definition id. */
     val weekly: Map<String, WeekTally> = emptyMap(),
+    /** Each weekly mission's past weeks (oldest first), for its chart. */
+    val weeklyHistory: Map<String, List<WeekMark>> = emptyMap(),
     val load: MissionLoad = MissionLoad(),
     /** Whether the phone lets the app read screen time (usage access); limits aren't drawn without it. */
     val screenMeasurable: Boolean = true,

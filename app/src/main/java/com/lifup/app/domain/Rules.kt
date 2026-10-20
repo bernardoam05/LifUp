@@ -124,6 +124,9 @@ object Rules {
     /** Days of history kept per mission (enough for two months of a daily one). */
     const val HABIT_DAYS_KEPT = 90
     const val HABIT_STRIP_DAYS = 30
+    /** Past weeks kept per weekly mission, and how many its chart shows (the current week included). */
+    const val WEEKLY_HISTORY_WEEKS = 26
+    const val WEEKLY_CHART_WEEKS = 8
 
     /** Sunday hour for the "boss escapes tonight" nudge. */
     const val BOSS_NUDGE_HOUR = 18

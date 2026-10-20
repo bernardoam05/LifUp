@@ -578,6 +578,10 @@
     <string name="week_worst">Least kept: %1$s (%2$d%%)</string>
     <string name="week_suggest">If it doesn\'t fit your day, swap it or turn it off in the Forge.</string>
     <string name="mission_rates">Missions kept</string>
+    <string name="weekly_rates">Weekly missions</string>
+    <string name="weekly_rates_hint">One bar per week; the last is this week, live.</string>
+    <string name="weekly_goals_met">Goal met %1$d of %2$d weeks</string>
+    <string name="weekly_no_history">Past weeks show up here from Monday on.</string>
     <string name="recent_days">Last 7 days</string>
     <string name="recent_days_kept">%1$d of %2$d counted</string>
     <string name="mission_rates_hint">Weakest first. Tap one to see its last 30 days.</string>

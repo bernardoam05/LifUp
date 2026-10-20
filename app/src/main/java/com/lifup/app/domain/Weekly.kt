@@ -18,6 +18,21 @@ data class WeekTally(val week: String, val goal: Int, val done: Int = 0, val tri
     fun dueOn(day: LocalDate) = !trial && needed > 0 && needed == 8 - day.dayOfWeek.value
 }
 
+/** One past week of a weekly mission, kept for its chart. */
+@Serializable
+data class WeekMark(val week: String, val done: Int, val goal: Int) {
+    val met get() = goal > 0 && done >= goal
+}
+
+/** Files the closing week's results of every weekly mission into their history. */
+internal fun Tx.recordWeekly(week: String) {
+    val lines = s.weekLines(week)
+    if (lines.isEmpty()) return
+    var history = s.weeklyHistory
+    lines.forEach { l -> history = history + (l.defId to ((history[l.defId] ?: emptyList()) + WeekMark(week, l.done, l.goal)).takeLast(Rules.WEEKLY_HISTORY_WEEKS)) }
+    s = s.copy(weeklyHistory = history)
+}
+
 /** A weekly mission's result, for the weekly report. */
 @Serializable
 data class WeekLine(val defId: String, val done: Int, val goal: Int)

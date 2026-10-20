@@ -79,6 +79,9 @@ import com.lifup.app.ui.attrColor
 import com.lifup.app.ui.fmtCount
 import com.lifup.app.ui.passiveText
 import com.lifup.app.ui.icon
+import com.lifup.app.domain.availableDefs
+import com.lifup.app.domain.isWeekly
+import androidx.compose.foundation.layout.fillMaxHeight
 import com.lifup.app.ui.color
 import com.lifup.app.domain.habitOn
 import com.lifup.app.domain.habitWindow
@@ -367,6 +370,64 @@ private fun Stats(s: GameState) {
     ActivityCalendar(s)
     RecentDays(s)
     MissionRates(s)
+    WeeklyRates(s)
+}
+
+/** "N times a week" missions are judged by the week: one card each with a bar per week, the last one live. */
+@Composable
+private fun WeeklyRates(s: GameState) {
+    val c = Lif.colors
+    val defs = s.availableDefs(content).filter { it.isWeekly() }
+    if (defs.isEmpty()) return
+    SectionTitle(stringResource(R.string.weekly_rates))
+    Text(stringResource(R.string.weekly_rates_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
+    Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        defs.forEach { def ->
+            val past = s.weeklyHistory[def.id].orEmpty()
+            val now = s.weekly[def.id]?.let { com.lifup.app.domain.WeekMark(it.week, it.done, it.goal) }
+            val weeks = (past + listOfNotNull(now)).takeLast(Rules.WEEKLY_CHART_WEEKS)
+            Panel {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    com.lifup.app.ui.components.IconBadge(def.icon(), def.color(c), 36.dp)
+                    Spacer(Modifier.width(10.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(defTitle(s, def.id), style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(
+                            if (past.isEmpty()) stringResource(R.string.weekly_no_history)
+                            else stringResource(R.string.weekly_goals_met, past.count { it.met }, past.size),
+                            style = MaterialTheme.typography.labelSmall, color = c.muted,
+                        )
+                    }
+                    now?.let { Text("${it.done}/${it.goal}", style = MaterialTheme.typography.titleLarge, color = if (it.met) c.green else c.text) }
+                }
+                Spacer(Modifier.height(10.dp))
+                WeekBars(weeks, current = now != null)
+            }
+        }
+    }
+}
+
+/** A bar per week, filled by sessions over the goal: green when met, gold part-way, red when none; the current week is outlined. */
+@Composable
+private fun WeekBars(weeks: List<com.lifup.app.domain.WeekMark>, current: Boolean) {
+    val c = Lif.colors
+    Row(Modifier.fillMaxWidth().height(44.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.Bottom) {
+        // Empty slots on the left keep bars the same width while history is short.
+        repeat(Rules.WEEKLY_CHART_WEEKS - weeks.size) { Box(Modifier.weight(1f).fillMaxHeight(0.12f).clip(RoundedCornerShape(3.dp)).background(c.border.copy(alpha = 0.4f))) }
+        weeks.forEachIndexed { i, w ->
+            val live = current && i == weeks.lastIndex
+            val share = if (w.goal == 0) 0f else (w.done / w.goal.toFloat()).coerceIn(0f, 1f)
+            val color = when { w.met -> c.green; w.done > 0 -> c.gold; else -> c.red }
+            val shape = RoundedCornerShape(3.dp)
+            Box(
+                Modifier.weight(1f).fillMaxHeight().clip(shape).background(c.border.copy(alpha = 0.4f))
+                    .then(if (live) Modifier.border(1.5.dp, c.accent, shape) else Modifier),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                Box(Modifier.fillMaxWidth().fillMaxHeight(share.coerceAtLeast(if (live) 0f else 0.08f)).background(if (live && !w.met) c.accent else color))
+            }
+        }
+    }
 }
 
 /** The last week day by day, folded by default: each day's missions as a bar in the colour of how it ended. */
