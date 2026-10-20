@@ -578,6 +578,13 @@
     <string name="week_worst">Least kept: %1$s (%2$d%%)</string>
     <string name="week_suggest">If it doesn\'t fit your day, swap it or turn it off in the Forge.</string>
     <string name="mission_rates">Missions kept</string>
+    <string name="recent_days">Last 7 days</string>
+    <string name="recent_days_kept">%1$d of %2$d counted</string>
+    <string name="mission_rates_hint">Weakest first. Tap one to see its last 30 days.</string>
+    <plurals name="rate_times">
+        <item quantity="one">%1$d of %2$d time</item>
+        <item quantity="other">%1$d of %2$d times</item>
+    </plurals>
     <string name="habit_none_yet">History starts from today: it shows here once the mission comes up.</string>
     <string name="habit_recent">Last 30 days: %1$d of %2$d</string>
     <string name="habit_trend">Last 30 days: %1$d of %2$d (%3$d%%) · the 30 before: %4$d%%</string>

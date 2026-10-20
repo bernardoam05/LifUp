@@ -345,8 +345,12 @@ private fun StreakFlame(s: GameState) {
         Modifier.clip(RoundedCornerShape(8.dp)).clickable { open = !open }.padding(horizontal = 2.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            if (flame.kind == FlameKind.PERFECT) Box(Modifier.size(24.dp).background(Brush.radialGradient(listOf(color.copy(alpha = 0.45f), Color.Transparent)), CircleShape))
+        // Fixed size: the glow and the burst are scaled, so changing state never moves the HUD.
+        Box(Modifier.size(16.dp), contentAlignment = Alignment.Center) {
+            if (flame.kind == FlameKind.PERFECT) Box(
+                Modifier.size(16.dp).graphicsLayer { scaleX = 1.6f; scaleY = 1.6f }
+                    .background(Brush.radialGradient(listOf(color.copy(alpha = 0.45f), Color.Transparent)), CircleShape),
+            )
             if (burst.value < 1f) Box(
                 Modifier.size(16.dp).graphicsLayer { scaleX = 1 + 2.2f * burst.value; scaleY = 1 + 2.2f * burst.value; alpha = 1 - burst.value }
                     .border(2.dp, color, CircleShape),

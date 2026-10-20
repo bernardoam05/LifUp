@@ -577,6 +577,13 @@
     <string name="week_worst">Menos cumplida: %1$s (%2$d%%)</string>
     <string name="week_suggest">Si no encaja en tu día, cámbiala o desactívala en la Forja.</string>
     <string name="mission_rates">Misiones cumplidas</string>
+    <string name="recent_days">Últimos 7 días</string>
+    <string name="recent_days_kept">%1$d de %2$d contaron</string>
+    <string name="mission_rates_hint">Las más flojas primero. Toca una para ver sus últimos 30 días.</string>
+    <plurals name="rate_times">
+        <item quantity="one">%1$d de %2$d vez</item>
+        <item quantity="other">%1$d de %2$d veces</item>
+    </plurals>
     <string name="habit_none_yet">El historial cuenta desde hoy: aparece aquí cuando salga la misión.</string>
     <string name="habit_recent">Últimos 30 días: %1$d de %2$d</string>
     <string name="habit_trend">Últimos 30 días: %1$d de %2$d (%3$d%%) · 30 anteriores: %4$d%%</string>

@@ -35,6 +35,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.FilterChip
@@ -77,6 +78,8 @@ import com.lifup.app.domain.Attr
 import com.lifup.app.ui.attrColor
 import com.lifup.app.ui.fmtCount
 import com.lifup.app.ui.passiveText
+import com.lifup.app.ui.icon
+import com.lifup.app.ui.color
 import com.lifup.app.domain.habitOn
 import com.lifup.app.domain.habitWindow
 import androidx.compose.material.icons.rounded.ExpandLess
@@ -362,52 +365,88 @@ private fun Stats(s: GameState) {
     }
     SectionTitle(stringResource(R.string.history))
     ActivityCalendar(s)
-    Spacer(Modifier.height(8.dp))
-    s.dayLog.takeLast(7).reversed().forEach { d ->
-        Row(Modifier.fillMaxWidth().padding(vertical = 3.dp)) {
-            Text(java.time.LocalDate.parse(d.day).format(java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM")), style = MaterialTheme.typography.labelMedium, color = c.muted, modifier = Modifier.weight(1f))
-            Text(
-                when {
-                    d.rest -> stringResource(R.string.day_rest)
-                    d.perfect -> stringResource(R.string.day_perfect)
-                    d.penalty -> stringResource(R.string.day_penalty, d.done, d.total)
-                    else -> "${d.done}/${d.total}"
-                },
-                style = MaterialTheme.typography.labelMedium,
-                color = when { d.perfect -> c.green; d.penalty -> c.red; d.rest -> c.purple; else -> c.text },
-            )
-        }
-    }
+    RecentDays(s)
     MissionRates(s)
 }
 
-/** Kept-rate per mission, weakest first among the ones done often enough to judge. */
+/** The last week day by day, folded by default: each day's missions as a bar in the colour of how it ended. */
+@Composable
+private fun RecentDays(s: GameState) {
+    val c = Lif.colors
+    val days = s.dayLog.takeLast(7).reversed()
+    if (days.isEmpty()) return
+    var open by rememberSaveable { mutableStateOf(false) }
+    Panel(Modifier.padding(top = 8.dp), onClick = { open = !open }) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.recent_days), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.recent_days_kept, days.count { it.passed || it.perfect }, days.size), style = MaterialTheme.typography.labelMedium, color = c.muted)
+            Icon(if (open) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = c.dim, modifier = Modifier.padding(start = 4.dp).size(20.dp))
+        }
+        if (open) days.forEach { DayRow(it) }
+    }
+}
+
+@Composable
+private fun DayRow(d: com.lifup.app.domain.DayLog) {
+    val c = Lif.colors
+    val color = when { d.rest -> c.purple; d.perfect -> c.gold; d.penalty -> c.red; d.passed -> c.green; else -> c.muted }
+    // Short results in a fixed column, so every bar is the same length; a penalty shows as a warning mark.
+    val result = when {
+        d.rest -> stringResource(R.string.day_rest)
+        d.perfect -> stringResource(R.string.day_perfect)
+        else -> "${d.done}/${d.total}"
+    }
+    Row(Modifier.fillMaxWidth().padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            java.time.LocalDate.parse(d.day).format(java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM")),
+            style = MaterialTheme.typography.labelMedium, color = c.muted, modifier = Modifier.width(112.dp), maxLines = 1, overflow = TextOverflow.Ellipsis,
+        )
+        Bar(if (d.total == 0) 0f else d.done / d.total.toFloat(), color, height = 6.dp, modifier = Modifier.weight(1f))
+        Row(Modifier.width(84.dp), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+            if (d.penalty) Icon(Icons.Rounded.Warning, stringResource(R.string.penalty_section), tint = color, modifier = Modifier.padding(end = 4.dp).size(14.dp))
+            Text(result, style = MaterialTheme.typography.labelMedium, color = color, maxLines = 1)
+        }
+    }
+}
+
+/** Kept-rate per mission, weakest first: a card each, tapped open for its last 30 days. */
 @Composable
 private fun MissionRates(s: GameState) {
     val c = Lif.colors
     // Missions removed from the app have no name left to show.
-    val stats = s.missionStats.entries.filter { it.value.total > 0 && s.defOf(it.key, content) != null }.sortedWith(compareBy({ it.value.rate }, { -it.value.total }))
+    val stats = s.missionStats.entries.mapNotNull { e -> s.defOf(e.key, content)?.takeIf { e.value.total > 0 }?.let { it to e.value } }
+        .sortedWith(compareBy({ it.second.rate }, { -it.second.total }))
     if (stats.isEmpty()) return
     var all by remember { mutableStateOf(false) }
     var open by remember { mutableStateOf<String?>(null) }
     SectionTitle(stringResource(R.string.mission_rates))
-    Panel {
-        (if (all) stats else stats.take(6)).forEach { (id, st) ->
+    Text(stringResource(R.string.mission_rates_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
+    Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        (if (all) stats else stats.take(6)).forEach { (def, st) ->
             val pct = (st.rate * 100).roundToInt()
             val color = when { pct >= 75 -> c.green; pct >= 50 -> c.gold; else -> c.red }
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp).clickable { open = if (open == id) null else id }) {
-                Text(defTitle(s, id), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f), maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
-                Text("$pct% · ${st.done}/${st.total}", style = MaterialTheme.typography.labelMedium, color = color)
-                Icon(if (open == id) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = c.dim, modifier = Modifier.size(18.dp))
+            Panel(onClick = { open = if (open == def.id) null else def.id }) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    com.lifup.app.ui.components.IconBadge(def.icon(), def.color(c), 36.dp)
+                    Spacer(Modifier.width(10.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(defTitle(s, def.id), style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text(androidx.compose.ui.res.pluralStringResource(R.plurals.rate_times, st.total, st.done, st.total), style = MaterialTheme.typography.labelSmall, color = c.muted)
+                            s.adapt[def.id]?.level?.takeIf { it != 0 }?.let { lvl ->
+                                Pill(stringResource(R.string.adapt_level, (if (lvl > 0) "+" else "") + lvl * 10), c.dim)
+                            }
+                        }
+                    }
+                    Text("$pct%", style = MaterialTheme.typography.titleLarge, color = color)
+                }
+                Spacer(Modifier.height(8.dp))
+                Bar(st.rate.toFloat(), color, height = 6.dp)
+                if (open == def.id) HabitHistory(s, def.id)
             }
-            Bar(st.rate.toFloat(), color, height = 4.dp, modifier = Modifier.padding(top = 2.dp))
-            s.adapt[id]?.level?.takeIf { it != 0 }?.let { lvl ->
-                Text(stringResource(R.string.adapt_level, (if (lvl > 0) "+" else "") + lvl * 10), style = MaterialTheme.typography.labelSmall, color = c.dim)
-            }
-            if (open == id) HabitHistory(s, id)
         }
-        if (stats.size > 6) TextButton(onClick = { all = !all }) { Text(stringResource(if (all) R.string.show_less else R.string.show_all).uppercase()) }
     }
+    if (stats.size > 6) TextButton(onClick = { all = !all }) { Text(stringResource(if (all) R.string.show_less else R.string.show_all).uppercase()) }
 }
 
 /**

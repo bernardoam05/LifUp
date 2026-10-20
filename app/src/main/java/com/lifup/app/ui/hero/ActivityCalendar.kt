@@ -84,10 +84,9 @@ fun ActivityCalendar(s: GameState) {
             }
         }
         Spacer(Modifier.height(8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(picked?.let { dayLine(it, days[it]) } ?: summary(days, today), style = MaterialTheme.typography.labelMedium, color = c.muted, modifier = Modifier.weight(1f))
-            Legend()
-        }
+        Text(picked?.let { dayLine(it, days[it]) } ?: summary(days, today), style = MaterialTheme.typography.labelMedium, color = c.muted)
+        Spacer(Modifier.height(6.dp))
+        Legend()
     }
 }
 
@@ -107,7 +106,7 @@ private fun cellColor(d: DayLog?): Color {
         d == null -> c.border.copy(alpha = 0.5f)
         d.rest -> c.purple.copy(alpha = 0.7f)
         d.penalty -> c.red.copy(alpha = 0.75f)
-        d.perfect -> c.green
+        d.perfect -> c.gold
         d.total == 0 || d.done == 0 -> c.border
         else -> c.green.copy(alpha = 0.2f + 0.55f * d.done / d.total)
     }
@@ -183,6 +182,9 @@ private fun Legend() {
             Box(Modifier.size(10.dp).clip(RoundedCornerShape(2.dp)).background(it))
         }
         Text(stringResource(R.string.calendar_more), style = MaterialTheme.typography.labelSmall, color = c.dim)
+        Spacer(Modifier.width(4.dp))
+        Box(Modifier.size(10.dp).clip(RoundedCornerShape(2.dp)).background(c.gold))
+        Text(stringResource(R.string.day_perfect), style = MaterialTheme.typography.labelSmall, color = c.dim)
     }
 }
 
