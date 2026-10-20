@@ -3,6 +3,7 @@ package com.lifup.app.system
 import com.lifup.app.domain.openBedtime
 import com.lifup.app.domain.dayGoal
 import com.lifup.app.domain.limitsNearing
+import com.lifup.app.domain.openAvoids
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.text
 import android.app.AlarmManager
@@ -52,6 +53,10 @@ object Alarms {
             val at = ctx.atHour(ctx.today, Rules.BOSS_NUDGE_HOUR)
             if (at > now) candidates += at
         }
+        if (s.settings.notifications && s.openAvoids().isNotEmpty()) {
+            val at = ctx.atHour(ctx.today, 0) + Rules.AVOID_CHECK_MIN * 60_000L
+            if (at > now) candidates += at
+        }
         if (s.settings.notifications && s.openBedtime() != null) {
             val at = ctx.atHour(ctx.today, 0) + Rules.BEDTIME_NUDGE_MIN * 60_000L
             if (at > now) candidates += at
@@ -95,6 +100,10 @@ object Alarms {
             Notifications.bossLastDay(context, name, boss.hp)
         }
         val minute = ctx.dateTime.hour * 60 + ctx.dateTime.minute
+        if (minute >= Rules.AVOID_CHECK_MIN && prefs.getString("avoid", "") != ctx.todayKey && s.openAvoids().isNotEmpty()) {
+            prefs.edit().putString("avoid", ctx.todayKey).apply()
+            Notifications.avoidCheck(context, s.openAvoids())
+        }
         if (minute >= Rules.BEDTIME_NUDGE_MIN && prefs.getString("bedtime", "") != ctx.todayKey) {
             if (s.openBedtime() != null) {
                 prefs.edit().putString("bedtime", ctx.todayKey).apply()

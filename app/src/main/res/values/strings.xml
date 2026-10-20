@@ -604,6 +604,9 @@
     <string name="show_less">Show less</string>
     <string name="notif_reminder_safe_title">Streak secured</string>
     <string name="notif_reminder_safe_text">%1$d more for a perfect day, with bonus XP and an echo.</string>
+    <string name="notif_avoid_title">How did the day go?</string>
+    <string name="notif_avoid_text">These count at midnight. If you slipped on one, mark it now: %1$s.</string>
+    <string name="notif_avoid_fail">Slipped: %1$s</string>
     <string name="notif_bedtime_title">Time to rest</string>
     <string name="notif_bedtime_text">Confirm your bedtime check-in before midnight.</string>
     <string name="widget_goal">%1$d more for the streak</string>

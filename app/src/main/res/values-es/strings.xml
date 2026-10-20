@@ -603,6 +603,9 @@
     <string name="show_less">Ver menos</string>
     <string name="notif_reminder_safe_title">Racha asegurada</string>
     <string name="notif_reminder_safe_text">Te faltan %1$d para un día perfecto, con XP extra y un eco.</string>
+    <string name="notif_avoid_title">¿Qué tal el día?</string>
+    <string name="notif_avoid_text">Estas cuentan a medianoche. Si fallaste alguna, márcala ahora: %1$s.</string>
+    <string name="notif_avoid_fail">Fallé: %1$s</string>
     <string name="notif_bedtime_title">Hora de descansar</string>
     <string name="notif_bedtime_text">Confirma el check-in de dormir antes de medianoche.</string>
     <string name="widget_goal">Faltan %1$d para la racha</string>

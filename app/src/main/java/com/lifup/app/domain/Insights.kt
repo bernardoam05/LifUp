@@ -89,6 +89,14 @@ fun GameState.flame(): Flame {
     }
 }
 
+/** Avoid missions still standing today: they count at midnight unless marked as slipped. */
+fun GameState.openAvoids(): List<Quest> = dailyQuests.filter { it.type == QuestType.FORBIDDEN && it.status == QuestStatus.OPEN }
+
+/** Marks an avoid mission as slipped; never un-marks one (a repeated tap from a notification). */
+fun Tx.slipAvoid(id: String) {
+    if (s.openAvoids().any { it.id == id }) toggleFailed(id)
+}
+
 /** An open bedtime check-in that the user should be nudged about. */
 fun GameState.openBedtime(): Quest? = dailyQuests.firstOrNull { it.fromHour != null && it.status == QuestStatus.OPEN }
 

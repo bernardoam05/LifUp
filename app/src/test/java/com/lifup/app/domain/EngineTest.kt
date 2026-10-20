@@ -836,4 +836,15 @@ class EngineTest {
         assertEquals(0.45, base.atLeast.getValue(ShadowRank.KNIGHT), 0.01)
         assertTrue(lucky.atLeast.getValue(ShadowRank.MARSHAL) > base.atLeast.getValue(ShadowRank.MARSHAL))
     }
+
+    @Test fun `slipping an avoid mission from the notification marks it once and never un-marks it`() {
+        val avoid = buildQuest(content.questDefById.getValue("pool_nonews"), 1, QuestOrigin.DAILY, "avoid_n")
+        var s = fresh().let { it.copy(quests = it.quests + avoid) }
+        assertTrue(s.openAvoids().any { it.id == avoid.id })
+        s = run(s, "2026-10-14T21:31") { slipAvoid(avoid.id) }
+        assertEquals(QuestStatus.FAILED, s.quests.first { it.id == avoid.id }.status)
+        s = run(s, "2026-10-14T21:32") { slipAvoid(avoid.id) }
+        assertEquals(QuestStatus.FAILED, s.quests.first { it.id == avoid.id }.status)
+        assertTrue(s.openAvoids().none { it.id == avoid.id })
+    }
 }

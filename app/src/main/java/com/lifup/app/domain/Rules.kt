@@ -133,6 +133,8 @@ object Rules {
 
     /** Nudge for an open bedtime check-in, in minutes after midnight (22:30). */
     const val BEDTIME_NUDGE_MIN = 22 * 60 + 30
+    /** When open avoid missions get their evening check-in. */
+    const val AVOID_CHECK_MIN = 21 * 60 + 30
 
     /** A finished "no quitting" session credits its minutes ×1.25 and 1 gold per 5 minutes. */
     const val STRICT_BONUS = 1.25

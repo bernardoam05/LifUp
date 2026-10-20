@@ -585,6 +585,9 @@
     <string name="show_less">Voir moins</string>
     <string name="notif_reminder_safe_title">Série assurée</string>
     <string name="notif_reminder_safe_text">Encore %1$d pour une journée parfaite, avec bonus d\'XP et un écho.</string>
+    <string name="notif_avoid_title">Comment s\'est passée la journée ?</string>
+    <string name="notif_avoid_text">Elles comptent à minuit. Si tu as craqué sur une, marque-la maintenant : %1$s.</string>
+    <string name="notif_avoid_fail">J\'ai craqué : %1$s</string>
     <string name="notif_bedtime_title">L\'heure du repos</string>
     <string name="notif_bedtime_text">Confirme ton check-in du coucher avant minuit.</string>
     <string name="widget_goal">Encore %1$d pour la série</string>

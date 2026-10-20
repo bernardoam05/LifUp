@@ -13,6 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.lifup.app.MainActivity
 import com.lifup.app.R
+import com.lifup.app.domain.text
 
 object Notifications {
     const val CH_SESSION = "session_quiet"
@@ -31,6 +32,7 @@ object Notifications {
     private const val ID_TIMER = 1340
     private const val ID_BOSS = 2007
     private const val ID_LIMIT = 2010
+    private const val ID_AVOID = 2020
 
     fun createChannels(context: Context) {
         val nm = context.getSystemService(NotificationManager::class.java)
@@ -97,6 +99,32 @@ object Notifications {
         else context.getString(R.string.notif_reminder_text, goal.needed - goal.kept),
         "today",
     )
+
+    /**
+     * The evening check-in for avoid missions still standing: they'll count at midnight, so a slip
+     * gets marked here with one tap per mission (the notification refreshes with the ones left).
+     */
+    fun avoidCheck(context: Context, open: List<com.lifup.app.domain.Quest>) {
+        val nm = NotificationManagerCompat.from(context)
+        if (open.isEmpty()) return nm.cancel(ID_AVOID)
+        if (!canPost(context)) return
+        val lang = java.util.Locale.getDefault().language
+        val titles = open.map { it.title.text(lang) }
+        val text = context.getString(R.string.notif_avoid_text, titles.joinToString(", "))
+        val b = NotificationCompat.Builder(context, CH_REMINDERS)
+            .setSmallIcon(R.drawable.ic_stat_lifup)
+            .setContentTitle(context.getString(R.string.notif_avoid_title))
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setAutoCancel(true)
+            .setOnlyAlertOnce(true)
+            .setContentIntent(openApp(context, "today"))
+        open.take(3).forEachIndexed { i, q ->
+            val label = if (open.size == 1) context.getString(R.string.forbidden_fail) else context.getString(R.string.notif_avoid_fail, titles[i])
+            b.addAction(0, label, NotificationActionReceiver.intent(context, NotificationActionReceiver.SLIP_AVOID, q.id))
+        }
+        runCatching { nm.notify(ID_AVOID, b.build()) }
+    }
 
     fun bedtime(context: Context) = post(
         context, ID_BEDTIME, CH_REMINDERS, context.getString(R.string.notif_bedtime_title),

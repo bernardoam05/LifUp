@@ -585,6 +585,9 @@
     <string name="show_less">Ver menos</string>
     <string name="notif_reminder_safe_title">Sequência garantida</string>
     <string name="notif_reminder_safe_text">Faltam %1$d para um dia perfeito, com bónus de XP e um eco.</string>
+    <string name="notif_avoid_title">Correu bem o dia?</string>
+    <string name="notif_avoid_text">Estas contam à meia-noite. Se falhaste alguma, marca agora: %1$s.</string>
+    <string name="notif_avoid_fail">Falhei: %1$s</string>
     <string name="notif_bedtime_title">Hora de descansar</string>
     <string name="notif_bedtime_text">Confirma o check-in de dormir antes da meia-noite.</string>
     <string name="widget_goal">Faltam %1$d para a sequência</string>
