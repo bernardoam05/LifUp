@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="accessibility_description">Detecta en tiempo real qué app está en primer plano, para que LifUp bloquee distracciones durante las sesiones de foco y las penalizaciones. No lee el contenido de la pantalla.</string>
 
     <!-- General -->
     <string name="add">Añadir</string>
@@ -166,13 +165,10 @@
     <string name="perm_explain">El bloqueo de apps, el cierre del día a medianoche y los recordatorios dependen de estos permisos del sistema.</string>
     <string name="perm_usage">Acceso de uso</string>
     <string name="perm_overlay">Mostrar sobre otras apps</string>
-    <string name="perm_accessibility">Accesibilidad (bloqueo instantáneo)</string>
     <string name="perm_battery">Sin restricciones de batería</string>
     <string name="perm_alarms">Alarmas exactas</string>
     <string name="perm_notifications">Notificaciones</string>
     <string name="perm_autostart">Inicio automático (Xiaomi, Oppo…)</string>
-    <string name="perm_restricted_hint">Instalada fuera de Play Store: en Información de la app, abre ⋮ y toca \"Permitir ajustes restringidos\" antes de activar la accesibilidad.</string>
-    <string name="open_app_info">Abrir información de la app</string>
 
     <!-- Hero -->
     <string name="hero_shadows">Ecos</string>
@@ -510,7 +506,6 @@
     <string name="block_needs_apps">Elige las apps que te distraen para bloquearlas.</string>
     <string name="perm_usage_why">Saber qué app está abierta, para bloquearla y medir el tiempo de pantalla.</string>
     <string name="perm_overlay_why">Mostrar la pantalla de bloqueo encima de la app bloqueada.</string>
-    <string name="perm_accessibility_why">Opcional: bloquea al instante en vez de tras unos segundos.</string>
     <string name="perm_battery_why">Evita que el sistema cierre la app durante sesiones y a medianoche.</string>
     <string name="perm_alarms_why">Cierra el día y termina sesiones a su hora.</string>
     <string name="perm_notifications_why">Avisos de sesiones, portales, penalizaciones y el recordatorio diario.</string>

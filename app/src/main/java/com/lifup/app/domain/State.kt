@@ -358,6 +358,8 @@ data class GameState(
     /** This week's tally of each "N times a week" mission, by definition id. */
     val weekly: Map<String, WeekTally> = emptyMap(),
     val load: MissionLoad = MissionLoad(),
+    /** Whether the phone lets the app read screen time (usage access); limits aren't drawn without it. */
+    val screenMeasurable: Boolean = true,
     /** A fixed mission done on only some days last week, offered as "N times a week". */
     val weeklyHint: WeeklyHint? = null,
     val weeklyHintsDismissed: Set<String> = emptySet(),

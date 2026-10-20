@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="accessibility_description">Erkennt in Echtzeit, welche App im Vordergrund ist, damit LifUp Ablenkungen während Fokus-Sessions und Strafen blockieren kann. Bildschirminhalte werden nicht gelesen.</string>
 
     <!-- General -->
     <string name="add">Hinzufügen</string>
@@ -166,13 +165,10 @@
     <string name="perm_explain">App-Sperre, Tagesabschluss um Mitternacht und Erinnerungen hängen von diesen Systemberechtigungen ab.</string>
     <string name="perm_usage">Nutzungszugriff</string>
     <string name="perm_overlay">Über anderen Apps einblenden</string>
-    <string name="perm_accessibility">Bedienungshilfen (sofortige Sperre)</string>
     <string name="perm_battery">Keine Akku-Einschränkungen</string>
     <string name="perm_alarms">Exakte Wecker</string>
     <string name="perm_notifications">Benachrichtigungen</string>
     <string name="perm_autostart">Autostart-Einstellungen (Xiaomi, Oppo…)</string>
-    <string name="perm_restricted_hint">Außerhalb des Play Store installiert: Öffne in den App-Infos ⋮ und tippe auf \"Eingeschränkte Einstellungen zulassen\", bevor du die Bedienungshilfen aktivierst.</string>
-    <string name="open_app_info">App-Infos öffnen</string>
 
     <!-- Hero -->
     <string name="hero_shadows">Echos</string>
@@ -510,7 +506,6 @@
     <string name="block_needs_apps">Wähle die ablenkenden Apps, die gesperrt werden sollen.</string>
     <string name="perm_usage_why">Erkennen, welche App offen ist, um sie zu sperren und Bildschirmzeit zu messen.</string>
     <string name="perm_overlay_why">Den Sperrbildschirm über der gesperrten App anzeigen.</string>
-    <string name="perm_accessibility_why">Optional: sperrt sofort statt nach ein paar Sekunden.</string>
     <string name="perm_battery_why">Verhindert, dass das System die App während Sitzungen und um Mitternacht beendet.</string>
     <string name="perm_alarms_why">Schließt den Tag und beendet Sitzungen pünktlich.</string>
     <string name="perm_notifications_why">Hinweise zu Sitzungen, Portalen, Strafen und die tägliche Erinnerung.</string>

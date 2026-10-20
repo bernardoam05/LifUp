@@ -14,6 +14,10 @@ data class AutoReading(
  * Feeds automatic quests. Steps complete a quest when they reach the target; screen-time limits break
  * (status FAILED) as soon as usage passes the limit. Readings for any day other than the open one are ignored.
  */
+fun Tx.setScreenMeasurable(on: Boolean) {
+    if (s.screenMeasurable != on) s = s.copy(screenMeasurable = on)
+}
+
 fun Tx.applyAuto(r: AutoReading) {
     if (r.day != s.day) return
     r.steps?.takeIf { it > s.daily.steps }?.let { s = s.copy(daily = s.daily.copy(steps = it)) }

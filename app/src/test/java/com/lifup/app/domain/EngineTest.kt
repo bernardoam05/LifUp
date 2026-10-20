@@ -761,4 +761,11 @@ class EngineTest {
         assertTrue(reach(155).shadows.none { it.origin == EchoOrigin.LEVEL })
         assertEquals(ShadowRank.MARSHAL, content.shadowById.getValue(reach(650).shadows.single { it.origin == EchoOrigin.LEVEL }.id).rank)
     }
+
+    @Test fun `screen limits aren't drawn when the phone can't measure them`() {
+        val s = fresh()
+        assertTrue(s.availableDefs(content).any { it.id == "pool_screen_limit" })
+        val blind = run(s, "2026-10-14T10:00") { setScreenMeasurable(false) }
+        assertTrue(blind.availableDefs(content).none { it.auto == AutoKind.SCREEN_TIME || it.auto == AutoKind.DISTRACTION_TIME })
+    }
 }

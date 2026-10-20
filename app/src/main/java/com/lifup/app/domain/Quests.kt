@@ -54,10 +54,17 @@ fun GameState.tipFor(q: Quest, content: Content): L10n? = defOf(q.defId, content
 
 fun GameState.isEditedBuiltIn(id: String, content: Content) = content.questDefById[id] != null && customDefs.any { it.id == id }
 
+/** A mission measured by the phone only counts when the phone can measure it; otherwise it would pass by itself. */
+private fun QuestDef.measurable(s: GameState) = when (auto) {
+    AutoKind.SCREEN_TIME -> s.screenMeasurable
+    AutoKind.DISTRACTION_TIME -> s.screenMeasurable && s.settings.blockedApps.isNotEmpty()
+    else -> true
+}
+
 fun GameState.availableDefs(content: Content): List<QuestDef> {
     val edited = customDefs.associateBy { it.id }
     return (content.quests.map { edited[it.id] ?: it } + customDefs.filter { content.questDefById[it.id] == null }).filter {
-        it.id !in disabledDefIds && (it.auto != AutoKind.DISTRACTION_TIME || settings.blockedApps.isNotEmpty())
+        it.id !in disabledDefIds && it.measurable(this)
     }
 }
 

@@ -62,8 +62,6 @@ class SessionService : Service() {
     companion object {
         const val OWN_PACKAGE = "com.lifup.app"
         @Volatile var instance: SessionService? = null
-        @Volatile var lastForegroundPkg: String? = null
-        @Volatile private var lastForegroundMs = 0L
 
         fun needed(s: GameState, now: Long) = s.focus != null || s.penaltyBlockActive(now)
 
@@ -79,19 +77,6 @@ class SessionService : Service() {
                 else -> FocusDnd.set(context, false) // a session that ended while the app was gone
             }
         }
-
-        /** Called by the accessibility service with the app that just came to the front. */
-        fun onForegroundApp(pkg: String) {
-            val now = System.currentTimeMillis()
-            val inst = instance
-            val plan = inst?.plan
-            // Launchers fire a window event right after the blocked app; ignore that bounce.
-            val prev = lastForegroundPkg
-            if (plan != null && prev != null && prev in plan.packages && now - lastForegroundMs < 1_500 && pkg !in plan.packages && pkg != OWN_PACKAGE) return
-            lastForegroundPkg = pkg
-            lastForegroundMs = now
-            inst?.onDetected(pkg, fromAccessibility = true)
-        }
     }
 
     val handler = Handler(Looper.getMainLooper())
@@ -101,7 +86,6 @@ class SessionService : Service() {
     private lateinit var usage: UsageStatsManager
     private var wakeLock: PowerManager.WakeLock? = null
     private var overlay: LinearLayout? = null
-    private var overlayShownAt = 0L
     private var killedAt = 0L
     private var player: MediaPlayer? = null
     private var playingAmbient: String? = null
@@ -234,7 +218,7 @@ class SessionService : Service() {
             if (plan == null) return
             val now = System.currentTimeMillis()
             val top = runCatching { foregroundPackage(now) }.getOrNull()
-            if (top != null) handler.post { onDetected(top, fromAccessibility = false) }
+            if (top != null) handler.post { onDetected(top) }
             pollHandler.postDelayed(this, 500)
         }
     }
@@ -246,26 +230,25 @@ class SessionService : Service() {
 
     private fun isLaunchable(pkg: String) = launchable.getOrPut(pkg) { packageManager.getLaunchIntentForPackage(pkg) != null }
 
-    fun onDetected(pkg: String, fromAccessibility: Boolean) {
+    fun onDetected(pkg: String) {
         val p = plan ?: return removeOverlay()
         val now = System.currentTimeMillis()
         if (overlay != null && !Settings.canDrawOverlays(this)) overlay = null
         if (pkg == OWN_PACKAGE) {
-            // The overlay's own addView fires an event for our package; don't remove it for that echo.
-            if (!(fromAccessibility && overlay != null && now - overlayShownAt < 500)) removeOverlay()
+            removeOverlay()
             return
         }
         if (overlay == null && now - killedAt < 3_000) return
         val blocked = now < p.until && pkg in p.packages
         when {
             blocked -> showOverlay(pkg, p)
-            !fromAccessibility && overlay != null && isLaunchable(pkg) -> removeOverlay()
+            overlay != null && isLaunchable(pkg) -> removeOverlay()
         }
     }
 
     fun checkNow() {
         val top = runCatching { foregroundPackage(System.currentTimeMillis()) }.getOrNull() ?: return
-        onDetected(top, fromAccessibility = false)
+        onDetected(top)
     }
 
     private fun foregroundPackage(now: Long): String? {
@@ -335,7 +318,7 @@ class SessionService : Service() {
             PixelFormat.TRANSLUCENT,
         )
         overlay = root
-        runCatching { windowManager.addView(root, params); overlayShownAt = System.currentTimeMillis() }.onFailure { overlay = null }
+        runCatching { windowManager.addView(root, params) }.onFailure { overlay = null }
     }
 
     private fun removeOverlay() {

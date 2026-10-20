@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
-import android.text.TextUtils
 import androidx.core.content.ContextCompat
 
 data class InstalledApp(val pkg: String, val label: String)
@@ -27,14 +26,6 @@ object Permissions {
 
     fun overlay(c: Context) = Settings.canDrawOverlays(c)
 
-    fun accessibility(c: Context): Boolean {
-        val enabled = Settings.Secure.getString(c.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: return false
-        // The system may store the short form ("pkg/.Cls"), so compare parsed components.
-        val me = ComponentName(c, BlockerAccessibilityService::class.java)
-        val splitter = TextUtils.SimpleStringSplitter(':').apply { setString(enabled) }
-        return splitter.any { ComponentName.unflattenFromString(it) == me }
-    }
-
     fun batteryUnrestricted(c: Context) = (c.getSystemService(Context.POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(c.packageName)
 
     fun exactAlarms(c: Context) = Build.VERSION.SDK_INT < 31 || c.getSystemService(AlarmManager::class.java).canScheduleExactAlarms()
@@ -47,18 +38,13 @@ object Permissions {
 
     fun location(c: Context) = ContextCompat.checkSelfPermission(c, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    /** Minimum for blocking: usage access + overlay. Accessibility makes it instant. */
+    /** Blocking needs usage access (to see the app in front) and overlay (to cover it). */
     fun blockerReady(c: Context) = usageAccess(c) && overlay(c)
-
-    /** Sideloaded apps on Android 13+ must allow "restricted settings" before enabling accessibility. */
-    fun sideloaded(c: Context): Boolean = Build.VERSION.SDK_INT >= 33 &&
-        runCatching { c.packageManager.getInstallSourceInfo(c.packageName).installingPackageName == null }.getOrDefault(false)
 
     private fun open(c: Context, intent: Intent) = runCatching { c.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }.isSuccess
 
     fun openUsageAccess(c: Context) = open(c, Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
     fun openOverlay(c: Context) = open(c, Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:${c.packageName}")))
-    fun openAccessibility(c: Context) = open(c, Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
     fun openAppDetails(c: Context) = open(c, Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${c.packageName}")))
 
     fun openExactAlarms(c: Context) {

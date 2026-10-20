@@ -25,6 +25,7 @@ import com.lifup.app.domain.AutoReading
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.applyAuto
 import com.lifup.app.domain.runCheckpoint
+import com.lifup.app.domain.setScreenMeasurable
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
@@ -181,7 +182,9 @@ object AutoTracker {
     suspend fun dispatchCatchingUp(c: Context, action: com.lifup.app.domain.Tx.() -> Unit = {}): GameState {
         val store = LifUpApp.store
         val final = readBeforeClose(c, store.current)
-        return store.dispatch(before = { final?.let { applyAuto(it) } }, action = action)
+        val measurable = Permissions.usageAccess(c)
+        // Before the day rolls over, so tomorrow's draw knows whether screen limits can be measured.
+        return store.dispatch(before = { setScreenMeasurable(measurable); final?.let { applyAuto(it) } }, action = action)
     }
 
     /** Before a day closes, record its final values so the close-out judges them correctly. */

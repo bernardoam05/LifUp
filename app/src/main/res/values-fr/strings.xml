@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="accessibility_description">Détecte en temps réel l\'app au premier plan, pour que LifUp bloque les distractions pendant les sessions de focus et les pénalités. Aucun contenu de l\'écran n\'est lu.</string>
 
     <string name="add">Ajouter</string>
     <string name="back">Retour</string>
@@ -156,13 +155,10 @@
     <string name="perm_explain">Le blocage d\'apps, la clôture du jour à minuit et les rappels dépendent de ces autorisations système.</string>
     <string name="perm_usage">Accès aux données d\'utilisation</string>
     <string name="perm_overlay">Superposition aux autres apps</string>
-    <string name="perm_accessibility">Accessibilité (blocage instantané)</string>
     <string name="perm_battery">Aucune restriction de batterie</string>
     <string name="perm_alarms">Alarmes exactes</string>
     <string name="perm_notifications">Notifications</string>
     <string name="perm_autostart">Démarrage auto (Xiaomi, Oppo…)</string>
-    <string name="perm_restricted_hint">Installée hors du Play Store : dans Infos sur l\'appli, ouvre ⋮ et touche \"Autoriser les paramètres restreints\" avant d\'activer l\'accessibilité.</string>
-    <string name="open_app_info">Ouvrir les infos de l\'appli</string>
 
     <string name="hero_shadows">Échos</string>
     <string name="hero_achievements">Succès</string>
@@ -492,7 +488,6 @@
     <string name="block_needs_apps">Choisis les apps qui te distraient à bloquer.</string>
     <string name="perm_usage_why">Savoir quelle app est ouverte, pour la bloquer et mesurer le temps d\'écran.</string>
     <string name="perm_overlay_why">Afficher l\'écran de blocage par-dessus l\'app bloquée.</string>
-    <string name="perm_accessibility_why">Optionnel : bloque instantanément au lieu de quelques secondes après.</string>
     <string name="perm_battery_why">Empêche le système de fermer l\'app pendant les sessions et à minuit.</string>
     <string name="perm_alarms_why">Clôture la journée et termine les sessions à l\'heure.</string>
     <string name="perm_notifications_why">Alertes de sessions, portails, pénalités et le rappel quotidien.</string>

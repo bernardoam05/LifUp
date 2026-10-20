@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">LifUp</string>
-    <string name="accessibility_description">Detects in real time which app is in the foreground, so LifUp can block distractions during focus sessions and penalties. No screen content is read.</string>
 
     <!-- General -->
     <string name="add">Add</string>
@@ -167,13 +166,10 @@
     <string name="perm_explain">App blocking, midnight day-closing and reminders depend on these system permissions.</string>
     <string name="perm_usage">Usage access</string>
     <string name="perm_overlay">Display over other apps</string>
-    <string name="perm_accessibility">Accessibility (instant blocking)</string>
     <string name="perm_battery">No battery restrictions</string>
     <string name="perm_alarms">Exact alarms</string>
     <string name="perm_notifications">Notifications</string>
     <string name="perm_autostart">Autostart settings (Xiaomi, Oppo…)</string>
-    <string name="perm_restricted_hint">Installed outside the Play Store: in App info, open ⋮ and tap \"Allow restricted settings\" before enabling accessibility.</string>
-    <string name="open_app_info">Open app info</string>
 
     <!-- Hero -->
     <string name="hero_shadows">Echoes</string>
@@ -511,7 +507,6 @@
     <string name="block_needs_apps">Choose the distracting apps to block.</string>
     <string name="perm_usage_why">Knowing which app is open, to block it and measure screen time.</string>
     <string name="perm_overlay_why">Showing the block screen over the blocked app.</string>
-    <string name="perm_accessibility_why">Optional: blocks instantly instead of after a few seconds.</string>
     <string name="perm_battery_why">Stops the system from killing the app during sessions and at midnight.</string>
     <string name="perm_alarms_why">Closes the day and ends sessions on time.</string>
     <string name="perm_notifications_why">Alerts for sessions, portals, penalties and the daily reminder.</string>

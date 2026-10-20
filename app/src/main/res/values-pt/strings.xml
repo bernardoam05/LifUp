@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="accessibility_description">Deteta em tempo real qual a app em primeiro plano, para o LifUp bloquear distrações durante as sessões de foco e penalizações. Não lê o conteúdo do ecrã.</string>
 
     <string name="add">Adicionar</string>
     <string name="back">Voltar</string>
@@ -156,13 +155,10 @@
     <string name="perm_explain">O bloqueio de apps, o fecho do dia à meia-noite e os lembretes dependem destas permissões do sistema.</string>
     <string name="perm_usage">Acesso de utilização</string>
     <string name="perm_overlay">Sobrepor a outras apps</string>
-    <string name="perm_accessibility">Acessibilidade (bloqueio instantâneo)</string>
     <string name="perm_battery">Sem restrições de bateria</string>
     <string name="perm_alarms">Alarmes exatos</string>
     <string name="perm_notifications">Notificações</string>
     <string name="perm_autostart">Arranque automático (Xiaomi, Oppo…)</string>
-    <string name="perm_restricted_hint">Instalada fora da Play Store: em Informações da app, abre ⋮ e toca em \"Permitir definições restritas\" antes de ativar a acessibilidade.</string>
-    <string name="open_app_info">Abrir informações da app</string>
 
     <string name="hero_shadows">Ecos</string>
     <string name="hero_achievements">Conquistas</string>
@@ -492,7 +488,6 @@
     <string name="block_needs_apps">Escolhe as apps que distraem para serem bloqueadas.</string>
     <string name="perm_usage_why">Saber que app está aberta, para bloquear e medir tempo de ecrã.</string>
     <string name="perm_overlay_why">Mostrar o ecrã de bloqueio por cima da app bloqueada.</string>
-    <string name="perm_accessibility_why">Opcional: bloqueia no instante em vez de após alguns segundos.</string>
     <string name="perm_battery_why">Impede o sistema de fechar a app durante sessões e à meia-noite.</string>
     <string name="perm_alarms_why">Fecha o dia e termina sessões à hora certa.</string>
     <string name="perm_notifications_why">Avisos de sessões, portais, penalizações e o lembrete diário.</string>

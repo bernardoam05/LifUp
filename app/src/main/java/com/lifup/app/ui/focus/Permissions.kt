@@ -87,7 +87,6 @@ fun PermissionsPanel(s: GameState, startExpanded: Boolean = false) {
         listOf(
             PermRow(R.string.perm_usage, R.string.perm_usage_why, Permissions.usageAccess(context)) { Permissions.openUsageAccess(context) },
             PermRow(R.string.perm_overlay, R.string.perm_overlay_why, Permissions.overlay(context)) { Permissions.openOverlay(context) },
-            PermRow(R.string.perm_accessibility, R.string.perm_accessibility_why, Permissions.accessibility(context)) { Permissions.openAccessibility(context) },
             PermRow(R.string.perm_battery, R.string.perm_battery_why, Permissions.batteryUnrestricted(context)) { Permissions.openBattery(context) },
             PermRow(R.string.perm_alarms, R.string.perm_alarms_why, Permissions.exactAlarms(context)) { Permissions.openExactAlarms(context) },
             PermRow(R.string.perm_notifications, R.string.perm_notifications_why, Permissions.notifications(context)) {
@@ -119,10 +118,6 @@ fun PermissionsPanel(s: GameState, startExpanded: Boolean = false) {
                     }
                     if (!r.ok) TextButton(onClick = r.fix) { Text(stringResource(R.string.fix).uppercase()) }
                 }
-            }
-            if (!Permissions.accessibility(context) && Permissions.sideloaded(context)) {
-                Text(stringResource(R.string.perm_restricted_hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.gold, modifier = Modifier.padding(top = 4.dp))
-                TextButton(onClick = { Permissions.openAppDetails(context) }) { Text(stringResource(R.string.open_app_info).uppercase()) }
             }
             TextButton(onClick = { Permissions.openAutostart(context) }) { Text(stringResource(R.string.perm_autostart).uppercase()) }
         }
