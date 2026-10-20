@@ -32,6 +32,7 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         fromHour = def.fromHour,
         perWeek = def.perWeek.takeIf { def.isWeekly() },
         prompt = day?.let { def.promptOn(it) },
+        group = def.drawGroup(),
         adapt = step,
     )
 }

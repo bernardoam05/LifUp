@@ -70,8 +70,11 @@ import com.lifup.app.ui.gameState
 import com.lifup.app.ui.lang
 import com.lifup.app.ui.local
 import com.lifup.app.domain.text
-import com.lifup.app.ui.questColor
-import com.lifup.app.ui.questIcon
+import com.lifup.app.ui.color
+import com.lifup.app.ui.familyName
+import com.lifup.app.domain.DrawGroup
+import com.lifup.app.domain.drawGroup
+import com.lifup.app.ui.icon
 import com.lifup.app.ui.questTypeName
 import com.lifup.app.ui.autoName
 import com.lifup.app.ui.unitLabel
@@ -100,12 +103,12 @@ fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
             val own = s.customDefs.filter { content.questDefById[it.id] == null }
             if (own.isEmpty()) item { EmptyNote(stringResource(R.string.no_custom)) }
             items(own, key = { it.id }) { def -> DefRow(def, enabled = def.id !in s.disabledDefIds, onEdit = { onEdit(def.id) }) }
-            // System missions grouped by type so it's clear what each family does.
-            QuestType.entries.forEach { type ->
-                val defs = content.quests.filter { it.type == type }
+            // System missions grouped by family, the attribute each one grows.
+            DrawGroup.entries.forEach { family ->
+                val defs = content.quests.filter { (s.defOf(it.id, content) ?: it).drawGroup() == family }
                 if (defs.isEmpty()) return@forEach
-                item(key = "h_$type") {
-                    SectionTitle(stringResource(questTypeName(type))) {
+                item(key = "h_$family") {
+                    SectionTitle(stringResource(familyName(family))) {
                         Text("${defs.count { it.id !in s.disabledDefIds }}/${defs.size}", color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium)
                     }
                 }
@@ -123,12 +126,12 @@ fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
 @Composable
 private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?, edited: Boolean = false) {
     val c = Lif.colors
-    val color = questColor(def.type, c)
+    val color = def.color(c)
     val unit = unitLabel(def.unit)
     val dayNames = stringArrayResourceCompat()
     Panel(padding = PaddingValues(12.dp), onClick = onEdit) {
         Row(verticalAlignment = Alignment.Top) {
-            IconBadge(questIcon(def.type), if (enabled) color else c.dim, 36.dp)
+            IconBadge(def.icon(), if (enabled) color else c.dim, 36.dp)
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
                 Text(def.title.local(), style = MaterialTheme.typography.titleSmall, color = if (enabled) c.text else c.dim)
@@ -141,7 +144,8 @@ private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?, edite
         }
         Spacer(Modifier.height(6.dp))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Pill(stringResource(questTypeName(def.type)), color)
+            Pill(stringResource(familyName(def.drawGroup())), color)
+            if (def.type == QuestType.FOCUS || def.type == QuestType.FORBIDDEN || def.type == QuestType.LIMIT) Pill(stringResource(questTypeName(def.type)), c.muted)
             Pill(stringResource(if (def.kind == DefKind.CORE) R.string.kind_core else R.string.kind_pool), c.muted)
             def.auto?.let { Pill(stringResource(R.string.auto_badge) + " · " + stringResource(autoName(it)), c.green) }
             Pill("${fmtNum(def.baseTarget)} $unit", c.text)

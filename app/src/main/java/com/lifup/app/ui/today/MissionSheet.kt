@@ -93,9 +93,11 @@ import com.lifup.app.ui.focus.usesPomodoro
 import com.lifup.app.ui.fmtDuration
 import com.lifup.app.ui.fmtNum
 import com.lifup.app.ui.lang
-import com.lifup.app.ui.questColor
+import com.lifup.app.ui.color
+import com.lifup.app.ui.familyName
+import com.lifup.app.domain.family
 import com.lifup.app.ui.questDetail
-import com.lifup.app.ui.questIcon
+import com.lifup.app.ui.icon
 import com.lifup.app.ui.questTitle
 import com.lifup.app.ui.questTypeName
 import com.lifup.app.ui.theme.Lif
@@ -174,13 +176,16 @@ private fun Quest.timeable() = auto == null && fromHour == null && (type == Ques
 
 @Composable
 private fun SheetHeader(q: Quest) {
-    val color = questColor(q.type, Lif.colors)
+    val color = q.color(Lif.colors)
     Row(verticalAlignment = Alignment.CenterVertically) {
-        IconBadge(questIcon(q.type), color, 46.dp)
+        IconBadge(q.icon(), color, 46.dp)
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(questTitle(q, lang()), style = MaterialTheme.typography.titleLarge)
-            Pill(stringResource(questTypeName(q.type)), color)
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Pill(stringResource(familyName(q.family())), color)
+                if (q.type == QuestType.FOCUS || q.type == QuestType.FORBIDDEN || q.type == QuestType.LIMIT) Pill(stringResource(questTypeName(q.type)), Lif.colors.muted)
+            }
         }
     }
 }

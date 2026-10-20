@@ -41,6 +41,11 @@ import com.lifup.app.domain.HunterRank
 import com.lifup.app.domain.L10n
 import com.lifup.app.domain.Passive
 import com.lifup.app.domain.Quest
+import com.lifup.app.domain.QuestDef
+import com.lifup.app.domain.DrawGroup
+import com.lifup.app.domain.drawGroup
+import com.lifup.app.domain.family
+import androidx.compose.material.icons.rounded.Favorite
 import com.lifup.app.domain.QuestType
 import com.lifup.app.domain.ShadowClass
 import com.lifup.app.domain.ShadowRank
@@ -112,22 +117,36 @@ fun fmtShort(ms: Long): String {
     return if (min >= 60 * 24) "${min / (60 * 24)}d ${(min / 60) % 24}h" else if (min >= 60) "${min / 60}h ${min % 60}m" else "${min}m"
 }
 
-fun questIcon(type: QuestType): ImageVector = when (type) {
-    QuestType.TRAINING -> Icons.Rounded.FitnessCenter
-    QuestType.KNOWLEDGE -> Icons.AutoMirrored.Rounded.MenuBook
+/**
+ * A mission's icon: how it works when that matters (focus timer, avoid, limit), otherwise its family.
+ * Its colour is always the colour of the attribute its family grows.
+ */
+fun questIcon(type: QuestType, family: DrawGroup): ImageVector = when (type) {
     QuestType.FOCUS -> Icons.Rounded.HourglassTop
-    QuestType.GPS -> Icons.AutoMirrored.Rounded.DirectionsRun
     QuestType.FORBIDDEN -> Icons.Rounded.Block
     QuestType.LIMIT -> Icons.Rounded.Speed
+    else -> when (family) {
+        DrawGroup.STRENGTH -> Icons.Rounded.FitnessCenter
+        DrawGroup.MOVEMENT -> Icons.AutoMirrored.Rounded.DirectionsRun
+        DrawGroup.MIND -> Icons.AutoMirrored.Rounded.MenuBook
+        DrawGroup.HEALTH -> Icons.Rounded.Favorite
+        DrawGroup.SELF_CONTROL -> Icons.Rounded.Shield
+    }
 }
 
-fun questColor(type: QuestType, p: Palette): Color = when (type) {
-    QuestType.TRAINING -> p.orange
-    QuestType.KNOWLEDGE -> p.blue
-    QuestType.FOCUS -> p.purple
-    QuestType.GPS -> p.green
-    QuestType.FORBIDDEN -> p.gold
-    QuestType.LIMIT -> p.muted
+fun questColor(family: DrawGroup, p: Palette): Color = attrColor(family.attr, p)
+
+fun Quest.icon() = questIcon(type, family())
+fun Quest.color(p: Palette) = questColor(family(), p)
+fun QuestDef.icon() = questIcon(type, drawGroup())
+fun QuestDef.color(p: Palette) = questColor(drawGroup(), p)
+
+@StringRes fun familyName(g: DrawGroup) = when (g) {
+    DrawGroup.STRENGTH -> R.string.family_strength
+    DrawGroup.MOVEMENT -> R.string.family_movement
+    DrawGroup.MIND -> R.string.family_mind
+    DrawGroup.HEALTH -> R.string.family_health
+    DrawGroup.SELF_CONTROL -> R.string.family_self_control
 }
 
 @StringRes fun questTypeName(type: QuestType) = when (type) {

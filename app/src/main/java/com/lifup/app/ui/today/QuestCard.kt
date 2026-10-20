@@ -52,9 +52,9 @@ import com.lifup.app.ui.components.Pill
 import com.lifup.app.ui.fmtDuration
 import com.lifup.app.ui.fmtNum
 import com.lifup.app.ui.lang
-import com.lifup.app.ui.questColor
+import com.lifup.app.ui.color
 import com.lifup.app.ui.questDetail
-import com.lifup.app.ui.questIcon
+import com.lifup.app.ui.icon
 import com.lifup.app.ui.questTitle
 import com.lifup.app.ui.theme.Lif
 import com.lifup.app.ui.unitLabel
@@ -62,7 +62,7 @@ import com.lifup.app.ui.unitLabel
 @Composable
 fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null, onClick: () -> Unit) {
     val p = Lif.colors
-    val color = questColor(q.type, p)
+    val color = q.color(p)
     val done = q.status == QuestStatus.DONE
     val failed = q.status == QuestStatus.FAILED
     val border = when {
@@ -77,7 +77,7 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null
             // The check pops in with a little bounce when a mission is finished.
             val pop by animateFloatAsState(if (done) 1f else 0.85f, spring(dampingRatio = 0.35f, stiffness = 400f), label = "pop")
             Box(Modifier.scale(if (done) pop else 1f)) {
-                if (done) IconBadge(Icons.Rounded.CheckCircle, p.green) else IconBadge(questIcon(q.type), if (failed) p.red else color)
+                if (done) IconBadge(Icons.Rounded.CheckCircle, p.green) else IconBadge(q.icon(), if (failed) p.red else color)
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f).alpha(if (done) 0.6f else 1f)) {

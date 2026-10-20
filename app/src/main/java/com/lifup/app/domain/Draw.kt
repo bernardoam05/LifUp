@@ -77,6 +77,9 @@ fun Attributes.lagging(): Set<Attr> {
 /** The attributes whose families weigh more in today's draw. */
 fun GameState.drawFocus(): Set<Attr> = if (settings.catchUp) player.attrXp.lagging() else settings.focusAttrs
 
+/** The family shown for a quest: the one stamped when it was built, else its type's. */
+fun Quest.family(): DrawGroup = group ?: groupOf(type)
+
 /** The family a quest belongs to, from its definition when there is one. */
 fun Tx.groupOf(q: Quest): DrawGroup =
     s.defOf(q.defId, content)?.drawGroup() ?: groupOf(q.type)

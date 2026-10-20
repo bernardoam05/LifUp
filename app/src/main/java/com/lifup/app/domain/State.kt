@@ -61,6 +61,8 @@ data class Quest(
     val perWeek: Int? = null,
     /** Today's suggestion for an open-ended mission. */
     val prompt: L10n? = null,
+    /** The family it belongs to (from its definition); older saves fall back to the type. */
+    val group: DrawGroup? = null,
 )
 
 @Serializable

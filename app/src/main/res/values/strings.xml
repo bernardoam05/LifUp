@@ -660,6 +660,11 @@
     <string name="edit_mission_tomorrow">Edit mission · applies from tomorrow</string>
     <string name="count_title">How many so far?</string>
     <string name="manage_missions">Manage missions</string>
+    <string name="family_strength">Strength</string>
+    <string name="family_movement">Movement</string>
+    <string name="family_mind">Mind</string>
+    <string name="family_health">Health</string>
+    <string name="family_self_control">Self-control</string>
     <string name="manage">Manage</string>
     <string name="side_delete_paid">Deleting this side quest takes back the XP and gold it gave.</string>
     <string name="how_to">How to?</string>

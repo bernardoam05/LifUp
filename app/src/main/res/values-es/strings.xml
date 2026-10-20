@@ -659,6 +659,11 @@
     <string name="edit_mission_tomorrow">Editar misión · cuenta desde mañana</string>
     <string name="count_title">¿Cuántas llevas?</string>
     <string name="manage_missions">Gestionar misiones</string>
+    <string name="family_strength">Fuerza</string>
+    <string name="family_movement">Movimiento</string>
+    <string name="family_mind">Mente</string>
+    <string name="family_health">Salud</string>
+    <string name="family_self_control">Autocontrol</string>
     <string name="manage">Gestionar</string>
     <string name="side_delete_paid">Borrar esta tarea quita el XP y el oro que dio.</string>
     <string name="how_to">¿Cómo hacerlo?</string>

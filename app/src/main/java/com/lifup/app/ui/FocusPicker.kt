@@ -28,6 +28,7 @@ import com.lifup.app.R
 import com.lifup.app.domain.Attr
 import com.lifup.app.domain.Rules.MAX_FOCUS_ATTRS
 import com.lifup.app.ui.theme.Lif
+import com.lifup.app.ui.theme.Palette
 
 @Composable
 fun attrShort(a: Attr): String = stringResource(when (a) {
@@ -38,11 +39,14 @@ fun attrShort(a: Attr): String = stringResource(when (a) {
 })
 
 @Composable
-fun attrColor(a: Attr): Color = when (a) {
-    Attr.STR -> Lif.colors.red
-    Attr.AGI -> Lif.colors.green
-    Attr.INT -> Lif.colors.blue
-    Attr.VIT -> Lif.colors.gold
+fun attrColor(a: Attr): Color = attrColor(a, Lif.colors)
+
+/** Strength is orange, not red: red stays for failures and penalties. */
+fun attrColor(a: Attr, p: Palette): Color = when (a) {
+    Attr.STR -> p.orange
+    Attr.AGI -> p.green
+    Attr.INT -> p.blue
+    Attr.VIT -> p.gold
 }
 
 private fun attrNameRes(a: Attr) = when (a) {
