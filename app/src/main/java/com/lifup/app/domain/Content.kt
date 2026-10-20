@@ -108,7 +108,7 @@ data class ShadowDef(
 )
 
 @Serializable
-enum class EchoAura { SPIN, RAYS, ORBIT, PULSE, FLAME, RUNES, STAR, ECLIPSE, GEAR }
+enum class EchoAura { SPIN, RAYS, ORBIT, PULSE, FLAME, RUNES, STAR, ECLIPSE, GEAR, VOID, SHARDS, CLOCK, WINGS, CROWN, SPARKS, LIGHTNING, COMET, SMOKE, SEASONS, FROST, THORNS }
 
 @Serializable
 enum class ItemEffect {

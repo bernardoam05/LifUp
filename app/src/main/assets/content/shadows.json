@@ -644,7 +644,7 @@
    "de": "Eklipse, der kosmische Hunger"
   },
   "icon": "DarkMode",
-  "aura": "ECLIPSE"
+  "aura": "VOID"
  },
  {
   "id": "glad_god",
@@ -801,7 +801,7 @@
    "de": "Phantomwesir"
   },
   "icon": "Balance",
-  "aura": "RUNES"
+  "aura": "SMOKE"
  },
  {
   "id": "shadow_wisp",
@@ -870,7 +870,7 @@
    "de": "Architekt des Verfalls"
   },
   "icon": "Architecture",
-  "aura": "STAR"
+  "aura": "SHARDS"
  },
  {
   "id": "calendar_knight",
@@ -905,7 +905,7 @@
    "de": "Meister der Beharrlichkeit"
   },
   "icon": "CalendarMonth",
-  "aura": "PULSE"
+  "aura": "ORBIT"
  },
  {
   "id": "quest_boss_goblin_warlord",
@@ -1230,7 +1230,7 @@
    "de": "Herr der Blitze"
   },
   "icon": "Bolt",
-  "aura": "PULSE"
+  "aura": "LIGHTNING"
  },
  {
   "id": "quest_boss_chrono_master",
@@ -1249,7 +1249,7 @@
    "de": "Herr der Zeit"
   },
   "icon": "HourglassBottom",
-  "aura": "ORBIT"
+  "aura": "CLOCK"
  },
  {
   "id": "quest_boss_star_breaker",
@@ -1287,7 +1287,7 @@
    "de": "Sangreal der Duellant"
   },
   "icon": "Bloodtype",
-  "aura": "FLAME"
+  "aura": "THORNS"
  },
  {
   "id": "quest_boss_lich_king",
@@ -1306,7 +1306,7 @@
    "de": "Vergessener Lichkönig"
   },
   "icon": "Brightness3",
-  "aura": "RUNES"
+  "aura": "FROST"
  },
  {
   "id": "soul_reaper",
@@ -1344,7 +1344,7 @@
    "de": "Gefallener Seraph"
   },
   "icon": "Flare",
-  "aura": "RAYS"
+  "aura": "WINGS"
  },
  {
   "id": "auto_titan",
@@ -1363,7 +1363,7 @@
    "de": "Schrotttitan"
   },
   "icon": "Recycling",
-  "aura": "PULSE"
+  "aura": "SPARKS"
  },
  {
   "id": "easter_hare_shadow",
@@ -1556,7 +1556,7 @@
    "de": "Hüter der Jahreszeiten"
   },
   "icon": "Park",
-  "aura": "SPIN"
+  "aura": "SEASONS"
  },
  {
   "id": "lvl_patient_colossus",
@@ -1575,7 +1575,7 @@
    "de": "Geduldiger Koloss"
   },
   "icon": "Landscape",
-  "aura": "GEAR"
+  "aura": "PULSE"
  },
  {
   "id": "lvl_wandering_star",
@@ -1594,7 +1594,7 @@
    "de": "Wandernder Stern"
   },
   "icon": "AutoAwesome",
-  "aura": "ORBIT"
+  "aura": "COMET"
  },
  {
   "id": "lvl_thousandth",
@@ -1613,6 +1613,6 @@
    "de": "Der Tausendste"
   },
   "icon": "WorkspacePremium",
-  "aura": "SPIN"
+  "aura": "CROWN"
  }
 ]
