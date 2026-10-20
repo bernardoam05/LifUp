@@ -13,7 +13,8 @@
    "es": "Peón Mecánico",
    "fr": "Pion Mécanique",
    "de": "Uhrwerk-Bauer"
-  }
+  },
+  "icon": "SmartToy"
  },
  {
   "id": "auto_scout",
@@ -29,7 +30,8 @@
    "es": "Centinela Explorador",
    "fr": "Sentinelle Éclaireuse",
    "de": "Späher-Wächter"
-  }
+  },
+  "icon": "Visibility"
  },
  {
   "id": "astral_moth",
@@ -45,7 +47,8 @@
    "es": "Polilla del Vacío",
    "fr": "Phalène du Vide",
    "de": "Leerenmotte"
-  }
+  },
+  "icon": "EmojiNature"
  },
  {
   "id": "glad_recruit",
@@ -61,7 +64,8 @@
    "es": "Recluta de la Arena",
    "fr": "Recrue de l'Arène",
    "de": "Arena-Rekrut"
-  }
+  },
+  "icon": "SportsKabaddi"
  },
  {
   "id": "glad_net",
@@ -72,12 +76,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Caçador de Redes",
-   "en": "Net Hunter",
-   "es": "Cazador de Redes",
-   "fr": "Chasseur de Filets",
-   "de": "Netzjäger"
-  }
+   "pt": "Gladiador da Rede",
+   "en": "Net Gladiator",
+   "es": "Gladiador de la Red",
+   "fr": "Gladiateur au Filet",
+   "de": "Netzkämpfer"
+  },
+  "icon": "Phishing"
  },
  {
   "id": "god_servant",
@@ -93,7 +98,8 @@
    "es": "Acólito de Bronce",
    "fr": "Acolyte de Bronze",
    "de": "Bronze-Akolyth"
-  }
+  },
+  "icon": "HistoryEdu"
  },
  {
   "id": "forgotten_mage",
@@ -109,7 +115,8 @@
    "es": "Mago Olvidado",
    "fr": "Mage Oublié",
    "de": "Vergessener Magier"
-  }
+  },
+  "icon": "AutoFixHigh"
  },
  {
   "id": "shadow_rat_king",
@@ -125,7 +132,8 @@
    "es": "Rey de las Ratas",
    "fr": "Roi des Rats",
    "de": "Rattenkönig"
-  }
+  },
+  "icon": "PestControlRodent"
  },
  {
   "id": "blind_seer",
@@ -141,7 +149,8 @@
    "es": "Vidente Ciego",
    "fr": "Voyant Aveugle",
    "de": "Blinder Seher"
-  }
+  },
+  "icon": "VisibilityOff"
  },
  {
   "id": "rust_hound",
@@ -157,7 +166,8 @@
    "es": "Sabueso Oxidado",
    "fr": "Chien de Rouille",
    "de": "Rosthund"
-  }
+  },
+  "icon": "Pets"
  },
  {
   "id": "bone_collector",
@@ -173,7 +183,8 @@
    "es": "Coleccionista de Huesos",
    "fr": "Collecteur d'Os",
    "de": "Knochensammler"
-  }
+  },
+  "icon": "Inventory2"
  },
  {
   "id": "fire_salamander",
@@ -189,7 +200,8 @@
    "es": "Salamandra de Fuego",
    "fr": "Salamandre de Feu",
    "de": "Feuersalamander"
-  }
+  },
+  "icon": "LocalFireDepartment"
  },
  {
   "id": "swamp_troll",
@@ -205,7 +217,8 @@
    "es": "Trol del Pantano",
    "fr": "Troll des Marais",
    "de": "Sumpftroll"
-  }
+  },
+  "icon": "Grass"
  },
  {
   "id": "auto_clockwork",
@@ -221,7 +234,8 @@
    "es": "Autómata de Relojería",
    "fr": "Automate d'Horlogerie",
    "de": "Uhrwerk-Automat"
-  }
+  },
+  "icon": "Settings"
  },
  {
   "id": "astral_weaver",
@@ -237,7 +251,8 @@
    "es": "Tejedora de Constelaciones",
    "fr": "Tisseuse de Constellations",
    "de": "Sternbildweberin"
-  }
+  },
+  "icon": "Stars"
  },
  {
   "id": "glad_minotaur",
@@ -253,7 +268,8 @@
    "es": "Minotauro Encadenado",
    "fr": "Minotaure Enchaîné",
    "de": "Angeketteter Minotaurus"
-  }
+  },
+  "icon": "Link"
  },
  {
   "id": "god_scripture",
@@ -269,7 +285,8 @@
    "es": "Pergamino Maldito",
    "fr": "Écrit Maudit",
    "de": "Verfluchte Schriftrolle"
-  }
+  },
+  "icon": "AutoStories"
  },
  {
   "id": "venom_weaver",
@@ -285,7 +302,8 @@
    "es": "Tejedora de Veneno",
    "fr": "Tisseuse de Venin",
    "de": "Giftweberin"
-  }
+  },
+  "icon": "Opacity"
  },
  {
   "id": "cursed_samurai",
@@ -301,7 +319,8 @@
    "es": "Samurái Vengativo",
    "fr": "Samouraï Vengeur",
    "de": "Rachsüchtiger Samurai"
-  }
+  },
+  "icon": "SportsMartialArts"
  },
  {
   "id": "crystal_golem",
@@ -317,7 +336,8 @@
    "es": "Gólem de Cristal",
    "fr": "Golem de Cristal",
    "de": "Kristallgolem"
-  }
+  },
+  "icon": "Diamond"
  },
  {
   "id": "glacier_stalker",
@@ -328,12 +348,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Espreitador Glacial",
-   "en": "Glacier Stalker",
-   "es": "Acechador Glacial",
-   "fr": "Rôdeur des Glaciers",
-   "de": "Gletscherpirscher"
-  }
+   "pt": "Raposa do Gelo",
+   "en": "Ice Fox",
+   "es": "Zorro de Hielo",
+   "fr": "Renard des Glaces",
+   "de": "Eisfuchs"
+  },
+  "icon": "AcUnit"
  },
  {
   "id": "storm_witch",
@@ -344,12 +365,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Bruxa das Tempestades",
-   "en": "Storm Witch",
-   "es": "Bruja de las Tormentas",
-   "fr": "Sorcière des Tempêtes",
-   "de": "Sturmhexe"
-  }
+   "pt": "Bruxa do Nevoeiro",
+   "en": "Fog Witch",
+   "es": "Bruja de la Niebla",
+   "fr": "Sorcière du Brouillard",
+   "de": "Nebelhexe"
+  },
+  "icon": "Cloud"
  },
  {
   "id": "vampire_lord",
@@ -365,7 +387,8 @@
    "es": "Señor Vampiro",
    "fr": "Seigneur Vampire",
    "de": "Vampirlord"
-  }
+  },
+  "icon": "Brightness4"
  },
  {
   "id": "wendigo",
@@ -381,7 +404,8 @@
    "es": "Wendigo de las Cumbres",
    "fr": "Wendigo des Hauteurs",
    "de": "Hochland-Wendigo"
-  }
+  },
+  "icon": "Forest"
  },
  {
   "id": "banshee",
@@ -397,7 +421,8 @@
    "es": "Banshee de las Profundidades",
    "fr": "Banshee des Profondeurs",
    "de": "Banshee der Tiefe"
-  }
+  },
+  "icon": "Air"
  },
  {
   "id": "manticore",
@@ -408,12 +433,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Manticora Sombria",
-   "en": "Shadow Manticore",
-   "es": "Mantícora Sombría",
-   "fr": "Manticore d'Ombre",
-   "de": "Schattenmanticore"
-  }
+   "pt": "Manticora do Deserto",
+   "en": "Desert Manticore",
+   "es": "Mantícora del Desierto",
+   "fr": "Manticore du Désert",
+   "de": "Wüstenmantikor"
+  },
+  "icon": "Dangerous"
  },
  {
   "id": "plague_doctor",
@@ -429,7 +455,8 @@
    "es": "Médico de la Peste",
    "fr": "Médecin de la Peste",
    "de": "Pestdoktor"
-  }
+  },
+  "icon": "MedicalServices"
  },
  {
   "id": "dark_cavalry",
@@ -440,12 +467,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Cavalaria Sombria",
-   "en": "Dark Cavalry",
-   "es": "Caballería Oscura",
-   "fr": "Cavalerie Sombre",
-   "de": "Dunkle Kavallerie"
-  }
+   "pt": "Cavalaria Fantasma",
+   "en": "Phantom Cavalry",
+   "es": "Caballería Fantasma",
+   "fr": "Cavalerie Fantôme",
+   "de": "Geisterreiterei"
+  },
+  "icon": "Speed"
  },
  {
   "id": "crypt_guardian",
@@ -456,12 +484,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Guardião da Cripta",
-   "en": "Crypt Guardian",
-   "es": "Guardián de la Cripta",
-   "fr": "Gardien de la Crypte",
+   "pt": "Sentinela da Cripta",
+   "en": "Crypt Sentinel",
+   "es": "Centinela de la Cripta",
+   "fr": "Sentinelle de la Crypte",
    "de": "Gruftwächter"
-  }
+  },
+  "icon": "Castle"
  },
  {
   "id": "abyss_warlock",
@@ -477,7 +506,8 @@
    "es": "Brujo Abisal",
    "fr": "Sorcier Abyssal",
    "de": "Abgrund-Hexenmeister"
-  }
+  },
+  "icon": "Waves"
  },
  {
   "id": "crimson_knight",
@@ -488,12 +518,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Cavaleiro Carmesim",
-   "en": "Crimson Knight",
-   "es": "Caballero Carmesí",
-   "fr": "Chevalier Écarlate",
-   "de": "Purpurritter"
-  }
+   "pt": "Cavaleiro de Ébano",
+   "en": "Ebony Knight",
+   "es": "Caballero de Ébano",
+   "fr": "Chevalier d'Ébène",
+   "de": "Ebenholzritter"
+  },
+  "icon": "Security"
  },
  {
   "id": "cerberus",
@@ -504,12 +535,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Cerberus, o Guardião",
-   "en": "Cerberus, the Gatekeeper",
-   "es": "Cerbero, el Guardián",
-   "fr": "Cerbère, le Gardien des Portes",
-   "de": "Cerberus, der Torwächter"
-  }
+   "pt": "Cérbero",
+   "en": "Cerberus",
+   "es": "Cerbero",
+   "fr": "Cerbère",
+   "de": "Zerberus"
+  },
+  "icon": "Fort"
  },
  {
   "id": "white_tiger_lord",
@@ -525,7 +557,8 @@
    "es": "Señor Tigre Blanco",
    "fr": "Seigneur Tigre Blanc",
    "de": "Weißer Tigerlord"
-  }
+  },
+  "icon": "Whatshot"
  },
  {
   "id": "wraith_commander",
@@ -536,12 +569,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Comandante Espectral",
-   "en": "Wraith Commander",
-   "es": "Comandante Espectral",
-   "fr": "Commandant Spectral",
-   "de": "Geisterkommandant"
-  }
+   "pt": "General Espectral",
+   "en": "Wraith General",
+   "es": "General Espectral",
+   "fr": "Général Spectral",
+   "de": "Geistergeneral"
+  },
+  "icon": "NightsStay"
  },
  {
   "id": "storm_herald",
@@ -557,7 +591,8 @@
    "es": "Heraldo de la Tormenta",
    "fr": "Héraut de la Tempête",
    "de": "Sturmherold"
-  }
+  },
+  "icon": "Thunderstorm"
  },
  {
   "id": "royal_assassin",
@@ -573,7 +608,8 @@
    "es": "Asesino Real",
    "fr": "Assassin Royal",
    "de": "Königlicher Assassine"
-  }
+  },
+  "icon": "TheaterComedy"
  },
  {
   "id": "glad_juggernaut",
@@ -584,12 +620,13 @@
    "type": "EXTRACTION"
   },
   "name": {
-   "pt": "Imperador da Dor",
-   "en": "Emperor of Pain",
-   "es": "Emperador del Dolor",
-   "fr": "Empereur de la Douleur",
-   "de": "Kaiser des Schmerzes"
-  }
+   "pt": "Muralha Viva",
+   "en": "Living Wall",
+   "es": "Muralla Viviente",
+   "fr": "Muraille Vivante",
+   "de": "Lebende Mauer"
+  },
+  "icon": "Shield"
  },
  {
   "id": "astral_eclipse",
@@ -605,7 +642,9 @@
    "es": "Eclipse, el Hambre Cósmica",
    "fr": "Éclipse, la Faim Cosmique",
    "de": "Eklipse, der kosmische Hunger"
-  }
+  },
+  "icon": "DarkMode",
+  "aura": "ECLIPSE"
  },
  {
   "id": "glad_god",
@@ -621,7 +660,9 @@
    "es": "Dios de la Arena",
    "fr": "Dieu de l'Arène",
    "de": "Gott der Arena"
-  }
+  },
+  "icon": "EmojiEvents",
+  "aura": "RAYS"
  },
  {
   "id": "monolith",
@@ -637,7 +678,9 @@
    "es": "El Monolito Primigenio",
    "fr": "Le Monolithe Primordial",
    "de": "Der Urzeit-Monolith"
-  }
+  },
+  "icon": "AccountBalance",
+  "aura": "RUNES"
  },
  {
   "id": "auto_prime",
@@ -653,7 +696,9 @@
    "es": "El Motor Eterno",
    "fr": "Le Moteur Éternel",
    "de": "Die ewige Maschine"
-  }
+  },
+  "icon": "AllInclusive",
+  "aura": "GEAR"
  },
  {
   "id": "hired_golem",
@@ -669,7 +714,8 @@
    "es": "Gólem a Sueldo",
    "fr": "Golem Mercenaire",
    "de": "Gemieteter Golem"
-  }
+  },
+  "icon": "Handshake"
  },
  {
   "id": "shadow_mercenary",
@@ -680,12 +726,13 @@
    "type": "SHOP"
   },
   "name": {
-   "pt": "Mercenário das Sombras",
-   "en": "Shadow Mercenary",
-   "es": "Mercenario de las Sombras",
-   "fr": "Mercenaire d'Ombre",
-   "de": "Schattensöldner"
-  }
+   "pt": "Mercenário Silencioso",
+   "en": "Silent Mercenary",
+   "es": "Mercenario Silencioso",
+   "fr": "Mercenaire Silencieux",
+   "de": "Stiller Söldner"
+  },
+  "icon": "Paid"
  },
  {
   "id": "shadow_blacksmith",
@@ -696,12 +743,13 @@
    "type": "SHOP"
   },
   "name": {
-   "pt": "Ferreiro das Sombras",
-   "en": "Shadow Blacksmith",
-   "es": "Herrero de las Sombras",
-   "fr": "Forgeron d'Ombre",
-   "de": "Schattenschmied"
-  }
+   "pt": "Ferreiro Errante",
+   "en": "Wandering Smith",
+   "es": "Herrero Errante",
+   "fr": "Forgeron Errant",
+   "de": "Wandernder Schmied"
+  },
+  "icon": "Hardware"
  },
  {
   "id": "dark_alchemist_shadow",
@@ -717,7 +765,8 @@
    "es": "Alquimista Oscuro",
    "fr": "Alchimiste Noir",
    "de": "Dunkler Alchemist"
-  }
+  },
+  "icon": "Science"
  },
  {
   "id": "shadow_treasury_haunter",
@@ -733,7 +782,8 @@
    "es": "Espectro del Tesoro",
    "fr": "Hanteur du Trésor",
    "de": "Schatzkammer-Spuk"
-  }
+  },
+  "icon": "Savings"
  },
  {
   "id": "phantom_vizier",
@@ -749,7 +799,9 @@
    "es": "Visir Fantasmal",
    "fr": "Vizir Fantôme",
    "de": "Phantomwesir"
-  }
+  },
+  "icon": "Balance",
+  "aura": "RUNES"
  },
  {
   "id": "shadow_wisp",
@@ -760,12 +812,13 @@
    "type": "ACHIEVEMENT"
   },
   "name": {
-   "pt": "Chama Sombria",
-   "en": "Shadow Wisp",
-   "es": "Fuego Fatuo Sombrío",
-   "fr": "Feu Follet d'Ombre",
-   "de": "Schattenirrlicht"
-  }
+   "pt": "Fogo-Fátuo",
+   "en": "Will-o'-the-Wisp",
+   "es": "Fuego Fatuo",
+   "fr": "Feu Follet",
+   "de": "Irrlicht"
+  },
+  "icon": "Brightness7"
  },
  {
   "id": "moonlit_stalker",
@@ -776,12 +829,13 @@
    "type": "ACHIEVEMENT"
   },
   "name": {
-   "pt": "Caçador da Lua",
-   "en": "Moonlit Stalker",
-   "es": "Acechador Lunar",
-   "fr": "Rôdeur Lunaire",
-   "de": "Mondlicht-Pirscher"
-  }
+   "pt": "Lince Lunar",
+   "en": "Moon Lynx",
+   "es": "Lince Lunar",
+   "fr": "Lynx Lunaire",
+   "de": "Mondluchs"
+  },
+  "icon": "Nightlight"
  },
  {
   "id": "mind_flayer",
@@ -797,7 +851,8 @@
    "es": "Devorador de Mentes",
    "fr": "Dévoreur d'Esprits",
    "de": "Gedankenverschlinger"
-  }
+  },
+  "icon": "Psychology"
  },
  {
   "id": "architect_of_ruin",
@@ -813,7 +868,9 @@
    "es": "Arquitecto de la Ruina",
    "fr": "Architecte de la Ruine",
    "de": "Architekt des Verfalls"
-  }
+  },
+  "icon": "Architecture",
+  "aura": "STAR"
  },
  {
   "id": "calendar_knight",
@@ -824,12 +881,13 @@
    "type": "STREAK"
   },
   "name": {
-   "pt": "Guardião da Constância",
-   "en": "Guardian of Constancy",
-   "es": "Guardián de la Constancia",
-   "fr": "Gardien de la Constance",
-   "de": "Wächter der Beständigkeit"
-  }
+   "pt": "Cavaleiro da Constância",
+   "en": "Knight of Constancy",
+   "es": "Caballero de la Constancia",
+   "fr": "Chevalier de la Constance",
+   "de": "Ritter der Beständigkeit"
+  },
+  "icon": "EventAvailable"
  },
  {
   "id": "calendar_marshal",
@@ -840,12 +898,14 @@
    "type": "STREAK"
   },
   "name": {
-   "pt": "Marechal da Perseverança",
-   "en": "Marshal of Perseverance",
-   "es": "Mariscal de la Perseverancia",
-   "fr": "Maréchal de la Persévérance",
-   "de": "Marschall der Ausdauer"
-  }
+   "pt": "Mestre da Perseverança",
+   "en": "Master of Perseverance",
+   "es": "Maestro de la Perseverancia",
+   "fr": "Maître de la Persévérance",
+   "de": "Meister der Beharrlichkeit"
+  },
+  "icon": "CalendarMonth",
+  "aura": "PULSE"
  },
  {
   "id": "quest_boss_goblin_warlord",
@@ -862,7 +922,8 @@
    "es": "Señor Goblin",
    "fr": "Seigneur Gobelin",
    "de": "Goblin-Kriegsherr"
-  }
+  },
+  "icon": "SportsMma"
  },
  {
   "id": "quest_boss_cave_spider_matriarch",
@@ -879,7 +940,8 @@
    "es": "Matriarca de la Caverna",
    "fr": "Matriarche de la Caverne",
    "de": "Höhlenmatriarchin"
-  }
+  },
+  "icon": "BugReport"
  },
  {
   "id": "quest_boss_ant_worker_prime",
@@ -891,12 +953,13 @@
    "bossId": "boss_ant_worker_prime"
   },
   "name": {
-   "pt": "Operária Primordial",
-   "en": "Primeval Worker",
-   "es": "Obrera Primigenia",
-   "fr": "Ouvrière Primordiale",
-   "de": "Urzeit-Arbeiterin"
-  }
+   "pt": "Operária Incansável",
+   "en": "Tireless Worker Ant",
+   "es": "Obrera Incansable",
+   "fr": "Ouvrière Infatigable",
+   "de": "Unermüdliche Arbeiterin"
+  },
+  "icon": "Hive"
  },
  {
   "id": "quest_boss_stone_golem_shard",
@@ -913,7 +976,8 @@
    "es": "Esquirla de Gólem",
    "fr": "Éclat de Golem",
    "de": "Golem-Splitter"
-  }
+  },
+  "icon": "Category"
  },
  {
   "id": "quest_boss_stringsinger",
@@ -930,7 +994,8 @@
    "es": "Sirena de las Cuerdas",
    "fr": "Sirène des Cordes",
    "de": "Sirene der Saiten"
-  }
+  },
+  "icon": "MusicNote"
  },
  {
   "id": "quest_boss_polyglot_trial",
@@ -947,7 +1012,8 @@
    "es": "Esfinge Políglota",
    "fr": "Sphinx Polyglotte",
    "de": "Polyglotte Sphinx"
-  }
+  },
+  "icon": "Translate"
  },
  {
   "id": "quest_boss_culinary_ritual",
@@ -959,12 +1025,13 @@
    "bossId": "boss_culinary_ritual"
   },
   "name": {
-   "pt": "Ogre do Caldeirão",
+   "pt": "Ogro do Caldeirão",
    "en": "Cauldron Ogre",
    "es": "Ogro del Caldero",
    "fr": "Ogre du Chaudron",
    "de": "Kessel-Oger"
-  }
+  },
+  "icon": "SoupKitchen"
  },
  {
   "id": "quest_boss_memory_labyrinth",
@@ -981,7 +1048,8 @@
    "es": "Búho del Palacio Mental",
    "fr": "Chouette du Palais Mental",
    "de": "Eule des Gedächtnispalasts"
-  }
+  },
+  "icon": "LocalLibrary"
  },
  {
   "id": "quest_boss_new_frontier",
@@ -998,7 +1066,8 @@
    "es": "Grifo de la Frontera",
    "fr": "Griffon de la Frontière",
    "de": "Grenzgreif"
-  }
+  },
+  "icon": "Explore"
  },
  {
   "id": "quest_boss_artisan_trial",
@@ -1015,7 +1084,8 @@
    "es": "Gólem Artesano",
    "fr": "Golem Artisan",
    "de": "Handwerker-Golem"
-  }
+  },
+  "icon": "Handyman"
  },
  {
   "id": "quest_boss_wind_walker",
@@ -1032,7 +1102,8 @@
    "es": "Caminante del Viento",
    "fr": "Marcheur du Vent",
    "de": "Windwanderer"
-  }
+  },
+  "icon": "Cyclone"
  },
  {
   "id": "quest_boss_tarantula",
@@ -1049,7 +1120,8 @@
    "es": "Tarántula Imperial",
    "fr": "Tarentule Impériale",
    "de": "Kaiserliche Tarantel"
-  }
+  },
+  "icon": "PestControl"
  },
  {
   "id": "quest_boss_cold_philosopher",
@@ -1066,7 +1138,8 @@
    "es": "Yeti Filósofo",
    "fr": "Yéti Philosophe",
    "de": "Philosophen-Yeti"
-  }
+  },
+  "icon": "School"
  },
  {
   "id": "quest_boss_digital_craftsman",
@@ -1083,7 +1156,8 @@
    "es": "Autómata Digital",
    "fr": "Automate Numérique",
    "de": "Digitaler Automat"
-  }
+  },
+  "icon": "Memory"
  },
  {
   "id": "quest_boss_stoic_challenge",
@@ -1100,7 +1174,8 @@
    "es": "Gárgola Estoica",
    "fr": "Gargouille Stoïque",
    "de": "Stoische Gargoyle"
-  }
+  },
+  "icon": "Terrain"
  },
  {
   "id": "quest_boss_titan_ape",
@@ -1117,7 +1192,8 @@
    "es": "Simio Titánico",
    "fr": "Grand Singe Titanesque",
    "de": "Titanischer Affe"
-  }
+  },
+  "icon": "FitnessCenter"
  },
  {
   "id": "quest_boss_astral_drake",
@@ -1134,7 +1210,8 @@
    "es": "Draco Astral",
    "fr": "Drake Astral",
    "de": "Astraldrache"
-  }
+  },
+  "icon": "Public"
  },
  {
   "id": "quest_boss_storm_bringer",
@@ -1146,12 +1223,14 @@
    "bossId": "boss_storm_bringer"
   },
   "name": {
-   "pt": "Invocador de Tempestades",
-   "en": "Storm Bringer",
-   "es": "Invocador de Tormentas",
-   "fr": "Porteur de Tempêtes",
-   "de": "Sturmbringer"
-  }
+   "pt": "Senhor dos Raios",
+   "en": "Lord of Lightning",
+   "es": "Señor de los Rayos",
+   "fr": "Seigneur de la Foudre",
+   "de": "Herr der Blitze"
+  },
+  "icon": "Bolt",
+  "aura": "PULSE"
  },
  {
   "id": "quest_boss_chrono_master",
@@ -1168,7 +1247,9 @@
    "es": "Señor del Tiempo",
    "fr": "Seigneur du Temps",
    "de": "Herr der Zeit"
-  }
+  },
+  "icon": "HourglassBottom",
+  "aura": "ORBIT"
  },
  {
   "id": "quest_boss_star_breaker",
@@ -1185,7 +1266,9 @@
    "es": "Rompeestrellas",
    "fr": "Brise-Étoiles",
    "de": "Sternenbrecher"
-  }
+  },
+  "icon": "RocketLaunch",
+  "aura": "STAR"
  },
  {
   "id": "quest_boss_blood_knight",
@@ -1197,12 +1280,14 @@
    "bossId": "boss_blood_knight"
   },
   "name": {
-   "pt": "Sangreal, Cavaleiro de Sangue",
-   "en": "Sangreal, the Blood Knight",
-   "es": "Sangreal, el Caballero de Sangre",
-   "fr": "Sangreal, le Chevalier de Sang",
-   "de": "Sangreal, der Blutritter"
-  }
+   "pt": "Sangreal, o Duelista",
+   "en": "Sangreal the Duelist",
+   "es": "Sangreal, el Duelista",
+   "fr": "Sangreal le Duelliste",
+   "de": "Sangreal der Duellant"
+  },
+  "icon": "Bloodtype",
+  "aura": "FLAME"
  },
  {
   "id": "quest_boss_lich_king",
@@ -1219,7 +1304,9 @@
    "es": "Rey Lich Olvidado",
    "fr": "Roi Liche Oublié",
    "de": "Vergessener Lichkönig"
-  }
+  },
+  "icon": "Brightness3",
+  "aura": "RUNES"
  },
  {
   "id": "soul_reaper",
@@ -1236,7 +1323,9 @@
    "es": "Segador de Almas",
    "fr": "Faucheur d'Âmes",
    "de": "Seelenschnitter"
-  }
+  },
+  "icon": "HourglassEmpty",
+  "aura": "ECLIPSE"
  },
  {
   "id": "god_seraphim",
@@ -1248,12 +1337,14 @@
    "bossId": "season_yule"
   },
   "name": {
-   "pt": "Lâmina do Serafim Caído",
-   "en": "Fallen Seraph Blade",
-   "es": "Hoja del Serafín Caído",
-   "fr": "Lame du Séraphin Déchu",
-   "de": "Klinge des gefallenen Seraphs"
-  }
+   "pt": "Serafim Caído",
+   "en": "Fallen Seraph",
+   "es": "Serafín Caído",
+   "fr": "Séraphin Déchu",
+   "de": "Gefallener Seraph"
+  },
+  "icon": "Flare",
+  "aura": "RAYS"
  },
  {
   "id": "auto_titan",
@@ -1270,7 +1361,9 @@
    "es": "Titán de Chatarra",
    "fr": "Titan de Ferraille",
    "de": "Schrotttitan"
-  }
+  },
+  "icon": "Recycling",
+  "aura": "PULSE"
  },
  {
   "id": "easter_hare_shadow",
@@ -1282,12 +1375,13 @@
    "bossId": "season_spring"
   },
   "name": {
-   "pt": "Coelho das Sombras",
-   "en": "Shadow Hare",
-   "es": "Liebre de las Sombras",
-   "fr": "Lièvre d'Ombre",
-   "de": "Schattenhase"
-  }
+   "pt": "Lebre de Março",
+   "en": "March Hare",
+   "es": "Liebre de Marzo",
+   "fr": "Lièvre de Mars",
+   "de": "Märzhase"
+  },
+  "icon": "CrueltyFree"
  },
  {
   "id": "shadow_dragon",
@@ -1299,12 +1393,14 @@
    "bossId": "season_summer"
   },
   "name": {
-   "pt": "Filhote de Dragão Sombrio",
-   "en": "Shadow Dragon Whelp",
-   "es": "Cría de Dragón Sombrío",
-   "fr": "Dragonnet d'Ombre",
-   "de": "Schattendrachenjunges"
-  }
+   "pt": "Filhote de Dragão",
+   "en": "Dragon Whelp",
+   "es": "Cría de Dragón",
+   "fr": "Dragonnet",
+   "de": "Drachenjunges"
+  },
+  "icon": "Egg",
+  "aura": "FLAME"
  },
  {
   "id": "dawn_warden",
@@ -1320,7 +1416,8 @@
    "es": "Vigía del Alba",
    "fr": "Veilleur de l'Aube",
    "de": "Wächter der Morgenröte"
-  }
+  },
+  "icon": "WbSunny"
  },
  {
   "id": "shieldbreaker",
@@ -1336,7 +1433,8 @@
    "es": "Rompescudos",
    "fr": "Brise-Bouclier",
    "de": "Schildbrecher"
-  }
+  },
+  "icon": "Gavel"
  },
  {
   "id": "threshold_keeper",
@@ -1352,7 +1450,8 @@
    "es": "Guardián del Umbral",
    "fr": "Gardien du Seuil",
    "de": "Hüter der Schwelle"
-  }
+  },
+  "icon": "DoorFront"
  },
  {
   "id": "diligent_artisan",
@@ -1368,7 +1467,8 @@
    "es": "Artífice Diligente",
    "fr": "Artisan Assidu",
    "de": "Fleißiger Handwerker"
-  }
+  },
+  "icon": "Brush"
  },
  {
   "id": "pilgrim",
@@ -1384,7 +1484,8 @@
    "es": "Peregrino",
    "fr": "Pèlerin",
    "de": "Pilger"
-  }
+  },
+  "icon": "Hiking"
  },
  {
   "id": "silent_monk",
@@ -1400,7 +1501,8 @@
    "es": "Monje del Silencio",
    "fr": "Moine du Silence",
    "de": "Mönch der Stille"
-  }
+  },
+  "icon": "SelfImprovement"
  },
  {
   "id": "sleep_warden",
@@ -1411,12 +1513,13 @@
    "type": "ACHIEVEMENT"
   },
   "name": {
-   "pt": "Guardião do Sono",
-   "en": "Sleep Warden",
-   "es": "Guardián del Sueño",
-   "fr": "Gardien du Sommeil",
-   "de": "Hüter des Schlafs"
-  }
+   "pt": "Pastor do Sono",
+   "en": "Shepherd of Sleep",
+   "es": "Pastor del Sueño",
+   "fr": "Berger du Sommeil",
+   "de": "Hirte des Schlafs"
+  },
+  "icon": "Bedtime"
  },
  {
   "id": "lvl_centurion",
@@ -1433,7 +1536,8 @@
    "es": "Centurión",
    "fr": "Centurion",
    "de": "Zenturio"
-  }
+  },
+  "icon": "MilitaryTech"
  },
  {
   "id": "lvl_season_warden",
@@ -1450,7 +1554,9 @@
    "es": "Guardián de las Estaciones",
    "fr": "Gardien des Saisons",
    "de": "Hüter der Jahreszeiten"
-  }
+  },
+  "icon": "Park",
+  "aura": "SPIN"
  },
  {
   "id": "lvl_patient_colossus",
@@ -1467,7 +1573,9 @@
    "es": "Coloso Paciente",
    "fr": "Colosse Patient",
    "de": "Geduldiger Koloss"
-  }
+  },
+  "icon": "Landscape",
+  "aura": "GEAR"
  },
  {
   "id": "lvl_wandering_star",
@@ -1484,7 +1592,9 @@
    "es": "Estrella Errante",
    "fr": "Étoile Errante",
    "de": "Wandernder Stern"
-  }
+  },
+  "icon": "AutoAwesome",
+  "aura": "ORBIT"
  },
  {
   "id": "lvl_thousandth",
@@ -1501,6 +1611,8 @@
    "es": "El Milésimo",
    "fr": "Le Millième",
    "de": "Der Tausendste"
-  }
+  },
+  "icon": "WorkspacePremium",
+  "aura": "SPIN"
  }
 ]

@@ -101,7 +101,14 @@ data class ShadowDef(
     val passive: Passive,
     val source: ShadowSource,
     val name: L10n,
+    /** Its own figure (an icon name); without one it shows its class's. */
+    val icon: String? = null,
+    /** How a mythic echo's emblem moves: each has its own. */
+    val aura: EchoAura? = null,
 )
+
+@Serializable
+enum class EchoAura { SPIN, RAYS, ORBIT, PULSE, FLAME, RUNES, STAR, ECLIPSE, GEAR }
 
 @Serializable
 enum class ItemEffect {

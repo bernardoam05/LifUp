@@ -34,7 +34,7 @@ import com.lifup.app.domain.ShadowRank
 import com.lifup.app.ui.Feedback
 import com.lifup.app.ui.Sfx
 import com.lifup.app.ui.hero.EchoEmblem
-import com.lifup.app.ui.shadowIcon
+import com.lifup.app.ui.hero.figure
 import com.lifup.app.ui.shadowRankColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -81,7 +81,7 @@ fun EchoReveal(def: ShadowDef, onDone: () -> Unit) {
                 val pulse = 1f + 0.06f * sin(t * t * 40f)
                 Box(Modifier.size(240.dp).scale(0.8f + 0.4f * t).clip(CircleShape).background(Brush.radialGradient(listOf(Color.White.copy(alpha = 0.10f + 0.35f * t), Color.Transparent))))
                 Box(Modifier.size(120.dp).scale(pulse).clip(CircleShape).background(Color.White.copy(alpha = 0.06f + 0.1f * t)), contentAlignment = Alignment.Center) {
-                    Icon(shadowIcon(def.shadowClass), null, tint = Color.White.copy(alpha = 0.25f + 0.6f * t), modifier = Modifier.size(56.dp))
+                    Icon(def.figure(), null, tint = Color.White.copy(alpha = 0.25f + 0.6f * t), modifier = Modifier.size(56.dp))
                 }
             } else {
                 val b = burst.value
