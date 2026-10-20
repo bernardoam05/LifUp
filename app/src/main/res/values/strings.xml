@@ -643,7 +643,7 @@
     <string name="attr_focus_title">Attribute focus</string>
     <string name="attr_focus_question">Which attributes do you want to grow?</string>
     <string name="attr_focus_hint">Up to 2. Their missions come up more often; the others still appear.</string>
-    <string name="attr_focus_catchup">Even out</string>
+    <string name="attr_focus_catchup">Adaptive</string>
     <string name="attr_focus_catchup_what">lifts the ones left behind</string>
     <string name="attr_focus_catchup_now">Today lifting: %1$s</string>
     <string name="attr_focus_catchup_even">They\'re even for now: everything comes up equally.</string>

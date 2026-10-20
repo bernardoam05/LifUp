@@ -642,7 +642,7 @@
     <string name="attr_focus_title">Attributfokus</string>
     <string name="attr_focus_question">Welche Attribute willst du entwickeln?</string>
     <string name="attr_focus_hint">Bis zu 2. Ihre Missionen kommen öfter; die anderen erscheinen weiterhin.</string>
-    <string name="attr_focus_catchup">Angleichen</string>
+    <string name="attr_focus_catchup">Adaptiv</string>
     <string name="attr_focus_catchup_what">stärkt die, die zurückliegen</string>
     <string name="attr_focus_catchup_now">Heute im Fokus: %1$s</string>
     <string name="attr_focus_catchup_even">Im Moment sind sie ausgeglichen: alles kommt gleich oft.</string>

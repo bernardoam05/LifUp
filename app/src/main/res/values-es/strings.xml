@@ -642,7 +642,7 @@
     <string name="attr_focus_title">Foco de atributos</string>
     <string name="attr_focus_question">¿Qué atributos quieres desarrollar?</string>
     <string name="attr_focus_hint">Hasta 2. Sus misiones salen más a menudo; las demás siguen apareciendo.</string>
-    <string name="attr_focus_catchup">Nivelar</string>
+    <string name="attr_focus_catchup">Adaptativo</string>
     <string name="attr_focus_catchup_what">refuerza los que se quedaron atrás</string>
     <string name="attr_focus_catchup_now">Hoy impulsando: %1$s</string>
     <string name="attr_focus_catchup_even">Por ahora están igualados: todo sale por igual.</string>
