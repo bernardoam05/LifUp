@@ -144,15 +144,20 @@ private fun Tx.finishFocus(f: FocusSession, minutes: Double, completed: Boolean)
     f.pomodoro?.let { count(StatKey.POMODORO_CYCLES, Pomodoro.completedCycles(it, f.elapsedMinutes(ctx.now)).toLong()) }
     // "No quitting" is a bet: finishing pays the minutes +25% and some gold.
     val won = completed && f.strict
-    if (won) payFocusGold((minutes / Rules.STRICT_GOLD_EVERY_MIN).toInt())
+    val xp = payFocus(minutes, won)
     creditFocus(if (won) minutes * Rules.STRICT_BONUS else minutes, f.questId, pomodoro = f.pomodoro != null)
-    toast(ToastKind.FOCUS_DONE, minutes.roundToInt().toString())
+    toast(ToastKind.FOCUS_DONE, "${minutes.roundToInt()}:$xp")
 }
 
-/** Gold for a won "no quitting" session, up to the day's cap so a timer left running can't farm it. */
-private fun Tx.payFocusGold(amount: Int) {
-    val paid = amount.coerceAtMost(Rules.STRICT_GOLD_MAX_PER_DAY - s.daily.focusGold).coerceAtLeast(0)
-    if (paid == 0) return
-    gainGold(paid, boosted = false)
-    s = s.copy(daily = s.daily.copy(focusGold = s.daily.focusGold + paid))
+/**
+ * Focus pays XP by the minute (+25% and gold when a no-quitting session is won), for up to
+ * [Rules.FOCUS_PAID_MAX_MIN] minutes a day, so a timer left running can't farm it. Returns the XP gained.
+ */
+private fun Tx.payFocus(minutes: Double, won: Boolean): Int {
+    val paid = minutes.coerceAtMost(Rules.FOCUS_PAID_MAX_MIN - s.daily.focusPaidMin).coerceAtLeast(0.0)
+    if (paid <= 0) return 0
+    s = s.copy(daily = s.daily.copy(focusPaidMin = s.daily.focusPaidMin + paid))
+    if (won) gainGold((paid / Rules.STRICT_GOLD_EVERY_MIN).toInt(), boosted = false)
+    val base = paid * Rules.FOCUS_XP_PER_MIN * Rules.tierMultiplier(s.player.level) * (if (won) Rules.STRICT_BONUS else 1.0)
+    return gainXp(base.roundToInt(), QuestType.FOCUS, hitsBoss = false)
 }

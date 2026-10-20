@@ -127,7 +127,7 @@
     </plurals>
     <string name="choose_apps">Choisir des apps</string>
     <string name="strict_mode">Sans abandon</string>
-    <string name="strict_info">Arrête avant la fin et tu perds les minutes. Va jusqu\'au bout : elles comptent +25 % et tu gagnes de l\'or en plus (jusqu\'à 3 h par jour).</string>
+    <string name="strict_info">Arrête avant la fin et tu perds les minutes. Va jusqu\'au bout : elles comptent +25 % et tu gagnes de l\'or en plus (jusqu\'à 2 h par jour).</string>
     <string name="ambient">Son d\'ambiance</string>
     <string name="ambient_none">Silence</string>
     <string name="ambient_rain">Pluie</string>
@@ -259,6 +259,7 @@
     <string name="toast_item_found">Trouvé : %1$s</string>
     <string name="toast_penalty_cleared">Pénalité levée</string>
     <string name="toast_focus_done">Focus terminé : %1$s min</string>
+    <string name="toast_focus_done_xp">Focus terminé : %1$s min · +%2$s XP</string>
     <string name="toast_focus_lost">Sans abandon rompu : %1$s min perdues</string>
     <string name="toast_boss_escaped">Temps écoulé : %1$s n\'a pas été vaincu</string>
     <string name="toast_portal_escaped">Le portail s\'est fermé</string>
@@ -511,7 +512,7 @@
     <string name="guide_shadows_title">Échos</string>
     <string name="guide_shadows">Où les trouver::Journées parfaites, boss, portails, succès, paliers de série et la boutique.\nEscouade::Jusqu\'à 3 sur le terrain, chacun avec un passif : plus d\'XP, plus d\'or, plus de dégâts, protection.\nÉvolution::Les doubles et l\'or font monter l\'écho de niveau, jusqu\'au tien.</string>
     <string name="guide_focus_title">Focus et Pomodoro</string>
-    <string name="guide_focus">Lie une mission::Les minutes comptent pour elle. Une session libre ne compte que dans les stats.\nLe bon mode::Chaque mission est en minuteur ou en Pomodoro, et seul ce mode compte.\nDe vraies pauses::En Pomodoro, seules les minutes de focus comptent, et pendant les pauses les apps sont libres.\nSans limite::Ça compte jusqu\'à ce que tu t\'arrêtes.\nSans abandon::S\'arrêter en cours de route fait perdre les minutes ; aller au bout vaut +25 % et de l\'or en plus.</string>
+    <string name="guide_focus">Lie une mission::Les minutes comptent pour elle. Toute session rapporte aussi de l\'XP par minute, jusqu\'à 2 h par jour.\nLe bon mode::Chaque mission est en minuteur ou en Pomodoro, et seul ce mode compte.\nDe vraies pauses::En Pomodoro, seules les minutes de focus comptent, et pendant les pauses les apps sont libres.\nSans limite::Ça compte jusqu\'à ce que tu t\'arrêtes.\nSans abandon::S\'arrêter en cours de route fait perdre les minutes ; aller au bout vaut +25 % et de l\'or en plus.</string>
     <string name="guide_shop_title">Boutique</string>
     <string name="guide_shop">Objets::Changer de mission, protéger ta série, élixirs d\'XP et d\'or, coffres.\nÉchos en vente::3 par semaine, renouvelées chaque lundi.\nInventaire::Ce que tu achètes est gardé jusqu\'à ce que tu l\'utilises.</string>
     <string name="auto_backups">Copies automatiques</string>
@@ -623,8 +624,8 @@
     <string name="attr_focus_title">Attributs prioritaires</string>
     <string name="attr_focus_question">Quels attributs veux-tu développer ?</string>
     <string name="attr_focus_hint">Jusqu\'à 2. Leurs missions sortent plus souvent ; les autres apparaissent toujours.</string>
-    <string name="attr_focus_catchup">Rattrapage</string>
-    <string name="attr_focus_catchup_what">relance ceux qui sont à la traîne</string>
+    <string name="attr_focus_catchup">Niveler</string>
+    <string name="attr_focus_catchup_what">renforce ceux qui sont à la traîne</string>
     <string name="attr_focus_catchup_now">Aujourd\'hui en renfort : %1$s</string>
     <string name="attr_focus_catchup_even">Pour l\'instant ils sont à égalité : tout sort autant.</string>
     <string name="notif_limit_title">%1$s : presque à la limite</string>

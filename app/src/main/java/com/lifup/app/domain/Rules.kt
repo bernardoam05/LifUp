@@ -113,8 +113,9 @@ object Rules {
     /** A finished "no quitting" session credits its minutes ×1.25 and 1 gold per 5 minutes. */
     const val STRICT_BONUS = 1.25
     const val STRICT_GOLD_EVERY_MIN = 5.0
-    /** Daily cap on that gold: 3 hours' worth. */
-    const val STRICT_GOLD_MAX_PER_DAY = 36
+    /** Focus sessions pay this XP per minute (times the level tier), for up to this many minutes a day. */
+    const val FOCUS_XP_PER_MIN = 1.0
+    const val FOCUS_PAID_MAX_MIN = 120.0
     /** A measured limit warns once a day when this share of it, or this many minutes, is left. */
     const val LIMIT_WARN_SHARE = 0.25
     const val LIMIT_WARN_MIN = 20

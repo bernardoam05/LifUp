@@ -196,8 +196,8 @@ data class DailyFlags(
     val rest: Boolean = false,
     /** Highest step count read today; added to the lifetime total when the day closes. */
     val steps: Int = 0,
-    /** Gold paid today by finished "no quitting" focus sessions, which has a daily cap. */
-    val focusGold: Int = 0,
+    /** Focus minutes already paid in XP (and gold) today, which has a daily cap. */
+    val focusPaidMin: Double = 0.0,
 )
 
 @Serializable

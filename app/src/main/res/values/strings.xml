@@ -137,7 +137,7 @@
     </plurals>
     <string name="choose_apps">Choose apps</string>
     <string name="strict_mode">No quitting</string>
-    <string name="strict_info">Stop early and you lose the minutes. Finish and they count +25%, plus bonus gold (up to 3 h a day).</string>
+    <string name="strict_info">Stop early and you lose the minutes. Finish and they count +25%, plus bonus gold (up to 2 h a day).</string>
     <string name="ambient">Ambient sound</string>
     <string name="ambient_none">Silence</string>
     <string name="ambient_rain">Rain</string>
@@ -274,6 +274,7 @@
     <string name="toast_item_found">Found: %1$s</string>
     <string name="toast_penalty_cleared">Penalty cleared</string>
     <string name="toast_focus_done">Focus complete: %1$s min</string>
+    <string name="toast_focus_done_xp">Focus complete: %1$s min · +%2$s XP</string>
     <string name="toast_focus_lost">No quitting: you gave up, %1$s min lost</string>
     <string name="toast_boss_escaped">Time\'s up: %1$s was not beaten</string>
     <string name="toast_portal_escaped">The portal closed</string>
@@ -530,7 +531,7 @@
     <string name="guide_shadows_title">Echoes</string>
     <string name="guide_shadows">Where to find them::Perfect days, bosses, portals, achievements, streak milestones and the shop.\nSquad::Up to 3 in the field, each with a passive: more XP, more gold, more damage, protection.\nGrowth::Duplicate copies and gold level an echo up, up to your own level.</string>
     <string name="guide_focus_title">Focus and Pomodoro</string>
-    <string name="guide_focus">Link a mission::Minutes count for it. A free session only counts in your stats.\nThe right mode::Each mission is timer or Pomodoro, and only that mode counts.\nReal breaks::In Pomodoro only focus minutes count, and apps are free on breaks.\nNo limit::Counts until you stop.\nNo quitting::Stopping early loses the minutes; finishing counts +25% and bonus gold.</string>
+    <string name="guide_focus">Link a mission::Minutes count for it. Any session also pays XP per minute, up to 2 h a day.\nThe right mode::Each mission is timer or Pomodoro, and only that mode counts.\nReal breaks::In Pomodoro only focus minutes count, and apps are free on breaks.\nNo limit::Counts until you stop.\nNo quitting::Stopping early loses the minutes; finishing counts +25% and bonus gold.</string>
     <string name="guide_shop_title">Shop</string>
     <string name="guide_shop">Items::Swap missions, protect your streak, XP and gold elixirs, chests.\nEchoes for sale::3 a week, refreshed every Monday.\nInventory::What you buy is kept until you use it.</string>
     <string name="auto_backups">Automatic copies</string>
@@ -642,7 +643,7 @@
     <string name="attr_focus_title">Attribute focus</string>
     <string name="attr_focus_question">Which attributes do you want to grow?</string>
     <string name="attr_focus_hint">Up to 2. Their missions come up more often; the others still appear.</string>
-    <string name="attr_focus_catchup">Catch up</string>
+    <string name="attr_focus_catchup">Even out</string>
     <string name="attr_focus_catchup_what">lifts the ones left behind</string>
     <string name="attr_focus_catchup_now">Today lifting: %1$s</string>
     <string name="attr_focus_catchup_even">They\'re even for now: everything comes up equally.</string>

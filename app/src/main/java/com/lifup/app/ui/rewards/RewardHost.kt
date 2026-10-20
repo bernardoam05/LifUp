@@ -237,7 +237,9 @@ private fun toastMessage(s: GameState, t: Reward.Toast): String {
         ToastKind.LEVEL_UP -> stringResource(R.string.toast_level, t.arg)
         ToastKind.ITEM_FOUND -> stringResource(R.string.toast_item_found, itemName)
         ToastKind.PENALTY_CLEARED -> stringResource(R.string.toast_penalty_cleared)
-        ToastKind.FOCUS_DONE -> stringResource(R.string.toast_focus_done, t.arg)
+        ToastKind.FOCUS_DONE -> t.arg.split(':').let { (min, xp) -> // older toasts carry minutes only
+            if (xp.toIntOrNull()?.takeIf { it > 0 } != null) stringResource(R.string.toast_focus_done_xp, min, xp) else stringResource(R.string.toast_focus_done, min)
+        }
         ToastKind.FOCUS_LOST -> stringResource(R.string.toast_focus_lost, t.arg)
         ToastKind.BOSS_ESCAPED -> stringResource(R.string.toast_boss_escaped, content.bossById[t.arg]?.title?.local() ?: t.arg)
         ToastKind.BOSS_REVIVED -> stringResource(R.string.toast_boss_revived, content.bossById[t.arg]?.title?.local() ?: t.arg)

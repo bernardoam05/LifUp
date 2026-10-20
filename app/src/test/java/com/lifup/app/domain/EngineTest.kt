@@ -682,19 +682,35 @@ class EngineTest {
         assertTrue(s.rewards.none { it is Reward.Toast && it.kind == ToastKind.ACHIEVEMENT })
     }
 
-    @Test fun `gold from won no-quitting sessions stops at the daily cap`() {
-        var s = run(fresh(), "2026-10-14T10:00") { startFocus(FocusSession(0, 150, strict = true)) }
-        s = run(s, "2026-10-14T12:30") { settleFocus() }
-        assertEquals(30, s.daily.focusGold)
-        s = run(s, "2026-10-14T13:00") { startFocus(FocusSession(0, 60, strict = true)) }
-        val before = s.player.gold
-        s = run(s, "2026-10-14T14:00") { settleFocus() }
-        assertEquals(Rules.STRICT_GOLD_MAX_PER_DAY, s.daily.focusGold)
-        assertEquals(Rules.STRICT_GOLD_MAX_PER_DAY - 30, s.player.gold - before)
+    /** XP earned since level 1, so level-ups don't hide gains. */
+    private fun GameState.totalXp() = (1 until player.level).sumOf { Rules.xpForLevel(it) } + player.xp
+
+    @Test fun `focus pays xp per minute and gold when won, up to the daily cap`() {
+        // Level 4: tier ×1 and room for the XP below without a level-up; the first focus-hours
+        // achievement already taken, so only focus pays gold here.
+        val start = fresh().let { it.copy(player = it.player.copy(level = 4), achievements = mapOf("focus_hours" to 1)) }
+        var s = run(start, "2026-10-14T10:00") { startFocus(FocusSession(0, 50)) }
+        val xp0 = s.totalXp()
+        s = run(s, "2026-10-14T10:50") { settleFocus() }
+        assertEquals(50.0, s.daily.focusPaidMin, 1e-9)
+        assertEquals(50, s.totalXp() - xp0)
+        s = run(s, "2026-10-14T11:00") { startFocus(FocusSession(0, 100, strict = true)) }
+        val gold = s.player.gold
+        val xp1 = s.totalXp()
+        s = run(s, "2026-10-14T12:40") { settleFocus() }
+        // Only 70 of the 100 minutes were left in today's allowance; won: +25% XP and gold.
+        assertEquals(Rules.FOCUS_PAID_MAX_MIN, s.daily.focusPaidMin, 1e-9)
+        assertEquals(88, s.totalXp() - xp1)
+        assertEquals(14, s.player.gold - gold)
+        s = run(s, "2026-10-14T13:00") { startFocus(FocusSession(0, 30)) }
+        val xp2 = s.totalXp()
+        s = run(s, "2026-10-14T13:30") { settleFocus() }
+        assertEquals(xp2, s.totalXp())
+        assertEquals(30, s.count(StatKey.FOCUS_MINUTES) - 50 - 125) // the stats keep counting
         // A new day starts a new allowance.
-        s = run(s, "2026-10-15T10:00") { startFocus(FocusSession(0, 25, strict = true)) }
+        s = run(s, "2026-10-15T10:00") { startFocus(FocusSession(0, 25)) }
         s = run(s, "2026-10-15T10:25") { settleFocus() }
-        assertEquals(5, s.daily.focusGold)
+        assertEquals(25.0, s.daily.focusPaidMin, 1e-9)
     }
 
     @Test fun `measured limits warn when a quarter or 20 minutes are left`() {

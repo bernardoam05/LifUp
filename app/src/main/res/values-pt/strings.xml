@@ -127,7 +127,7 @@
     </plurals>
     <string name="choose_apps">Escolher apps</string>
     <string name="strict_mode">Sem desistências</string>
-    <string name="strict_info">Se parares antes do fim perdes os minutos. Se chegares ao fim, valem +25% e ganhas ouro extra (até 3 h por dia).</string>
+    <string name="strict_info">Se parares antes do fim perdes os minutos. Se chegares ao fim, valem +25% e ganhas ouro extra (até 2 h por dia).</string>
     <string name="ambient">Som ambiente</string>
     <string name="ambient_none">Silêncio</string>
     <string name="ambient_rain">Chuva</string>
@@ -259,6 +259,7 @@
     <string name="toast_item_found">Encontraste: %1$s</string>
     <string name="toast_penalty_cleared">Penalização cumprida</string>
     <string name="toast_focus_done">Foco concluído: %1$s min</string>
+    <string name="toast_focus_done_xp">Foco concluído: %1$s min · +%2$s XP</string>
     <string name="toast_focus_lost">Sem desistências: desististe, %1$s min perdidos</string>
     <string name="toast_boss_escaped">Tempo esgotado: %1$s ficou por vencer</string>
     <string name="toast_portal_escaped">O portal fechou-se</string>
@@ -511,7 +512,7 @@
     <string name="guide_shadows_title">Ecos</string>
     <string name="guide_shadows">Onde os encontras::Dias perfeitos, bosses, portais, conquistas, marcos de sequência e a loja.\nEsquadrão::Até 3 em campo, cada um com uma passiva: mais XP, mais ouro, mais dano, proteção.\nEvolução::Cópias repetidas e ouro sobem o nível do eco, até ao teu.</string>
     <string name="guide_focus_title">Foco e Pomodoro</string>
-    <string name="guide_focus">Liga a uma missão::Os minutos contam para ela. Uma sessão livre só conta nas estatísticas.\nO modo certo::Cada missão é de temporizador ou de Pomodoro, e só esse modo conta.\nPausas a sério::No Pomodoro só os minutos de foco contam, e nas pausas as apps ficam livres.\nSem limite::Conta até parares.\nSem desistências::Parar a meio perde os minutos; chegar ao fim vale +25% e ouro extra.</string>
+    <string name="guide_focus">Liga a uma missão::Os minutos contam para ela. Qualquer sessão dá também XP por minuto, até 2 h por dia.\nO modo certo::Cada missão é de temporizador ou de Pomodoro, e só esse modo conta.\nPausas a sério::No Pomodoro só os minutos de foco contam, e nas pausas as apps ficam livres.\nSem limite::Conta até parares.\nSem desistências::Parar a meio perde os minutos; chegar ao fim vale +25% e ouro extra.</string>
     <string name="guide_shop_title">Loja</string>
     <string name="guide_shop">Objetos::Trocar missões, proteger a sequência, elixires de XP e ouro, baús.\nEcos à venda::3 por semana, renovam todas as segundas.\nInventário::O que compras fica guardado até o usares.</string>
     <string name="auto_backups">Cópias automáticas</string>
@@ -623,8 +624,8 @@
     <string name="attr_focus_title">Foco de atributos</string>
     <string name="attr_focus_question">Que atributos queres desenvolver?</string>
     <string name="attr_focus_hint">Até 2. As missões deles saem mais vezes; as outras continuam a aparecer.</string>
-    <string name="attr_focus_catchup">Pôr em dia</string>
-    <string name="attr_focus_catchup_what">puxa pelos que ficaram para trás</string>
+    <string name="attr_focus_catchup">Nivelar</string>
+    <string name="attr_focus_catchup_what">reforça os que ficaram para trás</string>
     <string name="attr_focus_catchup_now">Hoje a puxar por: %1$s</string>
     <string name="attr_focus_catchup_even">Para já estão equilibrados: sai tudo por igual.</string>
     <string name="notif_limit_title">%1$s: quase no limite</string>

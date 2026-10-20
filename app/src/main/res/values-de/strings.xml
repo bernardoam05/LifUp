@@ -136,7 +136,7 @@
     </plurals>
     <string name="choose_apps">Apps wählen</string>
     <string name="strict_mode">Kein Aufgeben</string>
-    <string name="strict_info">Wenn du vorzeitig stoppst, verlierst du die Minuten. Wenn du durchhältst, zählen sie +25 % und du bekommst Extra-Gold (bis zu 3 Std. am Tag).</string>
+    <string name="strict_info">Wenn du vorzeitig stoppst, verlierst du die Minuten. Wenn du durchhältst, zählen sie +25 % und du bekommst Extra-Gold (bis zu 2 Std. am Tag).</string>
     <string name="ambient">Umgebungsklang</string>
     <string name="ambient_none">Stille</string>
     <string name="ambient_rain">Regen</string>
@@ -273,6 +273,7 @@
     <string name="toast_item_found">Gefunden: %1$s</string>
     <string name="toast_penalty_cleared">Strafe aufgehoben</string>
     <string name="toast_focus_done">Fokus beendet: %1$s min</string>
+    <string name="toast_focus_done_xp">Fokus beendet: %1$s min · +%2$s XP</string>
     <string name="toast_focus_lost">Kein Aufgeben gescheitert: %1$s min verloren</string>
     <string name="toast_boss_escaped">Zeit abgelaufen: %1$s wurde nicht besiegt</string>
     <string name="toast_portal_escaped">Das Portal hat sich geschlossen</string>
@@ -529,7 +530,7 @@
     <string name="guide_shadows_title">Echos</string>
     <string name="guide_shadows">Wo du sie findest::Perfekte Tage, Bosse, Portale, Erfolge, Serien-Meilensteine und der Shop.\nTeam::Bis zu 3 im Einsatz, jedes mit einem Passiv: mehr XP, mehr Gold, mehr Schaden, Schutz.\nEntwicklung::Doppelte Kopien und Gold steigern das Echo im Level, bis zu deinem.</string>
     <string name="guide_focus_title">Fokus und Pomodoro</string>
-    <string name="guide_focus">Mission verknüpfen::Die Minuten zählen für sie. Eine freie Sitzung zählt nur in den Statistiken.\nDer richtige Modus::Jede Mission läuft mit Timer oder Pomodoro, und nur dieser Modus zählt.\nEchte Pausen::Im Pomodoro zählen nur die Fokus-Minuten, und in den Pausen sind die Apps frei.\nOhne Limit::Zählt, bis du stoppst.\nKein Aufgeben::Mittendrin stoppen kostet die Minuten; bis zum Ende durchhalten zählt +25 % und bringt Extra-Gold.</string>
+    <string name="guide_focus">Mission verknüpfen::Die Minuten zählen für sie. Auch eine freie Sitzung bringt XP pro Minute, bis zu 2 Std. am Tag.\nDer richtige Modus::Jede Mission läuft mit Timer oder Pomodoro, und nur dieser Modus zählt.\nEchte Pausen::Im Pomodoro zählen nur die Fokus-Minuten, und in den Pausen sind die Apps frei.\nOhne Limit::Zählt, bis du stoppst.\nKein Aufgeben::Mittendrin stoppen kostet die Minuten; bis zum Ende durchhalten zählt +25 % und bringt Extra-Gold.</string>
     <string name="guide_shop_title">Shop</string>
     <string name="guide_shop">Gegenstände::Missionen tauschen, Serie schützen, XP- und Gold-Elixiere, Truhen.\nEchos im Angebot::3 pro Woche, erneuert jeden Montag.\nInventar::Was du kaufst, bleibt gespeichert, bis du es nutzt.</string>
     <string name="auto_backups">Automatische Kopien</string>
@@ -641,8 +642,8 @@
     <string name="attr_focus_title">Attributfokus</string>
     <string name="attr_focus_question">Welche Attribute willst du entwickeln?</string>
     <string name="attr_focus_hint">Bis zu 2. Ihre Missionen kommen öfter; die anderen erscheinen weiterhin.</string>
-    <string name="attr_focus_catchup">Aufholen</string>
-    <string name="attr_focus_catchup_what">zieht die Nachzügler hoch</string>
+    <string name="attr_focus_catchup">Angleichen</string>
+    <string name="attr_focus_catchup_what">stärkt die, die zurückliegen</string>
     <string name="attr_focus_catchup_now">Heute im Fokus: %1$s</string>
     <string name="attr_focus_catchup_even">Im Moment sind sie ausgeglichen: alles kommt gleich oft.</string>
     <string name="notif_limit_title">%1$s: fast am Limit</string>
