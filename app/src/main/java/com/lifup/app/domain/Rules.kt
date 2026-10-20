@@ -120,6 +120,8 @@ object Rules {
     const val PROG_KEEPS_PER_MISS = 4
     const val PROG_DOWN_MISSES = 3
     const val PROG_MIN_STEP = -3
+    /** Past a mission's comfortable top, each step needs this many times the keeps. */
+    const val PROG_PAST_TOP_PACE = 2
     /** The reward follows the target: half its relative change, within these bounds. */
     const val PROG_REWARD_MIN = -0.15
     const val PROG_REWARD_MAX = 0.5

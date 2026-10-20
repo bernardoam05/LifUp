@@ -47,7 +47,7 @@ class DrawTest {
 
     @Test fun `targets follow the step and stop at their cap`() {
         val pushups = content.questDefById.getValue("core_pushups")
-        assertEquals(40.0, buildQuest(pushups, 100, QuestOrigin.DAILY, step = 100).target, 0.0)
+        assertEquals(pushups.peakTarget!!, buildQuest(pushups, 100, QuestOrigin.DAILY, step = 1000).target, 0.0)
         assertEquals(15.0, buildQuest(pushups, 100, QuestOrigin.DAILY).target, 0.0)
     }
 

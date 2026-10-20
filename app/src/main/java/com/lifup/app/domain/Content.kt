@@ -50,8 +50,10 @@ data class QuestDef(
     val perWeek: Int? = null,
     /** Family for the daily draw and attribute growth; null = from the type. */
     val group: DrawGroup? = null,
-    /** The hardest the target gets: a ceiling, or the floor for limits. */
+    /** The comfortable top: a ceiling, or the floor for limits. Past it, steps come at half pace up to [peakTarget]. */
     val maxTarget: Double? = null,
+    /** The hardest the target gets, for people who outgrow [maxTarget]; null = stop at [maxTarget]. */
+    val peakTarget: Double? = null,
     /** Rotating suggestions for open-ended missions; one is picked per day. */
     val prompts: List<L10n>? = null,
     /** How to go about it, for missions where that isn't obvious. */

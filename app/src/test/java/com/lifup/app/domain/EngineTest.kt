@@ -599,9 +599,12 @@ class EngineTest {
         assertTrue(limit.targetAt(1) < limit.baseTarget)
         assertEquals(limit.maxTarget!!, limit.targetAt(100), 0.0)
         val pushups = content.questDefById.getValue("core_pushups")
-        assertEquals(40.0, pushups.targetAt(100), 0.0)
+        assertEquals(pushups.peakTarget!!, pushups.targetAt(1000), 0.0)
         assertEquals(pushups.baseTarget / 2, pushups.targetAt(-100), 0.0)
-        assertNull(fresh().copy(adapt = mapOf(pushups.id to Adapt(25))).keepsToNextStep(pushups))
+        // Past the comfortable top (40) the pace halves; at the peak it stops.
+        assertEquals(pushups.scalingInterval, fresh().copy(adapt = mapOf(pushups.id to Adapt(24))).keepsToNextStep(pushups))
+        assertEquals(pushups.scalingInterval * 2, fresh().copy(adapt = mapOf(pushups.id to Adapt(25))).keepsToNextStep(pushups))
+        assertNull(fresh().copy(adapt = mapOf(pushups.id to Adapt(85))).keepsToNextStep(pushups))
     }
 
     @Test fun `every echo has a power kind and the amplifier counts as all`() {

@@ -24,7 +24,8 @@
    "unit": "reps",
    "baseXp": 50,
    "baseGold": 10,
-   "maxTarget": 40
+   "maxTarget": 40,
+   "peakTarget": 100
   },
   {
    "id": "core_squats",
@@ -50,7 +51,8 @@
    "unit": "reps",
    "baseXp": 50,
    "baseGold": 10,
-   "maxTarget": 50
+   "maxTarget": 50,
+   "peakTarget": 120
   },
   {
    "id": "core_reading",
@@ -83,7 +85,8 @@
     "es": "Vale cualquier libro que te enseñe algo, en papel o e-reader. 10 páginas son unos 15 minutos.",
     "fr": "N'importe quel livre qui t'apprend quelque chose, papier ou liseuse. 10 pages, c'est environ 15 minutes.",
     "de": "Jedes Buch, das dir etwas beibringt, auf Papier oder E-Reader. 10 Seiten dauern etwa 15 Minuten."
-   }
+   },
+   "peakTarget": 50
   },
   {
    "id": "core_water",
@@ -143,7 +146,8 @@
     "es": "Usa \"Empezar carrera\" en esta misión: la distancia sale de tus pasos. ¿Nunca corres? Alterna 1 min corriendo y 1 andando.",
     "fr": "Utilise « Démarrer la course » dans cette mission : la distance vient de tes pas. Débutant ? Alterne 1 min de course et 1 de marche.",
     "de": "Nutze „Lauf starten“ in dieser Mission: die Strecke kommt aus deinen Schritten. Neu? Wechsle 1 Min. Laufen und 1 Min. Gehen."
-   }
+   },
+   "peakTarget": 10
   },
   {
    "id": "pool_plank",
@@ -169,7 +173,8 @@
    "unit": "s",
    "baseXp": 60,
    "baseGold": 15,
-   "maxTarget": 180
+   "maxTarget": 180,
+   "peakTarget": 300
   },
   {
    "id": "pool_meditate",
@@ -246,7 +251,8 @@
     "es": "Siéntate cómodo y usa el Foco de la app como temporizador. Distraerse es parte: vuelve a la respiración.",
     "fr": "Assieds-toi confortablement et utilise le Focus de l'app comme minuteur. Se distraire en fait partie : reviens au souffle.",
     "de": "Setz dich bequem hin und nutze den Fokus der App als Timer. Abschweifen gehört dazu: kehr zum Atem zurück."
-   }
+   },
+   "peakTarget": 30
   },
   {
    "id": "pool_social",
@@ -329,7 +335,8 @@
    "unit": "reps",
    "baseXp": 90,
    "baseGold": 25,
-   "maxTarget": 15
+   "maxTarget": 15,
+   "peakTarget": 30
   },
   {
    "id": "pool_stretching",
@@ -356,7 +363,8 @@
    "unit": "min",
    "baseXp": 40,
    "baseGold": 10,
-   "maxTarget": 25
+   "maxTarget": 25,
+   "peakTarget": 30
   },
   {
    "id": "pool_deepwork",
@@ -389,7 +397,8 @@
     "es": "Móvil en otra habitación y una sola tarea elegida antes de empezar. Usa el Foco con bloqueo de apps.",
     "fr": "Téléphone dans une autre pièce et une seule tâche choisie avant de commencer. Utilise le Focus avec blocage d'apps.",
     "de": "Handy in einen anderen Raum und vorher genau eine Aufgabe wählen. Nutze den Fokus mit App-Sperre."
-   }
+   },
+   "peakTarget": 120
   },
   {
    "id": "pool_coldshower",
@@ -480,7 +489,8 @@
    "unit": "reps",
    "baseXp": 80,
    "baseGold": 25,
-   "maxTarget": 35
+   "maxTarget": 35,
+   "peakTarget": 60
   },
   {
    "id": "pool_cook",
@@ -637,7 +647,8 @@
    "baseGold": 20,
    "auto": "STEPS",
    "maxTarget": 12000,
-   "untilHour": 20
+   "untilHour": 20,
+   "peakTarget": 20000
   },
   {
    "id": "pool_screen_limit",
@@ -733,7 +744,8 @@
     "es": "Sin cuerda, los saltos en el sitio cuentan. Aterriza con la punta de los pies, rodillas algo flexionadas.",
     "fr": "Sans corde, les sauts sur place comptent. Atterris sur l'avant du pied, genoux légèrement fléchis.",
     "de": "Ohne Seil zählen Sprünge auf der Stelle. Lande auf den Fußballen, Knie leicht gebeugt."
-   }
+   },
+   "peakTarget": 600
   },
   {
    "id": "pool_lunges",
@@ -759,7 +771,8 @@
    "unit": "reps",
    "baseXp": 60,
    "baseGold": 15,
-   "maxTarget": 50
+   "maxTarget": 50,
+   "peakTarget": 100
   },
   {
    "id": "pool_dips",
@@ -785,7 +798,8 @@
    "unit": "reps",
    "baseXp": 60,
    "baseGold": 15,
-   "maxTarget": 35
+   "maxTarget": 35,
+   "peakTarget": 60
   },
   {
    "id": "pool_mobility",
@@ -819,7 +833,8 @@
     "es": "Ej.: rotaciones de cadera, gato-vaca, círculos de hombros. Un vídeo corto de movilidad ayuda.",
     "fr": "Ex. : rotations de hanches, chat-vache, cercles d'épaules. Une courte vidéo de mobilité aide.",
     "de": "Z. B. Hüftkreisen, Katze-Kuh, Schulterkreisen. Ein kurzes Mobility-Video hilft."
-   }
+   },
+   "peakTarget": 30
   },
   {
    "id": "pool_stairs",
@@ -846,7 +861,8 @@
    "unit": "flights",
    "baseXp": 60,
    "baseGold": 15,
-   "maxTarget": 20
+   "maxTarget": 20,
+   "peakTarget": 40
   },
   {
    "id": "pool_hike",
@@ -881,7 +897,8 @@
     "de": "Es zählt über die Schritte des Tages, also zählt jeder Weg zu Fuß. Eine große Runde am Abend holt den Rest."
    },
    "auto": "WALK_DISTANCE",
-   "untilHour": 17
+   "untilHour": 17,
+   "peakTarget": 15
   },
   {
    "id": "pool_veggies",
@@ -941,7 +958,8 @@
     "es": "Elige una parte pequeña y concreta (un acorde, un atajo, un paso) y repítela hasta que salga mejor.",
     "fr": "Choisis un petit élément concret (un accord, un raccourci, un geste) et répète-le jusqu'à ce qu'il s'améliore.",
     "de": "Wähle ein kleines, konkretes Stück (ein Akkord, ein Shortcut, eine Bewegung) und wiederhole es, bis es besser klappt."
-   }
+   },
+   "peakTarget": 60
   },
   {
    "id": "pool_creative",
@@ -1368,7 +1386,8 @@
    "unit": "reps",
    "baseXp": 50,
    "baseGold": 12,
-   "maxTarget": 50
+   "maxTarget": 50,
+   "peakTarget": 100
   },
   {
    "id": "pool_glutes",
@@ -1394,7 +1413,8 @@
    "unit": "reps",
    "baseXp": 45,
    "baseGold": 12,
-   "maxTarget": 50
+   "maxTarget": 50,
+   "peakTarget": 100
   },
   {
    "id": "pool_sideplank",
@@ -1420,7 +1440,8 @@
    "unit": "s",
    "baseXp": 55,
    "baseGold": 14,
-   "maxTarget": 90
+   "maxTarget": 90,
+   "peakTarget": 150
   },
   {
    "id": "pool_stroll",
@@ -1447,7 +1468,8 @@
    "unit": "min",
    "baseXp": 40,
    "baseGold": 10,
-   "maxTarget": 40
+   "maxTarget": 40,
+   "peakTarget": 60
   },
   {
    "id": "pool_active_breaks",
@@ -1817,7 +1839,8 @@
     "es": "Espalda pegada a la pared y rodillas a 90°, sobre los tobillos. Puedes dividirlo en 2 o 3 veces.",
     "fr": "Dos collé au mur, genoux à 90° au-dessus des chevilles. Tu peux le faire en 2 ou 3 fois.",
     "de": "Rücken flach an der Wand, Knie im 90°-Winkel über den Knöcheln. Du kannst es auf 2 oder 3 Mal aufteilen."
-   }
+   },
+   "peakTarget": 240
   },
   {
    "id": "pool_pike",
@@ -1851,7 +1874,8 @@
     "es": "Manos al ancho de los hombros y cadera bien alta; baja la cabeza entre las manos. ¿Muy difícil? Dobla las rodillas.",
     "fr": "Mains écartées de la largeur des épaules, hanches hautes ; descends la tête entre les mains. Trop dur ? Plie les genoux.",
     "de": "Hände schulterbreit, Hüfte hoch; senke den Kopf zwischen die Hände. Zu schwer? Beuge die Knie."
-   }
+   },
+   "peakTarget": 40
   },
   {
    "id": "pool_calves",
@@ -1885,7 +1909,8 @@
     "es": "En un escalón, dejando bajar los talones, rinde más. Sube despacio y para 1 s arriba.",
     "fr": "Sur une marche, talons sous le niveau de la marche, c'est plus efficace. Monte lentement et marque 1 s en haut.",
     "de": "Auf einer Stufe, mit den Fersen unter Stufenhöhe, wirkt es besser. Langsam hoch und oben 1 s halten."
-   }
+   },
+   "peakTarget": 150
   },
   {
    "id": "pool_backext",
@@ -1919,7 +1944,8 @@
     "es": "Levanta pecho y piernas a la vez, aguanta 2 s y baja despacio. Mira al suelo, no al frente.",
     "fr": "Lève la poitrine et les jambes ensemble, tiens 2 s et redescends lentement. Regarde le sol, pas devant toi.",
     "de": "Brust und Beine gleichzeitig heben, 2 s halten, langsam senken. Blick zum Boden, nicht nach vorn."
-   }
+   },
+   "peakTarget": 60
   },
   {
    "id": "pool_climbers",
@@ -1946,7 +1972,8 @@
    "unit": "reps",
    "baseXp": 50,
    "baseGold": 12,
-   "maxTarget": 80
+   "maxTarget": 80,
+   "peakTarget": 150
   },
   {
    "id": "pool_sport",
@@ -2006,7 +2033,8 @@
    "unit": "min",
    "baseXp": 70,
    "baseGold": 20,
-   "maxTarget": 45
+   "maxTarget": 45,
+   "peakTarget": 90
   },
   {
    "id": "pool_dance",
@@ -2040,7 +2068,8 @@
     "es": "No hace falta técnica: tres o cuatro canciones seguidas, sin parar.",
     "fr": "Pas besoin de technique : trois ou quatre morceaux d'affilée, sans t'arrêter.",
     "de": "Technik ist egal: drei, vier Lieder am Stück, immer in Bewegung."
-   }
+   },
+   "peakTarget": 40
   },
   {
    "id": "pool_balance",
@@ -2074,7 +2103,8 @@
     "es": "Cerca de una pared por si la necesitas. ¿Muy fácil? Cierra los ojos o súbete a un cojín.",
     "fr": "Près d'un mur au cas où. Trop facile ? Ferme les yeux ou tiens-toi sur un coussin.",
     "de": "Nah an einer Wand, falls du Halt brauchst. Zu leicht? Augen zu oder auf ein Kissen stellen."
-   }
+   },
+   "peakTarget": 120
   },
   {
    "id": "pool_highknees",
@@ -2101,7 +2131,8 @@
    "unit": "s",
    "baseXp": 45,
    "baseGold": 12,
-   "maxTarget": 180
+   "maxTarget": 180,
+   "peakTarget": 300
   },
   {
    "id": "pool_protein",

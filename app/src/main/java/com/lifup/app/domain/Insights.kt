@@ -8,12 +8,19 @@ import java.time.temporal.ChronoUnit
 /** Missions whose target moves with how they go: those with an increase (never avoid missions or check-ins). */
 fun QuestDef.progresses() = scalingAmount > 0 && type != QuestType.FORBIDDEN && fromHour == null
 
-/** The target after [step] steps: within the cap, and never eased by more than half the base. */
+/** The target after [step] steps: up to the peak (or the top), and never eased by more than half the base. */
 fun QuestDef.targetAt(step: Int): Double {
     if (!progresses()) return baseTarget
-    return if (descending) (baseTarget - step * scalingAmount).coerceAtLeast(minOf(maxTarget ?: 0.0, baseTarget)).coerceAtMost(baseTarget * 1.5)
-    else (baseTarget + step * scalingAmount).coerceAtMost(maxOf(maxTarget ?: Double.MAX_VALUE, baseTarget)).coerceAtLeast(baseTarget / 2)
+    val cap = peakTarget ?: maxTarget
+    return if (descending) (baseTarget - step * scalingAmount).coerceAtLeast(minOf(cap ?: 0.0, baseTarget)).coerceAtMost(baseTarget * 1.5)
+    else (baseTarget + step * scalingAmount).coerceAtMost(maxOf(cap ?: Double.MAX_VALUE, baseTarget)).coerceAtLeast(baseTarget / 2)
 }
+
+/** Whether [step] is at or past the comfortable top, where growth slows down. */
+fun QuestDef.pastTop(step: Int): Boolean = maxTarget?.let { top -> if (descending) targetAt(step) <= top else targetAt(step) >= top } ?: false
+
+/** Keeps a step up needs from [step]: the mission's cadence, slower past its comfortable top. */
+fun QuestDef.keepsFor(step: Int): Int = scalingInterval * if (pastTop(step)) Rules.PROG_PAST_TOP_PACE else 1
 
 /** Reward multiplier for a grown (or eased) target. */
 fun QuestDef.rewardAt(step: Int): Double {
@@ -27,7 +34,7 @@ fun GameState.stepOf(id: String) = adapt[id]?.level ?: 0
 fun GameState.keepsToNextStep(def: QuestDef): Int? {
     val a = adapt[def.id] ?: Adapt()
     if (!def.progresses() || def.targetAt(a.level + 1) == def.targetAt(a.level)) return null
-    return (maxOf(def.scalingInterval, Rules.PROG_KEEPS_PER_MISS * a.losses) - a.wins).coerceAtLeast(1)
+    return (maxOf(def.keepsFor(a.level), Rules.PROG_KEEPS_PER_MISS * a.losses) - a.wins).coerceAtLeast(1)
 }
 
 /** Records a closed day's daily missions and nudges each one's target toward what the user really does. */
@@ -69,7 +76,7 @@ internal fun Adapt.next(ok: Boolean, def: QuestDef): Adapt {
     val canRise = def.targetAt(level + 1) != def.targetAt(level)
     val canDrop = level > Rules.PROG_MIN_STEP && def.targetAt(level - 1) != def.targetAt(level)
     return when {
-        ok && canRise && kept >= def.scalingInterval && kept >= Rules.PROG_KEEPS_PER_MISS * missed -> Adapt(level + 1)
+        ok && canRise && kept >= def.keepsFor(level) && kept >= Rules.PROG_KEEPS_PER_MISS * missed -> Adapt(level + 1)
         !ok && canDrop && missed >= Rules.PROG_DOWN_MISSES && missed > kept -> Adapt(level - 1)
         else -> Adapt(level, kept, missed)
     }
