@@ -1,16 +1,26 @@
 package com.lifup.app.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -49,50 +59,85 @@ private fun attrWhatRes(a: Attr) = when (a) {
     Attr.VIT -> R.string.attr_vit_what
 }
 
+private enum class FocusMode(val label: Int) {
+    BALANCED(R.string.attr_focus_balanced), ADAPTIVE(R.string.attr_focus_catchup), CHOSEN(R.string.attr_focus_choose)
+}
+
 /**
- * "Balanced", up to [MAX_FOCUS_ATTRS] attributes, each with the kind of missions it brings, or (when
- * [catchUp] isn't null) "Catch up", which follows the attributes that fell behind ([lagging] today).
+ * First the mode (Balanced / Adaptive / Choose), then the attributes: picked by the player (up to
+ * [MAX_FOCUS_ATTRS]) or, in Adaptive, shown lit for the ones that fell behind ([lagging]).
+ * A null [catchUp] hides Adaptive (onboarding, before there is anything to catch up on).
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FocusPicker(
     selected: Set<Attr>, onChange: (Set<Attr>) -> Unit,
     catchUp: Boolean? = null, lagging: Set<Attr> = emptySet(), onCatchUp: (Boolean) -> Unit = {},
 ) {
     val c = Lif.colors
-    val auto = catchUp == true
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        FilterChip(selected = selected.isEmpty() && !auto, onClick = { onCatchUp(false); onChange(emptySet()) }, label = { Text(stringResource(R.string.attr_focus_balanced)) })
-        if (catchUp != null) FilterChip(
-            selected = auto,
-            onClick = { onCatchUp(!auto) },
-            label = { ChipLabel(stringResource(R.string.attr_focus_catchup), stringResource(R.string.attr_focus_catchup_what), if (auto) c.accent else c.text) },
-            colors = FilterChipDefaults.filterChipColors(selectedContainerColor = c.accent.copy(alpha = 0.15f)),
-        )
-        Attr.entries.forEach { a ->
-            val on = a in selected && !auto
-            val color = attrColor(a)
-            FilterChip(
-                selected = on,
-                enabled = on || auto || selected.size < MAX_FOCUS_ATTRS,
-                onClick = { onCatchUp(false); onChange(if (on) selected - a else if (auto) setOf(a) else selected + a) },
-                label = { ChipLabel(stringResource(attrNameRes(a)), stringResource(attrWhatRes(a)), if (on) color else c.text) },
-                colors = FilterChipDefaults.filterChipColors(selectedContainerColor = color.copy(alpha = 0.15f)),
-            )
+    // "Choose" with nothing picked yet still shows the grid, though the draw stays balanced.
+    var choosing by remember { mutableStateOf(selected.isNotEmpty()) }
+    val mode = when {
+        catchUp == true -> FocusMode.ADAPTIVE
+        choosing || selected.isNotEmpty() -> FocusMode.CHOSEN
+        else -> FocusMode.BALANCED
+    }
+    val modes = FocusMode.entries.filter { it != FocusMode.ADAPTIVE || catchUp != null }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+            modes.forEachIndexed { i, m ->
+                SegmentedButton(
+                    selected = mode == m,
+                    onClick = {
+                        choosing = m == FocusMode.CHOSEN
+                        if (catchUp != null) onCatchUp(m == FocusMode.ADAPTIVE)
+                        if (m == FocusMode.BALANCED) onChange(emptySet())
+                    },
+                    shape = SegmentedButtonDefaults.itemShape(i, modes.size),
+                ) { Text(stringResource(m.label), maxLines = 1) }
+            }
+        }
+        val info = when (mode) {
+            FocusMode.BALANCED -> stringResource(R.string.attr_focus_balanced_info)
+            FocusMode.CHOSEN -> stringResource(R.string.attr_focus_hint)
+            FocusMode.ADAPTIVE -> if (lagging.isEmpty()) stringResource(R.string.attr_focus_catchup_even)
+                else stringResource(R.string.attr_focus_catchup_now, lagging.map { stringResource(attrNameRes(it)) }.joinToString(", "))
+        }
+        Text(info, style = MaterialTheme.typography.bodySmall, color = c.muted)
+        when (mode) {
+            FocusMode.BALANCED -> Unit
+            FocusMode.ADAPTIVE -> AttrGrid(lit = lagging, enabled = { false }) {}
+            FocusMode.CHOSEN -> AttrGrid(lit = selected, enabled = { it in selected || selected.size < MAX_FOCUS_ATTRS }) { a ->
+                onChange(if (a in selected) selected - a else selected + a)
+            }
         }
     }
-    val hint = when {
-        !auto -> stringResource(R.string.attr_focus_hint)
-        lagging.isEmpty() -> stringResource(R.string.attr_focus_catchup_even)
-        else -> stringResource(R.string.attr_focus_catchup_now, lagging.map { stringResource(attrNameRes(it)) }.joinToString(", "))
+}
+
+/** The four attributes as equal cards, two per row; [lit] ones in their colour. */
+@Composable
+private fun AttrGrid(lit: Set<Attr>, enabled: (Attr) -> Boolean, onClick: (Attr) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Attr.entries.chunked(2).forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                row.forEach { a -> AttrCard(a, a in lit, enabled(a), Modifier.weight(1f)) { onClick(a) } }
+            }
+        }
     }
-    Text(hint, style = MaterialTheme.typography.bodySmall, color = c.muted)
 }
 
 @Composable
-private fun ChipLabel(name: String, what: String, color: Color) {
-    Column(Modifier.padding(vertical = 4.dp)) {
-        Text(name, color = color)
-        Text(what, style = MaterialTheme.typography.labelSmall, color = Lif.colors.muted)
+private fun AttrCard(a: Attr, on: Boolean, enabled: Boolean, modifier: Modifier, onClick: () -> Unit) {
+    val c = Lif.colors
+    val color = attrColor(a)
+    val shape = RoundedCornerShape(12.dp)
+    Column(
+        modifier.clip(shape)
+            .background(if (on) color.copy(alpha = 0.15f) else Color.Transparent)
+            .border(1.dp, if (on) color else c.muted.copy(alpha = 0.3f), shape)
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+    ) {
+        Text(stringResource(attrNameRes(a)), color = if (on) color else if (enabled) c.text else c.dim, style = MaterialTheme.typography.titleSmall)
+        Text(stringResource(attrWhatRes(a)), style = MaterialTheme.typography.labelSmall, color = c.muted)
     }
 }

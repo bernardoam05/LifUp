@@ -621,11 +621,12 @@
     <string name="attr_int_what">concentration et étude</string>
     <string name="attr_vit_what">santé et maîtrise de soi</string>
     <string name="attr_focus_balanced">Équilibré</string>
+    <string name="attr_focus_balanced_info">Tous les types de missions sortent à peu près autant.</string>
+    <string name="attr_focus_choose">Choisir</string>
     <string name="attr_focus_title">Attributs prioritaires</string>
     <string name="attr_focus_question">Quels attributs veux-tu développer ?</string>
     <string name="attr_focus_hint">Jusqu\'à 2. Leurs missions sortent plus souvent ; les autres apparaissent toujours.</string>
     <string name="attr_focus_catchup">Adaptatif</string>
-    <string name="attr_focus_catchup_what">renforce ceux qui sont à la traîne</string>
     <string name="attr_focus_catchup_now">Aujourd\'hui en renfort : %1$s</string>
     <string name="attr_focus_catchup_even">Pour l\'instant ils sont à égalité : tout sort autant.</string>
     <string name="notif_limit_title">%1$s : presque à la limite</string>

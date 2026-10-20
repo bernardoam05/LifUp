@@ -640,11 +640,12 @@
     <string name="attr_int_what">focus and study</string>
     <string name="attr_vit_what">health and self-control</string>
     <string name="attr_focus_balanced">Balanced</string>
+    <string name="attr_focus_balanced_info">Every kind of mission comes up about as often.</string>
+    <string name="attr_focus_choose">Choose</string>
     <string name="attr_focus_title">Attribute focus</string>
     <string name="attr_focus_question">Which attributes do you want to grow?</string>
     <string name="attr_focus_hint">Up to 2. Their missions come up more often; the others still appear.</string>
     <string name="attr_focus_catchup">Adaptive</string>
-    <string name="attr_focus_catchup_what">lifts the ones left behind</string>
     <string name="attr_focus_catchup_now">Today lifting: %1$s</string>
     <string name="attr_focus_catchup_even">They\'re even for now: everything comes up equally.</string>
     <string name="notif_limit_title">%1$s: almost at the limit</string>

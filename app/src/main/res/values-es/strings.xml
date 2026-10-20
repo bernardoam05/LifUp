@@ -639,11 +639,12 @@
     <string name="attr_int_what">foco y estudio</string>
     <string name="attr_vit_what">salud y autocontrol</string>
     <string name="attr_focus_balanced">Equilibrado</string>
+    <string name="attr_focus_balanced_info">Todos los tipos de misión salen más o menos por igual.</string>
+    <string name="attr_focus_choose">Elegir</string>
     <string name="attr_focus_title">Foco de atributos</string>
     <string name="attr_focus_question">¿Qué atributos quieres desarrollar?</string>
     <string name="attr_focus_hint">Hasta 2. Sus misiones salen más a menudo; las demás siguen apareciendo.</string>
     <string name="attr_focus_catchup">Adaptativo</string>
-    <string name="attr_focus_catchup_what">refuerza los que se quedaron atrás</string>
     <string name="attr_focus_catchup_now">Hoy impulsando: %1$s</string>
     <string name="attr_focus_catchup_even">Por ahora están igualados: todo sale por igual.</string>
     <string name="notif_limit_title">%1$s: casi en el límite</string>
