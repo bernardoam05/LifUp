@@ -659,6 +659,7 @@
     <string name="edit_mission_tomorrow">Editar misión · cuenta desde mañana</string>
     <string name="count_title">¿Cuántas llevas?</string>
     <string name="manage_missions">Gestionar misiones</string>
+    <string name="manage">Gestionar</string>
     <string name="side_delete_paid">Borrar esta tarea quita el XP y el oro que dio.</string>
     <string name="how_to">¿Cómo hacerlo?</string>
     <string name="note_add">Añadir nota</string>

@@ -659,6 +659,7 @@
     <string name="edit_mission_tomorrow">Mission bearbeiten · gilt ab morgen</string>
     <string name="count_title">Wie viele bisher?</string>
     <string name="manage_missions">Missionen verwalten</string>
+    <string name="manage">Verwalten</string>
     <string name="side_delete_paid">Wenn du diese Aufgabe löschst, werden ihre XP und ihr Gold abgezogen.</string>
     <string name="how_to">Wie geht das?</string>
     <string name="note_add">Notiz hinzufügen</string>

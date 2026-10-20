@@ -660,6 +660,7 @@
     <string name="edit_mission_tomorrow">Edit mission · applies from tomorrow</string>
     <string name="count_title">How many so far?</string>
     <string name="manage_missions">Manage missions</string>
+    <string name="manage">Manage</string>
     <string name="side_delete_paid">Deleting this side quest takes back the XP and gold it gave.</string>
     <string name="how_to">How to?</string>
     <string name="note_add">Add a note</string>

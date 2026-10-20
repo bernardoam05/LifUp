@@ -10,6 +10,8 @@ import com.lifup.app.domain.acceptWeeklyHint
 import com.lifup.app.domain.WeeklyHint
 import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.ui.text.style.TextOverflow
@@ -159,17 +161,13 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
 
         s.weeklyHint?.let { h -> item(key = "weekly_hint") { WeeklyHintCard(s, h) } }
 
-        item { SectionTitle(stringResource(R.string.daily_section)) { InfoButton(Guide.DAILY) } }
+        item { SectionTitle(stringResource(R.string.daily_section)) { ManageAction(openForge); InfoButton(Guide.DAILY) } }
         items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
 
         if (s.weeklyQuests.isNotEmpty()) {
             item { SectionTitle(stringResource(R.string.weekly_section)) { InfoButton(Guide.WEEKLY) } }
             items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId]) { selected = q.id } }
         }
-        item {
-            GhostButton(stringResource(R.string.manage_missions), onClick = openForge, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Tune, color = p.accent)
-        }
-
         item { BossCard(s, now) { selected = it } }
 
         if (s.extraQuests.isNotEmpty() || s.canAddExtra()) {
@@ -322,5 +320,20 @@ private fun WeeklyHintCard(s: GameState, h: WeeklyHint) {
             TextButton(onClick = { act { dismissWeeklyHint() } }) { Text(stringResource(R.string.weekly_hint_no), color = p.muted) }
             TextButton(onClick = { act { acceptWeeklyHint() } }) { Text(stringResource(R.string.weekly_hint_yes, h.perWeek), color = p.accent) }
         }
+    }
+}
+
+/** Small "Manage" action in the daily missions' header, opening the Forge. */
+@Composable
+private fun ManageAction(onClick: () -> Unit) {
+    val p = Lif.colors
+    val label = stringResource(R.string.manage_missions)
+    Row(
+        Modifier.clip(RoundedCornerShape(8.dp)).clickable(onClickLabel = label, onClick = onClick).padding(horizontal = 8.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(Icons.Rounded.Tune, contentDescription = null, tint = p.accent, modifier = Modifier.size(16.dp))
+        Spacer(Modifier.width(4.dp))
+        Text(stringResource(R.string.manage), color = p.accent, style = MaterialTheme.typography.labelLarge)
     }
 }
