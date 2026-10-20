@@ -604,6 +604,12 @@ class EngineTest {
         assertNull(fresh().copy(adapt = mapOf(pushups.id to Adapt(25))).keepsToNextStep(pushups))
     }
 
+    @Test fun `every echo has a power kind and the amplifier counts as all`() {
+        assertTrue(PowerKind.entries.all { k -> Passive.ALL_BOOST.isKind(k) })
+        assertFalse(Passive.GOLD_BOOST.isKind(PowerKind.COMBAT))
+        assertTrue(PowerKind.entries.all { k -> content.shadows.any { it.passive.kind() == k } })
+    }
+
     @Test fun `old saves keep the targets they had`() {
         val old = fresh().let { it.copy(version = 6, player = it.player.copy(level = 30), adapt = mapOf("pool_plank" to Adapt(1))) }
         val s = run(old, "2026-10-14T10:00")

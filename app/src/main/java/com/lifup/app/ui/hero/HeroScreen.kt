@@ -81,6 +81,8 @@ import com.lifup.app.ui.passiveText
 import com.lifup.app.ui.icon
 import com.lifup.app.domain.availableDefs
 import com.lifup.app.domain.isWeekly
+import com.lifup.app.domain.PowerKind
+import com.lifup.app.domain.isKind
 import com.lifup.app.domain.progresses
 import com.lifup.app.domain.roundTarget
 import com.lifup.app.domain.targetAt
@@ -269,12 +271,13 @@ internal fun squadGainText(g: com.lifup.app.domain.SquadGain): String? {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun Collection(s: GameState, filter: ShadowRank?, favorites: Set<String>, favOnly: Boolean, onOpen: (String) -> Unit) {
+internal fun Collection(s: GameState, filter: ShadowRank?, favorites: Set<String>, favOnly: Boolean, power: PowerKind? = null, onOpen: (String) -> Unit) {
     // [favorites] is the order's snapshot; the star on each tile follows the live state.
-    val list = content.shadows.filter { (filter == null || it.rank == filter) && (!favOnly || it.id in favorites) }
+    // An unknown echo's power stays a mystery, so a power filter only lists owned ones.
+    val list = content.shadows.filter { (filter == null || it.rank == filter) && (!favOnly || it.id in favorites) && (power == null || (s.owned(it.id) != null && it.passive.isKind(power))) }
         .sortedWith(compareByDescending<ShadowDef> { it.id in favorites }.thenByDescending { s.owned(it.id) != null }.thenByDescending { it.rank.ordinal })
-    if (favOnly && list.isEmpty()) {
-        Text(stringResource(R.string.favorites_empty), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+    if (list.isEmpty()) {
+        Text(stringResource(if (favOnly) R.string.favorites_empty else R.string.power_empty), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
         return
     }
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), maxItemsInEachRow = 4) {

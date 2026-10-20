@@ -672,6 +672,15 @@
     <string name="week_free">heute optional</string>
     <string name="week_short">diese Woche</string>
     <string name="weekly_section">Diese Woche</string>
+    <string name="power_growth">XP</string>
+    <string name="power_wealth">Gold</string>
+    <string name="power_combat">Kampf</string>
+    <string name="power_protection">Schutz</string>
+    <string name="power_fortune">Fokus &amp; Glück</string>
+    <string name="power_empty">Du hast noch keine Echos mit diesen Filtern.</string>
+    <string name="guide_extra_title">Zusatzmissionen</string>
+    <string name="guide_extra_hook">Für wenn der Tag geschafft ist und du mehr willst.</string>
+    <string name="guide_extra">Nach dem Tag::Sie erscheinen, wenn alle Tagesmissionen geschafft sind, bis zu 3 pro Tag.\nEine nach der anderen::Die nächste kommt erst, wenn die letzte geschafft ist, also kein Rosinenpicken.\nPassend zur Uhrzeit::Es kommen nur Missionen, die zu dieser Zeit noch Sinn ergeben.\nOhne Risiko::Sie geben XP, Gold und Beute, zählen aber nicht für die Serie oder die Strafe.</string>
     <string name="guide_weekly_title">Wochenmissionen</string>
     <string name="guide_weekly_hook">Für Dinge, die du ein paarmal pro Woche machst, an wechselnden Tagen.</string>
     <string name="guide_weekly">Optional::Solange noch Luft ist, zählt sie nur, wenn du sie machst, und verbessert dann deinen Tag.\nZählt heute::Wenn so viele Male fehlen wie Tage bis Sonntag, zählt sie wie eine tägliche und ersetzt eine gezogene Mission.\nWoche geschafft::Erreichst du das Ziel, gibt es Bonusgold. Zusätzliche Male geben trotzdem XP.\nNeue Woche::In der Woche, in der du sie anlegst, ist sie nie Pflicht. Sie zählt ab Montag.</string>

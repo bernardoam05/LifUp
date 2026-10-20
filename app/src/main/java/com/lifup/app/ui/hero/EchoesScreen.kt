@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import com.lifup.app.domain.PowerKind
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +37,7 @@ import com.lifup.app.ui.shadowRankName
 import com.lifup.app.ui.theme.Lif
 
 /**
- * The Echoes tab: the squad on top, then the whole collection with rarity and favourite filters.
+ * The Echoes tab: the squad on top, then the whole collection with rarity, power and favourite filters.
  * Favourites come first, but the order only catches up when the filter changes or the tab is
  * reopened, so tiles don't jump around while the player is starring them.
  */
@@ -44,6 +46,7 @@ fun EchoesScreen(s: GameState, active: Boolean = true) {
     var openShadow by rememberSaveable { mutableStateOf<String?>(null) }
     var filter by rememberSaveable { mutableStateOf<ShadowRank?>(null) }
     var favOnly by rememberSaveable { mutableStateOf(false) }
+    var power by rememberSaveable { mutableStateOf<PowerKind?>(null) }
     var shownFavs by remember { mutableStateOf(s.favoriteEchoes) }
     // The pager keeps the tab alive, so catch up when it goes off screen (no jump on the way back).
     val favorites by rememberUpdatedState(s.favoriteEchoes)
@@ -71,8 +74,26 @@ fun EchoesScreen(s: GameState, active: Boolean = true) {
                     FilterChip(selected = filter == r, onClick = { pick(if (filter == r) null else r, favOnly) }, label = { Text(stringResource(shadowRankName(r))) })
                 }
             }
+            PowerFilter(power) { power = it; shownFavs = s.favoriteEchoes }
         }
-        item { Collection(s, filter, shownFavs, favOnly) { openShadow = it } }
+        item { Collection(s, filter, shownFavs, favOnly, power) { openShadow = it } }
     }
     openShadow?.let { ShadowSheet(s, it) { openShadow = null } }
+}
+
+/** One chip per kind of power, in the colour its echoes glow with; tapping the chosen one clears it. */
+@Composable
+private fun PowerFilter(power: PowerKind?, onPick: (PowerKind?) -> Unit) {
+    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        PowerKind.entries.forEach { k ->
+            val color = powerColor(k)
+            FilterChip(
+                selected = power == k, onClick = { onPick(if (power == k) null else k) },
+                label = { Text(stringResource(powerName(k))) },
+                leadingIcon = { Icon(powerIcon(k), null, tint = color, modifier = Modifier.size(16.dp)) },
+                colors = FilterChipDefaults.filterChipColors(selectedContainerColor = color.copy(alpha = 0.18f)),
+                border = FilterChipDefaults.filterChipBorder(true, power == k, selectedBorderColor = color.copy(alpha = 0.6f)),
+            )
+        }
+    }
 }

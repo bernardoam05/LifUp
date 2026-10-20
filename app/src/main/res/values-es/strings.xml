@@ -672,6 +672,15 @@
     <string name="week_free">opcional hoy</string>
     <string name="week_short">esta semana</string>
     <string name="weekly_section">Esta semana</string>
+    <string name="power_growth">XP</string>
+    <string name="power_wealth">Oro</string>
+    <string name="power_combat">Combate</string>
+    <string name="power_protection">Protección</string>
+    <string name="power_fortune">Foco y suerte</string>
+    <string name="power_empty">Aún no tienes ecos con estos filtros.</string>
+    <string name="guide_extra_title">Misiones extra</string>
+    <string name="guide_extra_hook">Para cuando ya cumpliste el día y quieres más.</string>
+    <string name="guide_extra">Después del día::Aparecen cuando todas las diarias están cumplidas, hasta 3 al día.\nUna a la vez::La siguiente solo sale tras cumplir la anterior, así que no puedes elegir las que te convienen.\nSegún la hora::Solo salen misiones que aún tienen sentido a esa hora.\nSin riesgo::Dan XP, oro y botín, pero no cuentan para la racha ni para la penalización.</string>
     <string name="guide_weekly_title">Misiones semanales</string>
     <string name="guide_weekly_hook">Para lo que haces unas veces por semana, en días que cambian.</string>
     <string name="guide_weekly">Opcional::Mientras haya margen, solo cuenta si la haces, y entonces mejora tu día.\nCuenta hoy::Cuando faltan tantas veces como días hasta el domingo, cuenta como una diaria y ocupa el lugar de una sorteada.\nSemana cumplida::Al llegar a la meta ganas oro extra. Las veces de más siguen dando XP.\nSemana nueva::La semana en que la creas nunca es obligatoria. Empieza a contar el lunes.</string>

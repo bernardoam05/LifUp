@@ -673,6 +673,15 @@
     <string name="week_free">optional today</string>
     <string name="week_short">this week</string>
     <string name="weekly_section">This week</string>
+    <string name="power_growth">XP</string>
+    <string name="power_wealth">Gold</string>
+    <string name="power_combat">Combat</string>
+    <string name="power_protection">Protection</string>
+    <string name="power_fortune">Focus &amp; luck</string>
+    <string name="power_empty">You don\'t have echoes with these filters yet.</string>
+    <string name="guide_extra_title">Extra missions</string>
+    <string name="guide_extra_hook">For when the day is done and you want more.</string>
+    <string name="guide_extra">After the day::They show up once every daily mission is done, up to 3 a day.\nOne at a time::The next one comes only after you finish the last, so you can\'t pick the handy ones.\nRight for the hour::Only missions that still make sense at that time are drawn.\nNo risk::They give XP, gold and drops, but don\'t count for the streak or the penalty.</string>
     <string name="guide_weekly_title">Weekly missions</string>
     <string name="guide_weekly_hook">For things you do a few times a week, on days that vary.</string>
     <string name="guide_weekly">Optional::While there\'s room, it only counts if you do it, and then it boosts your day.\nCounts today::When the sessions left equal the days left until Sunday, it counts like a daily and takes a drawn mission\'s place.\nWeek done::Reach the goal for bonus gold. Extra sessions still give XP.\nNew week::It\'s never required in the week you add it. It starts counting on Monday.</string>

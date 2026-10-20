@@ -23,6 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lifup.app.domain.EchoAura
 import com.lifup.app.domain.Passive
+import com.lifup.app.domain.PowerKind
+import com.lifup.app.domain.kind
+import com.lifup.app.R
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
+import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material.icons.rounded.MonetizationOn
+import androidx.compose.material.icons.rounded.Shield
+import androidx.compose.material.icons.rounded.Whatshot
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.lifup.app.domain.ShadowDef
 import com.lifup.app.domain.ShadowRank
 import com.lifup.app.ui.shadowRankColor
@@ -54,12 +64,31 @@ private fun ShadowRank.shape(): Shape = when (this) {
 
 /** The colour of what an echo does: growth, wealth, combat, protection, focus or fortune. */
 @Composable
-fun passiveColor(p: Passive): Color = when (p) {
-    Passive.XP_BOOST, Passive.TRAINING_XP, Passive.MIND_XP, Passive.EXPLORER_XP, Passive.DAILY_BONUS -> Lif.colors.accent
-    Passive.GOLD_BOOST, Passive.SHOP_DISCOUNT, Passive.ALL_BOOST -> Lif.colors.gold
-    Passive.BOSS_DAMAGE -> Lif.colors.red
-    Passive.PENALTY_REDUCE, Passive.PENALTY_IMMUNITY, Passive.STREAK_PROTECT -> Lif.colors.green
-    Passive.FOCUS_MASTERY, Passive.SHADOW_LUCK -> Lif.colors.purple
+fun passiveColor(p: Passive): Color = powerColor(p.kind())
+
+@Composable
+fun powerColor(k: PowerKind): Color = when (k) {
+    PowerKind.GROWTH -> Lif.colors.accent
+    PowerKind.WEALTH -> Lif.colors.gold
+    PowerKind.COMBAT -> Lif.colors.red
+    PowerKind.PROTECTION -> Lif.colors.green
+    PowerKind.FORTUNE -> Lif.colors.purple
+}
+
+fun powerIcon(k: PowerKind): ImageVector = when (k) {
+    PowerKind.GROWTH -> Icons.AutoMirrored.Rounded.TrendingUp
+    PowerKind.WEALTH -> Icons.Rounded.MonetizationOn
+    PowerKind.COMBAT -> Icons.Rounded.Whatshot
+    PowerKind.PROTECTION -> Icons.Rounded.Shield
+    PowerKind.FORTUNE -> Icons.Rounded.AutoAwesome
+}
+
+fun powerName(k: PowerKind): Int = when (k) {
+    PowerKind.GROWTH -> R.string.power_growth
+    PowerKind.WEALTH -> R.string.power_wealth
+    PowerKind.COMBAT -> R.string.power_combat
+    PowerKind.PROTECTION -> R.string.power_protection
+    PowerKind.FORTUNE -> R.string.power_fortune
 }
 
 /**

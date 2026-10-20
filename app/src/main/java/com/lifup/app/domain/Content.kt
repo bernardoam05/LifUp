@@ -91,6 +91,20 @@ enum class Passive {
     PENALTY_IMMUNITY, STREAK_PROTECT, SHOP_DISCOUNT, FOCUS_MASTERY, DAILY_BONUS, SHADOW_LUCK, ALL_BOOST,
 }
 
+/** What an echo's passive is about: growth, wealth, combat, protection, or focus and fortune. */
+enum class PowerKind { GROWTH, WEALTH, COMBAT, PROTECTION, FORTUNE }
+
+fun Passive.kind(): PowerKind = when (this) {
+    Passive.XP_BOOST, Passive.TRAINING_XP, Passive.MIND_XP, Passive.EXPLORER_XP, Passive.DAILY_BONUS -> PowerKind.GROWTH
+    Passive.GOLD_BOOST, Passive.SHOP_DISCOUNT, Passive.ALL_BOOST -> PowerKind.WEALTH
+    Passive.BOSS_DAMAGE -> PowerKind.COMBAT
+    Passive.PENALTY_REDUCE, Passive.PENALTY_IMMUNITY, Passive.STREAK_PROTECT -> PowerKind.PROTECTION
+    Passive.FOCUS_MASTERY, Passive.SHADOW_LUCK -> PowerKind.FORTUNE
+}
+
+/** The amplifier boosts every other passive, so it belongs to every kind. */
+fun Passive.isKind(k: PowerKind) = this == Passive.ALL_BOOST || kind() == k
+
 @Serializable
 enum class SourceType { EXTRACTION, SHOP, ACHIEVEMENT, STREAK, BOSS, LEVEL }
 

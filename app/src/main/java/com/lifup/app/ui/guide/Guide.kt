@@ -98,6 +98,8 @@ enum class Guide(val title: Int, val hook: Int, val body: Int, val icon: ImageVe
         listOf(Icons.Rounded.Flag, Icons.AutoMirrored.Rounded.TrendingUp, Icons.Rounded.AutoAwesome, Icons.Rounded.SwapHoriz)),
     WEEKLY(R.string.guide_weekly_title, R.string.guide_weekly_hook, R.string.guide_weekly, Icons.Rounded.EventRepeat, Tone.ACCENT,
         listOf(Icons.Rounded.EventAvailable, Icons.Rounded.PriorityHigh, Icons.Rounded.EmojiEvents, Icons.Rounded.NewReleases)),
+    EXTRA(R.string.guide_extra_title, R.string.guide_extra_hook, R.string.guide_extra, Icons.Rounded.Add, Tone.ACCENT,
+        listOf(Icons.Rounded.TaskAlt, Icons.Rounded.Lock, Icons.Rounded.Schedule, Icons.Rounded.Shield)),
     STREAK(R.string.guide_streak_title, R.string.guide_streak_hook, R.string.guide_streak, Icons.Rounded.LocalFireDepartment, Tone.RED,
         listOf(Icons.Rounded.LocalFireDepartment, Icons.Rounded.Restore, Icons.Rounded.Bedtime, Icons.Rounded.Shield)),
     PENALTY(R.string.guide_penalty_title, R.string.guide_penalty_hook, R.string.guide_penalty, Icons.Rounded.Warning, Tone.RED,
