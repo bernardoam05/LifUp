@@ -458,10 +458,21 @@ private fun HabitHistory(s: GameState, id: String) {
     val c = Lif.colors
     val today = java.time.LocalDate.now()
     Column(Modifier.padding(top = 8.dp, bottom = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        // Closed days come from the history; today shows live: done, failed, or still open (outlined).
+        val live = s.dailyQuests.firstOrNull { it.defId == id }?.takeIf { s.day == today.toString() }
         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
             for (back in Rules.HABIT_STRIP_DAYS - 1 downTo 0) {
-                val color = when (s.habitOn(id, today.minusDays(back.toLong()))) { true -> c.green; false -> c.red; null -> c.border }
-                Box(Modifier.weight(1f).aspectRatio(1f).clip(RoundedCornerShape(2.dp)).background(color))
+                val shape = RoundedCornerShape(2.dp)
+                val cell = Modifier.weight(1f).aspectRatio(1f).clip(shape)
+                when {
+                    back == 0 && live != null && live.status == com.lifup.app.domain.QuestStatus.OPEN ->
+                        Box(cell.border(1.5.dp, c.accent, shape))
+                    back == 0 && live != null -> Box(cell.background(if (live.status == com.lifup.app.domain.QuestStatus.DONE) c.green else c.red))
+                    else -> {
+                        val color = when (s.habitOn(id, today.minusDays(back.toLong()))) { true -> c.green; false -> c.red; null -> c.border }
+                        Box(cell.background(color))
+                    }
+                }
             }
         }
         val recent = s.habitWindow(id, today, 30)

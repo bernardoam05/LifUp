@@ -585,7 +585,7 @@
         <item quantity="one">%1$d of %2$d time</item>
         <item quantity="other">%1$d of %2$d times</item>
     </plurals>
-    <string name="habit_none_yet">History starts from today: it shows here once the mission comes up.</string>
+    <string name="habit_none_yet">Each day this mission comes up is added here at midnight. The last square is today, live.</string>
     <string name="habit_recent">Last 30 days: %1$d of %2$d</string>
     <string name="habit_trend">Last 30 days: %1$d of %2$d (%3$d%%) · the 30 before: %4$d%%</string>
     <string name="adapt_level">Target adjusted %1$s%%</string>

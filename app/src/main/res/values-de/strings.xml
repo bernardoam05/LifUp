@@ -584,7 +584,7 @@
         <item quantity="one">%1$d von %2$d Mal</item>
         <item quantity="other">%1$d von %2$d Mal</item>
     </plurals>
-    <string name="habit_none_yet">Der Verlauf beginnt heute: Er erscheint hier, sobald die Mission kommt.</string>
+    <string name="habit_none_yet">Jeder Tag mit dieser Mission kommt um Mitternacht hierher. Das letzte Feld ist heute, live.</string>
     <string name="habit_recent">Letzte 30 Tage: %1$d von %2$d</string>
     <string name="habit_trend">Letzte 30 Tage: %1$d von %2$d (%3$d %%) · 30 davor: %4$d %%</string>
     <string name="adapt_level">Ziel angepasst %1$s %%</string>

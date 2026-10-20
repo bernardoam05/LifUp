@@ -584,7 +584,7 @@
         <item quantity="one">%1$d de %2$d vez</item>
         <item quantity="other">%1$d de %2$d veces</item>
     </plurals>
-    <string name="habit_none_yet">El historial cuenta desde hoy: aparece aquí cuando salga la misión.</string>
+    <string name="habit_none_yet">Cada día que sale esta misión se añade aquí a medianoche. El último cuadro es hoy, en directo.</string>
     <string name="habit_recent">Últimos 30 días: %1$d de %2$d</string>
     <string name="habit_trend">Últimos 30 días: %1$d de %2$d (%3$d%%) · 30 anteriores: %4$d%%</string>
     <string name="adapt_level">Objetivo ajustado %1$s%%</string>
