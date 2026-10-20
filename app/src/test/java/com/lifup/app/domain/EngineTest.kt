@@ -613,6 +613,23 @@ class EngineTest {
         assertTrue(PowerKind.entries.all { k -> content.shadows.any { it.passive.kind() == k } })
     }
 
+    @Test fun `a grown target can be held or eased once per climb, a new one can't`() {
+        val def = content.questDefById.getValue("core_pushups")
+        assertFalse(fresh().canTuneTarget(def))
+        var s = fresh().copy(adapt = mapOf(def.id to Adapt(5)))
+        s = run(s, "2026-10-14T10:00") { holdTarget(def.id, true) }
+        assertNull(s.keepsToNextStep(def))
+        assertEquals(5, s.adapt.getValue(def.id).next(true, def).level)
+        s = run(s, "2026-10-14T10:01") { easeTarget(def.id) ; easeTarget(def.id) }
+        assertEquals(4, s.stepOf(def.id))
+        assertFalse(s.canEaseTarget(def))
+        // Climbing again re-opens "too hard".
+        s = run(s, "2026-10-14T10:02") { holdTarget(def.id, false) }
+        val climbed = (1..def.scalingInterval).fold(s.adapt.getValue(def.id)) { a, _ -> a.next(true, def) }
+        assertEquals(5, climbed.level)
+        assertTrue(s.copy(adapt = mapOf(def.id to climbed)).canEaseTarget(def))
+    }
+
     @Test fun `old saves keep the targets they had`() {
         val old = fresh().let { it.copy(version = 6, player = it.player.copy(level = 30), adapt = mapOf("pool_plank" to Adapt(1))) }
         val s = run(old, "2026-10-14T10:00")

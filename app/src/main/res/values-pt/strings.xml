@@ -581,6 +581,14 @@
     <string name="habit_trend">Últimos 30 dias: %1$d de %2$d (%3$d%%) · 30 antes: %4$d%%</string>
     <string name="prog_from">Começou em %1$s</string>
     <string name="prog_max">Objetivo máximo atingido</string>
+    <string name="prog_next_time">Próxima vez: %1$s</string>
+    <string name="prog_held">Objetivo mantido</string>
+    <string name="prog_hold">Manter aqui</string>
+    <string name="prog_resume">Voltar a subir</string>
+    <string name="prog_ease">Está difícil</string>
+    <string name="prog_ease_title">Baixar o objetivo?</string>
+    <string name="prog_ease_text">Passa para %1$s a partir da próxima vez; o de hoje fica igual. Só voltas a poder baixar depois de voltar a subir.</string>
+    <string name="prog_ease_ok">Baixar</string>
     <plurals name="prog_next">
         <item quantity="one">Sobe depois de mais %d vez cumprida</item>
         <item quantity="other">Sobe depois de mais %d vezes cumpridas</item>

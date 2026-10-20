@@ -25,6 +25,14 @@ import com.lifup.app.domain.defOf
 import com.lifup.app.domain.QuestDef
 import com.lifup.app.domain.isWeekly
 import com.lifup.app.domain.keepsToNextStep
+import com.lifup.app.domain.canEaseTarget
+import com.lifup.app.ui.components.ConfirmDialog
+import com.lifup.app.domain.canTuneTarget
+import com.lifup.app.domain.easeTarget
+import com.lifup.app.domain.holdTarget
+import com.lifup.app.domain.roundTarget
+import com.lifup.app.domain.stepOf
+import com.lifup.app.domain.targetAt
 import com.lifup.app.domain.progresses
 import androidx.compose.ui.res.pluralStringResource
 import android.Manifest
@@ -293,15 +301,44 @@ private fun Details(s: GameState, q: Quest) {
     s.defOf(q.defId, content)?.takeIf { it.progresses() && q.origin != QuestOrigin.PENALTY && q.origin != QuestOrigin.PORTAL }?.let { ProgressLine(s, q, it) }
 }
 
-/** Where the target started and how many keeps until it grows again. */
+/**
+ * Where the target started and how many keeps until it grows again; once it has grown, two quiet links
+ * let the player keep it there or ease it one step (from the next time, after a confirmation).
+ */
 @Composable
 private fun ProgressLine(s: GameState, q: Quest, def: QuestDef) {
+    val p = Lif.colors
+    val step = s.stepOf(def.id)
+    val held = s.adapt[def.id]?.held == true
     val next = s.keepsToNextStep(def)
+    val unit = unitLabel(def.unit)
+    fun amount(step: Int) = "${fmtNum(roundTarget(def.targetAt(step), def.unit))} $unit".trim()
     val parts = listOfNotNull(
-        if (q.adapt != 0) stringResource(R.string.prog_from, "${fmtNum(def.baseTarget)} ${unitLabel(def.unit)}".trim()) else null,
-        if (next == null) stringResource(R.string.prog_max) else pluralStringResource(if (def.isWeekly()) R.plurals.prog_next_weeks else R.plurals.prog_next, next, next),
+        if (q.adapt != 0) stringResource(R.string.prog_from, amount(0)) else null,
+        if (step != q.adapt) stringResource(R.string.prog_next_time, amount(step)) else null,
+        when {
+            held -> stringResource(R.string.prog_held)
+            next == null -> stringResource(R.string.prog_max)
+            else -> pluralStringResource(if (def.isWeekly()) R.plurals.prog_next_weeks else R.plurals.prog_next, next, next)
+        },
     )
-    Text(parts.joinToString(" · "), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+    Text(parts.joinToString(" · "), style = MaterialTheme.typography.bodySmall, color = p.muted)
+    if (!s.canTuneTarget(def)) return
+    var confirmEase by remember { mutableStateOf(false) }
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text(
+            stringResource(if (held) R.string.prog_resume else R.string.prog_hold), style = MaterialTheme.typography.labelMedium, color = p.accent,
+            modifier = Modifier.clickable { act { holdTarget(def.id, !held) } }.padding(vertical = 6.dp),
+        )
+        if (s.canEaseTarget(def)) Text(
+            stringResource(R.string.prog_ease), style = MaterialTheme.typography.labelMedium, color = p.muted,
+            modifier = Modifier.clickable { confirmEase = true }.padding(vertical = 6.dp),
+        )
+    }
+    if (confirmEase) ConfirmDialog(
+        stringResource(R.string.prog_ease_title), stringResource(R.string.prog_ease_text, amount(step - 1)), stringResource(R.string.prog_ease_ok),
+        onConfirm = { act { easeTarget(def.id) }; confirmEase = false }, onDismiss = { confirmEase = false },
+    )
 }
 
 /** A folded "How to?" line: one tap shows the tip, so the sheet stays short. */

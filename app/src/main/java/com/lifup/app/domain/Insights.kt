@@ -33,7 +33,7 @@ fun GameState.stepOf(id: String) = adapt[id]?.level ?: 0
 /** Keeps still needed for the next step up; null at the cap or for fixed targets. */
 fun GameState.keepsToNextStep(def: QuestDef): Int? {
     val a = adapt[def.id] ?: Adapt()
-    if (!def.progresses() || def.targetAt(a.level + 1) == def.targetAt(a.level)) return null
+    if (!def.progresses() || a.held || def.targetAt(a.level + 1) == def.targetAt(a.level)) return null
     return (maxOf(def.keepsFor(a.level), Rules.PROG_KEEPS_PER_MISS * a.losses) - a.wins).coerceAtLeast(1)
 }
 
@@ -73,13 +73,35 @@ fun GameState.habitOn(id: String, day: LocalDate): Boolean? {
 internal fun Adapt.next(ok: Boolean, def: QuestDef): Adapt {
     val kept = wins + if (ok) 1 else 0
     val missed = losses + if (ok) 0 else 1
-    val canRise = def.targetAt(level + 1) != def.targetAt(level)
+    val canRise = !held && def.targetAt(level + 1) != def.targetAt(level)
     val canDrop = level > Rules.PROG_MIN_STEP && def.targetAt(level - 1) != def.targetAt(level)
     return when {
         ok && canRise && kept >= def.keepsFor(level) && kept >= Rules.PROG_KEEPS_PER_MISS * missed -> Adapt(level + 1)
-        !ok && canDrop && missed >= Rules.PROG_DOWN_MISSES && missed > kept -> Adapt(level - 1)
-        else -> Adapt(level, kept, missed)
+        !ok && canDrop && missed >= Rules.PROG_DOWN_MISSES && missed > kept -> Adapt(level - 1, held = held, eased = eased)
+        else -> copy(wins = kept, losses = missed)
     }
+}
+
+/** Hand controls only show once a target has grown: a beginner first gets to see it climb. */
+fun GameState.canTuneTarget(def: QuestDef) = def.progresses() && stepOf(def.id) > 0
+
+/** Keeps a grown target where it is, or lets it climb again. */
+fun Tx.holdTarget(defId: String, on: Boolean) {
+    val def = s.defOf(defId, content) ?: return
+    if (on && !s.canTuneTarget(def)) return
+    val a = s.adapt[defId] ?: return
+    s = s.copy(adapt = s.adapt + (defId to a.copy(held = on, wins = 0, losses = 0)))
+}
+
+/** Whether "too hard" is on offer: once per climb, so it can't be tapped all the way down. */
+fun GameState.canEaseTarget(def: QuestDef) = canTuneTarget(def) && adapt[def.id]?.eased != true
+
+/** One step down from the next time on; today's target stays, so it isn't a way out of today. */
+fun Tx.easeTarget(defId: String) {
+    val def = s.defOf(defId, content) ?: return
+    if (!s.canEaseTarget(def)) return
+    val a = s.adapt.getValue(defId)
+    s = s.copy(adapt = s.adapt + (defId to a.copy(level = a.level - 1, wins = 0, losses = 0, eased = true)))
 }
 
 // ── Today's goal ──────────────────────────────────────────────────────────────

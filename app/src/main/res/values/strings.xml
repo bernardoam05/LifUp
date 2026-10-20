@@ -600,6 +600,14 @@
     <string name="habit_trend">Last 30 days: %1$d of %2$d (%3$d%%) · the 30 before: %4$d%%</string>
     <string name="prog_from">Started at %1$s</string>
     <string name="prog_max">Top goal reached</string>
+    <string name="prog_next_time">Next time: %1$s</string>
+    <string name="prog_held">Kept at this goal</string>
+    <string name="prog_hold">Keep it here</string>
+    <string name="prog_resume">Let it grow again</string>
+    <string name="prog_ease">Too hard</string>
+    <string name="prog_ease_title">Lower the goal?</string>
+    <string name="prog_ease_text">It goes to %1$s from next time; today stays as it is. You can only lower it again after it grows back.</string>
+    <string name="prog_ease_ok">Lower</string>
     <plurals name="prog_next">
         <item quantity="one">Goes up after %d more success</item>
         <item quantity="other">Goes up after %d more successes</item>
