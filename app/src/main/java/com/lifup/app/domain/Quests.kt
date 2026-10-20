@@ -10,7 +10,7 @@ fun roundTarget(value: Double, unit: String): Double =
 /** [day] picks the day's prompt for missions that have them. */
 fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.id, adapt: Int = 0, day: LocalDate? = null): Quest {
     val step = if (def.adaptable()) adapt else 0
-    val mult = Rules.tierMultiplier(level) * (1 + Rules.ADAPT_STEP / 2 * step)
+    val adaptMult = 1 + Rules.ADAPT_STEP / 2 * step
     val steps = (level - 1) / def.scalingInterval.coerceAtLeast(1)
     val scaled = def.baseTarget + steps * (if (def.descending) -def.scalingAmount else def.scalingAmount)
     val raw = (def.maxTarget?.let { scaled.coerceAtMost(it) } ?: scaled) * adaptFactor(def.type, step)
@@ -24,8 +24,8 @@ fun buildQuest(def: QuestDef, level: Int, origin: QuestOrigin, id: String = def.
         description = def.description,
         unit = def.unit,
         target = roundTarget(raw.coerceAtLeast(min), def.unit).coerceAtLeast(min),
-        xp = (def.baseXp * mult).roundToInt(),
-        gold = (def.baseGold * mult).roundToInt(),
+        xp = (def.baseXp * Rules.xpMultiplier(level) * adaptMult).roundToInt(),
+        gold = (def.baseGold * Rules.tierMultiplier(level) * adaptMult).roundToInt(),
         rank = Rules.questRank(def.baseXp),
         auto = def.auto,
         pomodoro = def.pomodoro,

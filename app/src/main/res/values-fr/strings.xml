@@ -199,6 +199,7 @@
     <string name="source_shop">Vendue en boutique (rotation hebdo).</string>
     <string name="source_achievement">Récompense de succès.</string>
     <string name="source_streak">Récompense de palier de série.</string>
+    <string name="source_level">Atteins le niveau %1$d.</string>
     <string name="source_boss">Récompense pour avoir vaincu %1$s.</string>
     <string name="upgrade_capped">Niveau max : un écho ne peut pas dépasser ton niveau.</string>
     <string name="upgrade_cost">Évoluer : %1$d or · copies %2$d/%3$d</string>
@@ -660,6 +661,7 @@
     <string name="origin_shop">acheté à la boutique</string>
     <string name="origin_achievement">succès %1$s</string>
     <string name="origin_streak">série de %1$d jours</string>
+    <string name="origin_level">tu as atteint le niveau %1$d</string>
     <string name="origin_boss">tu as vaincu %1$s</string>
     <string name="squad_swap">Échanger</string>
     <string name="squad_swap_title">Qui quitte l\'escouade ?</string>
@@ -680,5 +682,6 @@
     <string name="reason_shop">Acheté à la boutique</string>
     <string name="reason_achievement">Récompense du succès %1$s</string>
     <string name="reason_streak">Récompense pour une série de %1$d jours</string>
+    <string name="reason_level">Récompense pour avoir atteint le niveau %1$d</string>
     <string name="reason_boss">Récompense pour avoir vaincu %1$s</string>
 </resources>

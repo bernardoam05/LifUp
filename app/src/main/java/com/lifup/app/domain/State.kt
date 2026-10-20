@@ -121,7 +121,7 @@ data class OwnedShadow(
 )
 
 @Serializable
-enum class EchoOrigin { PERFECT_DAY, PORTAL, ESSENCE, SHOP, ACHIEVEMENT, STREAK, BOSS }
+enum class EchoOrigin { PERFECT_DAY, PORTAL, ESSENCE, SHOP, ACHIEVEMENT, STREAK, BOSS, LEVEL }
 
 @Serializable
 data class Buff(val itemId: String, val stat: String, val value: Double, val expiresAt: Long)

@@ -11,13 +11,14 @@ fun Tx.gainXp(base: Int, type: QuestType? = null, hitsBoss: Boolean = true, boos
     var xp = p.xp + amount
     var level = p.level
     val oldRank = HunterRank.of(level)
-    while (xp >= Rules.xpForLevel(level)) {
+    while (xp >= Rules.xpForLevel(level) && level < Rules.MAX_LEVEL) {
         xp -= Rules.xpForLevel(level)
         level++
         s = s.copy(player = p.copy(xp = xp, level = level))
         onLevelReached(level)
         p = s.player
     }
+    if (level == Rules.MAX_LEVEL) xp = xp.coerceAtMost(Rules.xpForLevel(level))
     s = s.copy(player = s.player.copy(xp = xp, level = level))
     val newRank = HunterRank.of(level)
     if (newRank != oldRank) reward { Reward.RankUp(it, newRank) }
@@ -37,12 +38,27 @@ private fun Tx.onLevelReached(level: Int) {
         toast(ToastKind.LEVEL_UP, level.toString())
         return
     }
-    val gold = level * 25
+    val gold = Rules.levelGold(level)
     val items = List(if (level % 10 == 0) 2 else 1) { Rules.LEVEL_ITEMS.random(ctx.rng) }
     s = s.copy(player = s.player.copy(gold = s.player.gold + gold))
     count(StatKey.GOLD_EARNED, gold.toLong())
     items.forEach { addItem(it) }
     reward { Reward.LevelUp(it, level, gold, items) }
+    levelEcho(level)?.let { gainShadow(it.id, it.source.type, EchoOrigin.LEVEL, level.toString()) }
+}
+
+/**
+ * The echo a level brings: the one reserved for that level when there is one, otherwise (every
+ * [Rules.LEVEL_ECHO_EVERY] levels from [Rules.LEVEL_ECHO_FROM]) one not owned yet of the level's rank.
+ */
+private fun Tx.levelEcho(level: Int): ShadowDef? {
+    content.shadows.firstOrNull { it.source.type == SourceType.LEVEL && it.source.level == level }?.let { return it }
+    if (level < Rules.LEVEL_ECHO_FROM || level % Rules.LEVEL_ECHO_EVERY != 0) return null
+    val rank = Rules.levelEchoRank(level)
+    val pool = content.shadowPool(SourceType.EXTRACTION, SourceType.SHOP).filter { it.rank >= rank }
+    val fresh = pool.filter { s.owned(it.id) == null }
+    // A new one of that rank, else a new higher one, else another copy of that rank.
+    return fresh.filter { it.rank == rank }.ifEmpty { fresh }.ifEmpty { pool.filter { it.rank == rank } }.randomOrNull(ctx.rng)
 }
 
 fun Tx.gainGold(base: Int, boosted: Boolean = true): Int {

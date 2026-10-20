@@ -285,4 +285,5 @@ private fun echoReason(origin: com.lifup.app.domain.EchoOrigin, ref: String?): S
     com.lifup.app.domain.EchoOrigin.ACHIEVEMENT -> stringResource(R.string.reason_achievement, content.achievementById[ref]?.title?.local().orEmpty())
     com.lifup.app.domain.EchoOrigin.STREAK -> stringResource(R.string.reason_streak, ref?.toIntOrNull() ?: 0)
     com.lifup.app.domain.EchoOrigin.BOSS -> stringResource(R.string.reason_boss, content.bossById[ref]?.title?.local().orEmpty())
+    com.lifup.app.domain.EchoOrigin.LEVEL -> stringResource(R.string.reason_level, ref?.toIntOrNull() ?: 0)
 }

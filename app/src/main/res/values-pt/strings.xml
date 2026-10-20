@@ -199,6 +199,7 @@
     <string name="source_shop">Vendida na loja (rotação semanal).</string>
     <string name="source_achievement">Recompensa de conquista.</string>
     <string name="source_streak">Recompensa de marco de sequência.</string>
+    <string name="source_level">Chega ao nível %1$d.</string>
     <string name="source_boss">Recompensa por venceres %1$s.</string>
     <string name="upgrade_capped">Nível máximo: um eco não passa o teu nível.</string>
     <string name="upgrade_cost">Evoluir: %1$d ouro · cópias %2$d/%3$d</string>
@@ -660,6 +661,7 @@
     <string name="origin_shop">comprado na loja</string>
     <string name="origin_achievement">conquista %1$s</string>
     <string name="origin_streak">sequência de %1$d dias</string>
+    <string name="origin_level">chegaste ao nível %1$d</string>
     <string name="origin_boss">venceste %1$s</string>
     <string name="squad_swap">Trocar</string>
     <string name="squad_swap_title">Quem sai do esquadrão?</string>
@@ -680,5 +682,6 @@
     <string name="reason_shop">Comprado na loja</string>
     <string name="reason_achievement">Recompensa da conquista %1$s</string>
     <string name="reason_streak">Recompensa da sequência de %1$d dias</string>
+    <string name="reason_level">Recompensa por chegares ao nível %1$d</string>
     <string name="reason_boss">Recompensa por venceres %1$s</string>
 </resources>

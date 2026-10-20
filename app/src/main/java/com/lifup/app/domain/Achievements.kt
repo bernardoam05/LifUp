@@ -39,6 +39,11 @@ fun Tx.migrateState() {
         // Missions used to grow with level (4 drawn from level 25): keep what players already had.
         s = s.copy(load = MissionLoad(extra = if (s.player.level >= 25) 1 else 0), version = 5)
     }
+    if (s.version < 6) {
+        // Quests built before they carried their family get it from their definition.
+        fun stamp(q: Quest) = q.copy(group = q.group ?: s.defOf(q.defId, content)?.drawGroup())
+        s = s.copy(quests = s.quests.map(::stamp), penalty = s.penalty.copy(quests = s.penalty.quests.map(::stamp)), version = 6)
+    }
 }
 
 /** Unlocks every tier whose target has been reached. Rewards are paid unboosted to avoid feedback loops. */

@@ -93,6 +93,7 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
                     SourceType.ACHIEVEMENT -> stringResource(R.string.source_achievement)
                     SourceType.STREAK -> stringResource(R.string.source_streak)
                     SourceType.BOSS -> stringResource(R.string.source_boss, content.bossById[def.source.bossId]?.title?.local().orEmpty())
+                    SourceType.LEVEL -> stringResource(R.string.source_level, def.source.level ?: 0)
                 },
                 style = MaterialTheme.typography.labelMedium, color = c.muted,
             )
@@ -133,6 +134,7 @@ private fun originText(o: com.lifup.app.domain.OwnedShadow): String {
         EchoOrigin.ACHIEVEMENT -> stringResource(R.string.origin_achievement, content.achievementById[ref]?.title?.local().orEmpty())
         EchoOrigin.STREAK -> stringResource(R.string.origin_streak, ref.toIntOrNull() ?: 0)
         EchoOrigin.BOSS -> stringResource(R.string.origin_boss, content.bossById[ref]?.title?.local().orEmpty())
+        EchoOrigin.LEVEL -> stringResource(R.string.origin_level, ref.toIntOrNull() ?: 0)
         null -> ""
     }
     val date = o.obtainedOn?.let { java.time.LocalDate.parse(it).format(java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy")) }

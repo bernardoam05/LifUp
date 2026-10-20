@@ -46,7 +46,25 @@ object Rules {
     const val BOSS_CHALLENGE_DAMAGE = 0.35
     const val WEEK_MS = 7L * 24 * 3_600_000
 
-    fun xpForLevel(level: Int) = 100 * level.coerceAtLeast(1)
+    const val MAX_LEVEL = 1000
+
+    /** XP to go from [level] to the next: grows by 100 a level up to 100, then by 50 (about 4 days a level for good). */
+    fun xpForLevel(level: Int) = level.coerceIn(1, MAX_LEVEL).let { if (it <= 100) 100 * it else 10_000 + 50 * (it - 100) }
+
+    /** Mission XP keeps growing past the top tier (+1 every 25 levels) so late levels still move; gold doesn't. */
+    fun xpMultiplier(level: Int) = if (level <= 90) tierMultiplier(level) else 5.0 + (level - 90) / 25.0
+
+    /** Gold for every 5th level: grows by 25 a level up to 100, then by 10. */
+    fun levelGold(level: Int) = if (level <= 100) level * 25 else 2_500 + 10 * (level - 100)
+
+    /** From level 150, every 50th level brings an echo, of a higher rank the further you go. */
+    const val LEVEL_ECHO_EVERY = 50
+    const val LEVEL_ECHO_FROM = 150
+    fun levelEchoRank(level: Int) = when {
+        level >= 600 -> ShadowRank.MARSHAL
+        level >= 300 -> ShadowRank.COMMANDER
+        else -> ShadowRank.KNIGHT
+    }
 
     fun attrLevel(xp: Int) = 10 + floor(sqrt(xp.coerceAtLeast(0) / 5.0)).toInt()
 

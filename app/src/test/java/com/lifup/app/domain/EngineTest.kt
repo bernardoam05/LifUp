@@ -12,6 +12,7 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.random.Random
+import kotlin.math.roundToInt
 
 class EngineTest {
     private val zone = ZoneId.of("Europe/Lisbon")
@@ -725,5 +726,39 @@ class EngineTest {
         assertEquals(19, GameState(quests = listOf(short.copy(progress = 41 / 60.0))).limitsNearing().single().second)
         assertTrue(GameState(quests = listOf(short.copy(progress = 0.5))).limitsNearing().isEmpty())
         assertTrue(GameState(quests = listOf(screen.copy(progress = 3.5, autoOff = true))).limitsNearing().isEmpty())
+    }
+
+    @Test fun `levels go to 1000 with steady growth and stop there`() {
+        assertEquals(10_000, Rules.xpForLevel(100))
+        assertEquals(10_050, Rules.xpForLevel(101))
+        assertEquals(Rules.xpForLevel(Rules.MAX_LEVEL), Rules.xpForLevel(Rules.MAX_LEVEL + 5))
+        assertEquals(5.0, Rules.xpMultiplier(90), 0.0)
+        assertEquals(9.0, Rules.xpMultiplier(190), 0.0)
+        val top = fresh().let { it.copy(player = it.player.copy(level = Rules.MAX_LEVEL - 1, xp = Rules.xpForLevel(Rules.MAX_LEVEL - 1) - 1)) }
+        val s = run(top, "2026-10-14T10:00") { gainXp(10_000_000, hitsBoss = false, boosted = false) }
+        assertEquals(Rules.MAX_LEVEL, s.player.level)
+        assertEquals(Rules.xpForLevel(Rules.MAX_LEVEL), s.player.xp)
+    }
+
+    @Test fun `past the top tier mission xp keeps growing but gold does not`() {
+        val def = content.questDefById.getValue("core_squats")
+        val q90 = buildQuest(def, 90, QuestOrigin.DAILY)
+        val q290 = buildQuest(def, 290, QuestOrigin.DAILY)
+        assertEquals(q90.gold, q290.gold)
+        assertEquals((def.baseXp * 13.0).roundToInt(), q290.xp)
+    }
+
+    @Test fun `milestone levels bring echoes, reserved ones first`() {
+        fun reach(level: Int): GameState {
+            val start = fresh().let { it.copy(player = it.player.copy(level = level - 1, xp = Rules.xpForLevel(level - 1) - 1)) }
+            return run(start, "2026-10-14T10:00") { gainXp(1, hitsBoss = false, boosted = false) }
+        }
+        val at100 = reach(100)
+        assertEquals(EchoOrigin.LEVEL, at100.owned("lvl_centurion")?.origin)
+        val at150 = reach(150)
+        val echo = at150.shadows.single { it.origin == EchoOrigin.LEVEL }
+        assertEquals(ShadowRank.KNIGHT, content.shadowById.getValue(echo.id).rank)
+        assertTrue(reach(155).shadows.none { it.origin == EchoOrigin.LEVEL })
+        assertEquals(ShadowRank.MARSHAL, content.shadowById.getValue(reach(650).shadows.single { it.origin == EchoOrigin.LEVEL }.id).rank)
     }
 }

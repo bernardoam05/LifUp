@@ -212,6 +212,7 @@
     <string name="source_shop">Sold in the shop (weekly rotation).</string>
     <string name="source_achievement">Achievement reward.</string>
     <string name="source_streak">Streak milestone reward.</string>
+    <string name="source_level">Reached at level %1$d.</string>
     <string name="source_boss">Reward for beating %1$s.</string>
     <string name="upgrade_capped">Max level: an echo can\'t pass your level.</string>
     <string name="upgrade_cost">Evolve: %1$d gold · copies %2$d/%3$d</string>
@@ -679,6 +680,7 @@
     <string name="origin_shop">bought in the shop</string>
     <string name="origin_achievement">achievement %1$s</string>
     <string name="origin_streak">%1$d-day streak</string>
+    <string name="origin_level">reached level %1$d</string>
     <string name="origin_boss">defeated %1$s</string>
     <string name="squad_swap">Swap</string>
     <string name="squad_swap_title">Who leaves the squad?</string>
@@ -699,5 +701,6 @@
     <string name="reason_shop">Bought in the shop</string>
     <string name="reason_achievement">Reward for the achievement %1$s</string>
     <string name="reason_streak">Reward for a %1$d-day streak</string>
+    <string name="reason_level">Reward for reaching level %1$d</string>
     <string name="reason_boss">Reward for defeating %1$s</string>
 </resources>

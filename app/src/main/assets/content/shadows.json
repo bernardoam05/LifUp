@@ -1417,5 +1417,90 @@
    "fr": "Gardien du Sommeil",
    "de": "Hüter des Schlafs"
   }
+ },
+ {
+  "id": "lvl_centurion",
+  "rank": "COMMANDER",
+  "shadowClass": "WARRIOR",
+  "passive": "DAILY_BONUS",
+  "source": {
+   "type": "LEVEL",
+   "level": 100
+  },
+  "name": {
+   "pt": "Centurião",
+   "en": "Centurion",
+   "es": "Centurión",
+   "fr": "Centurion",
+   "de": "Zenturio"
+  }
+ },
+ {
+  "id": "lvl_season_warden",
+  "rank": "MARSHAL",
+  "shadowClass": "SPIRIT",
+  "passive": "STREAK_PROTECT",
+  "source": {
+   "type": "LEVEL",
+   "level": 250
+  },
+  "name": {
+   "pt": "Guardião das Estações",
+   "en": "Warden of Seasons",
+   "es": "Guardián de las Estaciones",
+   "fr": "Gardien des Saisons",
+   "de": "Hüter der Jahreszeiten"
+  }
+ },
+ {
+  "id": "lvl_patient_colossus",
+  "rank": "MARSHAL",
+  "shadowClass": "TANK",
+  "passive": "PENALTY_REDUCE",
+  "source": {
+   "type": "LEVEL",
+   "level": 500
+  },
+  "name": {
+   "pt": "Colosso Paciente",
+   "en": "Patient Colossus",
+   "es": "Coloso Paciente",
+   "fr": "Colosse Patient",
+   "de": "Geduldiger Koloss"
+  }
+ },
+ {
+  "id": "lvl_wandering_star",
+  "rank": "MARSHAL",
+  "shadowClass": "ELEMENTAL",
+  "passive": "SHADOW_LUCK",
+  "source": {
+   "type": "LEVEL",
+   "level": 750
+  },
+  "name": {
+   "pt": "Estrela Errante",
+   "en": "Wandering Star",
+   "es": "Estrella Errante",
+   "fr": "Étoile Errante",
+   "de": "Wandernder Stern"
+  }
+ },
+ {
+  "id": "lvl_thousandth",
+  "rank": "MARSHAL",
+  "shadowClass": "ANCIENT",
+  "passive": "ALL_BOOST",
+  "source": {
+   "type": "LEVEL",
+   "level": 1000
+  },
+  "name": {
+   "pt": "O Milésimo",
+   "en": "The Thousandth",
+   "es": "El Milésimo",
+   "fr": "Le Millième",
+   "de": "Der Tausendste"
+  }
  }
 ]

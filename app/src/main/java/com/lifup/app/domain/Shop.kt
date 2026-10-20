@@ -158,6 +158,6 @@ private fun Tx.payFocus(minutes: Double, won: Boolean): Int {
     if (paid <= 0) return 0
     s = s.copy(daily = s.daily.copy(focusPaidMin = s.daily.focusPaidMin + paid))
     if (won) gainGold((paid / Rules.STRICT_GOLD_EVERY_MIN).toInt(), boosted = false)
-    val base = paid * Rules.FOCUS_XP_PER_MIN * Rules.tierMultiplier(s.player.level) * (if (won) Rules.STRICT_BONUS else 1.0)
+    val base = paid * Rules.FOCUS_XP_PER_MIN * Rules.xpMultiplier(s.player.level) * (if (won) Rules.STRICT_BONUS else 1.0)
     return gainXp(base.roundToInt(), QuestType.FOCUS, hitsBoss = false)
 }

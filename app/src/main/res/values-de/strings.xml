@@ -211,6 +211,7 @@
     <string name="source_shop">Im Shop erhältlich (wöchentlicher Wechsel).</string>
     <string name="source_achievement">Belohnung für einen Erfolg.</string>
     <string name="source_streak">Belohnung für einen Serien-Meilenstein.</string>
+    <string name="source_level">Erreiche Stufe %1$d.</string>
     <string name="source_boss">Belohnung für den Sieg über %1$s.</string>
     <string name="upgrade_capped">Max. Level: ein Echo kann dein Level nicht übersteigen.</string>
     <string name="upgrade_cost">Entwickeln: %1$d Gold · Kopien %2$d/%3$d</string>
@@ -678,6 +679,7 @@
     <string name="origin_shop">im Shop gekauft</string>
     <string name="origin_achievement">Erfolg %1$s</string>
     <string name="origin_streak">%1$d-Tage-Serie</string>
+    <string name="origin_level">Stufe %1$d erreicht</string>
     <string name="origin_boss">%1$s besiegt</string>
     <string name="squad_swap">Tauschen</string>
     <string name="squad_swap_title">Wer verlässt den Trupp?</string>
@@ -698,5 +700,6 @@
     <string name="reason_shop">Im Shop gekauft</string>
     <string name="reason_achievement">Belohnung für den Erfolg %1$s</string>
     <string name="reason_streak">Belohnung für eine %1$d-Tage-Serie</string>
+    <string name="reason_level">Belohnung für Stufe %1$d</string>
     <string name="reason_boss">Belohnung für den Sieg über %1$s</string>
 </resources>

@@ -123,8 +123,10 @@ private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<Penalt
     val mult = when (rigor) { Rigor.EASY -> 0.3; Rigor.NORMAL -> 1.0; Rigor.HARD -> 2.0 }
     val reduce = s.passives(content, ctx.now).penaltyReduce
     // Loss follows the share left undone, so a near miss costs little.
-    val xpLost = floor(Rules.penaltyBase(s.player.level) * mult * (1 - ratio) * (1 - reduce)).toInt()
-    val goldLost = loseGold(xpLost)
+    val base = Rules.penaltyBase(s.player.level) * mult * (1 - ratio) * (1 - reduce)
+    // XP lost follows mission XP past the top tier; gold lost stays with the gold economy.
+    val xpLost = floor(base * Rules.xpMultiplier(s.player.level) / Rules.tierMultiplier(s.player.level)).toInt()
+    val goldLost = loseGold(floor(base).toInt())
     val xpActuallyLost = minOf(xpLost, s.player.xp)
     loseXp(xpLost)
 

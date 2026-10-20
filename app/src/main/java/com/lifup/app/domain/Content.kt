@@ -88,10 +88,10 @@ enum class Passive {
 }
 
 @Serializable
-enum class SourceType { EXTRACTION, SHOP, ACHIEVEMENT, STREAK, BOSS }
+enum class SourceType { EXTRACTION, SHOP, ACHIEVEMENT, STREAK, BOSS, LEVEL }
 
 @Serializable
-data class ShadowSource(val type: SourceType, val bossId: String? = null)
+data class ShadowSource(val type: SourceType, val bossId: String? = null, val level: Int? = null)
 
 @Serializable
 data class ShadowDef(
