@@ -578,6 +578,10 @@
     <string name="week_suggest">Wenn sie nicht in deinen Tag passt, tausche sie oder schalte sie in der Schmiede ab.</string>
     <string name="mission_rates">Geschaffte Missionen</string>
     <string name="weekly_rates">Wochenmissionen</string>
+    <string name="week_key_met">Ziel erreicht</string>
+    <string name="week_key_part">Teilweise</string>
+    <string name="week_key_none">Keine</string>
+    <string name="week_key_now">Diese Woche</string>
     <string name="weekly_rates_hint">Ein Balken pro Woche; der letzte ist diese Woche, live.</string>
     <string name="weekly_goals_met">Ziel in %1$d von %2$d Wochen erreicht</string>
     <string name="weekly_no_history">Vergangene Wochen erscheinen hier ab Montag.</string>

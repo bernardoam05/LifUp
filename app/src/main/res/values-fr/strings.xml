@@ -560,6 +560,10 @@
     <string name="week_suggest">Si elle ne colle pas à ta journée, échange-la ou désactive-la dans la Forge.</string>
     <string name="mission_rates">Missions tenues</string>
     <string name="weekly_rates">Missions hebdomadaires</string>
+    <string name="week_key_met">Objectif atteint</string>
+    <string name="week_key_part">Partiel</string>
+    <string name="week_key_none">Aucune</string>
+    <string name="week_key_now">Cette semaine</string>
     <string name="weekly_rates_hint">Une barre par semaine ; la dernière, c\'est celle-ci, en direct.</string>
     <string name="weekly_goals_met">Objectif atteint %1$d semaines sur %2$d</string>
     <string name="weekly_no_history">Les semaines passées apparaissent ici à partir de lundi.</string>

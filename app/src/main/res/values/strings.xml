@@ -579,6 +579,10 @@
     <string name="week_suggest">If it doesn\'t fit your day, swap it or turn it off in the Forge.</string>
     <string name="mission_rates">Missions kept</string>
     <string name="weekly_rates">Weekly missions</string>
+    <string name="week_key_met">Goal met</string>
+    <string name="week_key_part">Part</string>
+    <string name="week_key_none">None</string>
+    <string name="week_key_now">This week</string>
     <string name="weekly_rates_hint">One bar per week; the last is this week, live.</string>
     <string name="weekly_goals_met">Goal met %1$d of %2$d weeks</string>
     <string name="weekly_no_history">Past weeks show up here from Monday on.</string>

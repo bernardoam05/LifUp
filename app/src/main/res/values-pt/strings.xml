@@ -560,6 +560,10 @@
     <string name="week_suggest">Se não encaixa no teu dia, troca-a ou desativa-a na Forja.</string>
     <string name="mission_rates">Missões cumpridas</string>
     <string name="weekly_rates">Missões semanais</string>
+    <string name="week_key_met">Meta cumprida</string>
+    <string name="week_key_part">Parcial</string>
+    <string name="week_key_none">Nenhuma</string>
+    <string name="week_key_now">Esta semana</string>
     <string name="weekly_rates_hint">Uma barra por semana; a última é esta, em tempo real.</string>
     <string name="weekly_goals_met">Meta cumprida em %1$d de %2$d semanas</string>
     <string name="weekly_no_history">As semanas passadas aparecem aqui a partir de segunda.</string>

@@ -404,10 +404,36 @@ private fun WeeklyRates(s: GameState) {
                 WeekBars(weeks, current = now != null)
             }
         }
+        WeekLegend()
     }
 }
 
-/** A bar per week, filled by sessions over the goal: green when met, gold part-way, red when none; the current week is outlined. */
+/** The colour of a week: goal met, part of it, or no session at all. */
+@Composable
+private fun weekColor(w: com.lifup.app.domain.WeekMark): Color {
+    val c = Lif.colors
+    return when { w.met -> c.green; w.done > 0 -> c.gold; else -> c.red }
+}
+
+@Composable
+private fun WeekLegend() {
+    val c = Lif.colors
+    @Composable
+    fun key(color: Color, label: Int, outlined: Boolean = false) = Row(verticalAlignment = Alignment.CenterVertically) {
+        val shape = RoundedCornerShape(2.dp)
+        Box(Modifier.size(10.dp).clip(shape).then(if (outlined) Modifier.border(1.5.dp, color, shape) else Modifier.background(color)))
+        Spacer(Modifier.width(4.dp))
+        Text(stringResource(label), style = MaterialTheme.typography.labelSmall, color = c.dim)
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(start = 4.dp)) {
+        key(c.green, R.string.week_key_met)
+        key(c.gold, R.string.week_key_part)
+        key(c.red, R.string.week_key_none)
+        key(c.text, R.string.week_key_now, outlined = true)
+    }
+}
+
+/** A bar per week, filled by sessions over the goal in the week's colour; the current week is outlined. */
 @Composable
 private fun WeekBars(weeks: List<com.lifup.app.domain.WeekMark>, current: Boolean) {
     val c = Lif.colors
@@ -417,14 +443,14 @@ private fun WeekBars(weeks: List<com.lifup.app.domain.WeekMark>, current: Boolea
         weeks.forEachIndexed { i, w ->
             val live = current && i == weeks.lastIndex
             val share = if (w.goal == 0) 0f else (w.done / w.goal.toFloat()).coerceIn(0f, 1f)
-            val color = when { w.met -> c.green; w.done > 0 -> c.gold; else -> c.red }
             val shape = RoundedCornerShape(3.dp)
             Box(
                 Modifier.weight(1f).fillMaxHeight().clip(shape).background(c.border.copy(alpha = 0.4f))
-                    .then(if (live) Modifier.border(1.5.dp, c.accent, shape) else Modifier),
+                    .then(if (live) Modifier.border(1.5.dp, c.text, shape) else Modifier),
                 contentAlignment = Alignment.BottomCenter,
             ) {
-                Box(Modifier.fillMaxWidth().fillMaxHeight(share.coerceAtLeast(if (live) 0f else 0.08f)).background(if (live && !w.met) c.accent else color))
+                // A closed week with no session still shows a red sliver; the live one only fills as sessions come.
+                Box(Modifier.fillMaxWidth().fillMaxHeight(share.coerceAtLeast(if (live) 0f else 0.08f)).background(weekColor(w)))
             }
         }
     }
@@ -475,7 +501,8 @@ private fun DayRow(d: com.lifup.app.domain.DayLog) {
 private fun MissionRates(s: GameState) {
     val c = Lif.colors
     // Missions removed from the app have no name left to show.
-    val stats = s.missionStats.entries.mapNotNull { e -> s.defOf(e.key, content)?.takeIf { e.value.total > 0 }?.let { it to e.value } }
+    // Weekly missions have their own chart below (older stats may predate their switch to weekly).
+    val stats = s.missionStats.entries.mapNotNull { e -> s.defOf(e.key, content)?.takeIf { e.value.total > 0 && !it.isWeekly() }?.let { it to e.value } }
         .sortedWith(compareBy({ it.second.rate }, { -it.second.total }))
     if (stats.isEmpty()) return
     var all by remember { mutableStateOf(false) }
