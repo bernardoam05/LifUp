@@ -32,6 +32,7 @@ import com.lifup.app.domain.easeTarget
 import com.lifup.app.domain.holdTarget
 import com.lifup.app.domain.roundTarget
 import com.lifup.app.domain.stepOf
+import com.lifup.app.domain.bestAt
 import com.lifup.app.domain.targetAt
 import com.lifup.app.domain.progresses
 import androidx.compose.ui.res.pluralStringResource
@@ -323,10 +324,12 @@ private fun SheetLink(text: String, icon: androidx.compose.ui.graphics.vector.Im
 private fun HistoryRow(s: GameState, q: Quest, def: QuestDef) {
     val context = LocalContext.current
     val record = s.records[q.defId]
-    val records = record?.takeIf { it.count > 0 || it.bestMs > 0 }?.let { r ->
+    val best = record?.bestAt(q.target) ?: 0
+    val unit = unitLabel(q.unit)
+    val records = record?.takeIf { it.count > 0 || best > 0 }?.let { r ->
         listOfNotNull(
             context.getString(R.string.record_count, r.count).takeIf { r.count > 0 },
-            context.getString(R.string.record_best, fmtDuration(r.bestMs)).takeIf { r.bestMs > 0 },
+            context.getString(R.string.record_best, fmtDuration(best), "${fmtNum(q.target)} $unit".trim()).takeIf { best > 0 },
         ).joinToString(" · ")
     }
     val progresses = def.progresses() && q.origin != QuestOrigin.PENALTY && q.origin != QuestOrigin.PORTAL
