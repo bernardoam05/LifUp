@@ -17,6 +17,8 @@ import com.lifup.app.domain.text
 
 object Notifications {
     const val CH_SESSION = "session_quiet"
+    /** Focus sessions and runs: silent, but shown on the lock screen like a clock timer. */
+    const val CH_LIVE = "live"
     const val CH_EVENTS = "events"
     const val CH_REMINDERS = "reminders"
 
@@ -34,6 +36,13 @@ object Notifications {
     private const val ID_LIMIT = 2010
     private const val ID_AVOID = 2020
 
+    /**
+     * Something running right now (a focus session, a run): public on the lock screen and, on Android 16+,
+     * a Live Update with its own chip in the status bar, like the clock's timer.
+     */
+    fun NotificationCompat.Builder.live(category: String): NotificationCompat.Builder =
+        setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setCategory(category).setRequestPromotedOngoing(true)
+
     fun createChannels(context: Context) {
         val nm = context.getSystemService(NotificationManager::class.java)
         nm.deleteNotificationChannel("session")
@@ -41,6 +50,9 @@ object Notifications {
             listOf(
                 NotificationChannel(CH_SESSION, context.getString(R.string.channel_session), NotificationManager.IMPORTANCE_LOW).apply {
                     setSound(null, null); enableVibration(false); setShowBadge(false)
+                },
+                NotificationChannel(CH_LIVE, context.getString(R.string.channel_live), NotificationManager.IMPORTANCE_DEFAULT).apply {
+                    setSound(null, null); enableVibration(false); setShowBadge(false); lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
                 },
                 NotificationChannel(CH_EVENTS, context.getString(R.string.channel_events), NotificationManager.IMPORTANCE_HIGH),
                 NotificationChannel(CH_REMINDERS, context.getString(R.string.channel_reminders), NotificationManager.IMPORTANCE_DEFAULT),

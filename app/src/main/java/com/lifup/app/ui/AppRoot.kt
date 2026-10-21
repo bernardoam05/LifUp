@@ -241,7 +241,7 @@ private fun MainScaffold(
             HorizontalPager(pager, Modifier.padding(padding).fillMaxSize(), beyondViewportPageCount = 1) { page ->
                 when (Tab.entries[page]) {
                     Tab.TODAY -> TodayScreen(s, openForge, openDef, openQuest) { openQuest = null }
-                    Tab.FOCUS -> FocusScreen(s)
+                    Tab.FOCUS -> FocusScreen(s, active = pager.settledPage == page)
                     Tab.ECHOES -> com.lifup.app.ui.hero.EchoesScreen(s, active = pager.settledPage == page)
                     Tab.HERO -> HeroScreen(s)
                     Tab.SHOP -> ShopScreen(s)

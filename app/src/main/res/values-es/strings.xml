@@ -384,6 +384,7 @@
 
     <!-- System: notifications, blocker, tile -->
     <string name="channel_session">Sesiones de foco</string>
+    <string name="channel_live">Foco y carreras en curso</string>
     <string name="channel_events">Eventos</string>
     <string name="channel_reminders">Recordatorios</string>
     <string name="session_focus_title">Sesión de foco</string>

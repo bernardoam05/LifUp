@@ -385,6 +385,7 @@
 
     <!-- System: notifications, blocker, tile -->
     <string name="channel_session">Focus sessions</string>
+    <string name="channel_live">Focus and runs in progress</string>
     <string name="channel_events">Events</string>
     <string name="channel_reminders">Reminders</string>
     <string name="session_focus_title">Focus session</string>

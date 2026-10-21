@@ -11,6 +11,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Looper
 import androidx.core.app.NotificationCompat
+import com.lifup.app.system.Notifications.live
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.lifup.app.LifUpApp
@@ -120,7 +121,8 @@ class GpsService : Service(), LocationListener {
         super.onDestroy()
     }
 
-    private fun notification(km: Double) = NotificationCompat.Builder(this, Notifications.CH_SESSION)
+    private fun notification(km: Double) = NotificationCompat.Builder(this, Notifications.CH_LIVE)
+        .live(NotificationCompat.CATEGORY_WORKOUT)
         .setSmallIcon(R.drawable.ic_stat_lifup)
         .setContentTitle(getString(R.string.gps_tracking_title))
         .setContentText(getString(R.string.gps_tracking_text, km))

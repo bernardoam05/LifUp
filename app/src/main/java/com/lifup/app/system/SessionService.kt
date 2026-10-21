@@ -33,6 +33,8 @@ import com.lifup.app.domain.Pomodoro
 import com.lifup.app.domain.text
 import com.lifup.app.domain.elapsedMinutes
 import com.lifup.app.domain.endsAt
+import com.lifup.app.domain.totalMinutes
+import com.lifup.app.system.Notifications.live
 import com.lifup.app.domain.penaltyBlockActive
 import com.lifup.app.domain.recordBlockedAttempt
 
@@ -344,7 +346,8 @@ class SessionService : Service() {
         val s = store.current
         val f = s.focus ?: return "penalty:${s.penalty.blockEnd}"
         val phase = f.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(System.currentTimeMillis())) }
-        return "focus:${f.startedAt}:${phase?.work}:${phase?.cycle}"
+        // The bar moves by the minute, so the minute is part of the key.
+        return "focus:${f.startedAt}:${phase?.work}:${phase?.cycle}:${f.elapsedMinutes(System.currentTimeMillis()).toInt()}"
     }
 
     /** Counts down on its own (chronometer), so it never needs re-posting just to tick. */
@@ -366,7 +369,8 @@ class SessionService : Service() {
         }
         val countUp = f?.open == true && phase == null
         val mission = f?.questId?.let { id -> s.allQuests.firstOrNull { it.id == id } }
-        val b = NotificationCompat.Builder(this, Notifications.CH_SESSION)
+        val b = NotificationCompat.Builder(this, Notifications.CH_LIVE)
+            .live(NotificationCompat.CATEGORY_STOPWATCH)
             .setSmallIcon(R.drawable.ic_stat_lifup)
             .setContentTitle(title)
             .setContentText(mission?.title?.text(java.util.Locale.getDefault().language))
@@ -377,11 +381,24 @@ class SessionService : Service() {
             .setChronometerCountDown(!countUp)
             .setWhen(if (countUp) f!!.startedAt else end)
             .setContentIntent(Notifications.openApp(this, "focus"))
+        if (f != null && !countUp) b.setStyle(progress(f, now))
         // A "no quitting" session can't be stopped from here: that choice costs minutes and stays in the app.
         if (f != null && !f.strict) b.addAction(0, getString(R.string.stop), NotificationActionReceiver.intent(this, NotificationActionReceiver.STOP_FOCUS))
         return b.build()
     }
+
+    /** The whole session as a bar: one segment per Pomodoro block, work in the focus purple and breaks in green. */
+    private fun progress(f: FocusSession, now: Long): NotificationCompat.ProgressStyle {
+        val segments = f.pomodoro?.let { p ->
+            Pomodoro.phases(p).map { NotificationCompat.ProgressStyle.Segment((it.endsAtMin - it.startMin).toInt().coerceAtLeast(1)).setColor(if (it.work) WORK_COLOR else BREAK_COLOR) }
+        } ?: listOf(NotificationCompat.ProgressStyle.Segment(f.totalMinutes().coerceAtLeast(1)).setColor(WORK_COLOR))
+        return NotificationCompat.ProgressStyle().setProgressSegments(segments).setStyledByProgress(true).setProgress(f.elapsedMinutes(now).toInt())
+    }
+
 }
+
+private const val WORK_COLOR = 0xFFA77BFF.toInt()
+private const val BREAK_COLOR = 0xFF5FD39A.toInt()
 
 object Ambient {
     val kinds = listOf("rain", "fire", "lofi")

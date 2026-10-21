@@ -366,6 +366,7 @@
     <string name="onb_start">Começar</string>
 
     <string name="channel_session">Sessões de foco</string>
+    <string name="channel_live">Foco e corridas em curso</string>
     <string name="channel_events">Eventos</string>
     <string name="channel_reminders">Lembretes</string>
     <string name="session_focus_title">Sessão de foco</string>

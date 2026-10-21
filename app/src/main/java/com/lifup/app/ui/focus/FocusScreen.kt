@@ -98,7 +98,15 @@ import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 @Composable
-fun FocusScreen(s: GameState) {
+fun FocusScreen(s: GameState, active: Boolean = true) {
+    // A running session keeps the screen on while you're looking at it, like a clock; leaving the tab lets it sleep.
+    if (active && s.focus != null) {
+        val view = androidx.compose.ui.platform.LocalView.current
+        androidx.compose.runtime.DisposableEffect(view) {
+            view.keepScreenOn = true
+            onDispose { view.keepScreenOn = false }
+        }
+    }
     Column(Modifier.verticalScroll(rememberScrollState()).padding(16.dp)) {
         val now = rememberNow(1_000)
         val f = s.focus

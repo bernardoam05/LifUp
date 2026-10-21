@@ -366,6 +366,7 @@
     <string name="onb_start">Commencer</string>
 
     <string name="channel_session">Sessions de focus</string>
+    <string name="channel_live">Focus et courses en cours</string>
     <string name="channel_events">Événements</string>
     <string name="channel_reminders">Rappels</string>
     <string name="session_focus_title">Session de focus</string>
