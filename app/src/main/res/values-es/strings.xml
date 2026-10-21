@@ -726,7 +726,7 @@
     <string name="weekly_hint_no">No</string>
     <string name="unit_meal">comida</string>
     <string name="unit_shower">ducha</string>
-    <string name="edit_mission_tomorrow">Editar misión · cuenta desde mañana</string>
+    <string name="edit_from_tomorrow">Los cambios cuentan a partir de mañana.</string>
     <string name="count_title">¿Cuántas llevas?</string>
     <string name="manage_missions">Gestionar misiones</string>
     <string name="family_strength">Fuerza</string>

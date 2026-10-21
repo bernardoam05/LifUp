@@ -58,6 +58,11 @@ import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.Timer
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -137,48 +142,35 @@ fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = nu
     var note by remember(q.defId) { mutableStateOf(record?.note.orEmpty()) }
 
     ModalBottomSheet(onDismissRequest = { if (note != record?.note.orEmpty()) act { saveNote(q.defId, note) }; onDismiss() }, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = p.panel) {
-        // Order: what it is, how far along, the main action, then details and extras.
+        // Three zones: what it is (and pays), doing it (tools, then the button), and knowing about it (folded rows).
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp).padding(bottom = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SheetHeader(q)
+            SheetHeader(s, q)
             Text(questDetail(q, lang(), unit), style = MaterialTheme.typography.bodyLarge, color = p.text)
             q.prompt?.let { Text(it.text(lang()), style = MaterialTheme.typography.bodyMedium, color = p.accent) }
             // Avoid missions pass by themselves: say so, and what to do on a slip.
             if (q.type == QuestType.FORBIDDEN && open) Text(stringResource(R.string.avoid_info), style = MaterialTheme.typography.bodySmall, color = p.muted)
             if (q.auto != null && q.autoOff) Text(stringResource(R.string.auto_off), style = MaterialTheme.typography.bodySmall, color = p.gold)
             else if (q.auto != null) AutoInfo(q.auto, s)
+            if (s.doubleXpNext && open && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA)) {
+                Text(stringResource(R.string.double_xp_active), style = MaterialTheme.typography.labelMedium, color = p.gold)
+            }
 
             if (open && q.countable()) Counter(q, unit)
+            // Timing is the main tool for "60 s" or "15 min"; for reps it's a small extra row.
+            if (open && q.timeable()) Stopwatch(q, timer, now, compact = q.countable())
             if (open && q.type == QuestType.FOCUS) FocusAction(s, q, onDismiss)
             if (open && q.type == QuestType.GPS) RunPanel(s, q, tracking = q.auto == null || q.autoOff)
             if (open && q.type != QuestType.FORBIDDEN && q.type != QuestType.LIMIT) CompleteAction(q, onDismiss)
 
             val def = s.defOf(q.defId, content)
-            if (open && q.origin == QuestOrigin.DAILY && def?.kind == DefKind.POOL) {
-                val free = s.daily.swapsUsed < Rules.FREE_SWAPS_PER_DAY
-                val scrolls = s.items("pergaminho_troca")
-                GhostButton(
-                    if (free) stringResource(R.string.swap_free) else stringResource(R.string.swap_scroll, scrolls),
-                    onClick = { act { swapQuest(q.id) }; onDismiss() },
-                    enabled = free || scrolls > 0, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.SwapHoriz,
-                )
-            }
-            if (q.status == QuestStatus.DONE && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY)) {
-                GhostButton(stringResource(R.string.undo), onClick = { act { undoQuest(q.id) }; onDismiss() }, modifier = Modifier.fillMaxWidth(), icon = Icons.AutoMirrored.Rounded.Undo, color = p.muted)
-            }
+            SideActions(s, q, def, onEdit, onDismiss)
 
-            Details(s, q)
-            if (open && q.timeable()) Stopwatch(q, timer, now)
-            s.tipFor(q, content)?.let { TipRow(it.text(lang())) }
-            NoteRow(note) { note = it }
-            // Edits change the mission from tomorrow on, so today's target can't be lowered to finish it.
-            if (onEdit != null && def != null && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY)) {
-                TextButton(onClick = { onEdit(def.id) }, modifier = Modifier.fillMaxWidth()) {
-                    Icon(Icons.Rounded.Edit, null, tint = p.muted, modifier = Modifier.size(16.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text(stringResource(R.string.edit_mission_tomorrow), color = p.muted, style = MaterialTheme.typography.labelLarge)
-                }
+            HorizontalDivider(color = p.border)
+            Column {
+                def?.let { HistoryRow(s, q, it) }
+                s.tipFor(q, content)?.let { TipRow(it.text(lang())) }
+                NoteRow(note) { note = it }
             }
-            Spacer(Modifier.height(4.dp))
         }
     }
 }
@@ -191,19 +183,37 @@ private fun Quest.countable() = auto == null && fromHour == null && target > 1 &
 private fun Quest.timeable() = auto == null && fromHour == null && (type == QuestType.TRAINING || type == QuestType.KNOWLEDGE) &&
     unit in setOf("reps", "s", "min", "pages", "flights", "km")
 
+/** Icon, title, family and what it pays: everything about the mission at a glance. */
 @Composable
-private fun SheetHeader(q: Quest) {
+private fun SheetHeader(s: GameState, q: Quest) {
     val color = q.color(Lif.colors)
     Row(verticalAlignment = Alignment.CenterVertically) {
         IconBadge(q.icon(), color, 46.dp)
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(questTitle(q, lang()), style = MaterialTheme.typography.titleLarge)
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Pill(stringResource(familyName(q.family())), color)
                 if (q.type == QuestType.FOCUS || q.type == QuestType.FORBIDDEN || q.type == QuestType.LIMIT) Pill(stringResource(questTypeName(q.type)), Lif.colors.muted)
+                Spacer(Modifier.weight(1f))
+                Reward(s, q)
             }
         }
+    }
+}
+
+/** XP follows the theme; gold is always gold, like the coin at the top. Done missions show what they paid. */
+@Composable
+private fun Reward(s: GameState, q: Quest) {
+    val p = Lif.colors
+    val done = q.status == QuestStatus.DONE
+    val now = System.currentTimeMillis()
+    val xp = if (done) q.xpGained else s.xpPreview(q, content, now)
+    val gold = if (done) q.goldGained else s.goldPreview(q, content, now)
+    if (xp > 0) Text("+$xp XP", style = MaterialTheme.typography.labelLarge, color = p.accent)
+    if (gold > 0) {
+        Icon(Icons.Rounded.MonetizationOn, null, tint = p.gold, modifier = Modifier.size(15.dp))
+        Text("+$gold", style = MaterialTheme.typography.labelLarge, color = p.gold, modifier = Modifier.padding(start = 2.dp))
     }
 }
 
@@ -270,73 +280,109 @@ private fun CompleteAction(q: Quest, onDismiss: () -> Unit) {
     else PrimaryButton(stringResource(R.string.complete), onClick = complete, modifier = Modifier.fillMaxWidth(), enabled = available, icon = Icons.Rounded.Check)
 }
 
-/** Rewards, records and target adjustments: useful to know, never in the way. */
+/** Swap (open drawn missions) or undo (done ones) on the left, edit on the right: quiet links, not buttons. */
 @Composable
-private fun Details(s: GameState, q: Quest) {
+private fun SideActions(s: GameState, q: Quest, def: QuestDef?, onEdit: ((String) -> Unit)?, onDismiss: () -> Unit) {
     val p = Lif.colors
-    val context = LocalContext.current
-    val record = s.records[q.defId]
-    if (q.xp > 0 || q.gold > 0) Row(verticalAlignment = Alignment.CenterVertically) {
-        // XP follows the theme; gold is always gold, like the coin at the top.
-        val done = q.status == QuestStatus.DONE
-        val now = System.currentTimeMillis()
-        Text("+${if (done) q.xpGained else s.xpPreview(q, content, now)} XP", style = MaterialTheme.typography.labelLarge, color = p.accent)
-        if (q.gold > 0) {
-            Spacer(Modifier.width(12.dp))
-            Icon(Icons.Rounded.MonetizationOn, null, tint = p.gold, modifier = Modifier.size(16.dp))
-            Spacer(Modifier.width(4.dp))
-            Text("+${if (done) q.goldGained else s.goldPreview(q, content, now)}", style = MaterialTheme.typography.labelLarge, color = p.gold)
-        }
+    val own = q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY)
+    val swappable = q.status == QuestStatus.OPEN && q.origin == QuestOrigin.DAILY && def?.kind == DefKind.POOL
+    val undoable = q.status == QuestStatus.DONE && own
+    // Edits change the mission from tomorrow on, so today's target can't be lowered to finish it.
+    val editable = onEdit != null && def != null && own
+    if (!swappable && !undoable && !editable) return
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        if (swappable) {
+            val free = s.daily.swapsUsed < Rules.FREE_SWAPS_PER_DAY
+            val scrolls = s.items("pergaminho_troca")
+            SheetLink(
+                if (free) stringResource(R.string.swap_free) else stringResource(R.string.swap_scroll, scrolls), Icons.Rounded.SwapHoriz, p.text,
+                enabled = free || scrolls > 0,
+            ) { act { swapQuest(q.id) }; onDismiss() }
+        } else if (undoable) SheetLink(stringResource(R.string.undo), Icons.AutoMirrored.Rounded.Undo, p.text) { act { undoQuest(q.id) }; onDismiss() }
+        Spacer(Modifier.weight(1f))
+        if (editable) SheetLink(stringResource(R.string.edit_mission), Icons.Rounded.Edit, p.muted) { onEdit!!(def!!.id) }
     }
-    if (s.doubleXpNext && q.status == QuestStatus.OPEN && q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA)) {
-        Text(stringResource(R.string.double_xp_active), style = MaterialTheme.typography.labelMedium, color = p.gold)
+}
+
+@Composable
+private fun SheetLink(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector, color: androidx.compose.ui.graphics.Color, enabled: Boolean = true, onClick: () -> Unit) {
+    val tint = if (enabled) color else Lif.colors.dim
+    TextButton(onClick = onClick, enabled = enabled, contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)) {
+        Icon(icon, null, tint = tint, modifier = Modifier.size(18.dp))
+        Spacer(Modifier.width(6.dp))
+        Text(text, color = tint, style = MaterialTheme.typography.labelLarge)
     }
-    if (record != null && (record.bestMs > 0 || record.count > 0)) Text(
-        buildString {
-            if (record.count > 0) append(context.getString(R.string.record_count, record.count))
-            if (record.bestMs > 0) { if (isNotEmpty()) append(" · "); append(context.getString(R.string.record_best, fmtDuration(record.bestMs))) }
-        },
-        style = MaterialTheme.typography.labelMedium, color = p.muted,
-    )
-    s.defOf(q.defId, content)?.takeIf { it.progresses() && q.origin != QuestOrigin.PENALTY && q.origin != QuestOrigin.PORTAL }?.let { ProgressLine(s, q, it) }
 }
 
 /**
- * Where the target started and how many keeps until it grows again; once it has grown, two quiet links
- * let the player keep it there or ease it one step (from the next time, after a confirmation).
+ * How the mission has gone, in one line: where the target stands (or the records, for fixed ones).
+ * Unfolding shows the records and, once the target has grown, the controls to keep or ease it, out of the
+ * way so nobody gives up on a whim.
  */
 @Composable
-private fun ProgressLine(s: GameState, q: Quest, def: QuestDef) {
-    val p = Lif.colors
+private fun HistoryRow(s: GameState, q: Quest, def: QuestDef) {
+    val context = LocalContext.current
+    val record = s.records[q.defId]
+    val records = record?.takeIf { it.count > 0 || it.bestMs > 0 }?.let { r ->
+        listOfNotNull(
+            context.getString(R.string.record_count, r.count).takeIf { r.count > 0 },
+            context.getString(R.string.record_best, fmtDuration(r.bestMs)).takeIf { r.bestMs > 0 },
+        ).joinToString(" · ")
+    }
+    val progresses = def.progresses() && q.origin != QuestOrigin.PENALTY && q.origin != QuestOrigin.PORTAL
+    if (!progresses) {
+        records?.let { FoldRow(Icons.Rounded.History, it, open = false, onClick = null) }
+        return
+    }
+    val tunable = s.canTuneTarget(def)
+    var open by remember { mutableStateOf(false) }
+    FoldRow(Icons.AutoMirrored.Rounded.TrendingUp, progressSummary(s, q, def), open, onClick = if (records != null || tunable) { { open = !open } } else null, maxLines = 2)
+    AnimatedVisibility(open) {
+        Column(Modifier.padding(start = 26.dp, bottom = 4.dp)) {
+            records?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted) }
+            if (tunable) TargetControls(s, def)
+        }
+    }
+}
+
+@Composable
+private fun progressSummary(s: GameState, q: Quest, def: QuestDef): String {
     val step = s.stepOf(def.id)
-    val held = s.adapt[def.id]?.held == true
     val next = s.keepsToNextStep(def)
     val unit = unitLabel(def.unit)
     fun amount(step: Int) = "${fmtNum(roundTarget(def.targetAt(step), def.unit))} $unit".trim()
-    val parts = listOfNotNull(
+    return listOfNotNull(
         if (q.adapt != 0) stringResource(R.string.prog_from, amount(0)) else null,
         if (step != q.adapt) stringResource(R.string.prog_next_time, amount(step)) else null,
         when {
-            held -> stringResource(R.string.prog_held)
+            s.adapt[def.id]?.held == true -> stringResource(R.string.prog_held)
             next == null -> stringResource(R.string.prog_max)
             else -> pluralStringResource(if (def.isWeekly()) R.plurals.prog_next_weeks else R.plurals.prog_next, next, next)
         },
-    )
-    Text(parts.joinToString(" · "), style = MaterialTheme.typography.bodySmall, color = p.muted)
-    if (!s.canTuneTarget(def)) return
+    ).joinToString(" · ")
+}
+
+/** Keep the grown target where it is, or ease it one step from next time (confirmed, once per climb). */
+@Composable
+private fun TargetControls(s: GameState, def: QuestDef) {
+    val p = Lif.colors
+    val held = s.adapt[def.id]?.held == true
+    val unit = unitLabel(def.unit)
     var confirmEase by remember { mutableStateOf(false) }
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
             stringResource(if (held) R.string.prog_resume else R.string.prog_hold), style = MaterialTheme.typography.labelMedium, color = p.accent,
-            modifier = Modifier.clickable { act { holdTarget(def.id, !held) } }.padding(vertical = 6.dp),
+            modifier = Modifier.clickable { act { holdTarget(def.id, !held) } }.padding(vertical = 8.dp),
         )
         if (s.canEaseTarget(def)) Text(
             stringResource(R.string.prog_ease), style = MaterialTheme.typography.labelMedium, color = p.muted,
-            modifier = Modifier.clickable { confirmEase = true }.padding(vertical = 6.dp),
+            modifier = Modifier.clickable { confirmEase = true }.padding(vertical = 8.dp),
         )
     }
     if (confirmEase) ConfirmDialog(
-        stringResource(R.string.prog_ease_title), stringResource(R.string.prog_ease_text, amount(step - 1)), stringResource(R.string.prog_ease_ok),
+        stringResource(R.string.prog_ease_title),
+        stringResource(R.string.prog_ease_text, "${fmtNum(roundTarget(def.targetAt(s.stepOf(def.id) - 1), def.unit))} $unit".trim()),
+        stringResource(R.string.prog_ease_ok),
         onConfirm = { act { easeTarget(def.id) }; confirmEase = false }, onDismiss = { confirmEase = false },
     )
 }
@@ -363,27 +409,32 @@ private fun NoteRow(note: String, onChange: (String) -> Unit) {
     }
 }
 
+/** A one-line row with an icon; with [onClick] it folds open (chevron), without it it's just information. */
 @Composable
-private fun FoldRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, open: Boolean, onClick: () -> Unit) {
+private fun FoldRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, open: Boolean, maxLines: Int = 1, onClick: (() -> Unit)?) {
     val p = Lif.colors
-    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(Modifier.fillMaxWidth().then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier).padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, null, tint = p.muted, modifier = Modifier.size(18.dp))
         Spacer(Modifier.width(8.dp))
-        Text(label, style = MaterialTheme.typography.bodyMedium, color = p.muted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
-        Icon(if (open) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = p.muted)
+        Text(label, style = MaterialTheme.typography.bodyMedium, color = p.muted, maxLines = maxLines, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+        if (onClick != null) Icon(if (open) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = p.muted)
     }
 }
 
 /** Stopwatch, kept in the state so it survives the app being closed. */
 @Composable
-private fun Stopwatch(q: Quest, timer: com.lifup.app.domain.MissionTimer?, now: Long) {
+private fun Stopwatch(q: Quest, timer: com.lifup.app.domain.MissionTimer?, now: Long, compact: Boolean = false) {
     val p = Lif.colors
     val elapsed = timer?.elapsed(now) ?: 0
     // Timed missions ("20 min", "90 s") measure against their target and turn green once it's reached.
     val goalMs = when (q.unit) { "min" -> q.target * 60_000; "s" -> q.target * 1_000; else -> null }?.toLong()
     val reached = goalMs != null && elapsed >= goalMs
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(fmtDuration(elapsed), style = MaterialTheme.typography.headlineMedium, color = if (reached) p.green else if (timer?.running == true) p.accent else p.text, modifier = Modifier.weight(1f))
+        if (compact) Icon(Icons.Rounded.Timer, null, tint = p.muted, modifier = Modifier.padding(end = 8.dp).size(18.dp))
+        Text(
+            fmtDuration(elapsed), style = if (compact) MaterialTheme.typography.titleMedium else MaterialTheme.typography.headlineMedium,
+            color = if (reached) p.green else if (timer?.running == true) p.accent else if (compact) p.muted else p.text, modifier = Modifier.weight(1f),
+        )
         if (timer?.running == true) IconButton(onClick = { act { pauseTimer(q.id) } }) { Icon(Icons.Rounded.Pause, stringResource(R.string.a11y_pause)) }
         else IconButton(onClick = { act { startTimer(q.id) } }) { Icon(Icons.Rounded.PlayArrow, stringResource(R.string.a11y_start), tint = p.accent) }
         IconButton(onClick = { act { resetTimer(q.id) } }, enabled = timer != null) { Icon(Icons.Rounded.RestartAlt, stringResource(R.string.a11y_reset)) }

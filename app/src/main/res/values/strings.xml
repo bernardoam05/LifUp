@@ -727,7 +727,7 @@
     <string name="weekly_hint_no">No</string>
     <string name="unit_meal">meal</string>
     <string name="unit_shower">shower</string>
-    <string name="edit_mission_tomorrow">Edit mission · applies from tomorrow</string>
+    <string name="edit_from_tomorrow">Changes count from tomorrow.</string>
     <string name="count_title">How many so far?</string>
     <string name="manage_missions">Manage missions</string>
     <string name="family_strength">Strength</string>
