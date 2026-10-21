@@ -19,10 +19,11 @@ data class Passives(
     val buffXp: Double = 0.0,
     val buffGold: Double = 0.0,
 ) {
-    fun xpFor(type: QuestType?): Double = xp + when (type) {
-        QuestType.TRAINING -> trainingXp
-        QuestType.KNOWLEDGE, QuestType.FOCUS -> mindXp
-        QuestType.GPS -> explorerXp
+    /** All-round XP plus the family's own: strength, movement or mind. */
+    fun xpFor(family: DrawGroup?): Double = xp + when (family) {
+        DrawGroup.STRENGTH -> trainingXp
+        DrawGroup.MIND -> mindXp
+        DrawGroup.MOVEMENT -> explorerXp
         else -> 0.0
     }
 }
@@ -37,7 +38,7 @@ fun GameState.passives(content: Content, now: Long): Passives {
         when (def.passive) {
             Passive.PENALTY_IMMUNITY -> immunity = true
             Passive.STREAK_PROTECT -> streak = true
-            else -> totals[def.passive] = (totals[def.passive] ?: 0.0) + Rules.passiveValue(def, level)
+            else -> totals[def.passive] = (totals[def.passive] ?: 0.0) + Rules.passiveValue(def, level, player.level)
         }
     }
     val amp = 1 + (totals[Passive.ALL_BOOST] ?: 0.0)
@@ -64,11 +65,28 @@ fun GameState.passives(content: Content, now: Long): Passives {
     )
 }
 
-/** Weekly-cooldown passives (immunity, streak protection). Returns the shadow that fired, if any. */
-fun Tx.tryWeeklyPassive(passive: Passive): ShadowDef? {
-    val shadow = s.squad.mapNotNull { content.shadowById[it] }.firstOrNull { it.passive == passive } ?: return null
+/**
+ * One value per passive in the squad, as it applies: summed and amplified, or for flags the shortest wait.
+ */
+fun GameState.squadEffects(content: Content): List<Pair<Passive, Double>> {
+    val members = squad.mapNotNull { id -> content.shadowById[id]?.let { it to (owned(id)?.level ?: 1) } }
+    val amp = 1 + members.filter { it.first.passive == Passive.ALL_BOOST }.sumOf { (d, l) -> Rules.passiveValue(d, l) }
+    return members.groupBy { it.first.passive }.map { (passive, ds) ->
+        val values = ds.map { (d, l) -> Rules.passiveValue(d, l, player.level) }
+        passive to when {
+            Rules.isFlag(passive) -> values.min()
+            passive == Passive.ALL_BOOST -> values.sum()
+            else -> values.sum() * amp
+        }
+    }
+}
+
+/** Passives that fire once in a while (immunity, streak protection); the squad's quickest one sets the wait. */
+fun Tx.tryCooldownPassive(passive: Passive): ShadowDef? {
+    fun days(d: ShadowDef) = Rules.flagDays(d, s.owned(d.id)?.level ?: 1)
+    val shadow = s.squad.mapNotNull { content.shadowById[it] }.filter { it.passive == passive }.minByOrNull(::days) ?: return null
     val last = s.passiveCooldowns[passive] ?: 0L
-    if (ctx.now - last < Rules.WEEK_MS) return null
+    if (ctx.now - last < days(shadow) * Rules.DAY_MS) return null
     s = s.copy(passiveCooldowns = s.passiveCooldowns + (passive to ctx.now))
     return shadow
 }
@@ -117,18 +135,24 @@ fun Tx.upgradeShadow(id: String): Boolean {
     return true
 }
 
+/**
+ * A member that joined today stays until tomorrow: the squad is a choice for the day, so a passive can't
+ * be slotted in for one purchase or one mission and taken out again. Joining is always immediate.
+ */
+fun GameState.squadLocked(id: String) = squadSince[id] == day
+
 /** With a full squad, [inId] takes [outId]'s place. */
 fun Tx.swapSquad(outId: String, inId: String) {
-    if (s.owned(inId) == null || outId !in s.squad || inId in s.squad) return
-    s = s.copy(squad = s.squad.map { if (it == outId) inId else it })
+    if (s.owned(inId) == null || outId !in s.squad || inId in s.squad || s.squadLocked(outId)) return
+    s = s.copy(squad = s.squad.map { if (it == outId) inId else it }, squadSince = s.squadSince - outId + (inId to s.day))
 }
 
 fun Tx.toggleSquad(id: String) {
     if (s.owned(id) == null) return
     s = when {
-        id in s.squad -> s.copy(squad = s.squad - id)
+        id in s.squad -> if (s.squadLocked(id)) s else s.copy(squad = s.squad - id, squadSince = s.squadSince - id)
         s.squad.size >= Rules.SQUAD_SIZE -> s
-        else -> s.copy(squad = s.squad + id)
+        else -> s.copy(squad = s.squad + id, squadSince = s.squadSince + (id to s.day))
     }
 }
 

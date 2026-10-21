@@ -54,7 +54,7 @@ private fun Tx.closeDay(day: LocalDate) {
     var bonusXp = 0
     if (!rest) {
         daily.filter { it.status == QuestStatus.OPEN && it.isSuccessful() }.forEach { q ->
-            bonusXp += gainXp(q.xp, q.type)
+            bonusXp += gainXp(q.xp, q.family())
             gainGold(q.gold)
             count(StatKey.QUESTS_COMPLETED)
         }
@@ -118,7 +118,7 @@ private fun Tx.setStreak(value: Int) {
 
 /** Returns the penalty summary and, if the streak survived, what saved it. */
 private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<PenaltyInfo, String?> {
-    tryWeeklyPassive(Passive.PENALTY_IMMUNITY)?.let { shadow ->
+    tryCooldownPassive(Passive.PENALTY_IMMUNITY)?.let { shadow ->
         toast(ToastKind.PASSIVE_FIRED, shadow.id)
         squadAdded(SquadGain(saves = 1))
         return PenaltyInfo(failed, total, 0, 0, 0, absorbedBy = shadow.id) to shadow.id
@@ -154,7 +154,7 @@ private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<Penalt
     var savedBy: String? = null
     val streak = s.player.streak
     if (streak > 0) {
-        val shadow = tryWeeklyPassive(Passive.STREAK_PROTECT)
+        val shadow = tryCooldownPassive(Passive.STREAK_PROTECT)
         when {
             shadow != null -> { savedBy = shadow.id; toast(ToastKind.PASSIVE_FIRED, shadow.id); squadAdded(SquadGain(saves = 1)) }
             s.items("escudo_constancia") > 0 -> { addItem("escudo_constancia", -1); count(StatKey.ITEMS_USED); savedBy = "escudo_constancia" }

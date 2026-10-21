@@ -145,7 +145,7 @@ fun Tx.expirePortal() {
 fun Tx.completePortal() {
     val p = s.portal ?: return
     val q = p.quest
-    gainXp(q.xp, q.type)
+    gainXp(q.xp, q.family())
     gainGold(q.gold)
     gainAttributes(groupOf(q))
     s = s.copy(portal = null)

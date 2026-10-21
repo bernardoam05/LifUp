@@ -83,6 +83,9 @@ import com.lifup.app.domain.availableDefs
 import com.lifup.app.domain.isWeekly
 import com.lifup.app.domain.PowerKind
 import com.lifup.app.domain.isKind
+import com.lifup.app.domain.squadEffects
+import com.lifup.app.domain.squadLocked
+import androidx.compose.material.icons.rounded.Lock
 import com.lifup.app.domain.progresses
 import com.lifup.app.domain.roundTarget
 import com.lifup.app.domain.targetAt
@@ -177,8 +180,11 @@ internal fun Squad(s: GameState, onOpen: (String) -> Unit) {
             val id = s.squad.getOrNull(i)
             val def = id?.let { content.shadowById[it] }
             Box(Modifier.weight(1f)) {
-                if (def != null) ShadowTile(def, s.owned(def.id)?.level, onClick = { onOpen(def.id) })
-                else Box(
+                if (def != null) {
+                    ShadowTile(def, s.owned(def.id)?.level, onClick = { onOpen(def.id) })
+                    // Joined today: stays until tomorrow.
+                    if (s.squadLocked(def.id)) Icon(Icons.Rounded.Lock, null, tint = c.dim, modifier = Modifier.align(Alignment.TopEnd).padding(8.dp).size(14.dp))
+                } else Box(
                     Modifier.fillMaxWidth().aspectRatio(0.8f).clip(RoundedCornerShape(12.dp)).border(1.dp, c.border, RoundedCornerShape(12.dp)),
                     contentAlignment = Alignment.Center,
                 ) { Icon(Icons.Rounded.Add, null, tint = c.dim) }
@@ -196,12 +202,7 @@ internal fun Squad(s: GameState, onOpen: (String) -> Unit) {
 @Composable
 private fun SquadEffects(s: GameState, luck: Double) {
     val c = Lif.colors
-    val members = s.squad.mapNotNull { id -> content.shadowById[id]?.let { it to (s.owned(id)?.level ?: 1) } }
-    val amp = 1 + members.filter { it.first.passive == com.lifup.app.domain.Passive.ALL_BOOST }.sumOf { (d, l) -> Rules.passiveValue(d, l) }
-    val effects = members.groupBy { it.first.passive }.map { (passive, ds) ->
-        val sum = ds.sumOf { (d, l) -> Rules.passiveValue(d, l) }
-        passive to if (passive == com.lifup.app.domain.Passive.ALL_BOOST) sum else sum * amp
-    }
+    val effects = s.squadEffects(content)
     Panel(Modifier.padding(top = 8.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             effects.forEach { (passive, value) -> Pill(passiveText(passive, value), passiveColor(passive)) }

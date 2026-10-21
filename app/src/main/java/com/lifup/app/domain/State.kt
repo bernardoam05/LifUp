@@ -346,6 +346,8 @@ data class GameState(
     val portalRollHour: String = "",
     val shadows: List<OwnedShadow> = emptyList(),
     val squad: List<String> = emptyList(),
+    /** The day each squad member joined: it stays until the next one (see [squadLocked]). */
+    val squadSince: Map<String, String> = emptyMap(),
     val inventory: Map<String, Int> = emptyMap(),
     val buffs: List<Buff> = emptyList(),
     val shop: ShopState = ShopState(),

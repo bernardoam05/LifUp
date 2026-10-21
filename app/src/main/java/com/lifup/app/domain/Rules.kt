@@ -10,6 +10,7 @@ import java.time.temporal.TemporalAdjusters
 import kotlin.math.floor
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
+import kotlin.math.pow
 import kotlin.random.Random
 
 /** Hunter rank, derived only from level. */
@@ -44,7 +45,7 @@ object Rules {
     const val STEPS_PER_MIN = 100.0
     const val DEFAULT_TASK_MIN = 15.0
     const val BOSS_CHALLENGE_DAMAGE = 0.35
-    const val WEEK_MS = 7L * 24 * 3_600_000
+    const val DAY_MS = 24L * 3_600_000
 
     const val MAX_LEVEL = 1000
 
@@ -183,25 +184,46 @@ object Rules {
 
     // ── Shadows ───────────────────────────────────────────────────────────────
 
+    /**
+     * Base strength by rank. A family's XP (strength, movement, mind: about a fifth of the missions each) is
+     * worth 2.5× the all-round XP, so it pays off for players who lean on that family; the amplifier only
+     * works through the other two members, so it starts high.
+     */
     private val PASSIVE_TABLE: Map<Passive, DoubleArray> = mapOf(
         Passive.XP_BOOST to doubleArrayOf(.02, .04, .06, .10, .15),
         Passive.GOLD_BOOST to doubleArrayOf(.03, .05, .08, .12, .18),
-        Passive.TRAINING_XP to doubleArrayOf(.05, .08, .12, .18, .25),
-        Passive.MIND_XP to doubleArrayOf(.05, .08, .12, .18, .25),
-        Passive.EXPLORER_XP to doubleArrayOf(.05, .08, .12, .18, .25),
+        Passive.TRAINING_XP to doubleArrayOf(.05, .10, .15, .25, .38),
+        Passive.MIND_XP to doubleArrayOf(.05, .10, .15, .25, .38),
+        Passive.EXPLORER_XP to doubleArrayOf(.05, .10, .15, .25, .38),
         Passive.BOSS_DAMAGE to doubleArrayOf(.05, .10, .15, .22, .30),
-        Passive.PENALTY_REDUCE to doubleArrayOf(.04, .07, .10, .15, .22),
-        Passive.SHOP_DISCOUNT to doubleArrayOf(.02, .04, .06, .09, .12),
-        Passive.FOCUS_MASTERY to doubleArrayOf(.03, .05, .08, .12, .18),
+        Passive.PENALTY_REDUCE to doubleArrayOf(.05, .10, .15, .22, .30),
+        Passive.SHOP_DISCOUNT to doubleArrayOf(.03, .05, .08, .12, .18),
+        Passive.FOCUS_MASTERY to doubleArrayOf(.05, .10, .15, .22, .30),
         Passive.DAILY_BONUS to doubleArrayOf(5.0, 10.0, 15.0, 25.0, 40.0),
         Passive.SHADOW_LUCK to doubleArrayOf(.05, .10, .15, .22, .30),
-        Passive.ALL_BOOST to doubleArrayOf(.03, .04, .05, .08, .12),
+        Passive.ALL_BOOST to doubleArrayOf(.10, .15, .20, .30, .40),
     )
 
-    /** Passive strength for a shadow at a level (0 for flag passives). */
-    fun passiveValue(def: ShadowDef, level: Int): Double {
-        val base = PASSIVE_TABLE[def.passive]?.get(def.rank.ordinal) ?: return 0.0
-        return base * (1 + (level - 1) * 0.12)
+    /** Days between the once-in-a-while passives (penalty immunity, streak protection) by rank, before levels. */
+    private val FLAG_DAYS = intArrayOf(14, 12, 10, 8, 7)
+    const val FLAG_MIN_DAYS = 4
+
+    fun isFlag(p: Passive) = p == Passive.PENALTY_IMMUNITY || p == Passive.STREAK_PROTECT
+
+    /** An echo's level multiplies its base: fast at first, then flattening, never past ×3, so it can't outgrow the game. */
+    fun levelFactor(level: Int) = 1 + 2 * (1 - 0.9.pow(level - 1))
+
+    /** A flag passive fires once every this many days: sooner with rank, and a day sooner every 3 levels. */
+    fun flagDays(def: ShadowDef, level: Int) = (FLAG_DAYS[def.rank.ordinal] - (level - 1) / 3).coerceAtLeast(FLAG_MIN_DAYS)
+
+    /**
+     * Passive strength for an echo at a level; for flags, its days between triggers. The perfect-day bonus
+     * also follows mission XP, through the player's level.
+     */
+    fun passiveValue(def: ShadowDef, level: Int, playerLevel: Int = 1): Double {
+        if (isFlag(def.passive)) return flagDays(def, level).toDouble()
+        val base = (PASSIVE_TABLE[def.passive]?.get(def.rank.ordinal) ?: return 0.0) * levelFactor(level)
+        return if (def.passive == Passive.DAILY_BONUS) base * xpMultiplier(playerLevel) else base
     }
 
     fun upgradeGold(rank: ShadowRank, level: Int): Int {

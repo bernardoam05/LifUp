@@ -134,7 +134,7 @@ private fun Tx.completeMission(q: Quest) {
     var dealt = 0
     var gold = 0
     val squad = squadDuring {
-        gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.type).let { (x, d) -> xp = x; dealt = d }
+        gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.family()).let { (x, d) -> xp = x; dealt = d }
         gold = gainGold(q.gold)
     }
     gainAttributes(groupOf(q))

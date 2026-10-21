@@ -1,6 +1,9 @@
 package com.lifup.app.ui.hero
 
 import com.lifup.app.domain.swapSquad
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.draw.alpha
+import com.lifup.app.domain.squadLocked
 import com.lifup.app.domain.toggleFavoriteEcho
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
@@ -96,9 +99,9 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
             val level = owned?.level ?: 1
             Panel(background = c.panelHigh) {
                 Text(stringResource(R.string.passive).uppercase(), style = MaterialTheme.typography.labelMedium, color = c.dim)
-                Text(passiveText(def.passive, Rules.passiveValue(def, level)), style = MaterialTheme.typography.titleMedium, color = c.accent)
-                if (owned != null && Rules.passiveValue(def, level) > 0) {
-                    Text(stringResource(R.string.next_level_value, passiveText(def.passive, Rules.passiveValue(def, level + 1))), style = MaterialTheme.typography.labelSmall, color = c.dim)
+                Text(passiveText(def.passive, Rules.passiveValue(def, level, s.player.level)), style = MaterialTheme.typography.titleMedium, color = c.accent)
+                if (owned != null && Rules.passiveValue(def, level + 1, s.player.level) != Rules.passiveValue(def, level, s.player.level)) {
+                    Text(stringResource(R.string.next_level_value, passiveText(def.passive, Rules.passiveValue(def, level + 1, s.player.level))), style = MaterialTheme.typography.labelSmall, color = c.dim)
                 }
                 if (def.passive == com.lifup.app.domain.Passive.SHADOW_LUCK) {
                     Spacer(Modifier.height(6.dp))
@@ -127,13 +130,14 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
                     style = MaterialTheme.typography.labelMedium, color = if (canUpgrade) c.text else c.dim,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    // A full squad offers a swap instead of a disabled button.
+                    // A full squad offers a swap instead of a disabled button; members that joined today stay put.
                     val full = !inSquad && s.squad.size >= Rules.SQUAD_SIZE
+                    val locked = if (inSquad) s.squadLocked(id) else full && s.squad.all { s.squadLocked(it) }
                     GhostButton(
-                        stringResource(if (inSquad) R.string.unequip else if (full) R.string.squad_swap else R.string.equip),
+                        stringResource(if (locked) R.string.squad_locked else if (inSquad) R.string.unequip else if (full) R.string.squad_swap else R.string.equip),
                         onClick = { if (full) swapping = true else act { toggleSquad(id) } },
-                        modifier = Modifier.weight(1f),
-                        icon = if (inSquad) Icons.Rounded.GroupRemove else if (full) Icons.Rounded.SwapHoriz else Icons.Rounded.GroupAdd,
+                        modifier = Modifier.weight(1f), enabled = !locked,
+                        icon = if (locked) Icons.Rounded.Lock else if (inSquad) Icons.Rounded.GroupRemove else if (full) Icons.Rounded.SwapHoriz else Icons.Rounded.GroupAdd,
                     )
                     PrimaryButton(stringResource(R.string.upgrade), onClick = { act { upgradeShadow(id) } }, enabled = canUpgrade, modifier = Modifier.weight(1f), icon = Icons.Rounded.ArrowUpward)
                 }
@@ -170,14 +174,19 @@ private fun SwapDialog(s: GameState, inId: String, onDismiss: () -> Unit) {
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 s.squad.mapNotNull { content.shadowById[it] }.forEach { out ->
-                    Panel(onClick = { act { swapSquad(out.id, inId) }; onDismiss() }, padding = PaddingValues(10.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                    val locked = s.squadLocked(out.id)
+                    Panel(onClick = if (locked) null else { { act { swapSquad(out.id, inId) }; onDismiss() } }, padding = PaddingValues(10.dp)) {
+                        Row(Modifier.alpha(if (locked) 0.5f else 1f), verticalAlignment = Alignment.CenterVertically) {
                             EchoEmblem(out, known = true, size = 36.dp)
                             Spacer(Modifier.width(10.dp))
                             Column(Modifier.weight(1f)) {
                                 Text(out.name.local(), style = MaterialTheme.typography.titleSmall)
-                                Text(passiveText(out.passive, Rules.passiveValue(out, s.owned(out.id)?.level ?: 1)), style = MaterialTheme.typography.labelSmall, color = Lif.colors.muted)
+                                Text(
+                                    if (locked) stringResource(R.string.squad_locked) else passiveText(out.passive, Rules.passiveValue(out, s.owned(out.id)?.level ?: 1, s.player.level)),
+                                    style = MaterialTheme.typography.labelSmall, color = Lif.colors.muted,
+                                )
                             }
+                            if (locked) Icon(Icons.Rounded.Lock, null, tint = Lif.colors.dim, modifier = Modifier.size(16.dp))
                         }
                     }
                 }

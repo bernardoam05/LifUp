@@ -3,10 +3,10 @@ package com.lifup.app.domain
 import kotlin.math.roundToInt
 
 /** Adds XP with squad/buff multipliers, handles level-ups, rank-ups and (optionally) boss damage. Returns XP gained. */
-fun Tx.gainXp(base: Int, type: QuestType? = null, hitsBoss: Boolean = true, boosted: Boolean = true): Int {
+fun Tx.gainXp(base: Int, family: DrawGroup? = null, hitsBoss: Boolean = true, boosted: Boolean = true): Int {
     if (base <= 0) return 0
     val passives = s.passives(content, ctx.now)
-    val mult = if (boosted) 1 + passives.xpFor(type) else 1.0
+    val mult = if (boosted) 1 + passives.xpFor(family) else 1.0
     val amount = (base * mult).roundToInt()
     // The squad's share: what this paid beyond what item buffs alone would have.
     if (boosted) squadAdded(SquadGain(xp = amount - (base * (1 + passives.buffXp)).roundToInt()))
@@ -30,9 +30,9 @@ fun Tx.gainXp(base: Int, type: QuestType? = null, hitsBoss: Boolean = true, boos
 }
 
 /** [gainXp] that also reports the boss HP it removed, so an undo can give it back. Returns (xp, damage). */
-fun Tx.gainXpTracked(base: Int, type: QuestType?): Pair<Int, Int> {
+fun Tx.gainXpTracked(base: Int, family: DrawGroup?): Pair<Int, Int> {
     val hpBefore = s.boss?.takeUnless { it.defeated }?.hp
-    val xp = gainXp(base, type)
+    val xp = gainXp(base, family)
     return xp to (hpBefore?.let { it - (s.boss?.hp ?: it) } ?: 0)
 }
 
@@ -66,7 +66,7 @@ private fun Tx.levelEcho(level: Int): ShadowDef? {
 
 /** What a mission pays if completed now, boosts included, so the card shows the real number before it's done. */
 fun GameState.xpPreview(q: Quest, content: Content, now: Long): Int =
-    if (q.origin.boosted()) (q.xp * (1 + passives(content, now).xpFor(q.type))).roundToInt() else q.xp
+    if (q.origin.boosted()) (q.xp * (1 + passives(content, now).xpFor(q.family()))).roundToInt() else q.xp
 
 fun GameState.goldPreview(q: Quest, content: Content, now: Long): Int =
     if (q.origin.boosted()) (q.gold * (1 + passives(content, now).gold)).roundToInt() else q.gold

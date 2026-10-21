@@ -220,13 +220,13 @@
     <string name="upgrade">Entwickeln</string>
     <string name="passive_xp">+%1$s XP</string>
     <string name="passive_gold">+%1$s Gold</string>
-    <string name="passive_training">+%1$s XP bei Trainingsmissionen</string>
-    <string name="passive_mind">+%1$s XP bei Wissens- und Fokusmissionen</string>
-    <string name="passive_explorer">+%1$s XP bei Streckenmissionen</string>
+    <string name="passive_training">+%1$s XP bei Kraftmissionen</string>
+    <string name="passive_mind">+%1$s XP bei Geistmissionen</string>
+    <string name="passive_explorer">+%1$s XP bei Bewegungsmissionen</string>
     <string name="passive_boss">+%1$s Schaden an Bossen</string>
     <string name="passive_penalty">−%1$s Strafverluste</string>
-    <string name="passive_immunity">Absorbiert eine Strafe pro Woche</string>
-    <string name="passive_streak">Rettet deine Serie einmal pro Woche</string>
+    <string name="passive_immunity">Fängt alle %1$d Tage eine Strafe ab</string>
+    <string name="passive_streak">Rettet deine Serie alle %1$d Tage einmal</string>
     <string name="passive_shop">−%1$s auf Shop-Preise</string>
     <string name="passive_focus">+%1$s angerechnete Fokusminuten</string>
     <string name="passive_daily">+%1$d XP für jeden perfekten Tag</string>
@@ -752,6 +752,7 @@
     <string name="origin_level">Stufe %1$d erreicht</string>
     <string name="origin_boss">%1$s besiegt</string>
     <string name="squad_swap">Tauschen</string>
+    <string name="squad_locked">Bleibt bis morgen</string>
     <string name="squad_swap_title">Wer verlässt den Trupp?</string>
     <string name="stat_steps">Schritte</string>
     <string name="timer_goal">Ziel: %1$s</string>

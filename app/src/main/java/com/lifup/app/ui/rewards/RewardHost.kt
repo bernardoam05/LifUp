@@ -119,7 +119,7 @@ fun RewardHost(s: GameState) {
                             Box(Modifier.width(120.dp)) { ShadowTile(def, s.owned(def.id)?.level ?: 1) {} }
                             Spacer(Modifier.height(8.dp))
                             Line(stringResource(shadowRankName(def.rank)), shadowRankColor(def.rank))
-                            Line(passiveText(def.passive, Rules.passiveValue(def, s.owned(def.id)?.level ?: 1)), Lif.colors.accent)
+                            Line(passiveText(def.passive, Rules.passiveValue(def, s.owned(def.id)?.level ?: 1, s.player.level)), Lif.colors.accent)
                             if (!reward.isNew) Line(stringResource(R.string.reward_copies, reward.copies), Lif.colors.muted)
                             reward.origin?.let { Line(echoReason(it, reward.originRef), Lif.colors.text) }
                         }

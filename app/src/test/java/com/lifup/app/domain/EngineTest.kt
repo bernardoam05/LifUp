@@ -630,6 +630,28 @@ class EngineTest {
         assertTrue(s.copy(adapt = mapOf(def.id to climbed)).canEaseTarget(def))
     }
 
+    @Test fun `a squad member that joined today stays until tomorrow`() {
+        val ids = content.shadows.take(4).map { it.id }
+        var s = fresh().let { st -> st.copy(shadows = ids.map { OwnedShadow(it) }) }
+        s = run(s, "2026-10-14T10:00") { ids.take(3).forEach { toggleSquad(it) } }
+        s = run(s, "2026-10-14T10:01") { toggleSquad(ids[0]); swapSquad(ids[1], ids[3]) }
+        assertEquals(ids.take(3), s.squad)
+        s = run(run(s, "2026-10-15T09:00"), "2026-10-15T09:01") { swapSquad(ids[1], ids[3]) }
+        assertEquals(listOf(ids[0], ids[3], ids[2]), s.squad)
+        assertTrue(s.squadLocked(ids[3]))
+    }
+
+    @Test fun `echo levels flatten out and family xp follows the family`() {
+        assertEquals(1.0, Rules.levelFactor(1), 1e-9)
+        assertTrue(Rules.levelFactor(1000) <= 3.0 && Rules.levelFactor(10) > 2.0)
+        val p = Passives(xp = 0.1, explorerXp = 0.3)
+        assertEquals(0.4, p.xpFor(DrawGroup.MOVEMENT), 1e-9)
+        assertEquals(0.1, p.xpFor(DrawGroup.HEALTH), 1e-9)
+        val guard = content.shadows.first { it.passive == Passive.STREAK_PROTECT }
+        assertTrue(Rules.flagDays(guard, 1) > Rules.flagDays(guard, 10))
+        assertEquals(Rules.FLAG_MIN_DAYS, Rules.flagDays(guard, 500))
+    }
+
     @Test fun `old saves keep the targets they had`() {
         val old = fresh().let { it.copy(version = 6, player = it.player.copy(level = 30), adapt = mapOf("pool_plank" to Adapt(1))) }
         val s = run(old, "2026-10-14T10:00")
@@ -726,7 +748,8 @@ class EngineTest {
         var s = run(fresh(), "2026-10-14T10:00") { ids.forEach { gainShadow(it, SourceType.SHOP, EchoOrigin.SHOP) }; ids.take(3).forEach { toggleSquad(it) } }
         s = run(s, "2026-10-14T10:01") { toggleSquad(ids[3]) }
         assertEquals(ids.take(3), s.squad) // full: equipping alone does nothing
-        s = run(s, "2026-10-14T10:02") { swapSquad(ids[1], ids[3]) }
+        // Members that joined today stay until tomorrow.
+        s = run(run(s, "2026-10-15T09:00"), "2026-10-15T09:01") { swapSquad(ids[1], ids[3]) }
         assertEquals(listOf(ids[0], ids[3], ids[2]), s.squad)
     }
 

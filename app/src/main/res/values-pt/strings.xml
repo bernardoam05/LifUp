@@ -208,13 +208,13 @@
     <string name="upgrade">Evoluir</string>
     <string name="passive_xp">+%1$s XP</string>
     <string name="passive_gold">+%1$s ouro</string>
-    <string name="passive_training">+%1$s XP em missões de treino</string>
-    <string name="passive_mind">+%1$s XP em missões de conhecimento e foco</string>
-    <string name="passive_explorer">+%1$s XP em missões de distância</string>
+    <string name="passive_training">+%1$s XP em missões de força</string>
+    <string name="passive_mind">+%1$s XP em missões de mente</string>
+    <string name="passive_explorer">+%1$s XP em missões de movimento</string>
     <string name="passive_boss">+%1$s de dano a bosses</string>
     <string name="passive_penalty">−%1$s nas perdas por penalização</string>
-    <string name="passive_immunity">Absorve uma penalização por semana</string>
-    <string name="passive_streak">Salva a sequência uma vez por semana</string>
+    <string name="passive_immunity">Absorve uma penalização a cada %1$d dias</string>
+    <string name="passive_streak">Salva a sequência uma vez a cada %1$d dias</string>
     <string name="passive_shop">−%1$s nos preços da loja</string>
     <string name="passive_focus">+%1$s nos minutos de foco creditados</string>
     <string name="passive_daily">+%1$d XP por cada dia perfeito</string>
@@ -734,6 +734,7 @@
     <string name="origin_level">chegaste ao nível %1$d</string>
     <string name="origin_boss">venceste %1$s</string>
     <string name="squad_swap">Trocar</string>
+    <string name="squad_locked">Fica até amanhã</string>
     <string name="squad_swap_title">Quem sai do esquadrão?</string>
     <string name="stat_steps">Passos</string>
     <string name="timer_goal">Objetivo: %1$s</string>
