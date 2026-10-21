@@ -92,8 +92,6 @@
 
     <string name="rewards_line">+%1$d XP · +%2$d ouro</string>
     <string name="double_xp_active">Ampulheta ativa: a próxima missão dá XP a dobrar</string>
-    <string name="record_count">Feita %1$d×</string>
-    <string name="record_best">melhor %1$s com %2$s</string>
     <string name="start_focus">Começar foco</string>
     <string name="complete">Concluir</string>
     <string name="available_from">Disponível das %1$d:00 até à meia-noite</string>

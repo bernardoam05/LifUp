@@ -32,7 +32,6 @@ import com.lifup.app.domain.easeTarget
 import com.lifup.app.domain.holdTarget
 import com.lifup.app.domain.roundTarget
 import com.lifup.app.domain.stepOf
-import com.lifup.app.domain.bestAt
 import com.lifup.app.domain.targetAt
 import com.lifup.app.domain.progresses
 import androidx.compose.ui.res.pluralStringResource
@@ -59,8 +58,6 @@ import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.SwapHoriz
-import androidx.compose.material.icons.rounded.History
-import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.foundation.layout.PaddingValues
@@ -157,8 +154,7 @@ fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = nu
             }
 
             if (open && q.countable()) Counter(q, unit)
-            // Timing is the main tool for "60 s" or "15 min"; for reps it's a small extra row.
-            if (open && q.timeable()) Stopwatch(q, timer, now, compact = q.countable())
+            if (open && q.timed()) Stopwatch(q, timer, now)
             if (open && q.type == QuestType.FOCUS) FocusAction(s, q, onDismiss)
             if (open && q.type == QuestType.GPS) RunPanel(s, q, tracking = q.auto == null || q.autoOff)
             if (open && q.type != QuestType.FORBIDDEN && q.type != QuestType.LIMIT) CompleteAction(q, onDismiss)
@@ -168,7 +164,7 @@ fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = nu
 
             HorizontalDivider(color = p.border)
             Column {
-                def?.let { HistoryRow(s, q, it) }
+                def?.let { ProgressRow(s, q, it) }
                 s.tipFor(q, content)?.let { TipRow(it.text(lang())) }
                 NoteRow(note) { note = it }
             }
@@ -180,9 +176,8 @@ fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = nu
 private fun Quest.countable() = auto == null && fromHour == null && target > 1 && unit != "s" && unit != "min" &&
     (type == QuestType.TRAINING || type == QuestType.KNOWLEDGE)
 
-/** Missions where timing yourself means something: not for a glass of water or a phone call. */
-private fun Quest.timeable() = auto == null && fromHour == null && (type == QuestType.TRAINING || type == QuestType.KNOWLEDGE) &&
-    unit in setOf("reps", "s", "min", "pages", "flights", "km")
+/** Missions measured in time ("60 s", "15 min"), where the stopwatch is the tool itself. */
+private fun Quest.timed() = auto == null && fromHour == null && (type == QuestType.TRAINING || type == QuestType.KNOWLEDGE) && (unit == "s" || unit == "min")
 
 /** Icon, title, family and what it pays: everything about the mission at a glance. */
 @Composable
@@ -315,37 +310,14 @@ private fun SheetLink(text: String, icon: androidx.compose.ui.graphics.vector.Im
     }
 }
 
-/**
- * How the mission has gone, in one line: where the target stands (or the records, for fixed ones).
- * Unfolding shows the records and, once the target has grown, the controls to keep or ease it, out of the
- * way so nobody gives up on a whim.
- */
+/** Where the target stands, in one line; once it has grown, unfolding shows the controls to keep or ease it, out of the way so nobody gives up on a whim. */
 @Composable
-private fun HistoryRow(s: GameState, q: Quest, def: QuestDef) {
-    val context = LocalContext.current
-    val record = s.records[q.defId]
-    val best = record?.bestAt(q.target) ?: 0
-    val unit = unitLabel(q.unit)
-    val records = record?.takeIf { it.count > 0 || best > 0 }?.let { r ->
-        listOfNotNull(
-            context.getString(R.string.record_count, r.count).takeIf { r.count > 0 },
-            context.getString(R.string.record_best, fmtDuration(best), "${fmtNum(q.target)} $unit".trim()).takeIf { best > 0 },
-        ).joinToString(" · ")
-    }
-    val progresses = def.progresses() && q.origin != QuestOrigin.PENALTY && q.origin != QuestOrigin.PORTAL
-    if (!progresses) {
-        records?.let { FoldRow(Icons.Rounded.History, it, open = false, onClick = null) }
-        return
-    }
+private fun ProgressRow(s: GameState, q: Quest, def: QuestDef) {
+    if (!def.progresses() || q.origin == QuestOrigin.PENALTY || q.origin == QuestOrigin.PORTAL) return
     val tunable = s.canTuneTarget(def)
     var open by remember { mutableStateOf(false) }
-    FoldRow(Icons.AutoMirrored.Rounded.TrendingUp, progressSummary(s, q, def), open, onClick = if (records != null || tunable) { { open = !open } } else null, maxLines = 2)
-    AnimatedVisibility(open) {
-        Column(Modifier.padding(start = 26.dp, bottom = 4.dp)) {
-            records?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted) }
-            if (tunable) TargetControls(s, def)
-        }
-    }
+    FoldRow(Icons.AutoMirrored.Rounded.TrendingUp, progressSummary(s, q, def), open, onClick = if (tunable) { { open = !open } } else null, maxLines = 2)
+    AnimatedVisibility(open) { Column(Modifier.padding(start = 26.dp, bottom = 4.dp)) { TargetControls(s, def) } }
 }
 
 @Composable
@@ -426,18 +398,14 @@ private fun FoldRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label
 
 /** Stopwatch, kept in the state so it survives the app being closed. */
 @Composable
-private fun Stopwatch(q: Quest, timer: com.lifup.app.domain.MissionTimer?, now: Long, compact: Boolean = false) {
+private fun Stopwatch(q: Quest, timer: com.lifup.app.domain.MissionTimer?, now: Long) {
     val p = Lif.colors
     val elapsed = timer?.elapsed(now) ?: 0
     // Timed missions ("20 min", "90 s") measure against their target and turn green once it's reached.
     val goalMs = when (q.unit) { "min" -> q.target * 60_000; "s" -> q.target * 1_000; else -> null }?.toLong()
     val reached = goalMs != null && elapsed >= goalMs
     Row(verticalAlignment = Alignment.CenterVertically) {
-        if (compact) Icon(Icons.Rounded.Timer, null, tint = p.muted, modifier = Modifier.padding(end = 8.dp).size(18.dp))
-        Text(
-            fmtDuration(elapsed), style = if (compact) MaterialTheme.typography.titleMedium else MaterialTheme.typography.headlineMedium,
-            color = if (reached) p.green else if (timer?.running == true) p.accent else if (compact) p.muted else p.text, modifier = Modifier.weight(1f),
-        )
+        Text(fmtDuration(elapsed), style = MaterialTheme.typography.headlineMedium, color = if (reached) p.green else if (timer?.running == true) p.accent else p.text, modifier = Modifier.weight(1f))
         if (timer?.running == true) IconButton(onClick = { act { pauseTimer(q.id) } }) { Icon(Icons.Rounded.Pause, stringResource(R.string.a11y_pause)) }
         else IconButton(onClick = { act { startTimer(q.id) } }) { Icon(Icons.Rounded.PlayArrow, stringResource(R.string.a11y_start), tint = p.accent) }
         IconButton(onClick = { act { resetTimer(q.id) } }, enabled = timer != null) { Icon(Icons.Rounded.RestartAlt, stringResource(R.string.a11y_reset)) }

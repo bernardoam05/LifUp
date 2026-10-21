@@ -214,10 +214,7 @@ data class DailyFlags(
 )
 
 @Serializable
-data class QuestRecord(val bestMs: Long = 0, val note: String = "", val count: Int = 0, val bestTarget: Double = 0.0)
-
-/** The best time only means something at the same target: a new target starts a new record. */
-fun QuestRecord.bestAt(target: Double): Long = if (bestMs > 0 && bestTarget == target) bestMs else 0
+data class QuestRecord(val note: String = "", val count: Int = 0)
 
 @Serializable
 data class MissionTimer(val runningSince: Long = 0, val accumulatedMs: Long = 0) {

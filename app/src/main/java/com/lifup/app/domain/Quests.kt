@@ -124,7 +124,7 @@ fun Tx.completeQuest(id: String) {
         QuestOrigin.PORTAL -> completePortal()
         QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY -> completeMission(q)
     }
-    stopTimer(id, record = true)
+    s = s.copy(timers = s.timers - id)
 }
 
 private fun Tx.completeMission(q: Quest) {
@@ -361,19 +361,6 @@ fun Tx.pauseTimer(id: String) {
 }
 
 fun Tx.resetTimer(id: String) {
-    s = s.copy(timers = s.timers - id)
-}
-
-private fun Tx.stopTimer(id: String, record: Boolean) {
-    val t = s.timers[id] ?: return
-    val q = s.allQuests.firstOrNull { it.id == id }
-    val elapsed = t.elapsed(ctx.now)
-    // Holding for "60 s" isn't a race: only counted missions keep a best time, per target.
-    if (record && q != null && elapsed > 1000 && q.unit != "s" && q.unit != "min") {
-        val rec = s.records[q.defId] ?: QuestRecord()
-        val best = rec.bestAt(q.target).takeIf { it > 0 }?.let { minOf(it, elapsed) } ?: elapsed
-        s = s.copy(records = s.records + (q.defId to rec.copy(bestMs = best, bestTarget = q.target)))
-    }
     s = s.copy(timers = s.timers - id)
 }
 

@@ -100,8 +100,6 @@
     <!-- Mission sheet -->
     <string name="rewards_line">+%1$d XP · +%2$d Gold</string>
     <string name="double_xp_active">Sanduhr aktiv: die nächste Mission gibt doppelte XP</string>
-    <string name="record_count">%1$d× erledigt</string>
-    <string name="record_best">Bestzeit %1$s für %2$s</string>
     <string name="start_focus">Fokus starten</string>
     <string name="complete">Abschließen</string>
     <string name="available_from">Verfügbar von %1$d:00 bis Mitternacht</string>

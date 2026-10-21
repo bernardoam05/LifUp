@@ -100,8 +100,6 @@
     <!-- Mission sheet -->
     <string name="rewards_line">+%1$d XP · +%2$d oro</string>
     <string name="double_xp_active">Reloj de arena activo: la próxima misión da XP doble</string>
-    <string name="record_count">Hecha %1$d×</string>
-    <string name="record_best">mejor %1$s con %2$s</string>
     <string name="start_focus">Empezar foco</string>
     <string name="complete">Completar</string>
     <string name="available_from">Disponible desde las %1$d:00 hasta medianoche</string>

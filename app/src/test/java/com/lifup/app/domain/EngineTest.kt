@@ -630,18 +630,6 @@ class EngineTest {
         assertTrue(s.copy(adapt = mapOf(def.id to climbed)).canEaseTarget(def))
     }
 
-    @Test fun `best times belong to a target and only to counted missions`() {
-        val reps = buildQuest(content.questDefById.getValue("pool_dips"), 1, QuestOrigin.EXTRA, "dips_t")
-        val plank = buildQuest(content.questDefById.getValue("pool_plank"), 1, QuestOrigin.EXTRA, "plank_t")
-        var s = fresh().let { it.copy(quests = it.quests + reps + plank) }
-        s = run(s, "2026-10-14T10:00") { startTimer(reps.id); startTimer(plank.id) }
-        s = run(s, "2026-10-14T10:02") { completeQuest(reps.id); completeQuest(plank.id) }
-        val rec = s.records.getValue(reps.defId)
-        assertEquals(120_000L, rec.bestAt(reps.target))
-        assertEquals(0L, rec.bestAt(reps.target + 1))
-        assertEquals(0L, s.records[plank.defId]?.bestMs ?: 0L)
-    }
-
     @Test fun `old saves keep the targets they had`() {
         val old = fresh().let { it.copy(version = 6, player = it.player.copy(level = 30), adapt = mapOf("pool_plank" to Adapt(1))) }
         val s = run(old, "2026-10-14T10:00")
