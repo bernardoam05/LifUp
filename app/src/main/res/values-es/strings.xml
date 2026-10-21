@@ -140,7 +140,8 @@
     <string name="ambient_none">Silencio</string>
     <string name="ambient_rain">Lluvia</string>
     <string name="ambient_fire">Chimenea</string>
-    <string name="ambient_lofi">Lo-fi</string>
+    <string name="ambient_own">Mi música</string>
+    <string name="ambient_own_info">Abre tu app de música cuando empieza la sesión.</string>
     <string name="start_session">Empezar sesión</string>
     <string name="focusing">En foco</string>
     <string name="session_total_left">quedan %1$s de sesión</string>
@@ -397,7 +398,7 @@
     <string name="notif_focus_done_text">%1$d minutos acreditados.</string>
     <string name="notif_pomodoro_work">De vuelta al trabajo</string>
     <string name="notif_pomodoro_break">Hora de la pausa</string>
-    <string name="notif_pomodoro_cycle">Ciclo Pomodoro %1$d</string>
+    <string name="notif_pomodoro_text">%1$d min · ciclo %2$d de %3$d</string>
     <string name="notif_penalty_title">Penalización aplicada</string>
     <string name="notif_penalty_text">Las misiones de ayer fallaron. Cumple %1$d misiones de penalización.</string>
     <string name="notif_reminder_title">Racha en peligro</string>
@@ -623,6 +624,7 @@
     <string name="notif_avoid_fail">Fallé: %1$s</string>
     <string name="notif_bedtime_title">Hora de descansar</string>
     <string name="notif_bedtime_text">Confirma el check-in de dormir antes de medianoche.</string>
+    <string name="notif_bedtime_confirm">Me voy a dormir</string>
     <string name="widget_goal">Faltan %1$d para la racha</string>
     <string name="widget_goal_safe">Racha asegurada ✓</string>
     <string name="widget_hours_left">%1$d h hasta medianoche</string>

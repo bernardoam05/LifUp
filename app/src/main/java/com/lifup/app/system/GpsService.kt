@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import com.lifup.app.system.Notifications.live
+import com.lifup.app.domain.text
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.lifup.app.LifUpApp
@@ -121,13 +122,26 @@ class GpsService : Service(), LocationListener {
         super.onDestroy()
     }
 
-    private fun notification(km: Double) = NotificationCompat.Builder(this, Notifications.CH_LIVE)
-        .live(NotificationCompat.CATEGORY_WORKOUT)
-        .setSmallIcon(R.drawable.ic_stat_lifup)
-        .setContentTitle(getString(R.string.gps_tracking_title))
-        .setContentText(getString(R.string.gps_tracking_text, km))
-        .setOngoing(true)
-        .setOnlyAlertOnce(true)
-        .setContentIntent(Notifications.openApp(this, "today"))
-        .build()
+    /** The mission's name, this run's distance and time, and the mission's total against its target as a bar. */
+    private fun notification(km: Double): android.app.Notification {
+        val q = questId?.let { id -> LifUpApp.store.current.allQuests.firstOrNull { it.id == id } }
+        val b = NotificationCompat.Builder(this, Notifications.CH_LIVE)
+            .live(NotificationCompat.CATEGORY_WORKOUT)
+            .setSmallIcon(R.drawable.ic_stat_lifup)
+            .setContentTitle(q?.title?.text(java.util.Locale.getDefault().language) ?: getString(R.string.gps_tracking_title))
+            .setContentText(getString(R.string.gps_tracking_text, km))
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setContentIntent(Notifications.openApp(this, "today"))
+        GpsTracker.session.value?.let { b.setUsesChronometer(true).setWhen(it.startedAt) }
+        if (q != null && q.target > 0) {
+            val meters = (q.target * 1000).toInt()
+            b.setStyle(
+                NotificationCompat.ProgressStyle()
+                    .setProgressSegments(listOf(NotificationCompat.ProgressStyle.Segment(meters).setColor(0xFF5FD39A.toInt())))
+                    .setProgress(((q.progress + pendingKm) * 1000).toInt().coerceAtMost(meters)),
+            )
+        }
+        return b.build()
+    }
 }

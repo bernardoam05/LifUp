@@ -25,16 +25,16 @@ object Notifications {
     const val ID_SESSION = 1337
     const val ID_GPS = 1338
     private const val ID_RUN = 1339
-    private const val ID_PORTAL = 2001
+    const val ID_PORTAL = 2001
     private const val ID_FOCUS_DONE = 2002
-    private const val ID_PENALTY = 2003
-    private const val ID_BEDTIME = 2006
-    private const val ID_REMINDER = 2004
-    private const val ID_POMODORO = 2005
+    const val ID_PENALTY = 2003
+    const val ID_BEDTIME = 2006
+    const val ID_REMINDER = 2004
+    const val ID_POMODORO = 2005
     private const val ID_TIMER = 1340
-    private const val ID_BOSS = 2007
-    private const val ID_LIMIT = 2010
-    private const val ID_AVOID = 2020
+    const val ID_BOSS = 2007
+    const val ID_LIMIT = 2010
+    const val ID_AVOID = 2020
 
     /**
      * Something running right now (a focus session, a run): public on the lock screen and, on Android 16+,
@@ -70,22 +70,32 @@ object Notifications {
     private fun canPost(context: Context) =
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
 
-    private fun post(context: Context, id: Int, channel: String, title: String, text: String, route: String) {
+    /** [timeoutMs]: gone by itself once it stops being true (a portal closing, a Pomodoro phase ending). */
+    private fun post(
+        context: Context, id: Int, channel: String, title: String, text: String, route: String,
+        timeoutMs: Long? = null, action: NotificationCompat.Action? = null,
+    ) {
         if (!canPost(context)) return
-        val n = NotificationCompat.Builder(context, channel)
+        val b = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_stat_lifup)
             .setContentTitle(title)
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
             .setAutoCancel(true)
             .setContentIntent(openApp(context, route))
-            .build()
-        runCatching { NotificationManagerCompat.from(context).notify(id, n) }
+        timeoutMs?.let { b.setTimeoutAfter(it) }
+        action?.let { b.addAction(it) }
+        runCatching { NotificationManagerCompat.from(context).notify(id, b.build()) }
+    }
+
+    fun cancel(context: Context, ids: Collection<Int>) {
+        val nm = NotificationManagerCompat.from(context)
+        ids.forEach { runCatching { nm.cancel(it) } }
     }
 
     fun portalOpened(context: Context, quest: String, minutes: Long) = post(
         context, ID_PORTAL, CH_EVENTS, context.getString(R.string.notif_portal_title),
-        context.getString(R.string.notif_portal_text, quest, minutes), "today",
+        context.getString(R.string.notif_portal_text, quest, minutes), "today", timeoutMs = minutes * 60_000,
     )
 
     fun focusDone(context: Context, minutes: Int) = post(
@@ -93,10 +103,11 @@ object Notifications {
         context.getString(R.string.notif_focus_done_text, minutes), "focus",
     )
 
-    fun pomodoroPhase(context: Context, work: Boolean, cycle: Int) = post(
+    /** A phase change: how long this one lasts and where in the session it is; it clears when the phase ends. */
+    fun pomodoroPhase(context: Context, work: Boolean, cycle: Int, rounds: Int, minutes: Int) = post(
         context, ID_POMODORO, CH_EVENTS,
         context.getString(if (work) R.string.notif_pomodoro_work else R.string.notif_pomodoro_break),
-        context.getString(R.string.notif_pomodoro_cycle, cycle), "focus",
+        context.getString(R.string.notif_pomodoro_text, minutes, cycle, rounds), "focus", timeoutMs = minutes * 60_000L,
     )
 
     fun penaltyApplied(context: Context, quests: Int) = post(
@@ -138,9 +149,11 @@ object Notifications {
         runCatching { nm.notify(ID_AVOID, b.build()) }
     }
 
-    fun bedtime(context: Context) = post(
+    /** The bedtime check-in can be confirmed straight from the notification. */
+    fun bedtime(context: Context, questId: String) = post(
         context, ID_BEDTIME, CH_REMINDERS, context.getString(R.string.notif_bedtime_title),
         context.getString(R.string.notif_bedtime_text), "today",
+        action = NotificationCompat.Action(0, context.getString(R.string.notif_bedtime_confirm), NotificationActionReceiver.intent(context, NotificationActionReceiver.COMPLETE, questId)),
     )
 
     /** Ongoing note for a step-counted run (no service: the counter runs in hardware). */
@@ -148,7 +161,8 @@ object Notifications {
         val nm = NotificationManagerCompat.from(context)
         if (r == null || !canPost(context)) { nm.cancel(ID_RUN); return }
         val now = System.currentTimeMillis()
-        val n = NotificationCompat.Builder(context, CH_SESSION)
+        val n = NotificationCompat.Builder(context, CH_LIVE)
+            .live(NotificationCompat.CATEGORY_WORKOUT)
             .setSmallIcon(R.drawable.ic_stat_lifup)
             .setContentTitle(context.getString(if (r.running) R.string.run_notif_running else R.string.run_notif_paused))
             .setContentText(context.getString(R.string.run_km, r.km))
@@ -166,7 +180,8 @@ object Notifications {
     fun missionTimer(context: Context, questId: String?, title: String, startedAt: Long, others: Int) {
         val nm = NotificationManagerCompat.from(context)
         if (questId == null || !canPost(context)) { nm.cancel(ID_TIMER); return }
-        val n = NotificationCompat.Builder(context, CH_SESSION)
+        val n = NotificationCompat.Builder(context, CH_LIVE)
+            .live(NotificationCompat.CATEGORY_STOPWATCH)
             .setSmallIcon(R.drawable.ic_stat_lifup)
             .setContentTitle(title)
             .setContentText(if (others > 0) context.getString(R.string.notif_timer_more, others) else context.getString(R.string.notif_timer_running))
@@ -176,7 +191,7 @@ object Notifications {
             .setWhen(startedAt)
             .setContentIntent(openApp(context, "quest/$questId"))
             .addAction(0, context.getString(R.string.a11y_pause), NotificationActionReceiver.intent(context, NotificationActionReceiver.PAUSE_TIMER, questId))
-            .addAction(0, context.getString(R.string.complete), NotificationActionReceiver.intent(context, NotificationActionReceiver.FINISH_TIMER, questId))
+            .addAction(0, context.getString(R.string.complete), NotificationActionReceiver.intent(context, NotificationActionReceiver.COMPLETE, questId))
             .build()
         runCatching { nm.notify(ID_TIMER, n) }
     }
@@ -190,6 +205,4 @@ object Notifications {
         context, ID_LIMIT + slot, CH_REMINDERS, context.getString(R.string.notif_limit_title, quest),
         context.getString(R.string.notif_limit_text, minutesLeft), "today",
     )
-
-    fun cancelReminder(context: Context) = NotificationManagerCompat.from(context).cancel(ID_REMINDER)
 }

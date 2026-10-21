@@ -131,7 +131,8 @@
     <string name="ambient_none">Silêncio</string>
     <string name="ambient_rain">Chuva</string>
     <string name="ambient_fire">Lareira</string>
-    <string name="ambient_lofi">Lo-fi</string>
+    <string name="ambient_own">A minha música</string>
+    <string name="ambient_own_info">Abre a tua app de música quando a sessão começa.</string>
     <string name="start_session">Começar sessão</string>
     <string name="focusing">Em foco</string>
     <string name="session_total_left">faltam %1$s na sessão</string>
@@ -379,7 +380,7 @@
     <string name="notif_focus_done_text">%1$d minutos creditados.</string>
     <string name="notif_pomodoro_work">De volta ao trabalho</string>
     <string name="notif_pomodoro_break">Hora da pausa</string>
-    <string name="notif_pomodoro_cycle">Ciclo Pomodoro %1$d</string>
+    <string name="notif_pomodoro_text">%1$d min · ciclo %2$d de %3$d</string>
     <string name="notif_penalty_title">Penalização aplicada</string>
     <string name="notif_penalty_text">As missões de ontem falharam. Cumpre %1$d missões de penalização.</string>
     <string name="notif_reminder_title">Sequência em risco</string>
@@ -605,6 +606,7 @@
     <string name="notif_avoid_fail">Falhei: %1$s</string>
     <string name="notif_bedtime_title">Hora de descansar</string>
     <string name="notif_bedtime_text">Confirma o check-in de dormir antes da meia-noite.</string>
+    <string name="notif_bedtime_confirm">Vou deitar-me</string>
     <string name="widget_goal">Faltam %1$d para a sequência</string>
     <string name="widget_goal_safe">Sequência garantida ✓</string>
     <string name="widget_hours_left">%1$d h até à meia-noite</string>

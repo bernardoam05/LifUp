@@ -131,7 +131,8 @@
     <string name="ambient_none">Silence</string>
     <string name="ambient_rain">Pluie</string>
     <string name="ambient_fire">Cheminée</string>
-    <string name="ambient_lofi">Lo-fi</string>
+    <string name="ambient_own">Ma musique</string>
+    <string name="ambient_own_info">Ouvre ton app de musique au début de la session.</string>
     <string name="start_session">Lancer la session</string>
     <string name="focusing">En focus</string>
     <string name="session_total_left">%1$s restants dans la session</string>
@@ -379,7 +380,7 @@
     <string name="notif_focus_done_text">%1$d minutes créditées.</string>
     <string name="notif_pomodoro_work">Au travail</string>
     <string name="notif_pomodoro_break">C\'est la pause</string>
-    <string name="notif_pomodoro_cycle">Cycle Pomodoro %1$d</string>
+    <string name="notif_pomodoro_text">%1$d min · cycle %2$d sur %3$d</string>
     <string name="notif_penalty_title">Pénalité appliquée</string>
     <string name="notif_penalty_text">Les missions d\'hier ont échoué. Termine %1$d missions de pénalité.</string>
     <string name="notif_reminder_title">Série en danger</string>
@@ -605,6 +606,7 @@
     <string name="notif_avoid_fail">J\'ai craqué : %1$s</string>
     <string name="notif_bedtime_title">L\'heure du repos</string>
     <string name="notif_bedtime_text">Confirme ton check-in du coucher avant minuit.</string>
+    <string name="notif_bedtime_confirm">Je vais me coucher</string>
     <string name="widget_goal">Encore %1$d pour la série</string>
     <string name="widget_goal_safe">Série assurée ✓</string>
     <string name="widget_hours_left">%1$d h avant minuit</string>

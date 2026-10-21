@@ -175,7 +175,8 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
             com.lifup.app.ui.components.Pill(stringResource(R.string.credited_min, f.creditableMinutes(now).roundToInt()), p.green)
         }
         SectionTitle(stringResource(R.string.ambient))
-        AmbientChips(f.ambient) { kind -> act { setFocusAmbient(kind) } }
+        val context = LocalContext.current
+        AmbientChips(f.ambient) { kind -> act { setFocusAmbient(kind) }; if (kind == Ambient.OWN) Ambient.openMusicApp(context) }
         Spacer(Modifier.height(16.dp))
         PrimaryButton(stringResource(R.string.stop_session), onClick = { confirmStop = true }, modifier = Modifier.fillMaxWidth(), color = p.red, icon = Icons.Rounded.Stop)
     }
@@ -208,7 +209,7 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
     }
 }
 
-private fun ambientName(kind: String?) = when (kind) { "rain" -> R.string.ambient_rain; "fire" -> R.string.ambient_fire; "lofi" -> R.string.ambient_lofi; else -> R.string.ambient_none }
+private fun ambientName(kind: String?) = when (kind) { "rain" -> R.string.ambient_rain; "fire" -> R.string.ambient_fire; Ambient.OWN -> R.string.ambient_own; else -> R.string.ambient_none }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -292,6 +293,7 @@ private fun SessionSetup(s: GameState) {
         val quest = focusQuests.firstOrNull { it.id == linked }?.id
         val session = FocusSession(0, minutes, plan, strict && !open, block && Permissions.blockerReady(context) && set.blockedApps.isNotEmpty(), ambient, quest, open)
         act { startFocus(session) }
+        if (ambient == Ambient.OWN) Ambient.openMusicApp(context)
     }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.PlayArrow, color = p.purple)
 
     // Everything else is optional and stays folded away, with a one-line summary of what's on.
@@ -328,6 +330,7 @@ private fun SessionSetup(s: GameState) {
         }
         SectionTitle(stringResource(R.string.ambient))
         AmbientChips(ambient) { ambient = it }
+        if (ambient == Ambient.OWN) Text(stringResource(R.string.ambient_own_info), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.padding(top = 6.dp))
     }
 
     if (pickApps) AppPickerSheet(set.blockedApps) { pickApps = false }

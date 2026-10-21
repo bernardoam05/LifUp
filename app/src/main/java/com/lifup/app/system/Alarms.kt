@@ -5,6 +5,8 @@ import com.lifup.app.domain.dayGoal
 import com.lifup.app.domain.limitsNearing
 import com.lifup.app.domain.openAvoids
 import com.lifup.app.domain.Rules
+import com.lifup.app.domain.AutoKind
+import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.text
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -107,9 +109,36 @@ object Alarms {
         if (minute >= Rules.BEDTIME_NUDGE_MIN && prefs.getString("bedtime", "") != ctx.todayKey) {
             if (s.openBedtime() != null) {
                 prefs.edit().putString("bedtime", ctx.todayKey).apply()
-                Notifications.bedtime(context)
+                Notifications.bedtime(context, s.openBedtime()!!.id)
             }
         }
+    }
+
+    private var dismissed: List<Int>? = null
+
+    /**
+     * Takes back nudges that no longer hold: the day got safe, the check-in was made, the portal closed,
+     * or they were yesterday's. Only acts when that set changes, since it runs on every state change.
+     */
+    fun dismissResolved(context: Context, s: GameState) {
+        val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        fun today(key: String) = prefs.getString(key, "") == ctx.todayKey
+        val gone = buildList {
+            if (!today("reminder") || s.allDailyDone()) add(Notifications.ID_REMINDER)
+            if (!today("avoid") || s.openAvoids().isEmpty()) add(Notifications.ID_AVOID)
+            if (!today("bedtime") || s.openBedtime() == null) add(Notifications.ID_BEDTIME)
+            if (prefs.getString("boss", "") != ctx.weekKey || ctx.today.dayOfWeek != java.time.DayOfWeek.SUNDAY || s.boss?.defeated != false) add(Notifications.ID_BOSS)
+            AutoKind.entries.forEach { k ->
+                if (prefs.getString("limit_$k", "") != s.day || s.dailyQuests.none { it.auto == k && it.status == QuestStatus.OPEN }) add(Notifications.ID_LIMIT + k.ordinal)
+            }
+            if (s.portal == null) add(Notifications.ID_PORTAL)
+            if (s.focus == null) add(Notifications.ID_POMODORO)
+            if (!s.penalty.active) add(Notifications.ID_PENALTY)
+        }
+        if (gone == dismissed) return
+        dismissed = gone
+        Notifications.cancel(context, gone)
     }
 
     /** Once a day per mission: a measured limit (screen or distraction time) is about to break. */

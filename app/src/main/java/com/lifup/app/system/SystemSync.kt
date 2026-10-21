@@ -37,6 +37,7 @@ object SystemSync {
         Alarms.schedule(context, s)
         if (s.run != postedRun) { postedRun = s.run; Notifications.run(context, s.run) }
         syncTimerNotification(context, s)
+        Alarms.dismissResolved(context, s)
         extraListeners.forEach { runCatching { it(context, s) } }
     }
 

@@ -12,7 +12,7 @@ import com.lifup.app.domain.pauseTimer
 import com.lifup.app.domain.stopFocus
 import kotlinx.coroutines.launch
 
-/** Buttons on notifications: stop a focus session, pause or finish a running mission timer, mark an avoid mission as slipped. */
+/** Buttons on notifications: stop a focus session, pause a mission timer, complete a mission (timer, bedtime), mark an avoid mission as slipped. */
 class NotificationActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val id = intent.getStringExtra(EXTRA_QUEST)
@@ -23,7 +23,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
                     when (intent.action) {
                         STOP_FOCUS -> stopFocus()
                         PAUSE_TIMER -> id?.let { pauseTimer(it) }
-                        FINISH_TIMER -> id?.let { completeQuest(it) }
+                        COMPLETE -> id?.let { completeQuest(it) }
                         SLIP_AVOID -> id?.let { slipAvoid(it) }
                     }
                 }.also { if (intent.action == SLIP_AVOID) Notifications.avoidCheck(context, it.openAvoids()) }
@@ -36,7 +36,7 @@ class NotificationActionReceiver : BroadcastReceiver() {
     companion object {
         const val STOP_FOCUS = "com.lifup.app.STOP_FOCUS"
         const val PAUSE_TIMER = "com.lifup.app.PAUSE_TIMER"
-        const val FINISH_TIMER = "com.lifup.app.FINISH_TIMER"
+        const val COMPLETE = "com.lifup.app.COMPLETE"
         const val SLIP_AVOID = "com.lifup.app.SLIP_AVOID"
         const val EXTRA_QUEST = "quest"
 

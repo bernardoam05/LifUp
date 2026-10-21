@@ -90,6 +90,7 @@ class SessionService : Service() {
     private var overlay: LinearLayout? = null
     private var killedAt = 0L
     private var player: MediaPlayer? = null
+    private var queued: MediaPlayer? = null
     private var playingAmbient: String? = null
     private var lastPhase: Pomodoro.Phase? = null
     /** What the ongoing notification currently shows; it's only re-posted when this changes. */
@@ -169,10 +170,11 @@ class SessionService : Service() {
                 val phase = Pomodoro.phaseAt(p, f.elapsedMinutes(now))
                 val prev = lastPhase
                 if (prev != null && (prev.work != phase.work || prev.cycle != phase.cycle)) {
-                    Notifications.pomodoroPhase(this@SessionService, phase.work, phase.cycle)
+                    Notifications.pomodoroPhase(this@SessionService, phase.work, phase.cycle, p.rounds, (phase.endsAtMin - phase.startMin).toInt())
                 }
                 lastPhase = phase
             }
+            syncAmbient(f)
             val key = notificationKey()
             if (key != postedKey) {
                 postedKey = key
@@ -186,31 +188,46 @@ class SessionService : Service() {
 
     // ── Ambient sound ─────────────────────────────────────────────────────────
 
+    /** Plays during work only: a Pomodoro break goes quiet, like the apps going free. */
     private fun syncAmbient(f: FocusSession?) {
-        val wanted = f?.ambient?.takeIf { store.current.settings.sound }
+        val working = f?.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(System.currentTimeMillis())).work } != false
+        val wanted = f?.ambient?.takeIf { store.current.settings.sound && working && Ambient.tracks(it).isNotEmpty() }
         if (wanted == playingAmbient) return
         stopAmbient()
         if (wanted != null) playAmbient(wanted)
     }
 
+    /** Random clips chained back to back with [MediaPlayer.setNextMediaPlayer], so there's no gap between them. */
     private fun playAmbient(kind: String) {
         val tracks = Ambient.tracks(kind)
-        if (tracks.isEmpty()) return
         playingAmbient = kind
-        fun next() {
-            player?.release()
-            player = MediaPlayer.create(this, tracks.random())?.apply {
-                setOnCompletionListener { if (playingAmbient == kind) next() }
-                start()
+        var last = -1
+        fun create(): MediaPlayer? {
+            val pick = tracks.indices.filter { it != last || tracks.size == 1 }.random()
+            last = pick
+            return MediaPlayer.create(this, tracks[pick])
+        }
+        fun chain(current: MediaPlayer) {
+            val next = create() ?: return
+            queued = next
+            current.setNextMediaPlayer(next)
+            current.setOnCompletionListener {
+                it.release()
+                if (playingAmbient != kind) return@setOnCompletionListener
+                player = next
+                queued = null
+                chain(next)
             }
         }
-        next()
+        player = create()?.also { it.start(); chain(it) }
     }
 
     private fun stopAmbient() {
         playingAmbient = null
         player?.run { runCatching { stop() }; release() }
+        queued?.release()
         player = null
+        queued = null
     }
 
     // ── App blocking ──────────────────────────────────────────────────────────
@@ -400,13 +417,24 @@ class SessionService : Service() {
 private const val WORK_COLOR = 0xFFA77BFF.toInt()
 private const val BREAK_COLOR = 0xFF5FD39A.toInt()
 
+/**
+ * Focus sound: steady noise played by the app, or the player's own music app ([OWN]): music is personal,
+ * and any library beats a handful of built-in tracks.
+ */
 object Ambient {
-    val kinds = listOf("rain", "fire", "lofi")
+    const val OWN = "own"
+    val kinds = listOf("rain", "fire", OWN)
 
     fun tracks(kind: String): List<Int> = when (kind) {
-        "rain" -> listOf(R.raw.ambient_rain_1, R.raw.ambient_rain_2, R.raw.ambient_rain_3, R.raw.ambient_rain_4)
+        "rain" -> listOf(R.raw.ambient_rain_1, R.raw.ambient_rain_2, R.raw.ambient_rain_4)
         "fire" -> listOf(R.raw.ambient_fire_1, R.raw.ambient_fire_2, R.raw.ambient_fire_3, R.raw.ambient_fire_4)
-        "lofi" -> listOf(R.raw.ambient_lofi_1, R.raw.ambient_lofi_2, R.raw.ambient_lofi_3, R.raw.ambient_lofi_4, R.raw.ambient_lofi_5, R.raw.ambient_lofi_6)
         else -> emptyList()
+    }
+
+    /** Opens the phone's music app (Spotify, YouTube Music…); nothing happens if there's none. */
+    fun openMusicApp(context: Context) {
+        runCatching {
+            context.startActivity(Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_MUSIC).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        }
     }
 }
