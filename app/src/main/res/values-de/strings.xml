@@ -238,6 +238,9 @@
     <string name="luck_rank">Gefundenes Echo %1$s oder besser</string>
     <string name="luck_rank_top">Gefundenes Echo %1$s</string>
     <string name="passive_all">Verstärkt die anderen Passiven des Trupps um %1$s</string>
+    <string name="passive_streak_xp">+%1$s XP bei %2$d Tagen Serie (wächst bis dahin)</string>
+    <string name="passive_portal">+%1$s XP und Gold aus Portalen</string>
+    <string name="passive_swap">+1 kostenloser Tausch pro Tag</string>
 
     <!-- Shop -->
     <string name="shop">Shop</string>

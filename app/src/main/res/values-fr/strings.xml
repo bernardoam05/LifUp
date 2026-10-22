@@ -226,6 +226,9 @@
     <string name="luck_rank">Écho trouvé %1$s ou mieux</string>
     <string name="luck_rank_top">Écho trouvé %1$s</string>
     <string name="passive_all">Amplifie de %1$s les autres passifs de l\'escouade</string>
+    <string name="passive_streak_xp">+%1$s XP avec une série de %2$d jours (monte jusque-là)</string>
+    <string name="passive_portal">+%1$s XP et or dans les portails</string>
+    <string name="passive_swap">+1 échange gratuit par jour</string>
 
     <string name="shop">Boutique</string>
     <string name="inventory">Inventaire</string>

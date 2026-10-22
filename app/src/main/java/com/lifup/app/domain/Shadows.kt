@@ -13,6 +13,8 @@ data class Passives(
     val focusMastery: Double = 0.0,
     val dailyBonus: Double = 0.0,
     val luck: Double = 0.0,
+    val portal: Double = 0.0,
+    val extraSwaps: Int = 0,
     val immunity: Boolean = false,
     val streakProtect: Boolean = false,
     /** The parts of [xp] and [gold] that come from item buffs rather than the squad. */
@@ -32,12 +34,14 @@ fun GameState.passives(content: Content, now: Long): Passives {
     val totals = mutableMapOf<Passive, Double>()
     var immunity = false
     var streak = false
+    var swap = false
     for (id in squad) {
         val def = content.shadowById[id] ?: continue
         val level = owned(id)?.level ?: continue
         when (def.passive) {
             Passive.PENALTY_IMMUNITY -> immunity = true
             Passive.STREAK_PROTECT -> streak = true
+            Passive.EXTRA_SWAP -> swap = true
             else -> totals[def.passive] = (totals[def.passive] ?: 0.0) + Rules.passiveValue(def, level, player.level)
         }
     }
@@ -47,7 +51,8 @@ fun GameState.passives(content: Content, now: Long): Passives {
     val buffXp = live.filter { it.stat == "xp" }.sumOf { it.value }
     val buffGold = live.filter { it.stat == "gold" }.sumOf { it.value }
     return Passives(
-        xp = v(Passive.XP_BOOST) + buffXp,
+        // The streak's share builds up over its first days.
+        xp = v(Passive.XP_BOOST) + v(Passive.STREAK_XP) * player.streak.coerceAtMost(Rules.STREAK_XP_FULL_DAYS) / Rules.STREAK_XP_FULL_DAYS + buffXp,
         gold = v(Passive.GOLD_BOOST) + buffGold,
         buffXp = buffXp,
         buffGold = buffGold,
@@ -62,6 +67,8 @@ fun GameState.passives(content: Content, now: Long): Passives {
         focusMastery = v(Passive.FOCUS_MASTERY).coerceAtMost(Rules.MAX_FOCUS_MASTERY),
         dailyBonus = v(Passive.DAILY_BONUS),
         luck = v(Passive.SHADOW_LUCK).coerceAtMost(1.0),
+        portal = v(Passive.PORTAL_BOOST),
+        extraSwaps = if (swap) 1 else 0,
         immunity = immunity,
         streakProtect = streak,
     )
@@ -77,7 +84,7 @@ fun GameState.squadEffects(content: Content): List<Pair<Passive, Double>> {
         val values = ds.map { (d, l) -> Rules.passiveValue(d, l, player.level) }
         passive to when {
             Rules.isFlag(passive) -> values.min()
-            passive == Passive.ALL_BOOST -> values.sum()
+            passive == Passive.ALL_BOOST || passive == Passive.EXTRA_SWAP -> values.max()
             else -> values.sum() * amp
         }
     }

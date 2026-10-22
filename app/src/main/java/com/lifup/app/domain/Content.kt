@@ -91,17 +91,23 @@ enum class ShadowClass { BEAST, UNDEAD, MAGE, WARRIOR, TANK, ASSASSIN, ELEMENTAL
 enum class Passive {
     XP_BOOST, GOLD_BOOST, TRAINING_XP, MIND_XP, EXPLORER_XP, BOSS_DAMAGE, PENALTY_REDUCE,
     PENALTY_IMMUNITY, STREAK_PROTECT, SHOP_DISCOUNT, FOCUS_MASTERY, DAILY_BONUS, SHADOW_LUCK, ALL_BOOST,
+    /** XP that grows with the streak, full at [Rules.STREAK_XP_FULL_DAYS]. */
+    STREAK_XP,
+    /** More XP and gold from portals. */
+    PORTAL_BOOST,
+    /** One more free swap a day. */
+    EXTRA_SWAP,
 }
 
 /** What an echo's passive is about: growth, wealth, combat, protection, or focus and fortune. */
 enum class PowerKind { GROWTH, WEALTH, COMBAT, PROTECTION, FORTUNE }
 
 fun Passive.kind(): PowerKind = when (this) {
-    Passive.XP_BOOST, Passive.TRAINING_XP, Passive.MIND_XP, Passive.EXPLORER_XP, Passive.DAILY_BONUS -> PowerKind.GROWTH
+    Passive.XP_BOOST, Passive.TRAINING_XP, Passive.MIND_XP, Passive.EXPLORER_XP, Passive.DAILY_BONUS, Passive.STREAK_XP -> PowerKind.GROWTH
     Passive.GOLD_BOOST, Passive.SHOP_DISCOUNT, Passive.ALL_BOOST -> PowerKind.WEALTH
     Passive.BOSS_DAMAGE -> PowerKind.COMBAT
     Passive.PENALTY_REDUCE, Passive.PENALTY_IMMUNITY, Passive.STREAK_PROTECT -> PowerKind.PROTECTION
-    Passive.FOCUS_MASTERY, Passive.SHADOW_LUCK -> PowerKind.FORTUNE
+    Passive.FOCUS_MASTERY, Passive.SHADOW_LUCK, Passive.PORTAL_BOOST, Passive.EXTRA_SWAP -> PowerKind.FORTUNE
 }
 
 /** The amplifier boosts every other passive, so it belongs to every kind. */

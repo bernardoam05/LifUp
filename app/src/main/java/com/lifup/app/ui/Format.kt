@@ -219,6 +219,9 @@ fun passiveText(p: Passive, value: Double): String {
         Passive.DAILY_BONUS -> stringResource(R.string.passive_daily, value.roundToInt())
         Passive.SHADOW_LUCK -> stringResource(R.string.passive_luck, pct)
         Passive.ALL_BOOST -> stringResource(R.string.passive_all, pct)
+        Passive.STREAK_XP -> stringResource(R.string.passive_streak_xp, pct, com.lifup.app.domain.Rules.STREAK_XP_FULL_DAYS)
+        Passive.PORTAL_BOOST -> stringResource(R.string.passive_portal, pct)
+        Passive.EXTRA_SWAP -> stringResource(R.string.passive_swap)
     }
 }
 

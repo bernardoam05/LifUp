@@ -202,7 +202,12 @@ object Rules {
         Passive.DAILY_BONUS to doubleArrayOf(5.0, 10.0, 15.0, 25.0, 40.0),
         Passive.SHADOW_LUCK to doubleArrayOf(.05, .10, .15, .22, .30),
         Passive.ALL_BOOST to doubleArrayOf(.10, .15, .20, .30, .40),
+        // At a full streak it beats the all-round XP, but a broken streak takes it back to nothing.
+        Passive.STREAK_XP to doubleArrayOf(.03, .06, .10, .16, .25),
+        // Portals are about a third of a day's XP, so this is worth about the all-round XP.
+        Passive.PORTAL_BOOST to doubleArrayOf(.10, .20, .30, .45, .60),
     )
+    const val STREAK_XP_FULL_DAYS = 30
 
     /**
      * Days between the once-in-a-while passives (penalty immunity, streak protection) by rank, before levels.
@@ -229,6 +234,7 @@ object Rules {
      */
     fun passiveValue(def: ShadowDef, level: Int, playerLevel: Int = 1): Double {
         if (isFlag(def.passive)) return flagDays(def, level).toDouble()
+        if (def.passive == Passive.EXTRA_SWAP) return 1.0
         val base = (PASSIVE_TABLE[def.passive]?.get(def.rank.ordinal) ?: return 0.0) * levelFactor(level)
         return if (def.passive == Passive.DAILY_BONUS) base * xpMultiplier(playerLevel) else base
     }

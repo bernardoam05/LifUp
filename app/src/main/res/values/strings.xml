@@ -239,6 +239,9 @@
     <string name="luck_rank">Found echo %1$s or better</string>
     <string name="luck_rank_top">Found echo %1$s</string>
     <string name="passive_all">Amplifies the squad\'s other passives by %1$s</string>
+    <string name="passive_streak_xp">+%1$s XP with a %2$d-day streak (building up to it)</string>
+    <string name="passive_portal">+%1$s XP and gold from portals</string>
+    <string name="passive_swap">+1 free swap a day</string>
 
     <!-- Shop -->
     <string name="shop">Shop</string>

@@ -233,12 +233,15 @@ fun Tx.creditGps(questId: String, km: Double) {
 /** Whether it still makes sense to hand this mission out mid-day at [hour]. */
 fun QuestDef.offeredAt(hour: Int) = untilHour == null || hour < untilHour
 
-/** Swap an open daily pool mission. One free swap per day, then a Swap Scroll. */
+/** Free swaps a day: one, plus one with a swapping echo in the squad. */
+fun GameState.freeSwaps(content: Content, now: Long) = Rules.FREE_SWAPS_PER_DAY + passives(content, now).extraSwaps
+
+/** Swap an open daily pool mission. The free swaps first, then a Swap Scroll. */
 fun Tx.swapQuest(id: String): Boolean {
     val q = s.dailyQuests.firstOrNull { it.id == id } ?: return false
     val def = s.defOf(q.defId, content) ?: return false
     if (q.status != QuestStatus.OPEN || def.kind != DefKind.POOL) return false
-    val free = s.daily.swapsUsed < Rules.FREE_SWAPS_PER_DAY
+    val free = s.daily.swapsUsed < s.freeSwaps(content, ctx.now)
     if (!free && s.items("pergaminho_troca") == 0) return false
     val used = s.quests.map { it.defId }.toSet()
     val replacement = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.offeredAt(ctx.hour) }) ?: return false

@@ -238,6 +238,9 @@
     <string name="luck_rank">Eco encontrado %1$s o mejor</string>
     <string name="luck_rank_top">Eco encontrado %1$s</string>
     <string name="passive_all">Amplifica en %1$s las demás pasivas del escuadrón</string>
+    <string name="passive_streak_xp">+%1$s XP con una racha de %2$d días (crece hasta ahí)</string>
+    <string name="passive_portal">+%1$s XP y oro en los portales</string>
+    <string name="passive_swap">+1 cambio gratis al día</string>
 
     <!-- Shop -->
     <string name="shop">Tienda</string>

@@ -674,6 +674,18 @@ class EngineTest {
         assertEquals(start.itemXp(crystal), s.player.xp)
     }
 
+    @Test fun `streak xp builds with the streak and a swapping echo adds a free swap`() {
+        val streaker = content.shadows.first { it.passive == Passive.STREAK_XP }
+        val swapper = content.shadows.first { it.passive == Passive.EXTRA_SWAP }
+        val base = fresh().let { it.copy(shadows = listOf(OwnedShadow(streaker.id), OwnedShadow(swapper.id)), squad = listOf(streaker.id, swapper.id)) }
+        val now = at("2026-10-14T10:00")
+        val full = Rules.passiveValue(streaker, 1)
+        assertEquals(0.0, base.passives(content, now).xp, 1e-9)
+        assertEquals(full / 2, base.copy(player = base.player.copy(streak = 15)).passives(content, now).xp, 1e-9)
+        assertEquals(full, base.copy(player = base.player.copy(streak = 90)).passives(content, now).xp, 1e-9)
+        assertEquals(Rules.FREE_SWAPS_PER_DAY + 1, base.freeSwaps(content, now))
+    }
+
     @Test fun `old saves keep the targets they had`() {
         val old = fresh().let { it.copy(version = 6, player = it.player.copy(level = 30), adapt = mapOf("pool_plank" to Adapt(1))) }
         val s = run(old, "2026-10-14T10:00")

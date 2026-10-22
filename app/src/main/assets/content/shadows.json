@@ -241,7 +241,7 @@
   "id": "astral_weaver",
   "rank": "ELITE",
   "shadowClass": "MAGE",
-  "passive": "XP_BOOST",
+  "passive": "PORTAL_BOOST",
   "source": {
    "type": "EXTRACTION"
   },
@@ -343,7 +343,7 @@
   "id": "glacier_stalker",
   "rank": "ELITE",
   "shadowClass": "ASSASSIN",
-  "passive": "EXPLORER_XP",
+  "passive": "EXTRA_SWAP",
   "source": {
    "type": "EXTRACTION"
   },
@@ -581,7 +581,7 @@
   "id": "storm_herald",
   "rank": "COMMANDER",
   "shadowClass": "ELEMENTAL",
-  "passive": "BOSS_DAMAGE",
+  "passive": "PORTAL_BOOST",
   "source": {
    "type": "EXTRACTION"
   },
@@ -704,7 +704,7 @@
   "id": "hired_golem",
   "rank": "ELITE",
   "shadowClass": "CONSTRUCT",
-  "passive": "PENALTY_REDUCE",
+  "passive": "EXTRA_SWAP",
   "source": {
    "type": "SHOP"
   },
@@ -807,7 +807,7 @@
   "id": "shadow_wisp",
   "rank": "NORMAL",
   "shadowClass": "SPIRIT",
-  "passive": "XP_BOOST",
+  "passive": "PORTAL_BOOST",
   "source": {
    "type": "ACHIEVEMENT"
   },
@@ -893,7 +893,7 @@
   "id": "calendar_marshal",
   "rank": "MARSHAL",
   "shadowClass": "WARRIOR",
-  "passive": "XP_BOOST",
+  "passive": "STREAK_XP",
   "source": {
    "type": "STREAK"
   },
@@ -947,7 +947,7 @@
   "id": "quest_boss_ant_worker_prime",
   "rank": "KNIGHT",
   "shadowClass": "BEAST",
-  "passive": "EXPLORER_XP",
+  "passive": "STREAK_XP",
   "source": {
    "type": "BOSS",
    "bossId": "boss_ant_worker_prime"
@@ -1055,7 +1055,7 @@
   "id": "quest_boss_new_frontier",
   "rank": "KNIGHT",
   "shadowClass": "EXPLORER",
-  "passive": "EXPLORER_XP",
+  "passive": "PORTAL_BOOST",
   "source": {
    "type": "BOSS",
    "bossId": "boss_new_frontier"
@@ -1127,7 +1127,7 @@
   "id": "quest_boss_cold_philosopher",
   "rank": "COMMANDER",
   "shadowClass": "MAGE",
-  "passive": "PENALTY_REDUCE",
+  "passive": "STREAK_XP",
   "source": {
    "type": "BOSS",
    "bossId": "boss_cold_philosopher"
@@ -1508,7 +1508,7 @@
   "id": "sleep_warden",
   "rank": "ELITE",
   "shadowClass": "SPIRIT",
-  "passive": "PENALTY_REDUCE",
+  "passive": "STREAK_XP",
   "source": {
    "type": "ACHIEVEMENT"
   },

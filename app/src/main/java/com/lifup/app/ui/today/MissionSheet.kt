@@ -32,6 +32,7 @@ import com.lifup.app.domain.easeTarget
 import com.lifup.app.domain.holdTarget
 import com.lifup.app.domain.roundTarget
 import com.lifup.app.domain.stepOf
+import com.lifup.app.domain.freeSwaps
 import com.lifup.app.domain.targetAt
 import com.lifup.app.domain.progresses
 import androidx.compose.ui.res.pluralStringResource
@@ -288,7 +289,7 @@ private fun SideActions(s: GameState, q: Quest, def: QuestDef?, onEdit: ((String
     if (!swappable && !undoable && !editable) return
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         if (swappable) {
-            val free = s.daily.swapsUsed < Rules.FREE_SWAPS_PER_DAY
+            val free = s.daily.swapsUsed < s.freeSwaps(content, System.currentTimeMillis())
             val scrolls = s.items("pergaminho_troca")
             SheetLink(
                 if (free) stringResource(R.string.swap_free) else stringResource(R.string.swap_scroll, scrolls), Icons.Rounded.SwapHoriz, p.text,

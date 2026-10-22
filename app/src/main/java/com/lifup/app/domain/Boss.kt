@@ -145,8 +145,13 @@ fun Tx.expirePortal() {
 fun Tx.completePortal() {
     val p = s.portal ?: return
     val q = p.quest
-    gainXp(q.xp, q.family())
-    gainGold(q.gold)
+    // Portal echoes add on top; their share counts as the squad's.
+    val boost = s.passives(content, ctx.now).portal
+    val extraXp = (q.xp * boost).roundToInt()
+    val extraGold = (q.gold * boost).roundToInt()
+    gainXp(q.xp + extraXp, q.family())
+    gainGold(q.gold + extraGold)
+    squadAdded(SquadGain(xp = extraXp, gold = extraGold))
     gainAttributes(groupOf(q))
     s = s.copy(portal = null)
     count(StatKey.PORTALS_CLEARED)

@@ -66,10 +66,12 @@ private fun Tx.levelEcho(level: Int): ShadowDef? {
 
 /** What a mission pays if completed now, boosts included, so the card shows the real number before it's done. */
 fun GameState.xpPreview(q: Quest, content: Content, now: Long): Int =
-    if (q.origin.boosted()) (q.xp * (1 + passives(content, now).xpFor(q.family()))).roundToInt() else q.xp
+    if (q.origin.boosted()) passives(content, now).let { p -> (q.xp * (1 + p.portalShare(q)) * (1 + p.xpFor(q.family()))).roundToInt() } else q.xp
 
 fun GameState.goldPreview(q: Quest, content: Content, now: Long): Int =
-    if (q.origin.boosted()) (q.gold * (1 + passives(content, now).gold)).roundToInt() else q.gold
+    if (q.origin.boosted()) passives(content, now).let { p -> (q.gold * (1 + p.portalShare(q)) * (1 + p.gold)).roundToInt() } else q.gold
+
+private fun Passives.portalShare(q: Quest) = if (q.origin == QuestOrigin.PORTAL) portal else 0.0
 
 private fun QuestOrigin.boosted() = this == QuestOrigin.DAILY || this == QuestOrigin.EXTRA || this == QuestOrigin.WEEKLY || this == QuestOrigin.PORTAL
 
