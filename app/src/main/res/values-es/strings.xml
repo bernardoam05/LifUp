@@ -284,7 +284,7 @@
     <string name="rigor_hard">Difícil</string>
     <string name="rigor_easy_info">El día cuenta con el 60% de las misiones. Por debajo pierdes algo de XP y la racha; por debajo del 40% hay también una misión de penalización durante 24 horas (apps bloqueadas o la mitad de las recompensas). 2 días de descanso por semana.</string>
     <string name="rigor_normal_info">El día cuenta con el 75% de las misiones. Por debajo pierdes XP proporcional y la racha; por debajo del 50% también de 1 a 3 misiones de penalización (más cuanto menos hagas) durante 24 horas (apps bloqueadas o la mitad de las recompensas). 1 día de descanso por semana.</string>
-    <string name="rigor_hard_info">Solo cuenta el 100%. Pérdidas dobles; por debajo del 75% también de 2 a 4 misiones de penalización (más cuanto menos hagas) durante 24 horas (apps bloqueadas o la mitad de las recompensas). Sin días de descanso.</string>
+    <string name="rigor_hard_info">Solo cuenta el 100%. Pérdidas dobles; por debajo del 67% también de 2 a 4 misiones de penalización (más cuanto menos hagas) durante 24 horas (apps bloqueadas o la mitad de las recompensas). Sin días de descanso.</string>
     <string name="auto_missions">Cantidad de misiones automática</string>
     <string name="auto_missions_info">Ahora mismo %1$d misiones sorteadas al día, más las fijas.</string>
     <string name="extra_daily_missions">Misiones extra al día</string>
@@ -534,7 +534,7 @@
     <string name="guide_streak_title">Racha y descanso</string>
     <string name="guide_streak">Sube cada día::+1 por cada día que llegas al mínimo.\nSegunda oportunidad::¿La perdiste? Un día perfecto justo después la recupera (una vez por semana).\nDías de descanso::Márcalo antes del mediodía y ese día no cuenta ni a favor ni en contra. 2 por semana en Fácil, 1 en Normal.\nProtección extra::El Escudo de la Constancia y algunos ecos la salvan por ti. Solo un rescate por semana, contando la segunda oportunidad.</string>
     <string name="guide_penalty_title">Penalización</string>
-    <string name="guide_penalty">Pérdida proporcional::Pierdes XP y oro según lo que quedó sin hacer. Casi lograrlo casi no cuesta nada.\n24 horas::Por debajo del 40% (Fácil), 50% (Normal) o 75% (Difícil) empieza una penalización con misiones extra, más cuanto menos hagas. Hazlas y termina antes.\nMientras dura::Con el bloqueo de apps, tus apps de distracción quedan bloqueadas; sin él, las misiones dan la mitad de XP y oro.</string>
+    <string name="guide_penalty">Pérdida proporcional::Pierdes XP y oro según lo que quedó sin hacer. Casi lograrlo casi no cuesta nada.\n24 horas::Por debajo del 40% (Fácil), 50% (Normal) o 67% (Difícil) empieza una penalización con misiones extra, más cuanto menos hagas. Hazlas y termina antes.\nMientras dura::Con el bloqueo de apps, tus apps de distracción quedan bloqueadas; sin él, las misiones dan la mitad de XP y oro.</string>
     <string name="guide_side_title">Tareas</string>
     <string name="guide_side">Libres::Escribe cualquier tarea, sin objetivos ni reglas.\n5 con recompensa::Las 5 primeras que completes cada día dan XP y oro, y hieren al jefe.\nDespués de eso::Siguen funcionando como lista de tareas.\nSin trampas::Desmarcar o borrar te quita la recompensa.</string>
     <string name="guide_boss_title">Jefe semanal</string>

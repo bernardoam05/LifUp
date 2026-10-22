@@ -733,7 +733,10 @@ class EngineTest {
         assertTrue(Rules.severeRatio(Rigor.EASY) < Rules.passRatio(Rigor.EASY))
         assertEquals(listOf(1, 1), listOf(0.39, 0.0).map { Rules.penaltyMissionCount(Rigor.EASY, it) })
         assertEquals(listOf(1, 2, 3), listOf(0.45, 0.25, 0.0).map { Rules.penaltyMissionCount(Rigor.NORMAL, it) })
-        assertEquals(listOf(2, 3, 4), listOf(0.7, 0.4, 0.0).map { Rules.penaltyMissionCount(Rigor.HARD, it) })
+        assertEquals(listOf(2, 3, 4), listOf(0.6, 0.33, 0.0).map { Rules.penaltyMissionCount(Rigor.HARD, it) })
+        // Two thirds of the streak minimum; a day right on the line (4 of 6 on Hard) isn't below it.
+        Rigor.entries.forEach { assertEquals(Rules.passRatio(it) * 2 / 3, Rules.severeRatio(it), 1e-9) }
+        assertFalse(4.0 / 6 < Rules.severeRatio(Rigor.HARD))
     }
 
     @Test fun `old saves keep the targets they had`() {

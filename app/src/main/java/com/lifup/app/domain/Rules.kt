@@ -121,10 +121,11 @@ object Rules {
     fun passRatio(rigor: Rigor) = when (rigor) { Rigor.EASY -> 0.6; Rigor.NORMAL -> 0.75; Rigor.HARD -> 1.0 }
 
     /**
-     * Below this share a failed day also brings a penalty. Between it and [passRatio] a day only costs XP,
-     * gold and the streak, so a near miss is never punished twice.
+     * Below this share a failed day also brings a penalty: two thirds of the streak minimum, on every
+     * difficulty. Between it and [passRatio] a day only costs XP, gold and the streak, so a near miss is
+     * never punished twice.
      */
-    fun severeRatio(rigor: Rigor) = when (rigor) { Rigor.EASY -> 0.4; Rigor.NORMAL -> 0.5; Rigor.HARD -> 0.75 }
+    fun severeRatio(rigor: Rigor) = when (rigor) { Rigor.EASY -> 0.4; Rigor.NORMAL -> 0.5; Rigor.HARD -> 2.0 / 3 }
 
     private fun penaltyMissions(rigor: Rigor) = when (rigor) { Rigor.EASY -> 1..1; Rigor.NORMAL -> 1..3; Rigor.HARD -> 2..4 }
 
