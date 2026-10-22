@@ -4,6 +4,7 @@ import com.lifup.app.domain.openBedtime
 import com.lifup.app.domain.dayGoal
 import com.lifup.app.domain.limitsNearing
 import com.lifup.app.domain.openAvoids
+import com.lifup.app.domain.rollPortal
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.AutoKind
 import com.lifup.app.domain.QuestStatus
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
 
 /**
  * One exact alarm at the next moment the state needs attention: midnight (close the day even with the
- * app closed), session end, penalty block start/end, portal expiry, Pomodoro phase or the evening reminder.
+ * app closed), session end, penalty block start/end, portal roll and expiry, Pomodoro phase or the evening reminder.
  */
 object Alarms {
     private const val REQUEST = 4242
@@ -46,6 +47,7 @@ object Alarms {
             if (s.penalty.blockEnd > now) candidates += s.penalty.blockEnd + 500
         }
         s.portal?.let { candidates += it.expiresAt + 500 }
+        nextPortalRoll(s, ctx)?.let { candidates += it }
         if (!reminderDone && s.settings.notifications) {
             val at = ctx.atHour(ctx.today, s.settings.reminderHour)
             if (at > now) candidates += at
@@ -64,6 +66,17 @@ object Alarms {
             if (at > now) candidates += at
         }
         return candidates.filter { it > now }.min()
+    }
+
+    /**
+     * The next hour's portal roll, while one can still open today: rolled here rather than only when the app
+     * opens, so portals also open (and notify) with the app closed.
+     */
+    private fun nextPortalRoll(s: GameState, ctx: Ctx): Long? {
+        val opened = if (s.portalDay == ctx.todayKey) s.portalsToday else 0
+        if (s.portal != null || opened >= Rules.MAX_PORTALS_PER_DAY) return null
+        val next = ctx.hour + 1
+        return if (next in Rules.PORTAL_HOURS) ctx.atHour(ctx.today, next) + 1_000 else null
     }
 
     fun schedule(context: Context, s: GameState) {
@@ -161,7 +174,7 @@ private fun BroadcastReceiver.tick(context: Context) {
     val store = LifUpApp.store
     store.scope.launch {
         try {
-            val s = AutoTracker.dispatchCatchingUp(context)
+            val s = AutoTracker.dispatchCatchingUp(context) { rollPortal() }
             Alarms.maybeRemind(context, s)
             SystemSync.apply(context, s)
         } finally {

@@ -6,7 +6,6 @@ import com.lifup.app.data.LegacyImport
 import com.lifup.app.domain.Content
 import com.lifup.app.system.AutoWorker
 import com.lifup.app.system.Notifications
-import com.lifup.app.system.PortalWorker
 import com.lifup.app.system.SystemSync
 import com.lifup.app.widget.Widgets
 import java.io.File
@@ -28,7 +27,8 @@ class LifUpApp : Application() {
         Notifications.createChannels(this)
         SystemSync.onApply(Widgets::refresh)
         SystemSync.install(this, store)
-        PortalWorker.schedule(this)
+        // Portals now roll on the hourly alarm; drop the old periodic job from earlier installs.
+        androidx.work.WorkManager.getInstance(this).cancelUniqueWork("portal-roll")
         AutoWorker.schedule(this)
         store.fire()
     }

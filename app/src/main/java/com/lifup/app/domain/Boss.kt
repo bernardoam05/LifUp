@@ -99,7 +99,7 @@ fun Tx.rollPortal() {
     s = s.copy(portalRollHour = hourKey)
     if (s.portalDay != ctx.todayKey) s = s.copy(portalDay = ctx.todayKey, portalsToday = 0)
     expirePortal()
-    if (s.portal != null || ctx.hour !in 8..21 || s.portalsToday >= Rules.MAX_PORTALS_PER_DAY) return
+    if (s.portal != null || ctx.hour !in Rules.PORTAL_HOURS || s.portalsToday >= Rules.MAX_PORTALS_PER_DAY) return
     if (ctx.rng.nextDouble() >= Rules.PORTAL_CHANCE) return
     openPortal()
 }

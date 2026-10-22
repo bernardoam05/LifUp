@@ -38,6 +38,8 @@ object Rules {
     const val SIDE_REWARDS_PER_DAY = 5
     const val FREE_SWAPS_PER_DAY = 1
     const val MAX_PORTALS_PER_DAY = 2
+    /** Hours a portal can open in (rolled once an hour). */
+    val PORTAL_HOURS = 8..21
     const val PORTAL_CHANCE = 0.25
     /** Portals never ask for more than this much effort, so they fit in an evening. */
     const val PORTAL_MAX_TASK_MIN = 150.0

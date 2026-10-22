@@ -686,6 +686,14 @@ class EngineTest {
         assertEquals(Rules.FREE_SWAPS_PER_DAY + 1, base.freeSwaps(content, now))
     }
 
+    @Test fun `the alarm wakes for the next portal roll while one can still open`() {
+        val s = fresh()
+        val wake = com.lifup.app.system.Alarms.nextWake(s, ctx("2026-10-14T10:20"), reminderDone = true)
+        assertEquals(at("2026-10-14T11:00") + 1_000, wake)
+        val full = s.copy(portalDay = "2026-10-14", portalsToday = Rules.MAX_PORTALS_PER_DAY)
+        assertTrue(com.lifup.app.system.Alarms.nextWake(full, ctx("2026-10-14T10:20"), reminderDone = true) > at("2026-10-14T11:00") + 1_000)
+    }
+
     @Test fun `old saves keep the targets they had`() {
         val old = fresh().let { it.copy(version = 6, player = it.player.copy(level = 30), adapt = mapOf("pool_plank" to Adapt(1))) }
         val s = run(old, "2026-10-14T10:00")
