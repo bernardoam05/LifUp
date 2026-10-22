@@ -143,7 +143,10 @@ class EngineTest {
     @Test fun `a penalty without the app block halves mission rewards, and its focus pays nothing`() {
         val q = buildQuest(content.questDefById.getValue("pool_dips"), 1, QuestOrigin.EXTRA, "dips_p")
         val calm = fresh().let { it.copy(quests = it.quests + q) }
-        val penalized = calm.copy(penalty = Penalty(active = true, quests = listOf(buildQuest(content.penaltyQuests.first { it.type == QuestType.FOCUS }, 1, QuestOrigin.PENALTY, "pf"))))
+        val penalized = calm.copy(penalty = Penalty(
+            active = true, quests = listOf(buildQuest(content.penaltyQuests.first { it.type == QuestType.FOCUS }, 1, QuestOrigin.PENALTY, "pf")),
+            blockStart = at("2026-10-14T09:00"), blockEnd = at("2026-10-14T09:00") + Rules.PENALTY_MS,
+        ))
         val full = run(calm, "2026-10-14T10:00") { completeQuest(q.id) }.player.xp - calm.player.xp
         val half = run(penalized, "2026-10-14T10:00") { completeQuest(q.id) }.player.xp - penalized.player.xp
         assertEquals((full * Rules.PENALTY_REWARD_CUT).toDouble(), half.toDouble(), 1.0)
