@@ -267,9 +267,9 @@
     <string name="rigor_easy">Facile</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Difficile</string>
-    <string name="rigor_easy_info">La journée compte avec 60 % des missions. En dessous tu perds un peu d\'XP et la série ; sous 50 % il y a une mission de pénalité pendant 24 heures (apps bloquées ou moitié des récompenses). 2 jours de repos par semaine.</string>
-    <string name="rigor_normal_info">La journée compte avec 75 % des missions. En dessous tu perds de l\'XP en proportion et la série ; sous 50 % jusqu\'à 3 missions de pénalité pendant 24 heures (apps bloquées ou moitié des récompenses). 1 jour de repos par semaine.</string>
-    <string name="rigor_hard_info">Seul 100 % compte. Pertes doublées ; sous 50 % jusqu\'à 4 missions de pénalité pendant 24 heures (apps bloquées ou moitié des récompenses). Aucun jour de repos.</string>
+    <string name="rigor_easy_info">La journée compte avec 60 % des missions. En dessous tu perds un peu d\'XP et la série ; sous 40 % il y a aussi une mission de pénalité pendant 24 heures (apps bloquées ou moitié des récompenses). 2 jours de repos par semaine.</string>
+    <string name="rigor_normal_info">La journée compte avec 75 % des missions. En dessous tu perds de l\'XP en proportion et la série ; sous 50 % aussi 1 à 3 missions de pénalité (plus tu en fais peu, plus il y en a) pendant 24 heures (apps bloquées ou moitié des récompenses). 1 jour de repos par semaine.</string>
+    <string name="rigor_hard_info">Seul 100 % compte. Pertes doublées ; sous 75 % aussi 2 à 4 missions de pénalité (plus tu en fais peu, plus il y en a) pendant 24 heures (apps bloquées ou moitié des récompenses). Aucun jour de repos.</string>
     <string name="auto_missions">Nombre de missions auto</string>
     <string name="auto_missions_info">Actuellement %1$d missions tirées par jour, en plus des fixes.</string>
     <string name="extra_daily_missions">Missions bonus par jour</string>
@@ -325,11 +325,9 @@
     <string name="preset_easy">Facile</string>
     <string name="preset_medium">Moyenne</string>
     <string name="preset_hard">Difficile</string>
-    <string name="preset_epic">Épique</string>
     <string name="preset_easy_eg">Comme faire son lit ou lire 10 pages.</string>
     <string name="preset_medium_eg">Comme 20 fentes ou 15 minutes d\'une langue.</string>
     <string name="preset_hard_eg">Comme courir 3 km ou une heure de travail profond.</string>
-    <string name="preset_epic_eg">Comme marcher 7 km dans la journée.</string>
     <string name="field_days">Jours</string>
     <string name="add_today">Ajouter aussi aux missions du jour</string>
     <string name="delete_mission_text">Supprimer cette mission ? La copie du jour reste jusqu\'à minuit.</string>
@@ -518,7 +516,7 @@
     <string name="guide_streak_title">Série et repos</string>
     <string name="guide_streak">Monte chaque jour::+1 pour chaque jour où tu atteins le minimum.\nSeconde chance::Perdue ? Une journée parfaite juste après la ramène (une fois par semaine).\nJours de repos::Déclare-le avant midi et la journée ne compte ni pour ni contre toi. 2 par semaine en Facile, 1 en Normal.\nProtection en plus::Le Bouclier de Constance et certains échos la sauvent à ta place. Un seul sauvetage par semaine, seconde chance comprise.</string>
     <string name="guide_penalty_title">Pénalité</string>
-    <string name="guide_penalty">Perte proportionnelle::Tu perds de l\'XP et de l\'or selon ce qui reste à faire. Presque réussi ne coûte presque rien.\n24 heures::Sous 50 %, une pénalité démarre avec des missions en plus. Fais-les et elle se termine plus tôt.\nPendant ce temps::Avec le blocage d\'apps, tes apps qui distraient sont bloquées ; sans lui, les missions rapportent moitié moins d\'XP et d\'or.</string>
+    <string name="guide_penalty">Perte proportionnelle::Tu perds de l\'XP et de l\'or selon ce qui reste à faire. Presque réussi ne coûte presque rien.\n24 heures::Sous 40 % (Facile), 50 % (Normal) ou 75 % (Difficile), une pénalité démarre avec des missions en plus, d\'autant plus que tu en as fait peu. Fais-les et elle se termine plus tôt.\nPendant ce temps::Avec le blocage d\'apps, tes apps qui distraient sont bloquées ; sans lui, les missions rapportent moitié moins d\'XP et d\'or.</string>
     <string name="guide_side_title">Tâches</string>
     <string name="guide_side">Libres::Écris n\'importe quelle tâche, sans objectifs ni règles.\n5 avec récompense::Les 5 premières terminées chaque jour donnent de l\'XP et de l\'or, et blessent le boss.\nEnsuite::Elles continuent de servir de liste de tâches.\nPas de triche::Décocher ou supprimer reprend la récompense.</string>
     <string name="guide_boss_title">Boss hebdomadaire</string>

@@ -93,12 +93,11 @@ object Rules {
         else -> 120
     }
 
-    /** A mission's difficulty from its base XP: the Forge's four reward presets, split halfway between them. */
+    /** A mission's difficulty from its base XP: the Forge's three reward presets, split halfway between them. */
     fun difficulty(baseXp: Int) = when {
         baseXp < 45 -> Difficulty.EASY
         baseXp < 80 -> Difficulty.MEDIUM
-        baseXp < 125 -> Difficulty.HARD
-        else -> Difficulty.EPIC
+        else -> Difficulty.HARD
     }
 
     fun questRank(baseXp: Int) = when {
@@ -121,8 +120,20 @@ object Rules {
     /** Share of the day's missions that keeps the streak and avoids the penalty. */
     fun passRatio(rigor: Rigor) = when (rigor) { Rigor.EASY -> 0.6; Rigor.NORMAL -> 0.75; Rigor.HARD -> 1.0 }
 
-    /** Below this share the day is a bad one: penalty missions and app blocking. */
-    const val SEVERE_RATIO = 0.5
+    /**
+     * Below this share a failed day also brings a penalty. Between it and [passRatio] a day only costs XP,
+     * gold and the streak, so a near miss is never punished twice.
+     */
+    fun severeRatio(rigor: Rigor) = when (rigor) { Rigor.EASY -> 0.4; Rigor.NORMAL -> 0.5; Rigor.HARD -> 0.75 }
+
+    private fun penaltyMissions(rigor: Rigor) = when (rigor) { Rigor.EASY -> 1..1; Rigor.NORMAL -> 1..3; Rigor.HARD -> 2..4 }
+
+    /** Penalty missions for a day that kept [ratio] of its missions: more the emptier it was below the line. */
+    fun penaltyMissionCount(rigor: Rigor, ratio: Double): Int {
+        val range = penaltyMissions(rigor)
+        val depth = (1 - ratio / severeRatio(rigor)).coerceIn(0.0, 1.0)
+        return range.first + ((range.last - range.first) * depth).roundToInt()
+    }
 
     /**
      * Mission progression: a step up after the mission's N keeps since the last change, with at least this many

@@ -178,10 +178,9 @@ fun difficultyName(d: Difficulty) = when (d) {
     Difficulty.EASY -> R.string.preset_easy
     Difficulty.MEDIUM -> R.string.preset_medium
     Difficulty.HARD -> R.string.preset_hard
-    Difficulty.EPIC -> R.string.preset_epic
 }
 
-/** "●●○○ Medium": a neutral meter, so it never reads as a family colour. */
+/** "●●○ Medium": a neutral meter, so it never reads as a family colour. */
 @Composable
 fun difficultyLabel(d: Difficulty): String = "●".repeat(d.ordinal + 1) + "○".repeat(Difficulty.entries.size - d.ordinal - 1) + " " + stringResource(difficultyName(d))
 

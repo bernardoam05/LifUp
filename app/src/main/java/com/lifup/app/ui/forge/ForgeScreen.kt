@@ -167,7 +167,7 @@ private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?, edite
 private data class Preset(val label: Int, val xp: Int, val gold: Int, val example: Int)
 private val PRESETS = listOf(
     Preset(R.string.preset_easy, 30, 8, R.string.preset_easy_eg), Preset(R.string.preset_medium, 60, 15, R.string.preset_medium_eg),
-    Preset(R.string.preset_hard, 100, 30, R.string.preset_hard_eg), Preset(R.string.preset_epic, 150, 45, R.string.preset_epic_eg),
+    Preset(R.string.preset_hard, 100, 30, R.string.preset_hard_eg),
 )
 
 @OptIn(ExperimentalLayoutApi::class)

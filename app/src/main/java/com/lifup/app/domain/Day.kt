@@ -143,12 +143,8 @@ private fun Tx.penalize(failed: Int, total: Int, ratio: Double): PenaltyInfo {
     val xpActuallyLost = minOf(xpLost, s.player.xp)
     loseXp(xpLost)
 
-    val severe = ratio < Rules.SEVERE_RATIO
-    val questCount = if (!severe) 0 else when (rigor) {
-        Rigor.EASY -> 1
-        Rigor.NORMAL -> minOf(1 + failed / 2, 3)
-        Rigor.HARD -> minOf(2 + failed, 4)
-    }
+    val severe = ratio < Rules.severeRatio(rigor)
+    val questCount = if (severe) Rules.penaltyMissionCount(rigor, ratio) else 0
     val quests = content.penaltyQuests.shuffled(ctx.rng).take(questCount).mapIndexed { i, def ->
         buildQuest(def, 1, QuestOrigin.PENALTY, "${def.id}_${s.nextId}_$i")
     }

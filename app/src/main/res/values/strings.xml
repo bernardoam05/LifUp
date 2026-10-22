@@ -283,9 +283,9 @@
     <string name="rigor_easy">Easy</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Hard</string>
-    <string name="rigor_easy_info">A day counts with 60% of the missions. Below that you lose some XP and the streak; below 50% there is one penalty mission for 24 hours (blocked apps or half the rewards). 2 rest days a week.</string>
-    <string name="rigor_normal_info">A day counts with 75% of the missions. Below that you lose XP in proportion and the streak; below 50% up to 3 penalty missions for 24 hours (blocked apps or half the rewards). 1 rest day a week.</string>
-    <string name="rigor_hard_info">Only 100% counts. Double losses; below 50% up to 4 penalty missions for 24 hours (blocked apps or half the rewards). No rest days.</string>
+    <string name="rigor_easy_info">A day counts with 60% of the missions. Below that you lose some XP and the streak; below 40% there is also one penalty mission for 24 hours (blocked apps or half the rewards). 2 rest days a week.</string>
+    <string name="rigor_normal_info">A day counts with 75% of the missions. Below that you lose XP in proportion and the streak; below 50% also 1 to 3 penalty missions (more the less you did) for 24 hours (blocked apps or half the rewards). 1 rest day a week.</string>
+    <string name="rigor_hard_info">Only 100% counts. Double losses; below 75% also 2 to 4 penalty missions (more the less you did) for 24 hours (blocked apps or half the rewards). No rest days.</string>
     <string name="auto_missions">Automatic mission count</string>
     <string name="auto_missions_info">Currently %1$d drawn missions per day, plus the fixed ones.</string>
     <string name="extra_daily_missions">Extra missions per day</string>
@@ -342,11 +342,9 @@
     <string name="preset_easy">Easy</string>
     <string name="preset_medium">Medium</string>
     <string name="preset_hard">Hard</string>
-    <string name="preset_epic">Epic</string>
     <string name="preset_easy_eg">Like making the bed or reading 10 pages.</string>
     <string name="preset_medium_eg">Like 20 lunges or 15 minutes of a language.</string>
     <string name="preset_hard_eg">Like a 3 km run or an hour of deep work.</string>
-    <string name="preset_epic_eg">Like walking 7 km in a day.</string>
     <string name="field_days">Days</string>
     <string name="add_today">Add to today\'s missions as well</string>
     <string name="delete_mission_text">Delete this mission? Today\'s copy stays until midnight.</string>
@@ -537,7 +535,7 @@
     <string name="guide_streak_title">Streak and rest</string>
     <string name="guide_streak">Grows every day::+1 for each day you reach the minimum.\nSecond chance::Lost it? A perfect day right after brings it back (once a week).\nRest days::Call one before noon and the day counts neither way. 2 a week on Easy, 1 on Normal.\nExtra protection::The Shield of Constancy and some echoes save it for you. Only one save a week, second chance included.</string>
     <string name="guide_penalty_title">Penalty</string>
-    <string name="guide_penalty">Proportional loss::You lose XP and gold for what was left undone. Almost there costs almost nothing.\n24 hours::Below 50% a penalty starts with extra missions. Do them and it ends early.\nWhile it lasts::With app blocking your distracting apps stay blocked; without it, missions pay half the XP and gold.</string>
+    <string name="guide_penalty">Proportional loss::You lose XP and gold for what was left undone. Almost there costs almost nothing.\n24 hours::Below 40% (Easy), 50% (Normal) or 75% (Hard) a penalty starts with extra missions, more the less you did. Do them and it ends early.\nWhile it lasts::With app blocking your distracting apps stay blocked; without it, missions pay half the XP and gold.</string>
     <string name="guide_side_title">Side quests</string>
     <string name="guide_side">Free-form::Write any task, no targets or rules.\n5 with rewards::The first 5 finished each day give XP and gold and hurt the boss.\nAfter that::They keep working as a to-do list.\nNo cheating::Unticking or deleting takes the reward back.</string>
     <string name="guide_boss_title">Weekly boss</string>
