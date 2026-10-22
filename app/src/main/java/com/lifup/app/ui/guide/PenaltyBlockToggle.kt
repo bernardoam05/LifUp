@@ -1,5 +1,6 @@
 package com.lifup.app.ui.guide
 
+import com.lifup.app.domain.penaltyBlocks
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +32,8 @@ fun PenaltyBlockToggle(s: GameState) {
         s.settings.blockedApps.isEmpty() -> R.string.block_needs_apps
         else -> R.string.block_on_penalty_info
     }
-    ToggleRow(stringResource(R.string.block_on_penalty), stringResource(info), s.settings.blockOnPenalty && ready) { on ->
+    val consequence = if (s.penaltyBlocks() && ready) "" else " " + stringResource(R.string.penalty_cut_instead)
+    ToggleRow(stringResource(R.string.block_on_penalty), stringResource(info) + consequence, s.settings.blockOnPenalty && ready) { on ->
         when {
             on && !ready -> showPerms = true
             on && s.settings.blockedApps.isEmpty() -> { act { setBlockOnPenalty(true) }; pickApps = true }

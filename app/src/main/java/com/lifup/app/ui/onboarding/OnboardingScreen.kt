@@ -1,5 +1,7 @@
 package com.lifup.app.ui.onboarding
 
+import androidx.compose.material.icons.automirrored.rounded.TrendingDown
+import androidx.compose.material.icons.rounded.Block
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.RepeatMode
@@ -97,6 +99,7 @@ fun OnboardingScreen() {
     var name by rememberSaveable { mutableStateOf("") }
     var rigor by rememberSaveable { mutableStateOf(Rigor.NORMAL) }
     var focus by rememberSaveable { mutableStateOf(emptySet<Attr>()) }
+    var block by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val legacy = remember { LegacyImport.readAsyncStorage(context) }
@@ -139,6 +142,10 @@ fun OnboardingScreen() {
                         OutlinedTextField(name, { name = it.take(24) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.hunter_name)) }, singleLine = true)
                         Text(stringResource(R.string.difficulty), style = MaterialTheme.typography.titleMedium)
                         Rigor.entries.forEach { r -> RigorCard(r, rigor == r) { rigor = r } }
+                        Text(stringResource(R.string.onb_penalty_question), style = MaterialTheme.typography.titleMedium)
+                        ConsequenceCard(Icons.Rounded.Block, c.red, R.string.onb_penalty_block, R.string.onb_penalty_block_text, block) { block = true }
+                        ConsequenceCard(Icons.AutoMirrored.Rounded.TrendingDown, c.gold, R.string.onb_penalty_cut, R.string.onb_penalty_cut_text, !block) { block = false }
+                        if (block) Text(stringResource(R.string.onb_penalty_block_setup), style = MaterialTheme.typography.bodySmall, color = c.muted)
                         Text(stringResource(R.string.attr_focus_question), style = MaterialTheme.typography.titleMedium)
                         FocusPicker(focus, { focus = it })
                         Text(stringResource(R.string.onb_change_later), style = MaterialTheme.typography.bodySmall, color = c.dim)
@@ -158,8 +165,8 @@ fun OnboardingScreen() {
                 if (page < 2) page++
                 else {
                     if (Build.VERSION.SDK_INT >= 33) notif.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    val n = name; val r = rigor; val f = focus
-                    act { finishOnboarding(n, r, f) }
+                    val n = name; val r = rigor; val f = focus; val b = block
+                    act { finishOnboarding(n, r, f, b) }
                 }
             })
         }
@@ -219,6 +226,23 @@ private fun Feature(icon: ImageVector, color: Color, title: Int, text: Int, dela
 }
 
 /** Difficulty as a card: icon, name and the one line that tells them apart. */
+/** One way a failed day can cost you; same look as the difficulty cards above. */
+@Composable
+private fun ConsequenceCard(icon: ImageVector, color: Color, title: Int, text: Int, selected: Boolean, onClick: () -> Unit) {
+    val c = Lif.colors
+    Panel(border = if (selected) color else c.border, background = if (selected) color.copy(alpha = 0.08f) else c.panel, onClick = onClick) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconBadge(icon, color, 40.dp)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(title), style = MaterialTheme.typography.titleMedium, color = if (selected) color else c.text)
+                Text(stringResource(text), style = MaterialTheme.typography.bodySmall, color = c.muted)
+            }
+            if (selected) Icon(Icons.Rounded.CheckCircle, null, tint = color)
+        }
+    }
+}
+
 @Composable
 private fun RigorCard(r: Rigor, selected: Boolean, onClick: () -> Unit) {
     val c = Lif.colors

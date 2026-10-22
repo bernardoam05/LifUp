@@ -62,7 +62,7 @@
     <string name="rest_day_info">Dia de descanso: sem penalização à meia-noite, mas a sequência também não cresce.</string>
     <string name="forge">Forja de missões</string>
     <string name="penalty_section">Penalização</string>
-    <string name="penalty_info">Dura até fazeres estas missões. Até lá, as missões dão metade do XP e do ouro.</string>
+    <string name="penalty_info">Faz estas missões para a levantar mais cedo. Até lá, as tuas apps de distração ficam bloqueadas.</string>
     <string name="portal_section">Portal aberto</string>
     <string name="daily_section">Missões diárias</string>
     <string name="extra_section">Missões extra</string>
@@ -267,15 +267,15 @@
     <string name="rigor_easy">Fácil</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Difícil</string>
-    <string name="rigor_easy_info">O dia conta com 60% das missões. Abaixo disso perdes algum XP e a sequência; abaixo de 50% há uma missão de penalização e bloqueio de 24 horas. 2 dias de descanso por semana.</string>
-    <string name="rigor_normal_info">O dia conta com 75% das missões. Abaixo disso perdes XP proporcional e a sequência; abaixo de 50% até 3 missões de penalização e bloqueio de 24 horas. 1 dia de descanso por semana.</string>
-    <string name="rigor_hard_info">Só 100% conta. Perdas a dobrar; abaixo de 50% até 4 missões de penalização e bloqueio de 24 horas. Sem dias de descanso.</string>
+    <string name="rigor_easy_info">O dia conta com 60% das missões. Abaixo disso perdes algum XP e a sequência; abaixo de 50% há uma missão de penalização durante 24 horas (apps bloqueadas ou metade das recompensas). 2 dias de descanso por semana.</string>
+    <string name="rigor_normal_info">O dia conta com 75% das missões. Abaixo disso perdes XP proporcional e a sequência; abaixo de 50% até 3 missões de penalização durante 24 horas (apps bloqueadas ou metade das recompensas). 1 dia de descanso por semana.</string>
+    <string name="rigor_hard_info">Só 100% conta. Perdas a dobrar; abaixo de 50% até 4 missões de penalização durante 24 horas (apps bloqueadas ou metade das recompensas). Sem dias de descanso.</string>
     <string name="auto_missions">Número de missões automático</string>
     <string name="auto_missions_info">Neste momento %1$d missões sorteadas por dia, mais as fixas.</string>
     <string name="extra_daily_missions">Missões sorteadas por dia</string>
     <string name="penalties">Penalizações</string>
     <string name="block_on_penalty">Bloquear apps nas penalizações</string>
-    <string name="block_on_penalty_info">As apps bloqueadas fecham durante a janela de penalização.</string>
+    <string name="block_on_penalty_info">As apps escolhidas ficam bloqueadas durante a penalização (até 24 h).</string>
     <string name="side_penalize">Tarefas contam</string>
     <string name="side_penalize_info">Tarefas por fazer contam como falhas à meia-noite.</string>
     <string name="notifications">Notificações</string>
@@ -340,7 +340,7 @@
     <string name="onb_f_missions">Missões diárias</string>
     <string name="onb_f_missions_text">Hábitos fixos mais um sorteio diário. Cada objetivo cresce à medida que o vais cumprindo.</string>
     <string name="onb_f_penalty">Penalizações</string>
-    <string name="onb_f_penalty_text">À meia-noite, missões falhadas custam XP e ouro, juntam missões de penalização e podem bloquear as tuas apps de distração.</string>
+    <string name="onb_f_penalty_text">À meia-noite, missões falhadas custam XP e ouro e juntam missões de penalização. Até as fazeres: apps bloqueadas ou metade das recompensas, à tua escolha.</string>
     <string name="onb_f_focus">Foco</string>
     <string name="onb_f_focus_text">Temporizador ou Pomodoro com bloqueio de apps e som ambiente. Os minutos contam para as missões de foco.</string>
     <string name="onb_f_boss">Boss semanal</string>
@@ -348,6 +348,12 @@
     <string name="onb_f_shadows">Ecos</string>
     <string name="onb_f_shadows_text">Coleciona-os, evolui-os e põe três no esquadrão para ganhares bónus passivos.</string>
     <string name="onb_register">Registo</string>
+    <string name="onb_penalty_question">Se falhares um dia, o que preferes?</string>
+    <string name="onb_penalty_block">Bloquear as minhas apps</string>
+    <string name="onb_penalty_block_text">As apps de distração que escolheres ficam bloqueadas até cumprires a penalização (até 24 h).</string>
+    <string name="onb_penalty_cut">Metade das recompensas</string>
+    <string name="onb_penalty_cut_text">As missões dão metade do XP e do ouro até cumprires a penalização (até 24 h).</string>
+    <string name="onb_penalty_block_setup">Escolhes as apps e dás as permissões em Definições → Penalizações. Até lá, fica a metade das recompensas.</string>
     <string name="onb_change_later">Podes mudar isto quando quiseres nas Definições.</string>
     <string name="onb_start">Começar</string>
 
@@ -508,7 +514,7 @@
     <string name="guide_streak_title">Sequência e descanso</string>
     <string name="guide_streak">Sobe todos os dias::+1 por cada dia em que chegas ao mínimo.\nSegunda oportunidade::Perdeste-a? Um dia perfeito logo a seguir devolve-a (uma vez por semana).\nDias de descanso::Marca antes do meio-dia e o dia não conta nem a favor nem contra. 2 por semana no Fácil, 1 no Normal.\nProteção extra::O Escudo da Constância e alguns ecos salvam-na por ti. Só um salvamento por semana, contando com a segunda oportunidade.</string>
     <string name="guide_penalty_title">Penalização</string>
-    <string name="guide_penalty">Perda proporcional::Perdes XP e ouro conforme o que ficou por fazer. Quase lá custa quase nada.\nAté a cumprires::Abaixo de 50% começa uma penalização com missões extra. Só acaba quando as fizeres, e até lá as missões dão metade do XP e do ouro.\nBloqueio de apps::Se quiseres, as tuas apps de distração ficam bloqueadas nas primeiras 24 horas.</string>
+    <string name="guide_penalty">Perda proporcional::Perdes XP e ouro conforme o que ficou por fazer. Quase lá custa quase nada.\n24 horas::Abaixo de 50% começa uma penalização com missões extra. Fá-las e acaba mais cedo.\nEnquanto dura::Com o bloqueio de apps, as tuas apps de distração ficam bloqueadas; sem ele, as missões dão metade do XP e do ouro.</string>
     <string name="guide_side_title">Tarefas</string>
     <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro e ferem o boss.\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
     <string name="guide_boss_title">Boss semanal</string>
@@ -599,7 +605,9 @@
     <string name="a11y_reset">Repor</string>
     <string name="a11y_mark_done">Marcar como feita</string>
     <string name="a11y_mark_undone">Desmarcar</string>
-    <string name="penalty_until_done">Até fazeres as missões</string>
+    <string name="penalty_ends_in">Acaba em %1$s</string>
+    <string name="penalty_info_cut">Faz estas missões para a levantar mais cedo. Até lá, as missões dão metade do XP e do ouro.</string>
+    <string name="penalty_cut_instead">Sem ele, durante a penalização as missões dão metade do XP e do ouro.</string>
     <string name="guide_daily_hook">O teu treino de todos os dias. Não tens de ser perfeito — tens de aparecer.</string>
     <string name="guide_streak_hook">Cada dia cumprido alimenta a chama. Um dia mau não a apaga de vez.</string>
     <string name="guide_penalty_hook">Falhar tem um preço — mas é justo, e passa.</string>

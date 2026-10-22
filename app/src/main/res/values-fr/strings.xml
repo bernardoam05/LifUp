@@ -62,7 +62,7 @@
     <string name="rest_day_info">Jour de repos : pas de pénalité ce soir, mais la série n\'augmente pas non plus.</string>
     <string name="forge">Forge de missions</string>
     <string name="penalty_section">Pénalité</string>
-    <string name="penalty_info">Elle dure jusqu\'à ce que tu fasses ces missions. D\'ici là, les missions rapportent moitié moins d\'XP et d\'or.</string>
+    <string name="penalty_info">Fais ces missions pour la lever plus tôt. D\'ici là, tes apps qui distraient sont bloquées.</string>
     <string name="portal_section">Portail ouvert</string>
     <string name="daily_section">Missions quotidiennes</string>
     <string name="extra_section">Missions bonus</string>
@@ -267,15 +267,15 @@
     <string name="rigor_easy">Facile</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Difficile</string>
-    <string name="rigor_easy_info">La journée compte avec 60 % des missions. En dessous tu perds un peu d\'XP et la série ; sous 50 % il y a une mission de pénalité et un blocage de 24 heures. 2 jours de repos par semaine.</string>
-    <string name="rigor_normal_info">La journée compte avec 75 % des missions. En dessous tu perds de l\'XP en proportion et la série ; sous 50 % jusqu\'à 3 missions de pénalité et un blocage de 24 heures. 1 jour de repos par semaine.</string>
-    <string name="rigor_hard_info">Seul 100 % compte. Pertes doublées ; sous 50 % jusqu\'à 4 missions de pénalité et un blocage de 24 heures. Aucun jour de repos.</string>
+    <string name="rigor_easy_info">La journée compte avec 60 % des missions. En dessous tu perds un peu d\'XP et la série ; sous 50 % il y a une mission de pénalité pendant 24 heures (apps bloquées ou moitié des récompenses). 2 jours de repos par semaine.</string>
+    <string name="rigor_normal_info">La journée compte avec 75 % des missions. En dessous tu perds de l\'XP en proportion et la série ; sous 50 % jusqu\'à 3 missions de pénalité pendant 24 heures (apps bloquées ou moitié des récompenses). 1 jour de repos par semaine.</string>
+    <string name="rigor_hard_info">Seul 100 % compte. Pertes doublées ; sous 50 % jusqu\'à 4 missions de pénalité pendant 24 heures (apps bloquées ou moitié des récompenses). Aucun jour de repos.</string>
     <string name="auto_missions">Nombre de missions auto</string>
     <string name="auto_missions_info">Actuellement %1$d missions tirées par jour, en plus des fixes.</string>
     <string name="extra_daily_missions">Missions bonus par jour</string>
     <string name="penalties">Pénalités</string>
     <string name="block_on_penalty">Bloquer des apps pendant les pénalités</string>
-    <string name="block_on_penalty_info">Tes apps bloquées se ferment pendant la plage de pénalité.</string>
+    <string name="block_on_penalty_info">Les apps choisies restent bloquées pendant une pénalité (jusqu\'à 24 h).</string>
     <string name="side_penalize">Les tâches comptent</string>
     <string name="side_penalize_info">Les tâches non faites comptent comme des échecs à minuit.</string>
     <string name="notifications">Notifications</string>
@@ -340,7 +340,7 @@
     <string name="onb_f_missions">Missions quotidiennes</string>
     <string name="onb_f_missions_text">Des habitudes fixes plus un tirage quotidien. Chaque objectif grandit à mesure que tu le tiens.</string>
     <string name="onb_f_penalty">Pénalités</string>
-    <string name="onb_f_penalty_text">À minuit, les missions ratées coûtent de l\'XP et de l\'or, ajoutent des missions de pénalité et peuvent bloquer tes apps de distraction.</string>
+    <string name="onb_f_penalty_text">À minuit, les missions ratées coûtent de l\'XP et de l\'or et ajoutent des missions de pénalité. Jusqu\'à ce que tu les fasses : apps bloquées ou moitié des récompenses, au choix.</string>
     <string name="onb_f_focus">Focus</string>
     <string name="onb_f_focus_text">Minuteur ou Pomodoro avec blocage d\'apps et son d\'ambiance. Les minutes comptent pour les missions de focus.</string>
     <string name="onb_f_boss">Boss hebdo</string>
@@ -348,6 +348,12 @@
     <string name="onb_f_shadows">Échos</string>
     <string name="onb_f_shadows_text">Collectionne-les, fais-les évoluer et place-en trois dans ton escouade pour des bonus passifs.</string>
     <string name="onb_register">Inscription</string>
+    <string name="onb_penalty_question">Si tu rates une journée, tu préfères quoi ?</string>
+    <string name="onb_penalty_block">Bloquer mes apps</string>
+    <string name="onb_penalty_block_text">Les apps qui distraient que tu choisis restent bloquées jusqu\'à ce que tu fasses la pénalité (jusqu\'à 24 h).</string>
+    <string name="onb_penalty_cut">Moitié des récompenses</string>
+    <string name="onb_penalty_cut_text">Les missions rapportent moitié moins d\'XP et d\'or jusqu\'à ce que tu fasses la pénalité (jusqu\'à 24 h).</string>
+    <string name="onb_penalty_block_setup">Tu choisiras les apps et donneras les autorisations dans Paramètres → Pénalités. D\'ici là, c\'est la moitié des récompenses.</string>
     <string name="onb_change_later">Tu peux changer ça à tout moment dans les Paramètres.</string>
     <string name="onb_start">Commencer</string>
 
@@ -508,7 +514,7 @@
     <string name="guide_streak_title">Série et repos</string>
     <string name="guide_streak">Monte chaque jour::+1 pour chaque jour où tu atteins le minimum.\nSeconde chance::Perdue ? Une journée parfaite juste après la ramène (une fois par semaine).\nJours de repos::Déclare-le avant midi et la journée ne compte ni pour ni contre toi. 2 par semaine en Facile, 1 en Normal.\nProtection en plus::Le Bouclier de Constance et certains échos la sauvent à ta place. Un seul sauvetage par semaine, seconde chance comprise.</string>
     <string name="guide_penalty_title">Pénalité</string>
-    <string name="guide_penalty">Perte proportionnelle::Tu perds de l\'XP et de l\'or selon ce qui reste à faire. Presque réussi ne coûte presque rien.\nJusqu\'à la payer::Sous 50 %, une pénalité démarre avec des missions en plus. Elle ne se termine que quand tu les fais, et d\'ici là les missions rapportent moitié moins d\'XP et d\'or.\nBlocage d\'apps::Si tu veux, tes apps qui distraient restent bloquées pendant ses premières 24 heures.</string>
+    <string name="guide_penalty">Perte proportionnelle::Tu perds de l\'XP et de l\'or selon ce qui reste à faire. Presque réussi ne coûte presque rien.\n24 heures::Sous 50 %, une pénalité démarre avec des missions en plus. Fais-les et elle se termine plus tôt.\nPendant ce temps::Avec le blocage d\'apps, tes apps qui distraient sont bloquées ; sans lui, les missions rapportent moitié moins d\'XP et d\'or.</string>
     <string name="guide_side_title">Tâches</string>
     <string name="guide_side">Libres::Écris n\'importe quelle tâche, sans objectifs ni règles.\n5 avec récompense::Les 5 premières terminées chaque jour donnent de l\'XP et de l\'or, et blessent le boss.\nEnsuite::Elles continuent de servir de liste de tâches.\nPas de triche::Décocher ou supprimer reprend la récompense.</string>
     <string name="guide_boss_title">Boss hebdomadaire</string>
@@ -599,7 +605,9 @@
     <string name="a11y_reset">Réinitialiser</string>
     <string name="a11y_mark_done">Marquer comme faite</string>
     <string name="a11y_mark_undone">Décocher</string>
-    <string name="penalty_until_done">Jusqu\'à ce que les missions soient faites</string>
+    <string name="penalty_ends_in">Se termine dans %1$s</string>
+    <string name="penalty_info_cut">Fais ces missions pour la lever plus tôt. D\'ici là, les missions rapportent moitié moins d\'XP et d\'or.</string>
+    <string name="penalty_cut_instead">Sans lui, pendant une pénalité les missions rapportent moitié moins d\'XP et d\'or.</string>
     <string name="guide_daily_hook">Ton entraînement de chaque jour. Pas besoin d\'être parfait : il faut juste être là.</string>
     <string name="guide_streak_hook">Chaque jour tenu nourrit la flamme. Un mauvais jour ne l\'éteint pas pour de bon.</string>
     <string name="guide_penalty_hook">Échouer a un prix, mais il est juste, et il passe.</string>

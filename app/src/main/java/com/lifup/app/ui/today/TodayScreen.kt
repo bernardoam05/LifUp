@@ -1,5 +1,6 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.domain.penaltyBlocks
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Tune
 import com.lifup.app.ui.defTitle
@@ -151,7 +152,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
 
         if (s.penalty.active) {
             item { SectionTitle(stringResource(R.string.penalty_section)) { InfoButton(Guide.PENALTY, s) } }
-            item { Text(stringResource(R.string.penalty_info), style = MaterialTheme.typography.bodySmall, color = p.red) }
+            item { Text(stringResource(if (s.penaltyBlocks()) R.string.penalty_info else R.string.penalty_info_cut), style = MaterialTheme.typography.bodySmall, color = p.red) }
             if (!s.settings.blockOnPenalty) item { Panel { PenaltyBlockToggle(s) } }
             items(s.penalty.quests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now) { selected = q.id } }
         }

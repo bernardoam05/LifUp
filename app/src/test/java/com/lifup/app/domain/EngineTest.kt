@@ -127,7 +127,7 @@ class EngineTest {
         assertTrue(s.rewards.filterIsInstance<Reward.DayReport>().last().rest)
     }
 
-    @Test fun `the app block lasts 24 hours, the penalty until its missions are done`() {
+    @Test fun `penalty and its block last 24 hours`() {
         var s = fresh().let { it.copy(settings = it.settings.copy(blockOnPenalty = true)) }
         s = run(s, "2026-10-15T08:00")
         assertEquals(at("2026-10-15T08:00"), s.penalty.blockStart)
@@ -137,19 +137,19 @@ class EngineTest {
         s = run(s, "2026-10-16T07:59")
         assertTrue(s.penaltyBlockActive(at("2026-10-16T07:59")))
         s = run(s, "2026-10-16T08:00")
-        assertFalse(s.penaltyBlockActive(at("2026-10-16T08:00")))
-        assertTrue(s.penalty.active)
-        s = run(s, "2026-10-16T09:00") { s.penalty.quests.forEach { completeQuest(it.id) } }
         assertFalse(s.penalty.active)
     }
 
-    @Test fun `an active penalty halves mission rewards and its focus pays nothing`() {
+    @Test fun `a penalty without the app block halves mission rewards, and its focus pays nothing`() {
         val q = buildQuest(content.questDefById.getValue("pool_dips"), 1, QuestOrigin.EXTRA, "dips_p")
         val calm = fresh().let { it.copy(quests = it.quests + q) }
         val penalized = calm.copy(penalty = Penalty(active = true, quests = listOf(buildQuest(content.penaltyQuests.first { it.type == QuestType.FOCUS }, 1, QuestOrigin.PENALTY, "pf"))))
         val full = run(calm, "2026-10-14T10:00") { completeQuest(q.id) }.player.xp - calm.player.xp
         val half = run(penalized, "2026-10-14T10:00") { completeQuest(q.id) }.player.xp - penalized.player.xp
         assertEquals((full * Rules.PENALTY_REWARD_CUT).toDouble(), half.toDouble(), 1.0)
+        // With the block in place, the block is the cost: rewards stay whole.
+        val blocking = penalized.copy(settings = penalized.settings.copy(blockOnPenalty = true, blockedApps = listOf("x")), screenMeasurable = true)
+        assertEquals(full, run(blocking, "2026-10-14T10:00") { completeQuest(q.id) }.player.xp - blocking.player.xp)
         var s = run(penalized, "2026-10-14T10:00") { startFocus(FocusSession(0, 30, null, false, false, null, "pf")) }
         s = run(s, "2026-10-14T10:31")
         assertEquals(penalized.player.xp, s.player.xp)
@@ -487,7 +487,7 @@ class EngineTest {
         }
     }
 
-    @Test fun `a perfect day doesn't start a new penalty, the old one waits for its missions`() {
+    @Test fun `penalty lasts one day and its leftovers expire without a new penalty`() {
         var s = run(fresh(), "2026-10-15T08:00")
         assertTrue(s.penalty.active)
         s = run(s, "2026-10-15T12:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
@@ -495,7 +495,7 @@ class EngineTest {
         val report = s.rewards.filterIsInstance<Reward.DayReport>().last()
         assertTrue(report.perfect)
         assertNull(report.penalty)
-        assertTrue(s.penalty.active)
+        assertFalse(s.penalty.active)
     }
 
     /** A level-1 day with exactly [done] of 4 plain missions completed. */

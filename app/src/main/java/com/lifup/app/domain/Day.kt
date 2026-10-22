@@ -30,6 +30,7 @@ fun Tx.ensureDay() {
         )
     }
     s = s.copy(buffs = s.buffs.filter { it.expiresAt > ctx.now })
+    expirePenalty()
     settleFocus()
     ensureBoss()
     ensureShop()
@@ -61,6 +62,9 @@ private fun Tx.closeDay(day: LocalDate) {
 
     if (!rest) recordMissions(daily, day)
     count(StatKey.STEPS, s.daily.steps.toLong())
+
+    // A penalty lasts 24 hours: its missions only lift it early, and leftovers just expire.
+    expirePenalty()
 
     var penaltyInfo: PenaltyInfo? = null
     var streakSavedBy: String? = null
@@ -176,6 +180,17 @@ private fun Tx.saveStreak(): String? {
     if (spare) s = s.copy(recovery = StreakRecovery(streak, ctx.todayKey))
     return null
 }
+
+/** Ends a penalty once its 24 hours are over. */
+fun Tx.expirePenalty() {
+    if (s.penalty.active && s.penalty.blockEnd <= ctx.now) s = s.copy(penalty = Penalty())
+}
+
+/**
+ * Whether a penalty blocks the distracting apps: the player wants it, picked some and the phone can tell
+ * which app is open. Otherwise the penalty halves mission rewards instead ([penaltyCut]).
+ */
+fun GameState.penaltyBlocks() = settings.blockOnPenalty && settings.blockedApps.isNotEmpty() && screenMeasurable
 
 fun Tx.setBlockOnPenalty(on: Boolean) = updateSettings { it.copy(blockOnPenalty = on) }
 

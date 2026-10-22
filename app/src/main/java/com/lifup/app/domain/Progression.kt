@@ -72,8 +72,8 @@ fun GameState.xpPreview(q: Quest, content: Content, now: Long): Int =
 fun GameState.goldPreview(q: Quest, content: Content, now: Long): Int =
     if (q.origin.boosted()) passives(content, now).let { p -> (q.gold * (1 + p.portalShare(q)) * (1 + p.gold) * penaltyCut()).roundToInt() } else q.gold
 
-/** An active penalty halves what missions pay until its own missions are done. */
-fun GameState.penaltyCut() = if (penalty.active) Rules.PENALTY_REWARD_CUT else 1.0
+/** A penalty without the app block halves what missions pay while it lasts. */
+fun GameState.penaltyCut() = if (penalty.active && !penaltyBlocks()) Rules.PENALTY_REWARD_CUT else 1.0
 
 private fun Passives.portalShare(q: Quest) = if (q.origin == QuestOrigin.PORTAL) portal else 0.0
 

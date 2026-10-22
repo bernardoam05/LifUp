@@ -69,7 +69,7 @@
     <string name="rest_day_info">Rest day: no penalty tonight, but the streak won\'t grow either.</string>
     <string name="forge">Mission forge</string>
     <string name="penalty_section">Penalty</string>
-    <string name="penalty_info">It lasts until you do these missions. Until then, missions pay half the XP and gold.</string>
+    <string name="penalty_info">Do these missions to lift it early. Meanwhile your distracting apps are blocked.</string>
     <string name="portal_section">Portal open</string>
     <string name="daily_section">Daily missions</string>
     <string name="extra_section">Extra missions</string>
@@ -283,15 +283,15 @@
     <string name="rigor_easy">Easy</string>
     <string name="rigor_normal">Normal</string>
     <string name="rigor_hard">Hard</string>
-    <string name="rigor_easy_info">A day counts with 60% of the missions. Below that you lose some XP and the streak; below 50% there is one penalty mission and 24-hour blocking. 2 rest days a week.</string>
-    <string name="rigor_normal_info">A day counts with 75% of the missions. Below that you lose XP in proportion and the streak; below 50% up to 3 penalty missions and 24-hour blocking. 1 rest day a week.</string>
-    <string name="rigor_hard_info">Only 100% counts. Double losses; below 50% up to 4 penalty missions and 24-hour blocking. No rest days.</string>
+    <string name="rigor_easy_info">A day counts with 60% of the missions. Below that you lose some XP and the streak; below 50% there is one penalty mission for 24 hours (blocked apps or half the rewards). 2 rest days a week.</string>
+    <string name="rigor_normal_info">A day counts with 75% of the missions. Below that you lose XP in proportion and the streak; below 50% up to 3 penalty missions for 24 hours (blocked apps or half the rewards). 1 rest day a week.</string>
+    <string name="rigor_hard_info">Only 100% counts. Double losses; below 50% up to 4 penalty missions for 24 hours (blocked apps or half the rewards). No rest days.</string>
     <string name="auto_missions">Automatic mission count</string>
     <string name="auto_missions_info">Currently %1$d drawn missions per day, plus the fixed ones.</string>
     <string name="extra_daily_missions">Extra missions per day</string>
     <string name="penalties">Penalties</string>
     <string name="block_on_penalty">Block apps during penalties</string>
-    <string name="block_on_penalty_info">Your blocked apps close during the penalty window.</string>
+    <string name="block_on_penalty_info">Your chosen apps stay blocked during a penalty (up to 24 h).</string>
     <string name="side_penalize">Side quests count</string>
     <string name="side_penalize_info">Unfinished side quests count as failures at midnight.</string>
     <string name="notifications">Notifications</string>
@@ -358,7 +358,7 @@
     <string name="onb_f_missions">Daily missions</string>
     <string name="onb_f_missions_text">Fixed habits plus a daily draw. Each goal grows as you keep it.</string>
     <string name="onb_f_penalty">Penalties</string>
-    <string name="onb_f_penalty_text">At midnight, failed missions cost XP and gold, add penalty missions and can block your distracting apps.</string>
+    <string name="onb_f_penalty_text">At midnight, failed missions cost XP and gold and add penalty missions. Until you do them: blocked apps or half the rewards, your choice.</string>
     <string name="onb_f_focus">Focus</string>
     <string name="onb_f_focus_text">Timer or Pomodoro with app blocking and ambient sound. Minutes count toward focus missions.</string>
     <string name="onb_f_boss">Weekly boss</string>
@@ -366,6 +366,12 @@
     <string name="onb_f_shadows">Echoes</string>
     <string name="onb_f_shadows_text">Collect them, evolve them and put three in your squad for passive bonuses.</string>
     <string name="onb_register">Registration</string>
+    <string name="onb_penalty_question">If you fail a day, what should it cost?</string>
+    <string name="onb_penalty_block">Block my apps</string>
+    <string name="onb_penalty_block_text">The distracting apps you pick stay blocked until you clear the penalty (up to 24 h).</string>
+    <string name="onb_penalty_cut">Half the rewards</string>
+    <string name="onb_penalty_cut_text">Missions pay half the XP and gold until you clear the penalty (up to 24 h).</string>
+    <string name="onb_penalty_block_setup">You\'ll pick the apps and grant the permissions in Settings → Penalties. Until then, it\'s half the rewards.</string>
     <string name="onb_change_later">You can change this any time in Settings.</string>
     <string name="onb_start">Begin</string>
 
@@ -527,7 +533,7 @@
     <string name="guide_streak_title">Streak and rest</string>
     <string name="guide_streak">Grows every day::+1 for each day you reach the minimum.\nSecond chance::Lost it? A perfect day right after brings it back (once a week).\nRest days::Call one before noon and the day counts neither way. 2 a week on Easy, 1 on Normal.\nExtra protection::The Shield of Constancy and some echoes save it for you. Only one save a week, second chance included.</string>
     <string name="guide_penalty_title">Penalty</string>
-    <string name="guide_penalty">Proportional loss::You lose XP and gold for what was left undone. Almost there costs almost nothing.\nUntil you pay it::Below 50% a penalty starts with extra missions. It only ends when you do them, and until then missions pay half the XP and gold.\nApp blocking::If you want, your distracting apps stay blocked for its first 24 hours.</string>
+    <string name="guide_penalty">Proportional loss::You lose XP and gold for what was left undone. Almost there costs almost nothing.\n24 hours::Below 50% a penalty starts with extra missions. Do them and it ends early.\nWhile it lasts::With app blocking your distracting apps stay blocked; without it, missions pay half the XP and gold.</string>
     <string name="guide_side_title">Side quests</string>
     <string name="guide_side">Free-form::Write any task, no targets or rules.\n5 with rewards::The first 5 finished each day give XP and gold and hurt the boss.\nAfter that::They keep working as a to-do list.\nNo cheating::Unticking or deleting takes the reward back.</string>
     <string name="guide_boss_title">Weekly boss</string>
@@ -618,7 +624,9 @@
     <string name="a11y_reset">Reset</string>
     <string name="a11y_mark_done">Mark as done</string>
     <string name="a11y_mark_undone">Untick</string>
-    <string name="penalty_until_done">Until its missions are done</string>
+    <string name="penalty_ends_in">Ends in %1$s</string>
+    <string name="penalty_info_cut">Do these missions to lift it early. Meanwhile missions pay half the XP and gold.</string>
+    <string name="penalty_cut_instead">Without it, missions pay half the XP and gold during a penalty.</string>
     <string name="guide_daily_hook">Your everyday training. You don\'t have to be perfect — you have to show up.</string>
     <string name="guide_streak_hook">Every day kept feeds the flame. One bad day doesn\'t put it out for good.</string>
     <string name="guide_penalty_hook">Failing has a price — but it\'s fair, and it passes.</string>
