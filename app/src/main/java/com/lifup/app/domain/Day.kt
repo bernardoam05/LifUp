@@ -87,7 +87,7 @@ private fun Tx.closeDay(day: LocalDate) {
             setStreak((if (restored) recovery!!.streak else s.player.streak) + 1)
         }
         else -> {
-            val result = applyFailure(failed, total, ratio)
+            val result = applyFailure(daily, failed, total, ratio)
             penaltyInfo = result.first
             streakSavedBy = result.second
         }
@@ -118,32 +118,36 @@ private fun Tx.setStreak(value: Int) {
 }
 
 /** Returns the penalty summary and, if the streak survived, what saved it. Immunity spares the losses, not the streak. */
-private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<PenaltyInfo, String?> {
+private fun Tx.applyFailure(daily: List<Quest>, failed: Int, total: Int, ratio: Double): Pair<PenaltyInfo, String?> {
     val info = tryCooldownPassive(Passive.PENALTY_IMMUNITY)?.let { shadow ->
         toast(ToastKind.PASSIVE_FIRED, shadow.id)
         squadAdded(SquadGain(saves = 1))
         PenaltyInfo(failed, total, 0, 0, 0, absorbedBy = shadow.id)
-    } ?: penalize(failed, total, ratio)
+    } ?: penalize(daily, failed, total, ratio)
     return info to saveStreak()
 }
 
-private fun Tx.penalize(failed: Int, total: Int, ratio: Double): PenaltyInfo {
+/**
+ * What a failed day costs: the undone share of what its missions would have paid, times the difficulty,
+ * fading over a run of failed days (a week away costs a few days, not seven). Penalty missions only come
+ * on the first failed day of a run, so the app block or the halved rewards never last the whole run.
+ */
+private fun Tx.penalize(daily: List<Quest>, failed: Int, total: Int, ratio: Double): PenaltyInfo {
     val rigor = s.settings.rigor
     count(StatKey.PENALTIES_TAKEN)
-    val mult = when (rigor) { Rigor.EASY -> 0.3; Rigor.NORMAL -> 1.0; Rigor.HARD -> 2.0 }
+    val run = s.dayLog.takeLastWhile { !it.passed && !it.rest }.size
+    val share = Rules.lossMultiplier(rigor) * (1 - ratio) * Rules.failRunFactor(run)
     val reduce = s.passives(content, ctx.now).penaltyReduce
-    // Loss follows the share left undone, so a near miss costs little.
-    val full = Rules.penaltyBase(s.player.level) * mult * (1 - ratio)
-    val base = full * (1 - reduce)
-    // XP lost follows mission XP past the top tier; gold lost stays with the gold economy.
-    val xpScale = Rules.xpMultiplier(s.player.level) / Rules.tierMultiplier(s.player.level)
-    val xpLost = floor(base * xpScale).toInt()
-    squadAdded(SquadGain(xp = floor(full * xpScale).toInt() - xpLost, gold = floor(full).toInt() - floor(base).toInt()))
-    val goldLost = loseGold(floor(base).toInt())
+    val fullXp = daily.sumOf { it.xp } * share
+    val fullGold = daily.sumOf { it.gold } * share
+    val xpLost = floor(fullXp * (1 - reduce)).toInt()
+    val goldBase = floor(fullGold * (1 - reduce)).toInt()
+    squadAdded(SquadGain(xp = floor(fullXp).toInt() - xpLost, gold = floor(fullGold).toInt() - goldBase))
+    val goldLost = loseGold(goldBase)
     val xpActuallyLost = minOf(xpLost, s.player.xp)
     loseXp(xpLost)
 
-    val severe = ratio < Rules.severeRatio(rigor)
+    val severe = ratio < Rules.severeRatio(rigor) && run == 0
     val questCount = if (severe) Rules.penaltyMissionCount(rigor, ratio) else 0
     val quests = content.penaltyQuests.shuffled(ctx.rng).take(questCount).mapIndexed { i, def ->
         buildQuest(def, 1, QuestOrigin.PENALTY, "${def.id}_${s.nextId}_$i")

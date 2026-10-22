@@ -83,15 +83,11 @@ object Rules {
     }
 
     /** XP lost on a failed day before multipliers (≈60% of a typical day at that tier). */
-    fun penaltyBase(level: Int) = when {
-        level >= 90 -> 600
-        level >= 70 -> 420
-        level >= 50 -> 300
-        level >= 30 -> 240
-        level >= 15 -> 180
-        level >= 5 -> 144
-        else -> 120
-    }
+    /** A failed day costs this many times the undone share of what its missions would have paid. */
+    fun lossMultiplier(rigor: Rigor) = when (rigor) { Rigor.EASY -> 0.3; Rigor.NORMAL -> 1.0; Rigor.HARD -> 2.0 }
+
+    /** Losses over a run of failed days: the first in full, the second half, then a quarter. */
+    fun failRunFactor(previousFails: Int) = when (previousFails) { 0 -> 1.0; 1 -> 0.5; else -> 0.25 }
 
     /** A mission's difficulty from its base XP: the Forge's three reward presets, split halfway between them. */
     fun difficulty(baseXp: Int) = when {

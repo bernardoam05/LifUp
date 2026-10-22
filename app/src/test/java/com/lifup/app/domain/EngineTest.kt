@@ -69,14 +69,16 @@ class EngineTest {
 
     @Test fun `failed day applies penalty and resets streak`() {
         var s = dayWith(0).let { it.copy(player = it.player.copy(xp = 90)) }
+        val goldPay = s.dailyQuests.sumOf { it.gold }
         s = run(s, "2026-10-15T08:00")
         assertTrue(s.penalty.active)
         assertTrue(s.penalty.quests.isNotEmpty())
         assertEquals(0, s.player.streak)
         assertEquals(0, s.player.xp)
-        assertEquals(500 - 120, s.player.gold)
+        // An empty day on Normal costs the gold the whole day would have paid.
+        assertEquals(500 - goldPay, s.player.gold)
         // Loss is capped by the XP actually held (never drops a level).
-        assertTrue(s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost in 1..120)
+        assertEquals(90, s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost)
         s.penalty.quests.forEach { pq -> s = run(s, "2026-10-15T09:00") { completeQuest(pq.id) } }
         assertFalse(s.penalty.active)
         assertEquals(1L, s.count(StatKey.PENALTIES_CLEARED))
@@ -519,9 +521,10 @@ class EngineTest {
     }
 
     @Test fun `half done is a light penalty without missions`() {
-        val s = run(dayWith(2), "2026-10-15T08:00")
+        val half = dayWith(2)
+        val s = run(half, "2026-10-15T08:00")
         val pen = s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!
-        assertEquals(60, pen.xpLost)
+        assertEquals(half.dailyQuests.sumOf { it.xp } / 2, pen.xpLost)
         assertEquals(0, pen.quests)
         assertFalse(s.penalty.active)
         assertEquals(0, s.player.streak)
@@ -531,7 +534,7 @@ class EngineTest {
     @Test fun `a bad day brings penalty missions`() {
         val s = run(dayWith(1), "2026-10-15T08:00")
         assertTrue(s.penalty.active)
-        assertEquals(90, s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost)
+        assertTrue(s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost > 0)
     }
 
     @Test fun `a perfect day right after a fail recovers the streak once a week`() {
@@ -737,6 +740,24 @@ class EngineTest {
         // Two thirds of the streak minimum; a day right on the line (4 of 6 on Hard) isn't below it.
         Rigor.entries.forEach { assertEquals(Rules.passRatio(it) * 2 / 3, Rules.severeRatio(it), 1e-9) }
         assertFalse(4.0 / 6 < Rules.severeRatio(Rigor.HARD))
+    }
+
+    @Test fun `a failed day costs the undone share of its pay, fading over a run of failed days`() {
+        // Nothing done (avoid missions still count as kept): the undone share of the day's pay is lost.
+        fun loss(st: GameState) = st.countedQuests().let { d -> d.sumOf { it.xp } * (1 - d.count { it.isSuccessful() }.toDouble() / d.size) }
+        var s = fresh().let { it.copy(player = it.player.copy(xp = 5_000, gold = 5_000)) }
+        val expected1 = loss(s)
+        s = run(s, "2026-10-15T08:00")
+        val first = s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!
+        assertEquals(kotlin.math.floor(expected1).toInt(), first.xpLost)
+        assertTrue(first.quests > 0)
+        // The next day empty as well: half the loss, and no new penalty missions on top.
+        val expected2 = loss(s) * 0.5
+        s = run(s, "2026-10-16T08:00")
+        val second = s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!
+        assertEquals(kotlin.math.floor(expected2).toInt(), second.xpLost)
+        assertEquals(0, second.quests)
+        assertEquals(listOf(1.0, 0.5, 0.25, 0.25), (0..3).map(Rules::failRunFactor))
     }
 
     @Test fun `old saves keep the targets they had`() {

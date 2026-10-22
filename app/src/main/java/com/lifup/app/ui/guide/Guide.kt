@@ -103,7 +103,7 @@ enum class Guide(val title: Int, val hook: Int, val body: Int, val icon: ImageVe
     STREAK(R.string.guide_streak_title, R.string.guide_streak_hook, R.string.guide_streak, Icons.Rounded.LocalFireDepartment, Tone.RED,
         listOf(Icons.Rounded.LocalFireDepartment, Icons.Rounded.Restore, Icons.Rounded.Bedtime, Icons.Rounded.Shield)),
     PENALTY(R.string.guide_penalty_title, R.string.guide_penalty_hook, R.string.guide_penalty, Icons.Rounded.Warning, Tone.RED,
-        listOf(Icons.AutoMirrored.Rounded.TrendingDown, Icons.Rounded.Timer, Icons.Rounded.Block)),
+        listOf(Icons.AutoMirrored.Rounded.TrendingDown, Icons.Rounded.Timer, Icons.Rounded.Block, Icons.Rounded.Restore)),
     SIDE(R.string.guide_side_title, R.string.guide_side_hook, R.string.guide_side, Icons.Rounded.Checklist, Tone.GOLD,
         listOf(Icons.Rounded.Add, Icons.Rounded.Paid, Icons.Rounded.Checklist, Icons.AutoMirrored.Rounded.Undo)),
     BOSS(R.string.guide_boss_title, R.string.guide_boss_hook, R.string.guide_boss, Icons.Rounded.Whatshot, Tone.RED,
