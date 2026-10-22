@@ -342,6 +342,10 @@
     <string name="preset_medium">Mittel</string>
     <string name="preset_hard">Schwer</string>
     <string name="preset_epic">Episch</string>
+    <string name="preset_easy_eg">Wie Bett machen oder 10 Seiten lesen.</string>
+    <string name="preset_medium_eg">Wie 20 Ausfallschritte oder 15 Minuten Sprache.</string>
+    <string name="preset_hard_eg">Wie 3 km laufen oder eine Stunde konzentriert arbeiten.</string>
+    <string name="preset_epic_eg">Wie 7 km an einem Tag gehen.</string>
     <string name="field_days">Tage</string>
     <string name="add_today">Auch zu den heutigen Missionen hinzufügen</string>
     <string name="delete_mission_text">Diese Mission löschen? Die heutige Kopie bleibt bis Mitternacht.</string>

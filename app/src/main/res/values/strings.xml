@@ -343,6 +343,10 @@
     <string name="preset_medium">Medium</string>
     <string name="preset_hard">Hard</string>
     <string name="preset_epic">Epic</string>
+    <string name="preset_easy_eg">Like making the bed or reading 10 pages.</string>
+    <string name="preset_medium_eg">Like 20 lunges or 15 minutes of a language.</string>
+    <string name="preset_hard_eg">Like a 3 km run or an hour of deep work.</string>
+    <string name="preset_epic_eg">Like walking 7 km in a day.</string>
     <string name="field_days">Days</string>
     <string name="add_today">Add to today\'s missions as well</string>
     <string name="delete_mission_text">Delete this mission? Today\'s copy stays until midnight.</string>

@@ -111,8 +111,8 @@
    "scalingAmount": 0,
    "scalingInterval": 1,
    "unit": "glasses",
-   "baseXp": 10,
-   "baseGold": 5,
+   "baseXp": 25,
+   "baseGold": 6,
    "untilHour": 16
   },
   {
@@ -199,7 +199,7 @@
    "scalingInterval": 1,
    "unit": "min",
    "baseXp": 40,
-   "baseGold": 15,
+   "baseGold": 10,
    "maxTarget": 20,
    "prompts": [
     {

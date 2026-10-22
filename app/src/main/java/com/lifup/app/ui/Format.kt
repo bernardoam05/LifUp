@@ -1,5 +1,6 @@
 package com.lifup.app.ui
 
+import com.lifup.app.domain.Difficulty
 import com.lifup.app.domain.defOf
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
@@ -172,6 +173,17 @@ fun shadowIcon(c: ShadowClass): ImageVector = when (c) {
     ShadowClass.ARTISAN -> Icons.Rounded.Handyman
     ShadowClass.EXPLORER -> Icons.Rounded.Explore
 }
+
+fun difficultyName(d: Difficulty) = when (d) {
+    Difficulty.EASY -> R.string.preset_easy
+    Difficulty.MEDIUM -> R.string.preset_medium
+    Difficulty.HARD -> R.string.preset_hard
+    Difficulty.EPIC -> R.string.preset_epic
+}
+
+/** "●●○○ Medium": a neutral meter, so it never reads as a family colour. */
+@Composable
+fun difficultyLabel(d: Difficulty): String = "●".repeat(d.ordinal + 1) + "○".repeat(Difficulty.entries.size - d.ordinal - 1) + " " + stringResource(difficultyName(d))
 
 fun shadowRankColor(r: ShadowRank): Color = when (r) {
     // The usual rarity colours, so the order reads without learning it.

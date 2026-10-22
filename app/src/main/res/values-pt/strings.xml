@@ -326,6 +326,10 @@
     <string name="preset_medium">Média</string>
     <string name="preset_hard">Difícil</string>
     <string name="preset_epic">Épica</string>
+    <string name="preset_easy_eg">Como fazer a cama ou ler 10 páginas.</string>
+    <string name="preset_medium_eg">Como 20 afundos ou 15 minutos de outra língua.</string>
+    <string name="preset_hard_eg">Como correr 3 km ou uma hora de trabalho profundo.</string>
+    <string name="preset_epic_eg">Como andar 7 km num dia.</string>
     <string name="field_days">Dias</string>
     <string name="add_today">Adicionar também às missões de hoje</string>
     <string name="delete_mission_text">Apagar esta missão? A cópia de hoje fica até à meia-noite.</string>

@@ -99,6 +99,8 @@ enum class Passive {
     EXTRA_SWAP,
 }
 
+enum class Difficulty { EASY, MEDIUM, HARD, EPIC }
+
 /** What an echo's passive is about: growth, wealth, combat, protection, or focus and fortune. */
 enum class PowerKind { GROWTH, WEALTH, COMBAT, PROTECTION, FORTUNE }
 

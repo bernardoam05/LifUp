@@ -326,6 +326,10 @@
     <string name="preset_medium">Moyenne</string>
     <string name="preset_hard">Difficile</string>
     <string name="preset_epic">Épique</string>
+    <string name="preset_easy_eg">Comme faire son lit ou lire 10 pages.</string>
+    <string name="preset_medium_eg">Comme 20 fentes ou 15 minutes d\'une langue.</string>
+    <string name="preset_hard_eg">Comme courir 3 km ou une heure de travail profond.</string>
+    <string name="preset_epic_eg">Comme marcher 7 km dans la journée.</string>
     <string name="field_days">Jours</string>
     <string name="add_today">Ajouter aussi aux missions du jour</string>
     <string name="delete_mission_text">Supprimer cette mission ? La copie du jour reste jusqu\'à minuit.</string>

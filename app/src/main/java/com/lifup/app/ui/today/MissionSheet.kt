@@ -1,5 +1,6 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.ui.difficultyLabel
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalView
 import com.lifup.app.ui.components.Bar
@@ -191,6 +192,9 @@ private fun SheetHeader(s: GameState, q: Quest) {
             Text(questTitle(q, lang()), style = MaterialTheme.typography.titleLarge)
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Pill(stringResource(familyName(q.family())), color)
+                s.defOf(q.defId, content)?.takeIf { it.baseXp > 0 }?.let { def ->
+                    Pill(difficultyLabel(Rules.difficulty(def.baseXp)), Lif.colors.muted)
+                }
                 if (q.type == QuestType.FOCUS || q.type == QuestType.FORBIDDEN || q.type == QuestType.LIMIT) Pill(stringResource(questTypeName(q.type)), Lif.colors.muted)
                 Spacer(Modifier.weight(1f))
                 Reward(s, q)

@@ -93,6 +93,14 @@ object Rules {
         else -> 120
     }
 
+    /** A mission's difficulty from its base XP: the Forge's four reward presets, split halfway between them. */
+    fun difficulty(baseXp: Int) = when {
+        baseXp < 45 -> Difficulty.EASY
+        baseXp < 80 -> Difficulty.MEDIUM
+        baseXp < 125 -> Difficulty.HARD
+        else -> Difficulty.EPIC
+    }
+
     fun questRank(baseXp: Int) = when {
         baseXp >= 1000 -> QuestRank.S
         baseXp >= 600 -> QuestRank.A

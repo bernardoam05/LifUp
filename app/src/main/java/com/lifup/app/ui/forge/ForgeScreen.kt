@@ -1,5 +1,7 @@
 package com.lifup.app.ui.forge
 
+import com.lifup.app.domain.Rules
+import com.lifup.app.ui.difficultyLabel
 import androidx.compose.material3.TextButton
 import com.lifup.app.domain.defOf
 import androidx.compose.foundation.layout.Arrangement
@@ -154,15 +156,19 @@ private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?, edite
             )
             def.daysOfWeek?.takeIf { def.perWeek == null }?.let { days -> Pill(days.sorted().joinToString(" ") { dayNames[it - 1] }, c.muted) }
             def.perWeek?.let { Pill(stringResource(R.string.per_week_chip, it), c.accent) }
-            Pill("+${def.baseXp} XP · +${def.baseGold}", c.accent)
+            Pill("${difficultyLabel(Rules.difficulty(def.baseXp))} · +${def.baseXp} XP · +${def.baseGold}", c.accent)
             if (edited) Pill(stringResource(R.string.def_edited), c.gold)
             if (onEdit != null) Icon(Icons.Rounded.Edit, null, tint = c.muted, modifier = Modifier.size(16.dp))
         }
     }
 }
 
-private data class Preset(val label: Int, val xp: Int, val gold: Int)
-private val PRESETS = listOf(Preset(R.string.preset_easy, 30, 8), Preset(R.string.preset_medium, 60, 15), Preset(R.string.preset_hard, 100, 30), Preset(R.string.preset_epic, 200, 60))
+/** A reward level, with a built-in mission of that level as a reference. */
+private data class Preset(val label: Int, val xp: Int, val gold: Int, val example: Int)
+private val PRESETS = listOf(
+    Preset(R.string.preset_easy, 30, 8, R.string.preset_easy_eg), Preset(R.string.preset_medium, 60, 15, R.string.preset_medium_eg),
+    Preset(R.string.preset_hard, 100, 30, R.string.preset_hard_eg), Preset(R.string.preset_epic, 150, 45, R.string.preset_epic_eg),
+)
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -245,6 +251,7 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
                 PRESETS.forEachIndexed { i, p -> FilterChip(selected = preset == i, onClick = { preset = i }, label = { Text(stringResource(p.label)) }) }
             }
             Text("+${reward.first} XP · +${reward.second}", style = MaterialTheme.typography.labelMedium, color = c.accent)
+            PRESETS.getOrNull(preset)?.let { Text(stringResource(it.example), style = MaterialTheme.typography.bodySmall, color = c.muted) }
             Text(stringResource(R.string.field_days), style = MaterialTheme.typography.labelLarge, color = c.muted)
             // "N times a week" only makes sense for fixed missions you actively do.
             val weeklyAllowed = core && type != QuestType.FORBIDDEN && type != QuestType.LIMIT

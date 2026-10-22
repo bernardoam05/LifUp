@@ -723,6 +723,11 @@ class EngineTest {
         assertTrue(com.lifup.app.system.Alarms.nextWake(full, ctx("2026-10-14T10:20"), reminderDone = true) > at("2026-10-14T11:00") + 1_000)
     }
 
+    @Test fun `difficulty reads the forge presets back and every built-in mission has one`() {
+        assertEquals(listOf(Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD, Difficulty.EPIC), listOf(30, 60, 100, 150).map(Rules::difficulty))
+        assertTrue(Difficulty.entries.all { d -> content.quests.any { Rules.difficulty(it.baseXp) == d } })
+    }
+
     @Test fun `old saves keep the targets they had`() {
         val old = fresh().let { it.copy(version = 6, player = it.player.copy(level = 30), adapt = mapOf("pool_plank" to Adapt(1))) }
         val s = run(old, "2026-10-14T10:00")
