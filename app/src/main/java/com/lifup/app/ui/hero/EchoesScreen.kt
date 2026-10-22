@@ -1,12 +1,22 @@
 package com.lifup.app.ui.hero
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
+import com.lifup.app.ui.shadowRankColor
 import androidx.compose.material3.FilterChipDefaults
 import com.lifup.app.domain.PowerKind
 import androidx.compose.material3.MaterialTheme
@@ -68,32 +78,57 @@ fun EchoesScreen(s: GameState, active: Boolean = true) {
                 }
                 Text("${s.shadows.size}/${content.shadows.size}", color = Lif.colors.muted, style = MaterialTheme.typography.labelMedium)
             }
-            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                FilterChip(selected = filter == null, onClick = { pick(null, favOnly) }, label = { Text(stringResource(R.string.all)) })
-                ShadowRank.entries.forEach { r ->
-                    FilterChip(selected = filter == r, onClick = { pick(if (filter == r) null else r, favOnly) }, label = { Text(stringResource(shadowRankName(r))) })
-                }
+            // Two menus side by side: always fits, and each shows what it's filtering by.
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterMenu(
+                    stringResource(R.string.filter_rarity), stringResource(R.string.all), filter, ShadowRank.entries,
+                    name = { stringResource(shadowRankName(it)) }, color = { shadowRankColor(it) }, icon = null, modifier = Modifier.weight(1f),
+                ) { pick(it, favOnly) }
+                FilterMenu(
+                    stringResource(R.string.filter_power), stringResource(R.string.all_powers), power, PowerKind.entries,
+                    name = { stringResource(powerName(it)) }, color = { powerColor(it) }, icon = ::powerIcon, modifier = Modifier.weight(1f),
+                ) { power = it; shownFavs = s.favoriteEchoes }
             }
-            PowerFilter(power) { power = it; shownFavs = s.favoriteEchoes }
         }
         item { Collection(s, filter, shownFavs, favOnly, power) { openShadow = it } }
     }
     openShadow?.let { ShadowSheet(s, it) { openShadow = null } }
 }
 
-/** One chip per kind of power, in the colour its echoes glow with; tapping the chosen one clears it. */
+/**
+ * A chip that opens a menu of [options]: it shows the active one in its colour (or [title] when none is
+ * picked), so a row of them always fits the screen. Rarities get a colour dot, powers their icon.
+ */
 @Composable
-private fun PowerFilter(power: PowerKind?, onPick: (PowerKind?) -> Unit) {
-    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        PowerKind.entries.forEach { k ->
-            val color = powerColor(k)
-            FilterChip(
-                selected = power == k, onClick = { onPick(if (power == k) null else k) },
-                label = { Text(stringResource(powerName(k))) },
-                leadingIcon = { Icon(powerIcon(k), null, tint = color, modifier = Modifier.size(16.dp)) },
-                colors = FilterChipDefaults.filterChipColors(selectedContainerColor = color.copy(alpha = 0.18f)),
-                border = FilterChipDefaults.filterChipBorder(true, power == k, selectedBorderColor = color.copy(alpha = 0.6f)),
-            )
+private fun <T> FilterMenu(
+    title: String, allLabel: String, selected: T?, options: List<T>,
+    name: @Composable (T) -> String, color: @Composable (T) -> Color, icon: ((T) -> ImageVector)?,
+    modifier: Modifier, onPick: (T?) -> Unit,
+) {
+    var open by remember { mutableStateOf(false) }
+    val accent = selected?.let { color(it) } ?: Lif.colors.accent
+    @Composable fun Mark(o: T) {
+        if (icon != null) Icon(icon(o), null, tint = color(o), modifier = Modifier.size(16.dp))
+        else Box(Modifier.size(10.dp).background(color(o), CircleShape))
+    }
+    @Composable fun Tick(on: Boolean) { if (on) Icon(Icons.Rounded.Check, null, tint = Lif.colors.accent, modifier = Modifier.size(18.dp)) }
+    Box(modifier) {
+        FilterChip(
+            selected = selected != null, onClick = { open = true }, modifier = Modifier.fillMaxWidth(),
+            label = { Text(selected?.let { name(it) } ?: title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            leadingIcon = selected?.let { s -> { Mark(s) } },
+            trailingIcon = { Icon(Icons.Rounded.ArrowDropDown, null, modifier = Modifier.size(18.dp)) },
+            colors = FilterChipDefaults.filterChipColors(selectedContainerColor = accent.copy(alpha = 0.18f)),
+            border = FilterChipDefaults.filterChipBorder(true, selected != null, selectedBorderColor = accent.copy(alpha = 0.6f)),
+        )
+        DropdownMenu(open, onDismissRequest = { open = false }, containerColor = Lif.colors.panel) {
+            DropdownMenuItem(text = { Text(allLabel) }, trailingIcon = { Tick(selected == null) }, onClick = { onPick(null); open = false })
+            options.forEach { o ->
+                DropdownMenuItem(
+                    text = { Text(name(o)) }, leadingIcon = { Mark(o) }, trailingIcon = { Tick(selected == o) },
+                    onClick = { onPick(o); open = false },
+                )
+            }
         }
     }
 }

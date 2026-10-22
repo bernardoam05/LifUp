@@ -667,6 +667,9 @@
     <string name="week_free">facultative aujourd\'hui</string>
     <string name="week_short">cette semaine</string>
     <string name="weekly_section">Cette semaine</string>
+    <string name="filter_rarity">Rareté</string>
+    <string name="filter_power">Pouvoir</string>
+    <string name="all_powers">Tous</string>
     <string name="power_growth">XP</string>
     <string name="power_wealth">Or</string>
     <string name="power_combat">Combat</string>
