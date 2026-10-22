@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lifup.app.R
 import com.lifup.app.domain.Attr
+import com.lifup.app.domain.Settings
 import com.lifup.app.domain.Rules.MAX_FOCUS_ATTRS
 import com.lifup.app.ui.theme.Lif
 import com.lifup.app.ui.theme.Palette
@@ -63,57 +61,81 @@ private fun attrWhatRes(a: Attr) = when (a) {
     Attr.VIT -> R.string.attr_vit_what
 }
 
-private enum class FocusMode(val label: Int) {
-    BALANCED(R.string.attr_focus_balanced), ADAPTIVE(R.string.attr_focus_catchup), CHOSEN(R.string.attr_focus_choose)
+/** How the day's missions are drawn: one card each in the picker. */
+enum class DrawMode(val label: Int, val short: Int) {
+    BALANCED(R.string.attr_focus_balanced, R.string.mode_balanced_short),
+    ADAPTIVE(R.string.attr_focus_catchup, R.string.mode_catchup_short),
+    CHOSEN(R.string.attr_focus_choose, R.string.mode_choose_short),
+    RANDOM(R.string.attr_focus_random, R.string.mode_random_short),
+}
+
+fun Settings.drawMode(): DrawMode = when {
+    randomDraw -> DrawMode.RANDOM
+    catchUp -> DrawMode.ADAPTIVE
+    focusAttrs.isNotEmpty() -> DrawMode.CHOSEN
+    else -> DrawMode.BALANCED
 }
 
 /**
- * First the mode (Balanced / Adaptive / Choose), then the attributes: picked by the player (up to
- * [MAX_FOCUS_ATTRS]) or, in Adaptive, shown lit for the ones that fell behind ([lagging]).
- * A null [catchUp] hides Adaptive (onboarding, before there is anything to catch up on).
+ * First the profile, as a grid of cards (they fit any width, unlike a row of segments), then what it
+ * means: the attributes picked by the player (up to [MAX_FOCUS_ATTRS]) or, in Adaptive, the ones that fell
+ * behind ([lagging]). A null [mode] (onboarding) offers only Balanced and Choose.
  */
 @Composable
 fun FocusPicker(
     selected: Set<Attr>, onChange: (Set<Attr>) -> Unit,
-    catchUp: Boolean? = null, lagging: Set<Attr> = emptySet(), onCatchUp: (Boolean) -> Unit = {},
+    mode: DrawMode? = null, lagging: Set<Attr> = emptySet(), onMode: (DrawMode) -> Unit = {},
 ) {
     val c = Lif.colors
     // "Choose" with nothing picked yet still shows the grid, though the draw stays balanced.
     var choosing by remember { mutableStateOf(selected.isNotEmpty()) }
-    val mode = when {
-        catchUp == true -> FocusMode.ADAPTIVE
-        choosing || selected.isNotEmpty() -> FocusMode.CHOSEN
-        else -> FocusMode.BALANCED
-    }
-    val modes = FocusMode.entries.filter { it != FocusMode.ADAPTIVE || catchUp != null }
+    val base = mode ?: if (selected.isNotEmpty()) DrawMode.CHOSEN else DrawMode.BALANCED
+    val current = if (choosing && base == DrawMode.BALANCED) DrawMode.CHOSEN else base
+    val modes = if (mode == null) listOf(DrawMode.BALANCED, DrawMode.CHOSEN) else DrawMode.entries
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            modes.forEachIndexed { i, m ->
-                SegmentedButton(
-                    selected = mode == m,
-                    onClick = {
-                        choosing = m == FocusMode.CHOSEN
-                        if (catchUp != null) onCatchUp(m == FocusMode.ADAPTIVE)
-                        if (m == FocusMode.BALANCED) onChange(emptySet())
-                    },
-                    shape = SegmentedButtonDefaults.itemShape(i, modes.size),
-                ) { Text(stringResource(m.label), maxLines = 1) }
+        modes.chunked(2).forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                row.forEach { m ->
+                    ModeCard(m, current == m, Modifier.weight(1f)) {
+                        choosing = m == DrawMode.CHOSEN
+                        if (m != DrawMode.CHOSEN) onChange(emptySet())
+                        onMode(m)
+                    }
+                }
             }
         }
-        val info = when (mode) {
-            FocusMode.BALANCED -> stringResource(R.string.attr_focus_balanced_info)
-            FocusMode.CHOSEN -> stringResource(R.string.attr_focus_hint)
-            FocusMode.ADAPTIVE -> if (lagging.isEmpty()) stringResource(R.string.attr_focus_catchup_even)
+        val info = when (current) {
+            DrawMode.BALANCED -> stringResource(R.string.attr_focus_balanced_info)
+            DrawMode.CHOSEN -> stringResource(R.string.attr_focus_hint)
+            DrawMode.RANDOM -> stringResource(R.string.attr_focus_random_info)
+            DrawMode.ADAPTIVE -> if (lagging.isEmpty()) stringResource(R.string.attr_focus_catchup_even)
                 else stringResource(R.string.attr_focus_catchup_now, lagging.map { stringResource(attrNameRes(it)) }.joinToString(", "))
         }
         Text(info, style = MaterialTheme.typography.bodySmall, color = c.muted)
-        when (mode) {
-            FocusMode.BALANCED -> Unit
-            FocusMode.ADAPTIVE -> AttrGrid(lit = lagging, enabled = { false }) {}
-            FocusMode.CHOSEN -> AttrGrid(lit = selected, enabled = { it in selected || selected.size < MAX_FOCUS_ATTRS }) { a ->
+        when (current) {
+            DrawMode.ADAPTIVE -> AttrGrid(lit = lagging, enabled = { false }) {}
+            DrawMode.CHOSEN -> AttrGrid(lit = selected, enabled = { it in selected || selected.size < MAX_FOCUS_ATTRS }) { a ->
                 onChange(if (a in selected) selected - a else selected + a)
             }
+            else -> Unit
         }
+    }
+}
+
+/** One profile: its name and a few words, lit in the accent when chosen. */
+@Composable
+private fun ModeCard(m: DrawMode, on: Boolean, modifier: Modifier, onClick: () -> Unit) {
+    val c = Lif.colors
+    val shape = RoundedCornerShape(12.dp)
+    Column(
+        modifier.clip(shape)
+            .background(if (on) c.accent.copy(alpha = 0.15f) else Color.Transparent)
+            .border(1.dp, if (on) c.accent else c.muted.copy(alpha = 0.3f), shape)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+    ) {
+        Text(stringResource(m.label), color = if (on) c.accent else c.text, style = MaterialTheme.typography.titleSmall, maxLines = 1)
+        Text(stringResource(m.short), style = MaterialTheme.typography.labelSmall, color = c.muted, maxLines = 1)
     }
 }
 

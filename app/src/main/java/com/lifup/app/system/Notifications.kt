@@ -16,7 +16,6 @@ import com.lifup.app.R
 import com.lifup.app.domain.text
 
 object Notifications {
-    const val CH_SESSION = "session_quiet"
     /** Focus sessions and runs: silent, but shown on the lock screen like a clock timer. */
     const val CH_LIVE = "live"
     const val CH_EVENTS = "events"
@@ -45,12 +44,10 @@ object Notifications {
 
     fun createChannels(context: Context) {
         val nm = context.getSystemService(NotificationManager::class.java)
-        nm.deleteNotificationChannel("session")
+        // Channels of earlier versions, now unused: removed so they don't linger in the system settings.
+        listOf("session", "session_quiet").forEach(nm::deleteNotificationChannel)
         nm.createNotificationChannels(
             listOf(
-                NotificationChannel(CH_SESSION, context.getString(R.string.channel_session), NotificationManager.IMPORTANCE_LOW).apply {
-                    setSound(null, null); enableVibration(false); setShowBadge(false)
-                },
                 NotificationChannel(CH_LIVE, context.getString(R.string.channel_live), NotificationManager.IMPORTANCE_DEFAULT).apply {
                     setSound(null, null); enableVibration(false); setShowBadge(false); lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
                 },

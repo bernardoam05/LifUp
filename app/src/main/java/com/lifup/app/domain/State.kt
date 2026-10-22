@@ -178,6 +178,8 @@ data class Settings(
     val focusAttrs: Set<Attr> = emptySet(),
     /** "Catch up": the focus follows the attributes that fell behind, worked out every day. */
     val catchUp: Boolean = false,
+    /** "Random": a plain draw from the whole pool, without balancing the families. */
+    val randomDraw: Boolean = false,
     val blockOnPenalty: Boolean = false,
     /** Silences the phone (Do Not Disturb) during focus phases, when the system allows it. */
     val dndFocus: Boolean = false,

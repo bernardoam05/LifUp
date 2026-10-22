@@ -86,6 +86,7 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
         state.drawFocus(),
         Random(seed.toLong() xor state.seed),
         recent = if (state.day == date.minusDays(1).toString()) state.dailyQuests.map { it.defId }.toSet() else emptySet(),
+        balanced = !state.settings.randomDraw,
     )
     return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, step = state.stepOf(it.id), day = date) } +
         weekly.map { weeklyQuest(it, state.weekly[it.id], date, level, state.stepOf(it.id)) }
@@ -254,7 +255,7 @@ fun Tx.swapQuest(id: String): Boolean {
 
 /** One more mission for today, balanced against the families already in today's list. */
 private fun Tx.drawOne(defs: List<QuestDef>): QuestDef? =
-    drawBalanced(defs, 1, s.drawFocus(), ctx.rng, taken = s.quests.mapNotNull { s.defOf(it.defId, content) }).firstOrNull()
+    drawBalanced(defs, 1, s.drawFocus(), ctx.rng, taken = s.quests.mapNotNull { s.defOf(it.defId, content) }, balanced = !s.settings.randomDraw).firstOrNull()
 
 /** Extras come one at a time: the next one only once the last is done, so they can't be cherry-picked. */
 fun GameState.canAddExtra() = allDailyDone() && daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY && !extraOpen()

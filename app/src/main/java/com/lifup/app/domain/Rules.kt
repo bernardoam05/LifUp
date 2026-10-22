@@ -160,7 +160,10 @@ object Rules {
     const val OPEN_SESSION_MAX_MIN = 480
 
     /** A penalty, and its app block, lasts this long for every rigor. */
+    /** How long the optional app block of a penalty lasts. */
     const val PENALTY_MS = 24 * 3_600_000L
+    /** What missions pay while a penalty is active, so it matters even without the app block. */
+    const val PENALTY_REWARD_CUT = 0.5
 
     fun restDaysPerWeek(rigor: Rigor) = when (rigor) { Rigor.EASY -> 2; Rigor.NORMAL -> 1; Rigor.HARD -> 0 }
 

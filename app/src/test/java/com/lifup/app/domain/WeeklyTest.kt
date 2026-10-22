@@ -79,7 +79,8 @@ class WeeklyTest {
     @Test fun `reaching the goal pays a bonus once and shows in the weekly report`() {
         val days = listOf("2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22")
         var s = walk(withWeekly(), days.dropLast(1), doOn = days.toSet())
-        s = run(s, "2026-10-22T09:00")
+        // Missed days on the walk leave a penalty, which would halve the mission's own gold.
+        s = run(s, "2026-10-22T09:00").let { it.copy(penalty = Penalty()) }
         val before = s.player.gold
         s = run(s, "2026-10-22T10:00") { completeQuest(s.train().id) }
         assertTrue(s.weekly[train.id]!!.rewarded)

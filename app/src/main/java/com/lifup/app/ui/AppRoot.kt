@@ -293,13 +293,12 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
                     Spacer(Modifier.width(8.dp))
                     Text(stringResource(R.string.penalty_banner).uppercase(), style = MaterialTheme.typography.labelMedium, color = Lif.colors.red)
                 }
-                if (s.penalty.blockEnd > now) {
-                    val left = fmtShort(s.penalty.blockEnd - now)
-                    Text(
-                        stringResource(if (s.settings.blockOnPenalty) R.string.block_ends_in else R.string.penalty_ends_in, left),
-                        style = MaterialTheme.typography.labelSmall, color = Lif.colors.red, modifier = Modifier.align(Alignment.CenterVertically),
-                    )
-                }
+                // It lasts until its missions are done; only the optional app block has a clock.
+                Text(
+                    if (s.settings.blockOnPenalty && s.penalty.blockEnd > now) stringResource(R.string.block_ends_in, fmtShort(s.penalty.blockEnd - now))
+                    else stringResource(R.string.penalty_until_done),
+                    style = MaterialTheme.typography.labelSmall, color = Lif.colors.red, modifier = Modifier.align(Alignment.CenterVertically),
+                )
             }
         }
     }

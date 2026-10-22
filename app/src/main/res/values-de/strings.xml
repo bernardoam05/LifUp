@@ -61,18 +61,15 @@
 
     <!-- HUD / penalty -->
     <string name="penalty_banner">Strafe aktiv</string>
-    <string name="block_starts_in">Sperre in %1$s</string>
     <string name="block_ends_in">Sperre endet in %1$s</string>
 
     <!-- Today -->
-    <string name="today_progress">%1$d / %2$d Missionen</string>
     <string name="rest_day">Ruhetag</string>
     <string name="rest_day_info">Ruhetag: heute Nacht keine Strafe, aber deine Serie wächst auch nicht.</string>
     <string name="forge">Missionsschmiede</string>
     <string name="penalty_section">Strafe</string>
-    <string name="penalty_info">Erledige diese Missionen, um sie früher aufzuheben.</string>
+    <string name="penalty_info">Sie dauert, bis du diese Missionen erledigst. Bis dahin bringen Missionen nur halb so viel XP und Gold.</string>
     <string name="portal_section">Portal offen</string>
-    <string name="portal_info">Ein zeitlich begrenztes Portal: doppelte Belohnungen und die Chance, ein Echo zu erwecken. Es schließt sich von selbst.</string>
     <string name="daily_section">Tägliche Missionen</string>
     <string name="extra_section">Extra-Missionen</string>
     <string name="add_extra">Extra-Mission</string>
@@ -91,23 +88,17 @@
     <string name="boss_section">Wochenboss</string>
     <string name="boss_section_season">Saisonboss</string>
     <string name="boss_ends_in">endet in %1$s</string>
-    <string name="boss_hint">deine XP verursachen Schaden</string>
     <string name="boss_challenge">Boss-Challenge</string>
     <string name="boss_challenge_done">Erledigt</string>
     <string name="boss_defeated">Besiegt! %1$s ist deinem Trupp beigetreten.</string>
-    <string name="boss_drop">Beute: %1$s</string>
 
     <!-- Mission sheet -->
-    <string name="rewards_line">+%1$d XP · +%2$d Gold</string>
     <string name="double_xp_active">Sanduhr aktiv: die nächste Mission gibt doppelte XP</string>
-    <string name="start_focus">Fokus starten</string>
     <string name="complete">Abschließen</string>
     <string name="available_from">Verfügbar von %1$d:00 bis Mitternacht</string>
     <string name="mark_done_manual">Als erledigt markieren</string>
     <string name="swap_free">Tauschen (heute gratis)</string>
     <string name="swap_scroll">Tauschen (Schriftrollen: %1$d)</string>
-    <string name="note">Notiz</string>
-    <string name="gps_start">GPS-Tracking starten</string>
     <string name="gps_stop">Tracking stoppen</string>
     <string name="gps_live">%1$.2f km · %2$.1f km/h</string>
     <string name="gps_waiting">warte auf GPS</string>
@@ -119,7 +110,6 @@
     <string name="focus_title">Fokus-Session</string>
     <string name="mode_timer">Timer</string>
     <string name="mode_pomodoro">Pomodoro</string>
-    <string name="fine_tune">Feinjustierung</string>
     <string name="pomodoro_work_len">Arbeit</string>
     <string name="pomodoro_break_len">Pause</string>
     <string name="pomodoro_rounds">Runden</string>
@@ -127,7 +117,6 @@
     <string name="pomodoro_work">Arbeit · Zyklus %1$d/%2$d</string>
     <string name="pomodoro_break">Pause · Zyklus %1$d/%2$d</string>
     <string name="block_apps">Apps sperren</string>
-    <string name="block_apps_info">Die gewählten Apps werden während der Session verdeckt.</string>
     <string name="block_needs_perms">Braucht Nutzungszugriff und Über anderen Apps einblenden.</string>
     <plurals name="apps_selected">
         <item quantity="one">%1$d App gewählt</item>
@@ -155,9 +144,6 @@
     <string name="stop">Stopp</string>
     <string name="stop_and_lose">Stoppen und verlieren</string>
     <string name="keep_going">Weitermachen</string>
-    <string name="focus_quests">Fokus-Missionen</string>
-    <string name="penalty_block_active">Strafsperre: noch %1$s</string>
-    <string name="penalty_block_info">Deine gesperrten Apps bleiben zu, bis das Zeitfenster endet oder du die Strafmissionen erledigst.</string>
 
     <!-- Permissions -->
     <string name="permissions">Berechtigungen</string>
@@ -193,13 +179,11 @@
     <string name="stat_perfect">Perfekte Tage</string>
     <string name="stat_focus_h">Fokusstunden</string>
     <string name="stat_sessions">Sessions</string>
-    <string name="stat_km">Km getrackt</string>
     <string name="stat_portals">Portale</string>
     <string name="stat_gold_earned">Gold verdient</string>
     <string name="stat_penalties">Strafen</string>
     <string name="stat_side">Aufgaben</string>
     <string name="history">Verlauf</string>
-    <string name="history_empty">Deine Tage erscheinen hier.</string>
     <string name="day_rest">Ruhe</string>
     <string name="day_perfect">Perfekt</string>
     <string name="day_penalty">Strafe · %1$d/%2$d</string>
@@ -243,7 +227,6 @@
     <string name="passive_swap">+1 kostenloser Tausch pro Tag</string>
 
     <!-- Shop -->
-    <string name="shop">Shop</string>
     <string name="inventory">Inventar</string>
     <string name="items">Items</string>
     <string name="shadow_offers">Echos zu mieten</string>
@@ -338,7 +321,6 @@
     <!-- Forge -->
     <string name="forge_info">Erstelle eigene Missionen oder bearbeite und deaktiviere die eingebauten. Änderungen gelten ab der Liste von morgen.</string>
     <string name="your_missions">Deine Missionen</string>
-    <string name="system_missions">Basis-Missionen</string>
     <string name="no_custom">Noch keine eigenen Missionen. Tippe auf +, um eine zu schmieden.</string>
     <string name="kind_core">Fest</string>
     <string name="kind_pool">Zufall</string>
@@ -387,14 +369,11 @@
     <string name="onb_start">Los geht\'s</string>
 
     <!-- System: notifications, blocker, tile -->
-    <string name="channel_session">Fokus-Sessions</string>
     <string name="channel_live">Laufender Fokus und Läufe</string>
     <string name="channel_events">Ereignisse</string>
     <string name="channel_reminders">Erinnerungen</string>
     <string name="session_focus_title">Fokus-Session</string>
     <string name="session_penalty_title">Strafsperre aktiv</string>
-    <string name="session_left_h">noch %1$dh %2$dm</string>
-    <string name="session_left_m">noch %1$d min</string>
     <string name="notif_portal_title">Ein Portal hat sich geöffnet</string>
     <string name="notif_portal_text">%1$s — schließt in %2$d min. Doppelte Belohnungen.</string>
     <string name="notif_focus_done_title">Fokus beendet</string>
@@ -534,12 +513,11 @@
     <string name="strict_open_info">Gilt nicht für Sitzungen ohne Limit.</string>
     <string name="pomodoro_long_len">Lange Pause (0 = keine)</string>
     <string name="pomodoro_long_every">Lange Pause alle N Zyklen</string>
-    <string name="pomodoro_rules">Nur Fokusminuten zählen. In Pausen sind Apps entsperrt, deshalb darf eine Pause höchstens einen halben Fokusblock und eine lange Pause höchstens einen Block dauern.</string>
     <string name="block_needs_apps">Wähle die ablenkenden Apps, die gesperrt werden sollen.</string>
     <string name="perm_usage_why">Erkennen, welche App offen ist, um sie zu sperren und Bildschirmzeit zu messen.</string>
     <string name="perm_overlay_why">Den Sperrbildschirm über der gesperrten App anzeigen.</string>
     <string name="perm_battery_why">Verhindert, dass das System die App während Sitzungen und um Mitternacht beendet.</string>
-    <string name="perm_alarms_why">Schließt den Tag und beendet Sitzungen pünktlich.</string>
+    <string name="perm_alarms_why">Schließt den Tag, öffnet Portale und beendet Sitzungen pünktlich, auch bei geschlossener App.</string>
     <string name="perm_notifications_why">Hinweise zu Sitzungen, Portalen, Strafen und die tägliche Erinnerung.</string>
     <string name="perm_activity_why">Schritte für Geh-Missionen und Läufe zählen.</string>
     <string name="guide_section">So funktioniert es</string>
@@ -548,7 +526,7 @@
     <string name="guide_streak_title">Serie und Ruhetage</string>
     <string name="guide_streak">Wächst jeden Tag::+1 für jeden Tag, an dem du das Minimum erreichst.\nZweite Chance::Verloren? Ein perfekter Tag direkt danach holt sie zurück (einmal pro Woche).\nRuhetage::Melde ihn vor Mittag an und der Tag zählt weder dafür noch dagegen. 2 pro Woche auf Leicht, 1 auf Normal.\nExtra-Schutz::Der Schild der Beständigkeit und manche Echos retten sie für dich. Nur eine Rettung pro Woche, die zweite Chance eingeschlossen.</string>
     <string name="guide_penalty_title">Strafe</string>
-    <string name="guide_penalty">Anteiliger Verlust::Du verlierst XP und Gold je nach dem, was offen blieb. Fast geschafft kostet fast nichts.\n24 Stunden::Unter 50 % beginnt eine Strafe mit Extra-Missionen. Erledige sie und sie endet früher.\nApp-Sperre::Wenn du willst, bleiben deine Ablenkungs-Apps gesperrt, solange sie dauert.</string>
+    <string name="guide_penalty">Anteiliger Verlust::Du verlierst XP und Gold je nach dem, was offen blieb. Fast geschafft kostet fast nichts.\nBis du sie abarbeitest::Unter 50 % beginnt eine Strafe mit Extra-Missionen. Sie endet erst, wenn du sie erledigst, und bis dahin bringen Missionen nur halb so viel XP und Gold.\nApp-Sperre::Wenn du willst, bleiben deine Ablenkungs-Apps in den ersten 24 Stunden gesperrt.</string>
     <string name="guide_side_title">Aufgaben</string>
     <string name="guide_side">Freie::Schreib jede beliebige Aufgabe, ohne Ziele und Regeln.\n5 mit Belohnung::Die ersten 5 erledigten pro Tag geben XP und Gold und verletzen den Boss.\nDanach::Sie funktionieren weiter als To-do-Liste.\nKein Schummeln::Abhaken rückgängig machen oder Löschen nimmt die Belohnung zurück.</string>
     <string name="guide_boss_title">Wochenboss</string>
@@ -639,7 +617,7 @@
     <string name="a11y_reset">Zurücksetzen</string>
     <string name="a11y_mark_done">Als erledigt markieren</string>
     <string name="a11y_mark_undone">Abhaken rückgängig</string>
-    <string name="penalty_ends_in">Endet in %1$s</string>
+    <string name="penalty_until_done">Bis die Missionen erledigt sind</string>
     <string name="guide_daily_hook">Dein Training für jeden Tag. Du musst nicht perfekt sein, du musst nur auftauchen.</string>
     <string name="guide_streak_hook">Jeder geschaffte Tag nährt die Flamme. Ein schlechter Tag löscht sie nicht für immer.</string>
     <string name="guide_penalty_hook">Scheitern hat seinen Preis, aber er ist fair und geht vorbei.</string>
@@ -722,6 +700,12 @@
     <string name="attr_focus_title">Attributfokus</string>
     <string name="attr_focus_question">Welche Attribute willst du entwickeln?</string>
     <string name="attr_focus_hint">Bis zu 2. Ihre Missionen kommen öfter; die anderen erscheinen weiterhin.</string>
+    <string name="attr_focus_random">Zufällig</string>
+    <string name="attr_focus_random_info">Kein Ausgleich: Jede Mission kann kommen. An manchen Tagen viel Training, an anderen viel Lesen.</string>
+    <string name="mode_balanced_short">Alles gleich</string>
+    <string name="mode_catchup_short">Stärkt das Schwächste</string>
+    <string name="mode_choose_short">Du wählst</string>
+    <string name="mode_random_short">Reines Glück</string>
     <string name="attr_focus_catchup">Adaptiv</string>
     <string name="attr_focus_catchup_now">Heute im Fokus: %1$s</string>
     <string name="attr_focus_catchup_even">Im Moment sind sie ausgeglichen: alles kommt gleich oft.</string>

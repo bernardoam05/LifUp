@@ -7,9 +7,10 @@ fun Tx.gainXp(base: Int, family: DrawGroup? = null, hitsBoss: Boolean = true, bo
     if (base <= 0) return 0
     val passives = s.passives(content, ctx.now)
     val mult = if (boosted) 1 + passives.xpFor(family) else 1.0
-    val amount = (base * mult).roundToInt()
+    val cut = if (boosted) s.penaltyCut() else 1.0
+    val amount = (base * mult * cut).roundToInt()
     // The squad's share: what this paid beyond what item buffs alone would have.
-    if (boosted) squadAdded(SquadGain(xp = amount - (base * (1 + passives.buffXp)).roundToInt()))
+    if (boosted) squadAdded(SquadGain(xp = amount - (base * (1 + passives.buffXp) * cut).roundToInt()))
     var p = s.player
     var xp = p.xp + amount
     var level = p.level
@@ -66,10 +67,13 @@ private fun Tx.levelEcho(level: Int): ShadowDef? {
 
 /** What a mission pays if completed now, boosts included, so the card shows the real number before it's done. */
 fun GameState.xpPreview(q: Quest, content: Content, now: Long): Int =
-    if (q.origin.boosted()) passives(content, now).let { p -> (q.xp * (1 + p.portalShare(q)) * (1 + p.xpFor(q.family()))).roundToInt() } else q.xp
+    if (q.origin.boosted()) passives(content, now).let { p -> (q.xp * (1 + p.portalShare(q)) * (1 + p.xpFor(q.family())) * penaltyCut()).roundToInt() } else q.xp
 
 fun GameState.goldPreview(q: Quest, content: Content, now: Long): Int =
-    if (q.origin.boosted()) passives(content, now).let { p -> (q.gold * (1 + p.portalShare(q)) * (1 + p.gold)).roundToInt() } else q.gold
+    if (q.origin.boosted()) passives(content, now).let { p -> (q.gold * (1 + p.portalShare(q)) * (1 + p.gold) * penaltyCut()).roundToInt() } else q.gold
+
+/** An active penalty halves what missions pay until its own missions are done. */
+fun GameState.penaltyCut() = if (penalty.active) Rules.PENALTY_REWARD_CUT else 1.0
 
 private fun Passives.portalShare(q: Quest) = if (q.origin == QuestOrigin.PORTAL) portal else 0.0
 
@@ -78,8 +82,9 @@ private fun QuestOrigin.boosted() = this == QuestOrigin.DAILY || this == QuestOr
 fun Tx.gainGold(base: Int, boosted: Boolean = true): Int {
     if (base <= 0) return 0
     val passives = s.passives(content, ctx.now)
-    val amount = if (boosted) (base * (1 + passives.gold)).roundToInt() else base
-    if (boosted) squadAdded(SquadGain(gold = amount - (base * (1 + passives.buffGold)).roundToInt()))
+    val cut = if (boosted) s.penaltyCut() else 1.0
+    val amount = if (boosted) (base * (1 + passives.gold) * cut).roundToInt() else base
+    if (boosted) squadAdded(SquadGain(gold = amount - (base * (1 + passives.buffGold) * cut).roundToInt()))
     s = s.copy(player = s.player.copy(gold = s.player.gold + amount))
     count(StatKey.GOLD_EARNED, amount.toLong())
     return amount

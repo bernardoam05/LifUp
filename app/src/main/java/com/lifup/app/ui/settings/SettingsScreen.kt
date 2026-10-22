@@ -1,5 +1,7 @@
 package com.lifup.app.ui.settings
 
+import com.lifup.app.ui.DrawMode
+import com.lifup.app.ui.drawMode
 import com.lifup.app.domain.daysToNextMission
 import com.lifup.app.domain.drawnCount
 import com.lifup.app.domain.lagging
@@ -152,8 +154,8 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 Spacer(Modifier.height(4.dp))
                 com.lifup.app.ui.FocusPicker(
                     set.focusAttrs, { f -> act { updateSettings { it.copy(focusAttrs = f) } } },
-                    catchUp = set.catchUp, lagging = s.player.attrXp.lagging(),
-                    onCatchUp = { on -> act { updateSettings { it.copy(catchUp = on) } } },
+                    mode = set.drawMode(), lagging = s.player.attrXp.lagging(),
+                    onMode = { m -> act { updateSettings { it.copy(catchUp = m == DrawMode.ADAPTIVE, randomDraw = m == DrawMode.RANDOM) } } },
                 )
             }
 

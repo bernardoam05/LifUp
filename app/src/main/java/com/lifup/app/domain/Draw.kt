@@ -36,10 +36,11 @@ fun groupOf(type: QuestType): DrawGroup = when (type) {
  * Picks up to [count] distinct definitions, balancing families as described above. Missions drawn
  * yesterday ([recent]) are less likely within their family, without changing the family's share;
  * [taken] are today's missions already in play, which count as picks for the repeat decay.
+ * Without [balanced] every mission weighs the same, whatever its family (yesterday's still weigh less).
  */
 fun drawBalanced(
     defs: List<QuestDef>, count: Int, focus: Set<Attr>, rng: Random,
-    recent: Set<String> = emptySet(), taken: List<QuestDef> = emptyList(),
+    recent: Set<String> = emptySet(), taken: List<QuestDef> = emptyList(), balanced: Boolean = true,
 ): List<QuestDef> {
     val left = defs.toMutableList()
     val picked = taken.groupingBy { it.drawGroup() }.eachCount().toMutableMap()
@@ -47,7 +48,7 @@ fun drawBalanced(
     fun freshness(d: QuestDef) = if (d.id in recent) Rules.RECENT_WEIGHT else 1.0
     repeat(count.coerceAtMost(defs.size)) {
         val totals = left.groupBy { it.drawGroup() }.mapValues { (_, ds) -> ds.sumOf(::freshness) }
-        val weights = left.map { d ->
+        val weights = if (!balanced) left.map(::freshness) else left.map { d ->
             val g = d.drawGroup()
             val focusMult = if (g.attr in focus) Rules.FOCUS_WEIGHT else 1.0
             g.weight * focusMult * Rules.REPEAT_DECAY.pow(picked[g] ?: 0) * freshness(d) / totals.getValue(g)

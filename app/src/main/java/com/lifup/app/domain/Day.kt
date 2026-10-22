@@ -30,7 +30,6 @@ fun Tx.ensureDay() {
         )
     }
     s = s.copy(buffs = s.buffs.filter { it.expiresAt > ctx.now })
-    expirePenalty()
     settleFocus()
     ensureBoss()
     ensureShop()
@@ -63,8 +62,6 @@ private fun Tx.closeDay(day: LocalDate) {
     if (!rest) recordMissions(daily, day)
     count(StatKey.STEPS, s.daily.steps.toLong())
 
-    // A penalty lasts 24 hours: its missions only lift it early, and leftovers just expire.
-    expirePenalty()
     var penaltyInfo: PenaltyInfo? = null
     var streakSavedBy: String? = null
     var restored = false
@@ -178,11 +175,6 @@ private fun Tx.saveStreak(): String? {
     setStreak(0)
     if (spare) s = s.copy(recovery = StreakRecovery(streak, ctx.todayKey))
     return null
-}
-
-/** Ends a penalty once its 24 hours are over. */
-fun Tx.expirePenalty() {
-    if (s.penalty.active && s.penalty.blockEnd <= ctx.now) s = s.copy(penalty = Penalty())
 }
 
 fun Tx.setBlockOnPenalty(on: Boolean) = updateSettings { it.copy(blockOnPenalty = on) }

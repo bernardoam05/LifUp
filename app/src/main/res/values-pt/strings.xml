@@ -56,17 +56,14 @@
     <string name="srank_marshal">Mítico</string>
 
     <string name="penalty_banner">Penalização ativa</string>
-    <string name="block_starts_in">Bloqueio em %1$s</string>
     <string name="block_ends_in">Bloqueio acaba em %1$s</string>
 
-    <string name="today_progress">%1$d / %2$d missões</string>
     <string name="rest_day">Descanso</string>
     <string name="rest_day_info">Dia de descanso: sem penalização à meia-noite, mas a sequência também não cresce.</string>
     <string name="forge">Forja de missões</string>
     <string name="penalty_section">Penalização</string>
-    <string name="penalty_info">Faz estas missões para a levantar mais cedo.</string>
+    <string name="penalty_info">Dura até fazeres estas missões. Até lá, as missões dão metade do XP e do ouro.</string>
     <string name="portal_section">Portal aberto</string>
-    <string name="portal_info">Um portal temporário: recompensas a dobrar e hipótese de despertar um eco. Fecha-se sozinho.</string>
     <string name="daily_section">Missões diárias</string>
     <string name="extra_section">Missões extra</string>
     <string name="add_extra">Missão extra</string>
@@ -84,22 +81,16 @@
     <string name="boss_section">Boss semanal</string>
     <string name="boss_section_season">Boss sazonal</string>
     <string name="boss_ends_in">acaba em %1$s</string>
-    <string name="boss_hint">o teu XP causa dano</string>
     <string name="boss_challenge">Desafio do boss</string>
     <string name="boss_challenge_done">Cumprido</string>
     <string name="boss_defeated">Derrotado! %1$s juntou-se ao teu exército.</string>
-    <string name="boss_drop">Recompensa: %1$s</string>
 
-    <string name="rewards_line">+%1$d XP · +%2$d ouro</string>
     <string name="double_xp_active">Ampulheta ativa: a próxima missão dá XP a dobrar</string>
-    <string name="start_focus">Começar foco</string>
     <string name="complete">Concluir</string>
     <string name="available_from">Disponível das %1$d:00 até à meia-noite</string>
     <string name="mark_done_manual">Marcar como feita</string>
     <string name="swap_free">Trocar (grátis hoje)</string>
     <string name="swap_scroll">Trocar (pergaminhos: %1$d)</string>
-    <string name="note">Nota</string>
-    <string name="gps_start">Iniciar GPS</string>
     <string name="gps_stop">Parar GPS</string>
     <string name="gps_live">%1$.2f km · %2$.1f km/h</string>
     <string name="gps_waiting">à espera de sinal</string>
@@ -110,7 +101,6 @@
     <string name="focus_title">Sessão de foco</string>
     <string name="mode_timer">Temporizador</string>
     <string name="mode_pomodoro">Pomodoro</string>
-    <string name="fine_tune">Ajuste fino</string>
     <string name="pomodoro_work_len">Trabalho</string>
     <string name="pomodoro_break_len">Pausa</string>
     <string name="pomodoro_rounds">Ciclos</string>
@@ -118,7 +108,6 @@
     <string name="pomodoro_work">Trabalho · ciclo %1$d/%2$d</string>
     <string name="pomodoro_break">Pausa · ciclo %1$d/%2$d</string>
     <string name="block_apps">Bloquear apps</string>
-    <string name="block_apps_info">As apps escolhidas ficam tapadas durante a sessão.</string>
     <string name="block_needs_perms">Precisa de acesso de utilização e de sobreposição.</string>
     <plurals name="apps_selected">
         <item quantity="one">%1$d app escolhida</item>
@@ -146,9 +135,6 @@
     <string name="stop">Parar</string>
     <string name="stop_and_lose">Parar e perder</string>
     <string name="keep_going">Continuar</string>
-    <string name="focus_quests">Missões de foco</string>
-    <string name="penalty_block_active">Bloqueio de penalização: faltam %1$s</string>
-    <string name="penalty_block_info">As apps bloqueadas ficam fechadas até a janela acabar ou cumprires as missões de penalização.</string>
 
     <string name="permissions">Permissões</string>
     <string name="perm_all_ok">tudo certo</string>
@@ -182,13 +168,11 @@
     <string name="stat_perfect">Dias perfeitos</string>
     <string name="stat_focus_h">Horas de foco</string>
     <string name="stat_sessions">Sessões</string>
-    <string name="stat_km">Km com GPS</string>
     <string name="stat_portals">Portais</string>
     <string name="stat_gold_earned">Ouro ganho</string>
     <string name="stat_penalties">Penalizações</string>
     <string name="stat_side">Tarefas</string>
     <string name="history">Histórico</string>
-    <string name="history_empty">Os teus dias vão aparecer aqui.</string>
     <string name="day_rest">Descanso</string>
     <string name="day_perfect">Perfeito</string>
     <string name="day_penalty">Penalização · %1$d/%2$d</string>
@@ -230,7 +214,6 @@
     <string name="passive_portal">+%1$s XP e ouro nos portais</string>
     <string name="passive_swap">+1 troca grátis por dia</string>
 
-    <string name="shop">Loja</string>
     <string name="inventory">Inventário</string>
     <string name="items">Itens</string>
     <string name="shadow_offers">Ecos à venda</string>
@@ -322,7 +305,6 @@
 
     <string name="forge_info">Cria as tuas missões, ou edita e desliga as base. As alterações aplicam-se à lista de amanhã.</string>
     <string name="your_missions">As tuas missões</string>
-    <string name="system_missions">Missões base</string>
     <string name="no_custom">Ainda não tens missões tuas. Toca em + para forjar uma.</string>
     <string name="kind_core">Fixa</string>
     <string name="kind_pool">Sorteio</string>
@@ -369,14 +351,11 @@
     <string name="onb_change_later">Podes mudar isto quando quiseres nas Definições.</string>
     <string name="onb_start">Começar</string>
 
-    <string name="channel_session">Sessões de foco</string>
     <string name="channel_live">Foco e corridas em curso</string>
     <string name="channel_events">Eventos</string>
     <string name="channel_reminders">Lembretes</string>
     <string name="session_focus_title">Sessão de foco</string>
     <string name="session_penalty_title">Bloqueio de penalização ativo</string>
-    <string name="session_left_h">faltam %1$dh %2$dm</string>
-    <string name="session_left_m">faltam %1$d min</string>
     <string name="notif_portal_title">Abriu-se um portal</string>
     <string name="notif_portal_text">%1$s — fecha em %2$d min. Recompensas a dobrar.</string>
     <string name="notif_focus_done_title">Foco concluído</string>
@@ -516,12 +495,11 @@
     <string name="strict_open_info">Não se aplica a sessões sem limite.</string>
     <string name="pomodoro_long_len">Pausa longa (0 = sem)</string>
     <string name="pomodoro_long_every">Pausa longa a cada N ciclos</string>
-    <string name="pomodoro_rules">Só os minutos de foco contam. Nas pausas as apps ficam desbloqueadas, por isso uma pausa pode ir até metade do bloco de foco e a pausa longa até um bloco.</string>
     <string name="block_needs_apps">Escolhe as apps que distraem para serem bloqueadas.</string>
     <string name="perm_usage_why">Saber que app está aberta, para bloquear e medir tempo de ecrã.</string>
     <string name="perm_overlay_why">Mostrar o ecrã de bloqueio por cima da app bloqueada.</string>
     <string name="perm_battery_why">Impede o sistema de fechar a app durante sessões e à meia-noite.</string>
-    <string name="perm_alarms_why">Fecha o dia e termina sessões à hora certa.</string>
+    <string name="perm_alarms_why">Fecha o dia, abre portais e termina sessões à hora certa, mesmo com a app fechada.</string>
     <string name="perm_notifications_why">Avisos de sessões, portais, penalizações e o lembrete diário.</string>
     <string name="perm_activity_why">Contar passos nas missões de caminhar e corridas.</string>
     <string name="guide_section">Como funciona</string>
@@ -530,7 +508,7 @@
     <string name="guide_streak_title">Sequência e descanso</string>
     <string name="guide_streak">Sobe todos os dias::+1 por cada dia em que chegas ao mínimo.\nSegunda oportunidade::Perdeste-a? Um dia perfeito logo a seguir devolve-a (uma vez por semana).\nDias de descanso::Marca antes do meio-dia e o dia não conta nem a favor nem contra. 2 por semana no Fácil, 1 no Normal.\nProteção extra::O Escudo da Constância e alguns ecos salvam-na por ti. Só um salvamento por semana, contando com a segunda oportunidade.</string>
     <string name="guide_penalty_title">Penalização</string>
-    <string name="guide_penalty">Perda proporcional::Perdes XP e ouro conforme o que ficou por fazer. Quase lá custa quase nada.\n24 horas::Abaixo de 50% começa uma penalização com missões extra. Fá-las e acaba mais cedo.\nBloqueio de apps::Se quiseres, as tuas apps de distração ficam bloqueadas enquanto dura.</string>
+    <string name="guide_penalty">Perda proporcional::Perdes XP e ouro conforme o que ficou por fazer. Quase lá custa quase nada.\nAté a cumprires::Abaixo de 50% começa uma penalização com missões extra. Só acaba quando as fizeres, e até lá as missões dão metade do XP e do ouro.\nBloqueio de apps::Se quiseres, as tuas apps de distração ficam bloqueadas nas primeiras 24 horas.</string>
     <string name="guide_side_title">Tarefas</string>
     <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro e ferem o boss.\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
     <string name="guide_boss_title">Boss semanal</string>
@@ -621,7 +599,7 @@
     <string name="a11y_reset">Repor</string>
     <string name="a11y_mark_done">Marcar como feita</string>
     <string name="a11y_mark_undone">Desmarcar</string>
-    <string name="penalty_ends_in">Acaba em %1$s</string>
+    <string name="penalty_until_done">Até fazeres as missões</string>
     <string name="guide_daily_hook">O teu treino de todos os dias. Não tens de ser perfeito — tens de aparecer.</string>
     <string name="guide_streak_hook">Cada dia cumprido alimenta a chama. Um dia mau não a apaga de vez.</string>
     <string name="guide_penalty_hook">Falhar tem um preço — mas é justo, e passa.</string>
@@ -704,6 +682,12 @@
     <string name="attr_focus_title">Foco de atributos</string>
     <string name="attr_focus_question">Que atributos queres desenvolver?</string>
     <string name="attr_focus_hint">Até 2. As missões deles saem mais vezes; as outras continuam a aparecer.</string>
+    <string name="attr_focus_random">Aleatório</string>
+    <string name="attr_focus_random_info">Sem equilíbrio nenhum: pode sair qualquer missão. Uns dias calha muito treino, outros muita leitura.</string>
+    <string name="mode_balanced_short">Tudo por igual</string>
+    <string name="mode_catchup_short">Puxa pelo mais fraco</string>
+    <string name="mode_choose_short">Tu escolhes</string>
+    <string name="mode_random_short">Pura sorte</string>
     <string name="attr_focus_catchup">Adaptativo</string>
     <string name="attr_focus_catchup_now">Hoje a puxar por: %1$s</string>
     <string name="attr_focus_catchup_even">Para já estão equilibrados: sai tudo por igual.</string>
