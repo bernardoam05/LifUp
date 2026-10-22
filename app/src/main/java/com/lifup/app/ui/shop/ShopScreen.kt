@@ -51,6 +51,8 @@ import com.lifup.app.domain.QuestOrigin
 import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.buyItem
+import com.lifup.app.domain.itemXp
+import com.lifup.app.domain.usedOnBuy
 import com.lifup.app.domain.buyShadow
 import com.lifup.app.domain.price
 import com.lifup.app.domain.useItem
@@ -116,7 +118,7 @@ private fun BuyConfirm(s: GameState, key: String, now: Long, onDismiss: () -> Un
     val snackbar = com.lifup.app.ui.LocalSnackbar.current
     val goTo = com.lifup.app.ui.LocalTabSwitcher.current
     val scope = rememberCoroutineScope()
-    val boughtMsg = stringResource(R.string.bought_item, name)
+    val boughtMsg = if (item?.effect == com.lifup.app.domain.ItemEffect.ADD_XP) stringResource(R.string.xp_gained, s.itemXp(item)) else stringResource(R.string.bought_item, name)
     val seeLabel = stringResource(R.string.see_in_inventory)
     ConfirmDialog(
         title = stringResource(R.string.buy_confirm_title),
@@ -125,9 +127,10 @@ private fun BuyConfirm(s: GameState, key: String, now: Long, onDismiss: () -> Un
         onConfirm = {
             act { if (shadow != null) buyShadow(id) else buyItem(id) }
             Feedback.buzz(context)
-            // Items land in the Hero tab's inventory: offer a shortcut there.
-            if (item != null) scope.launch {
-                val r = snackbar.showSnackbar(boughtMsg, actionLabel = seeLabel, duration = SnackbarDuration.Short)
+            // Kept items land in the Hero tab's inventory: offer a shortcut there. Chests and essences open on the spot.
+            if (item != null && item.effect != com.lifup.app.domain.ItemEffect.CHEST && item.effect != com.lifup.app.domain.ItemEffect.SHADOW_ESSENCE) scope.launch {
+                val used = item.usedOnBuy()
+                val r = snackbar.showSnackbar(boughtMsg, actionLabel = if (used) null else seeLabel, duration = SnackbarDuration.Short)
                 if (r == SnackbarResult.ActionPerformed) { HeroNav.section = 0; goTo(Tab.HERO) }
             }
         },

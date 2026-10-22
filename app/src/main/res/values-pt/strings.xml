@@ -525,7 +525,7 @@
     <string name="guide_daily_title">Missões diárias</string>
     <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para a sequência::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas: à meia-noite ganhas XP extra e um eco novo. As de evitar contam quando aguentam o dia todo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja. Se algo só cabe em alguns dias, torna-o semanal.</string>
     <string name="guide_streak_title">Sequência e descanso</string>
-    <string name="guide_streak">Sobe todos os dias::+1 por cada dia em que chegas ao mínimo.\nSegunda oportunidade::Perdeste-a? Um dia perfeito logo a seguir devolve-a (uma vez por semana).\nDias de descanso::Marca antes do meio-dia e o dia não conta nem a favor nem contra. 2 por semana no Fácil, 1 no Normal.\nProteção extra::O Escudo da Constância e alguns ecos salvam a sequência por ti.</string>
+    <string name="guide_streak">Sobe todos os dias::+1 por cada dia em que chegas ao mínimo.\nSegunda oportunidade::Perdeste-a? Um dia perfeito logo a seguir devolve-a (uma vez por semana).\nDias de descanso::Marca antes do meio-dia e o dia não conta nem a favor nem contra. 2 por semana no Fácil, 1 no Normal.\nProteção extra::O Escudo da Constância e alguns ecos salvam-na por ti. Só um salvamento por semana, contando com a segunda oportunidade.</string>
     <string name="guide_penalty_title">Penalização</string>
     <string name="guide_penalty">Perda proporcional::Perdes XP e ouro conforme o que ficou por fazer. Quase lá custa quase nada.\n24 horas::Abaixo de 50% começa uma penalização com missões extra. Fá-las e acaba mais cedo.\nBloqueio de apps::Se quiseres, as tuas apps de distração ficam bloqueadas enquanto dura.</string>
     <string name="guide_side_title">Tarefas</string>
@@ -646,6 +646,7 @@
     <string name="rigor_hard_short">Todas as missões · sem descansos · perdas a dobrar</string>
     <string name="badge_new">NOVO</string>
     <string name="bought_item">Compraste %1$s</string>
+    <string name="xp_gained">+%1$d XP</string>
     <string name="see_in_inventory">Ver</string>
     <string name="widget_focus_name">Foco</string>
     <string name="widget_focus_desc">Começa uma sessão num toque e vê o tempo a contar.</string>

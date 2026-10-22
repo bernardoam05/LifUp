@@ -652,6 +652,28 @@ class EngineTest {
         assertEquals(Rules.FLAG_MIN_DAYS, Rules.flagDays(guard, 500))
     }
 
+    @Test fun `the streak is saved at most once a week`() {
+        var s = fresh().let { it.copy(player = it.player.copy(streak = 10)) }
+        s = run(s, "2026-10-14T10:00") { addItem("escudo_constancia"); addItem("escudo_constancia") }
+        s = run(s, "2026-10-15T09:00")
+        assertEquals(10, s.player.streak)
+        assertEquals(1, s.items("escudo_constancia"))
+        // A second failed day in the same week breaks it, shield or not, and leaves no comeback.
+        s = run(s, "2026-10-16T09:00")
+        assertEquals(0, s.player.streak)
+        assertEquals(1, s.items("escudo_constancia"))
+        assertNull(s.recovery)
+    }
+
+    @Test fun `xp crystals are used on purchase and grow with level`() {
+        val crystal = content.itemById.getValue("cristal_xp")
+        val start = fresh().let { it.copy(player = it.player.copy(gold = 5000, level = 50, xp = 0)) }
+        val s = run(start, "2026-10-14T10:00") { buyItem("cristal_xp") }
+        assertEquals(0, s.items("cristal_xp"))
+        assertTrue(s.itemXp(crystal) > crystal.value)
+        assertEquals(start.itemXp(crystal), s.player.xp)
+    }
+
     @Test fun `old saves keep the targets they had`() {
         val old = fresh().let { it.copy(version = 6, player = it.player.copy(level = 30), adapt = mapOf("pool_plank" to Adapt(1))) }
         val s = run(old, "2026-10-14T10:00")

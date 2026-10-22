@@ -209,11 +209,11 @@
    "de": "XP-Kristall"
   },
   "description": {
-   "pt": "+120 XP imediatos.",
-   "en": "+120 XP instantly.",
-   "es": "+120 XP al instante.",
-   "fr": "+120 XP instantanément.",
-   "de": "+120 XP sofort."
+   "pt": "XP na hora, o equivalente a umas duas missões. Usa-se ao comprar.",
+   "en": "Instant XP, worth about two missions. Used when bought.",
+   "es": "XP al instante, lo que valen unas dos misiones. Se usa al comprar.",
+   "fr": "De l'XP tout de suite, l'équivalent d'environ deux missions. S'utilise à l'achat.",
+   "de": "Sofort XP, etwa so viel wie zwei Missionen. Wird beim Kauf benutzt."
   }
  }
 ]

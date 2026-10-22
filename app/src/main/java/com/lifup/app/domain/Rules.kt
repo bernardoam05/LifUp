@@ -196,7 +196,7 @@ object Rules {
         Passive.MIND_XP to doubleArrayOf(.05, .10, .15, .25, .38),
         Passive.EXPLORER_XP to doubleArrayOf(.05, .10, .15, .25, .38),
         Passive.BOSS_DAMAGE to doubleArrayOf(.05, .10, .15, .22, .30),
-        Passive.PENALTY_REDUCE to doubleArrayOf(.05, .10, .15, .22, .30),
+        Passive.PENALTY_REDUCE to doubleArrayOf(.04, .07, .10, .15, .22),
         Passive.SHOP_DISCOUNT to doubleArrayOf(.03, .05, .08, .12, .18),
         Passive.FOCUS_MASTERY to doubleArrayOf(.05, .10, .15, .22, .30),
         Passive.DAILY_BONUS to doubleArrayOf(5.0, 10.0, 15.0, 25.0, 40.0),
@@ -204,9 +204,16 @@ object Rules {
         Passive.ALL_BOOST to doubleArrayOf(.10, .15, .20, .30, .40),
     )
 
-    /** Days between the once-in-a-while passives (penalty immunity, streak protection) by rank, before levels. */
-    private val FLAG_DAYS = intArrayOf(14, 12, 10, 8, 7)
-    const val FLAG_MIN_DAYS = 4
+    /**
+     * Days between the once-in-a-while passives (penalty immunity, streak protection) by rank, before levels.
+     * Never more than once a week: levels bring the lower ranks there, nothing goes past it.
+     */
+    private val FLAG_DAYS = intArrayOf(14, 14, 14, 10, 7)
+    const val FLAG_MIN_DAYS = 7
+    const val MAX_BOSS_DAMAGE = 1.5
+    const val MAX_PENALTY_REDUCE = 0.5
+    const val MAX_SHOP_DISCOUNT = 0.3
+    const val MAX_FOCUS_MASTERY = 0.5
 
     fun isFlag(p: Passive) = p == Passive.PENALTY_IMMUNITY || p == Passive.STREAK_PROTECT
 

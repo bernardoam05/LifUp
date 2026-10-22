@@ -544,7 +544,7 @@
     <string name="guide_daily_title">Daily missions</string>
     <string name="guide_daily">Fixed and drawn::1 fixed mission plus several drawn ones that change every day.\nStreak minimum::On Normal 75% of the missions is enough. 60% on Easy, 100% on Hard.\nPerfect day::Do them all: at midnight you get bonus XP and a new echo. Avoid missions count once they last the whole day.\nDoesn\'t fit today?::Swap one drawn mission a day for free, or create your own in the Forge. If something only fits some days, make it weekly.</string>
     <string name="guide_streak_title">Streak and rest</string>
-    <string name="guide_streak">Grows every day::+1 for each day you reach the minimum.\nSecond chance::Lost it? A perfect day right after brings it back (once a week).\nRest days::Call one before noon and the day counts neither way. 2 a week on Easy, 1 on Normal.\nExtra protection::The Shield of Constancy and some echoes save your streak for you.</string>
+    <string name="guide_streak">Grows every day::+1 for each day you reach the minimum.\nSecond chance::Lost it? A perfect day right after brings it back (once a week).\nRest days::Call one before noon and the day counts neither way. 2 a week on Easy, 1 on Normal.\nExtra protection::The Shield of Constancy and some echoes save it for you. Only one save a week, second chance included.</string>
     <string name="guide_penalty_title">Penalty</string>
     <string name="guide_penalty">Proportional loss::You lose XP and gold for what was left undone. Almost there costs almost nothing.\n24 hours::Below 50% a penalty starts with extra missions. Do them and it ends early.\nApp blocking::If you want, your distracting apps stay blocked while it lasts.</string>
     <string name="guide_side_title">Side quests</string>
@@ -665,6 +665,7 @@
     <string name="rigor_hard_short">Every mission · no rest days · double losses</string>
     <string name="badge_new">NEW</string>
     <string name="bought_item">You bought %1$s</string>
+    <string name="xp_gained">+%1$d XP</string>
     <string name="see_in_inventory">See</string>
     <string name="widget_focus_name">Focus</string>
     <string name="widget_focus_desc">Start a session in one tap and watch the clock.</string>

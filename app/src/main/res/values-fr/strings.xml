@@ -525,7 +525,7 @@
     <string name="guide_daily_title">Missions quotidiennes</string>
     <string name="guide_daily">Fixes et tirées au sort::1 mission fixe et plusieurs tirées au sort, qui changent chaque jour.\nMinimum pour la série::En Normal, 75 % des missions suffisent. 60 % en Facile, 100 % en Difficile.\nJournée parfaite::Fais-les toutes : à minuit tu gagnes de l\'XP bonus et un nouvel écho. Les missions à éviter comptent si elles tiennent toute la journée.\nÇa ne passe pas aujourd\'hui ?::Change une tirée au sort par jour gratuitement, ou crée les tiennes dans la Forge. Si quelque chose ne tient que certains jours, rends-le hebdomadaire.</string>
     <string name="guide_streak_title">Série et repos</string>
-    <string name="guide_streak">Monte chaque jour::+1 pour chaque jour où tu atteins le minimum.\nSeconde chance::Perdue ? Une journée parfaite juste après la ramène (une fois par semaine).\nJours de repos::Déclare-le avant midi et la journée ne compte ni pour ni contre toi. 2 par semaine en Facile, 1 en Normal.\nProtection en plus::Le Bouclier de Constance et certains échos sauvent ta série à ta place.</string>
+    <string name="guide_streak">Monte chaque jour::+1 pour chaque jour où tu atteins le minimum.\nSeconde chance::Perdue ? Une journée parfaite juste après la ramène (une fois par semaine).\nJours de repos::Déclare-le avant midi et la journée ne compte ni pour ni contre toi. 2 par semaine en Facile, 1 en Normal.\nProtection en plus::Le Bouclier de Constance et certains échos la sauvent à ta place. Un seul sauvetage par semaine, seconde chance comprise.</string>
     <string name="guide_penalty_title">Pénalité</string>
     <string name="guide_penalty">Perte proportionnelle::Tu perds de l\'XP et de l\'or selon ce qui reste à faire. Presque réussi ne coûte presque rien.\n24 heures::Sous 50 %, une pénalité démarre avec des missions en plus. Fais-les et elle se termine plus tôt.\nBlocage d\'apps::Si tu veux, tes apps qui distraient restent bloquées pendant la pénalité.</string>
     <string name="guide_side_title">Tâches</string>
@@ -646,6 +646,7 @@
     <string name="rigor_hard_short">Toutes les missions · aucun repos · pertes doublées</string>
     <string name="badge_new">NOUVEAU</string>
     <string name="bought_item">Tu as acheté %1$s</string>
+    <string name="xp_gained">+%1$d XP</string>
     <string name="see_in_inventory">Voir</string>
     <string name="widget_focus_name">Focus</string>
     <string name="widget_focus_desc">Lance une session en un geste et suis le temps.</string>

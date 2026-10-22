@@ -116,13 +116,17 @@ private fun Tx.setStreak(value: Int) {
     }
 }
 
-/** Returns the penalty summary and, if the streak survived, what saved it. */
+/** Returns the penalty summary and, if the streak survived, what saved it. Immunity spares the losses, not the streak. */
 private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<PenaltyInfo, String?> {
-    tryCooldownPassive(Passive.PENALTY_IMMUNITY)?.let { shadow ->
+    val info = tryCooldownPassive(Passive.PENALTY_IMMUNITY)?.let { shadow ->
         toast(ToastKind.PASSIVE_FIRED, shadow.id)
         squadAdded(SquadGain(saves = 1))
-        return PenaltyInfo(failed, total, 0, 0, 0, absorbedBy = shadow.id) to shadow.id
-    }
+        PenaltyInfo(failed, total, 0, 0, 0, absorbedBy = shadow.id)
+    } ?: penalize(failed, total, ratio)
+    return info to saveStreak()
+}
+
+private fun Tx.penalize(failed: Int, total: Int, ratio: Double): PenaltyInfo {
     val rigor = s.settings.rigor
     count(StatKey.PENALTIES_TAKEN)
     val mult = when (rigor) { Rigor.EASY -> 0.3; Rigor.NORMAL -> 1.0; Rigor.HARD -> 2.0 }
@@ -151,21 +155,29 @@ private fun Tx.applyFailure(failed: Int, total: Int, ratio: Double): Pair<Penalt
         s = s.copy(penalty = Penalty(active = true, quests = quests, blockStart = ctx.now, blockEnd = ctx.now + Rules.PENALTY_MS), nextId = s.nextId + 1)
     }
 
-    var savedBy: String? = null
+    return PenaltyInfo(failed, total, xpActuallyLost, goldLost, quests.size)
+}
+
+/**
+ * A failed day breaks the streak unless a guarding echo or the shield saves it. Only one save a week,
+ * the comeback included (a perfect day right after), so protections can't stack into skipping half the week.
+ */
+private fun Tx.saveStreak(): String? {
     val streak = s.player.streak
-    if (streak > 0) {
-        val shadow = tryCooldownPassive(Passive.STREAK_PROTECT)
-        when {
-            shadow != null -> { savedBy = shadow.id; toast(ToastKind.PASSIVE_FIRED, shadow.id); squadAdded(SquadGain(saves = 1)) }
-            s.items("escudo_constancia") > 0 -> { addItem("escudo_constancia", -1); count(StatKey.ITEMS_USED); savedBy = "escudo_constancia" }
-            else -> {
-                setStreak(0)
-                // Once a week, a perfect day right after brings the streak back.
-                if (s.recoveryWeek != ctx.weekKey) s = s.copy(recovery = StreakRecovery(streak, ctx.todayKey))
-            }
-        }
+    if (streak <= 0) return null
+    val spare = s.recoveryWeek != ctx.weekKey
+    val saved = if (!spare) null else tryCooldownPassive(Passive.STREAK_PROTECT)?.let { shadow ->
+        toast(ToastKind.PASSIVE_FIRED, shadow.id)
+        squadAdded(SquadGain(saves = 1))
+        shadow.id
+    } ?: "escudo_constancia".takeIf { s.items(it) > 0 }?.also { addItem(it, -1); count(StatKey.ITEMS_USED) }
+    if (saved != null) {
+        s = s.copy(recoveryWeek = ctx.weekKey)
+        return saved
     }
-    return PenaltyInfo(failed, total, xpActuallyLost, goldLost, quests.size) to savedBy
+    setStreak(0)
+    if (spare) s = s.copy(recovery = StreakRecovery(streak, ctx.todayKey))
+    return null
 }
 
 /** Ends a penalty once its 24 hours are over. */

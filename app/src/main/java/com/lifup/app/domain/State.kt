@@ -365,6 +365,7 @@ data class GameState(
     val restUsed: Int = 0,
     /** A streak lost yesterday that a perfect [StreakRecovery.day] brings back. */
     val recovery: StreakRecovery? = null,
+    /** The week the streak was last saved (echo, shield or comeback): one save a week. */
     val recoveryWeek: String = "",
     val missionStats: Map<String, MissionStat> = emptyMap(),
     /** Each mission's recent days: epoch day, positive when kept and negative when missed (newest last). */

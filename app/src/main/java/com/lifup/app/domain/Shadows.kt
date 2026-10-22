@@ -54,10 +54,12 @@ fun GameState.passives(content: Content, now: Long): Passives {
         trainingXp = v(Passive.TRAINING_XP),
         mindXp = v(Passive.MIND_XP),
         explorerXp = v(Passive.EXPLORER_XP),
-        bossDamage = v(Passive.BOSS_DAMAGE),
-        penaltyReduce = v(Passive.PENALTY_REDUCE).coerceAtMost(0.9),
-        shopDiscount = v(Passive.SHOP_DISCOUNT).coerceAtMost(0.5),
-        focusMastery = v(Passive.FOCUS_MASTERY).coerceAtMost(1.0),
+        // Stacked echoes stop here: a penalty still costs half, the shop at least 70%, focus minutes count
+        // at most 1.5×, and the boss still takes a week's work.
+        bossDamage = v(Passive.BOSS_DAMAGE).coerceAtMost(Rules.MAX_BOSS_DAMAGE),
+        penaltyReduce = v(Passive.PENALTY_REDUCE).coerceAtMost(Rules.MAX_PENALTY_REDUCE),
+        shopDiscount = v(Passive.SHOP_DISCOUNT).coerceAtMost(Rules.MAX_SHOP_DISCOUNT),
+        focusMastery = v(Passive.FOCUS_MASTERY).coerceAtMost(Rules.MAX_FOCUS_MASTERY),
         dailyBonus = v(Passive.DAILY_BONUS),
         luck = v(Passive.SHADOW_LUCK).coerceAtMost(1.0),
         immunity = immunity,

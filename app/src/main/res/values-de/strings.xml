@@ -543,7 +543,7 @@
     <string name="guide_daily_title">Tägliche Missionen</string>
     <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nSerien-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle: Um Mitternacht gibt es Bonus-XP und ein neues Echo. Vermeiden-Missionen zählen, wenn sie den ganzen Tag halten.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede. Passt etwas nur an manchen Tagen, mach es wöchentlich.</string>
     <string name="guide_streak_title">Serie und Ruhetage</string>
-    <string name="guide_streak">Wächst jeden Tag::+1 für jeden Tag, an dem du das Minimum erreichst.\nZweite Chance::Verloren? Ein perfekter Tag direkt danach holt sie zurück (einmal pro Woche).\nRuhetage::Melde ihn vor Mittag an und der Tag zählt weder dafür noch dagegen. 2 pro Woche auf Leicht, 1 auf Normal.\nExtra-Schutz::Der Schild der Beständigkeit und manche Echos retten deine Serie für dich.</string>
+    <string name="guide_streak">Wächst jeden Tag::+1 für jeden Tag, an dem du das Minimum erreichst.\nZweite Chance::Verloren? Ein perfekter Tag direkt danach holt sie zurück (einmal pro Woche).\nRuhetage::Melde ihn vor Mittag an und der Tag zählt weder dafür noch dagegen. 2 pro Woche auf Leicht, 1 auf Normal.\nExtra-Schutz::Der Schild der Beständigkeit und manche Echos retten sie für dich. Nur eine Rettung pro Woche, die zweite Chance eingeschlossen.</string>
     <string name="guide_penalty_title">Strafe</string>
     <string name="guide_penalty">Anteiliger Verlust::Du verlierst XP und Gold je nach dem, was offen blieb. Fast geschafft kostet fast nichts.\n24 Stunden::Unter 50 % beginnt eine Strafe mit Extra-Missionen. Erledige sie und sie endet früher.\nApp-Sperre::Wenn du willst, bleiben deine Ablenkungs-Apps gesperrt, solange sie dauert.</string>
     <string name="guide_side_title">Aufgaben</string>
@@ -664,6 +664,7 @@
     <string name="rigor_hard_short">Alle Missionen · keine Ruhetage · doppelte Verluste</string>
     <string name="badge_new">NEU</string>
     <string name="bought_item">Gekauft: %1$s</string>
+    <string name="xp_gained">+%1$d XP</string>
     <string name="see_in_inventory">Ansehen</string>
     <string name="widget_focus_name">Fokus</string>
     <string name="widget_focus_desc">Starte eine Sitzung mit einem Tipp und sieh die Zeit.</string>

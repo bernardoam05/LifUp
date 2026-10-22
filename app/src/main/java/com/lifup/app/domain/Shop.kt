@@ -24,8 +24,15 @@ fun Tx.buyItem(id: String): Boolean {
     if (left != null) s = s.copy(shop = s.shop.copy(stock = s.shop.stock + (id to left - 1)))
     addItem(id)
     count(StatKey.GOLD_SPENT, cost.toLong())
+    if (item.usedOnBuy()) useItem(id)
     return true
 }
+
+/** Nothing to gain by keeping these: XP is XP now, and a chest or an essence is bought to be opened. */
+fun ItemDef.usedOnBuy() = effect == ItemEffect.ADD_XP || effect == ItemEffect.CHEST || effect == ItemEffect.SHADOW_ESSENCE
+
+/** An XP item's worth, grown like mission XP so it doesn't fade with level. */
+fun GameState.itemXp(item: ItemDef): Int = (item.value * Rules.xpMultiplier(player.level)).roundToInt()
 
 fun Tx.buyShadow(id: String): Boolean {
     val def = content.shadowById[id] ?: return false
@@ -69,7 +76,7 @@ fun Tx.useItem(id: String, questId: String? = null): Boolean {
             return swapQuest(questId ?: return false)
         }
         ItemEffect.CHEST -> { openChest(); true }
-        ItemEffect.ADD_XP -> { gainXp(item.value.roundToInt(), hitsBoss = false, boosted = false); true }
+        ItemEffect.ADD_XP -> { gainXp(s.itemXp(item), hitsBoss = false, boosted = false); true }
         ItemEffect.STREAK_SHIELD, ItemEffect.SPELL_BREAKER -> false
     }
     if (ok) {
@@ -84,11 +91,12 @@ private fun Tx.openChest() {
     val roll = ctx.rng.nextDouble()
     when {
         roll < 0.55 -> {
-            val gold = gainGold(((150 + ctx.rng.nextInt(251)) * luck).roundToInt(), boosted = false)
+            // Chest gold and XP grow with level like missions' do.
+            val gold = gainGold(((150 + ctx.rng.nextInt(251)) * luck * Rules.tierMultiplier(s.player.level)).roundToInt(), boosted = false)
             reward { Reward.ChestOpened(it, gold, 0, null) }
         }
         roll < 0.85 -> {
-            val xp = gainXp(100 + ctx.rng.nextInt(201), hitsBoss = false, boosted = false)
+            val xp = gainXp(((100 + ctx.rng.nextInt(201)) * Rules.xpMultiplier(s.player.level)).roundToInt(), hitsBoss = false, boosted = false)
             reward { Reward.ChestOpened(it, 0, xp, null) }
         }
         else -> {
