@@ -97,7 +97,10 @@ private fun Tx.closeDay(day: LocalDate) {
     // Days skipped entirely (device off, app never ran) break the streak for good.
     val gap = ChronoUnit.DAYS.between(day, ctx.today)
     // An echo that absorbs the penalty saves the load as it saves the streak.
-    updateLoad((passed || penaltyInfo?.absorbedBy != null) && !rest, perfect && !rest, rest, skipped = gap > 1)
+    updateLoad(
+        (passed || penaltyInfo?.absorbedBy != null) && !rest, perfect && !rest, rest, skipped = gap > 1,
+        restored = restored, held = streakSavedBy != null && penaltyInfo?.absorbedBy == null,
+    )
     if (gap > 1 && !rest && s.player.streak > 0) setStreak(0)
     if (gap > 1) s = s.copy(recovery = null)
 

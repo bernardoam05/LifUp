@@ -42,6 +42,14 @@ class LoadTest {
         assertEquals(Rules.BASE_DRAWN, play(up + "MM").drawnCount())
     }
 
+    @Test fun `a day that restores the streak also restores the run towards the next mission`() {
+        // 4 kept, a miss, the perfect recovery day and two more: the streak is back to 7, and so is the run.
+        val s = play("KKKKMKKK")
+        assertEquals(7, s.player.streak)
+        assertEquals(Rules.BASE_DRAWN + 1, s.drawnCount())
+        assertEquals(Rules.BASE_DRAWN, play("KKKKMKK").drawnCount()) // 6 so far
+    }
+
     @Test fun `never below the base and never above the day's ceiling`() {
         assertEquals(Rules.BASE_DRAWN, play("MMMM").drawnCount())
         val s = play("K".repeat(7 * 6))
