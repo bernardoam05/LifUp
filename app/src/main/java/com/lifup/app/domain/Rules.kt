@@ -36,6 +36,9 @@ object Rules {
     const val WEEK_GOAL_GOLD_MULT = 2
     /** Side quests that pay XP/gold per day; more can be ticked, as a plain to-do list. */
     const val SIDE_REWARDS_PER_DAY = 5
+    /** What a side quest pays before level scaling: a token, since nothing checks it was done. */
+    const val SIDE_XP = 12
+    const val SIDE_GOLD = 3
     const val FREE_SWAPS_PER_DAY = 1
     const val MAX_PORTALS_PER_DAY = 2
     /** Hours a portal can open in (rolled once an hour). */
@@ -46,7 +49,16 @@ object Rules {
     const val MIN_PER_KM = 10.0
     const val STEPS_PER_MIN = 100.0
     const val DEFAULT_TASK_MIN = 15.0
-    const val BOSS_CHALLENGE_DAMAGE = 0.35
+    /** Each of the week's two boss challenges takes this share of its health. */
+    const val BOSS_CHALLENGE_DAMAGE = 0.15
+    const val BOSS_CHALLENGES = 2
+    /** The second challenge arrives on this day, and its notification at this hour. */
+    val BOSS_SECOND_DAY: DayOfWeek = DayOfWeek.THURSDAY
+    const val BOSS_SECOND_HOUR = 9
+    /** Days of full daily missions that, with both challenges, bring the boss down. */
+    const val BOSS_HP_DAYS = 4.5
+    /** Extra missions hit the boss for this share of their XP. */
+    const val EXTRA_BOSS_SHARE = 0.5
     const val DAY_MS = 24L * 3_600_000
 
     const val MAX_LEVEL = 1000

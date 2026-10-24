@@ -29,6 +29,25 @@
    "es": "Usa un temporizador de intervalos (busca \"Tabata timer\"). Elige un ejercicio que puedas mantener con buena técnica.",
    "fr": "Utilise un minuteur d'intervalles (cherche « Tabata timer »). Choisis un exercice que tu tiens avec une bonne technique.",
    "de": "Nutze einen Intervall-Timer (such nach „Tabata Timer“). Wähle eine Übung, die du sauber durchhältst."
+  },
+  "second": {
+   "type": "FOCUS",
+   "target": 25,
+   "unit": "min",
+   "description": {
+    "pt": "Pino: ativa o modo Foco por {target} min e treina o pino com um tutorial — ou a progressão seguinte que conseguires (contra a parede, pino de cabeça, corvo).",
+    "en": "Handstand: start Focus for {target} min and train the handstand with a tutorial — or the next progression you can manage (against the wall, headstand, crow pose).",
+    "es": "Pino: activa el modo Foco {target} min y entrena el pino con un tutorial, o la siguiente progresión que puedas (contra la pared, de cabeza, el cuervo).",
+    "fr": "Équilibre : lance le Focus pendant {target} min et travaille l'équilibre sur les mains avec un tutoriel — ou la progression suivante que tu peux (contre le mur, sur la tête, le corbeau).",
+    "de": "Handstand: Starte den Fokus für {target} Min. und trainier den Handstand mit einem Tutorial – oder die nächste Stufe, die du schaffst (an der Wand, Kopfstand, Krähe)."
+   },
+   "tip": {
+    "pt": "Aquece bem os pulsos antes. Começa de frente para a parede e sobe com os pés; a queda segura é rodar para o lado.",
+    "en": "Warm up your wrists first. Start facing the wall and walk your feet up; the safe way down is to turn to the side.",
+    "es": "Calienta bien las muñecas antes. Empieza de cara a la pared subiendo con los pies; la caída segura es girar hacia un lado.",
+    "fr": "Échauffe bien les poignets avant. Commence face au mur en montant avec les pieds ; pour tomber sans risque, pivote sur le côté.",
+    "de": "Wärm vorher die Handgelenke gut auf. Beginn mit dem Gesicht zur Wand und lauf mit den Füßen hoch; sicher raus kommst du, indem du zur Seite drehst."
+   }
   }
  },
  {
@@ -61,6 +80,25 @@
    "es": "Escribe como para alguien de 12 años. Donde tengas que parar a pensar, ahí es donde debes estudiar.",
    "fr": "Écris comme pour un enfant de 12 ans. Là où tu dois t'arrêter pour réfléchir, c'est là qu'il faut étudier.",
    "de": "Schreib, als wäre es für eine 12-Jährige. Wo du anhalten und nachdenken musst, musst du noch lernen."
+  },
+  "second": {
+   "type": "TRAINING",
+   "target": 10,
+   "unit": "",
+   "description": {
+    "pt": "Rastejar de aranha: {target} séries de 20 s de bear crawl seguidas de 5 flexões \"spider-man\" (joelho ao cotovelo em cada descida).",
+    "en": "Spider crawl: {target} sets of 20 s of bear crawl followed by 5 spider-man push-ups (knee to elbow on each way down).",
+    "es": "Arrastre de araña: {target} series de 20 s de bear crawl seguidas de 5 flexiones \"spider-man\" (rodilla al codo en cada bajada).",
+    "fr": "Rampe d'araignée : {target} séries de 20 s de bear crawl suivies de 5 pompes « spider-man » (genou au coude à chaque descente).",
+    "de": "Spinnengang: {target} Sätze aus 20 s Bear Crawl und danach 5 Spider-Man-Liegestützen (Knie zum Ellbogen bei jedem Absenken)."
+   },
+   "tip": {
+    "pt": "No bear crawl os joelhos ficam a dois dedos do chão e as costas direitas. Devagar e controlado vale mais do que rápido.",
+    "en": "In the bear crawl, keep your knees two fingers off the floor and your back flat. Slow and controlled beats fast.",
+    "es": "En el bear crawl las rodillas van a dos dedos del suelo y la espalda recta. Lento y controlado vale más que rápido.",
+    "fr": "Dans le bear crawl, les genoux restent à deux doigts du sol et le dos bien plat. Lent et contrôlé vaut mieux que rapide.",
+    "de": "Beim Bear Crawl bleiben die Knie zwei Finger über dem Boden und der Rücken gerade. Langsam und kontrolliert schlägt schnell."
+   }
   }
  },
  {
@@ -93,6 +131,25 @@
    "es": "Abre el registro de distancia de la misión antes de salir. En cada cruce, gira hacia donde nunca fuiste.",
    "fr": "Ouvre le suivi de distance de la mission avant de partir. À chaque carrefour, tourne là où tu n'es jamais allé.",
    "de": "Öffne vor dem Losgehen die Streckenerfassung der Mission. Bieg an jeder Kreuzung dorthin ab, wo du nie warst."
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "Sabedoria da colónia: aprende com alguém que já chegou onde queres chegar — uma conversa, uma entrevista, uma palestra ou um vídeo longo de alguém experiente. Anota 3 lições e escolhe 1 para aplicar esta semana.",
+    "en": "Wisdom of the colony: learn from someone who's already where you want to be — a conversation, an interview, a talk or a long video from someone experienced. Write down 3 lessons and pick 1 to apply this week.",
+    "es": "Sabiduría de la colonia: aprende de alguien que ya ha llegado a donde quieres llegar: una conversación, una entrevista, una charla o un vídeo largo de alguien con experiencia. Apunta 3 lecciones y elige 1 para aplicar esta semana.",
+    "fr": "Sagesse de la colonie : apprends de quelqu'un qui est déjà là où tu veux aller — une conversation, une interview, une conférence ou une longue vidéo d'une personne expérimentée. Note 3 leçons et choisis-en 1 à appliquer cette semaine.",
+    "de": "Weisheit der Kolonie: Lern von jemandem, der schon dort ist, wo du hinwillst – ein Gespräch, ein Interview, ein Vortrag oder ein langes Video von jemand Erfahrenem. Schreib 3 Lektionen auf und wähl 1, die du diese Woche umsetzt."
+   },
+   "tip": {
+    "pt": "Escolhe alguém com resultados no que te interessa, não só fama. Procura \"entrevista\" ou \"podcast\" com o nome da pessoa e ouve com um caderno ao lado.",
+    "en": "Pick someone with results in what interests you, not just fame. Search their name plus \"interview\" or \"podcast\" and listen with a notebook beside you.",
+    "es": "Elige a alguien con resultados en lo que te interesa, no solo fama. Busca su nombre con «entrevista» o «podcast» y escucha con una libreta al lado.",
+    "fr": "Choisis quelqu'un qui a des résultats dans ce qui t'intéresse, pas seulement de la notoriété. Cherche son nom avec « interview » ou « podcast » et écoute avec un carnet à côté.",
+    "de": "Wähl jemanden mit Ergebnissen in deinem Interessengebiet, nicht nur mit Ruhm. Such den Namen plus „Interview“ oder „Podcast“ und hör mit einem Notizbuch daneben zu."
+   }
   }
  },
  {
@@ -125,6 +182,25 @@
    "es": "Ej.: busca en YouTube \"yoga para principiantes\" o \"calistenia principiante 20 min\" y síguelo de principio a fin.",
    "fr": "Ex. : cherche sur YouTube « yoga débutant » ou « calisthénie débutant 20 min » et suis-le du début à la fin.",
    "de": "Z. B. such auf YouTube „Yoga für Anfänger“ oder „Calisthenics Anfänger 20 Min“ und mach es von Anfang bis Ende mit."
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "Pedra angular: escreve os teus 5 valores mais importantes, por ordem, e uma decisão desta semana que os respeite.",
+    "en": "Cornerstone: write down your 5 most important values, in order, and one decision this week that honours them.",
+    "es": "Piedra angular: escribe tus 5 valores más importantes, en orden, y una decisión de esta semana que los respete.",
+    "fr": "Pierre angulaire : écris tes 5 valeurs les plus importantes, dans l'ordre, et une décision de cette semaine qui les respecte.",
+    "de": "Grundstein: Schreib deine 5 wichtigsten Werte der Reihe nach auf und eine Entscheidung dieser Woche, die sie achtet."
+   },
+   "tip": {
+    "pt": "Se não sabes por onde começar, pensa em quem admiras e porquê: o que admiras nos outros diz muito do que valorizas.",
+    "en": "If you don't know where to start, think of who you admire and why: what you admire in others says a lot about what you value.",
+    "es": "Si no sabes por dónde empezar, piensa en a quién admiras y por qué: lo que admiras en otros dice mucho de lo que valoras.",
+    "fr": "Si tu ne sais pas par où commencer, pense à qui tu admires et pourquoi : ce que tu admires chez les autres en dit long sur ce que tu valorises.",
+    "de": "Wenn du nicht weißt, wo anfangen: Denk daran, wen du bewunderst und warum. Was du an anderen bewunderst, sagt viel über deine Werte."
+   }
   }
  },
  {
@@ -157,6 +233,25 @@
    "es": "Empieza despacio con el metrónomo (60 bpm) y solo sube cuando los cambios de acorde salgan limpios.",
    "fr": "Commence lentement au métronome (60 bpm) et n'accélère que quand les changements d'accords sont propres.",
    "de": "Fang langsam mit dem Metronom an (60 bpm) und werde erst schneller, wenn die Akkordwechsel sauber sind."
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "Voz: canta uma música inteira em voz alta, grava-te e ouve a gravação até ao fim, sem a apagar a meio.",
+    "en": "Voice: sing a whole song out loud, record yourself and listen to the recording all the way through, without deleting it halfway.",
+    "es": "Voz: canta una canción entera en voz alta, grábate y escucha la grabación hasta el final, sin borrarla a medias.",
+    "fr": "Voix : chante une chanson entière à voix haute, enregistre-toi et écoute l'enregistrement jusqu'au bout, sans l'effacer en cours de route.",
+    "de": "Stimme: Sing einen ganzen Song laut, nimm dich auf und hör dir die Aufnahme bis zum Ende an, ohne sie mittendrin zu löschen."
+   },
+   "tip": {
+    "pt": "Ninguém gosta de ouvir a própria voz da primeira vez. Ouvir até ao fim é o desafio; cantar bem não é.",
+    "en": "Nobody likes hearing their own voice the first time. Listening to the end is the challenge; singing well isn't.",
+    "es": "A nadie le gusta oír su propia voz la primera vez. Escuchar hasta el final es el reto; cantar bien no.",
+    "fr": "Personne n'aime entendre sa propre voix la première fois. Écouter jusqu'au bout, c'est ça le défi ; bien chanter, non.",
+    "de": "Niemand hört seine eigene Stimme beim ersten Mal gern. Bis zum Ende zuzuhören ist die Challenge, schön singen nicht."
+   }
   }
  },
  {
@@ -189,6 +284,25 @@
    "es": "Ej.: un mazo de palabras frecuentes en Anki o Drops. Comprueba las frases en DeepL o LanguageTool.",
    "fr": "Ex. : un paquet de mots fréquents dans Anki ou Drops. Vérifie tes phrases avec DeepL ou LanguageTool.",
    "de": "Z. B. ein Deck mit häufigen Wörtern in Anki oder Drops. Prüf deine Sätze mit DeepL oder LanguageTool."
+  },
+  "second": {
+   "type": "FOCUS",
+   "target": 20,
+   "unit": "min",
+   "description": {
+    "pt": "Imersão: ativa o modo Foco por {target} min e vê ou ouve conteúdo só no idioma que estás a aprender, sem legendas na tua língua. Anota 10 expressões novas.",
+    "en": "Immersion: start Focus for {target} min and watch or listen to content only in the language you're learning, without subtitles in your own. Write down 10 new expressions.",
+    "es": "Inmersión: activa el modo Foco {target} min y mira o escucha contenido solo en el idioma que aprendes, sin subtítulos en tu lengua. Apunta 10 expresiones nuevas.",
+    "fr": "Immersion : lance le Focus pendant {target} min et regarde ou écoute du contenu uniquement dans la langue que tu apprends, sans sous-titres dans la tienne. Note 10 expressions nouvelles.",
+    "de": "Eintauchen: Starte den Fokus für {target} Min. und schau oder hör Inhalte nur in der Sprache, die du lernst, ohne Untertitel in deiner. Notier 10 neue Ausdrücke."
+   },
+   "tip": {
+    "pt": "Legendas no próprio idioma ajudam no início. Escolhe algo de que gostavas de ver de qualquer forma.",
+    "en": "Subtitles in the same language help at first. Pick something you'd enjoy watching anyway.",
+    "es": "Los subtítulos en el mismo idioma ayudan al principio. Elige algo que te apetecería ver de todos modos.",
+    "fr": "Des sous-titres dans la même langue aident au début. Choisis quelque chose que tu aurais envie de regarder de toute façon.",
+    "de": "Untertitel in derselben Sprache helfen am Anfang. Nimm etwas, das du ohnehin gern schauen würdest."
+   }
   }
  },
  {
@@ -221,6 +335,25 @@
    "es": "\"Desde cero\" significa sin precocinados. Algo sencillo cuenta: arroz, verduras salteadas y una proteína.",
    "fr": "« Fait maison » veut dire sans plats préparés. Simple, ça compte : riz, légumes sautés et une protéine.",
    "de": "„Selbst gemacht“ heißt ohne Fertigprodukte. Einfaches zählt: Reis, gebratenes Gemüse und Eiweiß."
+  },
+  "second": {
+   "type": "FOCUS",
+   "target": 30,
+   "unit": "min",
+   "description": {
+    "pt": "Faca afiada: ativa o modo Foco por {target} min e treina técnica de faca com um tutorial — picar cebola, juliana, brunoise — e usa o que cortaste numa refeição.",
+    "en": "Sharp knife: start Focus for {target} min and practise knife skills with a tutorial — dicing an onion, julienne, brunoise — and use what you cut in a meal.",
+    "es": "Cuchillo afilado: activa el modo Foco {target} min y practica técnica de cuchillo con un tutorial —picar cebolla, juliana, brunoise— y usa lo que cortes en una comida.",
+    "fr": "Couteau affûté : lance le Focus pendant {target} min et travaille la technique du couteau avec un tutoriel — émincer un oignon, julienne, brunoise — et utilise ce que tu as coupé dans un repas.",
+    "de": "Scharfes Messer: Starte den Fokus für {target} Min. und übe Messertechnik mit einem Tutorial – Zwiebel würfeln, Julienne, Brunoise – und verwende das Geschnittene in einer Mahlzeit."
+   },
+   "tip": {
+    "pt": "Dedos dobrados em garra, a faca encosta-se aos nós dos dedos. Uma faca afiada é mais segura do que uma romba.",
+    "en": "Curl your fingers into a claw so the blade rests against your knuckles. A sharp knife is safer than a blunt one.",
+    "es": "Dedos doblados en garra, la hoja apoyada en los nudillos. Un cuchillo afilado es más seguro que uno romo.",
+    "fr": "Doigts repliés en griffe, la lame contre les phalanges. Un couteau affûté est plus sûr qu'un couteau émoussé.",
+    "de": "Finger zur Kralle krümmen, die Klinge liegt an den Knöcheln an. Ein scharfes Messer ist sicherer als ein stumpfes."
+   }
   }
  },
  {
@@ -253,6 +386,25 @@
    "es": "Usa una casa que conozcas bien: 12 lugares en orden (puerta, sofá, mesa…). Une cada cosa a un lugar con una imagen absurda.",
    "fr": "Prends une maison que tu connais bien : 12 endroits dans l'ordre (porte, canapé, table…). Associe chaque élément à un endroit avec une image absurde.",
    "de": "Nimm ein Haus, das du gut kennst: 12 Orte der Reihe nach (Tür, Sofa, Tisch…). Verknüpf jedes Element mit einem Ort durch ein absurdes Bild."
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "De cor: memoriza um poema ou um discurso com pelo menos 12 linhas e recita-o do princípio ao fim sem olhar.",
+    "en": "By heart: memorise a poem or a speech of at least 12 lines and recite it from start to finish without looking.",
+    "es": "De memoria: memoriza un poema o un discurso de al menos 12 líneas y recítalo de principio a fin sin mirar.",
+    "fr": "Par cœur : apprends un poème ou un discours d'au moins 12 lignes et récite-le du début à la fin sans regarder.",
+    "de": "Auswendig: Lern ein Gedicht oder eine Rede mit mindestens 12 Zeilen und trag sie von Anfang bis Ende vor, ohne hinzuschauen."
+   },
+   "tip": {
+    "pt": "Aprende 2 linhas de cada vez e junta-as à anterior. Usa o palácio mental de segunda, se o fizeste.",
+    "en": "Learn 2 lines at a time and chain them to the ones before. Use Monday's memory palace, if you built one.",
+    "es": "Aprende 2 líneas cada vez y únelas a las anteriores. Usa el palacio mental del lunes, si lo hiciste.",
+    "fr": "Apprends 2 lignes à la fois et enchaîne-les aux précédentes. Utilise le palais mental de lundi, si tu l'as construit.",
+    "de": "Lern jeweils 2 Zeilen und häng sie an die vorigen an. Nutz den Gedächtnispalast vom Montag, falls du einen gebaut hast."
+   }
   }
  },
  {
@@ -285,6 +437,25 @@
    "es": "Ej.: una clase gratis en YouTube, Coursera o Khan Academy sobre algo de lo que no sepas nada.",
    "fr": "Ex. : un cours gratuit sur YouTube, Coursera ou Khan Academy sur un sujet que tu ne connais pas du tout.",
    "de": "Z. B. ein kostenloser Kurs auf YouTube, Coursera oder Khan Academy über etwas, von dem du keine Ahnung hast."
+  },
+  "second": {
+   "type": "FOCUS",
+   "target": 30,
+   "unit": "min",
+   "description": {
+    "pt": "Pergunta grande: escolhe uma pergunta que sempre te intrigou (porque sonhamos? como funciona um avião?) e investiga {target} min em modo Foco até a saberes explicar a alguém.",
+    "en": "Big question: pick a question that has always intrigued you (why do we dream? how does a plane fly?) and dig into it for {target} min in Focus until you could explain it to someone.",
+    "es": "Gran pregunta: elige una pregunta que siempre te haya intrigado (¿por qué soñamos? ¿cómo vuela un avión?) e investígala {target} min en modo Foco hasta poder explicársela a alguien.",
+    "fr": "Grande question : choisis une question qui t'a toujours intrigué (pourquoi rêve-t-on ? comment vole un avion ?) et creuse-la {target} min en Focus jusqu'à pouvoir l'expliquer à quelqu'un.",
+    "de": "Große Frage: Such dir eine Frage aus, die dich schon immer beschäftigt hat (Warum träumen wir? Wie fliegt ein Flugzeug?), und recherchier {target} Min. im Fokus, bis du sie jemandem erklären kannst."
+   },
+   "tip": {
+    "pt": "Começa por um vídeo de divulgação e depois vai à fonte (Wikipédia, um artigo). No fim, explica-o em 3 frases.",
+    "en": "Start with an explainer video, then go to a source (Wikipedia, an article). At the end, explain it in 3 sentences.",
+    "es": "Empieza con un vídeo divulgativo y luego ve a la fuente (Wikipedia, un artículo). Al final, explícalo en 3 frases.",
+    "fr": "Commence par une vidéo de vulgarisation, puis va à la source (Wikipédia, un article). À la fin, explique-le en 3 phrases.",
+    "de": "Fang mit einem Erklärvideo an und geh dann zur Quelle (Wikipedia, ein Artikel). Erklär es am Ende in 3 Sätzen."
+   }
   }
  },
  {
@@ -317,6 +488,25 @@
    "es": "Mira a tu alrededor: un cable sin soporte, un cajón desordenado, una prenda rota. Usa lo que ya tienes en casa.",
    "fr": "Regarde autour de toi : un câble sans support, un tiroir en désordre, un vêtement déchiré. Utilise ce que tu as déjà.",
    "de": "Schau dich um: ein Kabel ohne Halter, eine unordentliche Schublade, ein gerissenes Kleidungsstück. Nutze, was du schon hast."
+  },
+  "second": {
+   "type": "FOCUS",
+   "target": 30,
+   "unit": "min",
+   "description": {
+    "pt": "Olho de artista: ativa o modo Foco por {target} min e desenha algo real que tenhas à frente (uma caneca, a tua mão, a janela), mesmo que nunca tenhas desenhado.",
+    "en": "Artist's eye: start Focus for {target} min and draw something real in front of you (a mug, your hand, the window), even if you've never drawn before.",
+    "es": "Ojo de artista: activa el modo Foco {target} min y dibuja algo real que tengas delante (una taza, tu mano, la ventana), aunque nunca hayas dibujado.",
+    "fr": "Œil d'artiste : lance le Focus pendant {target} min et dessine quelque chose de réel devant toi (une tasse, ta main, la fenêtre), même si tu n'as jamais dessiné.",
+    "de": "Künstlerblick: Starte den Fokus für {target} Min. und zeichne etwas Echtes vor dir (eine Tasse, deine Hand, das Fenster), auch wenn du noch nie gezeichnet hast."
+   },
+   "tip": {
+    "pt": "Desenha o que vês, não o que sabes que lá está: olha mais para o objeto do que para o papel.",
+    "en": "Draw what you see, not what you know is there: look at the object more than at the paper.",
+    "es": "Dibuja lo que ves, no lo que sabes que hay: mira más el objeto que el papel.",
+    "fr": "Dessine ce que tu vois, pas ce que tu sais qu'il y a : regarde plus l'objet que le papier.",
+    "de": "Zeichne, was du siehst, nicht was du weißt: Schau mehr aufs Objekt als aufs Papier."
+   }
   }
  },
  {
@@ -349,6 +539,25 @@
    "es": "Encadena 6 a 8 movimientos de 1 minuto y repite el circuito. Una lista escrita evita pausas para pensar.",
    "fr": "Enchaîne 6 à 8 mouvements d'une minute et répète le circuit. Une liste écrite évite les pauses pour réfléchir.",
    "de": "Reih 6 bis 8 einminütige Bewegungen aneinander und wiederhole den Zirkel. Eine Liste verhindert Denkpausen."
+  },
+  "second": {
+   "type": "GPS",
+   "target": 5,
+   "unit": "km",
+   "description": {
+    "pt": "Contra o vento: percorre {target} km a correr, ou a alternar corrida e marcha, sem parar.",
+    "en": "Into the wind: cover {target} km running, or alternating running and walking, without stopping.",
+    "es": "Contra el viento: recorre {target} km corriendo, o alternando carrera y marcha, sin parar.",
+    "fr": "Face au vent : parcours {target} km en courant, ou en alternant course et marche, sans t'arrêter.",
+    "de": "Gegen den Wind: Leg {target} km laufend zurück, oder abwechselnd laufend und gehend, ohne stehen zu bleiben."
+   },
+   "tip": {
+    "pt": "Se ainda não aguentas correr tudo, faz 2 min a correr e 1 min a andar. Abre o registo de distância antes de sair.",
+    "en": "If you can't run it all yet, do 2 min running and 1 min walking. Start the distance log before you head out.",
+    "es": "Si aún no aguantas correrlo todo, haz 2 min corriendo y 1 min andando. Activa el registro de distancia antes de salir.",
+    "fr": "Si tu ne tiens pas encore toute la distance en courant, fais 2 min de course et 1 min de marche. Lance le suivi de distance avant de sortir.",
+    "de": "Wenn du noch nicht alles laufen kannst: 2 Min. laufen, 1 Min. gehen. Starte die Distanzmessung vor dem Losgehen."
+   }
   }
  },
  {
@@ -381,6 +590,25 @@
    "es": "Decide el recorrido en un mapa antes de salir y deja el móvil en el bolsillo con el registro de distancia activo.",
    "fr": "Choisis l'itinéraire sur une carte avant de partir et garde le téléphone en poche avec le suivi de distance actif.",
    "de": "Leg die Route vorher auf einer Karte fest und lass das Handy mit laufender Streckenerfassung in der Tasche."
+  },
+  "second": {
+   "type": "TRAINING",
+   "target": 100,
+   "unit": "reps",
+   "description": {
+    "pt": "Veneno: {target} lunges alternados — com salto, se aguentares.",
+    "en": "Venom: {target} alternating lunges — jumping ones, if you can take it.",
+    "es": "Veneno: {target} zancadas alternas, con salto si aguantas.",
+    "fr": "Venin : {target} fentes alternées — sautées, si tu tiens le coup.",
+    "de": "Gift: {target} wechselnde Ausfallschritte – mit Sprung, wenn du es schaffst."
+   },
+   "tip": {
+    "pt": "Joelho de trás quase a tocar o chão e o da frente por cima do tornozelo. Séries de 20 com pausas curtas.",
+    "en": "Back knee almost touching the floor, front knee over the ankle. Sets of 20 with short breaks.",
+    "es": "Rodilla de atrás casi tocando el suelo y la de delante sobre el tobillo. Series de 20 con pausas cortas.",
+    "fr": "Genou arrière presque au sol, genou avant au-dessus de la cheville. Séries de 20 avec de courtes pauses.",
+    "de": "Hinteres Knie fast am Boden, vorderes Knie über dem Knöchel. Sätze zu 20 mit kurzen Pausen."
+   }
   }
  },
  {
@@ -413,6 +641,25 @@
    "es": "Escribe el problema en una frase, enumera argumentos a favor y en contra, y termina con \"Decidí … y el primer paso es …\".",
    "fr": "Écris le problème en une phrase, liste les arguments pour et contre, et termine par « J'ai décidé … et la première étape est … ».",
    "de": "Schreib das Problem in einem Satz auf, liste Pro und Contra und ende mit „Ich habe entschieden … und der erste Schritt ist …“."
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "Advogado do diabo: escolhe uma opinião forte que tens e escreve o melhor argumento possível contra ela, como se fosses o teu maior adversário.",
+    "en": "Devil's advocate: pick a strong opinion you hold and write the best possible argument against it, as if you were your toughest opponent.",
+    "es": "Abogado del diablo: elige una opinión fuerte que tengas y escribe el mejor argumento posible en contra, como si fueras tu mayor adversario.",
+    "fr": "Avocat du diable : choisis une opinion forte que tu as et écris le meilleur argument possible contre elle, comme si tu étais ton pire adversaire.",
+    "de": "Advocatus Diaboli: Nimm eine feste Meinung von dir und schreib das bestmögliche Argument dagegen, als wärst du dein härtester Gegner."
+   },
+   "tip": {
+    "pt": "Só conta se alguém do outro lado o lesse e dissesse \"é mesmo isso que penso\". Mudar de ideias não é obrigatório; perceber é.",
+    "en": "It only counts if someone on the other side would read it and say \"that's exactly what I think\". Changing your mind isn't required; understanding is.",
+    "es": "Solo cuenta si alguien del otro lado lo leyera y dijera «eso es justo lo que pienso». Cambiar de opinión no es obligatorio; entender sí.",
+    "fr": "Ça ne compte que si quelqu'un de l'autre camp le lisait et disait « c'est exactement ce que je pense ». Changer d'avis n'est pas obligatoire ; comprendre, si.",
+    "de": "Es zählt nur, wenn jemand von der Gegenseite es lesen und sagen würde: „Genau das denke ich.“ Die Meinung ändern musst du nicht, verstehen schon."
+   }
   }
  },
  {
@@ -445,6 +692,25 @@
    "es": "Elige algo que termines a tiempo: una página con un formulario, un script que renombra archivos, 5 diapositivas.",
    "fr": "Choisis quelque chose que tu finis à temps : une page avec un formulaire, un script qui renomme des fichiers, 5 diapos.",
    "de": "Wähl etwas, das du rechtzeitig fertig bekommst: eine Seite mit Formular, ein Skript zum Umbenennen von Dateien, 5 Folien."
+  },
+  "second": {
+   "type": "FOCUS",
+   "target": 45,
+   "unit": "min",
+   "description": {
+    "pt": "Nova ferramenta: ativa o modo Foco por {target} min, aprende o básico de uma ferramenta criativa que nunca usaste (edição de vídeo, Figma, Blender, GarageBand) e cria uma peça de 30 segundos.",
+    "en": "New tool: start Focus for {target} min, learn the basics of a creative tool you've never used (video editing, Figma, Blender, GarageBand) and make a 30-second piece.",
+    "es": "Nueva herramienta: activa el modo Foco {target} min, aprende lo básico de una herramienta creativa que nunca hayas usado (edición de vídeo, Figma, Blender, GarageBand) y crea una pieza de 30 segundos.",
+    "fr": "Nouvel outil : lance le Focus pendant {target} min, apprends les bases d'un outil créatif que tu n'as jamais utilisé (montage vidéo, Figma, Blender, GarageBand) et crée une pièce de 30 secondes.",
+    "de": "Neues Werkzeug: Starte den Fokus für {target} Min., lern die Grundlagen eines kreativen Tools, das du noch nie benutzt hast (Videoschnitt, Figma, Blender, GarageBand), und erstell ein 30-Sekunden-Stück."
+   },
+   "tip": {
+    "pt": "Segue um tutorial de \"primeiro projeto\" e depois muda-lhe uma coisa tua. Acabado é melhor do que perfeito.",
+    "en": "Follow a \"first project\" tutorial, then change one thing to make it yours. Done beats perfect.",
+    "es": "Sigue un tutorial de «primer proyecto» y luego cámbiale algo tuyo. Hecho es mejor que perfecto.",
+    "fr": "Suis un tutoriel « premier projet », puis changes-y une chose à toi. Fait vaut mieux que parfait.",
+    "de": "Folg einem „erstes Projekt“-Tutorial und änder dann eine Sache nach deinem Geschmack. Fertig schlägt perfekt."
+   }
   }
  },
  {
@@ -477,6 +743,25 @@
    "es": "Calienta primero en casa y no vayas más allá de lo seguro. El objetivo es incomodidad, no riesgo.",
    "fr": "Échauffe-toi d'abord à l'intérieur et ne dépasse jamais ce qui est sûr. Le but est l'inconfort, pas le risque.",
    "de": "Wärm dich zuerst drinnen auf und geh nie über das Sichere hinaus. Ziel ist Unbehagen, nicht Risiko."
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "Silêncio: passa 2 horas sem ecrãs, música nem snacks — só tu, um caderno e uma caminhada. Escreve o que te veio à cabeça.",
+    "en": "Silence: spend 2 hours without screens, music or snacks — just you, a notebook and a walk. Write down what came to mind.",
+    "es": "Silencio: pasa 2 horas sin pantallas, música ni picoteo: solo tú, una libreta y un paseo. Escribe lo que te vino a la cabeza.",
+    "fr": "Silence : passe 2 heures sans écrans, musique ni grignotage — juste toi, un carnet et une marche. Note ce qui t'est venu à l'esprit.",
+    "de": "Stille: Verbring 2 Stunden ohne Bildschirme, Musik und Snacks – nur du, ein Notizbuch und ein Spaziergang. Schreib auf, was dir in den Sinn kam."
+   },
+   "tip": {
+    "pt": "O tédio dos primeiros 20 minutos é normal: é aí que as ideias começam a aparecer.",
+    "en": "The boredom of the first 20 minutes is normal: that's when ideas start to show up.",
+    "es": "El aburrimiento de los primeros 20 minutos es normal: ahí empiezan a aparecer las ideas.",
+    "fr": "L'ennui des 20 premières minutes est normal : c'est là que les idées commencent à venir.",
+    "de": "Die Langeweile der ersten 20 Minuten ist normal: Genau dann kommen die Ideen."
+   }
   }
  },
  {
@@ -502,7 +787,26 @@
    "fr": "Force brute totale : {target} reps alternées de pompes + squats.",
    "de": "Pure Kraft: {target} Wiederholungen im Wechsel aus Liegestützen + Kniebeugen."
   },
-  "shadowId": "quest_boss_titan_ape"
+  "shadowId": "quest_boss_titan_ape",
+  "second": {
+   "type": "GPS",
+   "target": 5,
+   "unit": "km",
+   "description": {
+    "pt": "Peso do titã: caminha {target} km com uma mochila carregada (livros ou garrafas de água) — rucking.",
+    "en": "Titan's load: walk {target} km with a loaded backpack (books or water bottles) — rucking.",
+    "es": "Peso del titán: camina {target} km con una mochila cargada (libros o botellas de agua): rucking.",
+    "fr": "Charge du titan : marche {target} km avec un sac à dos chargé (livres ou bouteilles d'eau) — le rucking.",
+    "de": "Last des Titanen: Geh {target} km mit einem beladenen Rucksack (Bücher oder Wasserflaschen) – Rucking."
+   },
+   "tip": {
+    "pt": "Começa com uns 10% do teu peso, bem junto às costas e com as alças apertadas. Costas direitas, passo firme.",
+    "en": "Start with about 10% of your body weight, tight against your back with the straps snug. Straight back, firm stride.",
+    "es": "Empieza con un 10% de tu peso, bien pegado a la espalda y con las correas ajustadas. Espalda recta, paso firme.",
+    "fr": "Commence avec environ 10 % de ton poids, bien plaqué contre le dos, sangles serrées. Dos droit, pas assuré.",
+    "de": "Fang mit etwa 10 % deines Körpergewichts an, eng am Rücken, Gurte fest. Gerader Rücken, fester Schritt."
+   }
+  }
  },
  {
   "id": "boss_astral_drake",
@@ -534,6 +838,25 @@
    "es": "Hazlo sentado o tumbado, nunca en el agua ni conduciendo. Si te mareas, vuelve a respirar con normalidad.",
    "fr": "Fais-le assis ou allongé, jamais dans l'eau ni en conduisant. Si tu as la tête qui tourne, respire normalement.",
    "de": "Mach es im Sitzen oder Liegen, nie im Wasser oder beim Fahren. Wird dir schwindlig, atme wieder normal."
+  },
+  "second": {
+   "type": "GPS",
+   "target": 5,
+   "unit": "km",
+   "description": {
+    "pt": "Voo matinal: percorre {target} km a correr ou a andar antes das 8h da manhã.",
+    "en": "Morning flight: cover {target} km running or walking before 8 a.m.",
+    "es": "Vuelo matinal: recorre {target} km corriendo o andando antes de las 8 de la mañana.",
+    "fr": "Envol matinal : parcours {target} km en courant ou en marchant avant 8 h du matin.",
+    "de": "Morgenflug: Leg vor 8 Uhr morgens {target} km laufend oder gehend zurück."
+   },
+   "tip": {
+    "pt": "Deixa a roupa preparada na véspera, ao lado da cama. A parte difícil são os primeiros 2 minutos.",
+    "en": "Lay out your clothes the night before, next to the bed. The hard part is the first 2 minutes.",
+    "es": "Deja la ropa preparada la noche antes, junto a la cama. Lo difícil son los primeros 2 minutos.",
+    "fr": "Prépare tes affaires la veille, à côté du lit. Le plus dur, ce sont les 2 premières minutes.",
+    "de": "Leg deine Kleidung am Abend vorher neben das Bett. Schwer sind nur die ersten 2 Minuten."
+   }
   }
  },
  {
@@ -566,6 +889,25 @@
    "es": "Micro significa pequeña: un atajo de teclado, un nudo, un paso de baile, una fórmula de Excel.",
    "fr": "Micro veut dire petite : un raccourci clavier, un nœud, un pas de danse, une formule de tableur.",
    "de": "Mikro heißt klein: ein Tastenkürzel, ein Knoten, ein Tanzschritt, eine Tabellenformel."
+  },
+  "second": {
+   "type": "TRAINING",
+   "target": 50,
+   "unit": "reps",
+   "description": {
+    "pt": "Trovão: {target} burpees em menos de 10 minutos.",
+    "en": "Thunder: {target} burpees in under 10 minutes.",
+    "es": "Trueno: {target} burpees en menos de 10 minutos.",
+    "fr": "Tonnerre : {target} burpees en moins de 10 minutes.",
+    "de": "Donner: {target} Burpees in unter 10 Minuten."
+   },
+   "tip": {
+    "pt": "Divide em 5 séries de 10 com pausas de 30 s. Se não aguentares o salto, faz a versão sem salto.",
+    "en": "Split it into 5 sets of 10 with 30 s breaks. If you can't manage the jump, do the version without it.",
+    "es": "Divídelo en 5 series de 10 con pausas de 30 s. Si no aguantas el salto, haz la versión sin salto.",
+    "fr": "Découpe en 5 séries de 10 avec 30 s de pause. Si le saut est trop dur, fais la version sans saut.",
+    "de": "Teil es in 5 Sätze zu 10 mit 30 s Pause. Wenn der Sprung zu hart ist, mach die Version ohne."
+   }
   }
  },
  {
@@ -598,6 +940,25 @@
    "es": "Empieza en la pestaña Foco en modo Pomodoro con 25/5: los ciclos y las pausas cuentan solos.",
    "fr": "Lance-le depuis l'onglet Focus en mode Pomodoro 25/5 : les cycles et les pauses se comptent tout seuls.",
    "de": "Starte im Fokus-Tab im Pomodoro-Modus mit 25/5: Zyklen und Pausen zählen von selbst."
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "Hora roubada: acorda 1 hora mais cedo do que o costume e usa essa hora só para crescer — ler, treinar, aprender ou criar. Nada de ecrãs de distração.",
+    "en": "Stolen hour: wake up 1 hour earlier than usual and use that hour only to grow — read, train, learn or create. No distracting screens.",
+    "es": "Hora robada: levántate 1 hora antes de lo habitual y usa esa hora solo para crecer: leer, entrenar, aprender o crear. Nada de pantallas que distraigan.",
+    "fr": "Heure volée : lève-toi 1 heure plus tôt que d'habitude et consacre cette heure uniquement à grandir — lire, t'entraîner, apprendre ou créer. Pas d'écrans qui distraient.",
+    "de": "Gestohlene Stunde: Steh 1 Stunde früher auf als sonst und nutz diese Stunde nur, um zu wachsen – lesen, trainieren, lernen oder etwas erschaffen. Keine ablenkenden Bildschirme."
+   },
+   "tip": {
+    "pt": "Deita-te também uma hora mais cedo na véspera. Decide à noite o que vais fazer, para não gastares a hora a escolher.",
+    "en": "Go to bed an hour earlier the night before too. Decide the evening before what you'll do, so you don't spend the hour choosing.",
+    "es": "Acuéstate también una hora antes la noche anterior. Decide por la noche qué harás, para no gastar la hora eligiendo.",
+    "fr": "Couche-toi aussi une heure plus tôt la veille. Décide le soir de ce que tu feras, pour ne pas perdre l'heure à choisir.",
+    "de": "Geh am Vorabend auch eine Stunde früher ins Bett. Entscheide abends, was du machst, damit du die Stunde nicht mit Aussuchen verbringst."
+   }
   }
  },
  {
@@ -630,6 +991,25 @@
    "es": "Haz fotos de los 3 descubrimientos y escríbelos en la nota de la misión al volver.",
    "fr": "Prends en photo les 3 découvertes et écris-les dans la note de la mission à ton retour.",
    "de": "Fotografier die 3 Entdeckungen und schreib sie nach der Rückkehr in die Notiz der Mission."
+  },
+  "second": {
+   "type": "FOCUS",
+   "target": 45,
+   "unit": "min",
+   "description": {
+    "pt": "Projeto ambicioso: ativa o modo Foco por {target} min sem interrupções e avança no teu projeto pessoal maior (um livro, uma app, música, um negócio).",
+    "en": "Ambitious project: start Focus for {target} min without interruptions and move your biggest personal project forward (a book, an app, music, a business).",
+    "es": "Proyecto ambicioso: activa el modo Foco {target} min sin interrupciones y avanza en tu proyecto personal más grande (un libro, una app, música, un negocio).",
+    "fr": "Projet ambitieux : lance le Focus pendant {target} min sans interruption et fais avancer ton plus grand projet personnel (un livre, une appli, de la musique, une entreprise).",
+    "de": "Ehrgeiziges Projekt: Starte den Fokus für {target} Min. ohne Unterbrechung und bring dein größtes persönliches Projekt voran (ein Buch, eine App, Musik, ein Business)."
+   },
+   "tip": {
+    "pt": "Antes de começar, escreve o que queres ter feito no fim da sessão. Não tens projeto? Usa este tempo para o escolher e esboçar.",
+    "en": "Before you start, write down what you want to have done by the end of the session. No project? Use the time to pick one and sketch it out.",
+    "es": "Antes de empezar, escribe qué quieres tener hecho al final de la sesión. ¿No tienes proyecto? Usa el tiempo para elegirlo y esbozarlo.",
+    "fr": "Avant de commencer, écris ce que tu veux avoir fait à la fin de la séance. Pas de projet ? Utilise ce temps pour en choisir un et l'esquisser.",
+    "de": "Schreib vor dem Start auf, was am Ende der Sitzung fertig sein soll. Kein Projekt? Nutz die Zeit, um eins auszuwählen und zu skizzieren."
+   }
   }
  },
  {
@@ -662,6 +1042,25 @@
    "es": "Sin gimnasio, una mochila con libros sirve para sentadillas y peso muerto. Técnica antes que carga.",
    "fr": "Pas de salle ? Un sac à dos rempli de livres suffit pour les squats et le soulevé de terre. La technique avant la charge.",
    "de": "Kein Studio? Ein Rucksack voller Bücher reicht für Kniebeugen und Kreuzheben. Technik vor Gewicht."
+  },
+  "second": {
+   "type": "GPS",
+   "target": 8,
+   "unit": "km",
+   "description": {
+    "pt": "Marcha do cavaleiro: percorre {target} km a pé ou a correr, de uma só vez.",
+    "en": "Knight's march: cover {target} km on foot or running, in one go.",
+    "es": "Marcha del caballero: recorre {target} km a pie o corriendo, de una sola vez.",
+    "fr": "Marche du chevalier : parcours {target} km à pied ou en courant, d'une seule traite.",
+    "de": "Marsch des Ritters: Leg {target} km zu Fuß oder laufend am Stück zurück."
+   },
+   "tip": {
+    "pt": "Leva água e escolhe um destino a 4 km para ires e voltares. Ritmo que te deixe falar.",
+    "en": "Bring water and pick a destination 4 km away to go there and back. A pace that still lets you talk.",
+    "es": "Lleva agua y elige un destino a 4 km para ir y volver. Un ritmo que te deje hablar.",
+    "fr": "Prends de l'eau et choisis une destination à 4 km pour l'aller-retour. Un rythme qui te laisse parler.",
+    "de": "Nimm Wasser mit und such dir ein Ziel in 4 km Entfernung für Hin und Zurück. Ein Tempo, bei dem du noch reden kannst."
+   }
   }
  },
  {
@@ -694,6 +1093,25 @@
    "es": "Usa el Foco con bloqueo de apps y el móvil boca abajo. Puedes dividirlo en bloques de 25 min.",
    "fr": "Utilise le Focus avec blocage d'apps et le téléphone face cachée. Tu peux découper en blocs de 25 min.",
    "de": "Nutze den Fokus mit App-Sperre und das Handy umgedreht. Du kannst es in 25-Minuten-Blöcke teilen."
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 50,
+   "unit": "pages",
+   "description": {
+    "pt": "Livro proibido: lê {target} páginas do livro que andas a adiar há mais tempo.",
+    "en": "Forbidden tome: read {target} pages of the book you've been putting off the longest.",
+    "es": "Libro prohibido: lee {target} páginas del libro que llevas más tiempo aplazando.",
+    "fr": "Grimoire interdit : lis {target} pages du livre que tu repousses depuis le plus longtemps.",
+    "de": "Verbotenes Buch: Lies {target} Seiten des Buches, das du am längsten vor dir herschiebst."
+   },
+   "tip": {
+    "pt": "Divide em blocos de 25 páginas com o telemóvel noutra divisão. Se o livro não te agarrar em 50 páginas, podes largá-lo sem culpa.",
+    "en": "Split it into blocks of 25 pages with your phone in another room. If the book hasn't hooked you after 50 pages, you can drop it guilt-free.",
+    "es": "Divídelo en bloques de 25 páginas con el móvil en otra habitación. Si el libro no te engancha en 50 páginas, puedes dejarlo sin culpa.",
+    "fr": "Découpe en blocs de 25 pages, téléphone dans une autre pièce. Si le livre ne t'a pas accroché après 50 pages, tu peux le lâcher sans culpabilité.",
+    "de": "Teil es in Blöcke zu 25 Seiten, das Handy in einem anderen Raum. Wenn dich das Buch nach 50 Seiten nicht packt, darfst du es ohne schlechtes Gewissen weglegen."
+   }
   }
  },
  {
@@ -723,6 +1141,25 @@
   "season": {
    "from": "10-24",
    "to": "11-02"
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "Noite dos medos: faz uma coisa que te assusta e te faz crescer — falar com um desconhecido, publicar algo que criaste, inscrever-te naquilo que andas a adiar.",
+    "en": "Night of fears: do one thing that scares you and makes you grow — talk to a stranger, publish something you made, sign up for what you've been putting off.",
+    "es": "Noche de los miedos: haz algo que te asuste y te haga crecer: hablar con un desconocido, publicar algo que hayas creado, apuntarte a lo que llevas tiempo aplazando.",
+    "fr": "Nuit des peurs : fais une chose qui te fait peur et te fait grandir — parler à un inconnu, publier quelque chose que tu as créé, t'inscrire à ce que tu repousses.",
+    "de": "Nacht der Ängste: Tu eine Sache, die dir Angst macht und dich wachsen lässt – einen Fremden ansprechen, etwas Selbstgemachtes veröffentlichen, dich für das anmelden, was du vor dir herschiebst."
+   },
+   "tip": {
+    "pt": "Escolhe o que te dá um frio na barriga, não pânico. O medo é maior antes de começar do que durante.",
+    "en": "Pick something that gives you butterflies, not panic. Fear is bigger before you start than while you're at it.",
+    "es": "Elige algo que te dé un cosquilleo en el estómago, no pánico. El miedo es mayor antes de empezar que durante.",
+    "fr": "Choisis ce qui te noue un peu le ventre, pas ce qui te panique. La peur est plus grande avant de commencer que pendant.",
+    "de": "Nimm etwas, das dir Kribbeln im Bauch macht, keine Panik. Die Angst ist vor dem Anfang größer als mittendrin."
+   }
   }
  },
  {
@@ -752,6 +1189,25 @@
   "season": {
    "from": "12-15",
    "to": "12-26"
+  },
+  "second": {
+   "type": "KNOWLEDGE",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "Feito à mão: cria um presente para alguém de quem gostas — uma carta, um desenho, uma música, um doce — e entrega-o.",
+    "en": "Handmade: make a gift for someone you care about — a letter, a drawing, a song, a treat — and give it to them.",
+    "es": "Hecho a mano: crea un regalo para alguien a quien quieras —una carta, un dibujo, una canción, un dulce— y entrégaselo.",
+    "fr": "Fait main : crée un cadeau pour quelqu'un qui compte pour toi — une lettre, un dessin, une chanson, une douceur — et offre-le.",
+    "de": "Handgemacht: Mach ein Geschenk für jemanden, der dir wichtig ist – einen Brief, eine Zeichnung, ein Lied, etwas Süßes – und überreich es."
+   },
+   "tip": {
+    "pt": "Não precisa de ser perfeito: o que conta é ser teu e pensado para aquela pessoa.",
+    "en": "It doesn't have to be perfect: what counts is that it's yours and made for that person.",
+    "es": "No hace falta que sea perfecto: lo que cuenta es que sea tuyo y pensado para esa persona.",
+    "fr": "Pas besoin que ce soit parfait : ce qui compte, c'est que ce soit de toi et pensé pour cette personne.",
+    "de": "Es muss nicht perfekt sein: Es zählt, dass es von dir ist und für diesen Menschen gedacht."
+   }
   }
  },
  {
@@ -788,6 +1244,25 @@
    "es": "Para cada objetivo, escribe cómo medirás si lo cumples. Lo que vas a dejar cuenta tanto como lo que vas a empezar.",
    "fr": "Pour chaque objectif, écris comment tu le mesureras. Ce que tu arrêtes compte autant que ce que tu commences.",
    "de": "Schreib zu jedem Ziel, wie du es misst. Was du weglässt, zählt so viel wie das, was du anfängst."
+  },
+  "second": {
+   "type": "FOCUS",
+   "target": 30,
+   "unit": "min",
+   "description": {
+    "pt": "Primeiro passo: ativa o modo Foco por {target} min e trabalha já num dos objetivos do ano — o passo mais pequeno que o põe em movimento.",
+    "en": "First step: start Focus for {target} min and work right now on one of your goals for the year — the smallest step that gets it moving.",
+    "es": "Primer paso: activa el modo Foco {target} min y trabaja ya en uno de tus objetivos del año: el paso más pequeño que lo ponga en marcha.",
+    "fr": "Premier pas : lance le Focus pendant {target} min et avance dès maintenant sur l'un de tes objectifs de l'année — le plus petit pas qui le met en mouvement.",
+    "de": "Erster Schritt: Starte den Fokus für {target} Min. und arbeite sofort an einem deiner Jahresziele – der kleinste Schritt, der es ins Rollen bringt."
+   },
+   "tip": {
+    "pt": "Se o objetivo é grande, o primeiro passo pode ser só preparar: inscrever-te, arranjar o material, marcar a data.",
+    "en": "If the goal is big, the first step can just be getting ready: sign up, get the gear, set the date.",
+    "es": "Si el objetivo es grande, el primer paso puede ser solo prepararte: inscribirte, conseguir el material, fijar la fecha.",
+    "fr": "Si l'objectif est grand, le premier pas peut être juste de te préparer : t'inscrire, trouver le matériel, fixer la date.",
+    "de": "Ist das Ziel groß, kann der erste Schritt einfach Vorbereitung sein: anmelden, Material besorgen, Datum festlegen."
+   }
   }
  },
  {
@@ -817,6 +1292,25 @@
   "season": {
    "from": "04-01",
    "to": "04-15"
+  },
+  "second": {
+   "type": "FOCUS",
+   "target": 30,
+   "unit": "min",
+   "description": {
+    "pt": "Florescer: ativa o modo Foco por {target} min e cria algo do zero — um texto, um desenho, uma melodia, uma ideia de projeto.",
+    "en": "Bloom: start Focus for {target} min and create something from scratch — a piece of writing, a drawing, a melody, a project idea.",
+    "es": "Florecer: activa el modo Foco {target} min y crea algo desde cero: un texto, un dibujo, una melodía, una idea de proyecto.",
+    "fr": "Éclore : lance le Focus pendant {target} min et crée quelque chose à partir de rien — un texte, un dessin, une mélodie, une idée de projet.",
+    "de": "Erblühen: Starte den Fokus für {target} Min. und erschaffe etwas von Grund auf – einen Text, eine Zeichnung, eine Melodie, eine Projektidee."
+   },
+   "tip": {
+    "pt": "Não edites enquanto crias. Primeiro deixa sair tudo; julgar fica para amanhã.",
+    "en": "Don't edit while you create. Let it all out first; judging can wait until tomorrow.",
+    "es": "No edites mientras creas. Primero deja que salga todo; juzgar queda para mañana.",
+    "fr": "Ne corrige pas pendant que tu crées. Laisse d'abord tout sortir ; juger, ce sera pour demain.",
+    "de": "Bearbeite nicht, während du erschaffst. Lass erst alles raus; urteilen kannst du morgen."
+   }
   }
  },
  {
@@ -846,6 +1340,25 @@
   "season": {
    "from": "07-01",
    "to": "07-15"
+  },
+  "second": {
+   "type": "TRAINING",
+   "target": 1,
+   "unit": "",
+   "description": {
+    "pt": "Nascer do sol: acorda para ver o nascer do sol e treina 20 minutos ao ar livre logo a seguir.",
+    "en": "Sunrise: get up to watch the sunrise and train outdoors for 20 minutes right after.",
+    "es": "Amanecer: levántate para ver salir el sol y entrena 20 minutos al aire libre justo después.",
+    "fr": "Lever du soleil : lève-toi pour voir le soleil se lever et entraîne-toi 20 minutes dehors juste après.",
+    "de": "Sonnenaufgang: Steh auf, um den Sonnenaufgang zu sehen, und trainier gleich danach 20 Minuten draußen."
+   },
+   "tip": {
+    "pt": "Vê a hora do nascer do sol na véspera. Flexões, agachamentos e saltos chegam: não precisas de material.",
+    "en": "Check the sunrise time the night before. Push-ups, squats and jumps are enough: you don't need any gear.",
+    "es": "Mira la hora del amanecer la noche antes. Flexiones, sentadillas y saltos bastan: no necesitas material.",
+    "fr": "Regarde l'heure du lever du soleil la veille. Pompes, squats et sauts suffisent : pas besoin de matériel.",
+    "de": "Schau am Vorabend nach, wann die Sonne aufgeht. Liegestütze, Kniebeugen und Sprünge reichen: Du brauchst keine Ausrüstung."
+   }
   }
  }
 ]

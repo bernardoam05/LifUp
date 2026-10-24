@@ -79,6 +79,17 @@ data class BossDef(
     val season: Season? = null,
     /** How to go about the challenge. */
     val tip: L10n? = null,
+    /** The challenge that joins the first one mid-week; a different kind of effort, themed on the boss. */
+    val second: BossChallengeDef? = null,
+)
+
+@Serializable
+data class BossChallengeDef(
+    val type: QuestType,
+    val target: Double,
+    val unit: String,
+    val description: L10n,
+    val tip: L10n? = null,
 )
 
 @Serializable

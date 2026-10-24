@@ -91,6 +91,10 @@
     <string name="boss_ends_in">ends in %1$s</string>
     <string name="boss_challenge">Boss challenge</string>
     <string name="boss_challenge_done">Done</string>
+    <string name="boss_challenge_n">Challenge %1$d</string>
+    <string name="boss_second_soon">2nd challenge arrives on Thursday</string>
+    <string name="reward_boss_second_title">New boss challenge</string>
+    <string name="reward_boss_second_text">Another %1$d%% off its health at once. You have until Sunday.</string>
     <string name="boss_defeated">Defeated! %1$s joined your army.</string>
 
     <!-- Mission sheet -->
@@ -384,7 +388,8 @@
     <string name="session_focus_title">Focus session</string>
     <string name="session_penalty_title">Penalty block active</string>
     <string name="notif_portal_title">A portal opened</string>
-    <string name="notif_portal_text">%1$s — closes in %2$d min. Double rewards.</string>
+    <string name="notif_portal_text">%1$s — double rewards.</string>
+    <string name="notif_portal_closes">closes in</string>
     <string name="notif_focus_done_title">Focus complete</string>
     <string name="notif_focus_done_text">%1$d minutes credited.</string>
     <string name="notif_pomodoro_work">Back to work</string>
@@ -537,9 +542,9 @@
     <string name="guide_penalty_title">Penalty</string>
     <string name="guide_penalty">Proportional loss::You lose a share of what the day\'s missions would have paid: the part left undone (×0.3 on Easy, ×2 on Hard). Almost there costs almost nothing.\n24 hours::Below 40% (Easy), 50% (Normal) or 67% (Hard) a penalty starts with extra missions, more the less you did. Do them and it ends early.\nWhile it lasts::With app blocking your distracting apps stay blocked; without it, missions pay half the XP and gold.\nDays in a row::Failed days in a row weigh less and less: the first in full, the second half, then a quarter. Penalty missions only come on the first.</string>
     <string name="guide_side_title">Side quests</string>
-    <string name="guide_side">Free-form::Write any task, no targets or rules.\n5 with rewards::The first 5 finished each day give XP and gold and hurt the boss.\nAfter that::They keep working as a to-do list.\nNo cheating::Unticking or deleting takes the reward back.</string>
+    <string name="guide_side">Free-form::Write any task, no targets or rules.\n5 with rewards::The first 5 finished each day give XP and gold (they don\'t hurt the boss).\nAfter that::They keep working as a to-do list.\nNo cheating::Unticking or deleting takes the reward back.</string>
     <string name="guide_boss_title">Weekly boss</string>
-    <string name="guide_boss">All XP is damage::Every mission you do takes its health.\nBoss challenge::A special mission that rips off 35% at once.\nLoot::Beat it for XP, gold, a chest and its echo.\nIf not…::On Sunday night it ends — and another one comes.</string>
+    <string name="guide_boss">Missions are damage::Every mission you do takes its health; extra ones hit for half.\nBoss challenges::Two a week: one on Monday, another on Thursday. Each rips off 15%.\nLoot::Beat it for XP, gold, a chest and its echo.\nIf not…::On Sunday night it ends — and another one comes.</string>
     <string name="guide_portal_title">Portals</string>
     <string name="guide_portal">They show up on their own::Between 8 AM and 10 PM, up to 2 a day.\nDouble rewards::A bigger mission with twice the XP and gold.\nNew ally::Clearing it may bring you an echo.\nOn the clock::There\'s always enough time, but the portal closes when it runs out.</string>
     <string name="guide_shadows_title">Echoes</string>
@@ -665,7 +670,9 @@
     <string name="notif_timer_running">Timer running</string>
     <string name="notif_timer_more">+%1$d more timers running</string>
     <string name="notif_boss_title">Last day: %1$s</string>
-    <string name="notif_boss_text">The weekly boss ends tonight with %1$d HP left. The boss challenge takes 35%% at once.</string>
+    <string name="notif_boss_text">The weekly boss ends tonight with %1$d HP left. Each boss challenge takes 15%% at once.</string>
+    <string name="notif_boss_second_title">New challenge: %1$s</string>
+    <string name="notif_boss_second_text">The weekly boss has a second challenge. It takes %1$d%% at once.</string>
     <string name="toast_week_goal">Week done: %1$s</string>
     <string name="week_weekly_line">%1$s: %2$d/%3$d</string>
     <string name="week_due">counts today</string>

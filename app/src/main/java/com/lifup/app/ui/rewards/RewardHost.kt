@@ -4,6 +4,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateListOf
 import kotlin.math.roundToInt
 import com.lifup.app.ui.defTitle
+import com.lifup.app.ui.lang
+import com.lifup.app.ui.questDetail
+import com.lifup.app.ui.unitLabel
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -81,6 +84,7 @@ fun RewardHost(s: GameState) {
         when (reward) {
             is Reward.LevelUp, is Reward.RankUp, is Reward.StreakMilestone -> Feedback.play(context, Sfx.LEVEL)
             is Reward.BossDefeated, is Reward.AchievementUnlocked -> Feedback.play(context, Sfx.VICTORY)
+            is Reward.BossSecondChallenge -> Feedback.play(context, Sfx.PENALTY)
             // Copies get a small cue; new common/rare echoes a bright one; rarer new echoes play during their reveal.
             is Reward.ShadowGained -> when {
                 !reward.isNew -> Feedback.play(context, Sfx.QUEST)
@@ -129,6 +133,13 @@ fun RewardHost(s: GameState) {
                     Line("+${reward.xp} XP", Lif.colors.accent)
                     Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
                     reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
+                }
+                is Reward.BossSecondChallenge -> {
+                    val second = s.boss?.second?.takeIf { s.boss.bossId == reward.bossId }
+                    RewardCard(Icons.Rounded.Whatshot, Lif.colors.red, stringResource(R.string.reward_boss_second_title), content.bossById[reward.bossId]?.title?.local().orEmpty(), dismiss) {
+                        second?.let { Line(questDetail(it, lang(), unitLabel(it.unit)), Lif.colors.text) }
+                        Line(stringResource(R.string.reward_boss_second_text, (Rules.BOSS_CHALLENGE_DAMAGE * 100).toInt()), Lif.colors.gold)
+                    }
                 }
                 is Reward.AchievementUnlocked -> AchievementCard(batch.filterIsInstance<Reward.AchievementUnlocked>(), dismiss)
                 is Reward.StreakMilestone -> RewardCard(Icons.Rounded.LocalFireDepartment, Lif.colors.red, stringResource(R.string.reward_streak_title), stringResource(R.string.days_in_a_row, reward.days), dismiss) {

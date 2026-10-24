@@ -4,6 +4,7 @@ import com.lifup.app.system.blockPlan
 import kotlinx.serialization.encodeToString
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -246,6 +247,25 @@ class EngineTest {
         assertEquals(1L, s.count(StatKey.BOSSES_DEFEATED))
     }
 
+    @Test fun `second boss challenge arrives on thursday, announced once, and both take their share`() {
+        var s = fresh() // a Wednesday
+        assertNull(s.boss!!.second)
+        s = run(s, "2026-10-15T08:00")
+        val b = s.boss!!
+        val second = b.second!!
+        assertNotEquals(b.challenge.id, second.id)
+        assertNotEquals(b.challenge.type, second.type)
+        assertTrue(s.allQuests.any { it.id == second.id })
+        s = run(s, "2026-10-15T08:01") { completeQuest(b.challenge.id); completeQuest(second.id) }
+        assertEquals((b.maxHp * Rules.BOSS_CHALLENGE_DAMAGE).roundToInt() * 2, b.hp - s.boss!!.hp)
+        s = run(s, "2026-10-15T09:00")
+        assertEquals(1, s.rewards.count { it is Reward.BossSecondChallenge })
+    }
+
+    @Test fun `every boss has a second challenge of another kind`() {
+        content.bosses.forEach { assertNotEquals(it.id, it.type, it.second!!.type) }
+    }
+
     @Test fun `boss rotates on monday`() {
         val s = fresh()
         val next = run(s, "2026-10-19T09:00")
@@ -432,6 +452,7 @@ class EngineTest {
         val id = s.sideQuests.single().id
         s = run(s, "2026-10-14T10:01") { completeSideQuest(id) }
         assertTrue(s.player.xp > start.xp || s.player.level > start.level)
+        assertEquals(hp, s.boss!!.hp) // side quests never hurt the boss
         s = run(s, "2026-10-14T10:02") { undoSideQuest(id) }
         assertFalse(s.sideQuests.single().done)
         assertEquals(start.xp, s.player.xp)

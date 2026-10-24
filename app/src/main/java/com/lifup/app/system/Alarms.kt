@@ -8,6 +8,7 @@ import com.lifup.app.domain.rollPortal
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.AutoKind
 import com.lifup.app.domain.QuestStatus
+import com.lifup.app.domain.Reward
 import com.lifup.app.domain.text
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -55,6 +56,10 @@ object Alarms {
         // Sunday evening nudge while the weekly boss is still standing.
         if (s.settings.notifications && ctx.today.dayOfWeek == java.time.DayOfWeek.SUNDAY && s.boss?.defeated == false) {
             val at = ctx.atHour(ctx.today, Rules.BOSS_NUDGE_HOUR)
+            if (at > now) candidates += at
+        }
+        if (s.settings.notifications && s.secondChallengeUnseen()) {
+            val at = ctx.atHour(ctx.today, Rules.BOSS_SECOND_HOUR)
             if (at > now) candidates += at
         }
         if (s.settings.notifications && s.openAvoids().isNotEmpty()) {
@@ -114,6 +119,11 @@ object Alarms {
             val name = LifUpApp.store.content.bossById[boss.bossId]?.title?.let { it.text(java.util.Locale.getDefault().language) }.orEmpty()
             Notifications.bossLastDay(context, name, boss.hp)
         }
+        if (ctx.hour >= Rules.BOSS_SECOND_HOUR && s.secondChallengeUnseen() && prefs.getString("boss2", "") != ctx.weekKey) {
+            prefs.edit().putString("boss2", ctx.weekKey).apply()
+            val name = LifUpApp.store.content.bossById[boss!!.bossId]?.title?.let { it.text(java.util.Locale.getDefault().language) }.orEmpty()
+            Notifications.bossSecond(context, name)
+        }
         val minute = ctx.dateTime.hour * 60 + ctx.dateTime.minute
         if (minute >= Rules.AVOID_CHECK_MIN && prefs.getString("avoid", "") != ctx.todayKey && s.openAvoids().isNotEmpty()) {
             prefs.edit().putString("avoid", ctx.todayKey).apply()
@@ -125,6 +135,12 @@ object Alarms {
                 Notifications.bedtime(context, s.openBedtime()!!.id)
             }
         }
+    }
+
+    /** The mid-week challenge is open and its announcement hasn't been looked at in the app yet. */
+    private fun GameState.secondChallengeUnseen(): Boolean {
+        val b = boss ?: return false
+        return !b.defeated && !b.secondSeen && b.second?.status == QuestStatus.OPEN && rewards.any { it is Reward.BossSecondChallenge }
     }
 
     private var dismissed: List<Int>? = null
@@ -142,6 +158,7 @@ object Alarms {
             if (!today("avoid") || s.openAvoids().isEmpty()) add(Notifications.ID_AVOID)
             if (!today("bedtime") || s.openBedtime() == null) add(Notifications.ID_BEDTIME)
             if (prefs.getString("boss", "") != ctx.weekKey || ctx.today.dayOfWeek != java.time.DayOfWeek.SUNDAY || s.boss?.defeated != false) add(Notifications.ID_BOSS)
+            if (prefs.getString("boss2", "") != ctx.weekKey || !s.secondChallengeUnseen()) add(Notifications.ID_BOSS2)
             AutoKind.entries.forEach { k ->
                 if (prefs.getString("limit_$k", "") != s.day || s.dailyQuests.none { it.auto == k && it.status == QuestStatus.OPEN }) add(Notifications.ID_LIMIT + k.ordinal)
             }

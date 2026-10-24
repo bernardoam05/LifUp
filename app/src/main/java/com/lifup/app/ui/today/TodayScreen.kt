@@ -73,6 +73,9 @@ import com.lifup.app.domain.GameState
 import com.lifup.app.domain.canRest
 import com.lifup.app.domain.restDaysLeft
 import com.lifup.app.domain.QuestStatus
+import com.lifup.app.domain.Quest
+import com.lifup.app.domain.challenges
+import com.lifup.app.domain.markSecondSeen
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.addExtraQuest
 import com.lifup.app.domain.addSideQuest
@@ -195,7 +198,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
                     when {
                         sq.done && !paid -> Pill(stringResource(R.string.side_no_reward), p.dim)
                         !sq.done && s.sideRewardsLeft() == 0 -> Pill(stringResource(R.string.side_no_reward), p.gold)
-                        else -> Pill("${sq.rank.name} · +${if (sq.done) sq.xpGained else sq.xp} XP", p.accent)
+                        else -> Pill("+${if (sq.done) sq.xpGained else sq.xp} XP", p.accent)
                     }
                     // Deleting a paid side quest takes its XP back, so that one asks first.
                     IconButton(onClick = { if (paid) confirmDelete = sq.id else act { removeSideQuest(sq.id) } }) { Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.delete), tint = p.dim) }
@@ -255,7 +258,7 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
     Panel(
         border = (if (b.defeated) p.green else tint).copy(alpha = if (theme != null) 0.8f else 0.5f),
         background = theme?.color?.copy(alpha = 0.06f) ?: p.panel,
-        onClick = { onChallenge(b.challenge.id) },
+        onClick = { onChallenge(b.challenges().firstOrNull { it.status == QuestStatus.OPEN }?.id ?: b.challenge.id) },
     ) {
         if (theme != null) SeasonRibbon(theme)
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -274,18 +277,37 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
                 Spacer(Modifier.width(8.dp))
                 Text("${b.hp} / ${b.maxHp}", style = MaterialTheme.typography.labelMedium, color = p.muted)
             }
-            val c = b.challenge
-            Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.boss_challenge), style = MaterialTheme.typography.labelLarge, color = p.gold, modifier = Modifier.weight(1f))
-                Text(
-                    if (c.isSuccessful()) stringResource(R.string.boss_challenge_done) else "−${(Rules.BOSS_CHALLENGE_DAMAGE * 100).toInt()}% HP",
-                    style = MaterialTheme.typography.labelLarge, color = if (c.isSuccessful()) p.green else p.gold,
-                )
-                Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, null, tint = p.muted, modifier = Modifier.size(18.dp))
+            ChallengeRow(stringResource(R.string.boss_challenge_n, 1), b.challenge, isNew = false) { onChallenge(b.challenge.id) }
+            val second = b.second
+            when {
+                second != null -> ChallengeRow(stringResource(R.string.boss_challenge_n, 2), second, isNew = !b.secondSeen && second.status == QuestStatus.OPEN) {
+                    act { markSecondSeen() }
+                    onChallenge(second.id)
+                }
+                // Announced ahead, so the second one isn't a surprise nobody notices.
+                def.second != null -> Text(stringResource(R.string.boss_second_soon), style = MaterialTheme.typography.labelMedium, color = p.dim, modifier = Modifier.padding(top = 8.dp))
             }
         }
     }
     if (def.season == null) upcomingSeason(content.bosses, LocalDate.now())?.let { SeasonTeaser(it) }
+}
+
+@Composable
+private fun ChallengeRow(label: String, c: Quest, isNew: Boolean, onClick: () -> Unit) {
+    val p = Lif.colors
+    val done = c.isSuccessful()
+    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(label, style = MaterialTheme.typography.labelLarge, color = p.gold, modifier = Modifier.weight(1f))
+        if (isNew) {
+            Pill(stringResource(R.string.badge_new), p.accent)
+            Spacer(Modifier.width(6.dp))
+        }
+        Text(
+            if (done) stringResource(R.string.boss_challenge_done) else "−${(Rules.BOSS_CHALLENGE_DAMAGE * 100).toInt()}% HP",
+            style = MaterialTheme.typography.labelLarge, color = if (done) p.green else p.gold,
+        )
+        Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, null, tint = p.muted, modifier = Modifier.size(18.dp))
+    }
 }
 
 /** Missions marked done, with a flame sitting on the bar at the streak minimum; it lights up once reached. */

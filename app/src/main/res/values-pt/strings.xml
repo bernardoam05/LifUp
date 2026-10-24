@@ -83,6 +83,10 @@
     <string name="boss_ends_in">acaba em %1$s</string>
     <string name="boss_challenge">Desafio do boss</string>
     <string name="boss_challenge_done">Cumprido</string>
+    <string name="boss_challenge_n">Desafio %1$d</string>
+    <string name="boss_second_soon">O 2.º desafio chega na quinta</string>
+    <string name="reward_boss_second_title">Novo desafio do boss</string>
+    <string name="reward_boss_second_text">Mais %1$d%% da vida dele de uma vez. Tens até domingo.</string>
     <string name="boss_defeated">Derrotado! %1$s juntou-se ao teu exército.</string>
 
     <string name="double_xp_active">Ampulheta ativa: a próxima missão dá XP a dobrar</string>
@@ -365,7 +369,8 @@
     <string name="session_focus_title">Sessão de foco</string>
     <string name="session_penalty_title">Bloqueio de penalização ativo</string>
     <string name="notif_portal_title">Abriu-se um portal</string>
-    <string name="notif_portal_text">%1$s — fecha em %2$d min. Recompensas a dobrar.</string>
+    <string name="notif_portal_text">%1$s — recompensas a dobrar.</string>
+    <string name="notif_portal_closes">fecha em</string>
     <string name="notif_focus_done_title">Foco concluído</string>
     <string name="notif_focus_done_text">%1$d minutos creditados.</string>
     <string name="notif_pomodoro_work">De volta ao trabalho</string>
@@ -518,9 +523,9 @@
     <string name="guide_penalty_title">Penalização</string>
     <string name="guide_penalty">Perda proporcional::Perdes uma parte do que as missões do dia valiam: a que ficou por fazer (×0,3 no Fácil, ×2 no Difícil). Quase lá custa quase nada.\n24 horas::Abaixo de 40% (Fácil), 50% (Normal) ou 67% (Difícil) começa uma penalização com missões extra, mais quanto menos fizeres. Fá-las e acaba mais cedo.\nEnquanto dura::Com o bloqueio de apps, as tuas apps de distração ficam bloqueadas; sem ele, as missões dão metade do XP e do ouro.\nDias seguidos::Dias falhados seguidos pesam cada vez menos: o primeiro conta inteiro, o segundo metade e daí em diante um quarto. As missões de penalização só vêm no primeiro.</string>
     <string name="guide_side_title">Tarefas</string>
-    <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro e ferem o boss.\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
+    <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro (não ferem o boss).\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
     <string name="guide_boss_title">Boss semanal</string>
-    <string name="guide_boss">Todo o XP é dano::Cada missão que fazes tira-lhe vida.\nDesafio do boss::Uma missão especial que lhe arranca 35% de uma vez.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nSe não…::No domingo à noite acaba — e vem outro.</string>
+    <string name="guide_boss">Missões são dano::Cada missão que fazes tira-lhe vida; as extra tiram metade.\nDesafios do boss::Dois por semana: um na segunda e outro na quinta. Cada um arranca-lhe 15%.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nSe não…::No domingo à noite acaba — e vem outro.</string>
     <string name="guide_portal_title">Portais</string>
     <string name="guide_portal">Aparecem sozinhos::Entre as 8h e as 22h, até 2 por dia.\nRecompensa a dobrar::Uma missão maior, com o dobro de XP e ouro.\nNovo aliado::Concluí-lo pode trazer-te um eco.\nTempo contado::Dá sempre para a fazer, mas o portal fecha quando o tempo acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
@@ -646,7 +651,9 @@
     <string name="notif_timer_running">Cronómetro a contar</string>
     <string name="notif_timer_more">+%1$d cronómetros a contar</string>
     <string name="notif_boss_title">Último dia: %1$s</string>
-    <string name="notif_boss_text">O boss da semana acaba esta noite e faltam %1$d HP. O desafio do boss tira 35%% de uma vez.</string>
+    <string name="notif_boss_text">O boss da semana acaba esta noite e faltam %1$d HP. Cada desafio do boss tira 15%% de uma vez.</string>
+    <string name="notif_boss_second_title">Novo desafio: %1$s</string>
+    <string name="notif_boss_second_text">O boss da semana tem um 2.º desafio. Tira-lhe %1$d%% de uma vez.</string>
     <string name="toast_week_goal">Semana cumprida: %1$s</string>
     <string name="week_weekly_line">%1$s: %2$d/%3$d</string>
     <string name="week_due">conta hoje</string>

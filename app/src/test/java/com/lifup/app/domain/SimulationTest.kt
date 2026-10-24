@@ -47,7 +47,7 @@ class SimulationTest {
                     }
                 }
                 s.penalty.quests.forEach { if (rng.nextDouble() < p.keep) completeQuest(it.id) }
-                s.boss?.challenge?.takeIf { rng.nextDouble() < p.keep / 3 }?.let { completeQuest(it.id) }
+                s.boss?.challenges().orEmpty().filter { it.status == QuestStatus.OPEN && rng.nextDouble() < p.keep / 3 }.forEach { completeQuest(it.id) }
                 s.sideQuests.filter { !it.done }.forEach { if (rng.nextDouble() < p.keep) completeSideQuest(it.id) }
                 spend()
             }

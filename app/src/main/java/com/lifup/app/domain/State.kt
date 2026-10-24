@@ -106,12 +106,18 @@ data class BossState(
     val hp: Int,
     val challenge: Quest,
     val endsAt: Long,
+    /** The mid-week challenge, once it has arrived. */
+    val second: Quest? = null,
+    /** The player has opened the mid-week challenge, so the card stops flagging it as new. */
+    val secondSeen: Boolean = false,
     val defeated: Boolean = false,
     /** XP and gold the kill paid, taken back if an undo revives the boss. */
     val spoils: BossSpoils? = null,
     /** Chest and shadow were already given; a revived boss only pays XP and gold again. */
     val lootGiven: Boolean = false,
 )
+
+fun BossState.challenges() = listOfNotNull(challenge, second)
 
 @Serializable
 data class BossSpoils(val xp: Int, val gold: Int)
@@ -253,6 +259,9 @@ sealed interface Reward {
 
     @Serializable @SerialName("boss")
     data class BossDefeated(override val id: Long, val bossId: String, val xp: Int, val gold: Int, val items: List<String>) : Reward
+
+    @Serializable @SerialName("boss_second")
+    data class BossSecondChallenge(override val id: Long, val bossId: String) : Reward
 
     @Serializable @SerialName("achievement")
     data class AchievementUnlocked(override val id: Long, val achievementId: String, val tier: Int, val gold: Int, val items: List<String> = emptyList(), val shadowId: String? = null) : Reward
@@ -412,5 +421,5 @@ data class GameState(
 
     /** Every open quest of any origin, so progress sources (focus, GPS) can credit them all. */
     val allQuests: List<Quest>
-        get() = quests + penalty.quests + listOfNotNull(boss?.challenge?.takeIf { boss?.defeated == false }, portal?.quest)
+        get() = quests + penalty.quests + boss?.takeIf { !it.defeated }?.challenges().orEmpty() + listOfNotNull(portal?.quest)
 }

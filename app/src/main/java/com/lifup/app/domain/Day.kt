@@ -33,6 +33,7 @@ fun Tx.ensureDay() {
     expirePenalty()
     settleFocus()
     ensureBoss()
+    ensureSecondChallenge()
     ensureShop()
     expirePortal()
 }

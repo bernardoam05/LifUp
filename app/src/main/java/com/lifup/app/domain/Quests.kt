@@ -50,7 +50,9 @@ fun Quest.isSuccessful(): Boolean = when {
 fun GameState.defOf(id: String, content: Content): QuestDef? = customDefs.firstOrNull { it.id == id } ?: content.questDefById[id]
 
 /** The "how to" for a mission or a boss challenge, looked up live so content updates reach old saves. */
-fun GameState.tipFor(q: Quest, content: Content): L10n? = defOf(q.defId, content)?.tip ?: content.bossById[q.defId]?.tip
+fun GameState.tipFor(q: Quest, content: Content): L10n? = defOf(q.defId, content)?.tip ?: content.bossById[q.defId]?.let { def ->
+    if (q.id == boss?.second?.id) def.second?.tip else def.tip
+}
 
 fun GameState.isEditedBuiltIn(id: String, content: Content) = content.questDefById[id] != null && customDefs.any { it.id == id }
 
@@ -102,6 +104,7 @@ private fun Tx.updateQuest(id: String, f: (Quest) -> Quest) {
         s.quests.any { it.id == id } -> s.copy(quests = s.quests.map { if (it.id == id) f(it) else it })
         s.penalty.quests.any { it.id == id } -> s.copy(penalty = s.penalty.copy(quests = s.penalty.quests.map { if (it.id == id) f(it) else it }))
         s.boss?.challenge?.id == id -> s.copy(boss = s.boss!!.copy(challenge = f(s.boss!!.challenge)))
+        s.boss?.second?.id == id -> s.copy(boss = s.boss!!.copy(second = f(s.boss!!.second!!)))
         s.portal?.quest?.id == id -> s.copy(portal = s.portal!!.copy(quest = f(s.portal!!.quest)))
         else -> s
     }
@@ -135,7 +138,8 @@ private fun Tx.completeMission(q: Quest) {
     var dealt = 0
     var gold = 0
     val squad = squadDuring {
-        gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.family()).let { (x, d) -> xp = x; dealt = d }
+        val share = if (q.origin == QuestOrigin.EXTRA) Rules.EXTRA_BOSS_SHARE else 1.0
+        gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.family(), share).let { (x, d) -> xp = x; dealt = d }
         gold = gainGold(q.gold)
     }
     gainAttributes(groupOf(q))
@@ -277,15 +281,13 @@ fun Tx.addExtraQuest(): Boolean {
 
 // ── Side quests ───────────────────────────────────────────────────────────────
 
+/** Every side quest pays the same, growing with level like missions, so re-adding one can't fish for more. */
 fun Tx.addSideQuest(title: String) {
     if (title.isBlank()) return
-    val roll = ctx.rng.nextDouble()
-    val (rank, xp, gold) = when {
-        roll < 0.60 -> Triple(QuestRank.E, 10 + ctx.rng.nextInt(21), 3 + ctx.rng.nextInt(6))
-        roll < 0.90 -> Triple(QuestRank.D, 30 + ctx.rng.nextInt(31), 8 + ctx.rng.nextInt(8))
-        else -> Triple(QuestRank.C, 60 + ctx.rng.nextInt(41), 15 + ctx.rng.nextInt(11))
-    }
-    s = s.copy(sideQuests = s.sideQuests + SideQuest("side_${s.nextId}", title.trim(), ctx.todayKey, rank, xp, gold))
+    val level = s.player.level
+    val xp = (Rules.SIDE_XP * Rules.xpMultiplier(level)).roundToInt()
+    val gold = (Rules.SIDE_GOLD * Rules.tierMultiplier(level)).roundToInt()
+    s = s.copy(sideQuests = s.sideQuests + SideQuest("side_${s.nextId}", title.trim(), ctx.todayKey, QuestRank.E, xp, gold))
     s = s.copy(nextId = s.nextId + 1)
 }
 
@@ -302,16 +304,16 @@ fun Tx.completeSideQuest(id: String) {
         return
     }
     var xp = 0
-    var dealt = 0
     var gold = 0
+    // Side quests don't hurt the boss: it falls to the game's own missions.
     val squad = squadDuring {
-        gainXpTracked(sq.xp, null).let { (x, d) -> xp = x; dealt = d }
+        xp = gainXp(sq.xp, hitsBoss = false)
         gold = gainGold(sq.gold)
     }
     gainAttributes(null)
     count(StatKey.SIDE_COMPLETED)
     s = s.copy(daily = s.daily.copy(sideRewarded = s.daily.sideRewarded + 1))
-    updateSide(id) { it.copy(done = true, xpGained = xp, goldGained = gold, bossDamage = dealt, squad = squad) }
+    updateSide(id) { it.copy(done = true, xpGained = xp, goldGained = gold, squad = squad) }
 }
 
 /** Unticks a side quest and takes back exactly what it paid. */

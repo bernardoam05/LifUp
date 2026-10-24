@@ -3,7 +3,7 @@ package com.lifup.app.domain
 import kotlin.math.roundToInt
 
 /** Adds XP with squad/buff multipliers, handles level-ups, rank-ups and (optionally) boss damage. Returns XP gained. */
-fun Tx.gainXp(base: Int, family: DrawGroup? = null, hitsBoss: Boolean = true, boosted: Boolean = true): Int {
+fun Tx.gainXp(base: Int, family: DrawGroup? = null, hitsBoss: Boolean = true, boosted: Boolean = true, bossShare: Double = 1.0): Int {
     if (base <= 0) return 0
     val passives = s.passives(content, ctx.now)
     val mult = if (boosted) 1 + passives.xpFor(family) else 1.0
@@ -26,14 +26,14 @@ fun Tx.gainXp(base: Int, family: DrawGroup? = null, hitsBoss: Boolean = true, bo
     s = s.copy(player = s.player.copy(xp = xp, level = level))
     val newRank = HunterRank.of(level)
     if (newRank != oldRank) reward { Reward.RankUp(it, newRank) }
-    if (hitsBoss) damageBoss(amount)
+    if (hitsBoss) damageBoss((amount * bossShare).roundToInt())
     return amount
 }
 
 /** [gainXp] that also reports the boss HP it removed, so an undo can give it back. Returns (xp, damage). */
-fun Tx.gainXpTracked(base: Int, family: DrawGroup?): Pair<Int, Int> {
+fun Tx.gainXpTracked(base: Int, family: DrawGroup?, bossShare: Double = 1.0): Pair<Int, Int> {
     val hpBefore = s.boss?.takeUnless { it.defeated }?.hp
-    val xp = gainXp(base, family)
+    val xp = gainXp(base, family, bossShare = bossShare)
     return xp to (hpBefore?.let { it - (s.boss?.hp ?: it) } ?: 0)
 }
 

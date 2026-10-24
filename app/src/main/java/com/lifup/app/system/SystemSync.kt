@@ -59,7 +59,7 @@ object SystemSync {
         if (old.portal == null && portal != null) {
             val lang = java.util.Locale.getDefault().language
             val title = com.lifup.app.ui.questTitle(portal.quest, lang)
-            Notifications.portalOpened(context, title, (portal.expiresAt - System.currentTimeMillis()) / 60_000)
+            Notifications.portalOpened(context, title, portal.expiresAt)
         }
         val f = old.focus
         if (f != null && new.focus == null) {

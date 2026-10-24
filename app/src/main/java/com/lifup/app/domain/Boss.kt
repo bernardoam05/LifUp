@@ -34,8 +34,9 @@ fun Tx.ensureBoss() {
     }
 
     val dailyXp = s.dailyQuests.sumOf { it.xp }.coerceAtLeast(150)
-    // About a week of full days: steady players win, occasional ones only sometimes (see SimulationTest).
-    val maxHp = (dailyXp * 7 * if (def.rank == "S") 1.3 else 1.0).roundToInt()
+    // A few full days plus both challenges: steady players win by the weekend, occasional ones only sometimes (see SimulationTest).
+    val challengeShare = Rules.BOSS_CHALLENGE_DAMAGE * Rules.BOSS_CHALLENGES
+    val maxHp = (dailyXp * Rules.BOSS_HP_DAYS / (1 - challengeShare) * if (def.rank == "S") 1.2 else 1.0).roundToInt()
     val challenge = Quest(
         id = "boss_${ctx.weekKey}",
         defId = def.id,
@@ -50,6 +51,29 @@ fun Tx.ensureBoss() {
         rank = if (def.rank == "S") QuestRank.S else QuestRank.A,
     )
     s = s.copy(boss = BossState(ctx.weekKey, def.id, maxHp, maxHp, challenge, ctx.nextWeekStartMs))
+}
+
+/** From Thursday a standing boss gets its second challenge, announced so it isn't missed. */
+fun Tx.ensureSecondChallenge() {
+    val b = s.boss ?: return
+    val second = content.bossById[b.bossId]?.second ?: return
+    if (b.defeated || b.second != null || b.weekKey != ctx.weekKey || ctx.today.dayOfWeek < Rules.BOSS_SECOND_DAY) return
+    val quest = b.challenge.copy(
+        id = "boss2_${b.weekKey}",
+        type = second.type,
+        description = second.description,
+        unit = second.unit,
+        target = second.target,
+        progress = 0.0,
+        status = QuestStatus.OPEN,
+    )
+    s = s.copy(boss = b.copy(second = quest))
+    reward { Reward.BossSecondChallenge(it, b.bossId) }
+}
+
+fun Tx.markSecondSeen() {
+    val b = s.boss ?: return
+    if (b.second != null && !b.secondSeen) s = s.copy(boss = b.copy(secondSeen = true))
 }
 
 fun Tx.damageBoss(amount: Int) {

@@ -90,6 +90,10 @@
     <string name="boss_ends_in">endet in %1$s</string>
     <string name="boss_challenge">Boss-Challenge</string>
     <string name="boss_challenge_done">Erledigt</string>
+    <string name="boss_challenge_n">Challenge %1$d</string>
+    <string name="boss_second_soon">Die 2. Challenge kommt am Donnerstag</string>
+    <string name="reward_boss_second_title">Neue Boss-Challenge</string>
+    <string name="reward_boss_second_text">Noch einmal %1$d %% seines Lebens auf einen Schlag. Du hast bis Sonntag.</string>
     <string name="boss_defeated">Besiegt! %1$s ist deinem Trupp beigetreten.</string>
 
     <!-- Mission sheet -->
@@ -383,7 +387,8 @@
     <string name="session_focus_title">Fokus-Session</string>
     <string name="session_penalty_title">Strafsperre aktiv</string>
     <string name="notif_portal_title">Ein Portal hat sich geöffnet</string>
-    <string name="notif_portal_text">%1$s — schließt in %2$d min. Doppelte Belohnungen.</string>
+    <string name="notif_portal_text">%1$s — doppelte Belohnungen.</string>
+    <string name="notif_portal_closes">schließt in</string>
     <string name="notif_focus_done_title">Fokus beendet</string>
     <string name="notif_focus_done_text">%1$d Minuten angerechnet.</string>
     <string name="notif_pomodoro_work">Zurück an die Arbeit</string>
@@ -536,9 +541,9 @@
     <string name="guide_penalty_title">Strafe</string>
     <string name="guide_penalty">Anteiliger Verlust::Du verlierst einen Teil dessen, was die Missionen des Tages wert waren: den offenen Teil (×0,3 auf Leicht, ×2 auf Schwer). Fast geschafft kostet fast nichts.\n24 Stunden::Unter 40 % (Leicht), 50 % (Normal) oder 67 % (Schwer) beginnt eine Strafe mit Extra-Missionen, je weniger du geschafft hast, desto mehr. Erledige sie und sie endet früher.\nSolange sie dauert::Mit App-Sperre bleiben deine Ablenkungs-Apps gesperrt; ohne sie bringen Missionen nur halb so viel XP und Gold.\nTage in Folge::Verpasste Tage in Folge wiegen immer weniger: der erste voll, der zweite halb, danach ein Viertel. Strafmissionen gibt es nur am ersten.</string>
     <string name="guide_side_title">Aufgaben</string>
-    <string name="guide_side">Freie::Schreib jede beliebige Aufgabe, ohne Ziele und Regeln.\n5 mit Belohnung::Die ersten 5 erledigten pro Tag geben XP und Gold und verletzen den Boss.\nDanach::Sie funktionieren weiter als To-do-Liste.\nKein Schummeln::Abhaken rückgängig machen oder Löschen nimmt die Belohnung zurück.</string>
+    <string name="guide_side">Freie::Schreib jede beliebige Aufgabe, ohne Ziele und Regeln.\n5 mit Belohnung::Die ersten 5 erledigten pro Tag geben XP und Gold (sie verletzen den Boss nicht).\nDanach::Sie funktionieren weiter als To-do-Liste.\nKein Schummeln::Abhaken rückgängig machen oder Löschen nimmt die Belohnung zurück.</string>
     <string name="guide_boss_title">Wochenboss</string>
-    <string name="guide_boss">Alle XP sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben.\nBoss-Challenge::Eine Spezialmission, die ihm auf einen Schlag 35 % abzieht.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nWenn nicht …::Sonntagnacht endet er, und ein neuer kommt.</string>
+    <string name="guide_boss">Missionen sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben; Extra-Missionen die Hälfte.\nBoss-Challenges::Zwei pro Woche: eine am Montag, eine am Donnerstag. Jede zieht ihm 15 % ab.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nWenn nicht …::Sonntagnacht endet er, und ein neuer kommt.</string>
     <string name="guide_portal_title">Portale</string>
     <string name="guide_portal">Sie erscheinen von selbst::Zwischen 8 und 22 Uhr, bis zu 2 pro Tag.\nDoppelte Belohnung::Eine größere Mission mit doppelt so viel XP und Gold.\nNeuer Verbündeter::Sie abzuschließen kann dir ein Echo bringen.\nAuf Zeit::Die Zeit reicht immer, aber das Portal schließt sich, wenn sie abläuft.</string>
     <string name="guide_shadows_title">Echos</string>
@@ -664,7 +669,9 @@
     <string name="notif_timer_running">Timer läuft</string>
     <string name="notif_timer_more">+%1$d weitere Timer laufen</string>
     <string name="notif_boss_title">Letzter Tag: %1$s</string>
-    <string name="notif_boss_text">Der Wochenboss endet heute Nacht, noch %1$d HP. Die Boss-Herausforderung nimmt 35 %% auf einmal.</string>
+    <string name="notif_boss_text">Der Wochenboss endet heute Nacht, noch %1$d HP. Jede Boss-Challenge nimmt 15 %% auf einmal.</string>
+    <string name="notif_boss_second_title">Neue Challenge: %1$s</string>
+    <string name="notif_boss_second_text">Der Wochenboss hat eine zweite Challenge. Sie nimmt %1$d %% auf einmal.</string>
     <string name="toast_week_goal">Woche geschafft: %1$s</string>
     <string name="week_weekly_line">%1$s: %2$d/%3$d</string>
     <string name="week_due">zählt heute</string>

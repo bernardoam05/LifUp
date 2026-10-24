@@ -13,6 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.lifup.app.MainActivity
 import com.lifup.app.R
+import com.lifup.app.domain.Rules
 import com.lifup.app.domain.text
 
 object Notifications {
@@ -32,6 +33,7 @@ object Notifications {
     const val ID_POMODORO = 2005
     private const val ID_TIMER = 1340
     const val ID_BOSS = 2007
+    const val ID_BOSS2 = 2008
     const val ID_LIMIT = 2010
     const val ID_AVOID = 2020
 
@@ -90,10 +92,26 @@ object Notifications {
         ids.forEach { runCatching { nm.cancel(it) } }
     }
 
-    fun portalOpened(context: Context, quest: String, minutes: Long) = post(
-        context, ID_PORTAL, CH_EVENTS, context.getString(R.string.notif_portal_title),
-        context.getString(R.string.notif_portal_text, quest, minutes), "today", timeoutMs = minutes * 60_000,
-    )
+    /** Counts down to the portal closing by itself (a chronometer), and goes away when it closes. */
+    fun portalOpened(context: Context, quest: String, expiresAt: Long) {
+        if (!canPost(context)) return
+        val text = context.getString(R.string.notif_portal_text, quest)
+        val n = NotificationCompat.Builder(context, CH_EVENTS)
+            .setSmallIcon(R.drawable.ic_stat_lifup)
+            .setContentTitle(context.getString(R.string.notif_portal_title))
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setSubText(context.getString(R.string.notif_portal_closes))
+            .setShowWhen(true)
+            .setWhen(expiresAt)
+            .setUsesChronometer(true)
+            .setChronometerCountDown(true)
+            .setTimeoutAfter((expiresAt - System.currentTimeMillis()).coerceAtLeast(1))
+            .setAutoCancel(true)
+            .setContentIntent(openApp(context, "today"))
+            .build()
+        runCatching { NotificationManagerCompat.from(context).notify(ID_PORTAL, n) }
+    }
 
     fun focusDone(context: Context, minutes: Int) = post(
         context, ID_FOCUS_DONE, CH_EVENTS, context.getString(R.string.notif_focus_done_title),
@@ -196,6 +214,11 @@ object Notifications {
     fun bossLastDay(context: Context, boss: String, hp: Int) = post(
         context, ID_BOSS, CH_REMINDERS, context.getString(R.string.notif_boss_title, boss),
         context.getString(R.string.notif_boss_text, hp), "boss",
+    )
+
+    fun bossSecond(context: Context, boss: String) = post(
+        context, ID_BOSS2, CH_REMINDERS, context.getString(R.string.notif_boss_second_title, boss),
+        context.getString(R.string.notif_boss_second_text, (Rules.BOSS_CHALLENGE_DAMAGE * 100).toInt()), "boss",
     )
 
     fun limitNearing(context: Context, slot: Int, quest: String, minutesLeft: Int) = post(

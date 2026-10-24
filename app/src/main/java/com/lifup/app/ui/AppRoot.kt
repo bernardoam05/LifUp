@@ -179,7 +179,7 @@ private fun MainScaffold(
         Tab.entries.firstOrNull { it.route == deepLink }?.let { pager.scrollToPage(it.ordinal) }
         if (deepLink == "boss") {
             pager.scrollToPage(Tab.TODAY.ordinal)
-            openQuest = s.boss?.challenge?.id
+            openQuest = s.boss?.let { b -> b.second?.takeIf { it.status == com.lifup.app.domain.QuestStatus.OPEN }?.id ?: b.challenge.id }
         }
         // From widgets: open one mission, or prepare a focus session for it.
         if (deepLink?.startsWith("quest/") == true) {
