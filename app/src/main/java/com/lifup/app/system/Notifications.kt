@@ -36,6 +36,10 @@ object Notifications {
     const val ID_BOSS2 = 2008
     const val ID_LIMIT = 2010
     const val ID_AVOID = 2020
+    private const val ID_REMIND = 3000
+
+    /** One notification per reminded mission or side quest, steady across days. */
+    fun remindId(itemId: String) = ID_REMIND + (itemId.hashCode() and 0x3FF)
 
     /**
      * Something running right now (a focus session, a run): public on the lock screen and, on Android 16+,
@@ -130,13 +134,30 @@ object Notifications {
         context.getString(R.string.notif_penalty_text, quests), "today",
     )
 
-    fun reminder(context: Context, goal: com.lifup.app.domain.DayGoal) = post(
+    /** [alsoNow]: missions whose own reminder rang at the same time, named here instead of each ringing apart. */
+    fun reminder(context: Context, goal: com.lifup.app.domain.DayGoal, alsoNow: List<String> = emptyList()) = post(
         context, ID_REMINDER, CH_REMINDERS,
         context.getString(if (goal.safe) R.string.notif_reminder_safe_title else R.string.notif_reminder_title),
-        if (goal.safe) context.getString(R.string.notif_reminder_safe_text, goal.total - goal.kept)
-        else context.getString(R.string.notif_reminder_text, goal.needed - goal.kept),
+        (if (goal.safe) context.getString(R.string.notif_reminder_safe_text, goal.total - goal.kept)
+        else context.getString(R.string.notif_reminder_text, goal.needed - goal.kept)) +
+            (if (alsoNow.isEmpty()) "" else "\n" + context.getString(R.string.notif_reminder_also, alsoNow.joinToString(", "))),
         "today",
     )
+
+    /** A mission's or side quest's own reminder, with "done" ([doneAction], when one tap is enough) and "later". */
+    fun personalReminder(context: Context, itemId: String, title: String, text: String, route: String, doneAction: String?) {
+        if (!canPost(context)) return
+        val b = NotificationCompat.Builder(context, CH_REMINDERS)
+            .setSmallIcon(R.drawable.ic_stat_lifup)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setAutoCancel(true)
+            .setContentIntent(openApp(context, route))
+        doneAction?.let { b.addAction(0, context.getString(R.string.notif_remind_done), NotificationActionReceiver.intent(context, it, itemId)) }
+        b.addAction(0, context.getString(R.string.notif_remind_later, Rules.SNOOZE_MIN), NotificationActionReceiver.intent(context, NotificationActionReceiver.SNOOZE, itemId))
+        runCatching { NotificationManagerCompat.from(context).notify(remindId(itemId), b.build()) }
+    }
 
     /**
      * The evening check-in for avoid missions still standing: they'll count at midnight, so a slip

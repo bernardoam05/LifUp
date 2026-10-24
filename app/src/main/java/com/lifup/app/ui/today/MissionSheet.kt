@@ -11,6 +11,7 @@ import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.automirrored.rounded.Notes
 import androidx.compose.material.icons.rounded.Lightbulb
+import androidx.compose.material.icons.rounded.Alarm
 import androidx.compose.foundation.clickable
 import androidx.compose.animation.AnimatedVisibility
 import com.lifup.app.domain.Quest
@@ -93,6 +94,7 @@ import com.lifup.app.domain.completeQuest
 import com.lifup.app.domain.pauseTimer
 import com.lifup.app.domain.resetTimer
 import com.lifup.app.domain.saveNote
+import com.lifup.app.domain.setReminder
 import com.lifup.app.domain.setProgress
 import com.lifup.app.domain.startTimer
 import com.lifup.app.domain.swapQuest
@@ -168,6 +170,7 @@ fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = nu
             Column {
                 def?.let { ProgressRow(s, q, it) }
                 s.tipFor(q, content)?.let { TipRow(it.text(lang())) }
+                if (q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY)) ReminderRow(s, q)
                 NoteRow(note) { note = it }
             }
         }
@@ -378,6 +381,25 @@ private fun TipRow(tip: String) {
     AnimatedVisibility(open) { Text(tip, style = MaterialTheme.typography.bodyMedium, color = p.text, modifier = Modifier.padding(start = 26.dp)) }
 }
 
+/** The mission's own reminder, every day it comes up: tapped, it opens the time to set, change or take off. */
+@Composable
+private fun ReminderRow(s: GameState, q: Quest) {
+    val minute = s.reminders[q.defId]?.minute
+    var picking by remember { mutableStateOf(false) }
+    FoldRow(
+        Icons.Rounded.Alarm,
+        minute?.let { stringResource(R.string.reminder_at, com.lifup.app.ui.components.fmtMinuteOfDay(it)) } ?: stringResource(R.string.reminder_add),
+        open = false,
+        folds = false,
+    ) { picking = true }
+    if (picking) com.lifup.app.ui.components.TimeDialog(
+        stringResource(R.string.reminder_title), minute,
+        onPick = { m -> act { setReminder(q.defId, m) } },
+        onRemove = minute?.let { { act { setReminder(q.defId, null) } } },
+        onDismiss = { picking = false },
+    )
+}
+
 /** The player's own note for this mission, kept for next time; folded to one line until tapped. */
 @Composable
 private fun NoteRow(note: String, onChange: (String) -> Unit) {
@@ -393,13 +415,13 @@ private fun NoteRow(note: String, onChange: (String) -> Unit) {
 
 /** A one-line row with an icon; with [onClick] it folds open (chevron), without it it's just information. */
 @Composable
-private fun FoldRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, open: Boolean, maxLines: Int = 1, onClick: (() -> Unit)?) {
+private fun FoldRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, open: Boolean, maxLines: Int = 1, folds: Boolean = true, onClick: (() -> Unit)?) {
     val p = Lif.colors
     Row(Modifier.fillMaxWidth().then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier).padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, null, tint = p.muted, modifier = Modifier.size(18.dp))
         Spacer(Modifier.width(8.dp))
         Text(label, style = MaterialTheme.typography.bodyMedium, color = p.muted, maxLines = maxLines, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
-        if (onClick != null) Icon(if (open) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = p.muted)
+        if (onClick != null && folds) Icon(if (open) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = p.muted)
     }
 }
 

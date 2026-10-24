@@ -166,6 +166,11 @@ object Rules {
     const val WEEKLY_HISTORY_WEEKS = 26
     const val WEEKLY_CHART_WEEKS = 8
 
+    /** "Later" on a reminder puts it off this long. */
+    const val SNOOZE_MIN = 30
+    /** A reminder missed by more than this (phone off, app not run) is dropped rather than rung late. */
+    const val REMINDER_STALE_MIN = 90
+
     /** Sunday hour for the "boss escapes tonight" nudge. */
     const val BOSS_NUDGE_HOUR = 18
 
@@ -419,6 +424,8 @@ class Ctx(val content: Content, val now: Long, val zone: ZoneId = ZoneId.systemD
     val nextWeekStartMs: Long = weekStart.plusWeeks(1).atStartOfDay(zone).toInstant().toEpochMilli()
 
     fun atHour(date: LocalDate, hour: Int): Long = date.atTime(hour, 0).atZone(zone).toInstant().toEpochMilli()
+    /** Wall-clock time on [date], right on the days the clocks change (adding minutes to midnight would be an hour off). */
+    fun atMinute(date: LocalDate, minute: Int): Long = date.atTime(minute / 60, minute % 60).atZone(zone).toInstant().toEpochMilli()
     fun nextMidnight(): Long = today.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
 }
 

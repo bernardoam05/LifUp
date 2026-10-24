@@ -783,4 +783,12 @@
     <string name="reason_streak">Reward for a %1$d-day streak</string>
     <string name="reason_level">Reward for reaching level %1$d</string>
     <string name="reason_boss">Reward for defeating %1$s</string>
+    <string name="reminder_add">Add a reminder</string>
+    <string name="reminder_at">Reminder at %1$s</string>
+    <string name="reminder_title">Reminder</string>
+    <string name="reminder_remove">Remove</string>
+    <string name="notif_remind_done">Done</string>
+    <string name="notif_remind_later">Later (%1$d min)</string>
+    <string name="notif_remind_side">Side quest</string>
+    <string name="notif_reminder_also">Also now: %1$s</string>
 </resources>

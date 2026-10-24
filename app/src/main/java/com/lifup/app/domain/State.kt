@@ -80,7 +80,13 @@ data class SideQuest(
     val goldGained: Int = 0,
     val bossDamage: Int = 0,
     val squad: SquadGain = SquadGain(),
+    /** When to remind about it, once. */
+    val remindAt: Long? = null,
 )
+
+/** [minute]: minutes after midnight. [since]: when it was set, so a time already past that day doesn't ring at once. */
+@Serializable
+data class MissionReminder(val minute: Int, val since: Long)
 
 /** XP and gold the squad's passives added (or saved), and the times one saved a streak or a penalty. */
 @Serializable
@@ -349,6 +355,10 @@ data class GameState(
     val day: String = "",
     val quests: List<Quest> = emptyList(),
     val sideQuests: List<SideQuest> = emptyList(),
+    /** Missions' own reminders, by definition, so one set once holds every day the mission comes up. */
+    val reminders: Map<String, MissionReminder> = emptyMap(),
+    /** Reminders put off from their notification, by quest or side quest id, until this time; cleared each day. */
+    val snoozes: Map<String, Long> = emptyMap(),
     val customDefs: List<QuestDef> = emptyList(),
     val disabledDefIds: Set<String> = emptySet(),
     val penalty: Penalty = Penalty(),

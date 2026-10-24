@@ -10,6 +10,11 @@ import com.lifup.app.domain.AutoKind
 import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.Reward
 import com.lifup.app.domain.text
+import com.lifup.app.domain.DueReminder
+import com.lifup.app.domain.QuestType
+import com.lifup.app.domain.availableAt
+import com.lifup.app.domain.ownRemindersAhead
+import com.lifup.app.domain.reminderTimes
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -58,16 +63,17 @@ object Alarms {
             val at = ctx.atHour(ctx.today, Rules.BOSS_NUDGE_HOUR)
             if (at > now) candidates += at
         }
+        if (s.settings.notifications) candidates += s.reminderTimes(ctx).map { it.at }.filter { it > now }
         if (s.settings.notifications && s.secondChallengeUnseen()) {
             val at = ctx.atHour(ctx.today, Rules.BOSS_SECOND_HOUR)
             if (at > now) candidates += at
         }
         if (s.settings.notifications && s.openAvoids().isNotEmpty()) {
-            val at = ctx.atHour(ctx.today, 0) + Rules.AVOID_CHECK_MIN * 60_000L
+            val at = ctx.atMinute(ctx.today, Rules.AVOID_CHECK_MIN)
             if (at > now) candidates += at
         }
         if (s.settings.notifications && s.openBedtime() != null) {
-            val at = ctx.atHour(ctx.today, 0) + Rules.BEDTIME_NUDGE_MIN * 60_000L
+            val at = ctx.atMinute(ctx.today, Rules.BEDTIME_NUDGE_MIN)
             if (at > now) candidates += at
         }
         return candidates.filter { it > now }.min()
@@ -102,15 +108,34 @@ object Alarms {
     private fun reminderSentToday(context: Context, today: String) =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("reminder", "") == today
 
-    /** Evening nudge that says what is actually at stake, plus a late one for an open bedtime check-in. */
+    /**
+     * Evening nudge that says what is actually at stake, the missions' and side quests' own reminders (folded into
+     * the evening one when they ring together), plus a late one for an open bedtime check-in.
+     */
     fun maybeRemind(context: Context, s: GameState) {
         val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
-        if (!s.settings.notifications || s.daily.rest) return
+        if (!s.settings.notifications) return
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val lang = java.util.Locale.getDefault().language
+        // Rest days keep a side quest's one-off reminder but not the missions'.
+        var due = s.reminderTimes(ctx).filter {
+            it.at <= ctx.now && ctx.now - it.at <= Rules.REMINDER_STALE_MIN * 60_000L && prefs.getLong("rem_${it.itemId}", 0) < it.at &&
+                (!s.daily.rest || it.sideId != null)
+        }
+        fun sent(r: DueReminder) = prefs.edit().putLong("rem_${r.itemId}", r.at).apply()
+        if (s.daily.rest) return due.forEach { sent(it); personalReminder(context, s, it, lang, ctx) }
         if (ctx.hour >= s.settings.reminderHour && !reminderSentToday(context, ctx.todayKey)) {
             prefs.edit().putString("reminder", ctx.todayKey).apply()
-            if (!s.allDailyDone()) Notifications.reminder(context, s.dayGoal())
+            // Missions with their own reminder still ahead get theirs; the evening one doesn't repeat them.
+            if (!s.allDailyDone() && !s.ownRemindersAhead(ctx)) {
+                val folded = due.filter { it.questId != null }
+                folded.forEach(::sent)
+                due = due - folded.toSet()
+                val titles = folded.mapNotNull { r -> s.quests.firstOrNull { it.id == r.questId }?.let { com.lifup.app.ui.questTitle(it, lang) } }
+                Notifications.reminder(context, s.dayGoal(), titles)
+            }
         }
+        due.forEach { sent(it); personalReminder(context, s, it, lang, ctx) }
         val boss = s.boss
         if (ctx.today.dayOfWeek == java.time.DayOfWeek.SUNDAY && ctx.hour >= Rules.BOSS_NUDGE_HOUR && boss != null && !boss.defeated &&
             prefs.getString("boss", "") != ctx.weekKey
@@ -143,6 +168,22 @@ object Alarms {
         return !b.defeated && !b.secondSeen && b.second?.status == QuestStatus.OPEN && rewards.any { it is Reward.BossSecondChallenge }
     }
 
+    /** A mission's reminder can finish it from the notification when a tap is all it takes. */
+    private fun personalReminder(context: Context, s: GameState, r: DueReminder, lang: String, ctx: Ctx) {
+        r.questId?.let { id ->
+            val q = s.quests.firstOrNull { it.id == id } ?: return
+            val oneTap = q.auto == null && (q.type == QuestType.TRAINING || q.type == QuestType.KNOWLEDGE) && q.availableAt(ctx.hour)
+            Notifications.personalReminder(
+                context, id, com.lifup.app.ui.questTitle(q, lang), com.lifup.app.ui.questDetail(q, lang), "quest/$id",
+                if (oneTap) NotificationActionReceiver.COMPLETE else null,
+            )
+        }
+        r.sideId?.let { id ->
+            val sq = s.sideQuests.firstOrNull { it.id == id } ?: return
+            Notifications.personalReminder(context, id, sq.title, context.getString(com.lifup.app.R.string.notif_remind_side), "today", NotificationActionReceiver.COMPLETE_SIDE)
+        }
+    }
+
     private var dismissed: List<Int>? = null
 
     /**
@@ -165,6 +206,9 @@ object Alarms {
             if (s.portal == null) add(Notifications.ID_PORTAL)
             if (s.focus == null) add(Notifications.ID_POMODORO)
             if (!s.penalty.active) add(Notifications.ID_PENALTY)
+            // A reminder goes once its mission or side quest is done (or gone with the day).
+            s.quests.filter { it.status != QuestStatus.OPEN }.forEach { add(Notifications.remindId(it.id)) }
+            s.sideQuests.filter { it.done }.forEach { add(Notifications.remindId(it.id)) }
         }
         if (gone == dismissed) return
         dismissed = gone

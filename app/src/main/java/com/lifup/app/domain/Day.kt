@@ -26,6 +26,7 @@ fun Tx.ensureDay() {
             quests = generateDailyQuests(s, content, ctx.today),
             sideQuests = s.sideQuests.filterNot { it.done },
             timers = emptyMap(),
+            snoozes = emptyMap(),
             run = null,
         )
     }

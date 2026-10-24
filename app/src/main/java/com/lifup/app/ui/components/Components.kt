@@ -33,6 +33,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerDefaults
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -206,3 +210,40 @@ fun ConfirmDialog(title: String, text: String, confirm: String, onConfirm: () ->
 fun EmptyNote(text: String) {
     Text(text, color = Lif.colors.dim, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp), textAlign = TextAlign.Center)
 }
+
+/** Picks a time of day, in minutes after midnight; [onRemove] shows when there is one to take off. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimeDialog(title: String, initial: Int?, onPick: (Int) -> Unit, onRemove: (() -> Unit)?, onDismiss: () -> Unit) {
+    val start = initial ?: (18 * 60)
+    val state = rememberTimePickerState(initialHour = start / 60, initialMinute = start % 60, is24Hour = true)
+    val p = Lif.colors
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title, style = MaterialTheme.typography.titleLarge) },
+        text = {
+            TimePicker(
+                state,
+                colors = TimePickerDefaults.colors(
+                    clockDialColor = p.bg, selectorColor = p.accent, timeSelectorSelectedContainerColor = p.accent.copy(alpha = 0.25f),
+                    timeSelectorUnselectedContainerColor = p.bg, timeSelectorSelectedContentColor = p.text, timeSelectorUnselectedContentColor = p.muted,
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { onPick(state.hour * 60 + state.minute); onDismiss() }) {
+                Text(stringResource(R.string.save).uppercase(), color = p.accent, fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            Row {
+                if (onRemove != null) TextButton(onClick = { onRemove(); onDismiss() }) { Text(stringResource(R.string.reminder_remove).uppercase(), color = p.red) }
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel).uppercase(), color = p.muted) }
+            }
+        },
+        containerColor = p.panel,
+    )
+}
+
+/** "18:30" from minutes after midnight. */
+fun fmtMinuteOfDay(minute: Int) = "%02d:%02d".format(minute / 60, minute % 60)

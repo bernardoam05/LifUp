@@ -481,6 +481,46 @@ class EngineTest {
         assertEquals(0, s.dayLog.last().sideMissed)
     }
 
+    @Test fun `a mission reminder rings from the next time it comes round, and later puts it off`() {
+        var s = fresh() // 09:00
+        val q = s.dailyQuests.first()
+        s = run(s, "2026-10-14T10:00") { setReminder(q.defId, 8 * 60) } // 08:00 already gone today
+        assertTrue(s.reminderTimes(ctx("2026-10-14T10:00")).none { it.questId == q.id })
+        s = run(s, "2026-10-14T10:01") { setReminder(q.defId, 18 * 60) }
+        assertEquals(at("2026-10-14T18:00"), s.reminderTimes(ctx("2026-10-14T10:01")).single { it.questId == q.id }.at)
+        s = run(s, "2026-10-14T18:05") { snoozeReminder(q.id) }
+        assertEquals(at("2026-10-14T18:35"), s.reminderTimes(ctx("2026-10-14T18:05")).single { it.questId == q.id }.at)
+        s = run(s, "2026-10-14T18:06") { completeQuest(q.id) }
+        assertTrue(s.reminderTimes(ctx("2026-10-14T18:06")).none { it.questId == q.id })
+    }
+
+    @Test fun `a side quest reminder for a time already gone rings tomorrow`() {
+        var s = run(fresh(), "2026-10-14T15:00") { addSideQuest("Ligar ao banco") }
+        val id = s.sideQuests.single().id
+        s = run(s, "2026-10-14T15:01") { setSideReminder(id, 11 * 60) }
+        assertEquals(at("2026-10-15T11:00"), s.sideQuests.single().remindAt)
+        s = run(s, "2026-10-14T15:02") { setSideReminder(id, null) }
+        assertNull(s.sideQuests.single().remindAt)
+    }
+
+    @Test fun `reminders keep the wall-clock time on the night the clocks go back`() {
+        var s = run(fresh(), "2026-10-14T15:00") { addSideQuest("Ligar ao banco") }
+        s = run(s, "2026-10-25T00:30") // the 25-hour day
+        val id = s.sideQuests.single().id
+        s = run(s, "2026-10-25T00:31") { setSideReminder(id, 18 * 60) }
+        assertEquals(at("2026-10-25T18:00"), s.sideQuests.single().remindAt)
+    }
+
+    @Test fun `the evening reminder steps aside only when every open mission has its own still ahead`() {
+        var s = fresh()
+        val open = s.dailyQuests.filter { !it.isSuccessful() }
+        s = run(s, "2026-10-14T10:00") { open.drop(1).forEach { setReminder(it.defId, 22 * 60) } }
+        assertFalse(s.ownRemindersAhead(ctx("2026-10-14T20:00")))
+        s = run(s, "2026-10-14T10:01") { setReminder(open.first().defId, 22 * 60) }
+        assertTrue(s.ownRemindersAhead(ctx("2026-10-14T20:00")))
+        assertFalse(s.ownRemindersAhead(ctx("2026-10-14T22:30")))
+    }
+
     @Test fun `only five side quests a day pay rewards`() {
         var s = fresh()
         s = run(s, "2026-10-14T10:00") { repeat(7) { addSideQuest("t$it") } }

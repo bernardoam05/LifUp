@@ -3,6 +3,7 @@ package com.lifup.app.ui.today
 import com.lifup.app.domain.penaltyBlocks
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.Alarm
 import com.lifup.app.ui.defTitle
 import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.rounded.EventRepeat
@@ -87,6 +88,7 @@ import com.lifup.app.domain.isSuccessful
 import com.lifup.app.domain.removeSideQuest
 import com.lifup.app.domain.sideRewardsLeft
 import com.lifup.app.domain.undoSideQuest
+import com.lifup.app.domain.setSideReminder
 import com.lifup.app.domain.text
 import com.lifup.app.domain.toggleRestDay
 import com.lifup.app.ui.act
@@ -115,6 +117,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
     val now = rememberNow(1_000)
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
     var confirmDelete by rememberSaveable { mutableStateOf<String?>(null) }
+    var remindSide by rememberSaveable { mutableStateOf<String?>(null) }
     LaunchedEffect(openQuest) {
         if (openQuest != null) { selected = openQuest; onQuestOpened() }
     }
@@ -193,12 +196,21 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
                     IconButton(onClick = { act { if (sq.done) undoSideQuest(sq.id) else completeSideQuest(sq.id) } }) {
                         Icon(if (sq.done) Icons.Rounded.CheckBox else Icons.Rounded.CheckBoxOutlineBlank, stringResource(if (sq.done) R.string.a11y_mark_undone else R.string.a11y_mark_done), tint = if (sq.done) p.green else p.muted)
                     }
-                    Text(sq.title, style = MaterialTheme.typography.bodyLarge, color = if (sq.done) p.dim else p.text, modifier = Modifier.weight(1f))
+                    Column(Modifier.weight(1f)) {
+                        Text(sq.title, style = MaterialTheme.typography.bodyLarge, color = if (sq.done) p.dim else p.text)
+                        sq.remindAt?.takeIf { !sq.done }?.let { at ->
+                            val t = java.time.Instant.ofEpochMilli(at).atZone(java.time.ZoneId.systemDefault()).toLocalTime()
+                            Text("⏰ " + com.lifup.app.ui.components.fmtMinuteOfDay(t.hour * 60 + t.minute), style = MaterialTheme.typography.labelSmall, color = p.accent)
+                        }
+                    }
                     val paid = sq.xpGained > 0 || sq.goldGained > 0
                     when {
                         sq.done && !paid -> Pill(stringResource(R.string.side_no_reward), p.dim)
                         !sq.done && s.sideRewardsLeft() == 0 -> Pill(stringResource(R.string.side_no_reward), p.gold)
                         else -> Pill("+${if (sq.done) sq.xpGained else sq.xp} XP", p.accent)
+                    }
+                    if (!sq.done) IconButton(onClick = { remindSide = sq.id }) {
+                        Icon(Icons.Rounded.Alarm, stringResource(R.string.reminder_title), tint = if (sq.remindAt != null) p.accent else p.dim, modifier = Modifier.size(20.dp))
                     }
                     // Deleting a paid side quest takes its XP back, so that one asks first.
                     IconButton(onClick = { if (paid) confirmDelete = sq.id else act { removeSideQuest(sq.id) } }) { Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.delete), tint = p.dim) }
@@ -208,6 +220,16 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
         if (s.sideQuests.isEmpty()) item { EmptyNote(stringResource(R.string.side_empty)) }
     }
 
+    remindSide?.let { id ->
+        val sq = s.sideQuests.firstOrNull { it.id == id }
+        val current = sq?.remindAt?.let { java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneId.systemDefault()).toLocalTime() }
+        com.lifup.app.ui.components.TimeDialog(
+            stringResource(R.string.reminder_title), current?.let { it.hour * 60 + it.minute },
+            onPick = { m -> act { setSideReminder(id, m) } },
+            onRemove = current?.let { { act { setSideReminder(id, null) } } },
+            onDismiss = { remindSide = null },
+        )
+    }
     confirmDelete?.let { id ->
         com.lifup.app.ui.components.ConfirmDialog(
             stringResource(R.string.delete), stringResource(R.string.side_delete_paid), stringResource(R.string.delete),

@@ -764,4 +764,12 @@
     <string name="reason_streak">Recompensa da sequência de %1$d dias</string>
     <string name="reason_level">Recompensa por chegares ao nível %1$d</string>
     <string name="reason_boss">Recompensa por venceres %1$s</string>
+    <string name="reminder_add">Adicionar lembrete</string>
+    <string name="reminder_at">Lembrete às %1$s</string>
+    <string name="reminder_title">Lembrete</string>
+    <string name="reminder_remove">Remover</string>
+    <string name="notif_remind_done">Feito</string>
+    <string name="notif_remind_later">Adiar %1$d min</string>
+    <string name="notif_remind_side">Tarefa</string>
+    <string name="notif_reminder_also">Também agora: %1$s</string>
 </resources>
