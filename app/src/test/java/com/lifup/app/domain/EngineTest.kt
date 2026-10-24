@@ -467,6 +467,20 @@ class EngineTest {
         assertEquals(s.player.gold.toLong(), s.count(StatKey.GOLD_EARNED))
     }
 
+    @Test fun `with side quests counting, an unfinished one fails only the day it was written for, and shows`() {
+        var s = fresh().let { it.copy(settings = it.settings.copy(sidePenalize = true)) }
+        s = run(s, "2026-10-14T23:00") { addSideQuest("Ligar ao banco"); s.dailyQuests.forEach { completeQuest(it.id) } }
+        s = run(s, "2026-10-15T08:00") // the helper runs actions before the day opens
+        s = run(s, "2026-10-15T23:00") { s.dailyQuests.forEach { completeQuest(it.id) } }
+        val first = s.dayLog.last()
+        assertFalse(first.perfect)
+        assertEquals(1, first.sideMissed)
+        assertEquals(1, s.rewards.filterIsInstance<Reward.DayReport>().last().sideMissed)
+        s = run(s, "2026-10-16T08:00")
+        assertTrue(s.dayLog.last().perfect) // still on the list, but it already counted
+        assertEquals(0, s.dayLog.last().sideMissed)
+    }
+
     @Test fun `only five side quests a day pay rewards`() {
         var s = fresh()
         s = run(s, "2026-10-14T10:00") { repeat(7) { addSideQuest("t$it") } }

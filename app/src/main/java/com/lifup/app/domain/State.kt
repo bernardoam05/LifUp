@@ -231,7 +231,11 @@ data class MissionTimer(val runningSince: Long = 0, val accumulatedMs: Long = 0)
 }
 
 @Serializable
-data class DayLog(val day: String, val done: Int, val total: Int, val perfect: Boolean, val penalty: Boolean, val rest: Boolean, val passed: Boolean = false)
+data class DayLog(
+    val day: String, val done: Int, val total: Int, val perfect: Boolean, val penalty: Boolean, val rest: Boolean, val passed: Boolean = false,
+    /** Side quests that counted as failures ("side quests count"), shown so a 5/5 day that failed makes sense. */
+    val sideMissed: Int = 0,
+)
 
 @Serializable
 data class PenaltyInfo(val failed: Int, val total: Int, val xpLost: Int, val goldLost: Int, val quests: Int, val absorbedBy: String? = null)
@@ -281,6 +285,7 @@ sealed interface Reward {
         /** Enough missions for the streak, but not all of them. */
         val passed: Boolean = false,
         val streakRestored: Boolean = false,
+        val sideMissed: Int = 0,
     ) : Reward
 
     @Serializable @SerialName("week")

@@ -488,14 +488,15 @@ private fun DayRow(d: com.lifup.app.domain.DayLog) {
     val result = when {
         d.rest -> stringResource(R.string.day_rest)
         d.perfect -> stringResource(R.string.day_perfect)
-        else -> "${d.done}/${d.total}"
+        // Side quests that counted are part of the total, or a failed 5/5 day would make no sense.
+        else -> "${d.done}/${d.total + d.sideMissed}"
     }
     Row(Modifier.fillMaxWidth().padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(
             java.time.LocalDate.parse(d.day).format(java.time.format.DateTimeFormatter.ofPattern("EEE, d MMM")),
             style = MaterialTheme.typography.labelMedium, color = c.muted, modifier = Modifier.width(112.dp), maxLines = 1, overflow = TextOverflow.Ellipsis,
         )
-        Bar(if (d.total == 0) 0f else d.done / d.total.toFloat(), color, height = 6.dp, modifier = Modifier.weight(1f))
+        Bar(if (d.total + d.sideMissed == 0) 0f else d.done / (d.total + d.sideMissed).toFloat(), color, height = 6.dp, modifier = Modifier.weight(1f))
         Row(Modifier.width(84.dp), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
             if (d.penalty) Icon(Icons.Rounded.Warning, stringResource(R.string.penalty_section), tint = color, modifier = Modifier.padding(end = 4.dp).size(14.dp))
             Text(result, style = MaterialTheme.typography.labelMedium, color = color, maxLines = 1)

@@ -41,7 +41,9 @@ fun Tx.ensureDay() {
 private fun Tx.closeDay(day: LocalDate) {
     val daily = s.countedQuests()
     val rest = s.daily.rest
-    val sideFailed = if (s.settings.sidePenalize) s.sideQuests.count { !it.done && it.createdDay < ctx.todayKey } else 0
+    // A side quest counts once, on the night of the day it was written for; after that it's a plain to-do,
+    // so one forgotten task can't fail every day that follows.
+    val sideFailed = if (s.settings.sidePenalize && !rest) s.sideQuests.count { !it.done && it.createdDay == day.toString() } else 0
     val done = daily.count { it.isSuccessful() }
     // Unfinished penalty missions don't feed the next penalty.
     val failed = daily.size - done + sideFailed
@@ -104,8 +106,8 @@ private fun Tx.closeDay(day: LocalDate) {
     if (gap > 1 && !rest && s.player.streak > 0) setStreak(0)
     if (gap > 1) s = s.copy(recovery = null)
 
-    s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null, rest, passed && !rest)).takeLast(Rules.DAY_LOG_DAYS))
-    reward { Reward.DayReport(it, day.toString(), done, daily.size, perfect && !rest, rest, s.player.streak, bonusXp, penaltyInfo, streakSavedBy, passed && !rest, restored) }
+    s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null, rest, passed && !rest, sideFailed)).takeLast(Rules.DAY_LOG_DAYS))
+    reward { Reward.DayReport(it, day.toString(), done, daily.size, perfect && !rest, rest, s.player.streak, bonusXp, penaltyInfo, streakSavedBy, passed && !rest, restored, sideFailed) }
     // The perfect day's echo comes once the day is closed: avoid and limit missions can still break until midnight.
     if (perfect && !rest) rollExtraction()
 }

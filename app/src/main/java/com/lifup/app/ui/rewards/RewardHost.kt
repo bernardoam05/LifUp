@@ -172,6 +172,7 @@ private fun DayReportCard(r: Reward.DayReport, dismiss: () -> Unit) {
     }
     RewardCard(icon, color, stringResource(R.string.report_title, r.day), title, dismiss) {
         Line(stringResource(R.string.report_done, r.done, r.total))
+        if (r.sideMissed > 0) Line(stringResource(R.string.report_side_missed, r.sideMissed), c.red)
         if (r.bonusXp > 0) Line("+${r.bonusXp} XP", c.accent)
         if (pen != null) {
             if (pen.absorbedBy != null) {

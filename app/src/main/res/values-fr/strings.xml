@@ -247,6 +247,7 @@
     <string name="report_absorbed">Pénalité absorbée</string>
     <string name="report_failed">Missions échouées</string>
     <string name="report_done">%1$d missions faites sur %2$d</string>
+    <string name="report_side_missed">Tâches non faites comptées : %1$d</string>
     <string name="report_absorbed_by">%1$s a absorbé la pénalité</string>
     <string name="report_loss">−%1$d XP · −%2$d or</string>
     <string name="report_penalty_quests">%1$d missions de pénalité à terminer</string>
@@ -281,7 +282,7 @@
     <string name="block_on_penalty">Bloquer des apps pendant les pénalités</string>
     <string name="block_on_penalty_info">Les apps choisies restent bloquées pendant une pénalité (jusqu\'à 24 h).</string>
     <string name="side_penalize">Les tâches comptent</string>
-    <string name="side_penalize_info">Les tâches non faites comptent comme des échecs à minuit.</string>
+    <string name="side_penalize_info">Une tâche non faite compte comme un échec une fois, à minuit le jour où tu l\'as écrite.</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_info">Portails, sessions terminées, pénalités et un rappel le soir.</string>
     <string name="reminder_hour">Heure du rappel</string>

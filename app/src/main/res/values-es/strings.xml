@@ -261,6 +261,7 @@
     <string name="report_absorbed">Penalización absorbida</string>
     <string name="report_failed">Misiones falladas</string>
     <string name="report_done">%1$d de %2$d misiones hechas</string>
+    <string name="report_side_missed">Tareas pendientes que contaron: %1$d</string>
     <string name="report_absorbed_by">%1$s absorbió la penalización</string>
     <string name="report_loss">−%1$d XP · −%2$d oro</string>
     <string name="report_penalty_quests">%1$d misiones de penalización por cumplir</string>
@@ -296,7 +297,7 @@
     <string name="block_on_penalty">Bloquear apps en penalizaciones</string>
     <string name="block_on_penalty_info">Las apps elegidas quedan bloqueadas durante la penalización (hasta 24 h).</string>
     <string name="side_penalize">Las tareas cuentan</string>
-    <string name="side_penalize_info">Las tareas pendientes cuentan como fallos a medianoche.</string>
+    <string name="side_penalize_info">Una tarea pendiente cuenta como fallo una vez, a medianoche del día en que la escribiste.</string>
     <string name="notifications">Notificaciones</string>
     <string name="notifications_info">Portales, sesiones terminadas, penalizaciones y un recordatorio por la noche.</string>
     <string name="reminder_hour">Hora del recordatorio</string>

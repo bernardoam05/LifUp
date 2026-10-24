@@ -261,6 +261,7 @@
     <string name="report_absorbed">Strafe absorbiert</string>
     <string name="report_failed">Missionen gescheitert</string>
     <string name="report_done">%1$d von %2$d Missionen erledigt</string>
+    <string name="report_side_missed">Unerledigte Aufgaben, die zählten: %1$d</string>
     <string name="report_absorbed_by">%1$s hat die Strafe absorbiert</string>
     <string name="report_loss">−%1$d XP · −%2$d Gold</string>
     <string name="report_penalty_quests">%1$d Strafmissionen zu erledigen</string>
@@ -296,7 +297,7 @@
     <string name="block_on_penalty">Apps bei Strafen sperren</string>
     <string name="block_on_penalty_info">Die gewählten Apps bleiben während einer Strafe gesperrt (bis zu 24 h).</string>
     <string name="side_penalize">Aufgaben zählen</string>
-    <string name="side_penalize_info">Unerledigte Aufgaben zählen um Mitternacht als gescheitert.</string>
+    <string name="side_penalize_info">Eine unerledigte Aufgabe zählt einmal als gescheitert, um Mitternacht des Tages, an dem du sie geschrieben hast.</string>
     <string name="notifications">Benachrichtigungen</string>
     <string name="notifications_info">Portale, beendete Sessions, Strafen und eine Erinnerung am Abend.</string>
     <string name="reminder_hour">Erinnerungszeit</string>

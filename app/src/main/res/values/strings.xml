@@ -262,6 +262,7 @@
     <string name="report_absorbed">Penalty absorbed</string>
     <string name="report_failed">Missions failed</string>
     <string name="report_done">%1$d of %2$d missions done</string>
+    <string name="report_side_missed">Unfinished side quests that counted: %1$d</string>
     <string name="report_absorbed_by">%1$s absorbed the penalty</string>
     <string name="report_loss">−%1$d XP · −%2$d gold</string>
     <string name="report_penalty_quests">%1$d penalty missions to clear</string>
@@ -297,7 +298,7 @@
     <string name="block_on_penalty">Block apps during penalties</string>
     <string name="block_on_penalty_info">Your chosen apps stay blocked during a penalty (up to 24 h).</string>
     <string name="side_penalize">Side quests count</string>
-    <string name="side_penalize_info">Unfinished side quests count as failures at midnight.</string>
+    <string name="side_penalize_info">An unfinished side quest counts as a failure at midnight on the day you wrote it, once.</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_info">Portals, finished sessions, penalties and an evening reminder.</string>
     <string name="reminder_hour">Reminder hour</string>
