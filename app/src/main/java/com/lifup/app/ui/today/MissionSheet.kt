@@ -189,15 +189,17 @@ private fun SheetHeader(s: GameState, q: Quest) {
         IconBadge(q.icon(), color, 46.dp)
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
-            Text(questTitle(q, lang()), style = MaterialTheme.typography.titleLarge)
+            // The reward sits by the title: next to three pills it was squeezed until the gold broke into a column.
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(questTitle(q, lang()), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+                Reward(s, q)
+            }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Pill(stringResource(familyName(q.family())), color)
                 s.defOf(q.defId, content)?.takeIf { it.baseXp > 0 }?.let { def ->
                     Pill(difficultyLabel(Rules.difficulty(def.baseXp)), Lif.colors.muted)
                 }
                 if (q.type == QuestType.FOCUS || q.type == QuestType.FORBIDDEN || q.type == QuestType.LIMIT) Pill(stringResource(questTypeName(q.type)), Lif.colors.muted)
-                Spacer(Modifier.weight(1f))
-                Reward(s, q)
             }
         }
     }
@@ -213,7 +215,7 @@ private fun Reward(s: GameState, q: Quest) {
     val gold = if (done) q.goldGained else s.goldPreview(q, content, now)
     if (xp > 0) Text("+$xp XP", style = MaterialTheme.typography.labelLarge, color = p.accent)
     if (gold > 0) {
-        Icon(Icons.Rounded.MonetizationOn, null, tint = p.gold, modifier = Modifier.size(15.dp))
+        Icon(Icons.Rounded.MonetizationOn, null, tint = p.gold, modifier = Modifier.padding(start = if (xp > 0) 8.dp else 0.dp).size(15.dp))
         Text("+$gold", style = MaterialTheme.typography.labelLarge, color = p.gold, modifier = Modifier.padding(start = 2.dp))
     }
 }

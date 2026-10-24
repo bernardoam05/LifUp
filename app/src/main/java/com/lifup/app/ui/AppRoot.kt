@@ -175,6 +175,13 @@ private fun MainScaffold(
     val tab = Tab.entries[pager.currentPage]
     val goTo: (Tab) -> Unit = { t -> scope.launch { pager.animateScrollToPage(t.ordinal) } }
     var openQuest by remember { mutableStateOf<String?>(null) }
+    // With the app open across midnight the day closes on the dot, report included, instead of waiting for the
+    // alarm (late on phones that delay it) or for the next tap, which would close it silently and land on the new day.
+    LaunchedEffect(s.day) {
+        val nextDay = java.time.LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+        kotlinx.coroutines.delay((nextDay - System.currentTimeMillis()).coerceAtLeast(0) + 1_000)
+        act { }
+    }
     LaunchedEffect(deepLink) {
         Tab.entries.firstOrNull { it.route == deepLink }?.let { pager.scrollToPage(it.ordinal) }
         if (deepLink == "boss") {
