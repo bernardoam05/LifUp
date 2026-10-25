@@ -150,7 +150,8 @@ private fun Tx.completeMission(q: Quest) {
     if (q.fromHour != null) count(StatKey.BEDTIMES_KEPT)
     when (ctx.hour) {
         in 0..3 -> count(StatKey.NIGHT_QUESTS)
-        in 4..6 -> count(StatKey.EARLY_QUESTS)
+        // An early riser's morning, not a night owl's 4 a.m.
+        in 5..7 -> count(StatKey.EARLY_QUESTS)
     }
     val rec = s.records[q.defId] ?: QuestRecord()
     s = s.copy(records = s.records + (q.defId to rec.copy(count = rec.count + 1)))

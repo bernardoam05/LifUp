@@ -174,6 +174,8 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
             }
             com.lifup.app.ui.components.Pill(stringResource(R.string.credited_min, f.creditableMinutes(now).roundToInt()), p.green)
         }
+        // Can be switched mid-session (waiting for a call, say); the session service follows within a second.
+        Column(Modifier.padding(top = 8.dp)) { DndToggle(s.settings.dndFocus) }
         SectionTitle(stringResource(R.string.ambient))
         val context = LocalContext.current
         AmbientChips(f.ambient) { kind -> act { setFocusAmbient(kind) }; if (kind == Ambient.OWN) Ambient.openMusicApp(context) }

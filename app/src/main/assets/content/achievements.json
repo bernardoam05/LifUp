@@ -684,18 +684,18 @@
    "de": "Frühaufsteher"
   },
   "description": {
-   "pt": "Completa {target} missões antes das 7h.",
-   "en": "Complete {target} missions before 7 AM.",
-   "es": "Completa {target} misiones antes de las 7:00.",
-   "fr": "Termine {target} missions avant 7h.",
-   "de": "Schließe {target} Missionen vor 7 Uhr ab."
+   "pt": "Completa {target} missões antes das 8h.",
+   "en": "Complete {target} missions before 8 AM.",
+   "es": "Completa {target} misiones antes de las 8:00.",
+   "fr": "Termine {target} missions avant 8h.",
+   "de": "Schließe {target} Missionen vor 8 Uhr ab."
   },
   "descriptionOne": {
-   "pt": "Completa uma missão antes das 7h.",
-   "en": "Complete a mission before 7 AM.",
-   "es": "Completa una misión antes de las 7:00.",
-   "fr": "Termine une mission avant 7h.",
-   "de": "Schließe eine Mission vor 7 Uhr ab."
+   "pt": "Completa uma missão antes das 8h.",
+   "en": "Complete a mission before 8 AM.",
+   "es": "Completa una misión antes de las 8:00.",
+   "fr": "Termine une mission avant 8h.",
+   "de": "Schließe eine Mission vor 8 Uhr ab."
   },
   "shadowReward": {
    "tier": 2,
