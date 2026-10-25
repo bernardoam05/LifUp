@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Alarm
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Remove
@@ -60,7 +61,7 @@ import com.lifup.app.ui.theme.Lif
 import com.lifup.app.ui.unitLabel
 
 @Composable
-fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null, xp: Int = q.xp, onClick: () -> Unit) {
+fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null, xp: Int = q.xp, remindAt: Int? = null, onClick: () -> Unit) {
     val p = Lif.colors
     val color = q.color(p)
     val done = q.status == QuestStatus.DONE
@@ -95,6 +96,8 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 if (q.auto != null) Pill(stringResource(R.string.auto_badge), p.green)
                 if (q.xp > 0) Text("+${if (done) q.xpGained else xp} XP", style = MaterialTheme.typography.labelSmall, color = p.accent)
+                // Quiet, under the reward, and only while there's still something to be reminded of.
+                if (remindAt != null && q.status == QuestStatus.OPEN) ReminderTime(remindAt)
             }
         }
         if (timer != null && !done) {
@@ -168,5 +171,16 @@ private fun WeekProgress(q: Quest, t: WeekTally) {
             Text("${t.done}/${t.goal} · ", style = MaterialTheme.typography.labelSmall, color = p.muted)
         }
         Text(stringResource(label), style = MaterialTheme.typography.labelSmall, color = color, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+/** A small alarm and the time, in the muted text colour: the same mark on missions and side quests. */
+@Composable
+fun ReminderTime(minute: Int) {
+    val p = Lif.colors
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(Icons.Rounded.Alarm, null, tint = p.muted, modifier = Modifier.size(12.dp))
+        Spacer(Modifier.width(3.dp))
+        Text(com.lifup.app.ui.components.fmtMinuteOfDay(minute), style = MaterialTheme.typography.labelSmall, color = p.muted)
     }
 }

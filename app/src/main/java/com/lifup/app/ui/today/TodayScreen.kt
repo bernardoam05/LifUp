@@ -89,6 +89,7 @@ import com.lifup.app.domain.removeSideQuest
 import com.lifup.app.domain.sideRewardsLeft
 import com.lifup.app.domain.undoSideQuest
 import com.lifup.app.domain.setSideReminder
+import com.lifup.app.domain.reminderMinute
 import com.lifup.app.domain.text
 import com.lifup.app.domain.toggleRestDay
 import com.lifup.app.ui.act
@@ -171,17 +172,17 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
         s.weeklyHint?.let { h -> item(key = "weekly_hint") { WeeklyHintCard(s, h) } }
 
         item { SectionTitle(stringResource(R.string.daily_section)) { ManageAction(openForge); InfoButton(Guide.DAILY) } }
-        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now)) { selected = q.id } }
+        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q)) { selected = q.id } }
 
         if (s.weeklyQuests.isNotEmpty()) {
             item { SectionTitle(stringResource(R.string.weekly_section)) { InfoButton(Guide.WEEKLY) } }
-            items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now)) { selected = q.id } }
+            items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q)) { selected = q.id } }
         }
         item { BossCard(s, now) { selected = it } }
 
         if (s.extraQuests.isNotEmpty() || s.canAddExtra()) {
             item { SectionTitle(stringResource(R.string.extra_section)) { Text("${s.daily.extrasAdded}/${Rules.MAX_EXTRAS_PER_DAY}", color = p.dim, style = MaterialTheme.typography.labelMedium); InfoButton(Guide.EXTRA) } }
-            items(s.extraQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, xp = s.xpPreview(q, content, now)) { selected = q.id } }
+            items(s.extraQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, xp = s.xpPreview(q, content, now), remindAt = s.reminderMinute(q)) { selected = q.id } }
             if (s.canAddExtra()) item {
                 GhostButton(stringResource(R.string.add_extra), onClick = { act { addExtraQuest() } }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Add, color = p.accent)
             } else if (s.extraOpen() && s.daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY) item {
@@ -200,7 +201,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
                         Text(sq.title, style = MaterialTheme.typography.bodyLarge, color = if (sq.done) p.dim else p.text)
                         sq.remindAt?.takeIf { !sq.done }?.let { at ->
                             val t = java.time.Instant.ofEpochMilli(at).atZone(java.time.ZoneId.systemDefault()).toLocalTime()
-                            Text("⏰ " + com.lifup.app.ui.components.fmtMinuteOfDay(t.hour * 60 + t.minute), style = MaterialTheme.typography.labelSmall, color = p.accent)
+                            ReminderTime(t.hour * 60 + t.minute)
                         }
                     }
                     val paid = sq.xpGained > 0 || sq.goldGained > 0

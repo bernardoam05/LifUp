@@ -27,6 +27,9 @@ fun Tx.snoozeReminder(itemId: String) {
     s = s.copy(snoozes = s.snoozes + (itemId to ctx.now + Rules.SNOOZE_MIN * 60_000L))
 }
 
+/** The time a mission's reminder is set for today, in minutes after midnight: today's own, else the everyday one. */
+fun GameState.reminderMinute(q: Quest): Int? = (todayReminders[q.defId] ?: reminders[q.defId])?.minute
+
 /** Every reminder still to ring or ringing: open missions with a time, undone side quests with one, snoozes first. */
 fun GameState.reminderTimes(ctx: Ctx): List<DueReminder> {
     val missions = quests.filter { it.status == QuestStatus.OPEN }.mapNotNull { q ->
