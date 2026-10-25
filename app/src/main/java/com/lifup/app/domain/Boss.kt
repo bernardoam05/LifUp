@@ -20,9 +20,11 @@ fun Tx.ensureBoss() {
 
     val level = s.player.level
     val weekRng = s.weekRandom(ctx, salt = 0)
-    val today = MonthDay.from(ctx.today)
-    // A seasonal boss takes over once per season, even if its window covers two Mondays.
-    val seasonal = content.bosses.firstOrNull { it.activeOn(today) && it.id != current?.bossId }
+    // A seasonal boss takes the week its window covers on Monday, as the "next week" teaser says, so a player
+    // starting on the weekend before doesn't get it for two days and then miss the real week. Once per season,
+    // even if the window covers two Mondays.
+    val monday = MonthDay.from(ctx.weekStart)
+    val seasonal = content.bosses.firstOrNull { it.activeOn(monday) && it.id != current?.bossId }
     val def = seasonal ?: run {
         val regular = content.bosses.filter { it.season == null && it.minLevel <= level }
         // S-rank weeks get likelier as more S bosses unlock (12% each, up to 60%).
@@ -36,7 +38,9 @@ fun Tx.ensureBoss() {
     val dailyXp = s.dailyQuests.sumOf { it.xp }.coerceAtLeast(150)
     // A few full days plus both challenges: steady players win by the weekend, occasional ones only sometimes (see SimulationTest).
     val challengeShare = Rules.BOSS_CHALLENGE_DAMAGE * Rules.BOSS_CHALLENGES
-    val maxHp = (dailyXp * Rules.BOSS_HP_DAYS / (1 - challengeShare) * if (def.rank == "S") 1.2 else 1.0).roundToInt()
+    // The very first boss may come mid-week: its health covers only the days left, Sunday included.
+    val weekShare = if (current == null) (8 - ctx.today.dayOfWeek.value) / 7.0 else 1.0
+    val maxHp = (dailyXp * Rules.BOSS_HP_DAYS / (1 - challengeShare) * (if (def.rank == "S") 1.2 else 1.0) * weekShare).roundToInt().coerceAtLeast(1)
     val challenge = Quest(
         id = "boss_${ctx.weekKey}",
         defId = def.id,

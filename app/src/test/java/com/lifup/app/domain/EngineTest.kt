@@ -262,6 +262,19 @@ class EngineTest {
         assertEquals(1, s.rewards.count { it is Reward.BossSecondChallenge })
     }
 
+    @Test fun `a player starting on the weekend before an event gets a short regular boss, then the event on Monday`() {
+        var s = run(GameState(onboarded = true), "2026-10-24T09:00") // Saturday, inside the Halloween window
+        val first = s.boss!!
+        val def = content.bossById[first.bossId]!!
+        assertNull(def.season)
+        // Two days left (Saturday and Sunday) of what a whole week would ask.
+        val week = s.dailyQuests.sumOf { it.xp }.coerceAtLeast(150) * Rules.BOSS_HP_DAYS /
+            (1 - Rules.BOSS_CHALLENGE_DAMAGE * Rules.BOSS_CHALLENGES) * (if (def.rank == "S") 1.2 else 1.0)
+        assertEquals((week * 2 / 7).roundToInt(), first.maxHp)
+        s = run(s, "2026-10-26T09:00")
+        assertEquals("season_halloween", s.boss!!.bossId)
+    }
+
     @Test fun `every boss has a second challenge of another kind`() {
         content.bosses.forEach { assertNotEquals(it.id, it.type, it.second!!.type) }
     }
