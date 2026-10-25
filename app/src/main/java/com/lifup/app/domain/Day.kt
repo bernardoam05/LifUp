@@ -27,6 +27,7 @@ fun Tx.ensureDay() {
             sideQuests = s.sideQuests.filterNot { it.done },
             timers = emptyMap(),
             snoozes = emptyMap(),
+            todayReminders = emptyMap(),
             run = null,
         )
     }

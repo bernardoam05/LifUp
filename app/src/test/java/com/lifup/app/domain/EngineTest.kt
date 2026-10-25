@@ -494,6 +494,18 @@ class EngineTest {
         assertTrue(s.reminderTimes(ctx("2026-10-14T18:06")).none { it.questId == q.id })
     }
 
+    @Test fun `a reminder for today only stands in for the everyday one, which comes back tomorrow`() {
+        var s = fresh()
+        val q = s.dailyQuests.first { content.questDefById[it.defId]?.kind == DefKind.CORE }
+        s = run(s, "2026-10-14T10:00") { setReminder(q.defId, 18 * 60); setReminder(q.defId, 20 * 60, todayOnly = true) }
+        assertEquals(at("2026-10-14T20:00"), s.reminderTimes(ctx("2026-10-14T10:00")).single { it.questId == q.id }.at)
+        s = run(s, "2026-10-15T08:00")
+        val next = s.dailyQuests.first { it.defId == q.defId }
+        assertEquals(at("2026-10-15T18:00"), s.reminderTimes(ctx("2026-10-15T08:00")).single { it.questId == next.id }.at)
+        s = run(s, "2026-10-15T08:01") { setReminder(q.defId, 9 * 60, todayOnly = true); setReminder(q.defId, null, todayOnly = true) }
+        assertEquals(at("2026-10-15T18:00"), s.reminderTimes(ctx("2026-10-15T08:01")).single { it.questId == next.id }.at)
+    }
+
     @Test fun `a side quest reminder for a time already gone rings tomorrow`() {
         var s = run(fresh(), "2026-10-14T15:00") { addSideQuest("Ligar ao banco") }
         val id = s.sideQuests.single().id

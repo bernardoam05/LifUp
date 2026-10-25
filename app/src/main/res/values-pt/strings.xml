@@ -766,6 +766,9 @@
     <string name="reason_boss">Recompensa por venceres %1$s</string>
     <string name="reminder_add">Adicionar lembrete</string>
     <string name="reminder_at">Lembrete às %1$s</string>
+    <string name="reminder_today_only">Só hoje</string>
+    <string name="reminder_today">Lembrete hoje às %1$s</string>
+    <string name="reminder_today_instead">Lembrete hoje às %1$s · normalmente %2$s</string>
     <string name="reminder_title">Lembrete</string>
     <string name="reminder_remove">Remover</string>
     <string name="notif_remind_done">Feito</string>

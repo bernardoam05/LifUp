@@ -784,6 +784,9 @@
     <string name="reason_boss">Belohnung für den Sieg über %1$s</string>
     <string name="reminder_add">Erinnerung hinzufügen</string>
     <string name="reminder_at">Erinnerung um %1$s</string>
+    <string name="reminder_today_only">Nur heute</string>
+    <string name="reminder_today">Erinnerung heute um %1$s</string>
+    <string name="reminder_today_instead">Erinnerung heute um %1$s · sonst %2$s</string>
     <string name="reminder_title">Erinnerung</string>
     <string name="reminder_remove">Entfernen</string>
     <string name="notif_remind_done">Erledigt</string>

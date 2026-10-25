@@ -785,6 +785,9 @@
     <string name="reason_boss">Reward for defeating %1$s</string>
     <string name="reminder_add">Add a reminder</string>
     <string name="reminder_at">Reminder at %1$s</string>
+    <string name="reminder_today_only">Today only</string>
+    <string name="reminder_today">Reminder today at %1$s</string>
+    <string name="reminder_today_instead">Reminder today at %1$s · usually %2$s</string>
     <string name="reminder_title">Reminder</string>
     <string name="reminder_remove">Remove</string>
     <string name="notif_remind_done">Done</string>

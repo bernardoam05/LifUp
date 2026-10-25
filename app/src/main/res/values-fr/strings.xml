@@ -766,6 +766,9 @@
     <string name="reason_boss">Récompense pour avoir vaincu %1$s</string>
     <string name="reminder_add">Ajouter un rappel</string>
     <string name="reminder_at">Rappel à %1$s</string>
+    <string name="reminder_today_only">Aujourd\'hui seulement</string>
+    <string name="reminder_today">Rappel aujourd\'hui à %1$s</string>
+    <string name="reminder_today_instead">Rappel aujourd\'hui à %1$s · d\'habitude %2$s</string>
     <string name="reminder_title">Rappel</string>
     <string name="reminder_remove">Retirer</string>
     <string name="notif_remind_done">Fait</string>

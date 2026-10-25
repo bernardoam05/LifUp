@@ -357,6 +357,8 @@ data class GameState(
     val sideQuests: List<SideQuest> = emptyList(),
     /** Missions' own reminders, by definition, so one set once holds every day the mission comes up. */
     val reminders: Map<String, MissionReminder> = emptyMap(),
+    /** Reminders for today only, by definition: they stand in for the everyday one today and go at midnight. */
+    val todayReminders: Map<String, MissionReminder> = emptyMap(),
     /** Reminders put off from their notification, by quest or side quest id, until this time; cleared each day. */
     val snoozes: Map<String, Long> = emptyMap(),
     val customDefs: List<QuestDef> = emptyList(),

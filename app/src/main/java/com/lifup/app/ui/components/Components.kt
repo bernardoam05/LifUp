@@ -214,7 +214,7 @@ fun EmptyNote(text: String) {
 /** Picks a time of day, in minutes after midnight; [onRemove] shows when there is one to take off. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimeDialog(title: String, initial: Int?, onPick: (Int) -> Unit, onRemove: (() -> Unit)?, onDismiss: () -> Unit) {
+fun TimeDialog(title: String, initial: Int?, onPick: (Int) -> Unit, onRemove: (() -> Unit)?, onDismiss: () -> Unit, extra: (@Composable () -> Unit)? = null) {
     val start = initial ?: (18 * 60)
     val state = rememberTimePickerState(initialHour = start / 60, initialMinute = start % 60, is24Hour = true)
     val p = Lif.colors
@@ -222,13 +222,16 @@ fun TimeDialog(title: String, initial: Int?, onPick: (Int) -> Unit, onRemove: ((
         onDismissRequest = onDismiss,
         title = { Text(title, style = MaterialTheme.typography.titleLarge) },
         text = {
-            TimePicker(
-                state,
-                colors = TimePickerDefaults.colors(
-                    clockDialColor = p.bg, selectorColor = p.accent, timeSelectorSelectedContainerColor = p.accent.copy(alpha = 0.25f),
-                    timeSelectorUnselectedContainerColor = p.bg, timeSelectorSelectedContentColor = p.text, timeSelectorUnselectedContentColor = p.muted,
-                ),
-            )
+            Column {
+                TimePicker(
+                    state,
+                    colors = TimePickerDefaults.colors(
+                        clockDialColor = p.bg, selectorColor = p.accent, timeSelectorSelectedContainerColor = p.accent.copy(alpha = 0.25f),
+                        timeSelectorUnselectedContainerColor = p.bg, timeSelectorSelectedContentColor = p.text, timeSelectorUnselectedContentColor = p.muted,
+                    ),
+                )
+                extra?.invoke()
+            }
         },
         confirmButton = {
             TextButton(onClick = { onPick(state.hour * 60 + state.minute); onDismiss() }) {

@@ -3,9 +3,14 @@ package com.lifup.app.domain
 /** A reminder that rings at [at]: for an open mission ([questId]) or a side quest ([sideId]). */
 data class DueReminder(val itemId: String, val at: Long, val questId: String? = null, val sideId: String? = null)
 
-/** Puts a reminder on a mission (every day it comes up) at [minute] after midnight, or takes it off with null. */
-fun Tx.setReminder(defId: String, minute: Int?) {
-    s = s.copy(reminders = if (minute == null) s.reminders - defId else s.reminders + (defId to MissionReminder(minute.coerceIn(0, 24 * 60 - 1), ctx.now)))
+/**
+ * Puts a reminder on a mission at [minute] after midnight, or takes it off with null: every day it comes up, or with
+ * [todayOnly] just today, standing in for the everyday one (which comes back tomorrow).
+ */
+fun Tx.setReminder(defId: String, minute: Int?, todayOnly: Boolean = false) {
+    fun Map<String, MissionReminder>.with() =
+        if (minute == null) this - defId else this + (defId to MissionReminder(minute.coerceIn(0, 24 * 60 - 1), ctx.now))
+    s = if (todayOnly) s.copy(todayReminders = s.todayReminders.with()) else s.copy(reminders = s.reminders.with())
 }
 
 /** A side quest rings once at [minute]: today if that time is still ahead, otherwise tomorrow. */
@@ -25,7 +30,7 @@ fun Tx.snoozeReminder(itemId: String) {
 /** Every reminder still to ring or ringing: open missions with a time, undone side quests with one, snoozes first. */
 fun GameState.reminderTimes(ctx: Ctx): List<DueReminder> {
     val missions = quests.filter { it.status == QuestStatus.OPEN }.mapNotNull { q ->
-        val r = reminders[q.defId] ?: return@mapNotNull null
+        val r = todayReminders[q.defId] ?: reminders[q.defId] ?: return@mapNotNull null
         val at = snoozes[q.id] ?: ctx.atMinute(ctx.today, r.minute).takeIf { it > r.since } ?: return@mapNotNull null
         DueReminder(q.id, at, questId = q.id)
     }

@@ -381,23 +381,38 @@ private fun TipRow(tip: String) {
     AnimatedVisibility(open) { Text(tip, style = MaterialTheme.typography.bodyMedium, color = p.text, modifier = Modifier.padding(start = 26.dp)) }
 }
 
-/** The mission's own reminder, every day it comes up: tapped, it opens the time to set, change or take off. */
+/**
+ * The mission's own reminder: every day it comes up, or just today in place of that one. Tapped, it opens the time
+ * to set, change or take off, with "today only" deciding which of the two.
+ */
 @Composable
 private fun ReminderRow(s: GameState, q: Quest) {
-    val minute = s.reminders[q.defId]?.minute
+    val daily = s.reminders[q.defId]?.minute
+    val today = s.todayReminders[q.defId]?.minute
     var picking by remember { mutableStateOf(false) }
-    FoldRow(
-        Icons.Rounded.Alarm,
-        minute?.let { stringResource(R.string.reminder_at, com.lifup.app.ui.components.fmtMinuteOfDay(it)) } ?: stringResource(R.string.reminder_add),
-        open = false,
-        folds = false,
-    ) { picking = true }
-    if (picking) com.lifup.app.ui.components.TimeDialog(
-        stringResource(R.string.reminder_title), minute,
-        onPick = { m -> act { setReminder(q.defId, m) } },
-        onRemove = minute?.let { { act { setReminder(q.defId, null) } } },
-        onDismiss = { picking = false },
-    )
+    val fmt = { m: Int -> com.lifup.app.ui.components.fmtMinuteOfDay(m) }
+    val label = when {
+        today != null && daily != null && today != daily -> stringResource(R.string.reminder_today_instead, fmt(today), fmt(daily))
+        today != null -> stringResource(R.string.reminder_today, fmt(today))
+        daily != null -> stringResource(R.string.reminder_at, fmt(daily))
+        else -> stringResource(R.string.reminder_add)
+    }
+    FoldRow(Icons.Rounded.Alarm, label, open = false, folds = false) { picking = true }
+    if (picking) {
+        var todayOnly by remember { mutableStateOf(today != null) }
+        val shown = if (todayOnly) today else daily
+        com.lifup.app.ui.components.TimeDialog(
+            stringResource(R.string.reminder_title), today ?: daily,
+            onPick = { m -> act { setReminder(q.defId, m, todayOnly) } },
+            onRemove = shown?.let { { act { setReminder(q.defId, null, todayOnly) } } },
+            onDismiss = { picking = false },
+        ) {
+            Row(Modifier.fillMaxWidth().clickable { todayOnly = !todayOnly }, verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.reminder_today_only), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                androidx.compose.material3.Switch(todayOnly, { todayOnly = it })
+            }
+        }
+    }
 }
 
 /** The player's own note for this mission, kept for next time; folded to one line until tapped. */
