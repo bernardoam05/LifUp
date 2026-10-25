@@ -137,10 +137,11 @@ private fun Tx.completeMission(q: Quest) {
     var xp = 0
     var dealt = 0
     var gold = 0
+    val passives = s.passives(content, ctx.now)
     val squad = squadDuring {
         val share = if (q.origin == QuestOrigin.EXTRA) Rules.EXTRA_BOSS_SHARE else 1.0
-        gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.family(), share).let { (x, d) -> xp = x; dealt = d }
-        gold = gainGold(q.gold)
+        gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.family(), share, passives.missionXpBonus(s, q, ctx.hour)).let { (x, d) -> xp = x; dealt = d }
+        gold = gainGold(q.gold, extra = passives.missionGoldBonus(s, q))
     }
     gainAttributes(groupOf(q))
     updateQuest(q.id) { it.copy(status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt, squad = squad) }

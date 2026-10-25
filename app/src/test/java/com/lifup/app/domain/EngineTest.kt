@@ -275,6 +275,41 @@ class EngineTest {
         assertEquals("season_halloween", s.boss!!.bossId)
     }
 
+    private fun withEcho(s: GameState, id: String) = s.copy(shadows = s.shadows + OwnedShadow(id), squad = listOf(id))
+
+    @Test fun `an early echo pays more for missions done before ten`() {
+        val s = withEcho(fresh(), "dawn_lark")
+        val q = s.dailyQuests.first { it.defId == "core_pushups" }
+        val early = run(s, "2026-10-14T09:30") { completeQuest(q.id) }.quests.first { it.id == q.id }
+        val late = run(s, "2026-10-14T11:00") { completeQuest(q.id) }.quests.first { it.id == q.id }
+        assertEquals((q.xp * 1.05).roundToInt(), early.xpGained)
+        assertEquals(q.xp, late.xpGained)
+    }
+
+    @Test fun `a comeback echo pays more XP and gold the day after a failed day`() {
+        val base = withEcho(fresh(), "phoenix_chick")
+        val q = base.dailyQuests.first { it.defId == "core_pushups" }
+        val failedYesterday = base.copy(dayLog = listOf(DayLog("2026-10-13", 1, 4, perfect = false, penalty = true, rest = false, passed = false)))
+        val after = run(failedYesterday, "2026-10-14T11:00") { completeQuest(q.id) }.quests.first { it.id == q.id }
+        val normal = run(base, "2026-10-14T11:00") { completeQuest(q.id) }.quests.first { it.id == q.id }
+        assertEquals((q.xp * 1.25).roundToInt(), after.xpGained)
+        assertEquals((q.gold * 1.25).roundToInt(), after.goldGained)
+        assertEquals(q.xp, normal.xpGained)
+    }
+
+    @Test fun `a redemption echo gives back part of what the failed day cost once its penalty is cleared`() {
+        var s = withEcho(fresh(), "penitent_monk").let { it.copy(player = it.player.copy(xp = 90, gold = 500)) }
+        s = run(s, "2026-10-15T08:00") // the 14th did nothing: penalty
+        val pen = s.penalty
+        assertTrue(pen.active && pen.quests.isNotEmpty() && pen.xpLost > 0 && pen.goldLost > 0)
+        val before = s.player
+        s = run(s, "2026-10-15T08:01") { pen.quests.forEach { completeQuest(it.id) } }
+        assertFalse(s.penalty.active)
+        assertEquals((pen.xpLost * 0.45).roundToInt(), s.player.xp - before.xp)
+        // The first cleared penalty also unlocks its achievement, which pays its own gold.
+        assertEquals((pen.goldLost * 0.45).roundToInt() + achievementGold(1), s.player.gold - before.gold)
+    }
+
     @Test fun `every boss has a second challenge of another kind`() {
         content.bosses.forEach { assertNotEquals(it.id, it.type, it.second!!.type) }
     }

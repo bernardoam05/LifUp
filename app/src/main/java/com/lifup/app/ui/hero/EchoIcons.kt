@@ -9,6 +9,7 @@ import androidx.compose.material.icons.rounded.Architecture
 import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.AutoFixHigh
 import androidx.compose.material.icons.rounded.AutoStories
+import androidx.compose.material.icons.rounded.Autorenew
 import androidx.compose.material.icons.rounded.Balance
 import androidx.compose.material.icons.rounded.Bedtime
 import androidx.compose.material.icons.rounded.Bloodtype
@@ -32,7 +33,9 @@ import androidx.compose.material.icons.rounded.Egg
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.EmojiNature
 import androidx.compose.material.icons.rounded.EventAvailable
+import androidx.compose.material.icons.rounded.EventRepeat
 import androidx.compose.material.icons.rounded.Explore
+import androidx.compose.material.icons.rounded.Fireplace
 import androidx.compose.material.icons.rounded.FitnessCenter
 import androidx.compose.material.icons.rounded.Flare
 import androidx.compose.material.icons.rounded.Forest
@@ -49,6 +52,7 @@ import androidx.compose.material.icons.rounded.HourglassBottom
 import androidx.compose.material.icons.rounded.HourglassEmpty
 import androidx.compose.material.icons.rounded.Inventory2
 import androidx.compose.material.icons.rounded.Landscape
+import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.LocalLibrary
@@ -78,6 +82,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.SmartToy
 import androidx.compose.material.icons.rounded.SoupKitchen
+import androidx.compose.material.icons.rounded.Spa
 import androidx.compose.material.icons.rounded.Speed
 import androidx.compose.material.icons.rounded.SportsKabaddi
 import androidx.compose.material.icons.rounded.SportsMartialArts
@@ -89,8 +94,10 @@ import androidx.compose.material.icons.rounded.Thunderstorm
 import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.VisibilityOff
+import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.material.icons.rounded.Waves
 import androidx.compose.material.icons.rounded.WbSunny
+import androidx.compose.material.icons.rounded.WbTwilight
 import androidx.compose.material.icons.rounded.Whatshot
 import androidx.compose.material.icons.rounded.WorkspacePremium
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -107,6 +114,7 @@ private val ECHO_ICONS: Map<String, ImageVector> = mapOf(
     "AutoAwesome" to Icons.Rounded.AutoAwesome,
     "AutoFixHigh" to Icons.Rounded.AutoFixHigh,
     "AutoStories" to Icons.Rounded.AutoStories,
+    "Autorenew" to Icons.Rounded.Autorenew,
     "Balance" to Icons.Rounded.Balance,
     "Bedtime" to Icons.Rounded.Bedtime,
     "Bloodtype" to Icons.Rounded.Bloodtype,
@@ -130,7 +138,9 @@ private val ECHO_ICONS: Map<String, ImageVector> = mapOf(
     "EmojiEvents" to Icons.Rounded.EmojiEvents,
     "EmojiNature" to Icons.Rounded.EmojiNature,
     "EventAvailable" to Icons.Rounded.EventAvailable,
+    "EventRepeat" to Icons.Rounded.EventRepeat,
     "Explore" to Icons.Rounded.Explore,
+    "Fireplace" to Icons.Rounded.Fireplace,
     "FitnessCenter" to Icons.Rounded.FitnessCenter,
     "Flare" to Icons.Rounded.Flare,
     "Forest" to Icons.Rounded.Forest,
@@ -147,6 +157,7 @@ private val ECHO_ICONS: Map<String, ImageVector> = mapOf(
     "HourglassEmpty" to Icons.Rounded.HourglassEmpty,
     "Inventory2" to Icons.Rounded.Inventory2,
     "Landscape" to Icons.Rounded.Landscape,
+    "LightMode" to Icons.Rounded.LightMode,
     "Link" to Icons.Rounded.Link,
     "LocalFireDepartment" to Icons.Rounded.LocalFireDepartment,
     "LocalLibrary" to Icons.Rounded.LocalLibrary,
@@ -176,6 +187,7 @@ private val ECHO_ICONS: Map<String, ImageVector> = mapOf(
     "Shield" to Icons.Rounded.Shield,
     "SmartToy" to Icons.Rounded.SmartToy,
     "SoupKitchen" to Icons.Rounded.SoupKitchen,
+    "Spa" to Icons.Rounded.Spa,
     "Speed" to Icons.Rounded.Speed,
     "SportsKabaddi" to Icons.Rounded.SportsKabaddi,
     "SportsMartialArts" to Icons.Rounded.SportsMartialArts,
@@ -187,8 +199,10 @@ private val ECHO_ICONS: Map<String, ImageVector> = mapOf(
     "Translate" to Icons.Rounded.Translate,
     "Visibility" to Icons.Rounded.Visibility,
     "VisibilityOff" to Icons.Rounded.VisibilityOff,
+    "VolunteerActivism" to Icons.Rounded.VolunteerActivism,
     "Waves" to Icons.Rounded.Waves,
     "WbSunny" to Icons.Rounded.WbSunny,
+    "WbTwilight" to Icons.Rounded.WbTwilight,
     "Whatshot" to Icons.Rounded.Whatshot,
     "WorkspacePremium" to Icons.Rounded.WorkspacePremium,
 )

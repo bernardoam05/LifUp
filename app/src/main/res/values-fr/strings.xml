@@ -217,6 +217,9 @@
     <string name="passive_streak_xp">+%1$s XP avec une série de %2$d jours (monte jusque-là)</string>
     <string name="passive_portal">+%1$s XP et or dans les portails</string>
     <string name="passive_swap">+1 échange gratuit par jour</string>
+    <string name="passive_early">+%1$s XP sur les missions faites avant %2$d h</string>
+    <string name="passive_comeback">+%1$s XP et or le lendemain d\'un jour raté</string>
+    <string name="passive_redemption">Lever une pénalité rend %1$s de l\'XP et de l\'or perdus</string>
 
     <string name="inventory">Inventaire</string>
     <string name="items">Objets</string>
@@ -264,6 +267,7 @@
     <string name="toast_portal_cleared">Portail nettoyé !</string>
     <string name="toast_shadow_upgraded">%1$s a évolué</string>
     <string name="toast_passive_fired">%1$s a utilisé sa capacité</string>
+    <string name="toast_redeemed">%1$s a rendu +%2$d XP et +%3$d or</string>
     <string name="toast_buff">%1$s actif</string>
 
     <string name="profile">Profil</string>

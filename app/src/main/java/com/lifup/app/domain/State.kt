@@ -102,6 +102,9 @@ data class Penalty(
     val quests: List<Quest> = emptyList(),
     val blockStart: Long = 0,
     val blockEnd: Long = 0,
+    /** What the failed day cost, part of which redemption echoes give back when the penalty's missions are cleared. */
+    val xpLost: Int = 0,
+    val goldLost: Int = 0,
 )
 
 @Serializable
@@ -328,6 +331,8 @@ sealed interface Reward {
 enum class ToastKind {
     LEVEL_UP, ITEM_FOUND, PENALTY_CLEARED, FOCUS_DONE, FOCUS_LOST, BOSS_ESCAPED, PORTAL_ESCAPED,
     PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED, WEEK_GOAL, ACHIEVEMENT, LOAD_UP, LOAD_DOWN,
+    /** arg "shadowId:xp:gold": what a redemption echo gave back. */
+    REDEEMED,
 }
 
 @Serializable

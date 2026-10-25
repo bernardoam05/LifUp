@@ -217,6 +217,9 @@
     <string name="passive_streak_xp">+%1$s XP com %2$d dias de sequência (cresce até lá)</string>
     <string name="passive_portal">+%1$s XP e ouro nos portais</string>
     <string name="passive_swap">+1 troca grátis por dia</string>
+    <string name="passive_early">+%1$s XP nas missões feitas antes das %2$dh</string>
+    <string name="passive_comeback">+%1$s XP e ouro no dia a seguir a um dia falhado</string>
+    <string name="passive_redemption">Cumprir uma penalização devolve %1$s do XP e ouro perdidos</string>
 
     <string name="inventory">Inventário</string>
     <string name="items">Itens</string>
@@ -264,6 +267,7 @@
     <string name="toast_portal_cleared">Portal fechado!</string>
     <string name="toast_shadow_upgraded">%1$s evoluiu</string>
     <string name="toast_passive_fired">%1$s usou a sua habilidade</string>
+    <string name="toast_redeemed">%1$s devolveu +%2$d XP e +%3$d ouro</string>
     <string name="toast_buff">%1$s ativo</string>
 
     <string name="profile">Perfil</string>

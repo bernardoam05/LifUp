@@ -15,6 +15,9 @@ data class Passives(
     val luck: Double = 0.0,
     val portal: Double = 0.0,
     val extraSwaps: Int = 0,
+    val earlyXp: Double = 0.0,
+    val comeback: Double = 0.0,
+    val redemption: Double = 0.0,
     val immunity: Boolean = false,
     val streakProtect: Boolean = false,
     /** The parts of [xp] and [gold] that come from item buffs rather than the squad. */
@@ -69,6 +72,9 @@ fun GameState.passives(content: Content, now: Long): Passives {
         luck = v(Passive.SHADOW_LUCK).coerceAtMost(1.0),
         portal = v(Passive.PORTAL_BOOST),
         extraSwaps = if (swap) 1 else 0,
+        earlyXp = v(Passive.EARLY_XP),
+        comeback = v(Passive.COMEBACK),
+        redemption = v(Passive.REDEMPTION).coerceAtMost(Rules.MAX_REDEMPTION),
         immunity = immunity,
         streakProtect = streak,
     )

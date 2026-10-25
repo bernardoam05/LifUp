@@ -595,6 +595,10 @@
    "es": "Cumple una penalización.",
    "fr": "Purge une pénalité.",
    "de": "Erledige eine Strafe."
+  },
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "absolver"
   }
  },
  {
@@ -624,6 +628,10 @@
    "es": "Consigue un día perfecto justo después de una penalización.",
    "fr": "Fais une journée parfaite juste après une pénalité.",
    "de": "Schaffe einen perfekten Tag direkt nach einer Strafe."
+  },
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "ashen_phoenix"
   }
  },
  {
@@ -688,6 +696,10 @@
    "es": "Completa una misión antes de las 7:00.",
    "fr": "Termine une mission avant 7h.",
    "de": "Schließe eine Mission vor 7 Uhr ab."
+  },
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "sunrise_herald"
   }
  },
  {
@@ -717,6 +729,70 @@
    "es": "Crea una misión personalizada.",
    "fr": "Crée une mission personnalisée.",
    "de": "Erstelle eine eigene Mission."
+  }
+ },
+ {
+  "id": "seasonal_hunter",
+  "stat": "SEASONAL_BOSSES",
+  "tiers": [
+   1,
+   3,
+   5
+  ],
+  "shadowReward": {
+   "tier": 2,
+   "shadowId": "season_warden"
+  },
+  "title": {
+   "pt": "Caçador de Eventos",
+   "en": "Event Hunter",
+   "es": "Cazador de Eventos",
+   "fr": "Chasseur d'Événements",
+   "de": "Eventjäger"
+  },
+  "description": {
+   "pt": "Derrota {target} bosses de evento.",
+   "en": "Defeat {target} event bosses.",
+   "es": "Derrota a {target} jefes de evento.",
+   "fr": "Vaincs {target} boss d'événement.",
+   "de": "Besiege {target} Event-Bosse."
+  },
+  "descriptionOne": {
+   "pt": "Derrota um boss de evento.",
+   "en": "Defeat an event boss.",
+   "es": "Derrota a un jefe de evento.",
+   "fr": "Vaincs un boss d'événement.",
+   "de": "Besiege einen Event-Boss."
+  }
+ },
+ {
+  "id": "week_goals",
+  "stat": "WEEK_GOALS",
+  "tiers": [
+   1,
+   10,
+   50
+  ],
+  "title": {
+   "pt": "Constância",
+   "en": "Steady Hand",
+   "es": "Constancia",
+   "fr": "Constance",
+   "de": "Beständigkeit"
+  },
+  "description": {
+   "pt": "Cumpre a meta semanal de uma missão {target} vezes.",
+   "en": "Reach a weekly mission's goal {target} times.",
+   "es": "Cumple la meta semanal de una misión {target} veces.",
+   "fr": "Atteins l'objectif hebdomadaire d'une mission {target} fois.",
+   "de": "Erreiche {target}-mal das Wochenziel einer Mission."
+  },
+  "descriptionOne": {
+   "pt": "Cumpre a meta semanal de uma missão.",
+   "en": "Reach a weekly mission's goal.",
+   "es": "Cumple la meta semanal de una misión.",
+   "fr": "Atteins l'objectif hebdomadaire d'une mission.",
+   "de": "Erreiche das Wochenziel einer Mission."
   }
  }
 ]

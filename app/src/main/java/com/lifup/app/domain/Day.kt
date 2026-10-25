@@ -161,7 +161,7 @@ private fun Tx.penalize(daily: List<Quest>, failed: Int, total: Int, ratio: Doub
         buildQuest(def, 1, QuestOrigin.PENALTY, "${def.id}_${s.nextId}_$i")
     }
     if (severe) {
-        s = s.copy(penalty = Penalty(active = true, quests = quests, blockStart = ctx.now, blockEnd = ctx.now + Rules.PENALTY_MS), nextId = s.nextId + 1)
+        s = s.copy(penalty = Penalty(active = true, quests = quests, blockStart = ctx.now, blockEnd = ctx.now + Rules.PENALTY_MS, xpLost = xpActuallyLost, goldLost = goldLost), nextId = s.nextId + 1)
     }
 
     return PenaltyInfo(failed, total, xpActuallyLost, goldLost, quests.size)
@@ -204,9 +204,24 @@ fun Tx.setBlockOnPenalty(on: Boolean) = updateSettings { it.copy(blockOnPenalty 
 
 fun Tx.clearPenalty(cleared: Boolean) {
     if (!s.penalty.active) return
+    val lost = s.penalty
     s = s.copy(penalty = Penalty())
-    if (cleared) count(StatKey.PENALTIES_CLEARED)
+    if (cleared) {
+        count(StatKey.PENALTIES_CLEARED)
+        redeem(lost)
+    }
     toast(ToastKind.PENALTY_CLEARED)
+}
+
+/** Redemption echoes give back their share of what the failed day cost, once its penalty missions are done. */
+private fun Tx.redeem(lost: Penalty) {
+    val share = s.passives(content, ctx.now).redemption
+    if (share <= 0 || (lost.xpLost <= 0 && lost.goldLost <= 0)) return
+    val xp = gainXp((lost.xpLost * share).roundToInt(), hitsBoss = false, boosted = false)
+    val gold = gainGold((lost.goldLost * share).roundToInt(), boosted = false)
+    squadAdded(SquadGain(xp = xp, gold = gold))
+    val echo = s.squad.mapNotNull { content.shadowById[it] }.firstOrNull { it.passive == Passive.REDEMPTION }?.id.orEmpty()
+    toast(ToastKind.REDEEMED, "$echo:$xp:$gold")
 }
 
 fun GameState.restDaysLeft(weekKey: String) =

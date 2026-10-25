@@ -230,6 +230,9 @@
     <string name="passive_streak_xp">+%1$s XP with a %2$d-day streak (building up to it)</string>
     <string name="passive_portal">+%1$s XP and gold from portals</string>
     <string name="passive_swap">+1 free swap a day</string>
+    <string name="passive_early">+%1$s XP on missions done before %2$d:00</string>
+    <string name="passive_comeback">+%1$s XP and gold the day after a failed day</string>
+    <string name="passive_redemption">Clearing a penalty gives back %1$s of the XP and gold lost</string>
 
     <!-- Shop -->
     <string name="inventory">Inventory</string>
@@ -279,6 +282,7 @@
     <string name="toast_portal_cleared">Portal cleared!</string>
     <string name="toast_shadow_upgraded">%1$s evolved</string>
     <string name="toast_passive_fired">%1$s used its ability</string>
+    <string name="toast_redeemed">%1$s gave back +%2$d XP and +%3$d gold</string>
     <string name="toast_buff">%1$s active</string>
 
     <!-- Settings -->

@@ -265,6 +265,9 @@ private fun toastMessage(s: GameState, t: Reward.Toast): String {
         ToastKind.LOAD_UP -> stringResource(R.string.toast_load_up, t.arg.toIntOrNull() ?: 0)
         ToastKind.LOAD_DOWN -> stringResource(R.string.toast_load_down, t.arg.toIntOrNull() ?: 0)
         ToastKind.ACHIEVEMENT -> stringResource(R.string.toast_achievement, content.achievementById[t.arg]?.title?.local().orEmpty(), com.lifup.app.domain.achievementGold(1))
+        ToastKind.REDEEMED -> t.arg.split(':').let { parts ->
+            stringResource(R.string.toast_redeemed, content.shadowById[parts[0]]?.name?.local().orEmpty(), parts.getOrNull(1)?.toIntOrNull() ?: 0, parts.getOrNull(2)?.toIntOrNull() ?: 0)
+        }
         ToastKind.BOSS_HIT -> ""
     }
 }

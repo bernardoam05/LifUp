@@ -79,6 +79,7 @@ internal fun Tx.tallyWeekly(q: Quest, delta: Int) {
     val reached = delta > 0 && !t.rewarded && next.goal > 0 && next.done >= next.goal
     s = s.copy(weekly = s.weekly + (q.defId to if (reached) next.copy(rewarded = true) else next))
     if (reached) {
+        count(StatKey.WEEK_GOALS)
         gainGold(q.gold * Rules.WEEK_GOAL_GOLD_MULT, boosted = false)
         toast(ToastKind.WEEK_GOAL, q.defId)
     }

@@ -1614,5 +1614,124 @@
   },
   "icon": "WorkspacePremium",
   "aura": "CROWN"
+ },
+ {
+  "id": "dawn_lark",
+  "rank": "NORMAL",
+  "shadowClass": "BEAST",
+  "passive": "EARLY_XP",
+  "source": {
+   "type": "EXTRACTION"
+  },
+  "name": {
+   "pt": "Cotovia da Aurora",
+   "en": "Dawn Lark",
+   "es": "Alondra del Alba",
+   "fr": "Alouette de l'Aube",
+   "de": "Morgenlerche"
+  },
+  "icon": "WbTwilight"
+ },
+ {
+  "id": "phoenix_chick",
+  "rank": "ELITE",
+  "shadowClass": "BEAST",
+  "passive": "COMEBACK",
+  "source": {
+   "type": "EXTRACTION"
+  },
+  "name": {
+   "pt": "Cria de Fénix",
+   "en": "Phoenix Chick",
+   "es": "Polluelo de Fénix",
+   "fr": "Poussin de Phénix",
+   "de": "Phönixküken"
+  },
+  "icon": "Fireplace"
+ },
+ {
+  "id": "penitent_monk",
+  "rank": "KNIGHT",
+  "shadowClass": "SPIRIT",
+  "passive": "REDEMPTION",
+  "source": {
+   "type": "EXTRACTION"
+  },
+  "name": {
+   "pt": "Monge Penitente",
+   "en": "Penitent Monk",
+   "es": "Monje Penitente",
+   "fr": "Moine Pénitent",
+   "de": "Büßermönch"
+  },
+  "icon": "Spa"
+ },
+ {
+  "id": "sunrise_herald",
+  "rank": "KNIGHT",
+  "shadowClass": "SPIRIT",
+  "passive": "EARLY_XP",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Arauto do Nascer do Sol",
+   "en": "Sunrise Herald",
+   "es": "Heraldo del Amanecer",
+   "fr": "Héraut du Levant",
+   "de": "Herold des Sonnenaufgangs"
+  },
+  "icon": "LightMode"
+ },
+ {
+  "id": "ashen_phoenix",
+  "rank": "COMMANDER",
+  "shadowClass": "BEAST",
+  "passive": "COMEBACK",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Fénix das Cinzas",
+   "en": "Ashen Phoenix",
+   "es": "Fénix de Ceniza",
+   "fr": "Phénix des Cendres",
+   "de": "Aschenphönix"
+  },
+  "icon": "Autorenew"
+ },
+ {
+  "id": "absolver",
+  "rank": "COMMANDER",
+  "shadowClass": "SPIRIT",
+  "passive": "REDEMPTION",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "O Absolvedor",
+   "en": "The Absolver",
+   "es": "El Absolvedor",
+   "fr": "L'Absoluteur",
+   "de": "Der Lossprecher"
+  },
+  "icon": "VolunteerActivism"
+ },
+ {
+  "id": "season_warden",
+  "rank": "COMMANDER",
+  "shadowClass": "ANCIENT",
+  "passive": "BOSS_DAMAGE",
+  "source": {
+   "type": "ACHIEVEMENT"
+  },
+  "name": {
+   "pt": "Guardião das Estações",
+   "en": "Warden of Seasons",
+   "es": "Guardián de las Estaciones",
+   "fr": "Gardien des Saisons",
+   "de": "Hüter der Jahreszeiten"
+  },
+  "icon": "EventRepeat"
  }
 ]

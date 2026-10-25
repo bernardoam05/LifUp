@@ -244,7 +244,14 @@ object Rules {
         Passive.STREAK_XP to doubleArrayOf(.03, .06, .10, .16, .25),
         // Portals are about a third of a day's XP, so this is worth about the all-round XP.
         Passive.PORTAL_BOOST to doubleArrayOf(.10, .20, .30, .45, .60),
+        // Mornings hold about a family's share of the missions, so it pays like the family XP.
+        Passive.EARLY_XP to doubleArrayOf(.05, .10, .15, .25, .38),
+        // Only the day after a failed one, so it can be strong; a failed day still costs far more than it gives back.
+        Passive.COMEBACK to doubleArrayOf(.15, .25, .40, .60, .80),
+        Passive.REDEMPTION to doubleArrayOf(.20, .30, .45, .65, .85),
     )
+    /** Missions finished before this hour count as early. */
+    const val EARLY_HOUR = 10
     const val STREAK_XP_FULL_DAYS = 30
 
     /**
@@ -257,6 +264,8 @@ object Rules {
     const val MAX_PENALTY_REDUCE = 0.5
     const val MAX_SHOP_DISCOUNT = 0.3
     const val MAX_FOCUS_MASTERY = 0.5
+    /** Redemption gives back at most everything the failed day cost. */
+    const val MAX_REDEMPTION = 1.0
 
     fun isFlag(p: Passive) = p == Passive.PENALTY_IMMUNITY || p == Passive.STREAK_PROTECT
 

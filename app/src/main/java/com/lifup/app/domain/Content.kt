@@ -108,6 +108,12 @@ enum class Passive {
     PORTAL_BOOST,
     /** One more free swap a day. */
     EXTRA_SWAP,
+    /** More XP for missions done before [Rules.EARLY_HOUR]: the day's hard things first. */
+    EARLY_XP,
+    /** More XP and gold the day after a failed one: getting back up pays. */
+    COMEBACK,
+    /** Clearing a penalty's missions gives back part of what the failed day cost. */
+    REDEMPTION,
 }
 
 enum class Difficulty { EASY, MEDIUM, HARD }
@@ -116,10 +122,11 @@ enum class Difficulty { EASY, MEDIUM, HARD }
 enum class PowerKind { GROWTH, WEALTH, COMBAT, PROTECTION, FORTUNE }
 
 fun Passive.kind(): PowerKind = when (this) {
-    Passive.XP_BOOST, Passive.TRAINING_XP, Passive.MIND_XP, Passive.EXPLORER_XP, Passive.DAILY_BONUS, Passive.STREAK_XP -> PowerKind.GROWTH
+    Passive.XP_BOOST, Passive.TRAINING_XP, Passive.MIND_XP, Passive.EXPLORER_XP, Passive.DAILY_BONUS, Passive.STREAK_XP,
+    Passive.EARLY_XP, Passive.COMEBACK -> PowerKind.GROWTH
     Passive.GOLD_BOOST, Passive.SHOP_DISCOUNT, Passive.ALL_BOOST -> PowerKind.WEALTH
     Passive.BOSS_DAMAGE -> PowerKind.COMBAT
-    Passive.PENALTY_REDUCE, Passive.PENALTY_IMMUNITY, Passive.STREAK_PROTECT -> PowerKind.PROTECTION
+    Passive.PENALTY_REDUCE, Passive.PENALTY_IMMUNITY, Passive.STREAK_PROTECT, Passive.REDEMPTION -> PowerKind.PROTECTION
     Passive.FOCUS_MASTERY, Passive.SHADOW_LUCK, Passive.PORTAL_BOOST, Passive.EXTRA_SWAP -> PowerKind.FORTUNE
 }
 
@@ -173,7 +180,7 @@ enum class StatKey {
     POMODORO_CYCLES, BOSSES_DEFEATED, BOSS_CHALLENGES, PORTALS_CLEARED, SHADOWS_OWNED, MAX_SHADOW_LEVEL,
     SQUAD_FULL, LEVEL, GOLD_EARNED, GOLD_SPENT, ITEMS_USED, SIDE_COMPLETED, EXTRA_COMPLETED, GPS_KM,
     GPS_METERS, PENALTIES_TAKEN, PENALTIES_CLEARED, COMEBACKS, NIGHT_QUESTS, EARLY_QUESTS,
-    BLOCKED_ATTEMPTS, CUSTOM_QUESTS, STEPS, BEDTIMES_KEPT,
+    BLOCKED_ATTEMPTS, CUSTOM_QUESTS, STEPS, BEDTIMES_KEPT, SEASONAL_BOSSES, WEEK_GOALS,
 }
 
 @Serializable

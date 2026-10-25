@@ -94,6 +94,7 @@ private fun Tx.defeatBoss() {
     val def = content.bossById[b.bossId] ?: return
     s = s.copy(boss = b.copy(defeated = true, hp = 0), bossHistory = (s.bossHistory + b.bossId).takeLast(20))
     count(StatKey.BOSSES_DEFEATED)
+    if (def.season != null) count(StatKey.SEASONAL_BOSSES)
     val xp = gainXp(def.baseXp, hitsBoss = false)
     val gold = gainGold(def.baseGold)
     val loot = if (b.lootGiven) emptyList() else listOf("bau_cacador")
@@ -113,6 +114,7 @@ fun Tx.healBoss(amount: Int) {
     }
     b.spoils?.let { loseXp(it.xp); refundGold(it.gold) }
     count(StatKey.BOSSES_DEFEATED, -1)
+    if (content.bossById[b.bossId]?.season != null) count(StatKey.SEASONAL_BOSSES, -1)
     val history = s.bossHistory.toMutableList().apply { lastIndexOf(b.bossId).takeIf { it >= 0 }?.let(::removeAt) }
     s = s.copy(boss = b.copy(defeated = false, hp = minOf(b.maxHp, amount), spoils = null), bossHistory = history)
     toast(ToastKind.BOSS_REVIVED, b.bossId)
