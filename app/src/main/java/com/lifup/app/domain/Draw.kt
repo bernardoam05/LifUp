@@ -13,8 +13,8 @@ enum class Attr { STR, AGI, INT, VIT }
 
 /** Families the daily draw balances; each one mainly grows [attr]. */
 enum class DrawGroup(val attr: Attr, val weight: Double) {
-    STRENGTH(Attr.STR, 3.0),
-    MOVEMENT(Attr.AGI, 2.0),
+    STRENGTH(Attr.STR, 2.5),
+    MOVEMENT(Attr.AGI, 2.5),
     MIND(Attr.INT, 3.0),
     HEALTH(Attr.VIT, 2.0),
     SELF_CONTROL(Attr.VIT, 2.0),

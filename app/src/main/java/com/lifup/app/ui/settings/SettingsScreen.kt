@@ -199,6 +199,8 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 }
             }
 
+            FoldSection(stringResource(R.string.guide_section)) { com.lifup.app.ui.guide.GuideTopics(s) }
+
             SectionTitle(stringResource(R.string.missions))
             GhostButton(stringResource(R.string.forge), onClick = openForge, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Build)
 
@@ -222,9 +224,6 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
             }
 
             CrashReportRow()
-
-            Spacer(Modifier.height(12.dp))
-            com.lifup.app.ui.guide.GuideList(s)
 
             SectionTitle(stringResource(R.string.about))
             Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)

@@ -549,13 +549,13 @@
     <string name="guide_side_title">Side quests</string>
     <string name="guide_side">Free-form::Write any task, no targets or rules.\n5 with rewards::The first 5 finished each day give XP and gold (they don\'t hurt the boss).\nAfter that::They keep working as a to-do list.\nNo cheating::Unticking or deleting takes the reward back.</string>
     <string name="guide_boss_title">Weekly boss</string>
-    <string name="guide_boss">Missions are damage::Every mission you do takes its health; extra ones hit for half.\nBoss challenges::Two a week: one on Monday, another on Thursday. Each rips off 15%.\nLoot::Beat it for XP, gold, a chest and its echo.\nIf not…::On Sunday night it ends — and another one comes.</string>
+    <string name="guide_boss">Missions are damage::Every mission you do takes its health; extra ones and focus hit for half.\nBoss challenges::Two a week: one on Monday, another on Thursday. Each rips off 15%.\nLoot::Beat it for XP, gold, a chest and its echo.\nIf not…::On Sunday night it ends — and another one comes.</string>
     <string name="guide_portal_title">Portals</string>
     <string name="guide_portal">They show up on their own::Between 8 AM and 10 PM, up to 2 a day.\nDouble rewards::A bigger mission with twice the XP and gold.\nNew ally::Clearing it may bring you an echo.\nOn the clock::There\'s always enough time, but the portal closes when it runs out.</string>
     <string name="guide_shadows_title">Echoes</string>
     <string name="guide_shadows">Where to find them::Perfect days, bosses, portals, achievements, streak milestones and the shop.\nSquad::Up to 3 in the field, each with a passive: more XP, more gold, more damage, protection.\nGrowth::Duplicate copies and gold level an echo up, up to your own level.</string>
     <string name="guide_focus_title">Focus and Pomodoro</string>
-    <string name="guide_focus">Link a mission::Minutes count for it. Any session also pays XP per minute, up to 2 h a day.\nThe right mode::Each mission is timer or Pomodoro, and only that mode counts.\nReal breaks::In Pomodoro only focus minutes count, and apps are free on breaks.\nNo limit::Counts until you stop.\nNo quitting::Stopping early loses the minutes; finishing counts +25% and bonus gold.</string>
+    <string name="guide_focus">Link a mission::Minutes count for it. Any session also pays XP per minute and 1 gold every 10 min, up to 2 h a day.\nThe right mode::Each mission is timer or Pomodoro, and only that mode counts.\nReal breaks::In Pomodoro only focus minutes count, and apps are free on breaks.\nNo limit::Counts until you stop.\nNo quitting::Stopping early loses the minutes; finishing counts +25% and bonus gold.</string>
     <string name="guide_shop_title">Shop</string>
     <string name="guide_shop">Items::Swap missions, protect your streak, XP and gold elixirs, chests.\nEchoes for sale::3 a week, refreshed every Monday.\nInventory::What you buy is kept until you use it.</string>
     <string name="auto_backups">Automatic copies</string>
@@ -798,4 +798,27 @@
     <string name="notif_remind_later">Later (%1$d min)</string>
     <string name="notif_remind_side">Side quest</string>
     <string name="notif_reminder_also">Also now: %1$s</string>
+    <string name="report_missions_done">missions done</string>
+    <string name="report_paid_close">Paid at midnight</string>
+    <string name="report_side_label">Unfinished tasks</string>
+    <string name="report_penalty_label">Penalty</string>
+    <string name="report_penalty_quests_n">%1$d missions to clear</string>
+    <string name="report_streak_saved_short">saved by %1$s</string>
+    <string name="report_streak_restored_short">restored</string>
+    <string name="week_days_kept">days kept</string>
+    <string name="week_delta_up">+%1$d vs last week</string>
+    <string name="week_delta_down">−%1$d vs last week</string>
+    <string name="week_delta_same">same as last week</string>
+    <string name="week_legend_perfect">perfect</string>
+    <string name="week_legend_kept">kept</string>
+    <string name="week_legend_rest">rest</string>
+    <string name="week_legend_failed">missed</string>
+    <string name="week_boss_won_short">Defeated</string>
+    <string name="week_boss_lost_short">Escaped</string>
+    <string name="week_best_label">Most kept</string>
+    <string name="week_worst_label">Least kept</string>
+    <plurals name="days_count">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
 </resources>

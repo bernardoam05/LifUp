@@ -317,6 +317,8 @@ fun ShadowTile(def: ShadowDef, level: Int?, inSquad: Boolean = false, reveal: Bo
             if (owned) def.name.local() else "???",
             style = MaterialTheme.typography.labelSmall, color = if (owned) c.text else c.dim,
             maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center,
+            // A long name gives up its second line before the level is pushed out of the tile.
+            modifier = Modifier.weight(1f, fill = false),
         )
         if (level != null) Text(stringResource(R.string.level_short, level), style = MaterialTheme.typography.labelSmall, color = color)
     }

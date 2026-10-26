@@ -35,7 +35,7 @@ fun Tx.ensureBoss() {
         byRank.filterNot { it.id in recent }.ifEmpty { byRank }.random(weekRng)
     }
 
-    val dailyXp = s.dailyQuests.sumOf { it.xp }.coerceAtLeast(150)
+    val dailyXp = s.expectedDailyXp(content).coerceAtLeast(150)
     // A few full days plus both challenges: steady players win by the weekend, occasional ones only sometimes (see SimulationTest).
     val challengeShare = Rules.BOSS_CHALLENGE_DAMAGE * Rules.BOSS_CHALLENGES
     // The very first boss may come mid-week: its health covers only the days left, Sunday included.
@@ -55,6 +55,21 @@ fun Tx.ensureBoss() {
         rank = if (def.rank == "S") QuestRank.S else QuestRank.A,
     )
     s = s.copy(boss = BossState(ctx.weekKey, def.id, maxHp, maxHp, challenge, ctx.nextWeekStartMs))
+}
+
+/**
+ * What a full day pays at the player's level and load: the fixed missions (by the share of days they come up)
+ * plus the drawn ones at the pool's average, so a boss's health doesn't hang on how lucky Monday's draw was.
+ */
+fun GameState.expectedDailyXp(content: Content): Int {
+    val defs = availableDefs(content).filterNot { it.isWeekly() }
+    fun xp(d: QuestDef) = buildQuest(d, player.level, QuestOrigin.DAILY, step = stepOf(d.id)).xp
+    fun share(d: QuestDef) = d.daysOfWeek?.size?.div(7.0) ?: 1.0
+    val core = defs.filter { it.kind == DefKind.CORE }
+    val pool = defs.filter { it.kind == DefKind.POOL }
+    val drawn = if (settings.dailyPoolOverride != null) drawnCount() else minOf(drawnCount(), Rules.MAX_DAY_MISSIONS - core.size).coerceAtLeast(0)
+    val poolAvg = if (pool.isEmpty()) 0.0 else pool.sumOf { xp(it) * share(it) } / pool.sumOf(::share)
+    return (core.sumOf { xp(it) * share(it) } + minOf(drawn, pool.size) * poolAvg).roundToInt()
 }
 
 /** From Thursday a standing boss gets its second challenge, announced so it isn't missed. */

@@ -717,6 +717,7 @@
    "id": "pool_jumprope",
    "kind": "POOL",
    "type": "TRAINING",
+   "group": "MOVEMENT",
    "title": {
     "pt": "Saltos de Corda",
     "en": "Jump Rope",
@@ -1288,7 +1289,8 @@
   {
    "id": "pool_morning_phone",
    "kind": "POOL",
-   "type": "FORBIDDEN",
+   "type": "TRAINING",
+   "group": "SELF_CONTROL",
    "title": {
     "pt": "Manhã sem Ecrã",
     "en": "Screen-free Morning",
@@ -1306,9 +1308,10 @@
    "baseTarget": 1,
    "scalingAmount": 0,
    "scalingInterval": 1,
-   "unit": "h",
+   "unit": "",
    "baseXp": 60,
-   "baseGold": 15
+   "baseGold": 15,
+   "untilHour": 12
   },
   {
    "id": "pool_sleep",
@@ -1677,7 +1680,8 @@
   {
    "id": "pool_nosnooze",
    "kind": "POOL",
-   "type": "FORBIDDEN",
+   "type": "TRAINING",
+   "group": "SELF_CONTROL",
    "title": {
     "pt": "Ao Primeiro Toque",
     "en": "First Alarm",
@@ -1697,7 +1701,8 @@
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 50,
-   "baseGold": 12
+   "baseGold": 12,
+   "untilHour": 12
   },
   {
    "id": "pool_nobuy",

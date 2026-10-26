@@ -530,13 +530,13 @@
     <string name="guide_side_title">Tarefas</string>
     <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro (não ferem o boss).\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
     <string name="guide_boss_title">Boss semanal</string>
-    <string name="guide_boss">Missões são dano::Cada missão que fazes tira-lhe vida; as extra tiram metade.\nDesafios do boss::Dois por semana: um na segunda e outro na quinta. Cada um arranca-lhe 15%.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nSe não…::No domingo à noite acaba — e vem outro.</string>
+    <string name="guide_boss">Missões são dano::Cada missão que fazes tira-lhe vida; as extra e o foco tiram metade.\nDesafios do boss::Dois por semana: um na segunda e outro na quinta. Cada um arranca-lhe 15%.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nSe não…::No domingo à noite acaba — e vem outro.</string>
     <string name="guide_portal_title">Portais</string>
     <string name="guide_portal">Aparecem sozinhos::Entre as 8h e as 22h, até 2 por dia.\nRecompensa a dobrar::Uma missão maior, com o dobro de XP e ouro.\nNovo aliado::Concluí-lo pode trazer-te um eco.\nTempo contado::Dá sempre para a fazer, mas o portal fecha quando o tempo acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
     <string name="guide_shadows">Onde os encontras::Dias perfeitos, bosses, portais, conquistas, marcos de sequência e a loja.\nEsquadrão::Até 3 em campo, cada um com uma passiva: mais XP, mais ouro, mais dano, proteção.\nEvolução::Cópias repetidas e ouro sobem o nível do eco, até ao teu.</string>
     <string name="guide_focus_title">Foco e Pomodoro</string>
-    <string name="guide_focus">Liga a uma missão::Os minutos contam para ela. Qualquer sessão dá também XP por minuto, até 2 h por dia.\nO modo certo::Cada missão é de temporizador ou de Pomodoro, e só esse modo conta.\nPausas a sério::No Pomodoro só os minutos de foco contam, e nas pausas as apps ficam livres.\nSem limite::Conta até parares.\nSem desistências::Parar a meio perde os minutos; chegar ao fim vale +25% e ouro extra.</string>
+    <string name="guide_focus">Liga a uma missão::Os minutos contam para ela. Qualquer sessão dá também XP por minuto e 1 ouro a cada 10 min, até 2 h por dia.\nO modo certo::Cada missão é de temporizador ou de Pomodoro, e só esse modo conta.\nPausas a sério::No Pomodoro só os minutos de foco contam, e nas pausas as apps ficam livres.\nSem limite::Conta até parares.\nSem desistências::Parar a meio perde os minutos; chegar ao fim vale +25% e ouro extra.</string>
     <string name="guide_shop_title">Loja</string>
     <string name="guide_shop">Objetos::Trocar missões, proteger a sequência, elixires de XP e ouro, baús.\nEcos à venda::3 por semana, renovam todas as segundas.\nInventário::O que compras fica guardado até o usares.</string>
     <string name="auto_backups">Cópias automáticas</string>
@@ -779,4 +779,27 @@
     <string name="notif_remind_later">Adiar %1$d min</string>
     <string name="notif_remind_side">Tarefa</string>
     <string name="notif_reminder_also">Também agora: %1$s</string>
+    <string name="report_missions_done">missões feitas</string>
+    <string name="report_paid_close">Pago à meia-noite</string>
+    <string name="report_side_label">Tarefas por fazer</string>
+    <string name="report_penalty_label">Penalização</string>
+    <string name="report_penalty_quests_n">%1$d missões para cumprir</string>
+    <string name="report_streak_saved_short">salva por %1$s</string>
+    <string name="report_streak_restored_short">recuperada</string>
+    <string name="week_days_kept">dias cumpridos</string>
+    <string name="week_delta_up">+%1$d vs semana anterior</string>
+    <string name="week_delta_down">−%1$d vs semana anterior</string>
+    <string name="week_delta_same">igual à semana anterior</string>
+    <string name="week_legend_perfect">perfeito</string>
+    <string name="week_legend_kept">cumprido</string>
+    <string name="week_legend_rest">descanso</string>
+    <string name="week_legend_failed">falhado</string>
+    <string name="week_boss_won_short">Vencido</string>
+    <string name="week_boss_lost_short">Fugiu</string>
+    <string name="week_best_label">Mais cumprida</string>
+    <string name="week_worst_label">Menos cumprida</string>
+    <plurals name="days_count">
+        <item quantity="one">%1$d dia</item>
+        <item quantity="other">%1$d dias</item>
+    </plurals>
 </resources>

@@ -162,14 +162,14 @@ private fun Tx.finishFocus(f: FocusSession, minutes: Double, completed: Boolean)
 }
 
 /**
- * Focus pays XP by the minute (+25% and gold when a no-quitting session is won), for up to
- * [Rules.FOCUS_PAID_MAX_MIN] minutes a day, so a timer left running can't farm it. Returns the XP gained.
+ * Focus pays XP and a little gold by the minute (+25% and twice the gold when a no-quitting session is won), for up to
+ * [Rules.FOCUS_PAID_MAX_MIN] minutes a day, so a timer left running can't farm it; part of it hits the boss. Returns the XP gained.
  */
 private fun Tx.payFocus(minutes: Double, won: Boolean): Int {
     val paid = minutes.coerceAtMost(Rules.FOCUS_PAID_MAX_MIN - s.daily.focusPaidMin).coerceAtLeast(0.0)
     if (paid <= 0) return 0
     s = s.copy(daily = s.daily.copy(focusPaidMin = s.daily.focusPaidMin + paid))
-    if (won) gainGold((paid / Rules.STRICT_GOLD_EVERY_MIN).toInt(), boosted = false)
+    gainGold((paid / if (won) Rules.STRICT_GOLD_EVERY_MIN else Rules.FOCUS_GOLD_EVERY_MIN).toInt(), boosted = false)
     val base = paid * Rules.FOCUS_XP_PER_MIN * Rules.xpMultiplier(s.player.level) * (if (won) Rules.STRICT_BONUS else 1.0)
-    return gainXp(base.roundToInt(), DrawGroup.MIND, hitsBoss = false)
+    return gainXp(base.roundToInt(), DrawGroup.MIND, bossShare = Rules.FOCUS_BOSS_SHARE)
 }

@@ -1,7 +1,5 @@
 package com.lifup.app.ui.guide
 
-import androidx.compose.material.icons.rounded.ExpandMore
-import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -184,19 +182,12 @@ private fun Point(icon: ImageVector, lead: String, text: String, color: Color) {
     }
 }
 
-/** "How it works" in Settings: one row that unfolds into every topic. */
+/** "How it works" in Settings: every topic, each opening its sheet. */
 @Composable
-fun GuideList(s: GameState) {
+fun GuideTopics(s: GameState) {
     var open by rememberSaveable { mutableStateOf<Guide?>(null) }
-    var expanded by rememberSaveable { mutableStateOf(false) }
     Panel {
-        Row(Modifier.fillMaxWidth().clickable { expanded = !expanded }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.AutoMirrored.Rounded.HelpOutline, null, tint = Lif.colors.accent, modifier = Modifier.size(20.dp))
-            Spacer(Modifier.width(12.dp))
-            Text(stringResource(R.string.guide_section), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
-            Icon(if (expanded) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = Lif.colors.dim)
-        }
-        if (expanded) Guide.entries.forEach { topic ->
+        Guide.entries.forEach { topic ->
             Row(Modifier.fillMaxWidth().clickable { open = topic }.padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(topic.icon, null, tint = topic.tone.color(), modifier = Modifier.size(20.dp))
                 Spacer(Modifier.width(12.dp))

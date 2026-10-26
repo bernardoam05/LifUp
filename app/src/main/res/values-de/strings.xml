@@ -548,13 +548,13 @@
     <string name="guide_side_title">Aufgaben</string>
     <string name="guide_side">Freie::Schreib jede beliebige Aufgabe, ohne Ziele und Regeln.\n5 mit Belohnung::Die ersten 5 erledigten pro Tag geben XP und Gold (sie verletzen den Boss nicht).\nDanach::Sie funktionieren weiter als To-do-Liste.\nKein Schummeln::Abhaken rückgängig machen oder Löschen nimmt die Belohnung zurück.</string>
     <string name="guide_boss_title">Wochenboss</string>
-    <string name="guide_boss">Missionen sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben; Extra-Missionen die Hälfte.\nBoss-Challenges::Zwei pro Woche: eine am Montag, eine am Donnerstag. Jede zieht ihm 15 % ab.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nWenn nicht …::Sonntagnacht endet er, und ein neuer kommt.</string>
+    <string name="guide_boss">Missionen sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben; Extra-Missionen und Fokus die Hälfte.\nBoss-Challenges::Zwei pro Woche: eine am Montag, eine am Donnerstag. Jede zieht ihm 15 % ab.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nWenn nicht …::Sonntagnacht endet er, und ein neuer kommt.</string>
     <string name="guide_portal_title">Portale</string>
     <string name="guide_portal">Sie erscheinen von selbst::Zwischen 8 und 22 Uhr, bis zu 2 pro Tag.\nDoppelte Belohnung::Eine größere Mission mit doppelt so viel XP und Gold.\nNeuer Verbündeter::Sie abzuschließen kann dir ein Echo bringen.\nAuf Zeit::Die Zeit reicht immer, aber das Portal schließt sich, wenn sie abläuft.</string>
     <string name="guide_shadows_title">Echos</string>
     <string name="guide_shadows">Wo du sie findest::Perfekte Tage, Bosse, Portale, Erfolge, Serien-Meilensteine und der Shop.\nTeam::Bis zu 3 im Einsatz, jedes mit einem Passiv: mehr XP, mehr Gold, mehr Schaden, Schutz.\nEntwicklung::Doppelte Kopien und Gold steigern das Echo im Level, bis zu deinem.</string>
     <string name="guide_focus_title">Fokus und Pomodoro</string>
-    <string name="guide_focus">Mission verknüpfen::Die Minuten zählen für sie. Auch eine freie Sitzung bringt XP pro Minute, bis zu 2 Std. am Tag.\nDer richtige Modus::Jede Mission läuft mit Timer oder Pomodoro, und nur dieser Modus zählt.\nEchte Pausen::Im Pomodoro zählen nur die Fokus-Minuten, und in den Pausen sind die Apps frei.\nOhne Limit::Zählt, bis du stoppst.\nKein Aufgeben::Mittendrin stoppen kostet die Minuten; bis zum Ende durchhalten zählt +25 % und bringt Extra-Gold.</string>
+    <string name="guide_focus">Mission verknüpfen::Die Minuten zählen für sie. Auch eine freie Sitzung bringt XP pro Minute und 1 Gold alle 10 Min., bis zu 2 Std. am Tag.\nDer richtige Modus::Jede Mission läuft mit Timer oder Pomodoro, und nur dieser Modus zählt.\nEchte Pausen::Im Pomodoro zählen nur die Fokus-Minuten, und in den Pausen sind die Apps frei.\nOhne Limit::Zählt, bis du stoppst.\nKein Aufgeben::Mittendrin stoppen kostet die Minuten; bis zum Ende durchhalten zählt +25 % und bringt Extra-Gold.</string>
     <string name="guide_shop_title">Shop</string>
     <string name="guide_shop">Gegenstände::Missionen tauschen, Serie schützen, XP- und Gold-Elixiere, Truhen.\nEchos im Angebot::3 pro Woche, erneuert jeden Montag.\nInventar::Was du kaufst, bleibt gespeichert, bis du es nutzt.</string>
     <string name="auto_backups">Automatische Kopien</string>
@@ -797,4 +797,27 @@
     <string name="notif_remind_later">%1$d Min. später</string>
     <string name="notif_remind_side">Aufgabe</string>
     <string name="notif_reminder_also">Jetzt auch: %1$s</string>
+    <string name="report_missions_done">Missionen erledigt</string>
+    <string name="report_paid_close">Um Mitternacht gezahlt</string>
+    <string name="report_side_label">Offene Aufgaben</string>
+    <string name="report_penalty_label">Strafe</string>
+    <string name="report_penalty_quests_n">%1$d Missionen zu erfüllen</string>
+    <string name="report_streak_saved_short">gerettet von %1$s</string>
+    <string name="report_streak_restored_short">wiederhergestellt</string>
+    <string name="week_days_kept">Tage geschafft</string>
+    <string name="week_delta_up">+%1$d ggü. Vorwoche</string>
+    <string name="week_delta_down">−%1$d ggü. Vorwoche</string>
+    <string name="week_delta_same">wie letzte Woche</string>
+    <string name="week_legend_perfect">perfekt</string>
+    <string name="week_legend_kept">geschafft</string>
+    <string name="week_legend_rest">Ruhetag</string>
+    <string name="week_legend_failed">verpasst</string>
+    <string name="week_boss_won_short">Besiegt</string>
+    <string name="week_boss_lost_short">Entkommen</string>
+    <string name="week_best_label">Am häufigsten</string>
+    <string name="week_worst_label">Am seltensten</string>
+    <plurals name="days_count">
+        <item quantity="one">%1$d Tag</item>
+        <item quantity="other">%1$d Tage</item>
+    </plurals>
 </resources>

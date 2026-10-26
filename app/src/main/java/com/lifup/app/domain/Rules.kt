@@ -185,6 +185,10 @@ object Rules {
     /** Focus sessions pay this XP per minute (times the level tier), for up to this many minutes a day. */
     const val FOCUS_XP_PER_MIN = 1.0
     const val FOCUS_PAID_MAX_MIN = 120.0
+    /** Any paid focus session gives 1 gold per this many minutes (a won no-quitting one, per [STRICT_GOLD_EVERY_MIN]). */
+    const val FOCUS_GOLD_EVERY_MIN = 10.0
+    /** Paid focus XP hits the boss for this share, like extra missions. */
+    const val FOCUS_BOSS_SHARE = 0.5
     /** A measured limit warns once a day when this share of it, or this many minutes, is left. */
     const val LIMIT_WARN_SHARE = 0.25
     const val LIMIT_WARN_MIN = 20

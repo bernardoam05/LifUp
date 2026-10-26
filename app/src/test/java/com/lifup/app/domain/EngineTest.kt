@@ -268,11 +268,25 @@ class EngineTest {
         val def = content.bossById[first.bossId]!!
         assertNull(def.season)
         // Two days left (Saturday and Sunday) of what a whole week would ask.
-        val week = s.dailyQuests.sumOf { it.xp }.coerceAtLeast(150) * Rules.BOSS_HP_DAYS /
+        val week = s.expectedDailyXp(content).coerceAtLeast(150) * Rules.BOSS_HP_DAYS /
             (1 - Rules.BOSS_CHALLENGE_DAMAGE * Rules.BOSS_CHALLENGES) * (if (def.rank == "S") 1.2 else 1.0)
         assertEquals((week * 2 / 7).roundToInt(), first.maxHp)
         s = run(s, "2026-10-26T09:00")
         assertEquals("season_halloween", s.boss!!.bossId)
+    }
+
+    @Test fun `a boss's health follows a day's expected XP, not the missions Monday happened to draw`() {
+        val s = run(GameState(onboarded = true), "2026-10-19T09:00")
+        val level = s.player.level
+        val pool = content.quests.filter { it.kind == DefKind.POOL && s.availableDefs(content).contains(it) }
+        val avg = pool.sumOf { buildQuest(it, level, QuestOrigin.DAILY).xp }.toDouble() / pool.size
+        val core = content.quests.filter { it.kind == DefKind.CORE && !it.isWeekly() }.sumOf { buildQuest(it, level, QuestOrigin.DAILY).xp }
+        assertEquals((core + Rules.BASE_DRAWN * avg).roundToInt(), s.expectedDailyXp(content))
+        // Two players on the same level and load face the same health, whatever their draw.
+        val other = run(GameState(onboarded = true, seed = 12345), "2026-10-19T09:00")
+        fun base(g: GameState) = g.boss!!.maxHp / (if (content.bossById[g.boss!!.bossId]!!.rank == "S") 1.2 else 1.0)
+        assertNotEquals(s.dailyQuests.map { it.defId }, other.dailyQuests.map { it.defId })
+        assertEquals(base(s), base(other), 1.0)
     }
 
     private fun withEcho(s: GameState, id: String) = s.copy(shadows = s.shadows + OwnedShadow(id), squad = listOf(id))
@@ -953,8 +967,9 @@ class EngineTest {
         val bet = session(true)
         assertEquals(20.0, plain.quests.first { it.id == fq.id }.progress, 0.01)
         assertEquals(25.0, bet.quests.first { it.id == fq.id }.progress, 0.01)
-        // +4 gold for 20 min (the "no quitting" achievement may add more on top).
-        assertTrue(bet.player.gold >= plain.player.gold + 4)
+        // 20 min pay 2 gold, or 4 when won (the "no quitting" achievement may add more on top).
+        assertEquals(fresh().player.gold + 2, plain.player.gold)
+        assertTrue(bet.player.gold >= plain.player.gold + 2)
     }
 
     @Test fun `new echoes and items stay flagged until seen`() {

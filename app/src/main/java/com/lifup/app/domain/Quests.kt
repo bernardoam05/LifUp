@@ -88,6 +88,8 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
         state.drawFocus(),
         Random(seed.toLong() xor state.seed),
         recent = if (state.day == date.minusDays(1).toString()) state.dailyQuests.map { it.defId }.toSet() else emptySet(),
+        // The fixed missions are part of the day too: a fixed strength mission makes another one less likely.
+        taken = core,
         balanced = !state.settings.randomDraw,
     )
     return (core + pool).map { buildQuest(it, level, QuestOrigin.DAILY, step = state.stepOf(it.id), day = date) } +

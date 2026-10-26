@@ -29,6 +29,18 @@ class DrawTest {
         assertTrue(distinct in 0.8..0.95)
     }
 
+    @Test fun `a fixed mission counts as a pick, so its family rarely comes up again`() {
+        val pushups = content.questDefById.getValue("core_pushups")
+        fun strengthDays(taken: List<QuestDef>) = (0 until 4000).count { seed ->
+            drawBalanced(pool, 3, setOf(Attr.AGI, Attr.INT), Random(seed), taken = taken).any { it.drawGroup() == DrawGroup.STRENGTH }
+        } / 4000.0
+        val free = strengthDays(emptyList())
+        val withFixed = strengthDays(listOf(pushups))
+        println("another strength mission: $free -> $withFixed")
+        assertTrue(withFixed < 0.2)
+        assertTrue(withFixed < free / 2)
+    }
+
     @Test fun `a focus attribute roughly doubles its families`() {
         val base = shares(3).getValue(DrawGroup.STRENGTH)
         val focused = shares(3, setOf(Attr.STR)).getValue(DrawGroup.STRENGTH)

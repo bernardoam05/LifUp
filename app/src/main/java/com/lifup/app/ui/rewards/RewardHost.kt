@@ -2,13 +2,13 @@ package com.lifup.app.ui.rewards
 
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateListOf
-import kotlin.math.roundToInt
 import com.lifup.app.ui.defTitle
 import com.lifup.app.ui.lang
 import com.lifup.app.ui.questDetail
 import com.lifup.app.ui.unitLabel
-import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,14 +18,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Bedtime
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Inventory2
 import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.MilitaryTech
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.TaskAlt
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material.icons.rounded.Whatshot
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -160,72 +157,9 @@ fun RewardHost(s: GameState) {
 }
 
 @Composable
-private fun DayReportCard(r: Reward.DayReport, dismiss: () -> Unit) {
-    val c = Lif.colors
-    val pen = r.penalty
-    val (icon, color, title) = when {
-        r.rest -> Triple(Icons.Rounded.Bedtime, c.purple, stringResource(R.string.report_rest))
-        r.perfect -> Triple(Icons.Rounded.TaskAlt, c.green, stringResource(R.string.report_perfect))
-        r.passed -> Triple(Icons.Rounded.TaskAlt, c.accent, stringResource(R.string.report_passed))
-        pen != null && pen.absorbedBy != null -> Triple(Icons.Rounded.TaskAlt, c.purple, stringResource(R.string.report_absorbed))
-        else -> Triple(Icons.Rounded.Warning, c.red, stringResource(R.string.report_failed))
-    }
-    RewardCard(icon, color, stringResource(R.string.report_title, r.day), title, dismiss) {
-        Line(stringResource(R.string.report_done, r.done, r.total))
-        if (r.sideMissed > 0) Line(stringResource(R.string.report_side_missed, r.sideMissed), c.red)
-        if (r.bonusXp > 0) Line("+${r.bonusXp} XP", c.accent)
-        if (pen != null) {
-            if (pen.absorbedBy != null) {
-                Line(stringResource(R.string.report_absorbed_by, content.shadowById[pen.absorbedBy]?.name?.local().orEmpty()), c.purple)
-            } else {
-                Line(stringResource(R.string.report_loss, pen.xpLost, pen.goldLost), c.red)
-                if (pen.quests > 0) Line(stringResource(R.string.report_penalty_quests, pen.quests), c.red)
-            }
-        }
-        r.streakSavedBy?.let { by ->
-            val name = content.shadowById[by]?.name?.local() ?: content.itemById[by]?.name?.local() ?: by
-            Line(stringResource(R.string.report_streak_saved, name), c.gold)
-        }
-        if (r.streakRestored) Line(stringResource(R.string.report_streak_restored), c.gold)
-        Line(stringResource(R.string.report_streak, r.streak), if (r.streak > 0) c.red else c.muted)
-    }
-}
-
-/** Sunday's look back: days kept, how it compares, the strongest and weakest mission. */
-@Composable
-private fun WeekReportCard(s: GameState, r: Reward.WeekReport, dismiss: () -> Unit) {
-    val c = Lif.colors
-    RewardCard(Icons.Rounded.CalendarMonth, c.accent, stringResource(R.string.week_title), stringResource(R.string.week_kept, r.daysKept, r.days), dismiss) {
-        if (r.perfectDays > 0) Line(stringResource(R.string.week_perfect, r.perfectDays), c.green)
-        if (r.restDays > 0) Line(stringResource(R.string.week_rest, r.restDays), c.purple)
-        r.previousKept?.let { prev ->
-            val diff = r.daysKept - prev
-            Line(
-                when { diff > 0 -> stringResource(R.string.week_better, diff); diff < 0 -> stringResource(R.string.week_worse, -diff); else -> stringResource(R.string.week_same) },
-                if (diff >= 0) c.green else c.gold,
-            )
-        }
-        r.bossId?.let { id ->
-            val name = content.bossById[id]?.title?.local() ?: id
-            Line(stringResource(if (r.bossDefeated) R.string.week_boss_won else R.string.week_boss_lost, name), if (r.bossDefeated) c.green else c.muted)
-        }
-        com.lifup.app.ui.hero.squadGainText(r.squad)?.let { Line(stringResource(R.string.week_squad, it), c.purple) }
-        r.weekly.forEach { w ->
-            val met = w.done >= w.goal
-            Line(stringResource(R.string.week_weekly_line, defTitle(s, w.defId), w.done, w.goal), if (met) c.green else c.gold)
-        }
-        r.best?.let { Line(stringResource(R.string.week_best, defTitle(s, it), (r.bestRate * 100).roundToInt()), c.text) }
-        r.worst?.let {
-            Line(stringResource(R.string.week_worst, defTitle(s, it), (r.worstRate * 100).roundToInt()), c.gold)
-            if (r.worstRate < 0.4) Line(stringResource(R.string.week_suggest), c.muted)
-        }
-    }
-}
-
-@Composable
-private fun RewardCard(icon: ImageVector?, color: Color, title: String, subtitle: String, onContinue: () -> Unit, body: @Composable () -> Unit) {
+internal fun RewardCard(icon: ImageVector?, color: Color, title: String, subtitle: String, onContinue: () -> Unit, body: @Composable () -> Unit) {
     Panel(border = color.copy(alpha = 0.7f), padding = androidx.compose.foundation.layout.PaddingValues(24.dp)) {
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
             if (icon != null) Icon(icon, null, tint = color, modifier = Modifier.padding(bottom = 4.dp).height(44.dp).width(44.dp))
             Text(title.uppercase(), style = MaterialTheme.typography.titleSmall, color = color, textAlign = TextAlign.Center)
             if (subtitle.isNotEmpty()) Text(subtitle, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
