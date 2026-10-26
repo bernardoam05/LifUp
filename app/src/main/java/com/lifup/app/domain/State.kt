@@ -65,6 +65,12 @@ data class Quest(
     val prompt: L10n? = null,
     /** The family it belongs to (from its definition); older saves fall back to the type. */
     val group: DrawGroup? = null,
+    /** Hour it was completed at, so an undo takes back the early or night tally it made. */
+    val doneHour: Int? = null,
+    /** Its item roll has happened: completing it again after an undo doesn't roll again. */
+    val dropRolled: Boolean = false,
+    /** An hourglass doubled it; an undo hands the doubling back. */
+    val doubled: Boolean = false,
 )
 
 @Serializable

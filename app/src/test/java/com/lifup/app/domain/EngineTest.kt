@@ -302,6 +302,19 @@ class EngineTest {
         assertTrue(s.enabledDefIds.isEmpty())
     }
 
+    @Test fun `ticking a mission on and off can't farm items, attributes or early tallies`() {
+        var s = run(GameState(onboarded = true, inventory = mapOf("relogio_ampulheta" to 1)), "2026-10-14T06:30") { useItem("relogio_ampulheta") }
+        val id = s.quests.first { it.type == QuestType.TRAINING }.id
+        val start = s
+        repeat(60) { s = run(s, "2026-10-14T06:31", seed = it) { completeQuest(id); undoQuest(id) } }
+        assertEquals(start.player.attrXp, s.player.attrXp)
+        assertEquals(start.count(StatKey.EARLY_QUESTS), s.count(StatKey.EARLY_QUESTS))
+        assertEquals(start.records[id]?.count ?: 0, s.records[id]?.count ?: 0)
+        assertTrue(s.doubleXpNext)
+        // One roll for the mission, whatever the toggling.
+        assertTrue(s.inventory.values.sum() <= 1)
+    }
+
     private fun withEcho(s: GameState, id: String) = s.copy(shadows = s.shadows + OwnedShadow(id), squad = listOf(id))
 
     @Test fun `an early echo pays more for missions done before ten`() {

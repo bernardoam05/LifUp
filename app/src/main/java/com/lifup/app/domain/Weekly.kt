@@ -71,17 +71,23 @@ fun weeklyQuest(def: QuestDef, tally: WeekTally?, day: LocalDate, level: Int, st
 /** The missions that count for today: the daily ones plus weekly ones already done. */
 fun GameState.countedQuests(): List<Quest> = dailyQuests + weeklyQuests.filter { it.isSuccessful() }
 
-/** Counts a done session of a weekly mission; the first time the goal is reached pays a bonus. */
+/** Counts a done session of a weekly mission; reaching the goal pays a bonus, and an undo that drops below it takes it back. */
 internal fun Tx.tallyWeekly(q: Quest, delta: Int) {
     if (q.perWeek == null) return
     val t = s.weekly[q.defId] ?: return
     val next = t.copy(done = (t.done + delta).coerceAtLeast(0))
+    val bonus = q.gold * Rules.WEEK_GOAL_GOLD_MULT
     val reached = delta > 0 && !t.rewarded && next.goal > 0 && next.done >= next.goal
-    s = s.copy(weekly = s.weekly + (q.defId to if (reached) next.copy(rewarded = true) else next))
+    val lost = delta < 0 && t.rewarded && next.done < next.goal
+    s = s.copy(weekly = s.weekly + (q.defId to next.copy(rewarded = if (reached) true else if (lost) false else next.rewarded)))
     if (reached) {
         count(StatKey.WEEK_GOALS)
-        gainGold(q.gold * Rules.WEEK_GOAL_GOLD_MULT, boosted = false)
+        gainGold(bonus, boosted = false)
         toast(ToastKind.WEEK_GOAL, q.defId)
+    }
+    if (lost) {
+        count(StatKey.WEEK_GOALS, -1)
+        refundGold(bonus)
     }
 }
 

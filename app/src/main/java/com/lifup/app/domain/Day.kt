@@ -88,11 +88,11 @@ private fun Tx.closeDay(day: LocalDate) {
                 if (hadPenaltyBefore) count(StatKey.COMEBACKS)
             }
             restored = perfect && recovery?.day == day.toString()
-            if (restored) s = s.copy(recoveryWeek = ctx.weekKey)
+            if (restored) s = s.copy(recoveryWeek = weekOf(day))
             setStreak((if (restored) recovery!!.streak else s.player.streak) + 1)
         }
         else -> {
-            val result = applyFailure(daily, failed, total, ratio)
+            val result = applyFailure(daily, failed, total, ratio, weekOf(day))
             penaltyInfo = result.first
             streakSavedBy = result.second
         }
@@ -126,14 +126,17 @@ private fun Tx.setStreak(value: Int) {
 }
 
 /** Returns the penalty summary and, if the streak survived, what saved it. Immunity spares the losses, not the streak. */
-private fun Tx.applyFailure(daily: List<Quest>, failed: Int, total: Int, ratio: Double): Pair<PenaltyInfo, String?> {
+private fun Tx.applyFailure(daily: List<Quest>, failed: Int, total: Int, ratio: Double, week: String): Pair<PenaltyInfo, String?> {
     val info = tryCooldownPassive(Passive.PENALTY_IMMUNITY)?.let { shadow ->
         toast(ToastKind.PASSIVE_FIRED, shadow.id)
         squadAdded(SquadGain(saves = 1))
         PenaltyInfo(failed, total, 0, 0, 0, absorbedBy = shadow.id)
     } ?: penalize(daily, failed, total, ratio)
-    return info to saveStreak()
+    return info to saveStreak(week)
 }
+
+/** The ISO week a day belongs to: a Sunday closed after midnight still counts for its own week. */
+private fun weekOf(day: LocalDate) = day.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY)).toString()
 
 /**
  * What a failed day costs: the undone share of what its missions would have paid, times the difficulty,
@@ -171,17 +174,17 @@ private fun Tx.penalize(daily: List<Quest>, failed: Int, total: Int, ratio: Doub
  * A failed day breaks the streak unless a guarding echo or the shield saves it. Only one save a week,
  * the comeback included (a perfect day right after), so protections can't stack into skipping half the week.
  */
-private fun Tx.saveStreak(): String? {
+private fun Tx.saveStreak(week: String): String? {
     val streak = s.player.streak
     if (streak <= 0) return null
-    val spare = s.recoveryWeek != ctx.weekKey
+    val spare = s.recoveryWeek != week
     val saved = if (!spare) null else tryCooldownPassive(Passive.STREAK_PROTECT)?.let { shadow ->
         toast(ToastKind.PASSIVE_FIRED, shadow.id)
         squadAdded(SquadGain(saves = 1))
         shadow.id
     } ?: "escudo_constancia".takeIf { s.items(it) > 0 }?.also { addItem(it, -1); count(StatKey.ITEMS_USED) }
     if (saved != null) {
-        s = s.copy(recoveryWeek = ctx.weekKey)
+        s = s.copy(recoveryWeek = week)
         return saved
     }
     setStreak(0)

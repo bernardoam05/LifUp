@@ -125,6 +125,13 @@ fun Tx.gainAttributes(group: DrawGroup?) {
     s = s.copy(player = s.player.copy(attrXp = Attributes(a.str + g.str, a.agi + g.agi, a.int + g.int, a.vit + g.vit)))
 }
 
+/** Takes back what [gainAttributes] gave, for an undo. */
+fun Tx.loseAttributes(group: DrawGroup?) {
+    val g = Rules.attrGain(group)
+    val a = s.player.attrXp
+    s = s.copy(player = s.player.copy(attrXp = Attributes((a.str - g.str).coerceAtLeast(0), (a.agi - g.agi).coerceAtLeast(0), (a.int - g.int).coerceAtLeast(0), (a.vit - g.vit).coerceAtLeast(0))))
+}
+
 /** Removes XP without ever dropping a level (used by penalties and undo). */
 fun Tx.loseXp(amount: Int) {
     s = s.copy(player = s.player.copy(xp = (s.player.xp - amount).coerceAtLeast(0)))

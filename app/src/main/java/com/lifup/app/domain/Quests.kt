@@ -151,7 +151,12 @@ private fun Tx.completeMission(q: Quest) {
         gold = gainGold(q.gold, extra = passives.missionGoldBonus(s, q))
     }
     gainAttributes(groupOf(q))
-    updateQuest(q.id) { it.copy(status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt, squad = squad) }
+    updateQuest(q.id) {
+        it.copy(
+            status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt, squad = squad,
+            doneHour = ctx.hour, dropRolled = true, doubled = doubled,
+        )
+    }
     count(StatKey.QUESTS_COMPLETED)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED)
     if (q.fromHour != null) count(StatKey.BEDTIMES_KEPT)
@@ -163,7 +168,8 @@ private fun Tx.completeMission(q: Quest) {
     val rec = s.records[q.defId] ?: QuestRecord()
     s = s.copy(records = s.records + (q.defId to rec.copy(count = rec.count + 1)))
     tallyWeekly(q, +1)
-    rollMissionDrop()
+    // Once per mission and day: ticking it off again after an undo can't fish for chests.
+    if (!q.dropRolled) rollMissionDrop()
 }
 
 private fun Tx.rollMissionDrop() {
@@ -178,7 +184,7 @@ private fun Tx.rollMissionDrop() {
     toast(ToastKind.ITEM_FOUND, item)
 }
 
-/** Undo a completed daily/extra mission. XP is removed without dropping levels. */
+/** Undo a completed daily/extra mission: everything it paid comes back off, XP without dropping levels. */
 fun Tx.undoQuest(id: String) {
     val q = s.quests.firstOrNull { it.id == id } ?: return
     if (q.status != QuestStatus.DONE) return
@@ -189,12 +195,22 @@ fun Tx.undoQuest(id: String) {
     count(StatKey.QUESTS_COMPLETED, -1)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED, -1)
     if (q.fromHour != null) count(StatKey.BEDTIMES_KEPT, -1)
+    when (q.doneHour) {
+        in 0..3 -> count(StatKey.NIGHT_QUESTS, -1)
+        in 5..7 -> count(StatKey.EARLY_QUESTS, -1)
+    }
+    loseAttributes(groupOf(q))
+    s.records[q.defId]?.let { rec -> s = s.copy(records = s.records + (q.defId to rec.copy(count = (rec.count - 1).coerceAtLeast(0)))) }
+    if (q.doubled) s = s.copy(doubleXpNext = true)
     tallyWeekly(q, -1)
     updateQuest(id) {
         // Tracked minutes/km stay (they were really done); automatic missions restart and stop auto-filling.
         val tracked = it.auto == null && (it.type == QuestType.FOCUS || it.type == QuestType.GPS)
         val progress = if (tracked) it.progress.coerceAtMost(it.target * 0.99) else 0.0
-        it.copy(status = QuestStatus.OPEN, xpGained = 0, goldGained = 0, bossDamage = 0, squad = SquadGain(), progress = progress, autoOff = it.auto != null)
+        it.copy(
+            status = QuestStatus.OPEN, xpGained = 0, goldGained = 0, bossDamage = 0, squad = SquadGain(), progress = progress, autoOff = it.auto != null,
+            doneHour = null, doubled = false,
+        )
     }
 }
 
@@ -334,6 +350,7 @@ fun Tx.undoSideQuest(id: String) {
         healBoss(sq.bossDamage)
         squadAdded(SquadGain() - sq.squad)
         count(StatKey.SIDE_COMPLETED, -1)
+        loseAttributes(null)
         s = s.copy(daily = s.daily.copy(sideRewarded = (s.daily.sideRewarded - 1).coerceAtLeast(0)))
     }
     updateSide(id) { it.copy(done = false, xpGained = 0, goldGained = 0, bossDamage = 0, squad = SquadGain()) }

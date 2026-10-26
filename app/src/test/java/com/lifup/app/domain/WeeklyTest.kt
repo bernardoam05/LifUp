@@ -87,6 +87,9 @@ class WeeklyTest {
         val paid = s.player.gold - before
         assertTrue(paid >= train.baseGold * (1 + Rules.WEEK_GOAL_GOLD_MULT))
         s = run(s, "2026-10-22T10:05") { undoQuest(s.train().id) }
+        // Back under the goal: the bonus goes back too (an achievement it unlocked stays), and comes again with the goal.
+        assertFalse(s.weekly[train.id]!!.rewarded)
+        assertTrue(before + paid - s.player.gold >= train.baseGold * (1 + Rules.WEEK_GOAL_GOLD_MULT))
         s = run(s, "2026-10-22T10:06") { completeQuest(s.train().id) }
         assertEquals(before + paid, s.player.gold)
         s = run(s, "2026-10-26T09:00")
