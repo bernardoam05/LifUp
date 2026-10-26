@@ -18,7 +18,7 @@ fun Tx.ensureBoss() {
     val weekRng = s.weekRandom(ctx, salt = 0)
     if (current != null && current.weekKey >= ctx.weekKey) { // ISO dates: never rotate backwards
         // A boss from before weaknesses existed gets one.
-        if (current.weakness == null) s = s.copy(boss = current.copy(weakness = weaknessFor(s, s.weekRandom(ctx, salt = 3))))
+        if (current.weakness == null) s = s.copy(boss = current.copy(weakness = weaknessFor(s.weekRandom(ctx, salt = 3))))
         return
     }
     if (current != null && !current.defeated) toast(ToastKind.BOSS_ESCAPED, current.bossId)
@@ -58,18 +58,14 @@ fun Tx.ensureBoss() {
         gold = 0,
         rank = if (def.rank == "S") QuestRank.S else QuestRank.A,
     )
-    s = s.copy(boss = BossState(ctx.weekKey, def.id, maxHp, maxHp, challenge, ctx.nextWeekStartMs, weakness = weaknessFor(s, weekRng)))
+    s = s.copy(boss = BossState(ctx.weekKey, def.id, maxHp, maxHp, challenge, ctx.nextWeekStartMs, weakness = weaknessFor(weekRng)))
 }
 
 /**
- * The boss's weak family: the one that grows the player's weakest attribute, so the boss nudges toward balance;
- * any family while the attributes are even. Vitality has two families, so one of them is picked.
+ * The boss's weak family, drawn at random. Never from the player's attributes or focus: the draw already leans
+ * on those for some profiles, and a weakness that followed them would hand those profiles easier bosses.
  */
-private fun weaknessFor(s: GameState, rng: Random): DrawGroup {
-    val attr = s.player.attrXp.lagging().minByOrNull { s.player.attrXp.of(it) }
-    val families = DrawGroup.entries.filter { attr == null || it.attr == attr }
-    return families.random(rng)
-}
+private fun weaknessFor(rng: Random): DrawGroup = DrawGroup.entries.random(rng)
 
 /** Whether a mission completed now would hit the boss's weakness: its family, and the day's quota not used up. */
 fun GameState.hitsWeakness(q: Quest): Boolean {

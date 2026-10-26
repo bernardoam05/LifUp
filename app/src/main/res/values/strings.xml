@@ -549,7 +549,7 @@
     <string name="guide_side_title">Side quests</string>
     <string name="guide_side">Free-form::Write any task, no targets or rules.\n5 with rewards::The first 5 finished each day give XP and gold (they don\'t hurt the boss).\nAfter that::They keep working as a to-do list.\nNo cheating::Unticking or deleting takes the reward back.</string>
     <string name="guide_boss_title">Weekly boss</string>
-    <string name="guide_boss">Missions are damage::Every mission you do takes its health; extra ones and focus hit for half.\nBoss challenges::Two a week: one on Monday, another on Thursday. Each rips off 15%.\nLoot::Beat it for XP, gold, a chest and its echo.\nWeakness::Every boss is weak to one family, usually your weakest attribute\'s. Those missions hit it for +50%, on 2 a day.\nIf not…::On Sunday night it ends — and another one comes.</string>
+    <string name="guide_boss">Missions are damage::Every mission you do takes its health; extra ones and focus hit for half.\nBoss challenges::Two a week: one on Monday, another on Thursday. Each rips off 15%.\nLoot::Beat it for XP, gold, a chest and its echo.\nWeakness::Every boss is weak to one family, drawn when it shows up. Those missions hit it for +50%, on 2 a day.\nIf not…::On Sunday night it ends — and another one comes.</string>
     <string name="guide_portal_title">Portals</string>
     <string name="guide_portal">They show up on their own::Between 8 AM and 10 PM, up to 2 a day.\nDouble rewards::A bigger mission with twice the XP and gold.\nNew ally::Clearing it may bring you an echo.\nOn the clock::There\'s always enough time, but the portal closes when it runs out.</string>
     <string name="guide_shadows_title">Echoes</string>

@@ -315,9 +315,13 @@ class EngineTest {
         assertTrue(s.inventory.values.sum() <= 1)
     }
 
-    @Test fun `a boss is weak to the family of the weakest attribute`() {
-        val s = run(GameState(onboarded = true, player = Player(attrXp = Attributes(str = 500, agi = 10, int = 400, vit = 600))), "2026-10-19T09:00")
-        assertEquals(DrawGroup.MOVEMENT, s.boss!!.weakness)
+    @Test fun `a boss's weakness is random, not the weakest attribute's family`() {
+        // Same seed, very different attributes: the same weakness, so no profile is favoured.
+        fun weakness(a: Attributes) = run(GameState(onboarded = true, seed = 77, player = Player(attrXp = a)), "2026-10-19T09:00").boss!!.weakness
+        assertEquals(weakness(Attributes(str = 500, agi = 10, int = 400, vit = 600)), weakness(Attributes(str = 10, agi = 500, int = 600, vit = 400)))
+        // Over many players every family comes up.
+        val seen = (1L..60L).mapNotNull { run(GameState(onboarded = true, seed = it), "2026-10-19T09:00").boss!!.weakness }.toSet()
+        assertEquals(DrawGroup.entries.toSet(), seen)
     }
 
     @Test fun `missions of the weak family hit harder, two a day`() {

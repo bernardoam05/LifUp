@@ -548,7 +548,7 @@
     <string name="guide_side_title">Tareas</string>
     <string name="guide_side">Libres::Escribe cualquier tarea, sin objetivos ni reglas.\n5 con recompensa::Las 5 primeras que completes cada día dan XP y oro (no hieren al jefe).\nDespués de eso::Siguen funcionando como lista de tareas.\nSin trampas::Desmarcar o borrar te quita la recompensa.</string>
     <string name="guide_boss_title">Jefe semanal</string>
-    <string name="guide_boss">Las misiones son daño::Cada misión que haces le quita vida; las extra y el foco, la mitad.\nDesafíos del jefe::Dos por semana: uno el lunes y otro el jueves. Cada uno le arranca un 15%.\nBotín::Derrótalo y ganas XP, oro, un cofre y su eco.\nDebilidad::Cada jefe es débil contra una familia, normalmente la de tu atributo más flojo. Esas misiones le quitan +50%, en 2 al día.\nSi no…::El domingo por la noche termina, y llega otro.</string>
+    <string name="guide_boss">Las misiones son daño::Cada misión que haces le quita vida; las extra y el foco, la mitad.\nDesafíos del jefe::Dos por semana: uno el lunes y otro el jueves. Cada uno le arranca un 15%.\nBotín::Derrótalo y ganas XP, oro, un cofre y su eco.\nDebilidad::Cada jefe es débil contra una familia, sorteada cuando aparece. Esas misiones le quitan +50%, en 2 al día.\nSi no…::El domingo por la noche termina, y llega otro.</string>
     <string name="guide_portal_title">Portales</string>
     <string name="guide_portal">Aparecen solos::Entre las 8:00 y las 22:00, hasta 2 al día.\nRecompensa doble::Una misión más grande, con el doble de XP y oro.\nNuevo aliado::Completarlo puede despertar un eco.\nContra el reloj::Siempre hay tiempo de sobra, pero el portal se cierra cuando se acaba.</string>
     <string name="guide_shadows_title">Ecos</string>

@@ -530,7 +530,7 @@
     <string name="guide_side_title">Tarefas</string>
     <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro (não ferem o boss).\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
     <string name="guide_boss_title">Boss semanal</string>
-    <string name="guide_boss">Missões são dano::Cada missão que fazes tira-lhe vida; as extra e o foco tiram metade.\nDesafios do boss::Dois por semana: um na segunda e outro na quinta. Cada um arranca-lhe 15%.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nFraqueza::Cada boss é fraco contra uma família, normalmente a do teu atributo mais fraco. Essas missões tiram-lhe +50%, em 2 por dia.\nSe não…::No domingo à noite acaba — e vem outro.</string>
+    <string name="guide_boss">Missões são dano::Cada missão que fazes tira-lhe vida; as extra e o foco tiram metade.\nDesafios do boss::Dois por semana: um na segunda e outro na quinta. Cada um arranca-lhe 15%.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nFraqueza::Cada boss é fraco contra uma família, sorteada quando aparece. Essas missões tiram-lhe +50%, em 2 por dia.\nSe não…::No domingo à noite acaba — e vem outro.</string>
     <string name="guide_portal_title">Portais</string>
     <string name="guide_portal">Aparecem sozinhos::Entre as 8h e as 22h, até 2 por dia.\nRecompensa a dobrar::Uma missão maior, com o dobro de XP e ouro.\nNovo aliado::Concluí-lo pode trazer-te um eco.\nTempo contado::Dá sempre para a fazer, mas o portal fecha quando o tempo acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
