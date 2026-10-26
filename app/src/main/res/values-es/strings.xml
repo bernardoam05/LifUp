@@ -328,7 +328,7 @@
     <string name="reset_confirm">Borrar todo</string>
 
     <!-- Forge -->
-    <string name="forge_info">Crea tus misiones, o edita y desactiva las básicas. Los cambios se aplican a la lista de mañana.</string>
+    <string name="forge_info">Crea tus misiones, o edita y desactiva las básicas. Las opcionales empiezan desactivadas: activa las que encajen contigo. Los cambios se aplican a la lista de mañana.</string>
     <string name="your_missions">Tus misiones</string>
     <string name="no_custom">Aún no tienes misiones propias. Toca + para forjar una.</string>
     <string name="kind_core">Fija</string>
@@ -820,4 +820,5 @@
         <item quantity="one">%1$d día</item>
         <item quantity="other">%1$d días</item>
     </plurals>
+    <string name="def_optional">Opcional</string>
 </resources>

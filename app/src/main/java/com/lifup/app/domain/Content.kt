@@ -58,6 +58,10 @@ data class QuestDef(
     val prompts: List<L10n>? = null,
     /** How to go about it, for missions where that isn't obvious. */
     val tip: L10n? = null,
+    /** Fits only some players (a habit they have, a vice to cut, gear they own): off until switched on in the Forge. */
+    val optional: Boolean = false,
+    /** No longer handed out nor listed; kept so old history still finds its name. */
+    val retired: Boolean = false,
 )
 
 @Serializable

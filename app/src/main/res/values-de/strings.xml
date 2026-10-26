@@ -328,7 +328,7 @@
     <string name="reset_confirm">Alles löschen</string>
 
     <!-- Forge -->
-    <string name="forge_info">Erstelle eigene Missionen oder bearbeite und deaktiviere die eingebauten. Änderungen gelten ab der Liste von morgen.</string>
+    <string name="forge_info">Erstelle eigene Missionen oder bearbeite und deaktiviere die eingebauten. Optionale sind anfangs aus: schalte die ein, die zu dir passen. Änderungen gelten ab der Liste von morgen.</string>
     <string name="your_missions">Deine Missionen</string>
     <string name="no_custom">Noch keine eigenen Missionen. Tippe auf +, um eine zu schmieden.</string>
     <string name="kind_core">Fest</string>
@@ -820,4 +820,5 @@
         <item quantity="one">%1$d Tag</item>
         <item quantity="other">%1$d Tage</item>
     </plurals>
+    <string name="def_optional">Optional</string>
 </resources>

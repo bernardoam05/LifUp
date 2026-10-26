@@ -329,7 +329,7 @@
     <string name="reset_confirm">Erase everything</string>
 
     <!-- Forge -->
-    <string name="forge_info">Create your own missions, or edit and switch off the built-in ones. Changes apply to tomorrow\'s list.</string>
+    <string name="forge_info">Create your own missions, or edit and switch off the built-in ones. Optional ones start off: switch on those that fit you. Changes apply to tomorrow\'s list.</string>
     <string name="your_missions">Your missions</string>
     <string name="no_custom">No custom missions yet. Tap + to forge one.</string>
     <string name="kind_core">Fixed</string>
@@ -821,4 +821,5 @@
         <item quantity="one">%1$d day</item>
         <item quantity="other">%1$d days</item>
     </plurals>
+    <string name="def_optional">Optional</string>
 </resources>

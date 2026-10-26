@@ -289,6 +289,19 @@ class EngineTest {
         assertEquals(base(s), base(other), 1.0)
     }
 
+    @Test fun `optional missions start off and join the draw once switched on, retired ones never come back`() {
+        var s = run(GameState(onboarded = true), "2026-10-19T09:00")
+        val ids = s.availableDefs(content).map { it.id }
+        assertFalse("pool_floss" in ids)
+        assertFalse("pool_eyes" in ids)
+        s = run(s, "2026-10-19T09:01") { setDefEnabled("pool_floss", true); setDefEnabled("pool_eyes", true) }
+        assertTrue("pool_floss" in s.availableDefs(content).map { it.id })
+        assertFalse("pool_eyes" in s.availableDefs(content).map { it.id })
+        s = run(s, "2026-10-19T09:02") { setDefEnabled("pool_floss", false) }
+        assertFalse("pool_floss" in s.availableDefs(content).map { it.id })
+        assertTrue(s.enabledDefIds.isEmpty())
+    }
+
     private fun withEcho(s: GameState, id: String) = s.copy(shadows = s.shadows + OwnedShadow(id), squad = listOf(id))
 
     @Test fun `an early echo pays more for missions done before ten`() {

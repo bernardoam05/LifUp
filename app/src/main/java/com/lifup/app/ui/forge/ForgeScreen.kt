@@ -58,6 +58,7 @@ import com.lifup.app.domain.deleteCustomDef
 import com.lifup.app.domain.plainText
 import com.lifup.app.domain.saveCustomDef
 import com.lifup.app.domain.setDefEnabled
+import com.lifup.app.domain.isOn
 import com.lifup.app.ui.act
 import com.lifup.app.ui.components.ConfirmDialog
 import com.lifup.app.ui.components.EmptyNote
@@ -104,20 +105,21 @@ fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
             item { SectionTitle(stringResource(R.string.your_missions)) }
             val own = s.customDefs.filter { content.questDefById[it.id] == null }
             if (own.isEmpty()) item { EmptyNote(stringResource(R.string.no_custom)) }
-            items(own, key = { it.id }) { def -> DefRow(def, enabled = def.id !in s.disabledDefIds, onEdit = { onEdit(def.id) }) }
+            items(own, key = { it.id }) { def -> DefRow(def, enabled = s.isOn(def, content), onEdit = { onEdit(def.id) }) }
             // System missions grouped by family, the attribute each one grows.
             DrawGroup.entries.forEach { family ->
-                val defs = content.quests.filter { (s.defOf(it.id, content) ?: it).drawGroup() == family }
+                // Optional missions after the rest, so the ones in play by default read first.
+                val defs = content.quests.filter { !it.retired && (s.defOf(it.id, content) ?: it).drawGroup() == family }.sortedBy { it.optional }
                 if (defs.isEmpty()) return@forEach
                 item(key = "h_$family") {
                     SectionTitle(stringResource(familyName(family))) {
-                        Text("${defs.count { it.id !in s.disabledDefIds }}/${defs.size}", color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium)
+                        Text("${defs.count { s.isOn(it, content) }}/${defs.size}", color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium)
                     }
                 }
                 items(defs, key = { it.id }) { def ->
                     // Built-in missions show the player's edited copy when there is one.
                     val shown = s.defOf(def.id, content) ?: def
-                    DefRow(shown, enabled = def.id !in s.disabledDefIds, onEdit = { onEdit(def.id) }, edited = shown !== def)
+                    DefRow(shown, enabled = s.isOn(def, content), onEdit = { onEdit(def.id) }, edited = shown !== def, optional = def.optional)
                 }
             }
         }
@@ -126,7 +128,7 @@ fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?, edited: Boolean = false) {
+private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?, edited: Boolean = false, optional: Boolean = false) {
     val c = Lif.colors
     val color = def.color(c)
     val unit = unitLabel(def.unit)
@@ -157,6 +159,7 @@ private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?, edite
             def.daysOfWeek?.takeIf { def.perWeek == null }?.let { days -> Pill(days.sorted().joinToString(" ") { dayNames[it - 1] }, c.muted) }
             def.perWeek?.let { Pill(stringResource(R.string.per_week_chip, it), c.accent) }
             Pill("${difficultyLabel(Rules.difficulty(def.baseXp))} · +${def.baseXp} XP · +${def.baseGold}", c.accent)
+            if (optional) Pill(stringResource(R.string.def_optional), c.purple)
             if (edited) Pill(stringResource(R.string.def_edited), c.gold)
             if (onEdit != null) Icon(Icons.Rounded.Edit, null, tint = c.muted, modifier = Modifier.size(16.dp))
         }

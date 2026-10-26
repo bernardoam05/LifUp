@@ -312,7 +312,7 @@
     <string name="reset_text">Tout sera effacé : niveau, échos, objets et historique. Action irréversible.</string>
     <string name="reset_confirm">Tout effacer</string>
 
-    <string name="forge_info">Crée tes missions, ou modifie et désactive celles de base. Les changements s\'appliquent à la liste de demain.</string>
+    <string name="forge_info">Crée tes missions, ou modifie et désactive celles de base. Les optionnelles sont désactivées au départ : active celles qui te correspondent. Les changements s\'appliquent à la liste de demain.</string>
     <string name="your_missions">Tes missions</string>
     <string name="no_custom">Pas encore de missions perso. Touche + pour en forger une.</string>
     <string name="kind_core">Fixe</string>
@@ -802,4 +802,5 @@
         <item quantity="one">%1$d jour</item>
         <item quantity="other">%1$d jours</item>
     </plurals>
+    <string name="def_optional">Optionnelle</string>
 </resources>

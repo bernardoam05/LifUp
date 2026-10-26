@@ -863,7 +863,8 @@
    "baseXp": 60,
    "baseGold": 15,
    "maxTarget": 20,
-   "peakTarget": 40
+   "peakTarget": 40,
+   "retired": true
   },
   {
    "id": "pool_hike",
@@ -1499,7 +1500,8 @@
    "unit": "",
    "baseXp": 35,
    "baseGold": 10,
-   "untilHour": 16
+   "untilHour": 16,
+   "retired": true
   },
   {
    "id": "pool_daylight",
@@ -1752,7 +1754,8 @@
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 45,
-   "baseGold": 12
+   "baseGold": 12,
+   "optional": true
   },
   {
    "id": "pool_nocomplain",
@@ -2197,7 +2200,15 @@
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 25,
-   "baseGold": 6
+   "baseGold": 6,
+   "optional": true,
+   "tip": {
+    "pt": "Se a fazes todos os dias, edita-a na Forja e passa-a a fixa.",
+    "en": "If you do it every day, edit it in the Forge and make it fixed.",
+    "es": "Si la haces todos los días, edítala en la Forja y hazla fija.",
+    "fr": "Si tu la fais tous les jours, modifie-la dans la Forge et rends-la fixe.",
+    "de": "Wenn du sie täglich machst, bearbeite sie in der Schmiede und mach sie fest."
+   }
   },
   {
    "id": "pool_bed",
@@ -2258,7 +2269,8 @@
     "fr": "La règle 20-20-20 : toutes les 20 min d'écran, 20 s à regarder quelque chose à environ 6 m. Une fenêtre, c'est parfait.",
     "de": "Die 20-20-20-Regel: alle 20 Min. Bildschirm 20 s auf etwas in etwa 6 m Entfernung schauen. Ein Fenster ist ideal."
    },
-   "untilHour": 17
+   "untilHour": 17,
+   "retired": true
   },
   {
    "id": "pool_early_dinner",
@@ -2345,7 +2357,8 @@
    "scalingInterval": 1,
    "unit": "",
    "baseXp": 45,
-   "baseGold": 12
+   "baseGold": 12,
+   "optional": true
   },
   {
    "id": "pool_nonews",
@@ -2431,6 +2444,590 @@
    "unit": "",
    "baseXp": 45,
    "baseGold": 12
+  },
+  {
+   "id": "pool_kettlebell",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Balanço de Ferro",
+    "en": "Iron Swing",
+    "es": "Balanceo de Hierro",
+    "fr": "Balancier de Fer",
+    "de": "Eiserner Schwung"
+   },
+   "description": {
+    "pt": "Faz {target} balanços com kettlebell.",
+    "en": "Do {target} kettlebell swings.",
+    "es": "Haz {target} balanceos con kettlebell.",
+    "fr": "Fais {target} swings de kettlebell.",
+    "de": "Mach {target} Kettlebell-Swings."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 1,
+   "unit": "reps",
+   "baseXp": 60,
+   "baseGold": 15,
+   "maxTarget": 50,
+   "peakTarget": 100,
+   "tip": {
+    "pt": "A força vem das ancas, não dos braços: empurra-as para trás e estica-as de repente.",
+    "en": "The power comes from the hips, not the arms: push them back, then snap them forward.",
+    "es": "La fuerza viene de la cadera, no de los brazos: llévala atrás y estírala de golpe.",
+    "fr": "La force vient des hanches, pas des bras : pousse-les en arrière puis tends-les d'un coup.",
+    "de": "Die Kraft kommt aus der Hüfte, nicht aus den Armen: nach hinten schieben, dann explosiv strecken."
+   },
+   "optional": true
+  },
+  {
+   "id": "pool_hang",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Pegada de Aço",
+    "en": "Steel Grip",
+    "es": "Agarre de Acero",
+    "fr": "Poigne d'Acier",
+    "de": "Stahlgriff"
+   },
+   "description": {
+    "pt": "Fica pendurado numa barra durante {target} s, em blocos como quiseres.",
+    "en": "Hang from a bar for {target} s, in as many sets as you like.",
+    "es": "Cuélgate de una barra {target} s, en las series que quieras.",
+    "fr": "Suspends-toi à une barre {target} s, en autant de séries que tu veux.",
+    "de": "Häng {target} s an einer Stange, in so vielen Sätzen wie du willst."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 5,
+   "scalingInterval": 1,
+   "unit": "s",
+   "baseXp": 55,
+   "baseGold": 15,
+   "maxTarget": 60,
+   "peakTarget": 120,
+   "optional": true
+  },
+  {
+   "id": "pool_dumbbell",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Braços de Forja",
+    "en": "Forged Arms",
+    "es": "Brazos de Forja",
+    "fr": "Bras Forgés",
+    "de": "Geschmiedete Arme"
+   },
+   "description": {
+    "pt": "Faz {target} curls de bíceps com halteres (ou garrafas cheias).",
+    "en": "Do {target} dumbbell curls (or full bottles).",
+    "es": "Haz {target} curls de bíceps con mancuernas (o botellas llenas).",
+    "fr": "Fais {target} curls avec des haltères (ou des bouteilles pleines).",
+    "de": "Mach {target} Bizeps-Curls mit Hanteln (oder vollen Flaschen)."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 1,
+   "scalingInterval": 1,
+   "unit": "reps",
+   "baseXp": 50,
+   "baseGold": 12,
+   "maxTarget": 30,
+   "peakTarget": 50,
+   "optional": true
+  },
+  {
+   "id": "pool_band",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "STRENGTH",
+   "title": {
+    "pt": "Postura de Guarda",
+    "en": "Guard Posture",
+    "es": "Postura de Guardia",
+    "fr": "Posture de Garde",
+    "de": "Wächterhaltung"
+   },
+   "description": {
+    "pt": "Faz {target} aberturas com elástico à altura do peito, juntando as omoplatas.",
+    "en": "Do {target} band pull-aparts at chest height, squeezing your shoulder blades.",
+    "es": "Haz {target} aperturas con banda a la altura del pecho, juntando las escápulas.",
+    "fr": "Fais {target} écartés à l'élastique à hauteur de poitrine, en serrant les omoplates.",
+    "de": "Mach {target} Band Pull-Aparts auf Brusthöhe und zieh die Schulterblätter zusammen."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 1,
+   "unit": "reps",
+   "baseXp": 40,
+   "baseGold": 10,
+   "maxTarget": 50,
+   "peakTarget": 80,
+   "optional": true
+  },
+  {
+   "id": "pool_swim",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Braçada",
+    "en": "Stroke",
+    "es": "Brazada",
+    "fr": "Brasse",
+    "de": "Zug um Zug"
+   },
+   "description": {
+    "pt": "{target} min a nadar.",
+    "en": "{target} min of swimming.",
+    "es": "{target} min nadando.",
+    "fr": "{target} min de natation.",
+    "de": "{target} Min. schwimmen."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 90,
+   "baseGold": 25,
+   "maxTarget": 45,
+   "peakTarget": 90,
+   "optional": true
+  },
+  {
+   "id": "pool_row",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Remada",
+    "en": "Row",
+    "es": "Remada",
+    "fr": "Rameur",
+    "de": "Ruderschlag"
+   },
+   "description": {
+    "pt": "{target} min de remo, na água ou na máquina.",
+    "en": "{target} min of rowing, on the water or the machine.",
+    "es": "{target} min de remo, en el agua o en la máquina.",
+    "fr": "{target} min d'aviron, sur l'eau ou au rameur.",
+    "de": "{target} Min. rudern, auf dem Wasser oder am Gerät."
+   },
+   "baseTarget": 15,
+   "scalingAmount": 1,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 70,
+   "baseGold": 20,
+   "maxTarget": 30,
+   "peakTarget": 60,
+   "optional": true
+  },
+  {
+   "id": "pool_dog",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Patrulha com o Cão",
+    "en": "Dog Patrol",
+    "es": "Patrulla con el Perro",
+    "fr": "Patrouille avec le Chien",
+    "de": "Hundepatrouille"
+   },
+   "description": {
+    "pt": "Um passeio de {target} min com o teu cão, sem estar ao telemóvel.",
+    "en": "A {target}-min walk with your dog, off the phone.",
+    "es": "Un paseo de {target} min con tu perro, sin mirar el móvil.",
+    "fr": "Une balade de {target} min avec ton chien, sans téléphone.",
+    "de": "Ein {target}-Min.-Spaziergang mit deinem Hund, ohne Handy."
+   },
+   "baseTarget": 25,
+   "scalingAmount": 5,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 45,
+   "baseGold": 12,
+   "maxTarget": 45,
+   "peakTarget": 60,
+   "optional": true
+  },
+  {
+   "id": "pool_commute",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "MOVEMENT",
+   "title": {
+    "pt": "Trajeto Ativo",
+    "en": "Active Commute",
+    "es": "Trayecto Activo",
+    "fr": "Trajet Actif",
+    "de": "Aktiver Weg"
+   },
+   "description": {
+    "pt": "Faz pelo menos um trajeto a pé ou de bicicleta em vez de carro, mota ou transportes.",
+    "en": "Make at least one trip on foot or by bike instead of car, motorbike or transit.",
+    "es": "Haz al menos un trayecto a pie o en bici en lugar de coche, moto o transporte.",
+    "fr": "Fais au moins un trajet à pied ou à vélo au lieu de la voiture, la moto ou les transports.",
+    "de": "Leg mindestens einen Weg zu Fuß oder mit dem Rad zurück statt mit Auto, Motorrad oder Öffis."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 50,
+   "baseGold": 12,
+   "optional": true
+  },
+  {
+   "id": "pool_study",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Sessão de Estudo",
+    "en": "Study Session",
+    "es": "Sesión de Estudio",
+    "fr": "Séance d'Étude",
+    "de": "Lerneinheit"
+   },
+   "description": {
+    "pt": "{target} min de estudo para aulas ou exames.",
+    "en": "{target} min studying for classes or exams.",
+    "es": "{target} min de estudio para clases o exámenes.",
+    "fr": "{target} min d'étude pour les cours ou les examens.",
+    "de": "{target} Min. lernen für Unterricht oder Prüfungen."
+   },
+   "baseTarget": 30,
+   "scalingAmount": 5,
+   "scalingInterval": 2,
+   "unit": "min",
+   "baseXp": 70,
+   "baseGold": 20,
+   "maxTarget": 90,
+   "peakTarget": 120,
+   "tip": {
+    "pt": "Resolve exercícios ou explica a matéria sem olhar: reler sublinhados quase não fica.",
+    "en": "Solve problems or explain the material without looking: rereading highlights barely sticks.",
+    "es": "Resuelve ejercicios o explica la materia sin mirar: releer subrayados casi no se queda.",
+    "fr": "Fais des exercices ou explique la matière sans regarder : relire ses surlignages ne reste presque pas.",
+    "de": "Löse Aufgaben oder erkläre den Stoff ohne Vorlage: Markiertes nochmal lesen bleibt kaum hängen."
+   },
+   "optional": true
+  },
+  {
+   "id": "pool_instrument",
+   "kind": "POOL",
+   "type": "FOCUS",
+   "title": {
+    "pt": "Ensaio",
+    "en": "Rehearsal",
+    "es": "Ensayo",
+    "fr": "Répétition",
+    "de": "Probe"
+   },
+   "description": {
+    "pt": "{target} min a praticar o teu instrumento.",
+    "en": "{target} min practising your instrument.",
+    "es": "{target} min practicando tu instrumento.",
+    "fr": "{target} min à travailler ton instrument.",
+    "de": "{target} Min. an deinem Instrument üben."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 2,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 60,
+   "baseGold": 15,
+   "maxTarget": 45,
+   "peakTarget": 60,
+   "tip": {
+    "pt": "Escolhe uma passagem difícil e toca-a devagar até sair limpa, antes de tocar o que já sabes.",
+    "en": "Pick a hard passage and play it slowly until it's clean, before playing what you already know.",
+    "es": "Elige un pasaje difícil y tócalo despacio hasta que salga limpio, antes de tocar lo que ya sabes.",
+    "fr": "Choisis un passage difficile et joue-le lentement jusqu'à ce qu'il soit propre, avant ce que tu sais déjà.",
+    "de": "Nimm eine schwere Stelle und spiel sie langsam, bis sie sauber klingt, bevor du Bekanntes spielst."
+   },
+   "optional": true
+  },
+  {
+   "id": "pool_flashcards",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Memória Viva",
+    "en": "Living Memory",
+    "es": "Memoria Viva",
+    "fr": "Mémoire Vive",
+    "de": "Lebendiges Gedächtnis"
+   },
+   "description": {
+    "pt": "{target} min a rever cartões de memória (Anki ou em papel).",
+    "en": "{target} min reviewing flashcards (Anki or paper).",
+    "es": "{target} min repasando tarjetas de memoria (Anki o en papel).",
+    "fr": "{target} min à réviser des cartes mémoire (Anki ou papier).",
+    "de": "{target} Min. Karteikarten wiederholen (Anki oder Papier)."
+   },
+   "baseTarget": 10,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 40,
+   "baseGold": 10,
+   "tip": {
+    "pt": "Poucos minutos todos os dias valem mais do que uma hora ao domingo.",
+    "en": "A few minutes every day beat an hour on Sunday.",
+    "es": "Unos minutos cada día valen más que una hora el domingo.",
+    "fr": "Quelques minutes chaque jour valent mieux qu'une heure le dimanche.",
+    "de": "Jeden Tag ein paar Minuten bringen mehr als eine Stunde am Sonntag."
+   },
+   "optional": true
+  },
+  {
+   "id": "pool_story",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "title": {
+    "pt": "Hora do Conto",
+    "en": "Story Time",
+    "es": "Hora del Cuento",
+    "fr": "L'Heure du Conte",
+    "de": "Geschichtenzeit"
+   },
+   "description": {
+    "pt": "Lê uma história a uma criança, ou inventa uma com ela.",
+    "en": "Read a story to a child, or make one up together.",
+    "es": "Lee un cuento a un niño, o inventad uno juntos.",
+    "fr": "Lis une histoire à un enfant, ou inventez-en une ensemble.",
+    "de": "Lies einem Kind eine Geschichte vor oder erfindet zusammen eine."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 40,
+   "baseGold": 10,
+   "optional": true
+  },
+  {
+   "id": "pool_meds",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Elixir Diário",
+    "en": "Daily Elixir",
+    "es": "Elixir Diario",
+    "fr": "Élixir Quotidien",
+    "de": "Tägliches Elixier"
+   },
+   "description": {
+    "pt": "Toma a tua medicação ou suplementos à hora certa.",
+    "en": "Take your medication or supplements on time.",
+    "es": "Tómate la medicación o los suplementos a su hora.",
+    "fr": "Prends tes médicaments ou compléments à l'heure.",
+    "de": "Nimm deine Medikamente oder Nahrungsergänzung pünktlich."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 25,
+   "baseGold": 6,
+   "tip": {
+    "pt": "Se a fazes todos os dias, edita-a na Forja e passa-a a fixa.",
+    "en": "If you do it every day, edit it in the Forge and make it fixed.",
+    "es": "Si la haces todos los días, edítala en la Forja y hazla fija.",
+    "fr": "Si tu la fais tous les jours, modifie-la dans la Forge et rends-la fixe.",
+    "de": "Wenn du sie täglich machst, bearbeite sie in der Schmiede und mach sie fest."
+   },
+   "optional": true
+  },
+  {
+   "id": "pool_skincare",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Armadura de Pele",
+    "en": "Skin Armour",
+    "es": "Armadura de Piel",
+    "fr": "Armure de Peau",
+    "de": "Hautrüstung"
+   },
+   "description": {
+    "pt": "Faz a tua rotina de pele: limpar, hidratar e, de dia, protetor solar.",
+    "en": "Do your skincare routine: cleanse, moisturise and, by day, sunscreen.",
+    "es": "Haz tu rutina de piel: limpiar, hidratar y, de día, protector solar.",
+    "fr": "Fais ta routine de peau : nettoyer, hydrater et, le jour, crème solaire.",
+    "de": "Mach deine Hautpflege: reinigen, eincremen und tagsüber Sonnenschutz."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 25,
+   "baseGold": 6,
+   "tip": {
+    "pt": "Se a fazes todos os dias, edita-a na Forja e passa-a a fixa.",
+    "en": "If you do it every day, edit it in the Forge and make it fixed.",
+    "es": "Si la haces todos los días, edítala en la Forja y hazla fija.",
+    "fr": "Si tu la fais tous les jours, modifie-la dans la Forge et rends-la fixe.",
+    "de": "Wenn du sie täglich machst, bearbeite sie in der Schmiede und mach sie fest."
+   },
+   "optional": true
+  },
+  {
+   "id": "pool_mealprep",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Provisões",
+    "en": "Provisions",
+    "es": "Provisiones",
+    "fr": "Provisions",
+    "de": "Proviant"
+   },
+   "description": {
+    "pt": "Prepara a comida de amanhã (almoço ou lanche), para não dependeres do que houver.",
+    "en": "Prepare tomorrow's food (lunch or a snack), so you don't depend on whatever is around.",
+    "es": "Prepara la comida de mañana (almuerzo o merienda) para no depender de lo que haya.",
+    "fr": "Prépare le repas de demain (déjeuner ou en-cas) pour ne pas dépendre de ce qu'il y aura.",
+    "de": "Bereite das Essen für morgen vor (Mittag oder Snack), damit du nicht vom Angebot abhängst."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 50,
+   "baseGold": 12,
+   "optional": true
+  },
+  {
+   "id": "pool_nap",
+   "kind": "POOL",
+   "type": "TRAINING",
+   "group": "HEALTH",
+   "title": {
+    "pt": "Repouso do Guerreiro",
+    "en": "Warrior's Rest",
+    "es": "Descanso del Guerrero",
+    "fr": "Repos du Guerrier",
+    "de": "Kriegerrast"
+   },
+   "description": {
+    "pt": "Uma sesta de até {target} min, antes das 16h.",
+    "en": "A nap of up to {target} min, before 4 PM.",
+    "es": "Una siesta de hasta {target} min, antes de las 16h.",
+    "fr": "Une sieste de {target} min maximum, avant 16h.",
+    "de": "Ein Nickerchen von bis zu {target} Min., vor 16 Uhr."
+   },
+   "baseTarget": 20,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "min",
+   "baseXp": 30,
+   "baseGold": 8,
+   "untilHour": 16,
+   "tip": {
+    "pt": "Mais de 20 minutos ou muito tarde e acordas pior e dormes pior à noite.",
+    "en": "Longer than 20 minutes or too late and you wake up groggy and sleep worse at night.",
+    "es": "Más de 20 minutos o muy tarde y te despiertas peor y duermes peor por la noche.",
+    "fr": "Plus de 20 minutes ou trop tard, tu te réveilles vaseux et dors moins bien la nuit.",
+    "de": "Länger als 20 Minuten oder zu spät, und du wachst benommen auf und schläfst nachts schlechter."
+   },
+   "optional": true
+  },
+  {
+   "id": "pool_nosmoke",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Ar Limpo",
+    "en": "Clean Air",
+    "es": "Aire Limpio",
+    "fr": "Air Pur",
+    "de": "Saubere Luft"
+   },
+   "description": {
+    "pt": "Nenhum cigarro, charuto ou vape hoje.",
+    "en": "No cigarettes, cigars or vapes today.",
+    "es": "Ni cigarrillos, ni puros, ni vapeo hoy.",
+    "fr": "Ni cigarette, ni cigare, ni vape aujourd'hui.",
+    "de": "Heute keine Zigaretten, Zigarren oder Vapes."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 70,
+   "baseGold": 18,
+   "tip": {
+    "pt": "Quando vier a vontade, espera 10 minutos e bebe água: quase sempre passa.",
+    "en": "When the urge hits, wait 10 minutes and drink water: it almost always passes.",
+    "es": "Cuando llegue el antojo, espera 10 minutos y bebe agua: casi siempre pasa.",
+    "fr": "Quand l'envie arrive, attends 10 minutes et bois de l'eau : ça passe presque toujours.",
+    "de": "Wenn das Verlangen kommt, warte 10 Minuten und trink Wasser: Es geht fast immer vorbei."
+   },
+   "optional": true
+  },
+  {
+   "id": "pool_nogames",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Comando Pousado",
+    "en": "Controller Down",
+    "es": "Mando Guardado",
+    "fr": "Manette Posée",
+    "de": "Controller weg"
+   },
+   "description": {
+    "pt": "Nada de videojogos hoje.",
+    "en": "No video games today.",
+    "es": "Nada de videojuegos hoy.",
+    "fr": "Pas de jeux vidéo aujourd'hui.",
+    "de": "Heute keine Videospiele."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 50,
+   "baseGold": 12,
+   "optional": true
+  },
+  {
+   "id": "pool_noseries",
+   "kind": "POOL",
+   "type": "FORBIDDEN",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Sem Maratonas",
+    "en": "No Binge",
+    "es": "Sin Maratones",
+    "fr": "Pas de Marathon",
+    "de": "Kein Binge"
+   },
+   "description": {
+    "pt": "Nada de séries nem streaming hoje.",
+    "en": "No series or streaming today.",
+    "es": "Nada de series ni streaming hoy.",
+    "fr": "Pas de séries ni de streaming aujourd'hui.",
+    "de": "Heute keine Serien und kein Streaming."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "",
+   "baseXp": 45,
+   "baseGold": 12,
+   "optional": true
   }
  ],
  "penalty": [

@@ -368,6 +368,8 @@ data class GameState(
     val snoozes: Map<String, Long> = emptyMap(),
     val customDefs: List<QuestDef> = emptyList(),
     val disabledDefIds: Set<String> = emptySet(),
+    /** Optional built-in missions the player switched on (they start off). */
+    val enabledDefIds: Set<String> = emptySet(),
     val penalty: Penalty = Penalty(),
     val boss: BossState? = null,
     val bossHistory: List<String> = emptyList(),

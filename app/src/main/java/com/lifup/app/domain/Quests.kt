@@ -63,10 +63,15 @@ private fun QuestDef.measurable(s: GameState) = when (auto) {
     else -> true
 }
 
+/** Whether the player has this mission on: optional built-in ones start off, every other one starts on. */
+fun GameState.isOn(def: QuestDef, content: Content): Boolean =
+    if (content.questDefById[def.id]?.optional ?: def.optional) def.id in enabledDefIds else def.id !in disabledDefIds
+
 fun GameState.availableDefs(content: Content): List<QuestDef> {
     val edited = customDefs.associateBy { it.id }
-    return (content.quests.map { edited[it.id] ?: it } + customDefs.filter { content.questDefById[it.id] == null }).filter {
-        it.id !in disabledDefIds && it.measurable(this)
+    // Flags come from the content, so an edited copy saved before a mission was retired or made optional follows it too.
+    return (content.quests.filterNot { it.retired }.map { edited[it.id] ?: it } + customDefs.filter { content.questDefById[it.id] == null }).filter {
+        isOn(it, content) && it.measurable(this)
     }
 }
 
@@ -354,7 +359,11 @@ fun Tx.deleteCustomDef(id: String) {
 }
 
 fun Tx.setDefEnabled(id: String, enabled: Boolean) {
-    s = s.copy(disabledDefIds = if (enabled) s.disabledDefIds - id else s.disabledDefIds + id)
+    s = if (content.questDefById[id]?.optional == true) {
+        s.copy(enabledDefIds = if (enabled) s.enabledDefIds + id else s.enabledDefIds - id)
+    } else {
+        s.copy(disabledDefIds = if (enabled) s.disabledDefIds - id else s.disabledDefIds + id)
+    }
     syncWeekly() // switching a weekly mission back on starts a new trial week
 }
 

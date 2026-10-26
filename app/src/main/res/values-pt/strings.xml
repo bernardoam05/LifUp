@@ -312,7 +312,7 @@
     <string name="reset_text">Tudo será apagado: nível, ecos, itens e histórico. Não dá para desfazer.</string>
     <string name="reset_confirm">Apagar tudo</string>
 
-    <string name="forge_info">Cria as tuas missões, ou edita e desliga as base. As alterações aplicam-se à lista de amanhã.</string>
+    <string name="forge_info">Cria as tuas missões, ou edita e desliga as base. As opcionais começam desligadas: liga as que fazem sentido para ti. As alterações aplicam-se à lista de amanhã.</string>
     <string name="your_missions">As tuas missões</string>
     <string name="no_custom">Ainda não tens missões tuas. Toca em + para forjar uma.</string>
     <string name="kind_core">Fixa</string>
@@ -802,4 +802,5 @@
         <item quantity="one">%1$d dia</item>
         <item quantity="other">%1$d dias</item>
     </plurals>
+    <string name="def_optional">Opcional</string>
 </resources>
