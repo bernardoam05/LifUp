@@ -150,6 +150,7 @@ fun RewardHost(s: GameState) {
                 }
                 is Reward.DayReport -> DayReportCard(reward, dismiss)
                 is Reward.WeekReport -> WeekReportCard(s, reward, dismiss)
+                is Reward.MonthReport -> MonthReportCard(s, reward, dismiss)
                 is Reward.Toast -> Unit
             }
         }

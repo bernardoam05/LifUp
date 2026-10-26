@@ -30,10 +30,13 @@ internal fun Tx.recordWeekly(week: String) {
     if (lines.isEmpty()) return
     var history = s.weeklyHistory
     var adapt = s.adapt
+    // A week with paused days doesn't move a weekly mission's target: the break isn't a miss.
+    val end = java.time.LocalDate.parse(week).plusDays(7).toString()
+    val paused = s.pausedDays.any { it >= week && it < end }
     lines.forEach { l ->
         history = history + (l.defId to ((history[l.defId] ?: emptyList()) + WeekMark(week, l.done, l.goal)).takeLast(Rules.WEEKLY_HISTORY_WEEKS))
         // Weekly missions progress by the week: a met goal is a keep.
-        s.defOf(l.defId, content)?.takeIf { it.progresses() }?.let { def -> adapt = adapt + (def.id to (adapt[def.id] ?: Adapt()).next(l.done >= l.goal, def)) }
+        if (!paused) s.defOf(l.defId, content)?.takeIf { it.progresses() }?.let { def -> adapt = adapt + (def.id to (adapt[def.id] ?: Adapt()).next(l.done >= l.goal, def)) }
     }
     s = s.copy(weeklyHistory = history, adapt = adapt)
 }
@@ -106,7 +109,8 @@ internal fun Tx.suggestWeekly() {
     val hint = s.availableDefs(content)
         .filter { it.kind == DefKind.CORE && !it.isWeekly() && it.auto == null && it.fromHour == null && it.daysOfWeek == null }
         .filter { it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT && it.id !in s.weeklyHintsDismissed }
-        .mapNotNull { def -> s.weekStats[def.id]?.takeIf { it.total >= 5 && it.done in 1..it.total - 2 }?.let { def to it } }
+        // Only a habit that is already there on some days: suggesting "once a week" for a mission kept once would just lower the bar.
+        .mapNotNull { def -> s.weekStats[def.id]?.takeIf { it.total >= 5 && it.done in Rules.WEEKLY_HINT_MIN_DONE..it.total - 2 }?.let { def to it } }
         .maxByOrNull { (_, st) -> st.total - st.done }
         ?.let { (def, st) -> WeeklyHint(def.id, st.done.coerceIn(1, 6), st.done, st.total) }
     if (hint != null) s = s.copy(weeklyHint = hint)

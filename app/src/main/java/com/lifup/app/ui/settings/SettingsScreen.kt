@@ -168,6 +168,8 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                 }
             }
 
+            FoldSection(stringResource(R.string.pause_section)) { PausePanel(s) }
+
             FoldSection(stringResource(R.string.body)) {
                 Panel {
                     Stepper(set.heightCm, { v -> act { updateSettings { it.copy(heightCm = v) } } }, 120..220, stringResource(R.string.height), " cm", step = 2)

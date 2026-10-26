@@ -145,8 +145,9 @@ private fun Tx.completeMission(q: Quest) {
     var dealt = 0
     var gold = 0
     val passives = s.passives(content, ctx.now)
+    val weak = s.hitsWeakness(q)
     val squad = squadDuring {
-        val share = if (q.origin == QuestOrigin.EXTRA) Rules.EXTRA_BOSS_SHARE else 1.0
+        val share = (if (q.origin == QuestOrigin.EXTRA) Rules.EXTRA_BOSS_SHARE else 1.0) * (if (weak) 1 + Rules.BOSS_WEAK_BONUS else 1.0)
         gainXpTracked(if (doubled) q.xp * 2 else q.xp, q.family(), share, passives.missionXpBonus(s, q, ctx.hour)).let { (x, d) -> xp = x; dealt = d }
         gold = gainGold(q.gold, extra = passives.missionGoldBonus(s, q))
     }
@@ -154,7 +155,7 @@ private fun Tx.completeMission(q: Quest) {
     updateQuest(q.id) {
         it.copy(
             status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt, squad = squad,
-            doneHour = ctx.hour, dropRolled = true, doubled = doubled,
+            doneHour = ctx.hour, dropRolled = true, doubled = doubled, bossWeak = weak,
         )
     }
     count(StatKey.QUESTS_COMPLETED)
@@ -209,7 +210,7 @@ fun Tx.undoQuest(id: String) {
         val progress = if (tracked) it.progress.coerceAtMost(it.target * 0.99) else 0.0
         it.copy(
             status = QuestStatus.OPEN, xpGained = 0, goldGained = 0, bossDamage = 0, squad = SquadGain(), progress = progress, autoOff = it.auto != null,
-            doneHour = null, doubled = false,
+            doneHour = null, doubled = false, bossWeak = false,
         )
     }
 }

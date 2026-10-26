@@ -15,11 +15,15 @@ fun BossDef.activeOn(day: MonthDay): Boolean {
 /** Rotates the weekly boss on Mondays. Seasonal bosses take over during their window. */
 fun Tx.ensureBoss() {
     val current = s.boss
-    if (current != null && current.weekKey >= ctx.weekKey) return // ISO dates: never rotate backwards
+    val weekRng = s.weekRandom(ctx, salt = 0)
+    if (current != null && current.weekKey >= ctx.weekKey) { // ISO dates: never rotate backwards
+        // A boss from before weaknesses existed gets one.
+        if (current.weakness == null) s = s.copy(boss = current.copy(weakness = weaknessFor(s, s.weekRandom(ctx, salt = 3))))
+        return
+    }
     if (current != null && !current.defeated) toast(ToastKind.BOSS_ESCAPED, current.bossId)
 
     val level = s.player.level
-    val weekRng = s.weekRandom(ctx, salt = 0)
     // A seasonal boss takes the week its window covers on Monday, as the "next week" teaser says, so a player
     // starting on the weekend before doesn't get it for two days and then miss the real week. Once per season,
     // even if the window covers two Mondays.
@@ -54,7 +58,23 @@ fun Tx.ensureBoss() {
         gold = 0,
         rank = if (def.rank == "S") QuestRank.S else QuestRank.A,
     )
-    s = s.copy(boss = BossState(ctx.weekKey, def.id, maxHp, maxHp, challenge, ctx.nextWeekStartMs))
+    s = s.copy(boss = BossState(ctx.weekKey, def.id, maxHp, maxHp, challenge, ctx.nextWeekStartMs, weakness = weaknessFor(s, weekRng)))
+}
+
+/**
+ * The boss's weak family: the one that grows the player's weakest attribute, so the boss nudges toward balance;
+ * any family while the attributes are even. Vitality has two families, so one of them is picked.
+ */
+private fun weaknessFor(s: GameState, rng: Random): DrawGroup {
+    val attr = s.player.attrXp.lagging().minByOrNull { s.player.attrXp.of(it) }
+    val families = DrawGroup.entries.filter { attr == null || it.attr == attr }
+    return families.random(rng)
+}
+
+/** Whether a mission completed now would hit the boss's weakness: its family, and the day's quota not used up. */
+fun GameState.hitsWeakness(q: Quest): Boolean {
+    val b = boss ?: return false
+    return !b.defeated && b.weakness == q.family() && quests.count { it.bossWeak } < Rules.BOSS_WEAK_PER_DAY
 }
 
 /**
@@ -144,6 +164,7 @@ fun Tx.rollPortal() {
     s = s.copy(portalRollHour = hourKey)
     if (s.portalDay != ctx.todayKey) s = s.copy(portalDay = ctx.todayKey, portalsToday = 0)
     expirePortal()
+    if (s.daily.paused) return
     if (s.portal != null || ctx.hour !in Rules.PORTAL_HOURS || s.portalsToday >= Rules.MAX_PORTALS_PER_DAY) return
     if (ctx.rng.nextDouble() >= Rules.PORTAL_CHANCE) return
     openPortal()

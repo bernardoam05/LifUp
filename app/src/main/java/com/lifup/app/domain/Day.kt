@@ -31,6 +31,8 @@ fun Tx.ensureDay() {
             run = null,
         )
     }
+    rollMonth()
+    enterPausedDay()
     s = s.copy(buffs = s.buffs.filter { it.expiresAt > ctx.now })
     expirePenalty()
     settleFocus()
@@ -98,18 +100,22 @@ private fun Tx.closeDay(day: LocalDate) {
         }
     }
 
-    // Days skipped entirely (device off, app never ran) break the streak for good.
+    // Days skipped entirely (device off, app never ran) break the streak for good, unless they were paused.
     val gap = ChronoUnit.DAYS.between(day, ctx.today)
+    val gapPaused = gap > 1 && (1 until gap).all { s.pausedOn(day.plusDays(it).toString()) }
+    if (gapPaused) markPausedGap(day.plusDays(1), ctx.today.minusDays(1))
+    val skipped = gap > 1 && !gapPaused
     // An echo that absorbs the penalty saves the load as it saves the streak.
     updateLoad(
-        (passed || penaltyInfo?.absorbedBy != null) && !rest, perfect && !rest, rest, skipped = gap > 1,
+        (passed || penaltyInfo?.absorbedBy != null) && !rest, perfect && !rest, rest, skipped = skipped,
         restored = restored, held = streakSavedBy != null && penaltyInfo?.absorbedBy == null,
     )
-    if (gap > 1 && !rest && s.player.streak > 0) setStreak(0)
-    if (gap > 1) s = s.copy(recovery = null)
+    if (skipped && !rest && s.player.streak > 0) setStreak(0)
+    if (skipped) s = s.copy(recovery = null)
 
     s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null, rest, passed && !rest, sideFailed)).takeLast(Rules.DAY_LOG_DAYS))
-    reward { Reward.DayReport(it, day.toString(), done, daily.size, perfect && !rest, rest, s.player.streak, bonusXp, penaltyInfo, streakSavedBy, passed && !rest, restored, sideFailed) }
+    // A paused day has nothing to report; a week away shouldn't come back as seven cards.
+    if (!s.daily.paused) reward { Reward.DayReport(it, day.toString(), done, daily.size, perfect && !rest, rest, s.player.streak, bonusXp, penaltyInfo, streakSavedBy, passed && !rest, restored, sideFailed) }
     // The perfect day's echo comes once the day is closed: avoid and limit missions can still break until midnight.
     if (perfect && !rest) rollExtraction()
 }
@@ -231,9 +237,10 @@ fun GameState.restDaysLeft(weekKey: String) =
     Rules.restDaysPerWeek(settings.rigor) - (if (restWeek == weekKey) restUsed else 0)
 
 /** Rest can be called before noon while the week's allowance lasts; undoing it gives the day back. */
-fun GameState.canRest(ctx: Ctx) = daily.rest || (ctx.hour < Rules.REST_DEADLINE_HOUR && restDaysLeft(ctx.weekKey) > 0)
+fun GameState.canRest(ctx: Ctx) = !daily.paused && (daily.rest || (ctx.hour < Rules.REST_DEADLINE_HOUR && restDaysLeft(ctx.weekKey) > 0))
 
 fun Tx.toggleRestDay() {
+    if (s.daily.paused) return
     if (s.daily.rest) {
         s = s.copy(daily = s.daily.copy(rest = false), restUsed = if (s.restWeek == ctx.weekKey) (s.restUsed - 1).coerceAtLeast(0) else s.restUsed)
         return

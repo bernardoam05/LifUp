@@ -548,7 +548,7 @@
     <string name="guide_side_title">Tareas</string>
     <string name="guide_side">Libres::Escribe cualquier tarea, sin objetivos ni reglas.\n5 con recompensa::Las 5 primeras que completes cada día dan XP y oro (no hieren al jefe).\nDespués de eso::Siguen funcionando como lista de tareas.\nSin trampas::Desmarcar o borrar te quita la recompensa.</string>
     <string name="guide_boss_title">Jefe semanal</string>
-    <string name="guide_boss">Las misiones son daño::Cada misión que haces le quita vida; las extra y el foco, la mitad.\nDesafíos del jefe::Dos por semana: uno el lunes y otro el jueves. Cada uno le arranca un 15%.\nBotín::Derrótalo y ganas XP, oro, un cofre y su eco.\nSi no…::El domingo por la noche termina, y llega otro.</string>
+    <string name="guide_boss">Las misiones son daño::Cada misión que haces le quita vida; las extra y el foco, la mitad.\nDesafíos del jefe::Dos por semana: uno el lunes y otro el jueves. Cada uno le arranca un 15%.\nBotín::Derrótalo y ganas XP, oro, un cofre y su eco.\nDebilidad::Cada jefe es débil contra una familia, normalmente la de tu atributo más flojo. Esas misiones le quitan +50%, en 2 al día.\nSi no…::El domingo por la noche termina, y llega otro.</string>
     <string name="guide_portal_title">Portales</string>
     <string name="guide_portal">Aparecen solos::Entre las 8:00 y las 22:00, hasta 2 al día.\nRecompensa doble::Una misión más grande, con el doble de XP y oro.\nNuevo aliado::Completarlo puede despertar un eco.\nContra el reloj::Siempre hay tiempo de sobra, pero el portal se cierra cuando se acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
@@ -821,4 +821,34 @@
         <item quantity="other">%1$d días</item>
     </plurals>
     <string name="def_optional">Opcional</string>
+    <string name="optional_hint_text">Hay misiones opcionales, desactivadas al principio, para hábitos que solo algunos tienen: perro, instrumento, estudio, tabaco… Activa las tuyas en la Forja.</string>
+    <string name="optional_hint_open">Ver en la Forja</string>
+    <string name="optional_hint_later">Ahora no</string>
+    <string name="pause_section">Pausa (vacaciones o enfermedad)</string>
+    <string name="pause_info">Durante la pausa nada cuenta y nada se pierde: sin misiones obligatorias ni penalizaciones, y la racha se queda donde está. Pedida antes del mediodía empieza hoy; después, mañana.</string>
+    <string name="pause_days_label">Días de pausa</string>
+    <string name="pause_left">Te quedan %1$d de %2$d días de pausa en los últimos 12 meses.</string>
+    <string name="pause_start">Pausar</string>
+    <string name="pause_confirm_title">¿Pausar del %1$s al %2$s?</string>
+    <string name="pause_confirm_text">Esos días no necesitas hacer misiones. Puedes terminar la pausa antes, a partir del día siguiente.</string>
+    <string name="pause_active">En pausa del %1$s al %2$s.</string>
+    <string name="pause_end">Terminar pausa</string>
+    <string name="pause_today">En pausa hasta el %1$s: nada cuenta ni se pierde. Descansa.</string>
+    <string name="pause_none_left">Ya has usado los %1$d días de pausa de los últimos 12 meses.</string>
+    <string name="share">Compartir</string>
+    <string name="share_week_title">LifUp · semana del %1$s</string>
+    <string name="share_boss_won">⚔️ %1$s: vencido</string>
+    <string name="share_boss_lost">⚔️ %1$s: escapó</string>
+    <string name="boss_weak">Débil contra %1$s: +%2$d%% de daño, en %3$d misiones al día</string>
+    <string name="boss_weak_used">Debilidad aprovechada hoy: vuelve mañana</string>
+    <string name="a11y_boss_weak">Golpea la debilidad del jefe</string>
+    <string name="month_title">Resumen del mes</string>
+    <string name="month_best_run">Mejor racha</string>
+    <string name="month_quests">Misiones cumplidas</string>
+    <string name="month_bosses">Jefes vencidos</string>
+    <string name="month_focus">Minutos de foco</string>
+    <string name="month_levels">Niveles subidos</string>
+    <string name="month_echoes">Ecos nuevos</string>
+    <string name="month_attrs">Atributos que subieron</string>
+    <string name="month_numbers">El mes en números</string>
 </resources>

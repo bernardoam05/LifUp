@@ -1,5 +1,6 @@
 package com.lifup.app.ui.rewards
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Bedtime
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.TaskAlt
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.Icon
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -133,7 +138,42 @@ internal fun WeekReportCard(s: GameState, r: Reward.WeekReport, dismiss: () -> U
         com.lifup.app.ui.hero.squadGainText(r.squad)?.let { gain ->
             Block(stringResource(R.string.squad)) { Text(gain, style = MaterialTheme.typography.bodyMedium, color = c.purple) }
         }
+        val context = LocalContext.current
+        val text = weekShareText(s, r, start)
+        TextButton(onClick = {
+            val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
+            context.startActivity(Intent.createChooser(send, null))
+        }) {
+            Icon(Icons.Rounded.Share, null, tint = c.accent, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(6.dp))
+            Text(stringResource(R.string.share).uppercase(), color = c.accent, style = MaterialTheme.typography.labelLarge)
+        }
     }
+}
+
+/** The week as a few lines to paste in a chat: one coloured square a day, the score, the boss and the streak. */
+@Composable
+private fun weekShareText(s: GameState, r: Reward.WeekReport, start: LocalDate): String {
+    val logs = s.dayLog.associateBy { it.day }
+    val squares = (0..6).joinToString("") { i ->
+        val l = logs[start.plusDays(i.toLong()).toString()]
+        when {
+            l == null -> "⬛"
+            l.rest -> "🟪"
+            l.perfect -> "🟩"
+            l.passed -> "🟨"
+            else -> "🟥"
+        }
+    }
+    return buildList {
+        add(stringResource(R.string.share_week_title, start.format(DateTimeFormatter.ofPattern("d MMM"))))
+        add("$squares  ${r.daysKept}/${r.days}")
+        r.bossId?.let { id ->
+            val name = content.bossById[id]?.title?.local() ?: id
+            add(stringResource(if (r.bossDefeated) R.string.share_boss_won else R.string.share_boss_lost, name))
+        }
+        if (s.player.streak > 0) add("🔥 " + stringResource(R.string.days_in_a_row, s.player.streak))
+    }.joinToString("\n")
 }
 
 /** The headline number: "4/5" large, what it counts underneath, and one segment per unit. */
@@ -152,32 +192,51 @@ private fun Score(done: Int, total: Int, label: String, color: Color) {
     }
 }
 
-/** Monday to Sunday as dots, coloured by how each day closed; days not played stay empty. */
+/** How a day closed, as a colour; null for a day not played. */
 @Composable
-private fun WeekStrip(start: LocalDate, logs: Map<String, DayLog>) {
+private fun dayColor(l: DayLog?): Color? {
     val c = Lif.colors
-    fun colorOf(l: DayLog?): Color? = when {
+    return when {
         l == null -> null
         l.rest -> c.purple
         l.perfect -> c.green
         l.passed -> c.accent
         else -> c.red
     }
+}
+
+/** A day's dot: filled for kept, perfect and rest days, a red ring for a missed one, an empty ring if not played. */
+@Composable
+private fun DayDot(col: Color?, size: androidx.compose.ui.unit.Dp = 22.dp) {
+    val c = Lif.colors
+    Box(
+        Modifier.size(size)
+            .background(col?.copy(alpha = if (col == c.red) 0.15f else 0.85f) ?: Color.Transparent, CircleShape)
+            .border(1.5.dp, col ?: c.border, CircleShape),
+    )
+}
+
+/** Monday to Sunday as dots, coloured by how each day closed; days not played stay empty. */
+@Composable
+private fun WeekStrip(start: LocalDate, logs: Map<String, DayLog>) {
+    val c = Lif.colors
     val days = (0..6).map { start.plusDays(it.toLong()) }
-    val colors = days.map { colorOf(logs[it.toString()]) }
+    val colors = days.map { dayColor(logs[it.toString()]) }
     Row(Modifier.fillMaxWidth()) {
         days.zip(colors).forEach { (d, col) ->
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(
-                    Modifier.size(22.dp)
-                        .background(col?.copy(alpha = if (col == c.red) 0.15f else 0.85f) ?: Color.Transparent, CircleShape)
-                        .border(1.5.dp, col ?: c.border, CircleShape),
-                )
+                DayDot(col)
                 Text(d.dayOfWeek.getDisplayName(TextStyle.NARROW, Locale.getDefault()), style = MaterialTheme.typography.labelSmall, color = c.dim, modifier = Modifier.padding(top = 3.dp))
             }
         }
     }
-    // Only the kinds that appear this week, so the legend never explains what isn't there.
+    Legend(colors)
+}
+
+/** Only the kinds that appear, so the legend never explains what isn't there. */
+@Composable
+private fun Legend(colors: List<Color?>) {
+    val c = Lif.colors
     val legend = listOf(
         c.green to R.string.week_legend_perfect, c.accent to R.string.week_legend_kept,
         c.purple to R.string.week_legend_rest, c.red to R.string.week_legend_failed,
@@ -189,6 +248,59 @@ private fun WeekStrip(start: LocalDate, logs: Map<String, DayLog>) {
                 Spacer(Modifier.width(4.dp))
                 Text(stringResource(label), style = MaterialTheme.typography.labelSmall, color = c.muted)
             }
+        }
+    }
+}
+
+/** The month gone by: kept days on a calendar, what each attribute grew and the numbers that moved. */
+@Composable
+internal fun MonthReportCard(s: GameState, r: Reward.MonthReport, dismiss: () -> Unit) {
+    val c = Lif.colors
+    val first = LocalDate.parse("${r.month}-01")
+    val title = first.format(DateTimeFormatter.ofPattern("LLLL yyyy")).replaceFirstChar { it.titlecase() }
+    RewardCard(Icons.Rounded.CalendarMonth, c.accent, stringResource(R.string.month_title), title, dismiss) {
+        Score(r.daysKept, r.days, stringResource(R.string.week_days_kept), c.accent)
+        Spacer(Modifier.height(4.dp))
+        val logs = s.dayLog.associateBy { it.day }
+        val days = (0 until first.lengthOfMonth()).map { first.plusDays(it.toLong()) }
+        val colors = days.map { dayColor(logs[it.toString()]) }
+        // A calendar: Monday-first weeks, blanks before the 1st.
+        val cells: List<Int?> = List(first.dayOfWeek.value - 1) { null } + days.indices.toList()
+        Row(Modifier.fillMaxWidth()) {
+            (1..7).forEach { dow ->
+                Text(java.time.DayOfWeek.of(dow).getDisplayName(TextStyle.NARROW, Locale.getDefault()), style = MaterialTheme.typography.labelSmall, color = c.dim,
+                    modifier = Modifier.weight(1f), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+            }
+        }
+        cells.chunked(7).forEach { week ->
+            Row(Modifier.fillMaxWidth().padding(top = 4.dp)) {
+                (0 until 7).forEach { i ->
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) { week.getOrNull(i)?.let { DayDot(colors[it], 16.dp) } }
+                }
+            }
+        }
+        Legend(colors)
+
+        val g = r.attrGain
+        val gains = listOf(R.string.attr_str to g.str, R.string.attr_agi to g.agi, R.string.attr_int to g.int, R.string.attr_vit to g.vit)
+        val top = gains.maxOf { it.second }.coerceAtLeast(1)
+        Block(stringResource(R.string.month_attrs)) {
+            gains.forEach { (label, v) ->
+                Row(Modifier.padding(vertical = 3.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(label), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.width(96.dp), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Bar(v / top.toFloat(), c.accent, height = 6.dp, modifier = Modifier.weight(1f))
+                    Text("+$v", style = MaterialTheme.typography.labelLarge, color = c.muted, modifier = Modifier.width(56.dp), textAlign = androidx.compose.ui.text.style.TextAlign.End)
+                }
+            }
+        }
+        Block(stringResource(R.string.month_numbers)) {
+            StatRow(stringResource(R.string.month_best_run), pluralStringResource(R.plurals.days_count, r.bestRun, r.bestRun), c.red)
+            StatRow(stringResource(R.string.month_quests), r.quests.toString(), c.text)
+            StatRow(stringResource(R.string.month_bosses), r.bosses.toString(), c.text)
+            StatRow(stringResource(R.string.month_focus), r.focusMin.toString(), c.text)
+            StatRow(stringResource(R.string.stat_gold_earned), r.gold.toString(), c.gold)
+            if (r.levels > 0) StatRow(stringResource(R.string.month_levels), "+${r.levels}", c.accent)
+            if (r.echoes > 0) StatRow(stringResource(R.string.month_echoes), "+${r.echoes}", c.purple)
         }
     }
 }

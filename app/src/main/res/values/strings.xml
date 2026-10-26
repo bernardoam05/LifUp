@@ -549,7 +549,7 @@
     <string name="guide_side_title">Side quests</string>
     <string name="guide_side">Free-form::Write any task, no targets or rules.\n5 with rewards::The first 5 finished each day give XP and gold (they don\'t hurt the boss).\nAfter that::They keep working as a to-do list.\nNo cheating::Unticking or deleting takes the reward back.</string>
     <string name="guide_boss_title">Weekly boss</string>
-    <string name="guide_boss">Missions are damage::Every mission you do takes its health; extra ones and focus hit for half.\nBoss challenges::Two a week: one on Monday, another on Thursday. Each rips off 15%.\nLoot::Beat it for XP, gold, a chest and its echo.\nIf not…::On Sunday night it ends — and another one comes.</string>
+    <string name="guide_boss">Missions are damage::Every mission you do takes its health; extra ones and focus hit for half.\nBoss challenges::Two a week: one on Monday, another on Thursday. Each rips off 15%.\nLoot::Beat it for XP, gold, a chest and its echo.\nWeakness::Every boss is weak to one family, usually your weakest attribute\'s. Those missions hit it for +50%, on 2 a day.\nIf not…::On Sunday night it ends — and another one comes.</string>
     <string name="guide_portal_title">Portals</string>
     <string name="guide_portal">They show up on their own::Between 8 AM and 10 PM, up to 2 a day.\nDouble rewards::A bigger mission with twice the XP and gold.\nNew ally::Clearing it may bring you an echo.\nOn the clock::There\'s always enough time, but the portal closes when it runs out.</string>
     <string name="guide_shadows_title">Echoes</string>
@@ -822,4 +822,34 @@
         <item quantity="other">%1$d days</item>
     </plurals>
     <string name="def_optional">Optional</string>
+    <string name="optional_hint_text">There are optional missions, off to begin with, for habits only some people have: a dog, an instrument, studying, smoking… Switch on yours in the Forge.</string>
+    <string name="optional_hint_open">Open the Forge</string>
+    <string name="optional_hint_later">Not now</string>
+    <string name="pause_section">Pause (holidays or illness)</string>
+    <string name="pause_info">During a pause nothing counts and nothing is lost: no required missions, no penalties, and your streak stays where it is. Asked for before noon it starts today; after that, tomorrow.</string>
+    <string name="pause_days_label">Days of pause</string>
+    <string name="pause_left">You have %1$d of %2$d pause days left over the last 12 months.</string>
+    <string name="pause_start">Pause</string>
+    <string name="pause_confirm_title">Pause from %1$s to %2$s?</string>
+    <string name="pause_confirm_text">On those days you don\'t need to do any missions. You can end the pause early, from the next day on.</string>
+    <string name="pause_active">Paused from %1$s to %2$s.</string>
+    <string name="pause_end">End pause</string>
+    <string name="pause_today">Paused until %1$s: nothing counts and nothing is lost. Rest up.</string>
+    <string name="pause_none_left">You\'ve used all %1$d pause days of the last 12 months.</string>
+    <string name="share">Share</string>
+    <string name="share_week_title">LifUp · week of %1$s</string>
+    <string name="share_boss_won">⚔️ %1$s: defeated</string>
+    <string name="share_boss_lost">⚔️ %1$s: escaped</string>
+    <string name="boss_weak">Weak to %1$s: +%2$d%% damage, on %3$d missions a day</string>
+    <string name="boss_weak_used">Weakness used up today: back tomorrow</string>
+    <string name="a11y_boss_weak">Hits the boss\'s weakness</string>
+    <string name="month_title">Month in review</string>
+    <string name="month_best_run">Best run</string>
+    <string name="month_quests">Missions done</string>
+    <string name="month_bosses">Bosses defeated</string>
+    <string name="month_focus">Focus minutes</string>
+    <string name="month_levels">Levels gained</string>
+    <string name="month_echoes">New echoes</string>
+    <string name="month_attrs">Attributes grown</string>
+    <string name="month_numbers">The month in numbers</string>
 </resources>

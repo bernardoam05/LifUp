@@ -57,6 +57,10 @@ object Rules {
     const val BOSS_SECOND_HOUR = 9
     /** Days of full daily missions that, with both challenges, bring the boss down. */
     const val BOSS_HP_DAYS = 4.5
+    /** Missions of the boss's weak family hit it this much harder, for this many missions a day (so turning off
+     *  every other family in the Forge gains nothing). */
+    const val BOSS_WEAK_BONUS = 0.5
+    const val BOSS_WEAK_PER_DAY = 2
     /** Extra missions hit the boss for this share of their XP. */
     const val EXTRA_BOSS_SHARE = 0.5
     const val DAY_MS = 24L * 3_600_000
@@ -157,6 +161,8 @@ object Rules {
     const val PROG_REWARD_MIN = -0.15
     const val PROG_REWARD_MAX = 0.5
 
+    /** A fixed mission is suggested as weekly only when kept on at least this many days of the week. */
+    const val WEEKLY_HINT_MIN_DONE = 3
     /** A mission needs this many days in a week to be called best or worst. */
     const val WEEK_MIN_SAMPLES = 3
     /** Days of history kept per mission (enough for two months of a daily one). */
@@ -204,6 +210,10 @@ object Rules {
 
     fun restDaysPerWeek(rigor: Rigor) = when (rigor) { Rigor.EASY -> 2; Rigor.NORMAL -> 1; Rigor.HARD -> 0 }
 
+    /** A pause (holidays, illness): at most this many days at once, and this many over any year. */
+    const val PAUSE_MAX_DAYS = 14
+    const val PAUSE_DAYS_PER_YEAR = 28
+    const val PAUSE_DAYS_KEPT = 60
     /** Rest days must be called before this hour, not as a last-minute escape. */
     const val REST_DEADLINE_HOUR = 12
 

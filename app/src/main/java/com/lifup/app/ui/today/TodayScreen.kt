@@ -7,7 +7,11 @@ import androidx.compose.material.icons.rounded.Alarm
 import com.lifup.app.ui.defTitle
 import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.rounded.EventRepeat
+import androidx.compose.material.icons.rounded.Tune
 import com.lifup.app.domain.dismissWeeklyHint
+import com.lifup.app.domain.markGuideSeen
+import com.lifup.app.domain.hitsWeakness
+import com.lifup.app.ui.familyName
 import com.lifup.app.domain.acceptWeeklyHint
 import com.lifup.app.domain.WeeklyHint
 import androidx.compose.foundation.background
@@ -151,7 +155,10 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
                 }
                 InfoButton(Guide.STREAK)
             }
-            if (s.daily.rest) Text(stringResource(R.string.rest_day_info), style = MaterialTheme.typography.bodySmall, color = p.purple)
+            if (s.daily.paused) Text(
+                stringResource(R.string.pause_today, LocalDate.parse(s.pauseUntil ?: s.day).format(DateTimeFormatter.ofPattern("d MMM"))),
+                style = MaterialTheme.typography.bodySmall, color = p.purple,
+            ) else if (s.daily.rest) Text(stringResource(R.string.rest_day_info), style = MaterialTheme.typography.bodySmall, color = p.purple)
             s.recovery?.takeIf { it.day == s.day }?.let { r ->
                 Text(stringResource(R.string.streak_recovery, r.streak), style = MaterialTheme.typography.bodySmall, color = p.gold, modifier = Modifier.padding(top = 4.dp))
             }
@@ -169,20 +176,22 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
             item(key = portal.quest.id) { QuestCard(portal.quest, s.timers[portal.quest.id], now, xp = s.xpPreview(portal.quest, content, now)) { selected = portal.quest.id } }
         }
 
-        s.weeklyHint?.let { h -> item(key = "weekly_hint") { WeeklyHintCard(s, h) } }
+        // A hint saved before the bar was raised stays hidden.
+        s.weeklyHint?.takeIf { it.done >= Rules.WEEKLY_HINT_MIN_DONE }?.let { h -> item(key = "weekly_hint") { WeeklyHintCard(s, h) } }
+        if (OPTIONAL_HINT !in s.seenGuides) item(key = "optional_hint") { OptionalHintCard(openForge) }
 
         item { SectionTitle(stringResource(R.string.daily_section)) { ManageAction(openForge); InfoButton(Guide.DAILY) } }
-        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q)) { selected = q.id } }
+        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q), s.hitsWeakness(q)) { selected = q.id } }
 
         if (s.weeklyQuests.isNotEmpty()) {
             item { SectionTitle(stringResource(R.string.weekly_section)) { InfoButton(Guide.WEEKLY) } }
-            items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q)) { selected = q.id } }
+            items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q), s.hitsWeakness(q)) { selected = q.id } }
         }
         item { BossCard(s, now) { selected = it } }
 
         if (s.extraQuests.isNotEmpty() || s.canAddExtra()) {
             item { SectionTitle(stringResource(R.string.extra_section)) { Text("${s.daily.extrasAdded}/${Rules.MAX_EXTRAS_PER_DAY}", color = p.dim, style = MaterialTheme.typography.labelMedium); InfoButton(Guide.EXTRA) } }
-            items(s.extraQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, xp = s.xpPreview(q, content, now), remindAt = s.reminderMinute(q)) { selected = q.id } }
+            items(s.extraQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, xp = s.xpPreview(q, content, now), remindAt = s.reminderMinute(q), weak = s.hitsWeakness(q)) { selected = q.id } }
             if (s.canAddExtra()) item {
                 GhostButton(stringResource(R.string.add_extra), onClick = { act { addExtraQuest() } }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Add, color = p.accent)
             } else if (s.extraOpen() && s.daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY) item {
@@ -300,6 +309,18 @@ private fun BossCard(s: GameState, now: Long, onChallenge: (String) -> Unit) {
                 Spacer(Modifier.width(8.dp))
                 Text("${b.hp} / ${b.maxHp}", style = MaterialTheme.typography.labelMedium, color = p.muted)
             }
+            b.weakness?.let { w ->
+                val used = s.quests.count { it.bossWeak } >= Rules.BOSS_WEAK_PER_DAY
+                Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Rounded.Whatshot, null, tint = if (used) p.dim else p.red, modifier = Modifier.size(14.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        if (used) stringResource(R.string.boss_weak_used)
+                        else stringResource(R.string.boss_weak, stringResource(familyName(w)), (Rules.BOSS_WEAK_BONUS * 100).toInt(), Rules.BOSS_WEAK_PER_DAY),
+                        style = MaterialTheme.typography.labelMedium, color = if (used) p.dim else p.text,
+                    )
+                }
+            }
             ChallengeRow(stringResource(R.string.boss_challenge_n, 1), b.challenge, isNew = false) { onChallenge(b.challenge.id) }
             val second = b.second
             when {
@@ -354,6 +375,25 @@ private fun GoalBar(goal: com.lifup.app.domain.DayGoal) {
 }
 
 /** Offers to turn a mission kept on only some days into an "N times a week" one. */
+private const val OPTIONAL_HINT = "optional_missions"
+
+/** Once: optional missions start off, so say they exist before nobody ever finds them in the Forge. */
+@Composable
+private fun OptionalHintCard(openForge: () -> Unit) {
+    val p = Lif.colors
+    Panel(border = p.purple.copy(alpha = 0.6f), background = p.purple.copy(alpha = 0.06f)) {
+        Row(verticalAlignment = Alignment.Top) {
+            Icon(Icons.Rounded.Tune, null, tint = p.purple)
+            Spacer(Modifier.width(10.dp))
+            Text(stringResource(R.string.optional_hint_text), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            TextButton(onClick = { act { markGuideSeen(OPTIONAL_HINT) } }) { Text(stringResource(R.string.optional_hint_later), color = p.muted) }
+            TextButton(onClick = { act { markGuideSeen(OPTIONAL_HINT) }; openForge() }) { Text(stringResource(R.string.optional_hint_open), color = p.purple) }
+        }
+    }
+}
+
 @Composable
 private fun WeeklyHintCard(s: GameState, h: WeeklyHint) {
     val p = Lif.colors

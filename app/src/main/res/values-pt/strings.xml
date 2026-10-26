@@ -530,7 +530,7 @@
     <string name="guide_side_title">Tarefas</string>
     <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro (não ferem o boss).\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
     <string name="guide_boss_title">Boss semanal</string>
-    <string name="guide_boss">Missões são dano::Cada missão que fazes tira-lhe vida; as extra e o foco tiram metade.\nDesafios do boss::Dois por semana: um na segunda e outro na quinta. Cada um arranca-lhe 15%.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nSe não…::No domingo à noite acaba — e vem outro.</string>
+    <string name="guide_boss">Missões são dano::Cada missão que fazes tira-lhe vida; as extra e o foco tiram metade.\nDesafios do boss::Dois por semana: um na segunda e outro na quinta. Cada um arranca-lhe 15%.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nFraqueza::Cada boss é fraco contra uma família, normalmente a do teu atributo mais fraco. Essas missões tiram-lhe +50%, em 2 por dia.\nSe não…::No domingo à noite acaba — e vem outro.</string>
     <string name="guide_portal_title">Portais</string>
     <string name="guide_portal">Aparecem sozinhos::Entre as 8h e as 22h, até 2 por dia.\nRecompensa a dobrar::Uma missão maior, com o dobro de XP e ouro.\nNovo aliado::Concluí-lo pode trazer-te um eco.\nTempo contado::Dá sempre para a fazer, mas o portal fecha quando o tempo acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
@@ -803,4 +803,34 @@
         <item quantity="other">%1$d dias</item>
     </plurals>
     <string name="def_optional">Opcional</string>
+    <string name="optional_hint_text">Há missões opcionais, desligadas de início, para hábitos que só alguns têm: cão, instrumento, estudo, tabaco… Liga as que forem tuas na Forja.</string>
+    <string name="optional_hint_open">Ver na Forja</string>
+    <string name="optional_hint_later">Agora não</string>
+    <string name="pause_section">Pausa (férias ou doença)</string>
+    <string name="pause_info">Durante a pausa nada conta e nada se perde: sem missões obrigatórias nem penalizações, e a sequência fica onde está. Pedida antes do meio-dia começa hoje; depois disso, amanhã.</string>
+    <string name="pause_days_label">Dias de pausa</string>
+    <string name="pause_left">Tens %1$d de %2$d dias de pausa disponíveis nos últimos 12 meses.</string>
+    <string name="pause_start">Pausar</string>
+    <string name="pause_confirm_title">Pausar de %1$s a %2$s?</string>
+    <string name="pause_confirm_text">Nesses dias não precisas de fazer missões. Podes terminar a pausa mais cedo, a partir do dia seguinte.</string>
+    <string name="pause_active">Em pausa de %1$s a %2$s.</string>
+    <string name="pause_end">Terminar pausa</string>
+    <string name="pause_today">Em pausa até %1$s: nada conta nem se perde. Descansa.</string>
+    <string name="pause_none_left">Já usaste os %1$d dias de pausa dos últimos 12 meses.</string>
+    <string name="share">Partilhar</string>
+    <string name="share_week_title">LifUp · semana de %1$s</string>
+    <string name="share_boss_won">⚔️ %1$s: vencido</string>
+    <string name="share_boss_lost">⚔️ %1$s: fugiu</string>
+    <string name="boss_weak">Fraco contra %1$s: +%2$d%% de dano, em %3$d missões por dia</string>
+    <string name="boss_weak_used">Fraqueza aproveitada hoje: volta amanhã</string>
+    <string name="a11y_boss_weak">Acerta na fraqueza do boss</string>
+    <string name="month_title">Resumo do mês</string>
+    <string name="month_best_run">Melhor série</string>
+    <string name="month_quests">Missões cumpridas</string>
+    <string name="month_bosses">Bosses vencidos</string>
+    <string name="month_focus">Minutos de foco</string>
+    <string name="month_levels">Níveis subidos</string>
+    <string name="month_echoes">Ecos novos</string>
+    <string name="month_attrs">Atributos que subiram</string>
+    <string name="month_numbers">O mês em números</string>
 </resources>

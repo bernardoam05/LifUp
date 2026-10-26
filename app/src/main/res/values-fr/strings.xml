@@ -530,7 +530,7 @@
     <string name="guide_side_title">Tâches</string>
     <string name="guide_side">Libres::Écris n\'importe quelle tâche, sans objectifs ni règles.\n5 avec récompense::Les 5 premières terminées chaque jour donnent de l\'XP et de l\'or (elles ne blessent pas le boss).\nEnsuite::Elles continuent de servir de liste de tâches.\nPas de triche::Décocher ou supprimer reprend la récompense.</string>
     <string name="guide_boss_title">Boss hebdomadaire</string>
-    <string name="guide_boss">Les missions sont des dégâts::Chaque mission que tu accomplis lui retire de la vie ; les extras et le focus, la moitié.\nDéfis du boss::Deux par semaine : un le lundi, un autre le jeudi. Chacun lui arrache 15 %.\nButin::Bats-le pour de l\'XP, de l\'or, un coffre et son écho.\nSinon…::Dimanche soir, il se termine, et un autre arrive.</string>
+    <string name="guide_boss">Les missions sont des dégâts::Chaque mission que tu accomplis lui retire de la vie ; les extras et le focus, la moitié.\nDéfis du boss::Deux par semaine : un le lundi, un autre le jeudi. Chacun lui arrache 15 %.\nButin::Bats-le pour de l\'XP, de l\'or, un coffre et son écho.\nFaiblesse::Chaque boss est faible contre une famille, en général celle de ton attribut le plus faible. Ces missions lui retirent +50 %, sur 2 par jour.\nSinon…::Dimanche soir, il se termine, et un autre arrive.</string>
     <string name="guide_portal_title">Portails</string>
     <string name="guide_portal">Ils apparaissent seuls::Entre 8 h et 22 h, jusqu\'à 2 par jour.\nRécompense double::Une mission plus grosse, avec deux fois plus d\'XP et d\'or.\nNouvel allié::La terminer peut te donner un écho.\nContre la montre::Tu as toujours le temps, mais le portail se ferme quand il est écoulé.</string>
     <string name="guide_shadows_title">Échos</string>
@@ -803,4 +803,34 @@
         <item quantity="other">%1$d jours</item>
     </plurals>
     <string name="def_optional">Optionnelle</string>
+    <string name="optional_hint_text">Il y a des missions optionnelles, désactivées au départ, pour des habitudes que seuls certains ont : un chien, un instrument, les études, le tabac… Active les tiennes dans la Forge.</string>
+    <string name="optional_hint_open">Voir la Forge</string>
+    <string name="optional_hint_later">Pas maintenant</string>
+    <string name="pause_section">Pause (vacances ou maladie)</string>
+    <string name="pause_info">Pendant la pause rien ne compte et rien ne se perd : pas de missions obligatoires ni de pénalités, et ta série reste où elle est. Demandée avant midi, elle commence aujourd\'hui ; après, demain.</string>
+    <string name="pause_days_label">Jours de pause</string>
+    <string name="pause_left">Il te reste %1$d jours de pause sur %2$d sur les 12 derniers mois.</string>
+    <string name="pause_start">Mettre en pause</string>
+    <string name="pause_confirm_title">Pause du %1$s au %2$s ?</string>
+    <string name="pause_confirm_text">Ces jours-là, aucune mission n\'est demandée. Tu peux arrêter la pause plus tôt, à partir du lendemain.</string>
+    <string name="pause_active">En pause du %1$s au %2$s.</string>
+    <string name="pause_end">Arrêter la pause</string>
+    <string name="pause_today">En pause jusqu\'au %1$s : rien ne compte, rien ne se perd. Repose-toi.</string>
+    <string name="pause_none_left">Tu as utilisé les %1$d jours de pause des 12 derniers mois.</string>
+    <string name="share">Partager</string>
+    <string name="share_week_title">LifUp · semaine du %1$s</string>
+    <string name="share_boss_won">⚔️ %1$s : vaincu</string>
+    <string name="share_boss_lost">⚔️ %1$s : enfui</string>
+    <string name="boss_weak">Faible contre %1$s : +%2$d%% de dégâts, sur %3$d missions par jour</string>
+    <string name="boss_weak_used">Faiblesse exploitée aujourd\'hui : de retour demain</string>
+    <string name="a11y_boss_weak">Touche la faiblesse du boss</string>
+    <string name="month_title">Bilan du mois</string>
+    <string name="month_best_run">Meilleure série</string>
+    <string name="month_quests">Missions accomplies</string>
+    <string name="month_bosses">Boss vaincus</string>
+    <string name="month_focus">Minutes de focus</string>
+    <string name="month_levels">Niveaux gagnés</string>
+    <string name="month_echoes">Nouveaux échos</string>
+    <string name="month_attrs">Attributs gagnés</string>
+    <string name="month_numbers">Le mois en chiffres</string>
 </resources>

@@ -315,6 +315,29 @@ class EngineTest {
         assertTrue(s.inventory.values.sum() <= 1)
     }
 
+    @Test fun `a boss is weak to the family of the weakest attribute`() {
+        val s = run(GameState(onboarded = true, player = Player(attrXp = Attributes(str = 500, agi = 10, int = 400, vit = 600))), "2026-10-19T09:00")
+        assertEquals(DrawGroup.MOVEMENT, s.boss!!.weakness)
+    }
+
+    @Test fun `missions of the weak family hit harder, two a day`() {
+        val base = run(GameState(onboarded = true), "2026-10-19T09:00")
+        val q = base.quests.first { it.origin == QuestOrigin.DAILY }
+        val others = (1..3).map { q.copy(id = "w$it") }
+        fun withWeakness(g: DrawGroup) = base.copy(boss = base.boss!!.copy(weakness = g, hp = 100_000, maxHp = 100_000), quests = base.quests + others)
+        val other = DrawGroup.entries.first { it != q.family() }
+        fun dealt(g: DrawGroup, id: String, before: GameState = withWeakness(g)) =
+            run(before, "2026-10-19T10:00") { completeQuest(id) }.let { it to before.boss!!.hp - it.boss!!.hp }
+        val (_, plain) = dealt(other, q.id)
+        val (afterOne, weak) = dealt(q.family(), q.id)
+        assertEquals(plain * 1.5, weak.toDouble(), 2.0)
+        val (afterTwo, second) = dealt(q.family(), "w1", afterOne)
+        assertEquals(weak.toDouble(), second.toDouble(), 2.0)
+        val (_, third) = dealt(q.family(), "w2", afterTwo)
+        assertEquals(plain.toDouble(), third.toDouble(), 2.0)
+        assertFalse(afterTwo.hitsWeakness(others[1]))
+    }
+
     private fun withEcho(s: GameState, id: String) = s.copy(shadows = s.shadows + OwnedShadow(id), squad = listOf(id))
 
     @Test fun `an early echo pays more for missions done before ten`() {

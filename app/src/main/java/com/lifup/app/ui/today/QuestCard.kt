@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Whatshot
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Alarm
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -61,7 +62,7 @@ import com.lifup.app.ui.theme.Lif
 import com.lifup.app.ui.unitLabel
 
 @Composable
-fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null, xp: Int = q.xp, remindAt: Int? = null, onClick: () -> Unit) {
+fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null, xp: Int = q.xp, remindAt: Int? = null, weak: Boolean = false, onClick: () -> Unit) {
     val p = Lif.colors
     val color = q.color(p)
     val done = q.status == QuestStatus.DONE
@@ -96,6 +97,8 @@ fun QuestCard(q: Quest, timer: MissionTimer?, now: Long, week: WeekTally? = null
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 if (q.auto != null) Pill(stringResource(R.string.auto_badge), p.green)
                 if (q.xp > 0) Text("+${if (done) q.xpGained else xp} XP", style = MaterialTheme.typography.labelSmall, color = p.accent)
+                // Hits the boss's weak spot: the mark the player looks for when picking what to do next.
+                if (weak && !done) Icon(Icons.Rounded.Whatshot, stringResource(R.string.a11y_boss_weak), tint = p.red, modifier = Modifier.size(14.dp))
                 // Quiet, under the reward, and only while there's still something to be reminded of.
                 if (remindAt != null && q.status == QuestStatus.OPEN) ReminderTime(remindAt)
             }

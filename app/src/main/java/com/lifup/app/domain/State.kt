@@ -71,6 +71,8 @@ data class Quest(
     val dropRolled: Boolean = false,
     /** An hourglass doubled it; an undo hands the doubling back. */
     val doubled: Boolean = false,
+    /** It hit the boss's weakness, one of the day's few such hits. */
+    val bossWeak: Boolean = false,
 )
 
 @Serializable
@@ -130,6 +132,8 @@ data class BossState(
     val spoils: BossSpoils? = null,
     /** Chest and shadow were already given; a revived boss only pays XP and gold again. */
     val lootGiven: Boolean = false,
+    /** The family whose missions hit it harder (see [Rules.BOSS_WEAK_BONUS]); null on older saves. */
+    val weakness: DrawGroup? = null,
 )
 
 fun BossState.challenges() = listOfNotNull(challenge, second)
@@ -234,6 +238,8 @@ data class DailyFlags(
     val steps: Int = 0,
     /** Focus minutes already paid in XP (and gold) today, which has a daily cap. */
     val focusPaidMin: Double = 0.0,
+    /** Today is part of a pause: a rest day that doesn't use up the week's rest. */
+    val paused: Boolean = false,
 )
 
 @Serializable
@@ -322,6 +328,24 @@ sealed interface Reward {
         val squad: SquadGain = SquadGain(),
     ) : Reward
 
+    @Serializable @SerialName("month")
+    data class MonthReport(
+        override val id: Long,
+        val month: String,
+        val daysKept: Int,
+        val perfectDays: Int,
+        val restDays: Int,
+        val days: Int,
+        val bestRun: Int,
+        val quests: Int,
+        val bosses: Int,
+        val focusMin: Int,
+        val gold: Int,
+        val levels: Int,
+        val echoes: Int,
+        val attrGain: Attributes,
+    ) : Reward
+
     @Serializable @SerialName("streak")
     data class StreakMilestone(override val id: Long, val days: Int, val gold: Int, val items: List<String>) : Reward
 
@@ -376,6 +400,13 @@ data class GameState(
     val disabledDefIds: Set<String> = emptySet(),
     /** Optional built-in missions the player switched on (they start off). */
     val enabledDefIds: Set<String> = emptySet(),
+    /** The current (or last) pause, first and last day inclusive (ISO dates). */
+    val pauseFrom: String? = null,
+    val pauseUntil: String? = null,
+    /** Days spent paused, for the yearly allowance. */
+    val pausedDays: List<String> = emptyList(),
+    /** Where the counters stood when this month began, for the monthly report. */
+    val monthStart: MonthStart? = null,
     val penalty: Penalty = Penalty(),
     val boss: BossState? = null,
     val bossHistory: List<String> = emptyList(),

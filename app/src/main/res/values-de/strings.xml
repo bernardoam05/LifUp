@@ -548,7 +548,7 @@
     <string name="guide_side_title">Aufgaben</string>
     <string name="guide_side">Freie::Schreib jede beliebige Aufgabe, ohne Ziele und Regeln.\n5 mit Belohnung::Die ersten 5 erledigten pro Tag geben XP und Gold (sie verletzen den Boss nicht).\nDanach::Sie funktionieren weiter als To-do-Liste.\nKein Schummeln::Abhaken rückgängig machen oder Löschen nimmt die Belohnung zurück.</string>
     <string name="guide_boss_title">Wochenboss</string>
-    <string name="guide_boss">Missionen sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben; Extra-Missionen und Fokus die Hälfte.\nBoss-Challenges::Zwei pro Woche: eine am Montag, eine am Donnerstag. Jede zieht ihm 15 % ab.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nWenn nicht …::Sonntagnacht endet er, und ein neuer kommt.</string>
+    <string name="guide_boss">Missionen sind Schaden::Jede Mission, die du schaffst, nimmt ihm Leben; Extra-Missionen und Fokus die Hälfte.\nBoss-Challenges::Zwei pro Woche: eine am Montag, eine am Donnerstag. Jede zieht ihm 15 % ab.\nBeute::Besiege ihn für XP, Gold, eine Truhe und sein Echo.\nSchwäche::Jeder Boss ist gegen eine Familie schwach, meist die deines schwächsten Attributs. Diese Missionen treffen ihn mit +50 %, bei 2 pro Tag.\nWenn nicht …::Sonntagnacht endet er, und ein neuer kommt.</string>
     <string name="guide_portal_title">Portale</string>
     <string name="guide_portal">Sie erscheinen von selbst::Zwischen 8 und 22 Uhr, bis zu 2 pro Tag.\nDoppelte Belohnung::Eine größere Mission mit doppelt so viel XP und Gold.\nNeuer Verbündeter::Sie abzuschließen kann dir ein Echo bringen.\nAuf Zeit::Die Zeit reicht immer, aber das Portal schließt sich, wenn sie abläuft.</string>
     <string name="guide_shadows_title">Echos</string>
@@ -821,4 +821,34 @@
         <item quantity="other">%1$d Tage</item>
     </plurals>
     <string name="def_optional">Optional</string>
+    <string name="optional_hint_text">Es gibt optionale Missionen, anfangs aus, für Gewohnheiten, die nur manche haben: Hund, Instrument, Lernen, Rauchen… Schalte deine in der Schmiede ein.</string>
+    <string name="optional_hint_open">Zur Schmiede</string>
+    <string name="optional_hint_later">Nicht jetzt</string>
+    <string name="pause_section">Pause (Urlaub oder Krankheit)</string>
+    <string name="pause_info">Während der Pause zählt nichts und nichts geht verloren: keine Pflichtmissionen, keine Strafen, und deine Serie bleibt, wo sie ist. Vor Mittag beantragt beginnt sie heute, danach morgen.</string>
+    <string name="pause_days_label">Pausentage</string>
+    <string name="pause_left">Dir bleiben %1$d von %2$d Pausentagen in den letzten 12 Monaten.</string>
+    <string name="pause_start">Pausieren</string>
+    <string name="pause_confirm_title">Pause vom %1$s bis %2$s?</string>
+    <string name="pause_confirm_text">An diesen Tagen musst du keine Missionen machen. Du kannst die Pause früher beenden, ab dem nächsten Tag.</string>
+    <string name="pause_active">Pausiert vom %1$s bis %2$s.</string>
+    <string name="pause_end">Pause beenden</string>
+    <string name="pause_today">Pausiert bis %1$s: Nichts zählt, nichts geht verloren. Erhol dich.</string>
+    <string name="pause_none_left">Du hast alle %1$d Pausentage der letzten 12 Monate genutzt.</string>
+    <string name="share">Teilen</string>
+    <string name="share_week_title">LifUp · Woche vom %1$s</string>
+    <string name="share_boss_won">⚔️ %1$s: besiegt</string>
+    <string name="share_boss_lost">⚔️ %1$s: entkommen</string>
+    <string name="boss_weak">Schwach gegen %1$s: +%2$d%% Schaden, bei %3$d Missionen pro Tag</string>
+    <string name="boss_weak_used">Schwäche heute genutzt: morgen wieder</string>
+    <string name="a11y_boss_weak">Trifft die Schwäche des Bosses</string>
+    <string name="month_title">Monatsrückblick</string>
+    <string name="month_best_run">Beste Serie</string>
+    <string name="month_quests">Erledigte Missionen</string>
+    <string name="month_bosses">Besiegte Bosse</string>
+    <string name="month_focus">Fokusminuten</string>
+    <string name="month_levels">Gewonnene Stufen</string>
+    <string name="month_echoes">Neue Echos</string>
+    <string name="month_attrs">Gewachsene Attribute</string>
+    <string name="month_numbers">Der Monat in Zahlen</string>
 </resources>
