@@ -161,7 +161,6 @@ private fun Tx.penalize(daily: List<Quest>, failed: Int, total: Int, ratio: Doub
     val goldBase = floor(fullGold * (1 - reduce)).toInt()
     squadAdded(SquadGain(xp = floor(fullXp).toInt() - xpLost, gold = floor(fullGold).toInt() - goldBase))
     val goldLost = loseGold(goldBase)
-    val xpActuallyLost = minOf(xpLost, s.player.xp)
     loseXp(xpLost)
 
     val severe = ratio < Rules.severeRatio(rigor) && run == 0
@@ -170,10 +169,10 @@ private fun Tx.penalize(daily: List<Quest>, failed: Int, total: Int, ratio: Doub
         buildQuest(def, 1, QuestOrigin.PENALTY, "${def.id}_${s.nextId}_$i")
     }
     if (severe) {
-        s = s.copy(penalty = Penalty(active = true, quests = quests, blockStart = ctx.now, blockEnd = ctx.now + Rules.PENALTY_MS, xpLost = xpActuallyLost, goldLost = goldLost), nextId = s.nextId + 1)
+        s = s.copy(penalty = Penalty(active = true, quests = quests, blockStart = ctx.now, blockEnd = ctx.now + Rules.PENALTY_MS, xpLost = xpLost, goldLost = goldLost), nextId = s.nextId + 1)
     }
 
-    return PenaltyInfo(failed, total, xpActuallyLost, goldLost, quests.size)
+    return PenaltyInfo(failed, total, xpLost, goldLost, quests.size)
 }
 
 /**

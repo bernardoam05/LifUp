@@ -282,10 +282,10 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
                 }
                 Spacer(Modifier.size(4.dp))
                 Bar(p.xp / Rules.xpForLevel(p.level).toFloat(), height = 5.dp)
-                Text("${p.xp} / ${Rules.xpForLevel(p.level)} XP", style = MaterialTheme.typography.labelSmall, color = Lif.colors.dim)
+                Text("${p.xp} / ${Rules.xpForLevel(p.level)} XP", style = MaterialTheme.typography.labelSmall, color = if (p.xp < 0) Lif.colors.red else Lif.colors.dim)
             }
             Spacer(Modifier.width(10.dp))
-            HudChip(Icons.Rounded.Paid, fmtCompact(p.gold.toLong()), Lif.colors.gold)
+            HudChip(Icons.Rounded.Paid, fmtCompact(p.gold.toLong()), Lif.colors.gold, text = if (p.gold < 0) Lif.colors.red else Lif.colors.text)
             Spacer(Modifier.width(8.dp))
             StreakFlame(s)
             IconButton(onClick = openSettings) { Icon(Icons.Rounded.Settings, stringResource(R.string.settings), tint = Lif.colors.muted) }
@@ -419,11 +419,11 @@ private fun FlameCard(s: GameState, flame: com.lifup.app.domain.Flame, color: Co
 }
 
 @Composable
-private fun HudChip(icon: ImageVector, value: String, color: androidx.compose.ui.graphics.Color) {
+private fun HudChip(icon: ImageVector, value: String, color: androidx.compose.ui.graphics.Color, text: androidx.compose.ui.graphics.Color = Lif.colors.text) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, null, tint = color, modifier = Modifier.size(16.dp))
         Spacer(Modifier.width(3.dp))
-        Text(value, style = MaterialTheme.typography.labelLarge, color = Lif.colors.text, maxLines = 1, softWrap = false)
+        Text(value, style = MaterialTheme.typography.labelLarge, color = text, maxLines = 1, softWrap = false)
     }
 }
 

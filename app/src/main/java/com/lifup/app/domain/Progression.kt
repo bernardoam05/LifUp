@@ -132,9 +132,12 @@ fun Tx.loseAttributes(group: DrawGroup?) {
     s = s.copy(player = s.player.copy(attrXp = Attributes((a.str - g.str).coerceAtLeast(0), (a.agi - g.agi).coerceAtLeast(0), (a.int - g.int).coerceAtLeast(0), (a.vit - g.vit).coerceAtLeast(0))))
 }
 
-/** Removes XP without ever dropping a level (used by penalties and undo). */
+/**
+ * Removes XP without ever dropping a level (used by penalties and undo): below zero it goes negative and the
+ * next XP earned fills that first, so levelling up and then undoing can't keep the XP.
+ */
 fun Tx.loseXp(amount: Int) {
-    s = s.copy(player = s.player.copy(xp = (s.player.xp - amount).coerceAtLeast(0)))
+    s = s.copy(player = s.player.copy(xp = s.player.xp - amount))
 }
 
 /** Takes back gold that an undone action paid, so "gold earned" stays truthful. */
@@ -142,8 +145,8 @@ fun Tx.refundGold(amount: Int) {
     count(StatKey.GOLD_EARNED, -loseGold(amount).toLong())
 }
 
+/** Takes gold even past zero: spending what a mission paid and then undoing it leaves a debt, not a free mission. */
 fun Tx.loseGold(amount: Int): Int {
-    val lost = minOf(amount, s.player.gold)
-    s = s.copy(player = s.player.copy(gold = s.player.gold - lost))
-    return lost
+    s = s.copy(player = s.player.copy(gold = s.player.gold - amount))
+    return amount
 }

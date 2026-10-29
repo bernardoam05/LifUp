@@ -75,11 +75,13 @@ class EngineTest {
         assertTrue(s.penalty.active)
         assertTrue(s.penalty.quests.isNotEmpty())
         assertEquals(0, s.player.streak)
-        assertEquals(0, s.player.xp)
         // An empty day on Normal costs the gold the whole day would have paid.
         assertEquals(500 - goldPay, s.player.gold)
-        // Loss is capped by the XP actually held (never drops a level).
-        assertEquals(90, s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost)
+        // The whole loss is taken: past the XP held it goes negative, never down a level.
+        val xpLost = s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.xpLost
+        assertTrue(xpLost > 90)
+        assertEquals(90 - xpLost, s.player.xp)
+        assertEquals(1, s.player.level)
         s.penalty.quests.forEach { pq -> s = run(s, "2026-10-15T09:00") { completeQuest(pq.id) } }
         assertFalse(s.penalty.active)
         assertEquals(1L, s.count(StatKey.PENALTIES_CLEARED))
@@ -531,6 +533,43 @@ class EngineTest {
         val old = s.copy(version = 1, counters = s.counters + (StatKey.GOLD_EARNED to portal.gold.toLong()))
         val fixed = run(run(old, "2026-10-14T10:01"), "2026-10-14T10:02")
         assertEquals(s.player.gold.toLong(), fixed.count(StatKey.GOLD_EARNED))
+    }
+
+    @Test fun `spending a mission's gold and undoing it leaves a debt, so ticking it again pays nothing net`() {
+        var s = fresh()
+        val q = s.dailyQuests.first { it.type == QuestType.TRAINING }
+        s = run(s, "2026-10-14T10:00") { completeQuest(q.id) }
+        s = s.copy(player = s.player.copy(gold = 0)) // spent in the shop
+        s = run(s, "2026-10-14T10:01") { undoQuest(q.id) }
+        assertEquals(-q.gold, s.player.gold)
+        s = run(s, "2026-10-14T10:02") { completeQuest(q.id) }
+        assertEquals(0, s.player.gold)
+        assertEquals(s.player.gold.toLong(), s.count(StatKey.GOLD_EARNED) - q.gold)
+    }
+
+    @Test fun `undoing the mission that levelled up leaves negative XP instead of keeping it`() {
+        var s = fresh()
+        val q = s.dailyQuests.first { it.type == QuestType.TRAINING }
+        s = s.copy(player = s.player.copy(xp = Rules.xpForLevel(1) - 1))
+        s = run(s, "2026-10-14T10:00") { completeQuest(q.id) }
+        assertEquals(2, s.player.level)
+        val after = s.player.xp
+        val gained = s.quests.first { it.id == q.id }.xpGained
+        s = run(s, "2026-10-14T10:01") { undoQuest(q.id) }
+        assertEquals(2, s.player.level)
+        assertEquals(after - gained, s.player.xp)
+        assertTrue(s.player.xp < 0)
+        repeat(5) { s = run(s, "2026-10-14T10:02") { completeQuest(q.id); undoQuest(q.id) } }
+        assertEquals(after - gained, s.player.xp)
+        assertEquals(2, s.player.level)
+    }
+
+    @Test fun `a failed day with no gold left still costs it`() {
+        var s = dayWith(0).let { it.copy(player = it.player.copy(gold = 0)) }
+        val goldPay = s.dailyQuests.sumOf { it.gold }
+        s = run(s, "2026-10-15T08:00")
+        assertEquals(-goldPay, s.player.gold)
+        assertEquals(goldPay, s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.goldLost)
     }
 
     @Test fun `extra missions can be undone`() {
