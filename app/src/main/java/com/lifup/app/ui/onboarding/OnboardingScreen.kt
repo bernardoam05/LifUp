@@ -1,5 +1,6 @@
 package com.lifup.app.ui.onboarding
 
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.icons.automirrored.rounded.TrendingDown
 import androidx.compose.material.icons.rounded.Block
 import androidx.compose.animation.AnimatedContent
@@ -106,7 +107,7 @@ fun OnboardingScreen() {
     val notif = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
     val c = Lif.colors
 
-    Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(24.dp)) {
+    Column(Modifier.fillMaxSize().statusBarsPadding().imePadding().navigationBarsPadding().padding(24.dp)) {
         // Pages slide sideways in the direction of travel.
         AnimatedContent(
             targetState = page,

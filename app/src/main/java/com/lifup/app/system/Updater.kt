@@ -30,6 +30,7 @@ import java.net.URL
  */
 object Updater {
     private const val RELEASES = "https://api.github.com/repos/bernardoam05/LifUp/releases"
+    private const val NOTES = "https://raw.githubusercontent.com/bernardoam05/LifUp"
     private const val PREFS = "updater"
     private const val CHECK_EVERY_MS = 6 * 60 * 60 * 1000L
 
@@ -72,27 +73,31 @@ object Updater {
     }
 
     /**
-     * The notes of the release now running, on its first launch after an update (by the app itself or by hand);
-     * null on a fresh install, once seen, or offline (it tries again on the next launch).
+     * The notes of the release now running, on its first launch after an update (by the app itself or by hand):
+     * release-notes/<version>/<lang>.md from the release's tag, else the English file, else the release's text.
+     * Null on a fresh install, once seen, or offline (it tries again on the next launch).
      */
-    suspend fun whatsNew(context: Context): String? {
+    suspend fun whatsNew(context: Context, lang: String): String? {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        if (prefs.getString("notesSeen", null) == BuildConfig.VERSION_NAME) return null
+        val version = BuildConfig.VERSION_NAME
+        if (prefs.getString("notesSeen", null) == version) return null
         val info = context.packageManager.getPackageInfo(context.packageName, 0)
         if (info.firstInstallTime == info.lastUpdateTime) {
             seenWhatsNew(context)
             return null
         }
-        val body = withContext(Dispatchers.IO) {
-            runCatching {
-                open("$RELEASES/tags/v${BuildConfig.VERSION_NAME}").apply { setRequestProperty("Accept", "application/vnd.github+json") }
-                    .inputStream.use { it.readBytes().decodeToString() }
-            }.getOrNull()
-        } ?: return null
-        val notes = Json.parseToJsonElement(body).jsonObject["body"]?.jsonPrimitive?.contentOrNull
-        if (notes.isNullOrBlank()) seenWhatsNew(context)
+        val notes = withContext(Dispatchers.IO) {
+            listOf(lang, "en").distinct().firstNotNullOfOrNull { fetch("$NOTES/v$version/release-notes/$version/$it.md") }
+                ?: fetch("$RELEASES/tags/v$version", json = true)?.let { Json.parseToJsonElement(it).jsonObject["body"]?.jsonPrimitive?.contentOrNull }
+        }
         return notes?.takeIf { it.isNotBlank() }
     }
+
+    /** The text at [url], or null when it's missing or the phone is offline. */
+    private fun fetch(url: String, json: Boolean = false): String? = runCatching {
+        open(url).apply { if (json) setRequestProperty("Accept", "application/vnd.github+json") }
+            .inputStream.use { it.readBytes().decodeToString() }
+    }.getOrNull()
 
     fun seenWhatsNew(context: Context) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("notesSeen", BuildConfig.VERSION_NAME).apply()

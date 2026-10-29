@@ -1,0 +1,2 @@
+- Die Tastatur verdeckt deine Aufgaben nicht mehr: Der Bildschirm schrumpft, damit alles darüber Platz hat, ebenso in den Einstellungen, der Missionsschmiede und der Ersteinrichtung.
+- Die Neuigkeiten erscheinen jetzt in deiner Sprache.

@@ -29,7 +29,8 @@ import com.lifup.app.ui.theme.Lif
 fun WhatsNew() {
     val context = LocalContext.current
     var notes by remember { mutableStateOf<String?>(null) }
-    LaunchedEffect(Unit) { notes = Updater.whatsNew(context) }
+    val lang = lang()
+    LaunchedEffect(Unit) { notes = Updater.whatsNew(context, lang) }
     val text = notes ?: return
     if (CrashUi.report != null) return
     val close = { Updater.seenWhatsNew(context); notes = null }

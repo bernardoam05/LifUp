@@ -1,0 +1,2 @@
+- The keyboard no longer covers your side quests: the screen shrinks to fit above it, and the same goes for Settings, the Mission forge and the first setup.
+- "What's new" now comes in your language.

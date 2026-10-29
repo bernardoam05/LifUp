@@ -1,5 +1,6 @@
 package com.lifup.app.ui.settings
 
+import androidx.compose.foundation.layout.imePadding
 import com.lifup.app.ui.DrawMode
 import com.lifup.app.ui.drawMode
 import com.lifup.app.domain.daysToNextMission
@@ -119,7 +120,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
             IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back)) }
             Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
         }
-        Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding()) {
+        Column(Modifier.imePadding().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding()) {
             message?.let { Text(it, color = Lif.colors.accent, style = MaterialTheme.typography.labelLarge) }
 
             SectionTitle(stringResource(R.string.profile))

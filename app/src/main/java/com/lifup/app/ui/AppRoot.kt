@@ -1,5 +1,7 @@
 package com.lifup.app.ui
 
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import com.lifup.app.domain.penaltyBlocks
 import com.lifup.app.ui.hero.HeroNav
 import com.lifup.app.domain.markItemsSeen
@@ -246,8 +248,9 @@ private fun MainScaffold(
                 }
             },
         ) { padding ->
-            // Swipe between tabs; the bottom bar follows the pager.
-            HorizontalPager(pager, Modifier.padding(padding).fillMaxSize(), beyondViewportPageCount = 1) { page ->
+            // Swipe between tabs; the bottom bar follows the pager. The keyboard shrinks the page (it would cover the
+            // side quests otherwise), counting the bottom bar it hides as already taken.
+            HorizontalPager(pager, Modifier.padding(padding).consumeWindowInsets(padding).imePadding().fillMaxSize(), beyondViewportPageCount = 1) { page ->
                 when (Tab.entries[page]) {
                     Tab.TODAY -> TodayScreen(s, openForge, openDef, openQuest) { openQuest = null }
                     Tab.FOCUS -> FocusScreen(s, active = pager.settledPage == page)

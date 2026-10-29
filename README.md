@@ -25,11 +25,14 @@ A partir daí a app **atualiza-se sozinha**: ao abrir, vê se há uma release ma
 
 ## Lançar uma versão
 
+1. Escreve as notas em `release-notes/<versão>/` (`en.md`, `pt.md`, `es.md`, `fr.md`, `de.md`), uma alteração por linha começada por `- `, e faz commit.
+2. Cria a tag:
+
 ```bash
 git tag v2.1.0 && git push origin v2.1.0
 ```
 
-O workflow `Release` corre os testes, gera o APK assinado com a versão da tag (o `versionCode` vem dela: 2.1.0 → 20100) e publica a release. As apps instaladas apanham-na na próxima abertura.
+O workflow `Release` corre os testes, gera o APK assinado com a versão da tag (o `versionCode` vem dela: 2.1.0 → 20100) e publica a release com as notas em inglês. As apps instaladas apanham-na na próxima abertura e mostram "O que há de novo" na língua do telemóvel (inglês se não houver ficheiro nessa língua). Sem notas, a release lista os commits desde a tag anterior.
 
 ## Desenvolver
 

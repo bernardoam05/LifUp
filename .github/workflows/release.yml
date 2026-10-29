@@ -25,10 +25,14 @@ jobs:
       - name: Rename APK
         run: cp app/build/outputs/apk/release/app-release.apk "lifup-${GITHUB_REF_NAME}.apk"
       - name: Release notes
-        # One line per commit since the previous tag; the app shows them as "What's new" after updating.
+        # The English notes in release-notes/<version>/ (the app reads the file in the phone's language);
+        # without them, one line per commit since the previous tag.
         run: |
-          prev=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)
-          git log --no-merges --format='- %s' ${prev:+$prev..}"$GITHUB_REF_NAME" > notes.md
+          notes="release-notes/${GITHUB_REF_NAME#v}/en.md"
+          if [ -f "$notes" ]; then cp "$notes" notes.md; else
+            prev=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)
+            git log --no-merges --format='- %s' ${prev:+$prev..}"$GITHUB_REF_NAME" > notes.md
+          fi
       - uses: softprops/action-gh-release@v2
         with:
           files: lifup-*.apk

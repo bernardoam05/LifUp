@@ -1,5 +1,6 @@
 package com.lifup.app.ui.forge
 
+import androidx.compose.foundation.layout.imePadding
 import com.lifup.app.domain.Rules
 import com.lifup.app.ui.difficultyLabel
 import androidx.compose.material3.TextButton
@@ -207,7 +208,7 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
             if (existing != null && !builtIn) IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.delete), tint = c.red) }
             if (edited) TextButton(onClick = { act { deleteCustomDef(existing!!.id) }; onBack() }) { Text(stringResource(R.string.def_reset), color = c.gold) }
         }
-        Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(Modifier.imePadding().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             if (existing != null) Text(stringResource(R.string.edit_from_tomorrow), style = MaterialTheme.typography.bodySmall, color = c.muted)
             OutlinedTextField(title, { title = it.take(60) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.field_title)) }, singleLine = true)
             OutlinedTextField(description, { description = it.take(240) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.field_description)) }, supportingText = { Text(stringResource(R.string.field_description_hint)) })
