@@ -852,4 +852,10 @@
     <string name="month_echoes">New echoes</string>
     <string name="month_attrs">Attributes grown</string>
     <string name="month_numbers">The month in numbers</string>
+    <string name="update_check">Check for updates</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="update_latest">You\'re on the latest version</string>
+    <string name="update_downloading">Downloading %1$s…</string>
+    <string name="update_installing">Installing %1$s…</string>
+    <string name="update_failed">Couldn\'t update. Try again later.</string>
 </resources>

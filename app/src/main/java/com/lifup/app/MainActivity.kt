@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.lifup.app.domain.rollPortal
 import com.lifup.app.system.AppVisibility
 import com.lifup.app.system.AutoTracker
+import com.lifup.app.system.Updater
 import kotlinx.coroutines.launch
 import com.lifup.app.ui.AppRoot
 import com.lifup.app.ui.Feedback
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
             AutoTracker.dispatchCatchingUp(app) { rollPortal() }
             AutoTracker.sync(app)
         }
+        LifUpApp.store.scope.launch { Updater.check(app) }
     }
 
     override fun onStop() {

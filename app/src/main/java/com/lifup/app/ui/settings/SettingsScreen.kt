@@ -41,6 +41,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +66,7 @@ import com.lifup.app.domain.rename
 import com.lifup.app.domain.setBlockOnPenalty
 import com.lifup.app.domain.updateSettings
 import com.lifup.app.system.Permissions
+import com.lifup.app.system.Updater
 import com.lifup.app.ui.LocalSnackbar
 import com.lifup.app.ui.accentRank
 import com.lifup.app.ui.act
@@ -229,6 +231,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
 
             SectionTitle(stringResource(R.string.about))
             Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+            UpdateRow()
             TextButton(onClick = { confirmReset = true }) { Text(stringResource(R.string.reset_progress).uppercase(), color = Lif.colors.red) }
             Spacer(Modifier.height(24.dp))
         }
@@ -281,6 +284,26 @@ private fun AutoBackups(onRestore: (GameState) -> Unit) {
             Text(java.time.LocalDate.parse(e.day).format(java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
             TextButton(onClick = { LifUpApp.store.readSnapshot(e.file)?.let(onRestore) }) { Text(stringResource(R.string.restore).uppercase()) }
         }
+    }
+}
+
+/** Where the self-update stands, and a button to look for a new release now. */
+@Composable
+private fun UpdateRow() {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val state by Updater.state.collectAsState()
+    when (val st = state) {
+        Updater.State.Idle -> null
+        Updater.State.Checking -> stringResource(R.string.update_checking)
+        Updater.State.UpToDate -> stringResource(R.string.update_latest)
+        is Updater.State.Downloading -> stringResource(R.string.update_downloading, st.version)
+        is Updater.State.Installing -> stringResource(R.string.update_installing, st.version)
+        Updater.State.Failed -> stringResource(R.string.update_failed)
+    }?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = if (state == Updater.State.Failed) Lif.colors.red else Lif.colors.muted) }
+    val idle = state == Updater.State.Idle || state == Updater.State.UpToDate || state == Updater.State.Failed
+    TextButton(onClick = { scope.launch { Updater.check(context.applicationContext, force = true) } }, enabled = idle) {
+        Text(stringResource(R.string.update_check).uppercase())
     }
 }
 

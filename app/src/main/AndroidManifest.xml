@@ -24,6 +24,9 @@
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <!-- Do Not Disturb during focus sessions (the user grants access in system settings) -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!-- Updates from the project's GitHub releases -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />
 
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
@@ -106,6 +109,7 @@
 
         <receiver android:name=".system.TickReceiver" android:exported="false" />
         <receiver android:name=".system.NotificationActionReceiver" android:exported="false" />
+        <receiver android:name=".system.UpdateReceiver" android:exported="false" />
 
         <receiver android:name=".system.BootReceiver" android:exported="true">
             <intent-filter>

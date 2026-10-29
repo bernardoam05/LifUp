@@ -851,4 +851,10 @@
     <string name="month_echoes">Neue Echos</string>
     <string name="month_attrs">Gewachsene Attribute</string>
     <string name="month_numbers">Der Monat in Zahlen</string>
+    <string name="update_check">Nach Updates suchen</string>
+    <string name="update_checking">Suche nach Updates…</string>
+    <string name="update_latest">Du hast die neueste Version</string>
+    <string name="update_downloading">%1$s wird heruntergeladen…</string>
+    <string name="update_installing">%1$s wird installiert…</string>
+    <string name="update_failed">Update fehlgeschlagen. Versuch es später noch einmal.</string>
 </resources>

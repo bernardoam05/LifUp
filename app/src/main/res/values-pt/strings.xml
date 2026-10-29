@@ -833,4 +833,10 @@
     <string name="month_echoes">Ecos novos</string>
     <string name="month_attrs">Atributos que subiram</string>
     <string name="month_numbers">O mês em números</string>
+    <string name="update_check">Procurar atualizações</string>
+    <string name="update_checking">A procurar atualizações…</string>
+    <string name="update_latest">Tens a versão mais recente</string>
+    <string name="update_downloading">A transferir %1$s…</string>
+    <string name="update_installing">A instalar %1$s…</string>
+    <string name="update_failed">Não foi possível atualizar. Tenta mais tarde.</string>
 </resources>

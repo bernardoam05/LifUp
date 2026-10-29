@@ -13,8 +13,11 @@ android {
         applicationId = "com.lifup.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "2.0.0"
+        // Release builds take the version from the tag (-PappVersion=2.1.0); the code follows it, so 2.1.0 is 20100.
+        val appVersion = (findProperty("appVersion") as String?)?.removePrefix("v") ?: "2.0.0"
+        val (major, minor, patch) = (appVersion.split('.').map { it.toInt() } + listOf(0, 0)).take(3)
+        versionCode = major * 10_000 + minor * 100 + patch
+        versionName = appVersion
     }
 
     signingConfigs {
