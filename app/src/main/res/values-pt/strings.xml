@@ -839,4 +839,6 @@
     <string name="update_downloading">A transferir %1$s…</string>
     <string name="update_installing">A instalar %1$s…</string>
     <string name="update_failed">Não foi possível atualizar. Tenta mais tarde.</string>
+    <string name="whats_new_title">Novidades da %1$s</string>
+    <string name="whats_new_ok">Fixe</string>
 </resources>

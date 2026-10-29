@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -22,7 +24,12 @@ jobs:
         run: ./gradlew testReleaseUnitTest assembleRelease -PappVersion=${GITHUB_REF_NAME#v}
       - name: Rename APK
         run: cp app/build/outputs/apk/release/app-release.apk "lifup-${GITHUB_REF_NAME}.apk"
+      - name: Release notes
+        # One line per commit since the previous tag; the app shows them as "What's new" after updating.
+        run: |
+          prev=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)
+          git log --no-merges --format='- %s' ${prev:+$prev..}"$GITHUB_REF_NAME" > notes.md
       - uses: softprops/action-gh-release@v2
         with:
           files: lifup-*.apk
-          generate_release_notes: true
+          body_path: notes.md

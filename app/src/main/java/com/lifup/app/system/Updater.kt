@@ -14,6 +14,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -28,7 +29,7 @@ import java.net.URL
  * through without a prompt.
  */
 object Updater {
-    private const val LATEST = "https://api.github.com/repos/bernardoam05/LifUp/releases/latest"
+    private const val RELEASES = "https://api.github.com/repos/bernardoam05/LifUp/releases"
     private const val PREFS = "updater"
     private const val CHECK_EVERY_MS = 6 * 60 * 60 * 1000L
 
@@ -70,11 +71,38 @@ object Updater {
         }
     }
 
+    /**
+     * The notes of the release now running, on its first launch after an update (by the app itself or by hand);
+     * null on a fresh install, once seen, or offline (it tries again on the next launch).
+     */
+    suspend fun whatsNew(context: Context): String? {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        if (prefs.getString("notesSeen", null) == BuildConfig.VERSION_NAME) return null
+        val info = context.packageManager.getPackageInfo(context.packageName, 0)
+        if (info.firstInstallTime == info.lastUpdateTime) {
+            seenWhatsNew(context)
+            return null
+        }
+        val body = withContext(Dispatchers.IO) {
+            runCatching {
+                open("$RELEASES/tags/v${BuildConfig.VERSION_NAME}").apply { setRequestProperty("Accept", "application/vnd.github+json") }
+                    .inputStream.use { it.readBytes().decodeToString() }
+            }.getOrNull()
+        } ?: return null
+        val notes = Json.parseToJsonElement(body).jsonObject["body"]?.jsonPrimitive?.contentOrNull
+        if (notes.isNullOrBlank()) seenWhatsNew(context)
+        return notes?.takeIf { it.isNotBlank() }
+    }
+
+    fun seenWhatsNew(context: Context) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("notesSeen", BuildConfig.VERSION_NAME).apply()
+    }
+
     private class Release(val version: String, val apkUrl: String)
 
     /** The latest published release, or null when it has no APK attached. */
     private fun latest(): Release? {
-        val body = open(LATEST).apply { setRequestProperty("Accept", "application/vnd.github+json") }
+        val body = open("$RELEASES/latest").apply { setRequestProperty("Accept", "application/vnd.github+json") }
             .inputStream.use { it.readBytes().decodeToString() }
         val json = Json.parseToJsonElement(body).jsonObject
         val tag = json["tag_name"]?.jsonPrimitive?.content ?: return null

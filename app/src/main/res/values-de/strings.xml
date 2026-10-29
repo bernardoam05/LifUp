@@ -857,4 +857,6 @@
     <string name="update_downloading">%1$s wird heruntergeladen…</string>
     <string name="update_installing">%1$s wird installiert…</string>
     <string name="update_failed">Update fehlgeschlagen. Versuch es später noch einmal.</string>
+    <string name="whats_new_title">Neu in %1$s</string>
+    <string name="whats_new_ok">Verstanden</string>
 </resources>

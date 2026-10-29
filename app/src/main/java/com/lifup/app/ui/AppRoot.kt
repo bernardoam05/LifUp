@@ -141,6 +141,7 @@ fun AppRoot(deepLink: String?, onDeepLinkConsumed: () -> Unit) {
                 return@Box
             }
             CrashPrompt()
+            WhatsNew()
             val nav = rememberNavController()
             NavHost(nav, startDestination = "main") {
                 composable("main") {
