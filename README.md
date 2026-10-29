@@ -1,8 +1,39 @@
-# LifUp (Android nativo)
+# LifUp
 
-Produtividade gamificada: missões diárias, penalizações reais, foco com bloqueio de apps, boss semanal e coleção de sombras. Reescrita em Kotlin + Jetpack Compose da antiga app React Native (`../SoloLevelingRN`).
+Hábitos como um RPG. Cada dia traz um conjunto de missões (exercício, sono, foco, estudo, casa…); cumpri-las dá XP, ouro e atributos, e falhá-las tem custo real. A app é Android nativa (Kotlin + Jetpack Compose), funciona sem conta nem servidor, e o progresso fica só no telemóvel.
 
-## Comandos
+## O que faz
+
+- **Missões diárias** sorteadas de um catálogo de 95, com carga que sobe à medida que manténs os dias. Missões opcionais (meditação, natação, instrumento, medicação…) ficam na **Forja** até as ativares.
+- **Penalizações**: um dia falhado custa parte do que as missões teriam dado e pode trazer missões de castigo. A dificuldade (Fácil, Normal, Difícil) define o peso.
+- **Streak e pausa**: dias de descanso por semana (2 em Fácil, 1 em Normal, nenhum em Difícil) e pausas para férias ou doença que não quebram a sequência.
+- **Foco**: sessões cronometradas que bloqueiam as apps que escolheres, com Não Incomodar e som ambiente opcionais. Também há um atalho nas definições rápidas.
+- **Boss semanal e portais**: 27 bosses, cada um fraco a uma família de missões, e portais que aparecem ao longo do dia.
+- **Ecos**: 99 criaturas para colecionar, evoluir e equipar, cada uma com uma passiva.
+- **Atributos e níveis**: rank de caçador de E a N, 27 conquistas e um calendário de atividade.
+- **Relatórios**: resumo do dia, da semana (que dá para partilhar) e do mês.
+- **Deteção automática**: passos, GPS e outros dados marcam algumas missões sozinhos.
+- **Widgets**: Missões de hoje, Foco e Progresso.
+- **Cópias de segurança**: exportar e importar em ficheiro, mais cópias automáticas diárias.
+- Disponível em português, inglês, espanhol, francês e alemão.
+
+## Instalar
+
+Transfere o `lifup-vX.Y.Z.apk` da [última release](https://github.com/bernardoam05/LifUp/releases/latest) e instala-o (o Android vai pedir para permitires apps desta origem). Precisa de Android 8.0 ou mais recente.
+
+A partir daí a app **atualiza-se sozinha**: ao abrir, vê se há uma release mais recente no GitHub e instala-a. Na primeira vez o Android pede confirmação; do Android 12 em diante as seguintes passam sem perguntar. Também dá para procurar em Definições → Sobre.
+
+## Lançar uma versão
+
+```bash
+git tag v2.1.0 && git push origin v2.1.0
+```
+
+O workflow `Release` corre os testes, gera o APK assinado com a versão da tag (o `versionCode` vem dela: 2.1.0 → 20100) e publica a release. As apps instaladas apanham-na na próxima abertura.
+
+## Desenvolver
+
+Requisitos: JDK 17+ e Android SDK 36.
 
 ```bash
 ./gradlew testDebugUnitTest   # regras do jogo + migração (JVM, sem emulador)
@@ -11,41 +42,40 @@ Produtividade gamificada: missões diárias, penalizações reais, foco com bloq
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Requisitos: JDK 17+, Android SDK 36. `minSdk` 26.
+As builds de debug não se atualizam sozinhas, para não substituírem a versão que estás a testar.
 
-## Arquitetura
+### Arquitetura
 
 ```
 domain/   Kotlin puro, sem Android. Todas as regras do jogo.
           Engine.run(state, ctx) { ação } → novo estado (+ recompensas em fila)
-          Day.kt (fecho do dia, penalização, streak) · Quests.kt · Boss.kt (boss semanal + portais)
-          Shadows.kt (passivas, extração, evolução) · Shop.kt (loja, itens, sessões de foco)
-          Achievements.kt · Rules.kt (constantes e fórmulas)
-data/     GameStore — fonte única de verdade (StateFlow + JSON atómico em files/state.json)
-          Backup (export/import em ficheiro) · LegacyImport (lê a app RN antiga)
-system/   SessionService (sessão de foco + bloqueio de apps + som ambiente)
-          BlockerAccessibilityService · Alarms (um alarme exato: meia-noite, fim de sessão,
-          janela de penalização, portal, lembrete) · GpsService · FocusTileService · PortalWorker
-widget/   Widgets Glance "Hoje" e "Caçador"
+          Day.kt (fecho do dia, penalização, streak) · Draw.kt/Load.kt (sorteio e carga)
+          Quests.kt · Boss.kt (boss semanal + portais) · Shadows.kt (ecos) · Shop.kt
+          Pause.kt · Weekly.kt · Month.kt · Achievements.kt · Rules.kt (constantes e fórmulas)
+data/     GameStore: fonte única de verdade (StateFlow + JSON atómico em files/state.json)
+          Backup (export/import) · LegacyImport (lê a app React Native antiga)
+system/   SessionService (sessão de foco + bloqueio de apps) · Alarms (meia-noite, fim de
+          sessão, lembretes, portais) · AutoTracker (passos, GPS) · Updater (releases do GitHub)
+widget/   Widgets Glance
 ui/       Compose: Hoje · Foco · Herói · Loja + Definições, Forja, Onboarding, Recompensas
-assets/content/  Catálogos JSON: missões, bosses, 80 sombras, itens, conquistas
+assets/content/  Catálogos JSON: missões, bosses, ecos, itens, conquistas
 ```
 
 Princípios:
 
-- **Uma fonte de verdade.** UI, serviço de foco, widgets e tile leem o mesmo `GameStore`. Nada de sincronizar estados.
-- **O dia fecha sem a app aberta.** Um alarme à meia-noite acorda o processo, o motor fecha o dia e aplica a penalização. O relógio a andar para trás nunca reabre/fecha dias.
-- **Uma só fila de recompensas** (`Reward`), mostrada um item de cada vez (diálogos para momentos grandes, snackbar para avisos).
-- **Conteúdo em JSON.** Equilibrar o jogo = editar `assets/content/*.json`.
+- **Uma fonte de verdade.** UI, serviço de foco, widgets e tile leem o mesmo `GameStore`.
+- **O dia fecha sem a app aberta.** Um alarme à meia-noite acorda o processo e o motor fecha o dia. O relógio a andar para trás nunca reabre nem fecha dias.
+- **Uma só fila de recompensas**, mostrada um item de cada vez.
+- **Conteúdo em JSON.** Equilibrar o jogo é editar `assets/content/*.json`.
+
+### Línguas
+
+A interface está em pt, en, es, fr e de (`res/values-*/strings.xml`). O conteúdo (missões, ecos, bosses) está em pt e en; as outras línguas usam o inglês.
 
 ## Migração da app antiga
 
-Com o mesmo package (`com.lifup.app`) e a mesma chave, a app instala por cima da versão RN e, no primeiro arranque, lê o `AsyncStorage` antigo (`RKStorage`) e converte o progresso. Também há importação manual em Definições → Cópia de segurança (aceita ficheiros novos e o código base64 da app antiga).
+A versão React Native está na branch [`react-native`](https://github.com/bernardoam05/LifUp/tree/react-native). Como usa o mesmo package (`com.lifup.app`) e a mesma chave, esta app instala por cima e, no primeiro arranque, converte o progresso antigo. Também dá para importar à mão em Definições → Cópia de segurança.
 
-## Línguas
+## Créditos
 
-UI em pt, en, es, fr, de (`res/values-*/strings.xml`). Conteúdo (missões, sombras, bosses) em pt e en; as outras línguas usam o inglês.
-
-## Credits
-
-- UI sound effects: [Kenney](https://kenney.nl) — Interface Sounds and RPG Audio (CC0).
+- Efeitos sonoros: [Kenney](https://kenney.nl), Interface Sounds e RPG Audio (CC0).
