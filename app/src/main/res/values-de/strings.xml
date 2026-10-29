@@ -859,4 +859,26 @@
     <string name="update_failed">Update fehlgeschlagen. Versuch es später noch einmal.</string>
     <string name="whats_new_title">Neu in %1$s</string>
     <string name="whats_new_ok">Verstanden</string>
+    <string name="progression_xp_left">Noch %1$d XP bis Level %2$d</string>
+    <string name="progression_next">Nächste Belohnungen</string>
+    <string name="progression_items_note">Gegenstände werden beim Erreichen ausgelost, aus: %1$s.</string>
+    <string name="progression_ranks">Ränge</string>
+    <string name="progression_rank_level">Level %1$d</string>
+    <string name="progression_ranks_note">Jeder Rang schaltet seine Farbe als Design in den Einstellungen frei.</string>
+    <string name="progression_new_rank">Rang %1$s · %2$s</string>
+    <string name="progression_gold">+%1$d Gold</string>
+    <string name="progression_echo">Echo: %1$s</string>
+    <string name="progression_rank_echo">Ein Echo, das du noch nicht hast</string>
+    <plurals name="progression_days">
+        <item quantity="one">Etwa %1$d voller Tag bei deiner Last</item>
+        <item quantity="other">Etwa %1$d volle Tage bei deiner Last</item>
+    </plurals>
+    <plurals name="progression_days_short">
+        <item quantity="one">≈ %1$d Tag</item>
+        <item quantity="other">≈ %1$d Tage</item>
+    </plurals>
+    <plurals name="progression_items">
+        <item quantity="one">%1$d zufälliger Gegenstand</item>
+        <item quantity="other">%1$d zufällige Gegenstände</item>
+    </plurals>
 </resources>

@@ -150,3 +150,30 @@ fun Tx.loseGold(amount: Int): Int {
     s = s.copy(player = s.player.copy(gold = s.player.gold - amount))
     return amount
 }
+
+/** What reaching a level brings, for the progression sheet: gold and items every 5 levels, a rank, an echo. */
+data class LevelMilestone(
+    val level: Int,
+    val gold: Int = 0,
+    val items: Int = 0,
+    val rank: HunterRank? = null,
+    /** The echo reserved for this level, when there is one. */
+    val echoId: String? = null,
+    /** An echo not owned yet of the level's rank (every [Rules.LEVEL_ECHO_EVERY] levels from [Rules.LEVEL_ECHO_FROM]). */
+    val rankEcho: Boolean = false,
+)
+
+/** The next [count] levels after [from] that bring something, mirroring what a level-up hands out. */
+fun levelMilestones(content: Content, from: Int, count: Int): List<LevelMilestone> =
+    ((from + 1)..Rules.MAX_LEVEL).asSequence().mapNotNull { level ->
+        val reserved = content.shadows.firstOrNull { it.source.type == SourceType.LEVEL && it.source.level == level }
+        val m = LevelMilestone(
+            level,
+            gold = if (level % 5 == 0) Rules.levelGold(level) else 0,
+            items = if (level % 10 == 0) 2 else if (level % 5 == 0) 1 else 0,
+            rank = HunterRank.entries.firstOrNull { it.minLevel == level },
+            echoId = reserved?.id,
+            rankEcho = reserved == null && level >= Rules.LEVEL_ECHO_FROM && level % Rules.LEVEL_ECHO_EVERY == 0,
+        )
+        m.takeIf { it.gold > 0 || it.rank != null || it.echoId != null || it.rankEcho }
+    }.take(count).toList()

@@ -136,7 +136,9 @@ private fun Profile(s: GameState) {
     val p = s.player
     val rank = HunterRank.of(p.level)
     val c = Lif.colors
-    Panel {
+    var progression by remember { mutableStateOf(false) }
+    if (progression) ProgressionSheet(s) { progression = false }
+    Panel(onClick = { progression = true }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             RankBadge(rank.label, accentRank(rank), 56.dp)
             Spacer(Modifier.width(14.dp))

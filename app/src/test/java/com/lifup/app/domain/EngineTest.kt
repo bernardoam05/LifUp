@@ -572,6 +572,19 @@ class EngineTest {
         assertEquals(goldPay, s.rewards.filterIsInstance<Reward.DayReport>().last().penalty!!.goldLost)
     }
 
+    @Test fun `level milestones match what a level-up hands out`() {
+        val next = levelMilestones(content, 3, 3)
+        assertEquals(listOf(5, 10, 15), next.map { it.level })
+        assertEquals(HunterRank.D, next[0].rank)
+        assertEquals(Rules.levelGold(5), next[0].gold)
+        assertEquals(1, next[0].items)
+        assertEquals(2, next[1].items)
+        assertEquals(HunterRank.C, next[2].rank)
+        assertEquals("lvl_centurion", levelMilestones(content, 99, 1).single().echoId)
+        assertTrue(levelMilestones(content, 149, 1).single().rankEcho)
+        assertTrue(levelMilestones(content, Rules.MAX_LEVEL, 3).isEmpty())
+    }
+
     @Test fun `extra missions can be undone`() {
         var s = fresh()
         s = run(s, "2026-10-14T22:00") { s.dailyQuests.forEach { completeQuest(it.id) } }

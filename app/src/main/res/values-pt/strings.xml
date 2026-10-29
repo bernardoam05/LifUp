@@ -841,4 +841,26 @@
     <string name="update_failed">Não foi possível atualizar. Tenta mais tarde.</string>
     <string name="whats_new_title">Novidades da %1$s</string>
     <string name="whats_new_ok">Fixe</string>
+    <string name="progression_xp_left">Faltam %1$d XP para o nível %2$d</string>
+    <string name="progression_next">Próximas recompensas</string>
+    <string name="progression_items_note">Os itens são sorteados quando lá chegares, entre: %1$s.</string>
+    <string name="progression_ranks">Ranks</string>
+    <string name="progression_rank_level">Nível %1$d</string>
+    <string name="progression_ranks_note">Cada rank desbloqueia a sua cor como tema nas Definições.</string>
+    <string name="progression_new_rank">Rank %1$s · %2$s</string>
+    <string name="progression_gold">+%1$d ouro</string>
+    <string name="progression_echo">Eco: %1$s</string>
+    <string name="progression_rank_echo">Um eco que ainda não tens</string>
+    <plurals name="progression_days">
+        <item quantity="one">Cerca de %1$d dia completo com a tua carga</item>
+        <item quantity="other">Cerca de %1$d dias completos com a tua carga</item>
+    </plurals>
+    <plurals name="progression_days_short">
+        <item quantity="one">≈ %1$d dia</item>
+        <item quantity="other">≈ %1$d dias</item>
+    </plurals>
+    <plurals name="progression_items">
+        <item quantity="one">%1$d item aleatório</item>
+        <item quantity="other">%1$d itens aleatórios</item>
+    </plurals>
 </resources>

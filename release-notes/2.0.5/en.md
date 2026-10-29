@@ -1,0 +1,1 @@
+- Tap your rank or name at the top (or your profile in Hero) to see your progression: XP to the next level and roughly how many days it takes, the next rewards (gold, items, echoes, ranks) and the rank ladder.

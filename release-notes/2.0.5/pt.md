@@ -1,0 +1,1 @@
+- Toca no teu rank ou no nome, no topo (ou no perfil, no Herói), para veres a tua progressão: o XP que falta para o próximo nível e quantos dias deve demorar, as próximas recompensas (ouro, itens, ecos, ranks) e a escada de ranks.

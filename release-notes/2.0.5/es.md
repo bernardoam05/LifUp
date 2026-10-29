@@ -1,0 +1,1 @@
+- Toca tu rango o tu nombre arriba (o tu perfil en Héroe) para ver tu progresión: la XP que falta para el siguiente nivel y cuántos días tardarás más o menos, las próximas recompensas (oro, objetos, ecos, rangos) y la escalera de rangos.

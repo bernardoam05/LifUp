@@ -1,0 +1,1 @@
+- Tippe oben auf deinen Rang oder Namen (oder unter „Held“ auf dein Profil), um deinen Fortschritt zu sehen: die XP bis zum nächsten Level und wie viele Tage es etwa dauert, die nächsten Belohnungen (Gold, Gegenstände, Echos, Ränge) und die Rangleiter.

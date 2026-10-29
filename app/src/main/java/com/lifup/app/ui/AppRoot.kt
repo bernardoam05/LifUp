@@ -274,19 +274,24 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
     val now = rememberNow(30_000)
     Column(Modifier.background(Lif.colors.panel).statusBarsPadding()) {
         Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            RankBadge(rank.label, accentRank(rank))
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.Bottom) {
-                    // The name gives way first; the level never wraps.
-                    Text(p.name.ifBlank { stringResource(R.string.default_hunter) }.uppercase(), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.level_short, p.level), style = MaterialTheme.typography.labelMedium, color = Lif.colors.accent, maxLines = 1, softWrap = false)
+            // Rank, name and XP open the progression: what the next levels bring.
+            var progression by remember { mutableStateOf(false) }
+            Row(Modifier.weight(1f).clip(RoundedCornerShape(8.dp)).clickable { progression = true }, verticalAlignment = Alignment.CenterVertically) {
+                RankBadge(rank.label, accentRank(rank))
+                Spacer(Modifier.width(12.dp))
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        // The name gives way first; the level never wraps.
+                        Text(p.name.ifBlank { stringResource(R.string.default_hunter) }.uppercase(), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.level_short, p.level), style = MaterialTheme.typography.labelMedium, color = Lif.colors.accent, maxLines = 1, softWrap = false)
+                    }
+                    Spacer(Modifier.size(4.dp))
+                    Bar(p.xp / Rules.xpForLevel(p.level).toFloat(), height = 5.dp)
+                    Text("${p.xp} / ${Rules.xpForLevel(p.level)} XP", style = MaterialTheme.typography.labelSmall, color = if (p.xp < 0) Lif.colors.red else Lif.colors.dim)
                 }
-                Spacer(Modifier.size(4.dp))
-                Bar(p.xp / Rules.xpForLevel(p.level).toFloat(), height = 5.dp)
-                Text("${p.xp} / ${Rules.xpForLevel(p.level)} XP", style = MaterialTheme.typography.labelSmall, color = if (p.xp < 0) Lif.colors.red else Lif.colors.dim)
             }
+            if (progression) com.lifup.app.ui.hero.ProgressionSheet(s) { progression = false }
             Spacer(Modifier.width(10.dp))
             HudChip(Icons.Rounded.Paid, fmtCompact(p.gold.toLong()), Lif.colors.gold, text = if (p.gold < 0) Lif.colors.red else Lif.colors.text)
             Spacer(Modifier.width(8.dp))

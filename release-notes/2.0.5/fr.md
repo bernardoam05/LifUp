@@ -1,0 +1,1 @@
+- Touche ton rang ou ton nom en haut (ou ton profil dans Héros) pour voir ta progression : l'XP qu'il reste avant le prochain niveau et combien de jours environ, les prochaines récompenses (or, objets, échos, rangs) et l'échelle des rangs.

@@ -841,4 +841,26 @@
     <string name="update_failed">Mise à jour impossible. Réessaie plus tard.</string>
     <string name="whats_new_title">Nouveautés de la %1$s</string>
     <string name="whats_new_ok">Compris</string>
+    <string name="progression_xp_left">Encore %1$d XP avant le niveau %2$d</string>
+    <string name="progression_next">Prochaines récompenses</string>
+    <string name="progression_items_note">Les objets sont tirés au sort à l\'arrivée, parmi : %1$s.</string>
+    <string name="progression_ranks">Rangs</string>
+    <string name="progression_rank_level">Niveau %1$d</string>
+    <string name="progression_ranks_note">Chaque rang débloque sa couleur comme thème dans les Paramètres.</string>
+    <string name="progression_new_rank">Rang %1$s · %2$s</string>
+    <string name="progression_gold">+%1$d or</string>
+    <string name="progression_echo">Écho : %1$s</string>
+    <string name="progression_rank_echo">Un écho que tu n\'as pas encore</string>
+    <plurals name="progression_days">
+        <item quantity="one">Environ %1$d journée complète à ta charge</item>
+        <item quantity="other">Environ %1$d journées complètes à ta charge</item>
+    </plurals>
+    <plurals name="progression_days_short">
+        <item quantity="one">≈ %1$d jour</item>
+        <item quantity="other">≈ %1$d jours</item>
+    </plurals>
+    <plurals name="progression_items">
+        <item quantity="one">%1$d objet aléatoire</item>
+        <item quantity="other">%1$d objets aléatoires</item>
+    </plurals>
 </resources>

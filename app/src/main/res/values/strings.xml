@@ -860,4 +860,26 @@
     <string name="update_failed">Couldn\'t update. Try again later.</string>
     <string name="whats_new_title">What\'s new in %1$s</string>
     <string name="whats_new_ok">Got it</string>
+    <string name="progression_xp_left">%1$d XP to level %2$d</string>
+    <string name="progression_next">Next rewards</string>
+    <string name="progression_items_note">Items are drawn when you get there, from: %1$s.</string>
+    <string name="progression_ranks">Ranks</string>
+    <string name="progression_rank_level">Level %1$d</string>
+    <string name="progression_ranks_note">Each rank unlocks its colour as a theme in Settings.</string>
+    <string name="progression_new_rank">Rank %1$s · %2$s</string>
+    <string name="progression_gold">+%1$d gold</string>
+    <string name="progression_echo">Echo: %1$s</string>
+    <string name="progression_rank_echo">An echo you don\'t own yet</string>
+    <plurals name="progression_days">
+        <item quantity="one">About %1$d full day at your load</item>
+        <item quantity="other">About %1$d full days at your load</item>
+    </plurals>
+    <plurals name="progression_days_short">
+        <item quantity="one">≈ %1$d day</item>
+        <item quantity="other">≈ %1$d days</item>
+    </plurals>
+    <plurals name="progression_items">
+        <item quantity="one">%1$d random item</item>
+        <item quantity="other">%1$d random items</item>
+    </plurals>
 </resources>
