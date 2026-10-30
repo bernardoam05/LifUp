@@ -1,0 +1,1 @@
+- Extra missions no longer wait for one that only opens later, like Lights Out: once everything you can do now is done, you can ask for them. That mission still counts when the day closes.

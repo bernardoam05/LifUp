@@ -1,0 +1,1 @@
+- Las misiones extra ya no esperan a una que solo se abre más tarde, como A la Cama a su Hora: en cuanto cumplas todo lo que se puede hacer en ese momento, ya puedes pedirlas. Esa misión sigue contando al cerrar el día.

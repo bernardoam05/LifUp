@@ -430,18 +430,30 @@ class EngineTest {
 
     @Test fun `extra missions unlock after the daily set`() {
         var s = fresh()
-        assertFalse(s.canAddExtra())
+        assertFalse(s.canAddExtra(10))
         s = run(s, "2026-10-14T22:00") { s.dailyQuests.forEach { completeQuest(it.id) } ; addExtraQuest() }
         assertEquals(1, s.extraQuests.size)
+    }
+
+    @Test fun `a bedtime mission that hasn't opened yet doesn't hold extras back`() {
+        val bed = buildQuest(content.questDefById.getValue("pool_sleep"), 1, QuestOrigin.DAILY, "bed")
+        var s = fresh().let { it.copy(quests = it.quests + bed) }
+        s = run(s, "2026-10-14T15:00") { s.dailyQuests.filter { it.id != "bed" }.forEach { completeQuest(it.id) } }
+        assertTrue(s.canAddExtra(15))
+        s = run(s, "2026-10-14T15:01") { addExtraQuest() }
+        assertEquals(1, s.extraQuests.size)
+        // Once it opens it's a mission like any other: undone, it holds the next extra back.
+        s = run(s, "2026-10-14T21:30") { completeQuest(s.extraQuests.single().id) }
+        assertFalse(s.canAddExtra(21))
     }
 
     @Test fun `extras come one at a time and skip missions too late for the hour`() {
         var s = run(fresh(), "2026-10-14T23:00") { s.dailyQuests.forEach { completeQuest(it.id) } ; addExtraQuest() ; addExtraQuest() }
         assertEquals(1, s.extraQuests.size)
-        assertFalse(s.canAddExtra())
+        assertFalse(s.canAddExtra(23))
         assertTrue(content.questDefById.getValue(s.extraQuests.single().defId).offeredAt(23))
         s = run(s, "2026-10-14T23:01") { completeQuest(s.extraQuests.single().id) }
-        assertTrue(s.canAddExtra())
+        assertTrue(s.canAddExtra(23))
         assertFalse(content.questDefById.getValue("pool_bed").offeredAt(23))
         assertTrue(content.questDefById.getValue("pool_bed").offeredAt(8))
     }

@@ -1,0 +1,1 @@
+- As missões extra já não ficam à espera de uma que só abre mais tarde, como Deitar a Horas: quando cumprires tudo o que dá para fazer naquele momento, já as podes pedir. Essa missão continua a contar no fecho do dia.

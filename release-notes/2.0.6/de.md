@@ -1,0 +1,1 @@
+- Extra-Missionen warten nicht mehr auf eine, die erst später öffnet, wie Zapfenstreich: Sobald alles erledigt ist, was gerade möglich ist, kannst du sie anfordern. Diese Mission zählt beim Tagesabschluss trotzdem.

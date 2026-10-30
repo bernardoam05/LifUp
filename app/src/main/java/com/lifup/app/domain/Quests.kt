@@ -287,13 +287,18 @@ fun Tx.swapQuest(id: String): Boolean {
 private fun Tx.drawOne(defs: List<QuestDef>): QuestDef? =
     drawBalanced(defs, 1, s.drawFocus(), ctx.rng, taken = s.quests.mapNotNull { s.defOf(it.defId, content) }, balanced = !s.settings.randomDraw).firstOrNull()
 
-/** Extras come one at a time: the next one only once the last is done, so they can't be cherry-picked. */
-fun GameState.canAddExtra() = allDailyDone() && daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY && !extraOpen()
+/**
+ * Extras come one at a time: the next one only once the last is done, so they can't be cherry-picked. A mission
+ * that can't be done yet at [hour] (bedtime) doesn't hold them back; it still counts when the day closes.
+ */
+fun GameState.canAddExtra(hour: Int) =
+    dailyQuests.isNotEmpty() && dailyQuests.all { it.isSuccessful() || (it.status == QuestStatus.OPEN && !it.availableAt(hour)) } &&
+        daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY && !extraOpen()
 
 fun GameState.extraOpen() = extraQuests.any { it.status == QuestStatus.OPEN }
 
 fun Tx.addExtraQuest(): Boolean {
-    if (!s.canAddExtra()) return false
+    if (!s.canAddExtra(ctx.hour)) return false
     val used = s.quests.map { it.defId }.toSet()
     val def = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT && it.offeredAt(ctx.hour) })
         ?: return false

@@ -1,0 +1,1 @@
+- Les missions extra n'attendent plus une mission qui n'ouvre que plus tard, comme Couvre-Feu : dès que tout ce qui peut être fait à ce moment est fait, tu peux les demander. Cette mission compte toujours à la fin de la journée.
