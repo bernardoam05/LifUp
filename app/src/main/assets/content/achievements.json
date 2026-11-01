@@ -170,18 +170,18 @@
    "de": "Kein Ausweg"
   },
   "description": {
-   "pt": "Termina {target} sessões de foco rígidas até ao fim.",
-   "en": "Finish {target} strict focus sessions to the end.",
-   "es": "Termina {target} sesiones de concentración estrictas hasta el final.",
-   "fr": "Mène {target} sessions de focus strictes jusqu'au bout.",
-   "de": "Bring {target} strenge Fokus-Sessions bis zum Ende durch."
+   "pt": "Termina {target} sessões de foco com «Sem desistências» ligado, sem parar antes do fim.",
+   "en": "Finish {target} focus sessions with “No quitting” on, without stopping early.",
+   "es": "Termina {target} sesiones de concentración con «Sin rendirse» activado, sin parar antes del final.",
+   "fr": "Termine {target} sessions de focus avec « Sans abandon » activé, sans t'arrêter avant la fin.",
+   "de": "Schließe {target} Fokus-Sessions mit „Kein Aufgeben“ ab, ohne vorzeitig zu stoppen."
   },
   "descriptionOne": {
-   "pt": "Termina uma sessão de foco rígida até ao fim.",
-   "en": "Finish a strict focus session to the end.",
-   "es": "Termina una sesión de concentración estricta hasta el final.",
-   "fr": "Mène une session de focus stricte jusqu'au bout.",
-   "de": "Bring eine strenge Fokus-Session bis zum Ende durch."
+   "pt": "Termina uma sessão de foco com «Sem desistências» ligado, sem parar antes do fim.",
+   "en": "Finish a focus session with “No quitting” on, without stopping early.",
+   "es": "Termina una sesión de concentración con «Sin rendirse» activado, sin parar antes del final.",
+   "fr": "Termine une session de focus avec « Sans abandon » activé, sans t'arrêter avant la fin.",
+   "de": "Schließe eine Fokus-Session mit „Kein Aufgeben“ ab, ohne vorzeitig zu stoppen."
   }
  },
  {

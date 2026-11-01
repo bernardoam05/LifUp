@@ -480,6 +480,25 @@ class EngineTest {
         }
     }
 
+    @Test fun `a swapped-in screen limit starts from today's reading and needs room and a calm pace`() {
+        // Only the screen limit is left to swap to.
+        val others = content.quests.filter { it.kind == DefKind.POOL && it.id != "pool_screen_limit" }.map { it.id }.toSet()
+        val base = fresh().copy(screenMeasurable = true, inventory = mapOf("pergaminho_troca" to 5))
+        val slot = base.quests.indexOfFirst { content.questDefById[it.defId]?.kind == DefKind.POOL }
+        fun swapAt(time: String, minutes: Double): GameState {
+            val s = run(base.copy(disabledDefIds = others - base.quests[slot].defId), time) { applyAuto(AutoReading("2026-10-14", screenMinutes = minutes)) }
+            return run(s, time) { swapQuest(s.quests[slot].id) }
+        }
+        // 1 h by 8 pm out of 4 h: plenty of room, and it arrives with that hour on it.
+        val calm = swapAt("2026-10-14T20:00", 60.0).quests[slot]
+        assertEquals("pool_screen_limit", calm.defId)
+        assertEquals(1.0, calm.progress, 0.0)
+        // Half the limit gone: not offered, even late.
+        assertNotEquals("pool_screen_limit", swapAt("2026-10-14T22:00", 130.0).quests[slot].defId)
+        // 1.5 h by 10 am is a pace that ends far over the limit.
+        assertNotEquals("pool_screen_limit", swapAt("2026-10-14T10:00", 90.0).quests[slot].defId)
+    }
+
     @Test fun `yesterday's missions are remembered for today's draw and swaps`() {
         var s = fresh()
         val yesterday = s.quests.map { it.defId }.toSet()

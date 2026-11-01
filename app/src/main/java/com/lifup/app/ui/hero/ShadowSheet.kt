@@ -127,6 +127,8 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
                 val canUpgrade = s.canUpgrade(content, id)
                 Text(
                     if (cost.levelCapped) stringResource(R.string.upgrade_capped)
+                    // Every level of a once-only echo is paid in gold, so its copy count means nothing to the player.
+                    else if (cost.missing > 0 && Rules.onceOnly(def)) stringResource(R.string.upgrade_cost_once, cost.totalGold)
                     else if (cost.missing > 0) stringResource(R.string.upgrade_cost_missing, cost.totalGold, owned.copies, cost.copies)
                     else stringResource(R.string.upgrade_cost, cost.gold, owned.copies, cost.copies),
                     style = MaterialTheme.typography.labelMedium, color = if (canUpgrade) c.text else c.dim,

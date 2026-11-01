@@ -205,6 +205,7 @@
     <string name="upgrade_capped">Max level: an echo can\'t pass your level.</string>
     <string name="upgrade_cost">Evolve: %1$d gold · copies %2$d/%3$d</string>
     <string name="upgrade_cost_missing">Evolve: %1$d gold · copies %2$d/%3$d (the missing ones are paid in gold)</string>
+    <string name="upgrade_cost_once">Evolve: %1$d gold (a one-off echo: gold pays every level, no copies needed)</string>
     <string name="upgrade_ready">Can evolve</string>
     <string name="equip">Equip</string>
     <string name="unequip">Unequip</string>
@@ -554,7 +555,7 @@
     <string name="guide_portal_title">Portals</string>
     <string name="guide_portal">They show up on their own::Between 8 AM and 10 PM, up to 2 a day.\nDouble rewards::A bigger mission with twice the XP and gold.\nNew ally::Clearing it may bring you an echo.\nOn the clock::There\'s always enough time, but the portal closes when it runs out.</string>
     <string name="guide_shadows_title">Echoes</string>
-    <string name="guide_shadows">Where to find them::Perfect days, bosses, portals, achievements, streak milestones and the shop.\nSquad::Up to 3 in the field, each with a passive: more XP, more gold, more damage, protection.\nGrowth::Duplicate copies and gold level an echo up, up to your own level. Echoes found again and again take 1 to 3 copies by rank; the ones that come once (achievements, bosses, levels, streak) take 1.\nCopies short::Each missing copy can be paid in gold, half the shop price of its rank.\nArrow on the tile::That echo can evolve right now, with the copies and gold you have.</string>
+    <string name="guide_shadows">Where to find them::Perfect days, bosses, portals, achievements, streak milestones and the shop.\nSquad::Up to 3 in the field, each with a passive: more XP, more gold, more damage, protection.\nGrowth::Duplicate copies and gold level an echo up, up to your own level. Echoes found again and again take 1 to 3 copies by rank; the ones that come once (achievements, bosses, levels, streak) level up with gold alone, every level.\nCopies short::Each missing copy can be paid in gold, half the shop price of its rank.\nArrow on the tile::That echo can evolve right now, with the copies and gold you have.</string>
     <string name="guide_focus_title">Focus and Pomodoro</string>
     <string name="guide_focus">Link a mission::Minutes count for it. Any session also pays XP per minute and 1 gold every 10 min, up to 2 h a day.\nThe right mode::Each mission is timer or Pomodoro, and only that mode counts.\nReal breaks::In Pomodoro only focus minutes count, and apps are free on breaks.\nNo limit::Counts until you stop.\nNo quitting::Stopping early loses the minutes; finishing counts +25% and bonus gold.</string>
     <string name="guide_shop_title">Shop</string>

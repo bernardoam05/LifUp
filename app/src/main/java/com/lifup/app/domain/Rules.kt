@@ -198,6 +198,10 @@ object Rules {
     /** A measured limit warns once a day when this share of it, or this many minutes, is left. */
     const val LIMIT_WARN_SHARE = 0.25
     const val LIMIT_WARN_MIN = 20
+    /** A measured limit handed out mid-day needs at least this share of it still free. */
+    const val SWAP_LIMIT_FREE_SHARE = 0.5
+    /** Where the day's screen pace is counted from when judging a limit mid-day. */
+    const val WAKE_HOUR = 7
 
     /** Sessions without a set end still stop by themselves after this long. */
     const val OPEN_SESSION_MAX_MIN = 480
@@ -311,8 +315,10 @@ object Rules {
      * Copies a level takes. Echoes found again and again (perfect days, portals, essences, the shop) take more by
      * rank; the ones that come once or rarely (achievement, level, streak, boss) take one.
      */
-    fun upgradeCopies(def: ShadowDef) =
-        if (def.source.type == SourceType.EXTRACTION || def.source.type == SourceType.SHOP) intArrayOf(3, 3, 2, 2, 1)[def.rank.ordinal] else 1
+    fun upgradeCopies(def: ShadowDef) = if (onceOnly(def)) 1 else intArrayOf(3, 3, 2, 2, 1)[def.rank.ordinal]
+
+    /** Echoes no draw hands out: their copies, when any, come from the same boss or milestone coming round again. */
+    fun onceOnly(def: ShadowDef) = def.source.type != SourceType.EXTRACTION && def.source.type != SourceType.SHOP
 
     /** A copy the player doesn't have can be paid in gold instead: half the shop's price for that rank. */
     fun copyGold(rank: ShadowRank) = shopShadowPrice(rank) / 2

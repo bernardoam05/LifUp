@@ -279,33 +279,46 @@ fun Tx.swapQuest(id: String): Boolean {
     else { addItem("pergaminho_troca", -1); count(StatKey.ITEMS_USED) }
     s = s.copy(quests = s.quests.map { if (it.id == id) buildQuest(replacement, s.player.level, QuestOrigin.DAILY, step = s.stepOf(replacement.id), day = ctx.today) else it })
     s = s.copy(timers = s.timers - id, daily = s.daily.copy(swappedOut = s.daily.swappedOut + q.defId))
+    seedAuto()
     return true
 }
 
 /**
  * Pool missions that can still be handed out today, by a swap or as an extra: not already in the list, not
- * too late to start, and not a measured limit today's use has already spent (it would arrive failed). The ones
- * swapped away today only come back when nothing else is left.
+ * too late to start, and not a measured one today's readings have already settled. The ones swapped away
+ * today only come back when nothing else is left.
  */
 private fun Tx.midDayDefs(): List<QuestDef> {
     val used = s.quests.map { it.defId }.toSet()
-    val open = s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.offeredAt(ctx.hour) && !limitSpent(it) }
+    val open = s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.offeredAt(ctx.hour) && !settledToday(it) }
     return open.filter { it.id !in s.daily.swappedOut }.ifEmpty { open }
 }
 
 /**
- * A measured limit with less room left than the warning margin, or with no reading yet today to tell: handed out
- * mid-day it would break on arrival, or soon after.
+ * A measured mission today's readings already decide: steps or distance already reached (it would pay for
+ * nothing), or a screen limit that would arrive broken or too close to it. A limit needs half of it still
+ * free and today's pace, from waking up to now, carried on to midnight, to stay under it; with no reading
+ * today there's no telling, so it isn't handed out.
  */
-private fun Tx.limitSpent(def: QuestDef): Boolean {
-    val minutes = when (def.auto) {
+private fun Tx.settledToday(def: QuestDef): Boolean {
+    val target = buildQuest(def, s.player.level, QuestOrigin.DAILY, step = s.stepOf(def.id)).target
+    if (def.auto == AutoKind.STEPS) return s.daily.steps >= target
+    if (def.auto == AutoKind.WALK_DISTANCE) return Stride.walkKm(s.daily.steps.toLong(), s.settings.heightCm) >= target
+    val hours = when (def.auto) {
         AutoKind.SCREEN_TIME -> s.daily.screenMinutes
         AutoKind.DISTRACTION_TIME -> s.daily.distractionMinutes
         else -> return false
-    } ?: return true
-    val target = buildQuest(def, s.player.level, QuestOrigin.DAILY, step = s.stepOf(def.id)).target
-    return target - minutes / 60.0 <= maxOf(target * Rules.LIMIT_WARN_SHARE, Rules.LIMIT_WARN_MIN / 60.0)
+    }?.div(60.0) ?: return true
+    val now = ctx.hour + ctx.dateTime.minute / 60.0
+    val awake = (now - Rules.WAKE_HOUR).coerceAtLeast(1.0)
+    val projected = hours + hours / awake * (24 - now)
+    return hours > target * Rules.SWAP_LIMIT_FREE_SHARE || projected > target
 }
+
+/** A mission handed out mid-day starts from today's readings, not from zero until the next one comes in. */
+private fun Tx.seedAuto() = applyAuto(
+    AutoReading(s.day, steps = s.daily.steps.takeIf { it > 0 }, screenMinutes = s.daily.screenMinutes, distractionMinutes = s.daily.distractionMinutes),
+)
 
 /** One more mission for today, balanced against the families already in today's list; yesterday's weigh less. */
 private fun Tx.drawOne(defs: List<QuestDef>): QuestDef? = drawBalanced(
@@ -331,6 +344,7 @@ fun Tx.addExtraQuest(): Boolean {
         quests = s.quests + buildQuest(def, s.player.level, QuestOrigin.EXTRA, "extra_${n}_${def.id}", s.stepOf(def.id), ctx.today),
         daily = s.daily.copy(extrasAdded = n),
     )
+    seedAuto()
     return true
 }
 

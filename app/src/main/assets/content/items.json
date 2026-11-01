@@ -151,11 +151,11 @@
    "de": "Bannbrecher"
   },
   "description": {
-   "pt": "Termina uma sessão de foco rígida mais cedo sem perder os minutos.",
-   "en": "Ends a strict focus session early without losing its minutes.",
-   "es": "Termina antes una sesión de concentración estricta sin perder sus minutos.",
-   "fr": "Met fin à une session de focus stricte plus tôt sans perdre ses minutes.",
-   "de": "Beendet eine strenge Fokus-Session früher, ohne ihre Minuten zu verlieren."
+   "pt": "Para mais cedo uma sessão de foco com «Sem desistências» ligado, sem perder os minutos.",
+   "en": "Stops a focus session with “No quitting” on early, without losing its minutes.",
+   "es": "Para antes una sesión de concentración con «Sin rendirse» activado, sin perder sus minutos.",
+   "fr": "Arrête plus tôt une session de focus avec « Sans abandon » activé, sans perdre ses minutes.",
+   "de": "Beendet eine Fokus-Session mit „Kein Aufgeben“ vorzeitig, ohne ihre Minuten zu verlieren."
   }
  },
  {
