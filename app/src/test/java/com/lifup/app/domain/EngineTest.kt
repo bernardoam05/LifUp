@@ -439,6 +439,56 @@ class EngineTest {
         assertEquals(900 + 50, s.player.gold) // + level-5 achievement
     }
 
+    @Test fun `missing copies are paid in gold and once-only echoes need one`() {
+        val pawn = content.shadowById.getValue("auto_pawn")
+        val once = content.shadows.first { it.source.type == SourceType.ACHIEVEMENT && it.rank == ShadowRank.KNIGHT }
+        assertEquals(1, Rules.upgradeCopies(once))
+        var s = fresh().copy(shadows = listOf(OwnedShadow(pawn.id, 1, 1), OwnedShadow(once.id, 1, 0)), player = Player(level = 5, gold = 0))
+        val cost = s.upgradeCost(content, pawn.id)!!
+        assertEquals(2, cost.missing)
+        assertEquals(cost.gold + 2 * Rules.copyGold(pawn.rank), cost.totalGold)
+        assertFalse(s.canUpgrade(content, pawn.id))
+        s = s.copy(player = s.player.copy(gold = cost.totalGold))
+        assertTrue(s.canUpgrade(content, pawn.id))
+        s = run(s, "2026-10-14T10:00") { upgradeShadow(pawn.id) }
+        assertEquals(2, s.owned(pawn.id)!!.level)
+        assertEquals(0, s.owned(pawn.id)!!.copies)
+        assertEquals(cost.totalGold.toLong(), s.count(StatKey.GOLD_SPENT))
+    }
+
+    @Test fun `a swap never hands back what was swapped away today`() {
+        repeat(40) { seed ->
+            var s = fresh().copy(inventory = mapOf("pergaminho_troca" to 5))
+            // A swap gives the slot the new mission's id, so follow it by position.
+            val slot = s.quests.indexOfFirst { content.questDefById[it.defId]?.kind == DefKind.POOL }
+            val first = s.quests[slot]
+            s = run(s, "2026-10-14T10:00", seed) { swapQuest(first.id) }
+            val second = s.quests[slot]
+            s = run(s, "2026-10-14T10:05", seed + 1) { swapQuest(second.id) }
+            assertNotEquals(first.defId, s.quests[slot].defId)
+            assertEquals(listOf(first.defId, second.defId), s.daily.swappedOut)
+        }
+    }
+
+    @Test fun `a swap doesn't bring a measured limit that is already spent`() {
+        var s = fresh().copy(screenMeasurable = true, settings = Settings(blockedApps = listOf("x")), inventory = mapOf("pergaminho_troca" to 50))
+        s = run(s, "2026-10-14T20:00") { applyAuto(AutoReading("2026-10-14", screenMinutes = 600.0, distractionMinutes = 300.0)) }
+        val slot = s.quests.indexOfFirst { content.questDefById[it.defId]?.kind == DefKind.POOL }
+        repeat(40) { i ->
+            s = run(s, "2026-10-14T20:01", i) { swapQuest(s.quests[slot].id) }
+            assertNull(s.quests[slot].auto?.takeIf { it == AutoKind.SCREEN_TIME || it == AutoKind.DISTRACTION_TIME })
+        }
+    }
+
+    @Test fun `yesterday's missions are remembered for today's draw and swaps`() {
+        var s = fresh()
+        val yesterday = s.quests.map { it.defId }.toSet()
+        s = run(s, "2026-10-15T09:00")
+        assertEquals(yesterday, s.recentDefIds)
+        s = run(s, "2026-10-18T09:00")
+        assertTrue(s.recentDefIds.isEmpty())
+    }
+
     @Test fun `squad passives boost xp`() {
         var s = fresh().copy(shadows = listOf(OwnedShadow("bone_collector", 1)), squad = listOf("bone_collector"))
         val p = s.passives(content, at("2026-10-14T10:00"))

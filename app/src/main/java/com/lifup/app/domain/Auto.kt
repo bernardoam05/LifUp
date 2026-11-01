@@ -21,6 +21,9 @@ fun Tx.setScreenMeasurable(on: Boolean) {
 fun Tx.applyAuto(r: AutoReading) {
     if (r.day != s.day) return
     r.steps?.takeIf { it > s.daily.steps }?.let { s = s.copy(daily = s.daily.copy(steps = it)) }
+    if (r.screenMinutes != null || r.distractionMinutes != null) s = s.copy(
+        daily = s.daily.copy(screenMinutes = r.screenMinutes ?: s.daily.screenMinutes, distractionMinutes = r.distractionMinutes ?: s.daily.distractionMinutes),
+    )
     s.allQuests.filter { it.auto != null && !it.autoOff && it.status == QuestStatus.OPEN }.forEach { q ->
         val value = when (q.auto) {
             AutoKind.STEPS -> r.steps?.toDouble()

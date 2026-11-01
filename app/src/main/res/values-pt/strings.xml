@@ -191,6 +191,8 @@
     <string name="source_boss">Recompensa por venceres %1$s.</string>
     <string name="upgrade_capped">Nível máximo: um eco não passa o teu nível.</string>
     <string name="upgrade_cost">Evoluir: %1$d ouro · cópias %2$d/%3$d</string>
+    <string name="upgrade_cost_missing">Evoluir: %1$d ouro · cópias %2$d/%3$d (as que faltam pagam-se a ouro)</string>
+    <string name="upgrade_ready">Pode evoluir</string>
     <string name="equip">Equipar</string>
     <string name="unequip">Retirar</string>
     <string name="upgrade">Evoluir</string>
@@ -533,7 +535,7 @@
     <string name="guide_portal_title">Portais</string>
     <string name="guide_portal">Aparecem sozinhos::Entre as 8h e as 22h, até 2 por dia.\nRecompensa a dobrar::Uma missão maior, com o dobro de XP e ouro.\nNovo aliado::Concluí-lo pode trazer-te um eco.\nTempo contado::Dá sempre para a fazer, mas o portal fecha quando o tempo acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
-    <string name="guide_shadows">Onde os encontras::Dias perfeitos, bosses, portais, conquistas, marcos de sequência e a loja.\nEsquadrão::Até 3 em campo, cada um com uma passiva: mais XP, mais ouro, mais dano, proteção.\nEvolução::Cópias repetidas e ouro sobem o nível do eco, até ao teu.</string>
+    <string name="guide_shadows">Onde os encontras::Dias perfeitos, bosses, portais, conquistas, marcos de sequência e a loja.\nEsquadrão::Até 3 em campo, cada um com uma passiva: mais XP, mais ouro, mais dano, proteção.\nEvolução::Cópias repetidas e ouro sobem o nível do eco, até ao teu. Os que se encontram muitas vezes pedem 1 a 3 cópias conforme a raridade; os que só vêm uma vez (conquistas, bosses, níveis, sequência) pedem 1.\nCópias em falta::Cada cópia que falte paga-se a ouro, metade do preço da loja para essa raridade.\nSeta no eco::Esse eco pode evoluir já, com as cópias e o ouro que tens.</string>
     <string name="guide_focus_title">Foco e Pomodoro</string>
     <string name="guide_focus">Liga a uma missão::Os minutos contam para ela. Qualquer sessão dá também XP por minuto e 1 ouro a cada 10 min, até 2 h por dia.\nO modo certo::Cada missão é de temporizador ou de Pomodoro, e só esse modo conta.\nPausas a sério::No Pomodoro só os minutos de foco contam, e nas pausas as apps ficam livres.\nSem limite::Conta até parares.\nSem desistências::Parar a meio perde os minutos; chegar ao fim vale +25% e ouro extra.</string>
     <string name="guide_shop_title">Loja</string>

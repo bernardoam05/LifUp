@@ -231,7 +231,7 @@ object Rules {
     /** Each mission drawn from a family multiplies that family's weight by this for the rest of the day. */
     const val REPEAT_DECAY = 0.2
     /** Within its family, a mission drawn yesterday weighs this much against the others. */
-    const val RECENT_WEIGHT = 0.3
+    const val RECENT_WEIGHT = 0.15
     const val MAX_FOCUS_ATTRS = 2
 
     // ── Shadows ───────────────────────────────────────────────────────────────
@@ -307,7 +307,15 @@ object Rules {
         return (base * (1 + (level - 1) * 0.3)).roundToInt()
     }
 
-    fun upgradeCopies(rank: ShadowRank) = intArrayOf(3, 3, 2, 2, 1)[rank.ordinal]
+    /**
+     * Copies a level takes. Echoes found again and again (perfect days, portals, essences, the shop) take more by
+     * rank; the ones that come once or rarely (achievement, level, streak, boss) take one.
+     */
+    fun upgradeCopies(def: ShadowDef) =
+        if (def.source.type == SourceType.EXTRACTION || def.source.type == SourceType.SHOP) intArrayOf(3, 3, 2, 2, 1)[def.rank.ordinal] else 1
+
+    /** A copy the player doesn't have can be paid in gold instead: half the shop's price for that rank. */
+    fun copyGold(rank: ShadowRank) = shopShadowPrice(rank) / 2
 
     /** Echoes for hire in the shop each day: one per tier (see dailyShadowOffers). */
     const val SHOP_ECHO_OFFERS = 3

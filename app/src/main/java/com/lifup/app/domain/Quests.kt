@@ -92,7 +92,7 @@ fun generateDailyQuests(state: GameState, content: Content, date: LocalDate): Li
         ((if (state.settings.dailyPoolOverride != null) state.drawnCount() else minOf(state.drawnCount(), Rules.MAX_DAY_MISSIONS - core.size)) - due).coerceAtLeast(0),
         state.drawFocus(),
         Random(seed.toLong() xor state.seed),
-        recent = if (state.day == date.minusDays(1).toString()) state.dailyQuests.map { it.defId }.toSet() else emptySet(),
+        recent = state.recentDefIds,
         // The fixed missions are part of the day too: a fixed strength mission makes another one less likely.
         taken = core,
         balanced = !state.settings.randomDraw,
@@ -274,18 +274,44 @@ fun Tx.swapQuest(id: String): Boolean {
     if (q.status != QuestStatus.OPEN || def.kind != DefKind.POOL) return false
     val free = s.daily.swapsUsed < s.freeSwaps(content, ctx.now)
     if (!free && s.items("pergaminho_troca") == 0) return false
-    val used = s.quests.map { it.defId }.toSet()
-    val replacement = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.offeredAt(ctx.hour) }) ?: return false
+    val replacement = drawOne(midDayDefs()) ?: return false
     if (free) s = s.copy(daily = s.daily.copy(swapsUsed = s.daily.swapsUsed + 1))
     else { addItem("pergaminho_troca", -1); count(StatKey.ITEMS_USED) }
     s = s.copy(quests = s.quests.map { if (it.id == id) buildQuest(replacement, s.player.level, QuestOrigin.DAILY, step = s.stepOf(replacement.id), day = ctx.today) else it })
-    s = s.copy(timers = s.timers - id)
+    s = s.copy(timers = s.timers - id, daily = s.daily.copy(swappedOut = s.daily.swappedOut + q.defId))
     return true
 }
 
-/** One more mission for today, balanced against the families already in today's list. */
-private fun Tx.drawOne(defs: List<QuestDef>): QuestDef? =
-    drawBalanced(defs, 1, s.drawFocus(), ctx.rng, taken = s.quests.mapNotNull { s.defOf(it.defId, content) }, balanced = !s.settings.randomDraw).firstOrNull()
+/**
+ * Pool missions that can still be handed out today, by a swap or as an extra: not already in the list, not
+ * too late to start, and not a measured limit today's use has already spent (it would arrive failed). The ones
+ * swapped away today only come back when nothing else is left.
+ */
+private fun Tx.midDayDefs(): List<QuestDef> {
+    val used = s.quests.map { it.defId }.toSet()
+    val open = s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.offeredAt(ctx.hour) && !limitSpent(it) }
+    return open.filter { it.id !in s.daily.swappedOut }.ifEmpty { open }
+}
+
+/**
+ * A measured limit with less room left than the warning margin, or with no reading yet today to tell: handed out
+ * mid-day it would break on arrival, or soon after.
+ */
+private fun Tx.limitSpent(def: QuestDef): Boolean {
+    val minutes = when (def.auto) {
+        AutoKind.SCREEN_TIME -> s.daily.screenMinutes
+        AutoKind.DISTRACTION_TIME -> s.daily.distractionMinutes
+        else -> return false
+    } ?: return true
+    val target = buildQuest(def, s.player.level, QuestOrigin.DAILY, step = s.stepOf(def.id)).target
+    return target - minutes / 60.0 <= maxOf(target * Rules.LIMIT_WARN_SHARE, Rules.LIMIT_WARN_MIN / 60.0)
+}
+
+/** One more mission for today, balanced against the families already in today's list; yesterday's weigh less. */
+private fun Tx.drawOne(defs: List<QuestDef>): QuestDef? = drawBalanced(
+    defs, 1, s.drawFocus(), ctx.rng, recent = s.recentDefIds,
+    taken = s.quests.mapNotNull { s.defOf(it.defId, content) }, balanced = !s.settings.randomDraw,
+).firstOrNull()
 
 /**
  * Extras come one at a time: the next one only once the last is done, so they can't be cherry-picked. A mission
@@ -299,9 +325,7 @@ fun GameState.extraOpen() = extraQuests.any { it.status == QuestStatus.OPEN }
 
 fun Tx.addExtraQuest(): Boolean {
     if (!s.canAddExtra(ctx.hour)) return false
-    val used = s.quests.map { it.defId }.toSet()
-    val def = drawOne(s.availableDefs(content).filter { it.kind == DefKind.POOL && it.id !in used && it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT && it.offeredAt(ctx.hour) })
-        ?: return false
+    val def = drawOne(midDayDefs().filter { it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT }) ?: return false
     val n = s.daily.extrasAdded + 1
     s = s.copy(
         quests = s.quests + buildQuest(def, s.player.level, QuestOrigin.EXTRA, "extra_${n}_${def.id}", s.stepOf(def.id), ctx.today),

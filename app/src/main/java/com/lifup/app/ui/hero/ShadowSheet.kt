@@ -47,6 +47,7 @@ import com.lifup.app.domain.GameState
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.SourceType
 import com.lifup.app.domain.toggleSquad
+import com.lifup.app.domain.canUpgrade
 import com.lifup.app.domain.upgradeCost
 import com.lifup.app.domain.upgradeShadow
 import com.lifup.app.ui.act
@@ -123,9 +124,10 @@ fun ShadowSheet(s: GameState, id: String, reveal: Boolean = false, onDismiss: ()
             if (owned != null) {
                 val cost = s.upgradeCost(content, id)!!
                 val inSquad = id in s.squad
-                val canUpgrade = !cost.levelCapped && s.player.gold >= cost.gold && owned.copies >= cost.copies
+                val canUpgrade = s.canUpgrade(content, id)
                 Text(
                     if (cost.levelCapped) stringResource(R.string.upgrade_capped)
+                    else if (cost.missing > 0) stringResource(R.string.upgrade_cost_missing, cost.totalGold, owned.copies, cost.copies)
                     else stringResource(R.string.upgrade_cost, cost.gold, owned.copies, cost.copies),
                     style = MaterialTheme.typography.labelMedium, color = if (canUpgrade) c.text else c.dim,
                 )

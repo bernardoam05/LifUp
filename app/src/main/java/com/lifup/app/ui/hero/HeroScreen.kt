@@ -11,6 +11,7 @@ import com.lifup.app.ui.defTitle
 import com.lifup.app.ui.guide.InfoButton
 import com.lifup.app.ui.guide.Guide
 import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowUpward
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material.icons.rounded.EmojiEvents
@@ -61,6 +63,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.lifup.app.R
 import com.lifup.app.domain.GameState
+import com.lifup.app.domain.canUpgrade
 import com.lifup.app.domain.HunterRank
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.ShadowDef
@@ -183,7 +186,7 @@ internal fun Squad(s: GameState, onOpen: (String) -> Unit) {
             val def = id?.let { content.shadowById[it] }
             Box(Modifier.weight(1f)) {
                 if (def != null) {
-                    ShadowTile(def, s.owned(def.id)?.level, onClick = { onOpen(def.id) })
+                    ShadowTile(def, s.owned(def.id)?.level, upgradable = s.canUpgrade(content, def.id), onClick = { onOpen(def.id) })
                     // Joined today: stays until tomorrow.
                     if (s.squadLocked(def.id)) Icon(Icons.Rounded.Lock, null, tint = c.dim, modifier = Modifier.align(Alignment.TopEnd).padding(8.dp).size(14.dp))
                 } else Box(
@@ -286,7 +289,7 @@ internal fun Collection(s: GameState, filter: ShadowRank?, favorites: Set<String
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), maxItemsInEachRow = 4) {
         list.forEach { def ->
             Box(Modifier.weight(1f)) {
-                ShadowTile(def, s.owned(def.id)?.level, inSquad = def.id in s.squad, onClick = { onOpen(def.id) })
+                ShadowTile(def, s.owned(def.id)?.level, inSquad = def.id in s.squad, upgradable = s.canUpgrade(content, def.id), onClick = { onOpen(def.id) })
                 if (def.id in s.favoriteEchoes) Icon(
                     Icons.Rounded.Star, null, tint = Lif.colors.gold,
                     modifier = Modifier.align(Alignment.TopStart).padding(6.dp).size(16.dp),
@@ -301,28 +304,35 @@ internal fun Collection(s: GameState, filter: ShadowRank?, favorites: Set<String
 }
 
 @Composable
-fun ShadowTile(def: ShadowDef, level: Int?, inSquad: Boolean = false, reveal: Boolean = false, onClick: () -> Unit) {
+fun ShadowTile(def: ShadowDef, level: Int?, inSquad: Boolean = false, reveal: Boolean = false, upgradable: Boolean = false, onClick: () -> Unit) {
     val c = Lif.colors
     val color = shadowRankColor(def.rank)
     val owned = level != null || reveal
-    Column(
-        Modifier.fillMaxWidth().aspectRatio(0.8f).clip(RoundedCornerShape(12.dp))
-            .background(if (owned) Brush.verticalGradient(listOf(color.copy(alpha = 0.16f), c.panel)) else Brush.verticalGradient(listOf(c.panel, c.panel)))
-            .border(if (inSquad) 2.dp else 1.dp, if (owned) color.copy(alpha = if (inSquad) 1f else 0.5f) else c.border, RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick).padding(6.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        EchoEmblem(def, known = owned, size = 46.dp)
-        Spacer(Modifier.height(6.dp))
-        Text(
-            if (owned) def.name.local() else "???",
-            style = MaterialTheme.typography.labelSmall, color = if (owned) c.text else c.dim,
-            maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center,
-            // A long name gives up its second line before the level is pushed out of the tile.
-            modifier = Modifier.weight(1f, fill = false),
+    Box {
+        Column(
+            Modifier.fillMaxWidth().aspectRatio(0.8f).clip(RoundedCornerShape(12.dp))
+                .background(if (owned) Brush.verticalGradient(listOf(color.copy(alpha = 0.16f), c.panel)) else Brush.verticalGradient(listOf(c.panel, c.panel)))
+                .border(if (inSquad) 2.dp else 1.dp, if (owned) color.copy(alpha = if (inSquad) 1f else 0.5f) else c.border, RoundedCornerShape(12.dp))
+                .clickable(onClick = onClick).padding(6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            EchoEmblem(def, known = owned, size = 46.dp)
+            Spacer(Modifier.height(6.dp))
+            Text(
+                if (owned) def.name.local() else "???",
+                style = MaterialTheme.typography.labelSmall, color = if (owned) c.text else c.dim,
+                maxLines = 2, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center,
+                // A long name gives up its second line before the level is pushed out of the tile.
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            if (level != null) Text(stringResource(R.string.level_short, level), style = MaterialTheme.typography.labelSmall, color = color)
+        }
+        // Enough copies and gold to evolve right now.
+        if (upgradable) Icon(
+            Icons.Rounded.ArrowUpward, stringResource(R.string.upgrade_ready), tint = c.bg,
+            modifier = Modifier.align(Alignment.BottomEnd).padding(5.dp).size(18.dp).background(c.green, CircleShape).padding(2.dp),
         )
-        if (level != null) Text(stringResource(R.string.level_short, level), style = MaterialTheme.typography.labelSmall, color = color)
     }
 }
 

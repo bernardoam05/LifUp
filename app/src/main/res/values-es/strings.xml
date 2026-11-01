@@ -203,6 +203,8 @@
     <string name="source_boss">Recompensa por vencer %1$s.</string>
     <string name="upgrade_capped">Nivel máximo: un eco no puede superar tu nivel.</string>
     <string name="upgrade_cost">Evolucionar: %1$d oro · copias %2$d/%3$d</string>
+    <string name="upgrade_cost_missing">Evolucionar: %1$d oro · copias %2$d/%3$d (las que faltan se pagan en oro)</string>
+    <string name="upgrade_ready">Puede evolucionar</string>
     <string name="equip">Equipar</string>
     <string name="unequip">Quitar</string>
     <string name="upgrade">Evolucionar</string>
@@ -551,7 +553,7 @@
     <string name="guide_portal_title">Portales</string>
     <string name="guide_portal">Aparecen solos::Entre las 8:00 y las 22:00, hasta 2 al día.\nRecompensa doble::Una misión más grande, con el doble de XP y oro.\nNuevo aliado::Completarlo puede despertar un eco.\nContra el reloj::Siempre hay tiempo de sobra, pero el portal se cierra cuando se acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
-    <string name="guide_shadows">Dónde encontrarlos::Días perfectos, jefes, portales, logros, hitos de racha y la tienda.\nEscuadrón::Hasta 3 en combate, cada uno con una pasiva: más XP, más oro, más daño, protección.\nEvolución::Copias repetidas y oro suben el nivel del eco, hasta el tuyo.</string>
+    <string name="guide_shadows">Dónde encontrarlos::Días perfectos, jefes, portales, logros, hitos de racha y la tienda.\nEscuadrón::Hasta 3 en combate, cada uno con una pasiva: más XP, más oro, más daño, protección.\nEvolución::Copias repetidas y oro suben el nivel del eco, hasta el tuyo. Los que se encuentran a menudo piden de 1 a 3 copias según la rareza; los que llegan una sola vez (logros, jefes, niveles, racha) piden 1.\nCopias que faltan::Cada copia que falte se paga en oro, la mitad del precio de la tienda para esa rareza.\nFlecha en el eco::Ese eco puede evolucionar ya, con las copias y el oro que tienes.</string>
     <string name="guide_focus_title">Foco y Pomodoro</string>
     <string name="guide_focus">Vincula una misión::Los minutos cuentan para ella. Cualquier sesión da también XP por minuto y 1 de oro cada 10 min, hasta 2 h al día.\nEl modo correcto::Cada misión es de temporizador o de Pomodoro, y solo cuenta ese modo.\nDescansos de verdad::En Pomodoro solo cuentan los minutos de enfoque, y en los descansos las apps quedan libres.\nSin límite::Cuenta hasta que pares.\nSin rendirse::Parar a mitad pierde los minutos; llegar al final vale +25% y oro extra.</string>
     <string name="guide_shop_title">Tienda</string>

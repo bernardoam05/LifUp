@@ -242,6 +242,11 @@ data class DailyFlags(
     val focusPaidMin: Double = 0.0,
     /** Today is part of a pause: a rest day that doesn't use up the week's rest. */
     val paused: Boolean = false,
+    /** Missions swapped away today: a later swap or extra doesn't hand them back. */
+    val swappedOut: List<String> = emptyList(),
+    /** Today's last screen and distraction-app readings, so a measured limit isn't handed out already spent. */
+    val screenMinutes: Double? = null,
+    val distractionMinutes: Double? = null,
 )
 
 @Serializable
@@ -434,6 +439,8 @@ data class GameState(
     val timers: Map<String, MissionTimer> = emptyMap(),
     val dayLog: List<DayLog> = emptyList(),
     val daily: DailyFlags = DailyFlags(),
+    /** What the day before handed out (swapped-away ones too): today's draw and swaps make it less likely. */
+    val recentDefIds: Set<String> = emptySet(),
     /** Rest days used in [restWeek]. */
     val restWeek: String = "",
     val restUsed: Int = 0,

@@ -17,9 +17,12 @@ fun Tx.ensureDay() {
         s = s.copy(quests = generateDailyQuests(s, content, ctx.today))
     } else if (LocalDate.parse(s.day) < ctx.today) {
         // Only move forward: a clock set back (manual change, timezone hop) never re-closes a day.
-        closeDay(LocalDate.parse(s.day))
+        val last = LocalDate.parse(s.day)
+        closeDay(last)
         rollWeek()
         syncWeekly()
+        // The day before's missions, swapped-away ones too, come up less today; after a gap they're forgotten.
+        s = s.copy(recentDefIds = if (last == ctx.today.minusDays(1)) (s.quests.map { it.defId } + s.daily.swappedOut).toSet() else emptySet())
         s = s.copy(
             day = ctx.todayKey,
             daily = DailyFlags(ctx.todayKey),

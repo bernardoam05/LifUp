@@ -131,23 +131,35 @@ fun Tx.rollExtraction() {
     randomShadow(content.shadowPool(SourceType.EXTRACTION), rank)?.let { gainShadow(it.id, SourceType.EXTRACTION, EchoOrigin.PERFECT_DAY) }
 }
 
-data class UpgradeCost(val gold: Int, val copies: Int, val levelCapped: Boolean)
+/**
+ * What the next level takes: [copies] copies, of which the player holds [held], and [gold]. Copies short are paid
+ * in gold ([copyGold] each), so no echo is stuck for want of a copy that rarely or never comes again.
+ */
+data class UpgradeCost(val gold: Int, val copies: Int, val levelCapped: Boolean, val held: Int = copies, val copyGold: Int = 0) {
+    val missing get() = (copies - held).coerceAtLeast(0)
+    /** Everything in gold: the level's price plus the copies short. */
+    val totalGold get() = gold + missing * copyGold
+}
 
 fun GameState.upgradeCost(content: Content, id: String): UpgradeCost? {
     val owned = owned(id) ?: return null
     val def = content.shadowById[id] ?: return null
-    return UpgradeCost(Rules.upgradeGold(def.rank, owned.level), Rules.upgradeCopies(def.rank), owned.level >= player.level)
+    return UpgradeCost(Rules.upgradeGold(def.rank, owned.level), Rules.upgradeCopies(def), owned.level >= player.level, owned.copies, Rules.copyGold(def.rank))
 }
+
+/** Whether the echo can level up right now, with the copies and gold the player has. */
+fun GameState.canUpgrade(content: Content, id: String): Boolean =
+    upgradeCost(content, id)?.let { !it.levelCapped && player.gold >= it.totalGold } == true
 
 fun Tx.upgradeShadow(id: String): Boolean {
     val cost = s.upgradeCost(content, id) ?: return false
-    val owned = s.owned(id)!!
-    if (cost.levelCapped || s.player.gold < cost.gold || owned.copies < cost.copies) return false
+    if (!s.canUpgrade(content, id)) return false
+    val used = minOf(cost.held, cost.copies)
     s = s.copy(
-        player = s.player.copy(gold = s.player.gold - cost.gold),
-        shadows = s.shadows.map { if (it.id == id) it.copy(level = it.level + 1, copies = it.copies - cost.copies) else it },
+        player = s.player.copy(gold = s.player.gold - cost.totalGold),
+        shadows = s.shadows.map { if (it.id == id) it.copy(level = it.level + 1, copies = it.copies - used) else it },
     )
-    count(StatKey.GOLD_SPENT, cost.gold.toLong())
+    count(StatKey.GOLD_SPENT, cost.totalGold.toLong())
     toast(ToastKind.SHADOW_UPGRADED, id)
     return true
 }

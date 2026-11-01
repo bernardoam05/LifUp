@@ -378,11 +378,11 @@
     "de": "Deep Work"
    },
    "description": {
-    "pt": "Trabalha focado por {target} min sem pausas.",
-    "en": "Work focused for {target} min without breaks.",
-    "es": "Trabaja concentrado {target} min sin pausas.",
-    "fr": "Travaille concentré {target} min sans pause.",
-    "de": "Arbeite {target} Min. fokussiert ohne Pausen."
+    "pt": "{target} min de foco com o Temporizador (o Pomodoro não conta aqui). Podes dividir em várias sessões.",
+    "en": "{target} min of focus with the Timer (Pomodoro doesn't count here). You can split it into several sessions.",
+    "es": "{target} min de concentración con el Temporizador (el Pomodoro no cuenta aquí). Puedes dividirlo en varias sesiones.",
+    "fr": "{target} min de focus avec le Minuteur (le Pomodoro ne compte pas ici). Tu peux le répartir en plusieurs séances.",
+    "de": "{target} Min. Fokus mit dem Timer (Pomodoro zählt hier nicht). Du kannst es auf mehrere Sitzungen aufteilen."
    },
    "baseTarget": 60,
    "scalingAmount": 5,
@@ -392,11 +392,11 @@
    "baseGold": 30,
    "maxTarget": 90,
    "tip": {
-    "pt": "Telemóvel noutra divisão e uma só tarefa definida antes de começar. Usa o Foco com bloqueio de apps.",
-    "en": "Phone in another room and one task chosen before you start. Use Focus with app blocking.",
-    "es": "Móvil en otra habitación y una sola tarea elegida antes de empezar. Usa el Foco con bloqueo de apps.",
-    "fr": "Téléphone dans une autre pièce et une seule tâche choisie avant de commencer. Utilise le Focus avec blocage d'apps.",
-    "de": "Handy in einen anderen Raum und vorher genau eine Aufgabe wählen. Nutze den Fokus mit App-Sperre."
+    "pt": "No separador Foco, escolhe Temporizador e liga-o a esta missão. Telemóvel noutra divisão e uma só tarefa definida antes de começar; o bloqueio de apps ajuda.",
+    "en": "In the Focus tab, pick Timer and link it to this mission. Phone in another room and one task chosen before you start; app blocking helps.",
+    "es": "En la pestaña Foco, elige Temporizador y vincúlalo a esta misión. Móvil en otra habitación y una sola tarea elegida antes de empezar; el bloqueo de apps ayuda.",
+    "fr": "Dans l'onglet Focus, choisis Minuteur et lie-le à cette mission. Téléphone dans une autre pièce et une seule tâche choisie avant de commencer ; le blocage d'apps aide.",
+    "de": "Wähle im Fokus-Tab den Timer und verknüpfe ihn mit dieser Mission. Handy in einen anderen Raum und vorher genau eine Aufgabe wählen; die App-Sperre hilft."
    },
    "peakTarget": 120
   },
@@ -1756,7 +1756,8 @@
    "unit": "",
    "baseXp": 45,
    "baseGold": 12,
-   "optional": true
+   "optional": true,
+   "untilHour": 15
   },
   {
    "id": "pool_nocomplain",
