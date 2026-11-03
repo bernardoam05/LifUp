@@ -3,11 +3,26 @@ package com.lifup.app.domain
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
+/** Item stock refills on Monday; the echoes for hire change every day. */
 fun Tx.ensureShop() {
-    if (s.shop.weekKey >= ctx.weekKey) return
-    val stock = content.items.mapNotNull { item -> item.weeklyStock?.let { item.id to it } }.toMap()
-    val offers = content.shadowPool(SourceType.SHOP).shuffled(s.weekRandom(ctx, salt = 7)).take(3).map { it.id }
-    s = s.copy(shop = ShopState(ctx.weekKey, stock, offers))
+    if (s.shop.weekKey < ctx.weekKey) {
+        val stock = content.items.mapNotNull { item -> item.weeklyStock?.let { item.id to it } }.toMap()
+        s = s.copy(shop = s.shop.copy(weekKey = ctx.weekKey, stock = stock))
+    }
+    if (s.shop.offersDay >= ctx.todayKey) return // ISO dates: never rotate backwards
+    s = s.copy(shop = s.shop.copy(offersDay = ctx.todayKey, shadowOffers = dailyShadowOffers(s, content, ctx)))
+}
+
+/**
+ * Today's [Rules.SHOP_ECHO_OFFERS] echoes, the same all day for this install. Yesterday's are left out while
+ * the pool allows it, so the row never repeats from one day to the next; shown from the lowest rank up.
+ */
+internal fun dailyShadowOffers(s: GameState, content: Content, ctx: Ctx): List<String> {
+    val pool = content.shadowPool(SourceType.SHOP)
+    val fresh = pool.filter { it.id !in s.shop.shadowOffers }
+    val from = if (fresh.size >= Rules.SHOP_ECHO_OFFERS) fresh else pool
+    val rng = Random(ctx.todayKey.hashCode().toLong() * 31 + 7 xor s.seed)
+    return from.shuffled(rng).take(Rules.SHOP_ECHO_OFFERS).sortedBy { it.rank }.map { it.id }
 }
 
 fun GameState.price(content: Content, base: Int, now: Long): Int =

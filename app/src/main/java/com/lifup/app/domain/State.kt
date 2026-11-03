@@ -167,6 +167,8 @@ data class ShopState(
     val weekKey: String = "",
     val stock: Map<String, Int> = emptyMap(),
     val shadowOffers: List<String> = emptyList(),
+    /** The day [shadowOffers] were drawn for: they rotate daily, the item stock weekly. */
+    val offersDay: String = "",
 )
 
 @Serializable

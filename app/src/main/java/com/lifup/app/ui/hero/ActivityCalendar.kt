@@ -30,6 +30,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.lifup.app.ui.rewards.DayLegend
+import com.lifup.app.ui.rewards.dayColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -86,30 +88,26 @@ fun ActivityCalendar(s: GameState) {
         Spacer(Modifier.height(8.dp))
         Text(picked?.let { dayLine(it, days[it]) } ?: summary(days, today), style = MaterialTheme.typography.labelMedium, color = c.muted)
         Spacer(Modifier.height(6.dp))
-        Legend()
+        DayLegend(days.values.map { dayColor(it) })
     }
 }
 
-/** Closed days from the log plus today's live progress. */
+/** Closed days from the log plus today's live progress (never "missed" while it can still be kept). */
 private fun calendarDays(s: GameState, today: LocalDate): Map<String, DayLog> {
     val live = s.dailyQuests.takeIf { s.day == today.toString() && it.isNotEmpty() }?.let { q ->
         val done = q.count { it.status == QuestStatus.DONE }
-        DayLog(s.day, done, q.size, perfect = done == q.size, penalty = false, rest = s.daily.rest)
+        DayLog(s.day, done, q.size, perfect = done == q.size, penalty = false, rest = s.daily.rest, passed = done > 0).takeIf { it.rest || done > 0 }
     }
-    return s.dayLog.associateBy { it.day } + listOfNotNull(live).associateBy { it.day }
+    // Days logged before "passed" existed: no penalty and at least 60% done (the lowest pass mark) count as kept, not missed.
+    val logged = s.dayLog.map { if (!it.passed && !it.penalty && it.total > 0 && it.done >= it.total * 0.6) it.copy(passed = true) else it }
+    return logged.associateBy { it.day } + listOfNotNull(live).associateBy { it.day }
 }
 
+/** The day reports' colours (perfect, kept, rest, missed); a day not played is an empty square. */
 @Composable
 private fun cellColor(d: DayLog?): Color {
     val c = Lif.colors
-    return when {
-        d == null -> c.border.copy(alpha = 0.5f)
-        d.rest -> c.purple.copy(alpha = 0.7f)
-        d.penalty -> c.red.copy(alpha = 0.75f)
-        d.perfect -> c.gold
-        d.total == 0 || d.done == 0 -> c.border
-        else -> c.green.copy(alpha = 0.2f + 0.55f * d.done / d.total)
-    }
+    return dayColor(d)?.let { if (it == c.red) it.copy(alpha = 0.75f) else it } ?: c.border.copy(alpha = 0.5f)
 }
 
 /** A day square; penalty and rest days also carry a mark so colour isn't the only signal. */
@@ -170,21 +168,6 @@ private fun WeekdayLabels() {
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun Legend() {
-    val c = Lif.colors
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(GAP)) {
-        Text(stringResource(R.string.calendar_less), style = MaterialTheme.typography.labelSmall, color = c.dim)
-        listOf(c.border, c.green.copy(alpha = 0.3f), c.green.copy(alpha = 0.55f), c.green).forEach {
-            Box(Modifier.size(10.dp).clip(RoundedCornerShape(2.dp)).background(it))
-        }
-        Text(stringResource(R.string.calendar_more), style = MaterialTheme.typography.labelSmall, color = c.dim)
-        Spacer(Modifier.width(4.dp))
-        Box(Modifier.size(10.dp).clip(RoundedCornerShape(2.dp)).background(c.gold))
-        Text(stringResource(R.string.day_perfect), style = MaterialTheme.typography.labelSmall, color = c.dim)
     }
 }
 

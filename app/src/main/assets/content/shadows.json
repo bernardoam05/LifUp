@@ -1733,5 +1733,210 @@
    "de": "Hüter der Jahreszeiten"
   },
   "icon": "EventRepeat"
+ },
+ {
+  "id": "caravan_mule",
+  "rank": "NORMAL",
+  "shadowClass": "BEAST",
+  "passive": "EXPLORER_XP",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Mula da Caravana",
+   "en": "Caravan Mule",
+   "es": "Mula de la Caravana",
+   "fr": "Mule de Caravane",
+   "de": "Karawanen-Maultier"
+  },
+  "icon": "Agriculture"
+ },
+ {
+  "id": "lantern_wisp",
+  "rank": "NORMAL",
+  "shadowClass": "SPIRIT",
+  "passive": "FOCUS_MASTERY",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Fogo-Fátuo da Lanterna",
+   "en": "Lantern Wisp",
+   "es": "Fuego Fatuo del Farol",
+   "fr": "Feu Follet de Lanterne",
+   "de": "Laternen-Irrlicht"
+  },
+  "icon": "Lightbulb"
+ },
+ {
+  "id": "tea_master",
+  "rank": "ELITE",
+  "shadowClass": "ARTISAN",
+  "passive": "EARLY_XP",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Mestre do Chá",
+   "en": "Tea Master",
+   "es": "Maestro del Té",
+   "fr": "Maître du Thé",
+   "de": "Teemeister"
+  },
+  "icon": "Coffee"
+ },
+ {
+  "id": "dice_imp",
+  "rank": "ELITE",
+  "shadowClass": "ASSASSIN",
+  "passive": "SHADOW_LUCK",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Diabrete dos Dados",
+   "en": "Dice Imp",
+   "es": "Diablillo de los Dados",
+   "fr": "Diablotin des Dés",
+   "de": "Würfelkobold"
+  },
+  "icon": "Casino"
+ },
+ {
+  "id": "windup_top",
+  "rank": "ELITE",
+  "shadowClass": "CONSTRUCT",
+  "passive": "TRAINING_XP",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Pião de Corda",
+   "en": "Wind-up Top",
+   "es": "Peonza de Cuerda",
+   "fr": "Toupie Mécanique",
+   "de": "Aufzieh-Kreisel"
+  },
+  "icon": "Toys"
+ },
+ {
+  "id": "harbour_warden",
+  "rank": "KNIGHT",
+  "shadowClass": "WARRIOR",
+  "passive": "PENALTY_REDUCE",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Guarda do Porto",
+   "en": "Harbour Warden",
+   "es": "Guardián del Puerto",
+   "fr": "Gardien du Port",
+   "de": "Hafenwächter"
+  },
+  "icon": "Anchor"
+ },
+ {
+  "id": "riddle_sage",
+  "rank": "KNIGHT",
+  "shadowClass": "MAGE",
+  "passive": "MIND_XP",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Sábio dos Enigmas",
+   "en": "Riddle Sage",
+   "es": "Sabio de los Enigmas",
+   "fr": "Sage des Énigmes",
+   "de": "Rätselweiser"
+  },
+  "icon": "Extension"
+ },
+ {
+  "id": "blossom_dryad",
+  "rank": "KNIGHT",
+  "shadowClass": "SPIRIT",
+  "passive": "COMEBACK",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Dríade Florida",
+   "en": "Blossom Dryad",
+   "es": "Dríade en Flor",
+   "fr": "Dryade Fleurie",
+   "de": "Blüten-Dryade"
+  },
+  "icon": "LocalFlorist"
+ },
+ {
+  "id": "rain_keeper",
+  "rank": "COMMANDER",
+  "shadowClass": "ELEMENTAL",
+  "passive": "STREAK_PROTECT",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Guardião da Chuva",
+   "en": "Rain Keeper",
+   "es": "Guardián de la Lluvia",
+   "fr": "Gardien de la Pluie",
+   "de": "Regenhüter"
+  },
+  "icon": "Umbrella"
+ },
+ {
+  "id": "living_vault",
+  "rank": "COMMANDER",
+  "shadowClass": "CONSTRUCT",
+  "passive": "REDEMPTION",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Cofre Vivo",
+   "en": "Living Vault",
+   "es": "Cámara Viviente",
+   "fr": "Coffre Vivant",
+   "de": "Lebender Tresor"
+  },
+  "icon": "Lock"
+ },
+ {
+  "id": "ghost_captain",
+  "rank": "COMMANDER",
+  "shadowClass": "UNDEAD",
+  "passive": "BOSS_DAMAGE",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Capitão Fantasma",
+   "en": "Ghost Captain",
+   "es": "Capitán Fantasma",
+   "fr": "Capitaine Fantôme",
+   "de": "Geisterkapitän"
+  },
+  "icon": "Sailing"
+ },
+ {
+  "id": "bazaar_sultan",
+  "rank": "MARSHAL",
+  "shadowClass": "ANCIENT",
+  "passive": "PORTAL_BOOST",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Sultão do Bazar",
+   "en": "Bazaar Sultan",
+   "es": "Sultán del Bazar",
+   "fr": "Sultan du Bazar",
+   "de": "Basar-Sultan"
+  },
+  "icon": "Storefront",
+  "aura": "SPIN"
  }
 ]

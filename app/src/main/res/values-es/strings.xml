@@ -16,7 +16,7 @@
     <string name="use">Usar</string>
     <string name="fix">Resolver</string>
     <string name="all">Todas</string>
-    <string name="weekly">semanal</string>
+    <string name="shop_echoes_renew">nuevos en %1$s</string>
     <string name="automatic">Automático</string>
     <string name="default_hunter">Héroe</string>
     <string name="level_short">Nv %1$d</string>
@@ -196,7 +196,7 @@
     <string name="passive">Pasiva</string>
     <string name="next_level_value">Próximo nivel: %1$s</string>
     <string name="source_extraction">Se despierta tras días perfectos, en portales o con Esencia de Eco.</string>
-    <string name="source_shop">Se vende en la tienda (rotación semanal).</string>
+    <string name="source_shop">Se vende en la tienda (rotación diaria).</string>
     <string name="source_achievement">Recompensa de logro.</string>
     <string name="source_streak">Recompensa de hito de racha.</string>
     <string name="source_level">Llega al nivel %1$d.</string>
@@ -271,7 +271,7 @@
     <string name="report_streak_saved">Racha salvada por %1$s</string>
     <string name="report_streak">Racha: %1$d</string>
     <string name="toast_level">¡Nivel %1$s!</string>
-    <string name="toast_item_found">Encontraste: %1$s</string>
+    <string name="toast_item_found">Hallazgo de la misión: %1$s</string>
     <string name="toast_penalty_cleared">Penalización cumplida</string>
     <string name="toast_focus_done">Foco completado: %1$s min</string>
     <string name="toast_focus_done_xp">Foco completado: %1$s min · +%2$s XP</string>
@@ -479,8 +479,6 @@
     <string name="achievement_next">Siguiente: +%1$d de oro</string>
     <string name="achievement_next_shadow">Siguiente: +%1$d de oro + eco</string>
     <string name="achievement_maxed">Todos los niveles completados</string>
-    <string name="calendar_less">Menos</string>
-    <string name="calendar_more">Más</string>
     <string name="calendar_summary">Últimos 30 días: %1$d activos · %2$d perfectos</string>
     <string name="calendar_no_data">sin registro</string>
     <string name="focus_mission">Misión</string>
@@ -556,7 +554,7 @@
     <string name="guide_focus_title">Foco y Pomodoro</string>
     <string name="guide_focus">Vincula una misión::Los minutos cuentan para ella. Cualquier sesión da también XP por minuto y 1 de oro cada 10 min, hasta 2 h al día.\nEl modo correcto::Cada misión es de temporizador o de Pomodoro, y solo cuenta ese modo.\nDescansos de verdad::En Pomodoro solo cuentan los minutos de enfoque, y en los descansos las apps quedan libres.\nSin límite::Cuenta hasta que pares.\nSin rendirse::Parar a mitad pierde los minutos; llegar al final vale +25% y oro extra.</string>
     <string name="guide_shop_title">Tienda</string>
-    <string name="guide_shop">Objetos::Cambiar misiones, proteger la racha, elixires de XP y oro, cofres.\nEcos a la venta::3 por semana, se renuevan cada lunes.\nInventario::Lo que compras se guarda hasta que lo uses.</string>
+    <string name="guide_shop">Objetos::Cambiar misiones, proteger la racha, elixires de XP y oro, cofres.\nEcos a la venta::3 al día, nuevos cada medianoche.\nInventario::Lo que compras se guarda hasta que lo uses.</string>
     <string name="auto_backups">Copias automáticas</string>
     <string name="auto_backups_info">La app guarda una copia diaria de los últimos 7 días. Con la copia de seguridad de Android activada, también van a tu cuenta de Google.</string>
     <string name="auto_backups_none">Aún no hay copias.</string>

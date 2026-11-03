@@ -83,7 +83,14 @@ fun ShopScreen(s: GameState) {
     val now = rememberNow(30_000)
     val context = LocalContext.current
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            item { SectionTitle(stringResource(R.string.shadow_offers)) { Text(stringResource(R.string.weekly), color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium); InfoButton(Guide.SHOP) } }
+            item {
+                // The echoes change at midnight: say when, so a missed one isn't a surprise.
+                val midnight = java.time.LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                SectionTitle(stringResource(R.string.shadow_offers)) {
+                    Text(stringResource(R.string.shop_echoes_renew, fmtShort((midnight - now).coerceAtLeast(0))), color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium)
+                    InfoButton(Guide.SHOP)
+                }
+            }
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     s.shop.shadowOffers.mapNotNull { content.shadowById[it] }.forEach { def ->

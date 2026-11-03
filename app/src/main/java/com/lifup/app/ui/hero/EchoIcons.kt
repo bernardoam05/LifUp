@@ -2,6 +2,18 @@ package com.lifup.app.ui.hero
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AcUnit
+import androidx.compose.material.icons.rounded.Umbrella
+import androidx.compose.material.icons.rounded.Toys
+import androidx.compose.material.icons.rounded.Storefront
+import androidx.compose.material.icons.rounded.Sailing
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.LocalFlorist
+import androidx.compose.material.icons.rounded.Lightbulb
+import androidx.compose.material.icons.rounded.Extension
+import androidx.compose.material.icons.rounded.Coffee
+import androidx.compose.material.icons.rounded.Casino
+import androidx.compose.material.icons.rounded.Anchor
+import androidx.compose.material.icons.rounded.Agriculture
 import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.Air
 import androidx.compose.material.icons.rounded.AllInclusive
@@ -107,6 +119,18 @@ import com.lifup.app.ui.shadowIcon
 /** Generated from shadows.json: the figure each echo shows (its "icon" field). */
 private val ECHO_ICONS: Map<String, ImageVector> = mapOf(
     "AcUnit" to Icons.Rounded.AcUnit,
+    "Umbrella" to Icons.Rounded.Umbrella,
+    "Toys" to Icons.Rounded.Toys,
+    "Storefront" to Icons.Rounded.Storefront,
+    "Sailing" to Icons.Rounded.Sailing,
+    "Lock" to Icons.Rounded.Lock,
+    "LocalFlorist" to Icons.Rounded.LocalFlorist,
+    "Lightbulb" to Icons.Rounded.Lightbulb,
+    "Extension" to Icons.Rounded.Extension,
+    "Coffee" to Icons.Rounded.Coffee,
+    "Casino" to Icons.Rounded.Casino,
+    "Anchor" to Icons.Rounded.Anchor,
+    "Agriculture" to Icons.Rounded.Agriculture,
     "AccountBalance" to Icons.Rounded.AccountBalance,
     "Air" to Icons.Rounded.Air,
     "AllInclusive" to Icons.Rounded.AllInclusive,

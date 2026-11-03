@@ -192,9 +192,9 @@ private fun Score(done: Int, total: Int, label: String, color: Color) {
     }
 }
 
-/** How a day closed, as a colour; null for a day not played. */
+/** How a day closed, as a colour; null for a day not played. The history calendar uses the same colours. */
 @Composable
-private fun dayColor(l: DayLog?): Color? {
+internal fun dayColor(l: DayLog?): Color? {
     val c = Lif.colors
     return when {
         l == null -> null
@@ -230,12 +230,12 @@ private fun WeekStrip(start: LocalDate, logs: Map<String, DayLog>) {
             }
         }
     }
-    Legend(colors)
+    DayLegend(colors)
 }
 
 /** Only the kinds that appear, so the legend never explains what isn't there. */
 @Composable
-private fun Legend(colors: List<Color?>) {
+internal fun DayLegend(colors: List<Color?>) {
     val c = Lif.colors
     val legend = listOf(
         c.green to R.string.week_legend_perfect, c.accent to R.string.week_legend_kept,
@@ -279,7 +279,7 @@ internal fun MonthReportCard(s: GameState, r: Reward.MonthReport, dismiss: () ->
                 }
             }
         }
-        Legend(colors)
+        DayLegend(colors)
 
         val g = r.attrGain
         val gains = listOf(R.string.attr_str to g.str, R.string.attr_agi to g.agi, R.string.attr_int to g.int, R.string.attr_vit to g.vit)

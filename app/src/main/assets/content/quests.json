@@ -1582,6 +1582,7 @@
    "unit": "",
    "baseXp": 50,
    "baseGold": 12,
+   "untilHour": 22,
    "tip": {
     "pt": "Deixa o telemóvel a carregar longe da cama e troca-o por um livro ou música calma.",
     "en": "Leave your phone charging away from the bed and swap it for a book or calm music.",

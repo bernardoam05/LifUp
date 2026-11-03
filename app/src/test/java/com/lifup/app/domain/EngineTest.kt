@@ -34,6 +34,25 @@ class EngineTest {
         assertEquals(3, s.shop.shadowOffers.size)
     }
 
+    @Test fun `shop echoes rotate every day without repeating yesterday's`() {
+        var s = fresh()
+        val monday = s.shop.shadowOffers
+        assertEquals(monday, run(s, "2026-10-14T22:00").shop.shadowOffers)
+        val stock = s.shop.stock
+        s = run(s, "2026-10-15T08:00")
+        assertEquals(Rules.SHOP_ECHO_OFFERS, s.shop.shadowOffers.size)
+        assertTrue(s.shop.shadowOffers.none { it in monday })
+        assertTrue(s.shop.shadowOffers.all { content.shadowById.getValue(it).source.type == SourceType.SHOP })
+        // The item stock still refills weekly, not daily.
+        assertEquals(stock, s.shop.stock)
+    }
+
+    @Test fun `wind down is not handed out at night`() {
+        val def = content.questDefById.getValue("pool_winddown")
+        assertTrue(def.offeredAt(21))
+        assertFalse(def.offeredAt(22))
+    }
+
     @Test fun `generation is deterministic per day`() {
         val a = fresh().dailyQuests.map { it.defId }
         val b = fresh("2026-10-14T20:00").dailyQuests.map { it.defId }

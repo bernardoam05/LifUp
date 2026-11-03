@@ -307,6 +307,8 @@ object Rules {
 
     fun upgradeCopies(rank: ShadowRank) = intArrayOf(3, 3, 2, 2, 1)[rank.ordinal]
 
+    /** Echoes for hire in the shop each day. */
+    const val SHOP_ECHO_OFFERS = 3
     fun shopShadowPrice(rank: ShadowRank) = intArrayOf(800, 1500, 3000, 6000, 12000)[rank.ordinal]
 
     /** Chances that luck multiplies: an item after a mission (essence part of it) and an echo from a portal. */

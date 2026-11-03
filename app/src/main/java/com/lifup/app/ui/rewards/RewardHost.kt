@@ -160,13 +160,19 @@ fun RewardHost(s: GameState) {
 @Composable
 internal fun RewardCard(icon: ImageVector?, color: Color, title: String, subtitle: String, onContinue: () -> Unit, body: @Composable () -> Unit) {
     Panel(border = color.copy(alpha = 0.7f), padding = androidx.compose.foundation.layout.PaddingValues(24.dp)) {
-        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            if (icon != null) Icon(icon, null, tint = color, modifier = Modifier.padding(bottom = 4.dp).height(44.dp).width(44.dp))
-            Text(title.uppercase(), style = MaterialTheme.typography.titleSmall, color = color, textAlign = TextAlign.Center)
-            if (subtitle.isNotEmpty()) Text(subtitle, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
-            Spacer(Modifier.height(4.dp))
-            body()
-            Spacer(Modifier.height(12.dp))
+        // Only the content scrolls: a long week or month report keeps "Continue" on screen instead of under the fold.
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                if (icon != null) Icon(icon, null, tint = color, modifier = Modifier.padding(bottom = 4.dp).height(44.dp).width(44.dp))
+                Text(title.uppercase(), style = MaterialTheme.typography.titleSmall, color = color, textAlign = TextAlign.Center)
+                if (subtitle.isNotEmpty()) Text(subtitle, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+                Spacer(Modifier.height(4.dp))
+                body()
+            }
+            Spacer(Modifier.height(16.dp))
             PrimaryButton(stringResource(R.string.continue_), onClick = onContinue, modifier = Modifier.fillMaxWidth(), color = color)
         }
     }

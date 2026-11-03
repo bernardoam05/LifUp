@@ -487,7 +487,7 @@ private fun RecentDays(s: GameState) {
 @Composable
 private fun DayRow(d: com.lifup.app.domain.DayLog) {
     val c = Lif.colors
-    val color = when { d.rest -> c.purple; d.perfect -> c.gold; d.penalty -> c.red; d.passed -> c.green; else -> c.muted }
+    val color = com.lifup.app.ui.rewards.dayColor(d) ?: c.muted
     // Short results in a fixed column, so every bar is the same length; a penalty shows as a warning mark.
     val result = when {
         d.rest -> stringResource(R.string.day_rest)

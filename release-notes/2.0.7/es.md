@@ -1,0 +1,5 @@
+- 12 ecos nuevos en la tienda. Los 3 ecos a la venta ahora cambian cada día a medianoche, nunca los mismos que el día anterior, y la tienda muestra cuánto falta para los siguientes.
+- El botón Continuar se queda siempre a la vista en los resúmenes de la semana y del mes: solo se desplaza el contenido.
+- El calendario del historial y los últimos días usan los mismos colores que los resúmenes: verde para un día perfecto, el color de tu rango para un día cumplido, morado para descanso y rojo para un día fallado.
+- Desconectar ya no sale en los cambios a partir de las 22:00, cuando ya no se puede cumplir.
+- Cuando una misión te da un objeto por suerte, el mensaje dice que es un hallazgo de la misión, para no confundirlo con el premio del día perfecto.

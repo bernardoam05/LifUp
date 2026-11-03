@@ -9,7 +9,7 @@ Hábitos como um RPG. Cada dia traz um conjunto de missões (exercício, sono, f
 - **Streak e pausa**: dias de descanso por semana (2 em Fácil, 1 em Normal, nenhum em Difícil) e pausas para férias ou doença que não quebram a sequência.
 - **Foco**: sessões cronometradas que bloqueiam as apps que escolheres, com Não Incomodar e som ambiente opcionais. Também há um atalho nas definições rápidas.
 - **Boss semanal e portais**: 27 bosses, cada um fraco a uma família de missões, e portais que aparecem ao longo do dia.
-- **Ecos**: 99 criaturas para colecionar, evoluir e equipar, cada uma com uma passiva.
+- **Ecos**: 111 criaturas para colecionar, evoluir e equipar, cada uma com uma passiva; a loja tem 3 diferentes todos os dias.
 - **Atributos e níveis**: rank de caçador de E a N, 27 conquistas e um calendário de atividade.
 - **Relatórios**: resumo do dia, da semana (que dá para partilhar) e do mês.
 - **Deteção automática**: passos, GPS e outros dados marcam algumas missões sozinhos.

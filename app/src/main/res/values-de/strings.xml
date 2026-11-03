@@ -16,7 +16,7 @@
     <string name="use">Nutzen</string>
     <string name="fix">Beheben</string>
     <string name="all">Alle</string>
-    <string name="weekly">wöchentlich</string>
+    <string name="shop_echoes_renew">neu in %1$s</string>
     <string name="automatic">Automatisch</string>
     <string name="default_hunter">Held</string>
     <string name="level_short">Lv %1$d</string>
@@ -196,7 +196,7 @@
     <string name="passive">Passiv</string>
     <string name="next_level_value">Nächstes Level: %1$s</string>
     <string name="source_extraction">Erweckt nach perfekten Tagen, aus Portalen oder mit Echo-Essenz.</string>
-    <string name="source_shop">Im Shop erhältlich (wöchentlicher Wechsel).</string>
+    <string name="source_shop">Im Shop erhältlich (täglicher Wechsel).</string>
     <string name="source_achievement">Belohnung für einen Erfolg.</string>
     <string name="source_streak">Belohnung für einen Serien-Meilenstein.</string>
     <string name="source_level">Erreiche Stufe %1$d.</string>
@@ -271,7 +271,7 @@
     <string name="report_streak_saved">Serie gerettet von %1$s</string>
     <string name="report_streak">Serie: %1$d</string>
     <string name="toast_level">Level %1$s!</string>
-    <string name="toast_item_found">Gefunden: %1$s</string>
+    <string name="toast_item_found">Fund aus der Mission: %1$s</string>
     <string name="toast_penalty_cleared">Strafe aufgehoben</string>
     <string name="toast_focus_done">Fokus beendet: %1$s min</string>
     <string name="toast_focus_done_xp">Fokus beendet: %1$s min · +%2$s XP</string>
@@ -479,8 +479,6 @@
     <string name="achievement_next">Nächste: +%1$d Gold</string>
     <string name="achievement_next_shadow">Nächste: +%1$d Gold + Echo</string>
     <string name="achievement_maxed">Alle Stufen abgeschlossen</string>
-    <string name="calendar_less">Weniger</string>
-    <string name="calendar_more">Mehr</string>
     <string name="calendar_summary">Letzte 30 Tage: %1$d aktiv · %2$d perfekt</string>
     <string name="calendar_no_data">kein Eintrag</string>
     <string name="focus_mission">Mission</string>
@@ -556,7 +554,7 @@
     <string name="guide_focus_title">Fokus und Pomodoro</string>
     <string name="guide_focus">Mission verknüpfen::Die Minuten zählen für sie. Auch eine freie Sitzung bringt XP pro Minute und 1 Gold alle 10 Min., bis zu 2 Std. am Tag.\nDer richtige Modus::Jede Mission läuft mit Timer oder Pomodoro, und nur dieser Modus zählt.\nEchte Pausen::Im Pomodoro zählen nur die Fokus-Minuten, und in den Pausen sind die Apps frei.\nOhne Limit::Zählt, bis du stoppst.\nKein Aufgeben::Mittendrin stoppen kostet die Minuten; bis zum Ende durchhalten zählt +25 % und bringt Extra-Gold.</string>
     <string name="guide_shop_title">Shop</string>
-    <string name="guide_shop">Gegenstände::Missionen tauschen, Serie schützen, XP- und Gold-Elixiere, Truhen.\nEchos im Angebot::3 pro Woche, erneuert jeden Montag.\nInventar::Was du kaufst, bleibt gespeichert, bis du es nutzt.</string>
+    <string name="guide_shop">Gegenstände::Missionen tauschen, Serie schützen, XP- und Gold-Elixiere, Truhen.\nEchos im Angebot::3 pro Tag, jeden Tag um Mitternacht neue.\nInventar::Was du kaufst, bleibt gespeichert, bis du es nutzt.</string>
     <string name="auto_backups">Automatische Kopien</string>
     <string name="auto_backups_info">Die App behält eine Kopie pro Tag der letzten 7 Tage. Mit aktivierter Android-Sicherung landen sie auch in deinem Google-Konto.</string>
     <string name="auto_backups_none">Noch keine Kopien.</string>
