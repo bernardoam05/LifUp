@@ -858,6 +858,9 @@
     <string name="update_failed">Update fehlgeschlagen. Versuch es später noch einmal.</string>
     <string name="whats_new_title">Neu in %1$s</string>
     <string name="whats_new_ok">Verstanden</string>
+    <string name="patch_notes">Versionshinweise</string>
+    <string name="patch_notes_none">Diese Version enthält keine Hinweise.</string>
+    <string name="patch_notes_current">aktuell</string>
     <string name="progression_xp_left">Noch %1$d XP bis Level %2$d</string>
     <string name="progression_next">Nächste Belohnungen</string>
     <string name="progression_items_note">Gegenstände werden beim Erreichen ausgelost, aus: %1$s.</string>

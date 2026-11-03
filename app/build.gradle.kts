@@ -46,6 +46,35 @@ android {
     testOptions { unitTests.isReturnDefaultValues = true }
 }
 
+/** Copies release-notes/<version>/<lang>.md into the APK's assets, so every release's notes ship with the app. */
+abstract class BundleReleaseNotes : DefaultTask() {
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val notes: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        val out = outputDir.get().asFile.resolve("release-notes")
+        out.deleteRecursively()
+        notes.get().asFile.listFiles { f -> f.isDirectory }?.forEach { dir ->
+            dir.listFiles { f -> f.extension == "md" }?.forEach { it.copyTo(out.resolve("${dir.name}/${it.name}"), overwrite = true) }
+        }
+    }
+}
+
+val bundleReleaseNotes = tasks.register<BundleReleaseNotes>("bundleReleaseNotes") {
+    notes.set(rootProject.layout.projectDirectory.dir("release-notes"))
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(bundleReleaseNotes, BundleReleaseNotes::outputDir)
+    }
+}
+
 kotlin {
     compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
 }

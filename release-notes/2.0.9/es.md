@@ -1,0 +1,2 @@
+- [new] Notas de la versión en la app. Están en Ajustes → Acerca de, con todas las versiones, y vienen con la app, así que funcionan sin internet.
+- [tweak] Las novedades tras actualizar tienen nuevo aspecto. Cada cambio aparece con un icono y un titular, y si te saltaste una versión ves también sus notas.

@@ -1,5 +1,5 @@
-- 12 ecos novos na loja. Os 3 ecos à venda passam a mudar todos os dias à meia-noite, nunca iguais aos da véspera, e a loja mostra quanto falta para os próximos.
-- O botão Continuar fica sempre à vista nos resumos da semana e do mês: só o conteúdo faz scroll.
-- O calendário do histórico e os últimos dias usam as mesmas cores dos resumos: verde para dia perfeito, a cor do teu rank para dia cumprido, roxo para descanso e vermelho para dia falhado.
-- Desligar já não sai em trocas a partir das 22h, quando já não dá para a cumprir.
-- Quando uma missão te dá um objeto por sorte, a mensagem diz que foi um achado da missão, para não se confundir com o prémio do dia perfeito.
+- [new] 12 ecos novos na loja. Os 3 ecos à venda passam a mudar todos os dias à meia-noite, nunca iguais aos da véspera, e a loja mostra quanto falta para os próximos.
+- [fix] O botão Continuar fica sempre à vista nos resumos da semana e do mês: só o conteúdo faz scroll.
+- [tweak] O calendário do histórico e os últimos dias usam as mesmas cores dos resumos: verde para dia perfeito, a cor do teu rank para dia cumprido, roxo para descanso e vermelho para dia falhado.
+- [tweak] Desligar já não sai em trocas a partir das 22h, quando já não dá para a cumprir.
+- [tweak] Quando uma missão te dá um objeto por sorte, a mensagem diz que foi um achado da missão, para não se confundir com o prémio do dia perfeito.

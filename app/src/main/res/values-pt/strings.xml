@@ -840,6 +840,9 @@
     <string name="update_failed">Não foi possível atualizar. Tenta mais tarde.</string>
     <string name="whats_new_title">Novidades da %1$s</string>
     <string name="whats_new_ok">Fixe</string>
+    <string name="patch_notes">Notas de versão</string>
+    <string name="patch_notes_none">Esta versão não traz notas.</string>
+    <string name="patch_notes_current">atual</string>
     <string name="progression_xp_left">Faltam %1$d XP para o nível %2$d</string>
     <string name="progression_next">Próximas recompensas</string>
     <string name="progression_items_note">Os itens são sorteados quando lá chegares, entre: %1$s.</string>

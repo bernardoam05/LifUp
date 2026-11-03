@@ -1,2 +1,2 @@
-- Le clavier ne cache plus tes tâches : l'écran se réduit pour rester au-dessus, et de même dans les Paramètres, la Forge de missions et la configuration initiale.
-- Les nouveautés s'affichent maintenant dans ta langue.
+- [fix] Le clavier ne cache plus tes tâches : l'écran se réduit pour rester au-dessus, et de même dans les Paramètres, la Forge de missions et la configuration initiale.
+- [tweak] Les nouveautés s'affichent maintenant dans ta langue.

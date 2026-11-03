@@ -1,0 +1,2 @@
+- [new] Notes de version dans l'app. Elles sont dans Paramètres → À propos, avec toutes les versions, et sont incluses dans l'app, donc elles marchent hors ligne.
+- [tweak] Les nouveautés après une mise à jour ont un nouveau look. Chaque changement a une icône et un titre, et si tu as sauté une version tu vois aussi ses notes.

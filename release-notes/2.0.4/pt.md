@@ -1,2 +1,2 @@
-- O teclado já não tapa as tarefas: o ecrã encolhe para caber por cima dele, e o mesmo acontece nas Definições, na Forja de missões e na configuração inicial.
-- As novidades passam a aparecer na tua língua.
+- [fix] O teclado já não tapa as tarefas: o ecrã encolhe para caber por cima dele, e o mesmo acontece nas Definições, na Forja de missões e na configuração inicial.
+- [tweak] As novidades passam a aparecer na tua língua.

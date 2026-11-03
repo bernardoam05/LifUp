@@ -1,5 +1,5 @@
-- 12 neue Echos im Shop. Die 3 Echos im Angebot wechseln jetzt jeden Tag um Mitternacht, nie dieselben wie am Vortag, und der Shop zeigt, wie lange es bis zu den nächsten dauert.
-- Der Weiter-Button bleibt in den Wochen- und Monatsberichten immer sichtbar: Nur der Inhalt scrollt.
-- Der Verlaufskalender und die letzten Tage nutzen dieselben Farben wie die Berichte: Grün für einen perfekten Tag, die Farbe deines Rangs für einen geschafften Tag, Lila für Ruhetage und Rot für einen verpassten Tag.
-- Abschalten wird ab 22 Uhr nicht mehr beim Tauschen vergeben, wenn sie nicht mehr machbar ist.
-- Wenn dir eine Mission per Glück einen Gegenstand gibt, sagt die Meldung, dass es ein Fund aus der Mission war, damit er nicht mit der Belohnung für den perfekten Tag verwechselt wird.
+- [new] 12 neue Echos im Shop. Die 3 Echos im Angebot wechseln jetzt jeden Tag um Mitternacht, nie dieselben wie am Vortag, und der Shop zeigt, wie lange es bis zu den nächsten dauert.
+- [fix] Der Weiter-Button bleibt in den Wochen- und Monatsberichten immer sichtbar: Nur der Inhalt scrollt.
+- [tweak] Der Verlaufskalender und die letzten Tage nutzen dieselben Farben wie die Berichte: Grün für einen perfekten Tag, die Farbe deines Rangs für einen geschafften Tag, Lila für Ruhetage und Rot für einen verpassten Tag.
+- [tweak] Abschalten wird ab 22 Uhr nicht mehr beim Tauschen vergeben, wenn sie nicht mehr machbar ist.
+- [tweak] Wenn dir eine Mission per Glück einen Gegenstand gibt, sagt die Meldung, dass es ein Fund aus der Mission war, damit er nicht mit der Belohnung für den perfekten Tag verwechselt wird.

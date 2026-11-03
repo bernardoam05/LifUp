@@ -1,0 +1,2 @@
+- [new] Release notes in the app. They're in Settings → About, with every version, and ship with the app, so they work offline.
+- [tweak] What's new after an update has a new look. Each change comes with an icon and a headline, and if you skipped a version you see its notes too.

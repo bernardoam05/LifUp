@@ -859,6 +859,9 @@
     <string name="update_failed">Couldn\'t update. Try again later.</string>
     <string name="whats_new_title">What\'s new in %1$s</string>
     <string name="whats_new_ok">Got it</string>
+    <string name="patch_notes">Release notes</string>
+    <string name="patch_notes_none">No notes in this version.</string>
+    <string name="patch_notes_current">current</string>
     <string name="progression_xp_left">%1$d XP to level %2$d</string>
     <string name="progression_next">Next rewards</string>
     <string name="progression_items_note">Items are drawn when you get there, from: %1$s.</string>

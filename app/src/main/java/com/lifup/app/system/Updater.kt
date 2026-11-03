@@ -73,24 +73,28 @@ object Updater {
     }
 
     /**
-     * The notes of the release now running, on its first launch after an update (by the app itself or by hand):
-     * release-notes/<version>/<lang>.md from the release's tag, else the English file, else the release's text.
-     * Null on a fresh install, once seen, or offline (it tries again on the next launch).
+     * The notes to show on the first launch after an update (by the app itself or by hand): every release since the
+     * one whose notes were last seen, from the notes bundled in the APK, in [lang] or else English. A build without
+     * them falls back to the release's notes on GitHub. Empty on a fresh install, once seen, or offline without notes.
      */
-    suspend fun whatsNew(context: Context, lang: String): String? {
+    suspend fun whatsNew(context: Context, lang: String): List<com.lifup.app.domain.VersionNotes> {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val version = BuildConfig.VERSION_NAME
-        if (prefs.getString("notesSeen", null) == version) return null
+        val seen = prefs.getString("notesSeen", null)
+        if (seen == version) return emptyList()
         val info = context.packageManager.getPackageInfo(context.packageName, 0)
         if (info.firstInstallTime == info.lastUpdateTime) {
             seenWhatsNew(context)
-            return null
+            return emptyList()
         }
-        val notes = withContext(Dispatchers.IO) {
-            listOf(lang, "en").distinct().firstNotNullOfOrNull { fetch("$NOTES/v$version/release-notes/$version/$it.md") }
-                ?: fetch("$RELEASES/tags/v$version", json = true)?.let { Json.parseToJsonElement(it).jsonObject["body"]?.jsonPrimitive?.contentOrNull }
+        return withContext(Dispatchers.IO) {
+            val bundled = ReleaseNotes.since(context, seen, version, lang)
+            bundled.ifEmpty {
+                val text = listOf(lang, "en").distinct().firstNotNullOfOrNull { fetch("$NOTES/v$version/release-notes/$version/$it.md") }
+                    ?: fetch("$RELEASES/tags/v$version", json = true)?.let { Json.parseToJsonElement(it).jsonObject["body"]?.jsonPrimitive?.contentOrNull }
+                listOfNotNull(text?.takeIf { it.isNotBlank() }?.let { com.lifup.app.domain.VersionNotes(version, com.lifup.app.domain.PatchNotes.parse(it)) })
+            }
         }
-        return notes?.takeIf { it.isNotBlank() }
     }
 
     /** The text at [url], or null when it's missing or the phone is offline. */

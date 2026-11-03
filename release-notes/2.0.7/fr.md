@@ -1,5 +1,5 @@
-- 12 nouveaux échos en boutique. Les 3 échos en vente changent désormais chaque jour à minuit, jamais les mêmes que la veille, et la boutique indique dans combien de temps arrivent les suivants.
-- Le bouton Continuer reste toujours visible dans les bilans de la semaine et du mois : seul le contenu défile.
-- Le calendrier de l'historique et les derniers jours utilisent les mêmes couleurs que les bilans : vert pour une journée parfaite, la couleur de ton rang pour une journée réussie, violet pour le repos et rouge pour une journée ratée.
-- Décompresser ne sort plus lors des échanges à partir de 22h, quand il n'est plus possible de la faire.
-- Quand une mission te donne un objet par chance, le message dit que c'est une trouvaille de mission, pour ne pas la confondre avec la récompense de la journée parfaite.
+- [new] 12 nouveaux échos en boutique. Les 3 échos en vente changent désormais chaque jour à minuit, jamais les mêmes que la veille, et la boutique indique dans combien de temps arrivent les suivants.
+- [fix] Le bouton Continuer reste toujours visible dans les bilans de la semaine et du mois : seul le contenu défile.
+- [tweak] Le calendrier de l'historique et les derniers jours utilisent les mêmes couleurs que les bilans : vert pour une journée parfaite, la couleur de ton rang pour une journée réussie, violet pour le repos et rouge pour une journée ratée.
+- [tweak] Décompresser ne sort plus lors des échanges à partir de 22h, quand il n'est plus possible de la faire.
+- [tweak] Quand une mission te donne un objet par chance, le message dit que c'est une trouvaille de mission, pour ne pas la confondre avec la récompense de la journée parfaite.

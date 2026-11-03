@@ -1,2 +1,2 @@
-- El teclado ya no tapa tus tareas: la pantalla se ajusta para quedar por encima, y lo mismo en Ajustes, la Forja de misiones y la configuración inicial.
-- Las novedades ahora aparecen en tu idioma.
+- [fix] El teclado ya no tapa tus tareas: la pantalla se ajusta para quedar por encima, y lo mismo en Ajustes, la Forja de misiones y la configuración inicial.
+- [tweak] Las novedades ahora aparecen en tu idioma.

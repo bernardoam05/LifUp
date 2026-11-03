@@ -92,6 +92,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
     val scope = rememberCoroutineScope()
     var message by remember { mutableStateOf<String?>(null) }
     var confirmReset by rememberSaveable { mutableStateOf(false) }
+    var showNotes by rememberSaveable { mutableStateOf(false) }
     var pendingImport by remember { mutableStateOf<GameState?>(null) }
     var pasteOpen by rememberSaveable { mutableStateOf(false) }
     val okMsg = stringResource(R.string.backup_saved)
@@ -233,10 +234,13 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
             SectionTitle(stringResource(R.string.about))
             Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
             UpdateRow()
+            TextButton(onClick = { showNotes = true }) { Text(stringResource(R.string.patch_notes).uppercase()) }
             TextButton(onClick = { confirmReset = true }) { Text(stringResource(R.string.reset_progress).uppercase(), color = Lif.colors.red) }
             Spacer(Modifier.height(24.dp))
         }
     }
+
+    if (showNotes) com.lifup.app.ui.PatchNotesSheet { showNotes = false }
 
     if (confirmReset) ConfirmDialog(
         stringResource(R.string.reset_progress), stringResource(R.string.reset_text), stringResource(R.string.reset_confirm),

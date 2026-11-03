@@ -1,2 +1,2 @@
-- 6 weitere Echos im Shop, der jetzt 24 hat. Die tägliche Auswahl bringt jetzt ein Echo pro Stufe: ein gewöhnliches oder seltenes, ein episches und ein legendäres. Mythische bleiben selten und erscheinen nur an manchen Tagen.
-- Neue Passive Zweiter Atem: mehr XP und Gold aus Extra-Missionen.
+- [new] 6 weitere Echos im Shop, der jetzt 24 hat. Die tägliche Auswahl bringt jetzt ein Echo pro Stufe: ein gewöhnliches oder seltenes, ein episches und ein legendäres. Mythische bleiben selten und erscheinen nur an manchen Tagen.
+- [new] Neue Passive Zweiter Atem: mehr XP und Gold aus Extra-Missionen.

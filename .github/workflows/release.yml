@@ -50,7 +50,8 @@ jobs:
         run: |
           v="${{ steps.version.outputs.version }}"
           notes="release-notes/$v/en.md"
-          if [ -f "$notes" ]; then cp "$notes" notes.md; else
+          # The [new]/[fix]/[tweak] tags only pick the icon in the app.
+          if [ -f "$notes" ]; then sed -E 's/^- \[(new|fix|tweak)\] */- /I' "$notes" > notes.md; else
             prev=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || true)
             git log --no-merges --format='- %s' ${prev:+$prev..}HEAD > notes.md
           fi

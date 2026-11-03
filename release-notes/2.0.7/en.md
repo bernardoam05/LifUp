@@ -1,5 +1,5 @@
-- 12 new echoes in the shop. The 3 echoes for sale now change every day at midnight, never the same as the day before, and the shop shows how long until the next ones.
-- The Continue button stays on screen in the week and month reports: only the content scrolls.
-- The history calendar and recent days use the same colours as the reports: green for a perfect day, your rank's colour for a kept day, purple for rest and red for a missed day.
-- Wind Down is no longer handed out by swaps from 10 PM, when it can't be done anymore.
-- When a mission gives you an item by luck, the message says it was a lucky find, so it isn't mistaken for the perfect day reward.
+- [new] 12 new echoes in the shop. The 3 echoes for sale now change every day at midnight, never the same as the day before, and the shop shows how long until the next ones.
+- [fix] The Continue button stays on screen in the week and month reports: only the content scrolls.
+- [tweak] The history calendar and recent days use the same colours as the reports: green for a perfect day, your rank's colour for a kept day, purple for rest and red for a missed day.
+- [tweak] Wind Down is no longer handed out by swaps from 10 PM, when it can't be done anymore.
+- [tweak] When a mission gives you an item by luck, the message says it was a lucky find, so it isn't mistaken for the perfect day reward.

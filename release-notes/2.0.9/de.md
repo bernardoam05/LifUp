@@ -1,0 +1,2 @@
+- [new] Versionshinweise in der App. Sie sind unter Einstellungen → Über, mit allen Versionen, und kommen mit der App, also auch offline.
+- [tweak] Die Neuigkeiten nach einem Update sehen neu aus. Jede Änderung hat ein Symbol und eine Überschrift, und wenn du eine Version übersprungen hast, siehst du auch deren Hinweise.

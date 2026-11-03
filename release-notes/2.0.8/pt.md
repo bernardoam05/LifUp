@@ -1,2 +1,2 @@
-- Mais 6 ecos na loja, que fica com 24. A rotação diária passa a ter um eco por escalão: um comum ou raro, um épico e um lendário. Os míticos continuam raros e só aparecem em alguns dias.
-- Nova passiva Segundo Fôlego: mais XP e ouro nas missões extra.
+- [new] Mais 6 ecos na loja, que fica com 24. A rotação diária passa a ter um eco por escalão: um comum ou raro, um épico e um lendário. Os míticos continuam raros e só aparecem em alguns dias.
+- [new] Nova passiva Segundo Fôlego: mais XP e ouro nas missões extra.
