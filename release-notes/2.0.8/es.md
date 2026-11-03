@@ -1,0 +1,2 @@
+- 6 ecos más en la tienda, que ahora tiene 24. La rotación diaria ahora trae un eco por nivel: uno común o raro, uno épico y uno legendario. Los míticos siguen siendo raros y solo aparecen algunos días.
+- Nueva pasiva Segundo Aliento: más XP y oro en las misiones extra.

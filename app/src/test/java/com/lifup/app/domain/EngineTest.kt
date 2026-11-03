@@ -43,8 +43,23 @@ class EngineTest {
         assertEquals(Rules.SHOP_ECHO_OFFERS, s.shop.shadowOffers.size)
         assertTrue(s.shop.shadowOffers.none { it in monday })
         assertTrue(s.shop.shadowOffers.all { content.shadowById.getValue(it).source.type == SourceType.SHOP })
+        // One per tier: common, knight, then commander or marshal.
+        val ranks = s.shop.shadowOffers.map { content.shadowById.getValue(it).rank }
+        assertTrue(ranks[0] <= ShadowRank.ELITE && ranks[1] == ShadowRank.KNIGHT && ranks[2] >= ShadowRank.COMMANDER)
         // The item stock still refills weekly, not daily.
         assertEquals(stock, s.shop.stock)
+    }
+
+    @Test fun `marshals stay rare in the shop`() {
+        var s = fresh("2026-01-01T09:00")
+        var marshals = 0
+        var day = java.time.LocalDate.parse("2026-01-01")
+        repeat(200) {
+            day = day.plusDays(1)
+            s = run(s, "${day}T09:00")
+            if (s.shop.shadowOffers.any { content.shadowById.getValue(it).rank == ShadowRank.MARSHAL }) marshals++
+        }
+        assertTrue("marshal days: $marshals", marshals in 10..55)
     }
 
     @Test fun `wind down is not handed out at night`() {

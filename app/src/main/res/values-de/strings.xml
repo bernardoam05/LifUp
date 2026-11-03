@@ -231,6 +231,7 @@
     <string name="passive_swap">+1 kostenloser Tausch pro Tag</string>
     <string name="passive_early">+%1$s XP für Missionen vor %2$d Uhr</string>
     <string name="passive_comeback">+%1$s XP und Gold am Tag nach einem verpassten Tag</string>
+    <string name="passive_extra">+%1$s XP und Gold aus Extra-Missionen</string>
     <string name="passive_redemption">Eine Strafe abzuarbeiten gibt %1$s der verlorenen XP und des Golds zurück</string>
 
     <!-- Shop -->
@@ -554,7 +555,7 @@
     <string name="guide_focus_title">Fokus und Pomodoro</string>
     <string name="guide_focus">Mission verknüpfen::Die Minuten zählen für sie. Auch eine freie Sitzung bringt XP pro Minute und 1 Gold alle 10 Min., bis zu 2 Std. am Tag.\nDer richtige Modus::Jede Mission läuft mit Timer oder Pomodoro, und nur dieser Modus zählt.\nEchte Pausen::Im Pomodoro zählen nur die Fokus-Minuten, und in den Pausen sind die Apps frei.\nOhne Limit::Zählt, bis du stoppst.\nKein Aufgeben::Mittendrin stoppen kostet die Minuten; bis zum Ende durchhalten zählt +25 % und bringt Extra-Gold.</string>
     <string name="guide_shop_title">Shop</string>
-    <string name="guide_shop">Gegenstände::Missionen tauschen, Serie schützen, XP- und Gold-Elixiere, Truhen.\nEchos im Angebot::3 pro Tag, jeden Tag um Mitternacht neue.\nInventar::Was du kaufst, bleibt gespeichert, bis du es nutzt.</string>
+    <string name="guide_shop">Gegenstände::Missionen tauschen, Serie schützen, XP- und Gold-Elixiere, Truhen.\nEchos im Angebot::3 pro Tag, jeden Tag um Mitternacht neue: ein gewöhnliches oder seltenes, ein episches und ein legendäres (ab und zu ein mythisches).\nInventar::Was du kaufst, bleibt gespeichert, bis du es nutzt.</string>
     <string name="auto_backups">Automatische Kopien</string>
     <string name="auto_backups_info">Die App behält eine Kopie pro Tag der letzten 7 Tage. Mit aktivierter Android-Sicherung landen sie auch in deinem Google-Konto.</string>
     <string name="auto_backups_none">Noch keine Kopien.</string>

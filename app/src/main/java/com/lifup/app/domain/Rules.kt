@@ -263,6 +263,8 @@ object Rules {
         // Only the day after a failed one, so it can be strong; a failed day still costs far more than it gives back.
         Passive.COMEBACK to doubleArrayOf(.15, .25, .40, .60, .80),
         Passive.REDEMPTION to doubleArrayOf(.20, .30, .45, .65, .85),
+        // Extras are at most a few missions a day and each needs the last one done, so it sits with the portal boost.
+        Passive.EXTRA_BOOST to doubleArrayOf(.10, .20, .30, .45, .60),
     )
     /** Missions finished before this hour count as early. */
     const val EARLY_HOUR = 10
@@ -307,8 +309,10 @@ object Rules {
 
     fun upgradeCopies(rank: ShadowRank) = intArrayOf(3, 3, 2, 2, 1)[rank.ordinal]
 
-    /** Echoes for hire in the shop each day. */
+    /** Echoes for hire in the shop each day: one per tier (see dailyShadowOffers). */
     const val SHOP_ECHO_OFFERS = 3
+    /** Share of days whose top shop echo is a marshal instead of a commander. */
+    const val SHOP_MARSHAL_CHANCE = 0.15
     fun shopShadowPrice(rank: ShadowRank) = intArrayOf(800, 1500, 3000, 6000, 12000)[rank.ordinal]
 
     /** Chances that luck multiplies: an item after a mission (essence part of it) and an echo from a portal. */

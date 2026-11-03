@@ -237,6 +237,7 @@ fun passiveText(p: Passive, value: Double): String {
         Passive.EARLY_XP -> stringResource(R.string.passive_early, pct, com.lifup.app.domain.Rules.EARLY_HOUR)
         Passive.COMEBACK -> stringResource(R.string.passive_comeback, pct)
         Passive.REDEMPTION -> stringResource(R.string.passive_redemption, pct)
+        Passive.EXTRA_BOOST -> stringResource(R.string.passive_extra, pct)
     }
 }
 

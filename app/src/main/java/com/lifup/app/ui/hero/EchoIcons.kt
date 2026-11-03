@@ -2,6 +2,12 @@ package com.lifup.app.ui.hero
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AcUnit
+import androidx.compose.material.icons.rounded.Surfing
+import androidx.compose.material.icons.rounded.Policy
+import androidx.compose.material.icons.rounded.LibraryMusic
+import androidx.compose.material.icons.rounded.Celebration
+import androidx.compose.material.icons.rounded.Campaign
+import androidx.compose.material.icons.rounded.Cake
 import androidx.compose.material.icons.rounded.Umbrella
 import androidx.compose.material.icons.rounded.Toys
 import androidx.compose.material.icons.rounded.Storefront
@@ -119,6 +125,12 @@ import com.lifup.app.ui.shadowIcon
 /** Generated from shadows.json: the figure each echo shows (its "icon" field). */
 private val ECHO_ICONS: Map<String, ImageVector> = mapOf(
     "AcUnit" to Icons.Rounded.AcUnit,
+    "Surfing" to Icons.Rounded.Surfing,
+    "Policy" to Icons.Rounded.Policy,
+    "LibraryMusic" to Icons.Rounded.LibraryMusic,
+    "Celebration" to Icons.Rounded.Celebration,
+    "Campaign" to Icons.Rounded.Campaign,
+    "Cake" to Icons.Rounded.Cake,
     "Umbrella" to Icons.Rounded.Umbrella,
     "Toys" to Icons.Rounded.Toys,
     "Storefront" to Icons.Rounded.Storefront,

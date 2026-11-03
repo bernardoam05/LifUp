@@ -232,6 +232,7 @@
     <string name="passive_swap">+1 free swap a day</string>
     <string name="passive_early">+%1$s XP on missions done before %2$d:00</string>
     <string name="passive_comeback">+%1$s XP and gold the day after a failed day</string>
+    <string name="passive_extra">+%1$s XP and gold from extra missions</string>
     <string name="passive_redemption">Clearing a penalty gives back %1$s of the XP and gold lost</string>
 
     <!-- Shop -->
@@ -555,7 +556,7 @@
     <string name="guide_focus_title">Focus and Pomodoro</string>
     <string name="guide_focus">Link a mission::Minutes count for it. Any session also pays XP per minute and 1 gold every 10 min, up to 2 h a day.\nThe right mode::Each mission is timer or Pomodoro, and only that mode counts.\nReal breaks::In Pomodoro only focus minutes count, and apps are free on breaks.\nNo limit::Counts until you stop.\nNo quitting::Stopping early loses the minutes; finishing counts +25% and bonus gold.</string>
     <string name="guide_shop_title">Shop</string>
-    <string name="guide_shop">Items::Swap missions, protect your streak, XP and gold elixirs, chests.\nEchoes for sale::3 a day, new ones every midnight.\nInventory::What you buy is kept until you use it.</string>
+    <string name="guide_shop">Items::Swap missions, protect your streak, XP and gold elixirs, chests.\nEchoes for sale::3 a day, new every midnight: a common or rare one, an epic and a legendary (a mythic now and then).\nInventory::What you buy is kept until you use it.</string>
     <string name="auto_backups">Automatic copies</string>
     <string name="auto_backups_info">The app keeps one copy a day for the last 7 days. With Android backup on, they also go to your Google account.</string>
     <string name="auto_backups_none">No copies yet.</string>

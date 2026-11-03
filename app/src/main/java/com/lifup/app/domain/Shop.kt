@@ -14,15 +14,22 @@ fun Tx.ensureShop() {
 }
 
 /**
- * Today's [Rules.SHOP_ECHO_OFFERS] echoes, the same all day for this install. Yesterday's are left out while
- * the pool allows it, so the row never repeats from one day to the next; shown from the lowest rank up.
+ * Today's echoes, one per tier so there's always something within reach and something to save for:
+ * a common one (normal or elite), a knight, and a high one (a commander, or a marshal on about
+ * [Rules.SHOP_MARSHAL_CHANCE] of days, so they stay rare). The same all day for this install; a tier
+ * skips yesterday's echo while it has another.
  */
 internal fun dailyShadowOffers(s: GameState, content: Content, ctx: Ctx): List<String> {
     val pool = content.shadowPool(SourceType.SHOP)
-    val fresh = pool.filter { it.id !in s.shop.shadowOffers }
-    val from = if (fresh.size >= Rules.SHOP_ECHO_OFFERS) fresh else pool
     val rng = Random(ctx.todayKey.hashCode().toLong() * 31 + 7 xor s.seed)
-    return from.shuffled(rng).take(Rules.SHOP_ECHO_OFFERS).sortedBy { it.rank }.map { it.id }
+    val yesterday = s.shop.shadowOffers.toSet()
+    fun pick(ranks: Set<ShadowRank>): ShadowDef? {
+        val tier = pool.filter { it.rank in ranks }
+        return tier.filter { it.id !in yesterday }.ifEmpty { tier }.randomOrNull(rng)
+    }
+    val high = if (rng.nextDouble() < Rules.SHOP_MARSHAL_CHANCE) pick(setOf(ShadowRank.MARSHAL)) ?: pick(setOf(ShadowRank.COMMANDER))
+        else pick(setOf(ShadowRank.COMMANDER)) ?: pick(setOf(ShadowRank.MARSHAL))
+    return listOfNotNull(pick(setOf(ShadowRank.NORMAL, ShadowRank.ELITE)), pick(setOf(ShadowRank.KNIGHT)), high).map { it.id }
 }
 
 fun GameState.price(content: Content, base: Int, now: Long): Int =

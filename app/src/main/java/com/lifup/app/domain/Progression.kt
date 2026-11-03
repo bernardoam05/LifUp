@@ -83,9 +83,11 @@ private fun Quest.ownMission() = origin == QuestOrigin.DAILY || origin == QuestO
 
 /** Extra XP share the timing echoes add to one of the player's own missions: early in the day, the day after a miss. */
 fun Passives.missionXpBonus(s: GameState, q: Quest, hour: Int): Double =
-    if (!q.ownMission()) 0.0 else (if (hour < Rules.EARLY_HOUR) earlyXp else 0.0) + (if (s.comebackDay()) comeback else 0.0)
+    if (!q.ownMission()) 0.0 else (if (hour < Rules.EARLY_HOUR) earlyXp else 0.0) + (if (s.comebackDay()) comeback else 0.0) + extraShare(q)
 
-fun Passives.missionGoldBonus(s: GameState, q: Quest): Double = if (q.ownMission() && s.comebackDay()) comeback else 0.0
+fun Passives.missionGoldBonus(s: GameState, q: Quest): Double = if (!q.ownMission()) 0.0 else (if (s.comebackDay()) comeback else 0.0) + extraShare(q)
+
+private fun Passives.extraShare(q: Quest) = if (q.origin == QuestOrigin.EXTRA) extraBoost else 0.0
 
 /** A penalty without the app block halves what missions pay while it lasts. */
 fun GameState.penaltyCut() = if (penalty.active && !penaltyBlocks()) Rules.PENALTY_REWARD_CUT else 1.0

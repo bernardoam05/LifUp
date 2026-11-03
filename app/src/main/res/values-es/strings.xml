@@ -231,6 +231,7 @@
     <string name="passive_swap">+1 cambio gratis al día</string>
     <string name="passive_early">+%1$s XP en misiones hechas antes de las %2$d:00</string>
     <string name="passive_comeback">+%1$s XP y oro el día después de un día fallido</string>
+    <string name="passive_extra">+%1$s XP y oro en las misiones extra</string>
     <string name="passive_redemption">Cumplir una penalización devuelve el %1$s del XP y oro perdidos</string>
 
     <!-- Shop -->
@@ -554,7 +555,7 @@
     <string name="guide_focus_title">Foco y Pomodoro</string>
     <string name="guide_focus">Vincula una misión::Los minutos cuentan para ella. Cualquier sesión da también XP por minuto y 1 de oro cada 10 min, hasta 2 h al día.\nEl modo correcto::Cada misión es de temporizador o de Pomodoro, y solo cuenta ese modo.\nDescansos de verdad::En Pomodoro solo cuentan los minutos de enfoque, y en los descansos las apps quedan libres.\nSin límite::Cuenta hasta que pares.\nSin rendirse::Parar a mitad pierde los minutos; llegar al final vale +25% y oro extra.</string>
     <string name="guide_shop_title">Tienda</string>
-    <string name="guide_shop">Objetos::Cambiar misiones, proteger la racha, elixires de XP y oro, cofres.\nEcos a la venta::3 al día, nuevos cada medianoche.\nInventario::Lo que compras se guarda hasta que lo uses.</string>
+    <string name="guide_shop">Objetos::Cambiar misiones, proteger la racha, elixires de XP y oro, cofres.\nEcos a la venta::3 al día, nuevos cada medianoche: uno común o raro, uno épico y uno legendario (de vez en cuando uno mítico).\nInventario::Lo que compras se guarda hasta que lo uses.</string>
     <string name="auto_backups">Copias automáticas</string>
     <string name="auto_backups_info">La app guarda una copia diaria de los últimos 7 días. Con la copia de seguridad de Android activada, también van a tu cuenta de Google.</string>
     <string name="auto_backups_none">Aún no hay copias.</string>

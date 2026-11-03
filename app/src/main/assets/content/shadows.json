@@ -1938,5 +1938,107 @@
   },
   "icon": "Storefront",
   "aura": "SPIN"
+ },
+ {
+  "id": "town_crier",
+  "rank": "NORMAL",
+  "shadowClass": "WARRIOR",
+  "passive": "XP_BOOST",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Arauto da Praça",
+   "en": "Town Crier",
+   "es": "Pregonero de la Plaza",
+   "fr": "Crieur Public",
+   "de": "Marktschreier"
+  },
+  "icon": "Campaign"
+ },
+ {
+  "id": "patient_baker",
+  "rank": "NORMAL",
+  "shadowClass": "ARTISAN",
+  "passive": "STREAK_XP",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Padeiro Paciente",
+   "en": "Patient Baker",
+   "es": "Panadero Paciente",
+   "fr": "Boulanger Patient",
+   "de": "Geduldiger Bäcker"
+  },
+  "icon": "Cake"
+ },
+ {
+  "id": "festival_jester",
+  "rank": "ELITE",
+  "shadowClass": "SPIRIT",
+  "passive": "DAILY_BONUS",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Bobo da Festa",
+   "en": "Festival Jester",
+   "es": "Bufón de la Fiesta",
+   "fr": "Bouffon de la Fête",
+   "de": "Festnarr"
+  },
+  "icon": "Celebration"
+ },
+ {
+  "id": "second_wind",
+  "rank": "KNIGHT",
+  "shadowClass": "ELEMENTAL",
+  "passive": "EXTRA_BOOST",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Segundo Fôlego",
+   "en": "Second Wind",
+   "es": "Segundo Aliento",
+   "fr": "Second Souffle",
+   "de": "Zweiter Atem"
+  },
+  "icon": "Surfing"
+ },
+ {
+  "id": "iron_notary",
+  "rank": "COMMANDER",
+  "shadowClass": "CONSTRUCT",
+  "passive": "PENALTY_IMMUNITY",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Notário de Ferro",
+   "en": "Iron Notary",
+   "es": "Notario de Hierro",
+   "fr": "Notaire de Fer",
+   "de": "Eiserner Notar"
+  },
+  "icon": "Policy"
+ },
+ {
+  "id": "choir_conductor",
+  "rank": "COMMANDER",
+  "shadowClass": "MAGE",
+  "passive": "ALL_BOOST",
+  "source": {
+   "type": "SHOP"
+  },
+  "name": {
+   "pt": "Maestro do Coro",
+   "en": "Choir Conductor",
+   "es": "Director del Coro",
+   "fr": "Chef de Chœur",
+   "de": "Chordirigent"
+  },
+  "icon": "LibraryMusic"
  }
 ]

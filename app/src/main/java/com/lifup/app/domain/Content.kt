@@ -118,6 +118,8 @@ enum class Passive {
     COMEBACK,
     /** Clearing a penalty's missions gives back part of what the failed day cost. */
     REDEMPTION,
+    /** More XP and gold from extra missions: going past the day's list pays. */
+    EXTRA_BOOST,
 }
 
 enum class Difficulty { EASY, MEDIUM, HARD }
@@ -127,7 +129,7 @@ enum class PowerKind { GROWTH, WEALTH, COMBAT, PROTECTION, FORTUNE }
 
 fun Passive.kind(): PowerKind = when (this) {
     Passive.XP_BOOST, Passive.TRAINING_XP, Passive.MIND_XP, Passive.EXPLORER_XP, Passive.DAILY_BONUS, Passive.STREAK_XP,
-    Passive.EARLY_XP, Passive.COMEBACK -> PowerKind.GROWTH
+    Passive.EARLY_XP, Passive.COMEBACK, Passive.EXTRA_BOOST -> PowerKind.GROWTH
     Passive.GOLD_BOOST, Passive.SHOP_DISCOUNT, Passive.ALL_BOOST -> PowerKind.WEALTH
     Passive.BOSS_DAMAGE -> PowerKind.COMBAT
     Passive.PENALTY_REDUCE, Passive.PENALTY_IMMUNITY, Passive.STREAK_PROTECT, Passive.REDEMPTION -> PowerKind.PROTECTION

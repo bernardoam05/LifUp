@@ -1,0 +1,2 @@
+- 6 more echoes in the shop, which now has 24. The daily rotation now has one echo per tier: a common or rare one, an epic and a legendary. Mythics stay rare and only show up on some days.
+- New Second Wind passive: more XP and gold from extra missions.

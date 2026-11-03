@@ -18,6 +18,7 @@ data class Passives(
     val earlyXp: Double = 0.0,
     val comeback: Double = 0.0,
     val redemption: Double = 0.0,
+    val extraBoost: Double = 0.0,
     val immunity: Boolean = false,
     val streakProtect: Boolean = false,
     /** The parts of [xp] and [gold] that come from item buffs rather than the squad. */
@@ -75,6 +76,7 @@ fun GameState.passives(content: Content, now: Long): Passives {
         earlyXp = v(Passive.EARLY_XP),
         comeback = v(Passive.COMEBACK),
         redemption = v(Passive.REDEMPTION).coerceAtMost(Rules.MAX_REDEMPTION),
+        extraBoost = v(Passive.EXTRA_BOOST),
         immunity = immunity,
         streakProtect = streak,
     )

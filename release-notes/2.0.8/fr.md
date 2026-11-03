@@ -1,0 +1,2 @@
+- 6 échos de plus en boutique, qui en compte maintenant 24. La rotation quotidienne propose désormais un écho par palier : un commun ou rare, un épique et un légendaire. Les mythiques restent rares et n'apparaissent que certains jours.
+- Nouvelle passive Second Souffle : plus d'XP et d'or dans les missions extra.

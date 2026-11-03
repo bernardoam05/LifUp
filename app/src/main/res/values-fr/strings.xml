@@ -219,6 +219,7 @@
     <string name="passive_swap">+1 échange gratuit par jour</string>
     <string name="passive_early">+%1$s XP sur les missions faites avant %2$d h</string>
     <string name="passive_comeback">+%1$s XP et or le lendemain d\'un jour raté</string>
+    <string name="passive_extra">+%1$s XP et or dans les missions extra</string>
     <string name="passive_redemption">Lever une pénalité rend %1$s de l\'XP et de l\'or perdus</string>
 
     <string name="inventory">Inventaire</string>
@@ -536,7 +537,7 @@
     <string name="guide_focus_title">Focus et Pomodoro</string>
     <string name="guide_focus">Lie une mission::Les minutes comptent pour elle. Toute session rapporte aussi de l\'XP par minute et 1 or toutes les 10 min, jusqu\'à 2 h par jour.\nLe bon mode::Chaque mission est en minuteur ou en Pomodoro, et seul ce mode compte.\nDe vraies pauses::En Pomodoro, seules les minutes de focus comptent, et pendant les pauses les apps sont libres.\nSans limite::Ça compte jusqu\'à ce que tu t\'arrêtes.\nSans abandon::S\'arrêter en cours de route fait perdre les minutes ; aller au bout vaut +25 % et de l\'or en plus.</string>
     <string name="guide_shop_title">Boutique</string>
-    <string name="guide_shop">Objets::Changer de mission, protéger ta série, élixirs d\'XP et d\'or, coffres.\nÉchos en vente::3 par jour, de nouveaux chaque minuit.\nInventaire::Ce que tu achètes est gardé jusqu\'à ce que tu l\'utilises.</string>
+    <string name="guide_shop">Objets::Changer de mission, protéger ta série, élixirs d\'XP et d\'or, coffres.\nÉchos en vente::3 par jour, nouveaux chaque minuit : un commun ou rare, un épique et un légendaire (de temps en temps un mythique).\nInventaire::Ce que tu achètes est gardé jusqu\'à ce que tu l\'utilises.</string>
     <string name="auto_backups">Copies automatiques</string>
     <string name="auto_backups_info">L\'app garde une copie par jour des 7 derniers jours. Avec la sauvegarde Android activée, elles vont aussi sur ton compte Google.</string>
     <string name="auto_backups_none">Pas encore de copie.</string>
