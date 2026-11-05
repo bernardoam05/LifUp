@@ -6,7 +6,7 @@ import kotlin.math.roundToInt
 fun Tx.gainXp(base: Int, family: DrawGroup? = null, hitsBoss: Boolean = true, boosted: Boolean = true, bossShare: Double = 1.0, extra: Double = 0.0): Int {
     if (base <= 0) return 0
     val passives = s.passives(content, ctx.now)
-    val mult = if (boosted) 1 + passives.xpFor(family) + extra else 1.0
+    val mult = if (boosted) 1 + passives.xpShare(family, extra) else 1.0
     val cut = if (boosted) s.penaltyCut() else 1.0
     val amount = (base * mult * cut).roundToInt()
     // The squad's share: what this paid beyond what item buffs alone would have.
@@ -68,11 +68,11 @@ private fun Tx.levelEcho(level: Int): ShadowDef? {
 /** What a mission pays if completed now, boosts included, so the card shows the real number before it's done. */
 fun GameState.xpPreview(q: Quest, content: Content, now: Long): Int =
     if (q.origin.boosted()) passives(content, now).let { p ->
-        (q.xp * (1 + p.portalShare(q)) * (1 + p.xpFor(q.family()) + p.missionXpBonus(this, q, hourAt(now))) * penaltyCut()).roundToInt()
+        (q.xp * (1 + p.portalShare(q)) * (1 + p.xpShare(q.family(), p.missionXpBonus(this, q, hourAt(now)))) * penaltyCut()).roundToInt()
     } else q.xp
 
 fun GameState.goldPreview(q: Quest, content: Content, now: Long): Int =
-    if (q.origin.boosted()) passives(content, now).let { p -> (q.gold * (1 + p.portalShare(q)) * (1 + p.gold + p.missionGoldBonus(this, q)) * penaltyCut()).roundToInt() } else q.gold
+    if (q.origin.boosted()) passives(content, now).let { p -> (q.gold * (1 + p.portalShare(q)) * (1 + p.goldShare(p.missionGoldBonus(this, q))) * penaltyCut()).roundToInt() } else q.gold
 
 private fun hourAt(now: Long) = java.time.Instant.ofEpochMilli(now).atZone(java.time.ZoneId.systemDefault()).hour
 
@@ -100,7 +100,7 @@ fun Tx.gainGold(base: Int, boosted: Boolean = true, extra: Double = 0.0): Int {
     if (base <= 0) return 0
     val passives = s.passives(content, ctx.now)
     val cut = if (boosted) s.penaltyCut() else 1.0
-    val amount = if (boosted) (base * (1 + passives.gold + extra) * cut).roundToInt() else base
+    val amount = if (boosted) (base * (1 + passives.goldShare(extra)) * cut).roundToInt() else base
     if (boosted) squadAdded(SquadGain(gold = amount - (base * (1 + passives.buffGold) * cut).roundToInt()))
     s = s.copy(player = s.player.copy(gold = s.player.gold + amount))
     count(StatKey.GOLD_EARNED, amount.toLong())

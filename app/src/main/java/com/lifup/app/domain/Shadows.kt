@@ -32,6 +32,13 @@ data class Passives(
         DrawGroup.MOVEMENT -> explorerXp
         else -> 0.0
     }
+
+    /** A mission's XP share: the squad's (with [extra], the timing passives) up to [Rules.MAX_SQUAD_XP], then the buffs. */
+    fun xpShare(family: DrawGroup?, extra: Double = 0.0): Double =
+        (xpFor(family) - buffXp + extra).coerceAtMost(Rules.MAX_SQUAD_XP) + buffXp
+
+    /** The same for gold, up to [Rules.MAX_SQUAD_GOLD]. */
+    fun goldShare(extra: Double = 0.0): Double = (gold - buffGold + extra).coerceAtMost(Rules.MAX_SQUAD_GOLD) + buffGold
 }
 
 fun GameState.passives(content: Content, now: Long): Passives {
@@ -71,7 +78,7 @@ fun GameState.passives(content: Content, now: Long): Passives {
         focusMastery = v(Passive.FOCUS_MASTERY).coerceAtMost(Rules.MAX_FOCUS_MASTERY),
         dailyBonus = v(Passive.DAILY_BONUS),
         luck = v(Passive.SHADOW_LUCK).coerceAtMost(1.0),
-        portal = v(Passive.PORTAL_BOOST),
+        portal = v(Passive.PORTAL_BOOST).coerceAtMost(Rules.MAX_PORTAL_BOOST),
         extraSwaps = if (swap) 1 else 0,
         earlyXp = v(Passive.EARLY_XP),
         comeback = v(Passive.COMEBACK),
@@ -144,7 +151,7 @@ data class UpgradeCost(val gold: Int, val copies: Int, val levelCapped: Boolean,
 fun GameState.upgradeCost(content: Content, id: String): UpgradeCost? {
     val owned = owned(id) ?: return null
     val def = content.shadowById[id] ?: return null
-    return UpgradeCost(Rules.upgradeGold(def.rank, owned.level), Rules.upgradeCopies(def), owned.level >= player.level, owned.copies, Rules.copyGold(def.rank))
+    return UpgradeCost(Rules.upgradeGold(def.rank, owned.level), Rules.upgradeCopies(def), owned.level >= player.level, owned.copies, Rules.copyGold(def))
 }
 
 /** Whether the echo can level up right now, with the copies and gold the player has. */

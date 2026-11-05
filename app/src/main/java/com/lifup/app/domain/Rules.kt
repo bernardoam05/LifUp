@@ -283,6 +283,15 @@ object Rules {
     const val MAX_BOSS_DAMAGE = 1.5
     const val MAX_PENALTY_REDUCE = 0.5
     const val MAX_SHOP_DISCOUNT = 0.3
+    /**
+     * The most a mission's XP and gold can grow from the squad, all its passives together (all-round, family,
+     * streak, early, comeback, extras, through the amplifier): a full squad of maxed marshals reached more
+     * than ×3, which made levels and the shop meaningless. Item buffs (elixirs) still add on top, as paid for.
+     */
+    const val MAX_SQUAD_XP = 1.0
+    const val MAX_SQUAD_GOLD = 0.75
+    /** Portals multiply on top of the rest, so their own share stops at double too. */
+    const val MAX_PORTAL_BOOST = 1.0
     const val MAX_FOCUS_MASTERY = 0.5
     /** Redemption gives back at most everything the failed day cost. */
     const val MAX_REDEMPTION = 1.0
@@ -320,8 +329,12 @@ object Rules {
     /** Echoes no draw hands out: their copies, when any, come from the same boss or milestone coming round again. */
     fun onceOnly(def: ShadowDef) = def.source.type != SourceType.EXTRACTION && def.source.type != SourceType.SHOP
 
-    /** A copy the player doesn't have can be paid in gold instead: half the shop's price for that rank. */
-    fun copyGold(rank: ShadowRank) = shopShadowPrice(rank) / 2
+    /**
+     * A copy the player doesn't have can be paid in gold instead. A shop echo's copy costs what the shop charges
+     * for it (paying less than buying it would make the shop pointless); any other echo's, half the shop's price
+     * for its rank, since no shop sells it.
+     */
+    fun copyGold(def: ShadowDef) = if (def.source.type == SourceType.SHOP) shopShadowPrice(def.rank) else shopShadowPrice(def.rank) / 2
 
     /** Echoes for hire in the shop each day: one per tier (see dailyShadowOffers). */
     const val SHOP_ECHO_OFFERS = 3

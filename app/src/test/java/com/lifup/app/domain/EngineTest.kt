@@ -480,7 +480,7 @@ class EngineTest {
         var s = fresh().copy(shadows = listOf(OwnedShadow(pawn.id, 1, 1), OwnedShadow(once.id, 1, 0)), player = Player(level = 5, gold = 0))
         val cost = s.upgradeCost(content, pawn.id)!!
         assertEquals(2, cost.missing)
-        assertEquals(cost.gold + 2 * Rules.copyGold(pawn.rank), cost.totalGold)
+        assertEquals(cost.gold + 2 * Rules.copyGold(pawn), cost.totalGold)
         assertFalse(s.canUpgrade(content, pawn.id))
         s = s.copy(player = s.player.copy(gold = cost.totalGold))
         assertTrue(s.canUpgrade(content, pawn.id))
@@ -1085,6 +1085,21 @@ class EngineTest {
         val guard = content.shadows.first { it.passive == Passive.STREAK_PROTECT }
         assertTrue(Rules.flagDays(guard, 1) > Rules.flagDays(guard, 10))
         assertEquals(Rules.FLAG_MIN_DAYS, Rules.flagDays(guard, 500))
+    }
+
+    @Test fun `the squad's XP and gold stop at a cap, buffs on top`() {
+        val p = Passives(xp = 0.9, explorerXp = 1.5, gold = 1.2, buffXp = 0.5, buffGold = 0.25)
+        // Squad 0.4 all-round + 1.5 family + 0.3 early = 2.2, capped at 1.0, then the elixir's 0.5.
+        assertEquals(Rules.MAX_SQUAD_XP + 0.5, p.xpShare(DrawGroup.MOVEMENT, extra = 0.3), 1e-9)
+        assertEquals(0.4 + 0.5, p.xpShare(DrawGroup.HEALTH), 1e-9)
+        assertEquals(Rules.MAX_SQUAD_GOLD + 0.25, p.goldShare(), 1e-9)
+    }
+
+    @Test fun `a shop echo's copy costs what the shop charges`() {
+        val shop = content.shadows.first { it.source.type == SourceType.SHOP }
+        val found = content.shadows.first { it.source.type == SourceType.EXTRACTION && it.rank == shop.rank }
+        assertEquals(Rules.shopShadowPrice(shop.rank), Rules.copyGold(shop))
+        assertEquals(Rules.shopShadowPrice(found.rank) / 2, Rules.copyGold(found))
     }
 
     @Test fun `the streak is saved at most once a week`() {
