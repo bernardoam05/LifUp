@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="256" height="256"><title>LifUp atual</title>
+<defs>
+<radialGradient id="bg" cx="54" cy="40" r="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1C2350"/><stop offset=".6" stop-color="#0F1328"/><stop offset="1" stop-color="#080A12"/></radialGradient>
+<linearGradient id="hf" x1="0" y1="24" x2="0" y2="84" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00D4FF" stop-opacity=".1"/><stop offset="1" stop-color="#A855F7" stop-opacity=".04"/></linearGradient>
+<linearGradient id="hs" x1="0" y1="24" x2="0" y2="84" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00D4FF"/><stop offset="1" stop-color="#A855F7"/></linearGradient>
+<radialGradient id="glow" cx="54" cy="31" r="20" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00D4FF" stop-opacity=".45"/><stop offset="1" stop-color="#00D4FF" stop-opacity="0"/></radialGradient>
+<linearGradient id="c3" x1="0" y1="49.5" x2="0" y2="71" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6E6BFA"/><stop offset="1" stop-color="#A855F7"/></linearGradient>
+<linearGradient id="c2" x1="0" y1="36.5" x2="0" y2="58" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#22CCFF"/><stop offset="1" stop-color="#3B8BFF"/></linearGradient>
+<linearGradient id="c1" x1="0" y1="23.5" x2="0" y2="45" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#7DEBFF"/></linearGradient>
+</defs>
+<rect width="108" height="108" rx="24" fill="url(#bg)"/>
+<g transform="translate(54 54) scale(.84) translate(-54 -54)">
+<path d="M54,24 L80,39 L80,69 L54,84 L28,69 L28,39Z" fill="url(#hf)"/>
+<path d="M63.1,29.25 L80,39 L80,69 L54,84 L28,69 L28,39 L44.9,29.25" fill="none" stroke="url(#hs)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="54" cy="31" r="20" fill="url(#glow)"/>
+<path d="M54,49.5 L68.5,64 L68.5,71 L54,56.5 L39.5,71 L39.5,64Z" fill="url(#c3)" fill-opacity=".9"/>
+<path d="M54,36.5 L68.5,51 L68.5,58 L54,43.5 L39.5,58 L39.5,51Z" fill="url(#c2)"/>
+<path d="M54,23.5 L68.5,38 L68.5,45 L54,30.5 L39.5,45 L39.5,38Z" fill="url(#c1)"/>
+<path d="M72,17.5 Q72.65,22.35 77.5,23 Q72.65,23.65 72,28.5 Q71.35,23.65 66.5,23 Q71.35,22.35 72,17.5Z" fill="#fff"/>
+</g></svg>
