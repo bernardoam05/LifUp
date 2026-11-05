@@ -1,0 +1,2 @@
+- [tweak] Die XP- und Gold-Boni des Teams haben jetzt eine Obergrenze. Pro Mission geben Echos höchstens doppelte XP und +75 % Gold, Portale höchstens das Doppelte. Elixiere kommen weiterhin obendrauf.
+- [fix] Fehlende Kopien eines Shop-Echos kosten jetzt so viel wie der Kauf im Shop statt der Hälfte. Andere Echos kosten weiterhin die Hälfte des Shoppreises ihrer Seltenheit.

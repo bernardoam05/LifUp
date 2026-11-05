@@ -1,0 +1,2 @@
+- [tweak] Os bónus de XP e ouro do esquadrão passam a ter um teto. Por missão, os ecos dão no máximo o dobro do XP e +75% de ouro, e os portais no máximo o dobro. Os elixires continuam a somar por cima.
+- [fix] As cópias em falta de um eco da loja passam a custar o mesmo que comprá-lo na loja, em vez de metade. Os outros ecos continuam a pagar metade do preço da loja para a sua raridade.

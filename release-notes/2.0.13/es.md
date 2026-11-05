@@ -1,0 +1,2 @@
+- [tweak] Los bonus de XP y oro del escuadrón ahora tienen un tope. Por misión, los ecos dan como máximo el doble de XP y +75% de oro, y los portales como máximo el doble. Los elixires siguen sumando encima.
+- [fix] Las copias que faltan de un eco de la tienda ahora cuestan lo mismo que comprarlo en la tienda, en lugar de la mitad. Los demás ecos siguen pagando la mitad del precio de la tienda para su rareza.

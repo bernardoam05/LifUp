@@ -1,0 +1,2 @@
+- [tweak] Les bonus d'XP et d'or de l'escouade ont désormais un plafond. Par mission, les échos donnent au plus le double d'XP et +75 % d'or, et les portails au plus le double. Les élixirs s'ajoutent toujours par-dessus.
+- [fix] Les copies manquantes d'un écho de la boutique coûtent désormais le même prix que l'acheter en boutique, au lieu de la moitié. Les autres échos paient toujours la moitié du prix de la boutique pour leur rareté.

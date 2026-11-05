@@ -1,0 +1,2 @@
+- [tweak] The squad's XP and gold bonuses now have a cap. Per mission, echoes give at most double the XP and +75% gold, and portals at most double. Elixirs still add on top.
+- [fix] A shop echo's missing copies now cost the same as buying it in the shop, instead of half. Other echoes still pay half the shop price of their rank.
