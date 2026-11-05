@@ -1,0 +1,7 @@
+- [new] Los ecos que puedes evolucionar ya muestran una flecha verde, contando las copias y el oro que tienes.
+- [tweak] Ningún eco se queda atascado esperando copias: las que faltan se pagan en oro (la mitad del precio de la tienda). Los ecos que llegan una sola vez (logros, jefes, niveles, racha) suben todos los niveles solo con oro.
+- [tweak] Trabajo Profundo se explica mejor: solo cuenta el Temporizador (no el Pomodoro) y puedes dividirlo en varias sesiones.
+- [fix] El logro Sin Salida y el Rompehechizos dicen ahora que se trata de las sesiones con «Sin rendirse» activado.
+- [fix] Cambiar una misión ya no te da un límite de pantalla o de distracciones gastado o cerca de estarlo (necesita la mitad libre y un ritmo que no lo pase hasta medianoche), ni pasos que ya has dado, ni te devuelve una misión que cambiaste antes.
+- [fix] Una misión medida que llega por un cambio o como extra ya trae el valor de hoy, en vez de empezar en 0.
+- [tweak] Las misiones de ayer salen menos hoy, también en los cambios.

@@ -1,0 +1,7 @@
+- [new] Echos, die du entwickeln kannst, zeigen jetzt einen grünen Pfeil – mit deinen Kopien und deinem Gold gerechnet.
+- [tweak] Kein Echo hängt mehr an fehlenden Kopien fest: Fehlende lassen sich mit Gold bezahlen (halber Shop-Preis). Echos, die nur einmal kommen (Erfolge, Bosse, Level, Serie), steigen jedes Level nur mit Gold.
+- [tweak] Deep Work erklärt sich besser: Nur der Timer zählt (nicht Pomodoro), und du kannst es auf mehrere Sitzungen aufteilen.
+- [fix] Der Erfolg Kein Ausweg und der Bannbrecher sagen jetzt, dass es um Sessions mit „Kein Aufgeben“ geht.
+- [fix] Eine getauschte Mission ist kein Bildschirm- oder Ablenkungslimit mehr, das aufgebraucht oder fast aufgebraucht ist (die Hälfte muss frei sein, bei einem Tempo, das bis Mitternacht darunter bleibt), keine schon gelaufenen Schritte, und bringt keine Mission zurück, die du vorher weggetauscht hast.
+- [fix] Eine gemessene Mission, die per Tausch oder als Extra kommt, startet mit dem heutigen Wert statt bei 0.
+- [tweak] Die Missionen von gestern kommen heute seltener, auch beim Tauschen.

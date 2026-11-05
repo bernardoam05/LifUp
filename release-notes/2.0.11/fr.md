@@ -1,0 +1,7 @@
+- [new] Les échos que tu peux faire évoluer affichent maintenant une flèche verte, en comptant tes copies et ton or.
+- [tweak] Aucun écho ne reste bloqué faute de copies : celles qui manquent se paient en or (la moitié du prix de la boutique). Les échos qui ne viennent qu'une fois (succès, boss, niveaux, série) montent chaque niveau avec de l'or seulement.
+- [tweak] Travail Profond s'explique mieux : seul le Minuteur compte (pas le Pomodoro), et tu peux le répartir en plusieurs séances.
+- [fix] Le succès Sans Issue et le Brise-Sort précisent maintenant qu'il s'agit des sessions avec « Sans abandon » activé.
+- [fix] Changer une mission ne te donne plus une limite d'écran ou de distractions épuisée ou presque (il en faut la moitié libre, à un rythme qui reste dessous jusqu'à minuit), ni des pas déjà faits, ni ne te rend une mission que tu avais changée avant.
+- [fix] Une mission mesurée qui arrive par un changement ou en extra part de la valeur du jour, au lieu de 0.
+- [tweak] Les missions d'hier reviennent moins souvent aujourd'hui, y compris lors des changements.

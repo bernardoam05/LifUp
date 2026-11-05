@@ -1,0 +1,7 @@
+- [new] Echoes you can evolve now show a green arrow, counting the copies and gold you have.
+- [tweak] No echo gets stuck waiting for copies: the missing ones can be paid in gold (half the shop price). Echoes that come only once (achievements, bosses, levels, streak) level up with gold alone, every level.
+- [tweak] Deep Work explains itself better: only the Timer counts (not Pomodoro), and you can split it into several sessions.
+- [fix] The No Way Out achievement and the Spellbreaker now say they're about sessions with “No quitting” on.
+- [fix] Swapping a mission no longer gives you a screen or distraction limit that's used up or close to it (half must be free, at a pace that stays under it until midnight), or steps you've already walked, or brings back one you swapped away earlier.
+- [fix] A measured mission that arrives by a swap or as an extra starts with today's value instead of 0.
+- [tweak] Yesterday's missions come up less today, in swaps too.

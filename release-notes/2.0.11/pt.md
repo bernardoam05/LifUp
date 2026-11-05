@@ -1,0 +1,7 @@
+- [new] Os ecos que podes evoluir já mostram uma seta verde, contando com as cópias e o ouro que tens.
+- [tweak] Nenhum eco fica preso à espera de cópias: as que faltam pagam-se a ouro (metade do preço da loja). Os ecos que só vêm uma vez (conquistas, bosses, níveis, sequência) sobem todos os níveis só com ouro.
+- [tweak] Trabalho Profundo explica-se melhor: conta só o Temporizador (não o Pomodoro) e podes dividir em várias sessões.
+- [fix] A conquista Sem Saída e o Quebra-Feitiços dizem agora que se trata das sessões com «Sem desistências» ligado.
+- [fix] Trocar uma missão já não dá um limite de ecrã ou de distrações já gasto, nem um que esteja perto disso (precisa de metade livre e de um ritmo que não o passe até à meia-noite), nem passos que já fizeste, nem devolve uma missão que trocaste antes.
+- [fix] Uma missão medida que chega por troca ou como extra já vem com o valor de hoje, em vez de começar a 0.
+- [tweak] As missões de ontem aparecem menos hoje, também nas trocas.
