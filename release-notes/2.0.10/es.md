@@ -1,0 +1,1 @@
+- [new] Icono nuevo: el «!» dorado que marca una misión nueva. También aparece en las notificaciones, en la pantalla de inicio y en el icono temático (de un solo color).

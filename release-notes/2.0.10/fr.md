@@ -1,0 +1,1 @@
+- [new] Nouvelle icône : le « ! » doré qui signale une nouvelle quête. On le retrouve aussi dans les notifications, sur l’écran d’ouverture et dans l’icône à thème (une seule couleur).

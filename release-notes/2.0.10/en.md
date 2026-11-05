@@ -1,0 +1,1 @@
+- [new] New app icon: the gold “!” that marks a new quest. It also shows in notifications, on the opening screen and in the themed (single-colour) icon.

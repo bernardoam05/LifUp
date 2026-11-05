@@ -1,0 +1,1 @@
+- [new] Neues App-Symbol: das goldene „!“, das eine neue Quest anzeigt. Es erscheint auch in Benachrichtigungen, auf dem Startbildschirm und im Design-Symbol (einfarbig).
