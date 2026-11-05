@@ -1,0 +1,3 @@
+- [new] Meet Core, your companion in LifUp. She's on the app icon, in Hero, in focus and in rewards, and her face follows your day: focused, relaxed, asleep at night, happy when you get it all done and tired after a missed day.
+- [new] Core evolves with you. Each rank unlocks a new form, from Potential to Legend. Tap her in Hero to pick the form you like best.
+- [tweak] The app icon and the notification icon are now Core (her head and her chest diamond) instead of the "!".

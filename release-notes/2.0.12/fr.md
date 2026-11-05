@@ -1,0 +1,3 @@
+- [new] Voici Core, ta compagne dans LifUp. Elle est sur l'icône de l'app, dans Héros, pendant le focus et dans les récompenses, et son visage suit ta journée : concentrée, détendue, endormie la nuit, heureuse quand tu as tout fait et fatiguée après une journée ratée.
+- [new] Core évolue avec toi. Chaque rang débloque une nouvelle forme, de Potentiel à Légende. Touche-la dans Héros pour choisir ta forme préférée.
+- [tweak] L'icône de l'app et celle des notifications deviennent Core (sa tête et le losange de sa poitrine) à la place du « ! ».

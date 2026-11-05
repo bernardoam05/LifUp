@@ -1,22 +1,20 @@
 # Ícone da app
 
-**Atual: Quest Mark.** É o "!" que nos RPGs marca uma missão nova, a dourado (`#FFD866` → `#FF8A4C`, o `gold` do tema) sobre o fundo escuro de sempre.
+**Atual: a Core.** A cabeça da Core (a forma 1) sobre verde escuro, com um brilho por trás.
 
-- `quest-mark-icon.svg`: o ícone completo, recortado como o launcher o mostra (os 72 dp centrais).
-- `quest-mark-black.svg`: a marca a uma cor.
+- `core/icon-preview.png`: o ícone completo; `core/sprites.png`: as 5 formas × 8 caras usadas na app.
 - Em Android:
-  - `drawable/ic_launcher_foreground.xml` e `ic_launcher_monochrome.xml` (108 dp, marca dentro da zona segura de 66 dp).
-  - `drawable/ic_stat_lifup.xml` (notificações).
-  - O fundo continua a ser `ic_launcher_background.xml`.
-  - A splash (Android ≤11 e 12+) e o onboarding usam o primeiro plano, por isso mudam sozinhos.
+  - `mipmap-*/ic_launcher_foreground.webp` e `ic_launcher_monochrome.webp` (108 dp, a cabeça dentro da zona segura de 66 dp).
+  - `drawable/ic_launcher_background.xml`: o degradé verde escuro.
+  - `drawable/ic_stat_lifup.xml` (notificações): o losango do peito da Core.
+  - A splash e o onboarding usam a Core, por isso mudam sozinhas.
+  - As caras na app estão em `drawable-nodpi/core_s<forma>_<cara>.webp`.
 
-## Voltar ao ícone antigo
+## Voltar a um ícone anterior
 
-O hexágono com chevrons está em `legacy/`, com uma pré-visualização em `legacy/icon-preview.svg`. Para o repor:
+Os vetores dos ícones anteriores ficam guardados:
 
-```bash
-cp design/icon/legacy/ic_launcher_foreground.xml \
-   design/icon/legacy/ic_launcher_monochrome.xml \
-   design/icon/legacy/ic_stat_lifup.xml \
-   app/src/main/res/drawable/
-```
+- `quest-mark/`: o "!" dourado (2.0.10 e 2.0.11).
+- `legacy/`: o hexágono com chevrons.
+
+Para repor um deles, apaga os `ic_launcher_foreground.webp` e `ic_launcher_monochrome.webp` de `mipmap-*`, copia os `.xml` dessa pasta para `app/src/main/res/drawable/` e, em `mipmap-anydpi-v26/ic_launcher*.xml` e em `drawable/background_splash.xml`, troca `@mipmap/ic_launcher_…` por `@drawable/ic_launcher_…`.

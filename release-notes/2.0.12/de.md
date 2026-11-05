@@ -1,0 +1,3 @@
+- [new] Lerne Core kennen, deine Begleiterin in LifUp. Sie ist auf dem App-Symbol, unter „Held“, beim Fokus und bei Belohnungen, und ihr Gesicht folgt deinem Tag: konzentriert, entspannt, nachts schlafend, glücklich, wenn du alles geschafft hast, und müde nach einem verpassten Tag.
+- [new] Core entwickelt sich mit dir. Jeder Rang schaltet eine neue Gestalt frei, von Potenzial bis Legende. Tippe unter „Held“ auf sie, um deine Lieblingsgestalt zu wählen.
+- [tweak] App-Symbol und Benachrichtigungssymbol zeigen jetzt Core (ihren Kopf und die Raute auf der Brust) statt des „!“.
