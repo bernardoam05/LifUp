@@ -1,0 +1,1 @@
+- [fix] Der Startbildschirm zeigt die ganze Core statt nur ihres abgeschnittenen Kopfes.

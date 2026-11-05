@@ -1,0 +1,1 @@
+- [fix] The launch screen shows the whole Core instead of just her cut-off head.

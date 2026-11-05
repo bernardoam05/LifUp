@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Launch background: the app colour with the logo mark centred. -->
+<!-- Launch background: the icon's dark green with the whole Core centred (the launcher icon only has room for her head). -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
     <item android:drawable="@drawable/ic_launcher_background" />
-    <item android:width="216dp" android:height="216dp" android:gravity="center" android:drawable="@mipmap/ic_launcher_foreground" />
+    <item android:width="200dp" android:height="200dp" android:gravity="center" android:drawable="@drawable/splash_core_full" />
 </layer-list>

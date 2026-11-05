@@ -1,0 +1,1 @@
+- [fix] La pantalla de inicio muestra a Core entera en lugar de solo su cabeza cortada.
