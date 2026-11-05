@@ -71,7 +71,7 @@ fun rememberResumeTick(): Int {
     return tick
 }
 
-private class PermRow(val label: Int, val why: Int, val ok: Boolean, val fix: () -> Unit)
+private class PermRow(val label: Int, val why: Int, val ok: Boolean, val confirm: (() -> Unit)? = null, val fix: () -> Unit)
 
 /**
  * System permissions with what each one is for. Collapsible at all times; it opens by itself only
@@ -83,8 +83,10 @@ fun PermissionsPanel(s: GameState, startExpanded: Boolean = false) {
     val tick = rememberResumeTick()
     val notif = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
     val activity = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
-    val rows = remember(tick) {
-        listOf(
+    var confirmed by remember { mutableIntStateOf(0) }
+    var askedAutostart by rememberSaveable { mutableStateOf(false) }
+    val rows = remember(tick, confirmed, askedAutostart) {
+        listOfNotNull(
             PermRow(R.string.perm_usage, R.string.perm_usage_why, Permissions.usageAccess(context)) { Permissions.openUsageAccess(context) },
             PermRow(R.string.perm_overlay, R.string.perm_overlay_why, Permissions.overlay(context)) { Permissions.openOverlay(context) },
             PermRow(R.string.perm_battery, R.string.perm_battery_why, Permissions.batteryUnrestricted(context)) { Permissions.openBattery(context) },
@@ -95,6 +97,11 @@ fun PermissionsPanel(s: GameState, startExpanded: Boolean = false) {
             PermRow(R.string.perm_activity, R.string.perm_activity_why, Permissions.activity(context)) {
                 if (Build.VERSION.SDK_INT >= 29) activity.launch(Manifest.permission.ACTIVITY_RECOGNITION)
             },
+            // Only on the brands that close apps; where the state can't be read, the player says when it's done.
+            if (Permissions.autostartMatters()) PermRow(
+                R.string.perm_autostart_row, R.string.perm_autostart_why, Permissions.autostart(context),
+                confirm = if (Permissions.autostartKnown(context) == null && askedAutostart) ({ Permissions.confirmAutostart(context); confirmed++ }) else null,
+            ) { Permissions.openAutostart(context); askedAutostart = true } else null,
         )
     }
     val missing = rows.count { !it.ok }
@@ -116,10 +123,13 @@ fun PermissionsPanel(s: GameState, startExpanded: Boolean = false) {
                         Text(stringResource(r.label), style = MaterialTheme.typography.bodyMedium)
                         Text(stringResource(r.why), style = MaterialTheme.typography.bodySmall, color = Lif.colors.dim)
                     }
-                    if (!r.ok) TextButton(onClick = r.fix) { Text(stringResource(R.string.fix).uppercase()) }
+                    if (!r.ok) Column(horizontalAlignment = Alignment.End) {
+                        TextButton(onClick = r.fix) { Text(stringResource(R.string.fix).uppercase()) }
+                        r.confirm?.let { TextButton(onClick = it) { Text(stringResource(R.string.perm_autostart_done).uppercase(), color = Lif.colors.green) } }
+                    }
                 }
             }
-            TextButton(onClick = { Permissions.openAutostart(context) }) { Text(stringResource(R.string.perm_autostart).uppercase()) }
+            if (!Permissions.autostartMatters()) TextButton(onClick = { Permissions.openAutostart(context) }) { Text(stringResource(R.string.perm_autostart).uppercase()) }
         }
     }
 }

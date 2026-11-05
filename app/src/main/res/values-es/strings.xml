@@ -895,4 +895,7 @@
     <string name="core_stage_3">Disciplina</string>
     <string name="core_stage_4">Maestría</string>
     <string name="core_stage_5">Leyenda</string>
+    <string name="perm_autostart_row">Inicio automático</string>
+    <string name="perm_autostart_why">Sin esto el sistema cierra la app, y los recordatorios, los portales y el cierre del día solo llegan al desbloquear el móvil. En Oppo/Realme: Info de la app → Batería → permitir inicio automático y actividad en segundo plano.</string>
+    <string name="perm_autostart_done">Ya está</string>
 </resources>

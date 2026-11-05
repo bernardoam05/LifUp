@@ -877,4 +877,7 @@
     <string name="core_stage_3">Discipline</string>
     <string name="core_stage_4">Maîtrise</string>
     <string name="core_stage_5">Légende</string>
+    <string name="perm_autostart_row">Démarrage automatique</string>
+    <string name="perm_autostart_why">Sans cela, le système ferme l\'app : rappels, portails et clôture de la journée n\'arrivent qu\'au déverrouillage. Sur Oppo/Realme : Infos de l\'app → Batterie → autoriser le lancement automatique et l\'activité en arrière-plan.</string>
+    <string name="perm_autostart_done">C\'est fait</string>
 </resources>

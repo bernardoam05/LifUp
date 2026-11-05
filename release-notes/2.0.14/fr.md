@@ -1,1 +1,0 @@
-- [fix] L'écran de lancement montre Core en entier au lieu de sa seule tête coupée.

@@ -1,0 +1,2 @@
+- [fix] Sur Xiaomi, Oppo, Realme, Vivo et Huawei, le démarrage automatique apparaît désormais dans Autorisations avec un avertissement. Sans lui, le système ferme l'app et les rappels n'arrivent qu'au déverrouillage. Sur Xiaomi l'app voit seule s'il est activé ; sur les autres marques tu confirmes avec « C'est fait ».
+- [fix] L'écran de lancement montre Core en entier au lieu de sa seule tête coupée.

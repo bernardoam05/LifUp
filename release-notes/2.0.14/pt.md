@@ -1,1 +1,0 @@
-- [fix] O ecrã de abertura mostra a Core inteira em vez de só a cabeça cortada.

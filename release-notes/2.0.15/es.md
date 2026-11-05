@@ -1,0 +1,2 @@
+- [fix] En Xiaomi, Oppo, Realme, Vivo y Huawei, el inicio automático aparece ahora en Permisos con un aviso. Sin él, el sistema cierra la app y los recordatorios solo llegan al desbloquear el móvil. En Xiaomi la app ve sola si está activado; en las demás marcas lo confirmas con «Ya está».
+- [fix] La pantalla de inicio muestra a Core entera en lugar de solo su cabeza cortada.

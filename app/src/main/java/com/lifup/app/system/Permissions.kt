@@ -57,6 +57,35 @@ object Permissions {
         if (!ok) open(c, Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
     }
 
+    /**
+     * Brands whose system closes apps it hasn't been told to keep ("autostart" / "auto launch"): there an alarm
+     * can't wake a closed app, so reminders, portals and the midnight close only arrive when the phone is unlocked.
+     */
+    fun autostartMatters(): Boolean = Build.MANUFACTURER.lowercase().let { m ->
+        listOf("xiaomi", "redmi", "poco", "oppo", "realme", "oneplus", "vivo", "iqoo", "huawei", "honor").any { it in m }
+    }
+
+    /**
+     * Whether autostart is on, where the system says: Xiaomi keeps it as a hidden app-op (10008). Elsewhere no
+     * app can read it, so null, and the player confirms it themselves ([autostartConfirmed]).
+     */
+    fun autostartKnown(c: Context): Boolean? {
+        val m = Build.MANUFACTURER.lowercase()
+        if (listOf("xiaomi", "redmi", "poco").none { it in m }) return null
+        return runCatching {
+            val ops = c.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+            val check = AppOpsManager::class.java.getMethod("checkOpNoThrow", Int::class.javaPrimitiveType, Int::class.javaPrimitiveType, String::class.java)
+            check.invoke(ops, 10008, android.os.Process.myUid(), c.packageName) as Int == AppOpsManager.MODE_ALLOWED
+        }.getOrNull()
+    }
+
+    private const val PREFS = "permissions"
+    fun autostartConfirmed(c: Context) = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean("autostart", false)
+    fun confirmAutostart(c: Context) = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean("autostart", true).apply()
+
+    /** On those brands: on when the system says so, or when the player said they turned it on. */
+    fun autostart(c: Context): Boolean = autostartKnown(c) ?: autostartConfirmed(c)
+
     /** OEM "autostart" screens (Xiaomi, Oppo, Huawei, Vivo, Samsung…); falls back to App info. */
     fun openAutostart(c: Context) {
         val screens = listOf(

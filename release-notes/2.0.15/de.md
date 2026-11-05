@@ -1,0 +1,2 @@
+- [fix] Auf Xiaomi, Oppo, Realme, Vivo und Huawei erscheint Autostart jetzt mit Warnung unter Berechtigungen. Ohne ihn schließt das System die App und Erinnerungen kommen erst beim Entsperren. Bei Xiaomi erkennt die App selbst, ob er an ist; bei anderen Marken bestätigst du mit „Erledigt“.
+- [fix] Der Startbildschirm zeigt die ganze Core statt nur ihres abgeschnittenen Kopfes.

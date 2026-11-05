@@ -1,0 +1,2 @@
+- [fix] Em Xiaomi, Oppo, Realme, Vivo e Huawei, o arranque automático passa a aparecer nas Permissões com aviso. Sem ele, o sistema fecha a app e os lembretes só chegam quando desbloqueias o telemóvel. Na Xiaomi a app vê sozinha se está ligado; nas outras marcas confirmas com «Já liguei».
+- [fix] O ecrã de abertura mostra a Core inteira em vez de só a cabeça cortada.

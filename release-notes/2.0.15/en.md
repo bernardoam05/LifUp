@@ -1,0 +1,2 @@
+- [fix] On Xiaomi, Oppo, Realme, Vivo and Huawei, autostart now shows in Permissions with a warning. Without it the system closes the app and reminders only arrive when you unlock the phone. On Xiaomi the app sees whether it's on; on other brands you confirm with "Done".
+- [fix] The launch screen shows the whole Core instead of just her cut-off head.
