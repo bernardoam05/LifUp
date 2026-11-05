@@ -1,1 +1,3 @@
-- [new] Ícone novo: o «!» dourado que marca uma missão nova. Aparece também nas notificações, no ecrã de abertura e no ícone temático (de uma só cor).
+- [new] Conhece a Core, a tua companheira na LifUp. Está no ícone da app, no Herói, no foco e nas recompensas, e a cara dela acompanha o teu dia: focada, relaxada, a dormir à noite, feliz quando cumpres tudo e cansada depois de um dia falhado.
+- [new] A Core evolui contigo. Cada rank desbloqueia uma forma nova, de Potencial a Lenda. Toca nela no Herói para escolher a forma que preferes.
+- [tweak] Novo ícone de notificação, com o losango da Core.

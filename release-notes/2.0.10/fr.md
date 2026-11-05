@@ -1,1 +1,3 @@
-- [new] Nouvelle icône : le « ! » doré qui signale une nouvelle quête. On le retrouve aussi dans les notifications, sur l’écran d’ouverture et dans l’icône à thème (une seule couleur).
+- [new] Voici Core, ta compagne dans LifUp. Elle est sur l'icône de l'app, dans Héros, pendant le focus et dans les récompenses, et son visage suit ta journée : concentrée, détendue, endormie la nuit, heureuse quand tu as tout fait et fatiguée après une journée ratée.
+- [new] Core évolue avec toi. Chaque rang débloque une nouvelle forme, de Potentiel à Légende. Touche-la dans Héros pour choisir ta forme préférée.
+- [tweak] Nouvelle icône de notification, avec le losange de Core.

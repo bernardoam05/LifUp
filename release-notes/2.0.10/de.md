@@ -1,1 +1,3 @@
-- [new] Neues App-Symbol: das goldene „!“, das eine neue Quest anzeigt. Es erscheint auch in Benachrichtigungen, auf dem Startbildschirm und im Design-Symbol (einfarbig).
+- [new] Lerne Core kennen, deine Begleiterin in LifUp. Sie ist auf dem App-Symbol, unter „Held“, beim Fokus und bei Belohnungen, und ihr Gesicht folgt deinem Tag: konzentriert, entspannt, nachts schlafend, glücklich, wenn du alles geschafft hast, und müde nach einem verpassten Tag.
+- [new] Core entwickelt sich mit dir. Jeder Rang schaltet eine neue Gestalt frei, von Potenzial bis Legende. Tippe unter „Held“ auf sie, um deine Lieblingsgestalt zu wählen.
+- [tweak] Neues Benachrichtigungssymbol mit Cores Raute.
