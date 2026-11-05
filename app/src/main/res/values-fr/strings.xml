@@ -880,4 +880,6 @@
     <string name="perm_autostart_row">Démarrage automatique</string>
     <string name="perm_autostart_why">Sans cela, le système ferme l\'app : rappels, portails et clôture de la journée n\'arrivent qu\'au déverrouillage. Sur Oppo/Realme : Infos de l\'app → Batterie → autoriser le lancement automatique et l\'activité en arrière-plan.</string>
     <string name="perm_autostart_done">C\'est fait</string>
+    <string name="core_icon_follows">L\'icône de l\'app suit Core</string>
+    <string name="core_icon_follows_hint">Elle change quand tu quittes l\'app, jamais pendant que tu l\'utilises.</string>
 </resources>

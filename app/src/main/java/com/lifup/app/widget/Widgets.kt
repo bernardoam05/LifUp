@@ -35,7 +35,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.lifup.app.MainActivity
+import com.lifup.app.AppActivity
 import com.lifup.app.R
 import com.lifup.app.domain.GameState
 import kotlinx.coroutines.CoroutineScope
@@ -79,7 +79,7 @@ object Widgets {
 
 /** Opens the app on a deep link (lifup://today, lifup://quest/<id>, …). */
 internal fun openLink(context: Context, link: String): Action = actionStartActivity(
-    Intent(Intent.ACTION_VIEW, Uri.parse("lifup://$link"), context, MainActivity::class.java)
+    Intent(Intent.ACTION_VIEW, Uri.parse("lifup://$link"), context, AppActivity::class.java)
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP),
 )
 

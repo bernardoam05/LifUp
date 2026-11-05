@@ -1,0 +1,1 @@
+- [new] L'icône de l'app suit Core : quand elle évolue, ou quand tu choisis une autre forme, l'icône prend cette forme. Elle change quand tu quittes l'app, jamais pendant que tu l'utilises. Si tu préfères une icône fixe, désactive-la dans Forme de Core.

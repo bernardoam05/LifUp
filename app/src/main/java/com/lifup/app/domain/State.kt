@@ -228,6 +228,8 @@ data class Settings(
     val themeRank: HunterRank? = null,
     /** The Core's form the player picked (1..[Core.STAGES]); null = the most evolved one unlocked. */
     val coreStage: Int? = null,
+    /** Keeps the first form's launcher icon instead of following the Core's. */
+    val fixedIcon: Boolean = false,
 )
 
 @Serializable

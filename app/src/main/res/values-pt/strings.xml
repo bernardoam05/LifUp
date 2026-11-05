@@ -880,4 +880,6 @@
     <string name="perm_autostart_row">Arranque automático</string>
     <string name="perm_autostart_why">Sem isto o sistema fecha a app, e lembretes, portais e o fecho do dia só chegam quando desbloqueias o telemóvel. Na Oppo/Realme: Info da app → Bateria → permitir início automático e atividade em segundo plano.</string>
     <string name="perm_autostart_done">Já liguei</string>
+    <string name="core_icon_follows">Ícone da app segue a Core</string>
+    <string name="core_icon_follows_hint">Muda quando sais da app, nunca enquanto a estás a usar.</string>
 </resources>

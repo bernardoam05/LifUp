@@ -1,0 +1,1 @@
+- [new] Das App-Symbol folgt Core: Wenn sie sich entwickelt oder du eine andere Gestalt wählst, wird das Symbol zu dieser Gestalt. Es wechselt, wenn du die App verlässt, nie während du sie nutzt. Wenn du lieber ein festes Symbol willst, schalte es unter Cores Gestalt aus.

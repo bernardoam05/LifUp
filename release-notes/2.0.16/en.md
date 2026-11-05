@@ -1,0 +1,1 @@
+- [new] The app icon follows Core: when she evolves, or when you pick another form, the icon becomes that form. It changes when you leave the app, never while you're using it. If you'd rather keep a fixed icon, turn it off in Core's form.

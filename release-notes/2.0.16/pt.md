@@ -1,0 +1,1 @@
+- [new] O ícone da app acompanha a Core: quando ela evolui, ou quando escolhes outra forma, o ícone passa a ser essa forma. Muda quando sais da app, nunca enquanto a usas. Se preferires o ícone fixo, desliga em Forma da Core.

@@ -65,6 +65,17 @@ fun CoreSheet(s: GameState, onDismiss: () -> Unit) {
                 }
             }
             FilterChip(selected = auto, onClick = { act { updateSettings { it.copy(coreStage = null) } } }, label = { Text(stringResource(R.string.core_auto)) })
+            // The launcher icon follows the form (switched when the app goes to the background), unless kept fixed.
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.core_icon_follows), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.core_icon_follows_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
+                }
+                androidx.compose.material3.Switch(
+                    checked = !s.settings.fixedIcon,
+                    onCheckedChange = { on -> act { updateSettings { it.copy(fixedIcon = !on) } } },
+                )
+            }
             FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp), maxItemsInEachRow = 3) {
                 for (stage in 1..Core.STAGES) {
                     val open = stage <= unlocked

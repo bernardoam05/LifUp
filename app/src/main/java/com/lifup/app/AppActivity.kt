@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import com.lifup.app.ui.AppRoot
 import com.lifup.app.ui.Feedback
 
-class MainActivity : ComponentActivity() {
+class AppActivity : ComponentActivity() {
     /** Deep link target: a tab (lifup://today), or a tab plus an id (lifup://quest/<id>, lifup://focus/<id>). */
     private val deepLink = mutableStateOf<String?>(null)
 
@@ -45,6 +45,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         AppVisibility.foreground = false
+        // Leaving the app: the moment the launcher icon can follow the Core's form without anyone watching.
+        com.lifup.app.system.IconSwitcher.apply(applicationContext, LifUpApp.store.current)
         super.onStop()
     }
 }

@@ -898,4 +898,6 @@
     <string name="perm_autostart_row">Autostart</string>
     <string name="perm_autostart_why">Ohne das schließt das System die App, und Erinnerungen, Portale und der Tagesabschluss kommen erst beim Entsperren. Bei Oppo/Realme: App-Info → Akku → automatischen Start und Hintergrundaktivität erlauben.</string>
     <string name="perm_autostart_done">Erledigt</string>
+    <string name="core_icon_follows">App-Symbol folgt Core</string>
+    <string name="core_icon_follows_hint">Es wechselt, wenn du die App verlässt, nie während du sie nutzt.</string>
 </resources>
