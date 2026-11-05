@@ -887,4 +887,13 @@
         <item quantity="one">%1$d random item</item>
         <item quantity="other">%1$d random items</item>
     </plurals>
+    <string name="core_appearance">Core\'s form</string>
+    <string name="core_appearance_hint">New forms unlock as your rank goes up. Its face follows your day.</string>
+    <string name="core_auto">Automatic (the latest)</string>
+    <string name="core_rank">Rank %1$s</string>
+    <string name="core_stage_1">Potential</string>
+    <string name="core_stage_2">Focus</string>
+    <string name="core_stage_3">Discipline</string>
+    <string name="core_stage_4">Mastery</string>
+    <string name="core_stage_5">Legend</string>
 </resources>

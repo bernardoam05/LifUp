@@ -886,4 +886,13 @@
         <item quantity="one">%1$d zufälliger Gegenstand</item>
         <item quantity="other">%1$d zufällige Gegenstände</item>
     </plurals>
+    <string name="core_appearance">Cores Gestalt</string>
+    <string name="core_appearance_hint">Neue Gestalten schaltest du mit jedem Rang frei. Ihr Gesicht folgt deinem Tag.</string>
+    <string name="core_auto">Automatisch (die neueste)</string>
+    <string name="core_rank">Rang %1$s</string>
+    <string name="core_stage_1">Potenzial</string>
+    <string name="core_stage_2">Fokus</string>
+    <string name="core_stage_3">Disziplin</string>
+    <string name="core_stage_4">Meisterschaft</string>
+    <string name="core_stage_5">Legende</string>
 </resources>

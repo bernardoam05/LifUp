@@ -62,6 +62,40 @@ class EngineTest {
         assertTrue("marshal days: $marshals", marshals in 10..55)
     }
 
+    @Test fun `the Core's form follows the rank and the pick`() {
+        var s = fresh()
+        assertEquals(1, Core.stage(s))
+        s = s.copy(player = s.player.copy(level = 31))
+        assertEquals(3, Core.unlocked(s))
+        assertEquals(3, Core.stage(s))
+        s = s.copy(settings = s.settings.copy(coreStage = 2))
+        assertEquals(2, Core.stage(s))
+        // A form not unlocked (or no longer) falls back to the latest.
+        s = s.copy(settings = s.settings.copy(coreStage = 5))
+        assertEquals(3, Core.stage(s))
+        assertEquals(HunterRank.S, Core.rankFor(5))
+        assertEquals(HunterRank.E, Core.rankFor(1))
+    }
+
+    @Test fun `the Core's face follows the day`() {
+        var s = fresh("2026-10-14T09:00")
+        assertEquals(CoreMood.NEUTRAL, Core.mood(s, 9))
+        assertEquals(CoreMood.SLEEPING, Core.mood(s, 23))
+        s = run(s, "2026-10-14T10:00") { completeQuest(s.dailyQuests.first().id) }
+        assertEquals(CoreMood.CONFIDENT, Core.mood(s, 10))
+        s = run(s, "2026-10-14T20:00") { s.dailyQuests.forEach { if (it.status != QuestStatus.DONE) completeQuest(it.id) } }
+        assertEquals(CoreMood.HAPPY, Core.mood(s, 20))
+        // Missed days before today: tired after one, frustrated after two in a row.
+        val missed = { d: String -> DayLog(d, 0, 5, perfect = false, penalty = true, rest = false, passed = false) }
+        var m = fresh("2026-10-20T09:00")
+        m = m.copy(dayLog = listOf(missed("2026-10-19")))
+        assertEquals(CoreMood.TIRED, Core.mood(m, 9))
+        m = m.copy(dayLog = listOf(missed("2026-10-18"), missed("2026-10-19")))
+        assertEquals(CoreMood.FRUSTRATED, Core.mood(m, 9))
+        m = m.copy(dayLog = listOf(missed("2026-10-18"), DayLog("2026-10-19", 4, 5, false, false, false, passed = true)))
+        assertEquals(CoreMood.NEUTRAL, Core.mood(m, 9))
+    }
+
     @Test fun `wind down is not handed out at night`() {
         val def = content.questDefById.getValue("pool_winddown")
         assertTrue(def.offeredAt(21))

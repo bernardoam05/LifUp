@@ -133,6 +133,11 @@ private fun ActiveSession(s: GameState, f: FocusSession, now: Long) {
     var confirmStop by rememberSaveable { mutableStateOf(false) }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+        com.lifup.app.ui.components.CoreAvatar(
+            com.lifup.app.domain.Core.stage(s),
+            if (phase?.work == false) com.lifup.app.domain.CoreMood.RELAXED else com.lifup.app.domain.CoreMood.FOCUSED,
+            72.dp, glow = ringColor,
+        )
         Box(Modifier.size(260.dp).padding(8.dp), contentAlignment = Alignment.Center) {
             val track = p.border
             Canvas(Modifier.size(240.dp)) {

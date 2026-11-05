@@ -140,10 +140,17 @@ private fun Profile(s: GameState) {
     val rank = HunterRank.of(p.level)
     val c = Lif.colors
     var progression by remember { mutableStateOf(false) }
+    var coreSheet by remember { mutableStateOf(false) }
     if (progression) ProgressionSheet(s) { progression = false }
+    if (coreSheet) CoreSheet(s) { coreSheet = false }
+    val hour = java.time.LocalTime.ofInstant(java.time.Instant.ofEpochMilli(com.lifup.app.ui.components.rememberNow(60_000)), java.time.ZoneId.systemDefault()).hour
     Panel(onClick = { progression = true }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            RankBadge(rank.label, accentRank(rank), 56.dp)
+            // The Core, with the rank on its corner; tapping it picks its form.
+            Box(Modifier.size(84.dp).clip(RoundedCornerShape(16.dp)).clickable { coreSheet = true }) {
+                com.lifup.app.ui.components.CoreAvatar(com.lifup.app.domain.Core.stage(s), com.lifup.app.domain.Core.mood(s, hour), 84.dp, glow = accentRank(rank))
+                Box(Modifier.align(Alignment.BottomEnd)) { RankBadge(rank.label, accentRank(rank), 26.dp) }
+            }
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(p.name.ifBlank { stringResource(R.string.default_hunter) }.uppercase(), style = MaterialTheme.typography.headlineSmall, maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)

@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lifup.app.BuildConfig
+import com.lifup.app.LifUpApp
 import com.lifup.app.R
 import com.lifup.app.domain.NoteKind
 import com.lifup.app.domain.NoteLine
@@ -62,7 +63,7 @@ fun WhatsNew() {
     AlertDialog(
         onDismissRequest = close,
         containerColor = Lif.colors.panel,
-        icon = { IconBadge(Icons.Rounded.NewReleases, Lif.colors.accent) },
+        icon = { com.lifup.app.ui.components.CoreAvatar(com.lifup.app.domain.Core.stage(LifUpApp.store.state.value), com.lifup.app.domain.CoreMood.HAPPY, 72.dp) },
         title = { Text(stringResource(R.string.whats_new_title, BuildConfig.VERSION_NAME)) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(14.dp)) {

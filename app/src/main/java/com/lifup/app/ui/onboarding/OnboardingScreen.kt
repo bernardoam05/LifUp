@@ -17,7 +17,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.CheckCircle
@@ -29,7 +28,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import com.lifup.app.ui.components.Panel
 import kotlinx.coroutines.delay
 import android.Manifest
@@ -184,7 +182,7 @@ private fun Welcome(canImport: Boolean, onImport: () -> Unit) {
     Spacer(Modifier.height(24.dp))
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Box(Modifier.size(190.dp).scale(scale).clip(CircleShape).background(Brush.radialGradient(listOf(c.accent.copy(alpha = glow), Color.Transparent))))
-        Image(painterResource(R.drawable.ic_launcher_foreground), null, Modifier.size(170.dp))
+        com.lifup.app.ui.components.CoreAvatar(1, com.lifup.app.domain.CoreMood.HAPPY, 170.dp)
     }
     Text(stringResource(R.string.onb_welcome).uppercase(), style = MaterialTheme.typography.titleSmall, color = c.accent)
     Text(stringResource(R.string.onb_title), style = MaterialTheme.typography.displaySmall)

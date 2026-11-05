@@ -1,5 +1,9 @@
 package com.lifup.app.ui.rewards
 
+import com.lifup.app.LifUpApp
+import com.lifup.app.domain.Core
+import com.lifup.app.domain.CoreMood
+import com.lifup.app.ui.components.CoreAvatar
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateListOf
 import com.lifup.app.ui.defTitle
@@ -104,11 +108,11 @@ fun RewardHost(s: GameState) {
     Dialog(onDismissRequest = dismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(Modifier.padding(24.dp)) {
             when (reward) {
-                is Reward.LevelUp -> RewardCard(Icons.Rounded.Star, Lif.colors.accent, stringResource(R.string.reward_level_title), stringResource(R.string.level_n, reward.level), dismiss) {
+                is Reward.LevelUp -> RewardCard(Icons.Rounded.Star, Lif.colors.accent, stringResource(R.string.reward_level_title), stringResource(R.string.level_n, reward.level), dismiss, core = CoreMood.EXCITED) {
                     Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
                     reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
                 }
-                is Reward.RankUp -> RewardCard(Icons.Rounded.MilitaryTech, accentRank(reward.rank), stringResource(R.string.reward_rank_title), "${reward.rank.label} · ${stringResource(hunterTitle(reward.rank))}", dismiss) {
+                is Reward.RankUp -> RewardCard(Icons.Rounded.MilitaryTech, accentRank(reward.rank), stringResource(R.string.reward_rank_title), "${reward.rank.label} · ${stringResource(hunterTitle(reward.rank))}", dismiss, core = CoreMood.HAPPY) {
                     Line(stringResource(R.string.reward_rank_text), Lif.colors.muted)
                 }
                 is Reward.ShadowGained -> {
@@ -139,7 +143,7 @@ fun RewardHost(s: GameState) {
                     }
                 }
                 is Reward.AchievementUnlocked -> AchievementCard(batch.filterIsInstance<Reward.AchievementUnlocked>(), dismiss)
-                is Reward.StreakMilestone -> RewardCard(Icons.Rounded.LocalFireDepartment, Lif.colors.red, stringResource(R.string.reward_streak_title), stringResource(R.string.days_in_a_row, reward.days), dismiss) {
+                is Reward.StreakMilestone -> RewardCard(Icons.Rounded.LocalFireDepartment, Lif.colors.red, stringResource(R.string.reward_streak_title), stringResource(R.string.days_in_a_row, reward.days), dismiss, core = CoreMood.HAPPY) {
                     if (reward.gold > 0) Line(stringResource(R.string.reward_gold, reward.gold), Lif.colors.gold)
                     reward.items.forEach { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
                 }
@@ -158,7 +162,7 @@ fun RewardHost(s: GameState) {
 }
 
 @Composable
-internal fun RewardCard(icon: ImageVector?, color: Color, title: String, subtitle: String, onContinue: () -> Unit, body: @Composable () -> Unit) {
+internal fun RewardCard(icon: ImageVector?, color: Color, title: String, subtitle: String, onContinue: () -> Unit, core: CoreMood? = null, body: @Composable () -> Unit) {
     Panel(border = color.copy(alpha = 0.7f), padding = androidx.compose.foundation.layout.PaddingValues(24.dp)) {
         // Only the content scrolls: a long week or month report keeps "Continue" on screen instead of under the fold.
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -166,7 +170,8 @@ internal fun RewardCard(icon: ImageVector?, color: Color, title: String, subtitl
                 Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                if (icon != null) Icon(icon, null, tint = color, modifier = Modifier.padding(bottom = 4.dp).height(44.dp).width(44.dp))
+                if (core != null) CoreAvatar(Core.stage(LifUpApp.store.state.value), core, 96.dp, glow = color)
+                else if (icon != null) Icon(icon, null, tint = color, modifier = Modifier.padding(bottom = 4.dp).height(44.dp).width(44.dp))
                 Text(title.uppercase(), style = MaterialTheme.typography.titleSmall, color = color, textAlign = TextAlign.Center)
                 if (subtitle.isNotEmpty()) Text(subtitle, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
                 Spacer(Modifier.height(4.dp))

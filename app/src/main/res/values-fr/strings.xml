@@ -868,4 +868,13 @@
         <item quantity="one">%1$d objet aléatoire</item>
         <item quantity="other">%1$d objets aléatoires</item>
     </plurals>
+    <string name="core_appearance">Forme de Core</string>
+    <string name="core_appearance_hint">Tu débloques de nouvelles formes en montant de rang. Son visage suit ta journée.</string>
+    <string name="core_auto">Automatique (la plus récente)</string>
+    <string name="core_rank">Rang %1$s</string>
+    <string name="core_stage_1">Potentiel</string>
+    <string name="core_stage_2">Concentration</string>
+    <string name="core_stage_3">Discipline</string>
+    <string name="core_stage_4">Maîtrise</string>
+    <string name="core_stage_5">Légende</string>
 </resources>

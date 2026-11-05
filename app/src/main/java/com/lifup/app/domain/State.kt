@@ -226,6 +226,8 @@ data class Settings(
     val heightCm: Int = 170,
     /** null = follows the hunter rank. */
     val themeRank: HunterRank? = null,
+    /** The Core's form the player picked (1..[Core.STAGES]); null = the most evolved one unlocked. */
+    val coreStage: Int? = null,
 )
 
 @Serializable

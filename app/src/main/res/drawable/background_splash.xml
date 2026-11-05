@@ -2,5 +2,5 @@
 <!-- Launch background: the app colour with the logo mark centred. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
     <item android:drawable="@drawable/ic_launcher_background" />
-    <item android:width="216dp" android:height="216dp" android:gravity="center" android:drawable="@drawable/ic_launcher_foreground" />
+    <item android:width="216dp" android:height="216dp" android:gravity="center" android:drawable="@mipmap/ic_launcher_foreground" />
 </layer-list>
