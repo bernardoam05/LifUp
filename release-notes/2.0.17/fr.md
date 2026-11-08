@@ -1,0 +1,3 @@
+- [fix] Une copie manquante d'un écho que la boutique ne vend pas (comme le Chevalier d'Ébène) coûtait moitié prix. Désormais, toute copie manquante coûte le prix d'un écho de cette rareté en boutique.
+- [new] En boutique, chaque écho indique s'il est nouveau pour toi ou combien des copies de son prochain niveau tu as déjà.
+- [fix] Moins de saccades : les statistiques du Héros et la collection d'échos ne se reconstruisent plus entièrement à chaque changement dans l'app, elles s'ouvrent donc plus vite.

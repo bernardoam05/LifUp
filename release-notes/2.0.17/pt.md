@@ -1,0 +1,3 @@
+- [fix] A cópia em falta de um eco que a loja não vende (como o Cavaleiro de Ébano) custava metade. Agora qualquer cópia em falta custa o mesmo que um eco dessa raridade na loja.
+- [new] Na loja, cada eco mostra se é novo para ti ou quantas das cópias do próximo nível já tens.
+- [fix] Menos engasgos: as estatísticas do Herói e a coleção de ecos já não se refazem por inteiro sempre que algo muda na app, por isso abrem mais depressa.

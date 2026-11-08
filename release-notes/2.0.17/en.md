@@ -1,0 +1,3 @@
+- [fix] A missing copy of an echo the shop doesn't sell (like the Ebony Knight) cost half price. Every missing copy now costs what the shop charges for an echo of that rarity.
+- [new] In the shop, each echo shows whether it's new to you or how many of the copies its next level needs you already have.
+- [fix] Less stutter: the Hero tab's stats and the echo collection no longer rebuild in full whenever something in the app changes, so they open faster.

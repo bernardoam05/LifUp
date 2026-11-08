@@ -15,6 +15,8 @@
     <string name="use">Utiliser</string>
     <string name="fix">Régler</string>
     <string name="all">Toutes</string>
+    <string name="shop_echo_new">Nouveau</string>
+    <string name="shop_echo_copies">%1$d/%2$d copies</string>
     <string name="shop_echoes_renew">nouveaux dans %1$s</string>
     <string name="automatic">Automatique</string>
     <string name="default_hunter">Héros</string>
@@ -536,7 +538,7 @@
     <string name="guide_portal_title">Portails</string>
     <string name="guide_portal">Ils apparaissent seuls::Entre 8 h et 22 h, jusqu\'à 2 par jour.\nRécompense double::Une mission plus grosse, avec deux fois plus d\'XP et d\'or.\nNouvel allié::La terminer peut te donner un écho.\nContre la montre::Tu as toujours le temps, mais le portail se ferme quand il est écoulé.</string>
     <string name="guide_shadows_title">Échos</string>
-    <string name="guide_shadows">Où les trouver::Journées parfaites, boss, portails, succès, paliers de série et la boutique.\nEscouade::Jusqu\'à 3 sur le terrain, chacun avec une passive : plus d\'XP, plus d\'or, plus de dégâts, protection. Ensemble, ils donnent au plus le double d\'XP et +75 % d\'or par mission.\nÉvolution::Les doubles et l\'or font monter l\'écho de niveau, jusqu\'au tien. Ceux qu\'on trouve souvent demandent 1 à 3 copies selon la rareté ; ceux qui ne viennent qu\'une fois (succès, boss, niveaux, série) montent chaque niveau avec de l\'or seulement.\nCopies manquantes::Chaque copie manquante se paie en or : celle d\'un écho de la boutique coûte le prix de la boutique ; celle de tout autre, la moitié du prix de la boutique pour sa rareté.\nFlèche sur l\'écho::Cet écho peut évoluer maintenant, avec tes copies et ton or.</string>
+    <string name="guide_shadows">Où les trouver::Journées parfaites, boss, portails, succès, paliers de série et la boutique.\nEscouade::Jusqu\'à 3 sur le terrain, chacun avec une passive : plus d\'XP, plus d\'or, plus de dégâts, protection. Ensemble, ils donnent au plus le double d\'XP et +75 % d\'or par mission.\nÉvolution::Les doubles et l\'or font monter l\'écho de niveau, jusqu\'au tien. Ceux qu\'on trouve souvent demandent 1 à 3 copies selon la rareté ; ceux qui ne viennent qu\'une fois (succès, boss, niveaux, série) montent chaque niveau avec de l\'or seulement.\nCopies manquantes::Chaque copie manquante se paie en or, au prix d\'un écho de cette rareté en boutique, quel que soit l\'écho.\nFlèche sur l\'écho::Cet écho peut évoluer maintenant, avec tes copies et ton or.</string>
     <string name="guide_focus_title">Focus et Pomodoro</string>
     <string name="guide_focus">Lie une mission::Les minutes comptent pour elle. Toute session rapporte aussi de l\'XP par minute et 1 or toutes les 10 min, jusqu\'à 2 h par jour.\nLe bon mode::Chaque mission est en minuteur ou en Pomodoro, et seul ce mode compte.\nDe vraies pauses::En Pomodoro, seules les minutes de focus comptent, et pendant les pauses les apps sont libres.\nSans limite::Ça compte jusqu\'à ce que tu t\'arrêtes.\nSans abandon::S\'arrêter en cours de route fait perdre les minutes ; aller au bout vaut +25 % et de l\'or en plus.</string>
     <string name="guide_shop_title">Boutique</string>

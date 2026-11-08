@@ -1,0 +1,3 @@
+- [fix] La copia que faltaba de un eco que la tienda no vende (como el Caballero de Ébano) costaba la mitad. Ahora cualquier copia que falte cuesta lo mismo que un eco de esa rareza en la tienda.
+- [new] En la tienda, cada eco muestra si es nuevo para ti o cuántas de las copias de su próximo nivel ya tienes.
+- [fix] Menos tirones: las estadísticas del Héroe y la colección de ecos ya no se rehacen enteras cada vez que algo cambia en la app, así que abren más rápido.

@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import com.lifup.app.domain.upgradeCost
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -97,6 +99,14 @@ fun ShopScreen(s: GameState) {
                         val cost = s.price(content, Rules.shopShadowPrice(def.rank), now)
                         Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                             ShadowTile(def, s.owned(def.id)?.level, reveal = true) { shadowInfo = def.id }
+                            // New to the collection, or how many of the copies the next level takes are already held.
+                            val upgrade = s.upgradeCost(content, def.id)
+                            Spacer(Modifier.height(6.dp))
+                            if (upgrade == null) Pill(stringResource(R.string.shop_echo_new), Lif.colors.accent, filled = true)
+                            else Pill(
+                                stringResource(R.string.shop_echo_copies, upgrade.held, upgrade.copies),
+                                if (upgrade.held >= upgrade.copies) Lif.colors.green else Lif.colors.muted,
+                            )
                             TextButton(onClick = { buying = "shadow:${def.id}" }, enabled = s.player.gold >= cost) {
                                 Icon(Icons.Rounded.Paid, null, tint = Lif.colors.gold)
                                 Spacer(Modifier.width(4.dp))

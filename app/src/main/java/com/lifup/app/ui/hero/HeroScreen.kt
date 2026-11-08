@@ -5,6 +5,7 @@ import com.lifup.app.ui.fmtCompact
 import com.lifup.app.ui.fmtNum
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.runtime.remember
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.TextButton
 import kotlin.math.roundToInt
 import com.lifup.app.ui.defTitle
@@ -128,7 +129,14 @@ fun HeroScreen(s: GameState) {
         when (HeroNav.section) {
             0 -> item { InventorySection(s) }
             1 -> items(content.achievements, key = { it.id }) { def -> AchievementRow(s, def) { openAchievement = def.id } }
-            else -> item { Stats(s) }
+            // A lazy item per block, so opening the tab and every later state change only build what's on screen.
+            else -> {
+                item { StatTiles(s) }
+                item { SectionTitle(stringResource(R.string.history)); ActivityCalendar(s) }
+                item { RecentDays(s) }
+                item { MissionRates(s) }
+                item { WeeklyRates(s) }
+            }
         }
     }
     openAchievement?.let { id -> content.achievements.firstOrNull { it.id == id }?.let { AchievementSheet(s, it) { openAchievement = null } } }
@@ -282,31 +290,37 @@ internal fun squadGainText(g: com.lifup.app.domain.SquadGain): String? {
     }.joinToString(" · ")
 }
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-internal fun Collection(s: GameState, filter: ShadowRank?, favorites: Set<String>, favOnly: Boolean, power: PowerKind? = null, onOpen: (String) -> Unit) {
+/**
+ * The collection, a lazy row of four tiles per item: as one block it rebuilt all 117 tiles (emblems, auras and
+ * all) on every state change, even with the tab off screen next to Today.
+ */
+internal fun LazyListScope.collection(s: GameState, filter: ShadowRank?, favorites: Set<String>, favOnly: Boolean, power: PowerKind? = null, onOpen: (String) -> Unit) {
     // [favorites] is the order's snapshot; the star on each tile follows the live state.
     // An unknown echo's power stays a mystery, so a power filter only lists owned ones.
-    val list = content.shadows.filter { (filter == null || it.rank == filter) && (!favOnly || it.id in favorites) && (power == null || (s.owned(it.id) != null && it.passive.isKind(power))) }
-        .sortedWith(compareByDescending<ShadowDef> { it.id in favorites }.thenByDescending { s.owned(it.id) != null }.thenByDescending { it.rank.ordinal })
+    val owned = s.shadows.associateBy { it.id }
+    val list = content.shadows.filter { (filter == null || it.rank == filter) && (!favOnly || it.id in favorites) && (power == null || (it.id in owned && it.passive.isKind(power))) }
+        .sortedWith(compareByDescending<ShadowDef> { it.id in favorites }.thenByDescending { it.id in owned }.thenByDescending { it.rank.ordinal })
     if (list.isEmpty()) {
-        Text(stringResource(if (favOnly) R.string.favorites_empty else R.string.power_empty), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+        item { Text(stringResource(if (favOnly) R.string.favorites_empty else R.string.power_empty), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted) }
         return
     }
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), maxItemsInEachRow = 4) {
-        list.forEach { def ->
-            Box(Modifier.weight(1f)) {
-                ShadowTile(def, s.owned(def.id)?.level, inSquad = def.id in s.squad, upgradable = s.canUpgrade(content, def.id), onClick = { onOpen(def.id) })
-                if (def.id in s.favoriteEchoes) Icon(
-                    Icons.Rounded.Star, null, tint = Lif.colors.gold,
-                    modifier = Modifier.align(Alignment.TopStart).padding(6.dp).size(16.dp),
-                )
-                s.newEchoes[def.id]?.let { first ->
-                    Pill(if (first) stringResource(R.string.badge_new) else "+1", Lif.colors.green, modifier = Modifier.align(Alignment.TopEnd).padding(4.dp))
+    val rows = list.chunked(4)
+    items(rows.size, key = { "echoes:" + rows[it].first().id }) { i ->
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            rows[i].forEach { def ->
+                Box(Modifier.weight(1f)) {
+                    ShadowTile(def, owned[def.id]?.level, inSquad = def.id in s.squad, upgradable = def.id in owned && s.canUpgrade(content, def.id), onClick = { onOpen(def.id) })
+                    if (def.id in s.favoriteEchoes) Icon(
+                        Icons.Rounded.Star, null, tint = Lif.colors.gold,
+                        modifier = Modifier.align(Alignment.TopStart).padding(6.dp).size(16.dp),
+                    )
+                    s.newEchoes[def.id]?.let { first ->
+                        Pill(if (first) stringResource(R.string.badge_new) else "+1", Lif.colors.green, modifier = Modifier.align(Alignment.TopEnd).padding(4.dp))
+                    }
                 }
             }
+            repeat(4 - rows[i].size) { Spacer(Modifier.weight(1f)) }
         }
-        repeat((4 - list.size % 4) % 4) { Spacer(Modifier.weight(1f)) }
     }
 }
 
@@ -377,7 +391,7 @@ private fun AchievementRow(s: GameState, def: com.lifup.app.domain.AchievementDe
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun Stats(s: GameState) {
+private fun StatTiles(s: GameState) {
     val c = Lif.colors
     val tiles = listOf(
         R.string.stat_quests to s.count(StatKey.QUESTS_COMPLETED).toString(),
@@ -394,11 +408,6 @@ private fun Stats(s: GameState) {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), maxItemsInEachRow = 3) {
         tiles.forEach { (label, value) -> StatTile(stringResource(label), value, modifier = Modifier.weight(1f)) }
     }
-    SectionTitle(stringResource(R.string.history))
-    ActivityCalendar(s)
-    RecentDays(s)
-    MissionRates(s)
-    WeeklyRates(s)
 }
 
 /** "N times a week" missions are judged by the week: one card each with a bar per week, the last one live. */
@@ -531,8 +540,10 @@ private fun MissionRates(s: GameState) {
     val c = Lif.colors
     // Missions removed from the app have no name left to show.
     // Weekly missions have their own chart below (older stats may predate their switch to weekly).
-    val stats = s.missionStats.entries.mapNotNull { e -> s.defOf(e.key, content)?.takeIf { e.value.total > 0 && !it.isWeekly() }?.let { it to e.value } }
-        .sortedWith(compareBy({ it.second.rate }, { -it.second.total }))
+    val stats = remember(s.missionStats, s.customDefs) {
+        s.missionStats.entries.mapNotNull { e -> s.defOf(e.key, content)?.takeIf { e.value.total > 0 && !it.isWeekly() }?.let { it to e.value } }
+            .sortedWith(compareBy({ it.second.rate }, { -it.second.total }))
+    }
     if (stats.isEmpty()) return
     var all by remember { mutableStateOf(false) }
     var open by remember { mutableStateOf<String?>(null) }

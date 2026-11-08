@@ -90,7 +90,7 @@ fun EchoesScreen(s: GameState, active: Boolean = true) {
                 ) { power = it; shownFavs = s.favoriteEchoes }
             }
         }
-        item { Collection(s, filter, shownFavs, favOnly, power) { openShadow = it } }
+        collection(s, filter, shownFavs, favOnly, power) { openShadow = it }
     }
     openShadow?.let { ShadowSheet(s, it) { openShadow = null } }
 }

@@ -330,11 +330,11 @@ object Rules {
     fun onceOnly(def: ShadowDef) = def.source.type != SourceType.EXTRACTION && def.source.type != SourceType.SHOP
 
     /**
-     * A copy the player doesn't have can be paid in gold instead. A shop echo's copy costs what the shop charges
-     * for it (paying less than buying it would make the shop pointless); any other echo's, half the shop's price
-     * for its rank, since no shop sells it.
+     * A copy the player doesn't have can be paid in gold instead, at what the shop charges for an echo of its rank
+     * (before any discount), whatever the echo and wherever it comes from: paying less would make a missing copy
+     * cheaper than the echo itself, and a found echo would level up for less than one the shop sells.
      */
-    fun copyGold(def: ShadowDef) = if (def.source.type == SourceType.SHOP) shopShadowPrice(def.rank) else shopShadowPrice(def.rank) / 2
+    fun copyGold(def: ShadowDef) = shopShadowPrice(def.rank)
 
     /** Echoes for hire in the shop each day: one per tier (see dailyShadowOffers). */
     const val SHOP_ECHO_OFFERS = 3

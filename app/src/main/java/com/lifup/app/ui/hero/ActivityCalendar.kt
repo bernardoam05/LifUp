@@ -1,11 +1,14 @@
 package com.lifup.app.ui.hero
 
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -70,18 +73,7 @@ fun ActivityCalendar(s: GameState) {
                 MonthLabels(firstMonday, weeks)
                 Row {
                     WeekdayLabels()
-                    Row(horizontalArrangement = Arrangement.spacedBy(GAP)) {
-                        repeat(weeks) { w ->
-                            Column(verticalArrangement = Arrangement.spacedBy(GAP)) {
-                                repeat(7) { d ->
-                                    val date = firstMonday.plusWeeks(w.toLong()).plusDays(d.toLong())
-                                    val key = date.toString()
-                                    if (date.isAfter(today)) Spacer(Modifier.size(CELL))
-                                    else Cell(days[key], dayLine(key, days[key]), selected = picked == key) { picked = if (picked == key) null else key }
-                                }
-                            }
-                        }
-                    }
+                    Grid(days, firstMonday, weeks, today, picked) { key -> picked = if (picked == key) null else key }
                 }
             }
         }
@@ -103,36 +95,61 @@ private fun calendarDays(s: GameState, today: LocalDate): Map<String, DayLog> {
     return logged.associateBy { it.day } + listOfNotNull(live).associateBy { it.day }
 }
 
-/** The day reports' colours (perfect, kept, rest, missed); a day not played is an empty square. */
+/**
+ * The whole year of squares drawn on one canvas, with one tap handler: as separate composables they were up to
+ * 371 boxes, each with its own click, semantics and formatted label, rebuilt on every state change. Penalty and rest
+ * days also carry a mark so colour isn't the only signal; the tapped day is outlined and spelled out below the grid.
+ */
 @Composable
-private fun cellColor(d: DayLog?): Color {
+private fun Grid(days: Map<String, DayLog>, firstMonday: LocalDate, weeks: Int, today: LocalDate, picked: String?, onPick: (String) -> Unit) {
     val c = Lif.colors
-    return dayColor(d)?.let { if (it == c.red) it.copy(alpha = 0.75f) else it } ?: c.border.copy(alpha = 0.5f)
-}
-
-/** A day square; penalty and rest days also carry a mark so colour isn't the only signal. */
-@Composable
-private fun Cell(day: DayLog?, label: String, selected: Boolean, onClick: () -> Unit) {
-    val shape = RoundedCornerShape(3.dp)
-    val mark = Lif.colors.bg.copy(alpha = 0.85f)
-    Box(
-        Modifier.size(CELL).clip(shape).background(cellColor(day))
-            .then(if (selected) Modifier.border(1.5.dp, Lif.colors.text, shape) else Modifier)
-            .drawWithContent {
-                drawContent()
-                val w = size.width
-                when {
-                    day?.rest == true -> drawCircle(mark, radius = w * 0.16f)
-                    day?.penalty == true -> {
-                        val a = w * 0.3f; val b = w * 0.7f; val sw = w * 0.12f
-                        drawLine(mark, androidx.compose.ui.geometry.Offset(a, a), androidx.compose.ui.geometry.Offset(b, b), sw)
-                        drawLine(mark, androidx.compose.ui.geometry.Offset(b, a), androidx.compose.ui.geometry.Offset(a, b), sw)
-                    }
+    // The day reports' colours (perfect, kept, rest, missed); a day not played is an empty square.
+    val perfect = c.green; val kept = c.accent; val rest = c.purple; val missed = c.red.copy(alpha = 0.75f)
+    val empty = c.border.copy(alpha = 0.5f)
+    val mark = c.bg.copy(alpha = 0.85f)
+    val outline = c.text
+    val pickedNow by rememberUpdatedState(onPick)
+    Canvas(
+        Modifier.size(width(weeks) - GAP, CELL * 7 + GAP * 6)
+            .pointerInput(firstMonday, weeks, today) {
+                detectTapGestures { pos ->
+                    val step = (CELL + GAP).toPx()
+                    val w = (pos.x / step).toInt()
+                    val d = (pos.y / step).toInt()
+                    if (w !in 0 until weeks || d !in 0..6) return@detectTapGestures
+                    val date = firstMonday.plusWeeks(w.toLong()).plusDays(d.toLong())
+                    if (!date.isAfter(today)) pickedNow(date.toString())
+                }
+            },
+    ) {
+        val cell = CELL.toPx()
+        val step = (CELL + GAP).toPx()
+        val radius = CornerRadius(3.dp.toPx())
+        for (w in 0 until weeks) for (d in 0..6) {
+            val date = firstMonday.plusWeeks(w.toLong()).plusDays(d.toLong())
+            if (date.isAfter(today)) continue
+            val key = date.toString()
+            val day = days[key]
+            val color = when {
+                day == null -> empty
+                day.rest -> rest
+                day.perfect -> perfect
+                day.passed -> kept
+                else -> missed
+            }
+            val topLeft = Offset(w * step, d * step)
+            drawRoundRect(color, topLeft, Size(cell, cell), radius)
+            when {
+                day?.rest == true -> drawCircle(mark, radius = cell * 0.16f, center = topLeft + Offset(cell / 2, cell / 2))
+                day?.penalty == true -> {
+                    val a = cell * 0.3f; val b = cell * 0.7f; val sw = cell * 0.12f
+                    drawLine(mark, topLeft + Offset(a, a), topLeft + Offset(b, b), sw)
+                    drawLine(mark, topLeft + Offset(b, a), topLeft + Offset(a, b), sw)
                 }
             }
-            .semantics { contentDescription = label }
-            .clickable(onClick = onClick),
-    )
+            if (key == picked) drawRoundRect(outline, topLeft, Size(cell, cell), radius, style = Stroke(1.5.dp.toPx()))
+        }
+    }
 }
 
 @Composable

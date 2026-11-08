@@ -1,0 +1,3 @@
+- [fix] Eine fehlende Kopie eines Echos, das der Shop nicht verkauft (wie der Ebenholzritter), kostete den halben Preis. Jetzt kostet jede fehlende Kopie so viel wie ein Echo dieser Seltenheit im Shop.
+- [new] Im Shop zeigt jedes Echo, ob es neu für dich ist oder wie viele der Kopien für sein nächstes Level du schon hast.
+- [fix] Weniger Ruckeln: Die Statistiken im Helden-Tab und die Echo-Sammlung bauen sich nicht mehr komplett neu auf, sobald sich in der App etwas ändert, und öffnen dadurch schneller.
