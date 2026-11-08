@@ -1,0 +1,1 @@
+- [tweak] Echoes that only come once (achievements, bosses, levels, streak) pay a copy in gold at every level, so theirs cost half the shop price for their rarity. The rest still pay the full price.

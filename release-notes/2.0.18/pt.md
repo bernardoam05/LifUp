@@ -1,0 +1,1 @@
+- [tweak] Os ecos que só vêm uma vez (conquistas, bosses, níveis, sequência) pagam uma cópia a ouro em cada nível, por isso a deles custa metade do preço da loja para a sua raridade. Os restantes continuam a pagar o preço inteiro.

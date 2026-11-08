@@ -1,0 +1,1 @@
+- [tweak] Les échos qui ne viennent qu'une fois (succès, boss, niveaux, série) paient une copie en or à chaque niveau : la leur coûte donc moitié du prix de la boutique pour leur rareté. Les autres paient toujours le prix complet.

@@ -330,11 +330,13 @@ object Rules {
     fun onceOnly(def: ShadowDef) = def.source.type != SourceType.EXTRACTION && def.source.type != SourceType.SHOP
 
     /**
-     * A copy the player doesn't have can be paid in gold instead, at what the shop charges for an echo of its rank
-     * (before any discount), whatever the echo and wherever it comes from: paying less would make a missing copy
-     * cheaper than the echo itself, and a found echo would level up for less than one the shop sells.
+     * A copy the player doesn't have can be paid in gold instead. An echo that comes again and again (the shop, perfect
+     * days, portals, essences) pays what the shop charges for its rank, before any discount: less would make a missing
+     * copy cheaper than the echo itself. A once-only echo (achievement, boss, level, streak) can't be bought or farmed,
+     * so every one of its levels pays a copy in gold; at half that price, so a trophy doesn't cost more to grow than an
+     * echo that can be found again (a marshal from the shop takes one copy a level too, a commander two).
      */
-    fun copyGold(def: ShadowDef) = shopShadowPrice(def.rank)
+    fun copyGold(def: ShadowDef) = if (onceOnly(def)) shopShadowPrice(def.rank) / 2 else shopShadowPrice(def.rank)
 
     /** Echoes for hire in the shop each day: one per tier (see dailyShadowOffers). */
     const val SHOP_ECHO_OFFERS = 3

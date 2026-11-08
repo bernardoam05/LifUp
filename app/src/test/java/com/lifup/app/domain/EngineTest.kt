@@ -1095,10 +1095,15 @@ class EngineTest {
         assertEquals(Rules.MAX_SQUAD_GOLD + 0.25, p.goldShare(), 1e-9)
     }
 
-    @Test fun `a missing copy costs what the shop charges for its rank, whatever the echo`() {
-        // Every source and rank, e.g. the Ebony Knight (a found commander) costs a commander's shop price.
-        content.shadows.forEach { def -> assertEquals(def.id, Rules.shopShadowPrice(def.rank), Rules.copyGold(def)) }
+    @Test fun `a missing copy costs the shop price for its rank, half for a once-only echo`() {
+        // E.g. the Ebony Knight (a found commander) costs a commander's shop price; a boss's echo, half its rank's.
+        content.shadows.forEach { def ->
+            val full = Rules.shopShadowPrice(def.rank)
+            assertEquals(def.id, if (Rules.onceOnly(def)) full / 2 else full, Rules.copyGold(def))
+        }
         assertEquals(Rules.shopShadowPrice(ShadowRank.COMMANDER), Rules.copyGold(content.shadowById.getValue("crimson_knight")))
+        val boss = content.shadows.first { it.source.type == SourceType.BOSS }
+        assertEquals(Rules.shopShadowPrice(boss.rank) / 2, Rules.copyGold(boss))
     }
 
     @Test fun `the streak is saved at most once a week`() {

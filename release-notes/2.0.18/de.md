@@ -1,0 +1,1 @@
+- [tweak] Echos, die nur einmal kommen (Erfolge, Bosse, Level, Serie), zahlen auf jedem Level eine Kopie mit Gold, deshalb kostet ihre die Hälfte des Shoppreises ihrer Seltenheit. Alle anderen zahlen weiter den vollen Preis.

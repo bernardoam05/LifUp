@@ -1,0 +1,1 @@
+- [tweak] Los ecos que solo vienen una vez (logros, jefes, niveles, racha) pagan una copia en oro en cada nivel, así que la suya cuesta la mitad del precio de la tienda para su rareza. Los demás siguen pagando el precio completo.
