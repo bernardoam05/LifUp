@@ -317,6 +317,24 @@ class EngineTest {
         assertEquals(1L, s.count(StatKey.BOSSES_DEFEATED))
     }
 
+    @Test fun `the dragon whelp adds to the boss's spoils`() {
+        fun kill(squad: List<String>): BossSpoils {
+            var s = fresh().let { it.copy(shadows = it.shadows + OwnedShadow("shadow_dragon"), squad = squad) }
+            val hp = s.boss!!.maxHp
+            s = run(s, "2026-10-14T10:00") { gainXp(hp, boosted = false) }
+            assertTrue(s.boss!!.defeated)
+            return s.boss!!.spoils!!
+        }
+        val plain = kill(emptyList())
+        val hoard = kill(listOf("shadow_dragon"))
+        assertTrue(hoard.xp > plain.xp && hoard.gold > plain.gold)
+    }
+
+    @Test fun `every mythic echo has its own passive`() {
+        val mythics = content.shadows.filter { it.rank == ShadowRank.MARSHAL }
+        assertEquals(mythics.size, mythics.map { it.passive }.toSet().size)
+    }
+
     @Test fun `second boss challenge arrives on thursday, announced once, and both take their share`() {
         var s = fresh() // a Wednesday
         assertNull(s.boss!!.second)

@@ -120,6 +120,8 @@ enum class Passive {
     REDEMPTION,
     /** More XP and gold from extra missions: going past the day's list pays. */
     EXTRA_BOOST,
+    /** More XP and gold when the weekly boss falls: the hoard goes to whoever brings it down. */
+    BOSS_SPOILS,
 }
 
 enum class Difficulty { EASY, MEDIUM, HARD }
@@ -131,7 +133,7 @@ fun Passive.kind(): PowerKind = when (this) {
     Passive.XP_BOOST, Passive.TRAINING_XP, Passive.MIND_XP, Passive.EXPLORER_XP, Passive.DAILY_BONUS, Passive.STREAK_XP,
     Passive.EARLY_XP, Passive.COMEBACK, Passive.EXTRA_BOOST -> PowerKind.GROWTH
     Passive.GOLD_BOOST, Passive.SHOP_DISCOUNT, Passive.ALL_BOOST -> PowerKind.WEALTH
-    Passive.BOSS_DAMAGE -> PowerKind.COMBAT
+    Passive.BOSS_DAMAGE, Passive.BOSS_SPOILS -> PowerKind.COMBAT
     Passive.PENALTY_REDUCE, Passive.PENALTY_IMMUNITY, Passive.STREAK_PROTECT, Passive.REDEMPTION -> PowerKind.PROTECTION
     Passive.FOCUS_MASTERY, Passive.SHADOW_LUCK, Passive.PORTAL_BOOST, Passive.EXTRA_SWAP -> PowerKind.FORTUNE
 }

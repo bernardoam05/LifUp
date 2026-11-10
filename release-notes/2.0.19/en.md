@@ -1,0 +1,2 @@
+- [tweak] Every mythic echo now has a passive of its own, tied to its name: the Eternal Engine never stops (extra missions), the Fallen Seraph rises again (the day after a failed one), the Scrap Titan recycles the lost day (redemption), the Lich King freezes your streak, the Soul Reaper harvests souls (echo luck), and more.
+- [new] New passive on the Dragon Whelp: more XP and gold when you defeat the weekly boss.

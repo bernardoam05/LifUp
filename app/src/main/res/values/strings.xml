@@ -238,6 +238,7 @@
     <string name="passive_early">+%1$s XP on missions done before %2$d:00</string>
     <string name="passive_comeback">+%1$s XP and gold the day after a failed day</string>
     <string name="passive_extra">+%1$s XP and gold from extra missions</string>
+    <string name="passive_spoils">+%1$s XP and gold when you defeat a boss</string>
     <string name="passive_redemption">Clearing a penalty gives back %1$s of the XP and gold lost</string>
 
     <!-- Shop -->

@@ -269,6 +269,8 @@ object Rules {
         Passive.REDEMPTION to doubleArrayOf(.20, .30, .45, .65, .85),
         // Extras are at most a few missions a day and each needs the last one done, so it sits with the portal boost.
         Passive.EXTRA_BOOST to doubleArrayOf(.10, .20, .30, .45, .60),
+        // Once a week at most, like the comeback: strong on the day, small over the week.
+        Passive.BOSS_SPOILS to doubleArrayOf(.15, .25, .40, .60, .80),
     )
     /** Missions finished before this hour count as early. */
     const val EARLY_HOUR = 10

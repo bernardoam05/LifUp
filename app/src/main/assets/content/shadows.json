@@ -686,7 +686,7 @@
   "id": "auto_prime",
   "rank": "MARSHAL",
   "shadowClass": "CONSTRUCT",
-  "passive": "ALL_BOOST",
+  "passive": "EXTRA_BOOST",
   "source": {
    "type": "EXTRACTION"
   },
@@ -858,7 +858,7 @@
   "id": "architect_of_ruin",
   "rank": "MARSHAL",
   "shadowClass": "ANCIENT",
-  "passive": "ALL_BOOST",
+  "passive": "DAILY_BONUS",
   "source": {
    "type": "ACHIEVEMENT"
   },
@@ -1274,7 +1274,7 @@
   "id": "quest_boss_blood_knight",
   "rank": "MARSHAL",
   "shadowClass": "WARRIOR",
-  "passive": "BOSS_DAMAGE",
+  "passive": "TRAINING_XP",
   "source": {
    "type": "BOSS",
    "bossId": "boss_blood_knight"
@@ -1293,7 +1293,7 @@
   "id": "quest_boss_lich_king",
   "rank": "MARSHAL",
   "shadowClass": "UNDEAD",
-  "passive": "PENALTY_IMMUNITY",
+  "passive": "STREAK_PROTECT",
   "source": {
    "type": "BOSS",
    "bossId": "boss_lich_king"
@@ -1312,7 +1312,7 @@
   "id": "soul_reaper",
   "rank": "MARSHAL",
   "shadowClass": "UNDEAD",
-  "passive": "FOCUS_MASTERY",
+  "passive": "SHADOW_LUCK",
   "source": {
    "type": "BOSS",
    "bossId": "season_halloween"
@@ -1331,7 +1331,7 @@
   "id": "god_seraphim",
   "rank": "MARSHAL",
   "shadowClass": "ANCIENT",
-  "passive": "XP_BOOST",
+  "passive": "COMEBACK",
   "source": {
    "type": "BOSS",
    "bossId": "season_yule"
@@ -1350,7 +1350,7 @@
   "id": "auto_titan",
   "rank": "MARSHAL",
   "shadowClass": "CONSTRUCT",
-  "passive": "GOLD_BOOST",
+  "passive": "REDEMPTION",
   "source": {
    "type": "BOSS",
    "bossId": "season_newyear"
@@ -1387,7 +1387,7 @@
   "id": "shadow_dragon",
   "rank": "MARSHAL",
   "shadowClass": "BEAST",
-  "passive": "BOSS_DAMAGE",
+  "passive": "BOSS_SPOILS",
   "source": {
    "type": "BOSS",
    "bossId": "season_summer"
@@ -1543,7 +1543,7 @@
   "id": "lvl_season_warden",
   "rank": "MARSHAL",
   "shadowClass": "SPIRIT",
-  "passive": "STREAK_PROTECT",
+  "passive": "EARLY_XP",
   "source": {
    "type": "LEVEL",
    "level": 250
@@ -1581,7 +1581,7 @@
   "id": "lvl_wandering_star",
   "rank": "MARSHAL",
   "shadowClass": "ELEMENTAL",
-  "passive": "SHADOW_LUCK",
+  "passive": "PORTAL_BOOST",
   "source": {
    "type": "LEVEL",
    "level": 750
@@ -1925,7 +1925,7 @@
   "id": "bazaar_sultan",
   "rank": "MARSHAL",
   "shadowClass": "ANCIENT",
-  "passive": "PORTAL_BOOST",
+  "passive": "GOLD_BOOST",
   "source": {
    "type": "SHOP"
   },

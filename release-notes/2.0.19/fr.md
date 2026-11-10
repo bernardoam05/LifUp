@@ -1,0 +1,2 @@
+- [tweak] Chaque écho mythique a maintenant sa propre passive, liée à son nom : le Moteur Éternel ne s'arrête jamais (missions extra), le Séraphin Déchu se relève (le lendemain d'un jour raté), le Titan de Ferraille recycle la journée perdue (rédemption), le Roi Liche gèle ta série, le Faucheur récolte des âmes (chance en échos), entre autres.
+- [new] Nouvelle passive sur le Dragonnet : plus d'XP et d'or en battant le boss de la semaine.

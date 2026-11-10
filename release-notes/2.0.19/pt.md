@@ -1,0 +1,2 @@
+- [tweak] Cada eco mítico tem agora uma passiva só sua, ligada ao nome: o Motor Eterno nunca pára (missões extra), o Serafim Caído volta a erguer-se (dia a seguir a um falhado), o Titã de Sucata recicla o dia perdido (redenção), o Rei Lich congela a sequência, o Ceifeiro colhe almas (sorte em ecos), entre outros.
+- [new] Passiva nova no Filhote de Dragão: mais XP e ouro ao derrotar o boss da semana.

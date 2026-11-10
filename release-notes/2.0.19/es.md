@@ -1,0 +1,2 @@
+- [tweak] Cada eco mítico tiene ahora una pasiva propia, ligada a su nombre: el Motor Eterno nunca para (misiones extra), el Serafín Caído se levanta de nuevo (el día después de uno fallido), el Titán de Chatarra recicla el día perdido (redención), el Rey Lich congela tu racha, el Segador cosecha almas (suerte en ecos), entre otros.
+- [new] Pasiva nueva en la Cría de Dragón: más XP y oro al derrotar al jefe de la semana.

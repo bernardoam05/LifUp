@@ -126,8 +126,9 @@ private fun Tx.defeatBoss() {
     s = s.copy(boss = b.copy(defeated = true, hp = 0), bossHistory = (s.bossHistory + b.bossId).takeLast(20))
     count(StatKey.BOSSES_DEFEATED)
     if (def.season != null) count(StatKey.SEASONAL_BOSSES)
-    val xp = gainXp(def.baseXp, hitsBoss = false)
-    val gold = gainGold(def.baseGold)
+    val spoils = s.passives(content, ctx.now).bossSpoils
+    val xp = gainXp(def.baseXp, hitsBoss = false, extra = spoils)
+    val gold = gainGold(def.baseGold, extra = spoils)
     val loot = if (b.lootGiven) emptyList() else listOf("bau_cacador")
     loot.forEach { addItem(it) }
     s = s.copy(boss = s.boss?.copy(spoils = BossSpoils(xp, gold), lootGiven = true))

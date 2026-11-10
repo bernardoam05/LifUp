@@ -1,0 +1,2 @@
+- [tweak] Jedes mythische Echo hat jetzt eine eigene Passive, passend zu seinem Namen: die ewige Maschine hält nie an (Extra-Missionen), der Gefallene Seraph erhebt sich wieder (am Tag nach einem verpassten), der Schrotttitan recycelt den verlorenen Tag (Erlösung), der Lichkönig friert deine Serie ein, der Seelenschnitter erntet Seelen (Echo-Glück) und mehr.
+- [new] Neue Passive beim Drachenjungen: mehr XP und Gold beim Besiegen des Wochenbosses.

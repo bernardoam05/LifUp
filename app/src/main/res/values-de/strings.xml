@@ -237,6 +237,7 @@
     <string name="passive_early">+%1$s XP für Missionen vor %2$d Uhr</string>
     <string name="passive_comeback">+%1$s XP und Gold am Tag nach einem verpassten Tag</string>
     <string name="passive_extra">+%1$s XP und Gold aus Extra-Missionen</string>
+    <string name="passive_spoils">+%1$s XP und Gold beim Besiegen eines Bosses</string>
     <string name="passive_redemption">Eine Strafe abzuarbeiten gibt %1$s der verlorenen XP und des Golds zurück</string>
 
     <!-- Shop -->

@@ -225,6 +225,7 @@
     <string name="passive_early">+%1$s XP nas missões feitas antes das %2$dh</string>
     <string name="passive_comeback">+%1$s XP e ouro no dia a seguir a um dia falhado</string>
     <string name="passive_extra">+%1$s XP e ouro nas missões extra</string>
+    <string name="passive_spoils">+%1$s XP e ouro ao derrotar um boss</string>
     <string name="passive_redemption">Cumprir uma penalização devolve %1$s do XP e ouro perdidos</string>
 
     <string name="inventory">Inventário</string>
