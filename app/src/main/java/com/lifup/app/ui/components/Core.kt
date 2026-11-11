@@ -66,7 +66,7 @@ val CoreGreen = STAGE_COLORS[0]
  */
 private val FACES = listOf(
     floatArrayOf(0.517f, 0.545f, 0.291f),
-    floatArrayOf(0.516f, 0.476f, 0.270f),
+    floatArrayOf(0.520f, 0.461f, 0.266f),
     floatArrayOf(0.529f, 0.455f, 0.281f),
     floatArrayOf(0.547f, 0.444f, 0.238f),
     floatArrayOf(0.534f, 0.410f, 0.178f),
