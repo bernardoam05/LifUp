@@ -4,7 +4,7 @@ _Last updated: November 2026_
 
 ## English
 
-LifUp does not collect, send or sell any personal data. There is no account and no server: everything you do in the app (missions, progress, settings, statistics) is stored only on your phone.
+Questborn does not collect, send or sell any personal data. There is no account and no server: everything you do in the app (missions, progress, settings, statistics) is stored only on your phone.
 
 - **Permissions** are used on the device only:
   - *Usage access* and *display over other apps* block the apps you choose during focus sessions and measure screen time for missions.
@@ -22,7 +22,7 @@ Deleting the app deletes all its data. Questions: open an issue at https://githu
 
 ## Português
 
-A LifUp não recolhe, não envia e não vende dados pessoais. Não há conta nem servidor: tudo o que fazes na app (missões, progresso, definições, estatísticas) fica guardado apenas no teu telemóvel.
+A Questborn não recolhe, não envia e não vende dados pessoais. Não há conta nem servidor: tudo o que fazes na app (missões, progresso, definições, estatísticas) fica guardado apenas no teu telemóvel.
 
 - **As permissões** são usadas só no dispositivo:
   - O *acesso de utilização* e o *sobrepor a outras apps* bloqueiam as apps que escolheres durante o foco e medem o tempo de ecrã das missões.
@@ -40,7 +40,7 @@ Desinstalar a app apaga todos os dados. Dúvidas: abre uma issue em https://gith
 
 ## Español
 
-LifUp no recoge, no envía y no vende datos personales. No hay cuenta ni servidor: todo lo que haces en la app (misiones, progreso, ajustes, estadísticas) se guarda solo en tu móvil.
+Questborn no recoge, no envía y no vende datos personales. No hay cuenta ni servidor: todo lo que haces en la app (misiones, progreso, ajustes, estadísticas) se guarda solo en tu móvil.
 
 - **Los permisos** se usan solo en el dispositivo:
   - El *acceso de uso* y *mostrar sobre otras apps* bloquean las apps que elijas durante la concentración y miden el tiempo de pantalla de las misiones.
@@ -58,7 +58,7 @@ Desinstalar la app borra todos sus datos. Dudas: abre una issue en https://githu
 
 ## Français
 
-LifUp ne collecte, n'envoie et ne vend aucune donnée personnelle. Il n'y a ni compte ni serveur : tout ce que tu fais dans l'app (missions, progression, réglages, statistiques) est enregistré uniquement sur ton téléphone.
+Questborn ne collecte, n'envoie et ne vend aucune donnée personnelle. Il n'y a ni compte ni serveur : tout ce que tu fais dans l'app (missions, progression, réglages, statistiques) est enregistré uniquement sur ton téléphone.
 
 - **Les autorisations** sont utilisées uniquement sur l'appareil :
   - L'*accès aux données d'utilisation* et l'*affichage par-dessus les autres apps* bloquent les apps de ton choix pendant la concentration et mesurent le temps d'écran des missions.
@@ -76,7 +76,7 @@ Désinstaller l'app efface toutes ses données. Questions : ouvre une issue sur 
 
 ## Deutsch
 
-LifUp erhebt, sendet und verkauft keine personenbezogenen Daten. Es gibt kein Konto und keinen Server: Alles, was du in der App tust (Missionen, Fortschritt, Einstellungen, Statistiken), wird nur auf deinem Handy gespeichert.
+Questborn erhebt, sendet und verkauft keine personenbezogenen Daten. Es gibt kein Konto und keinen Server: Alles, was du in der App tust (Missionen, Fortschritt, Einstellungen, Statistiken), wird nur auf deinem Handy gespeichert.
 
 - **Berechtigungen** werden nur auf dem Gerät genutzt:
   - *Nutzungszugriff* und *Über anderen Apps einblenden* sperren die Apps deiner Wahl während des Fokus und messen die Bildschirmzeit für Missionen.

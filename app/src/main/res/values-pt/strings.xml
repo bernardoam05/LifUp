@@ -823,7 +823,7 @@
     <string name="pause_today">Em pausa até %1$s: nada conta nem se perde. Descansa.</string>
     <string name="pause_none_left">Já usaste os %1$d dias de pausa dos últimos 12 meses.</string>
     <string name="share">Partilhar</string>
-    <string name="share_week_title">LifUp · semana de %1$s</string>
+    <string name="share_week_title">Questborn · semana de %1$s</string>
     <string name="share_boss_won">⚔️ %1$s: vencido</string>
     <string name="share_boss_lost">⚔️ %1$s: fugiu</string>
     <string name="boss_weak">Fraco contra %1$s: +%2$d%% de dano, em %3$d missões por dia</string>
