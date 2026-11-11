@@ -70,7 +70,7 @@ Princípios:
 
 ### Línguas
 
-A interface está em pt, en, es, fr e de (`res/values-*/strings.xml`). O conteúdo (missões, ecos, bosses) está em pt e en; as outras línguas usam o inglês.
+A interface e o conteúdo (missões, ecos, bosses, itens, conquistas) estão em pt, en, es, fr e de: `res/values-*/strings.xml` e os campos por língua em `assets/content/*.json`. A ficha da Play Store está em `fastlane/metadata/android/<língua>/`.
 
 ## Migração da app antiga
 
