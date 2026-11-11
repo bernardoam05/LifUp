@@ -4,8 +4,44 @@
     "indexes": "firestore.indexes.json"
   },
   "emulators": {
-    "firestore": { "port": 8080 },
-    "ui": { "enabled": false },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": false
+    },
     "singleProjectMode": true
+  },
+  "hosting": {
+    "public": "hosting",
+    "ignore": [
+      "firebase.json",
+      "**/node_modules/**"
+    ],
+    "cleanUrls": true,
+    "headers": [
+      {
+        "source": "/.well-known/assetlinks.json",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Referrer-Policy",
+            "value": "no-referrer"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          }
+        ]
+      }
+    ]
   }
 }

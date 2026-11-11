@@ -48,7 +48,7 @@ O acerto é feito em cada telemóvel. A regra é: **as boas notícias chegam log
 
 ### 1.5 O link de aviso
 
-- **Formato:** `https://bernardoam05.github.io/LifUp/p/#<dados>`. É uma página estática no GitHub Pages, ligada à app por App Links (`assetlinks.json` com os dois SHA-256). Se a app não estiver instalada, a página manda para a loja.
+- **Formato:** `https://questborn-38f2a.web.app/p/#<dados>`. É uma página estática no Firebase Hosting (`firebase/hosting/p/`), ligada à app por App Links (`assetlinks.json`). Se a app não estiver instalada, a página manda para a loja. Se o browser de outra app não abrir a app sozinho, o botão da página passa o link por `intent:` com os dados em `?d=`, e a app aceita as duas formas.
 - **Tudo vai no fragmento (`#`)**, que nunca chega ao servidor. Os dados são o `pairId`, o ciclo, o uid de quem concluiu, a quantidade, a hora local da conclusão e uma assinatura HMAC-SHA256 com o `secret` do par. O `secret` são 32 bytes aleatórios guardados no documento do par, que só os membros leem.
 - **Ao abrir o link,** a app confirma a assinatura e guarda localmente "o colega concluiu o ciclo X às HH:MM". Depois faz **uma** leitura do Firestore, se a quota não estiver esgotada, para atualizar o resto.
 - **No acerto,** conta primeiro a entrada no servidor. Se ela não existir, conta a do link, que vale como dentro do prazo se a hora indicada for anterior ao prazo. Com isto, o caso da quota esgotada deixa de dar ×1 sempre que o colega mandou o link.
@@ -82,7 +82,7 @@ pairs/{pairId}/parts/{uid}     { name, level, last, done: { "<ciclo>": { at, amo
 - **`pairId`:** 20 caracteres aleatórios. Nunca aparece a ninguém; o único segredo partilhado é o código do convite.
 - **`quest`:** o id da missão no catálogo. O texto nas 5 línguas vem do catálogo local de cada telemóvel, por isso uma missão personalizada não pode ser usada em par na primeira versão.
 - **`done`:** um mapa por ciclo. Só se acrescenta o ciclo indicado em `last`, com `at` igual à hora do servidor. Uma entrada nunca é reescrita e as antigas podem ser apagadas. Guardam-se as últimas 7, num máximo de 14.
-- **`expireAt`:** daqui a 30 dias (as regras aceitam no máximo 40), renovado sempre que há uma escrita. Uma política de TTL apaga o que ficar abandonado, por exemplo de uma app desinstalada.
+- **`expireAt`:** daqui a 30 dias (as regras aceitam no máximo 40), renovado sempre que há uma escrita. Serve para a app reconhecer pares abandonados e apagá-los (no plano Spark não há TTL; ver 5).
 - **`secret`:** a chave que assina os links de aviso (1.5). É gerada por quem cria o par e nunca muda.
 - **`name`:** o nome do herói (`Player.name`), com 24 caracteres no máximo. É o único dado pessoal.
 
@@ -153,28 +153,40 @@ Num dia normal, por par recorrente, há ~2 escritas (as duas conclusões) e ~8 a
   - **Cifrado em trânsito:** sim.
   - **Pedido de eliminação:** sim, saindo do par.
 
-## 5. Configurar o Firebase (uma vez)
+## 5. Firebase (configurado a 2026-11-11)
 
-1. Em <https://console.firebase.google.com>, **cria um projeto** (por exemplo `questborn`), **sem Google Analytics**. Fica no plano Spark e não associes um cartão.
-2. **Authentication → Sign-in method → Anónimo → Ativar.**
-   - **Não faças o upgrade para o Identity Platform.** Com ele, o plano Spark limita a autenticação a 3 000 utilizadores ativos por dia.
-   - Em Authentication → Settings, confirma que o upgrade não está ativo. Se estiver, avisa-me.
-   - **Não ativas a limpeza automática de contas anónimas.** Ela apaga as contas 30 dias depois de criadas, mesmo que estejam a ser usadas, e um par com mais de um mês deixava de funcionar. Sem o Identity Platform, as contas anónimas não contam para nenhum limite. O que fica abandonado é apagado pelo TTL dos documentos (passo 5).
-3. **Firestore Database → Criar base de dados:**
-   - edição **Standard**, base de dados **(default)** (só uma é gratuita);
-   - localização **`eur3`** (multi-região na UE) ou `europe-west1`; esta escolha não pode ser mudada depois;
-   - **modo de produção**.
-4. **Regras:** cola o conteúdo de `firebase/firestore.rules` em Firestore → Regras e publica. Em alternativa, usa `npx firebase deploy --only firestore --project <id>` dentro de `firebase/`, que também envia o TTL.
-5. **TTL:** em Firestore → TTL, cria políticas no campo `expireAt` para os grupos `pairs`, `parts` e `invites`. Se o plano Spark não deixar, não faz mal: a app já apaga o que é dela, e só ficam para trás os pares abandonados.
-6. **Definições do projeto → Adicionar app → Android:**
-   - package `com.lifup.app`;
-   - SHA-1 da chave do GitHub: `5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25`;
-   - quando existir, junta o SHA-1 da assinatura da Play (Play Console → Integridade da app).
-   - Não é preciso descarregar o `google-services.json`: basta copiar o **apiKey**, o **appId** (`1:…:android:…`) e o **projectId** e mandar-mos.
-7. **Google Cloud Console → APIs e serviços → Credenciais**, na chave "Android key (auto created by Firebase)":
-   - **Restrições de aplicação:** apps Android, com `com.lifup.app` e os SHA-1 acima.
-   - **Restrições de API:** só Cloud Firestore API, Identity Toolkit API e Token Service API.
-8. **Para acompanhar:** Firestore → Utilização mostra as leituras e escritas do dia. Não há alertas de orçamento no plano Spark, mas a app trata a quota esgotada (ver 1.4).
+Projeto **`questborn-38f2a`**, no plano Spark e sem cartão. Estes valores não são secretos e vão no código da app:
+
+| | |
+|---|---|
+| projectId | `questborn-38f2a` |
+| appId | `1:382154712615:android:79cd702cd5c23e3fd4d002` |
+| apiKey | `AIzaSyD-0xUx5exVsBbFFckaUDBSZaaerGP8ju8` |
+
+O que está feito:
+
+- **Firestore:** base `(default)`, edição Standard, em `eur3`. As regras deste repositório estão publicadas.
+- **Authentication:** só o login anónimo. Fica no Firebase Auth normal (`FIREBASE_AUTH`), **sem o Identity Platform**, que no plano Spark limita a 3 000 utilizadores ativos por dia. A **limpeza automática de contas anónimas fica desligada**, porque apaga as contas 30 dias depois de criadas, mesmo que estejam a ser usadas, e um par com mais de um mês deixava de funcionar. As contas anónimas não contam para nenhum limite.
+- **App Android** `com.lifup.app`, com o SHA-1 e o SHA-256 da chave do GitHub.
+- **Chave de API Android:** só aceita pedidos de `com.lifup.app` com a chave do GitHub, e só para Firestore, Identity Toolkit, Token Service e Firebase Installations.
+- **Chave de API de browser:** a app não a usa. Só funciona a partir dos domínios do próprio Hosting.
+- **Hosting:** `https://questborn-38f2a.web.app` serve a página do link (`/p/`) e o `/.well-known/assetlinks.json`. O Google já o reconhece.
+- **Sem TTL:** as políticas de TTL do Firestore exigem a faturação ativa. A limpeza fica a cargo da app:
+  - quem sai apaga a sua parte, e o último a sair apaga o par;
+  - convites usados são apagados ao entrar;
+  - se o par ou o colega tiver um `expireAt` já passado, a app trata o par como terminado e apaga o que as regras deixam.
+  - Os restos (apps desinstaladas, convites nunca usados) ocupam ~1 KB cada. O plano tem 1 GiB, por isso cabem ~1 milhão antes de ser preciso uma limpeza.
+
+**Para publicar alterações**, a partir de `firebase/`, depois de `npx firebase login`:
+
+```bash
+npx firebase deploy --only firestore,hosting
+```
+
+**Quando a app estiver na Play:** junta o SHA-1 e o SHA-256 da assinatura da Play (Play Console → Integridade da app) em três sítios:
+- na app Firebase (`npx firebase apps:android:sha:create <appId> <sha>`);
+- nas restrições da chave Android (Google Cloud → APIs e serviços → Credenciais);
+- no `hosting/.well-known/assetlinks.json`.
 
 ## 6. Por decidir ou confirmar
 

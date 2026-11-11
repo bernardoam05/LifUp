@@ -1,8 +1,4 @@
 {
   "indexes": [],
-  "fieldOverrides": [
-    { "collectionGroup": "pairs", "fieldPath": "expireAt", "ttl": true, "indexes": [] },
-    { "collectionGroup": "parts", "fieldPath": "expireAt", "ttl": true, "indexes": [] },
-    { "collectionGroup": "invites", "fieldPath": "expireAt", "ttl": true, "indexes": [] }
-  ]
+  "fieldOverrides": []
 }
