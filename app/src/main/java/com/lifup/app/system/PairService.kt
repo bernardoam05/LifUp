@@ -63,6 +63,18 @@ object PairService {
 
     private val store get() = LifUpApp.store
 
+    /**
+     * A pair part completed anywhere (its sheet, the counter, focus, a run) goes to the cloud right away, so the
+     * partner sees it; installed once from the Application.
+     */
+    fun install(context: Context, store: com.lifup.app.data.GameStore) {
+        val app = context.applicationContext
+        store.addListener { old, new ->
+            fun done(s: com.lifup.app.domain.GameState) = s.pairs.flatMap { p -> p.parts.filter { it.doneAt != null }.map { p.id + it.cycle } }.toSet()
+            if ((done(new) - done(old)).isNotEmpty()) store.scope.launch { sync(app, foreground = true) }
+        }
+    }
+
     /** A join link was opened: Today shows "join with a code" with this code until it's handled. */
     val pendingJoin = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
 

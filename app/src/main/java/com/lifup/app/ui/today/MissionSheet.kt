@@ -162,6 +162,7 @@ fun MissionSheet(s: GameState, questId: String, onEdit: ((String) -> Unit)? = nu
             if (open && q.type == QuestType.FOCUS) FocusAction(s, q, onDismiss)
             if (open && q.type == QuestType.GPS) RunPanel(s, q, tracking = q.auto == null || q.autoOff)
             if (open && q.type != QuestType.FORBIDDEN && q.type != QuestType.LIMIT) CompleteAction(q, onDismiss)
+            if (q.origin == QuestOrigin.PAIR) PairSheetBlock(s, q.id)
 
             val def = s.defOf(q.defId, content)
             SideActions(s, q, def, onEdit, onDismiss)

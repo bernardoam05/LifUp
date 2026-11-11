@@ -2,6 +2,17 @@ package com.lifup.app.ui.today
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import com.lifup.app.domain.QuestOrigin
+import com.lifup.app.domain.buildQuest
+import com.lifup.app.domain.stepOf
+import com.lifup.app.domain.pairOf
+import com.lifup.app.domain.xpPreview
+import com.lifup.app.ui.color
+import com.lifup.app.ui.icon
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -87,9 +98,9 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
-/** Today's pair quests (docs/PAIRS.md): one card per pair, and the way to start or join one. */
+/** Today's pair missions (docs/PAIRS.md): each a normal mission card with the pair's state under it. */
 @Composable
-fun PairSection(s: GameState, now: Long) {
+fun PairSection(s: GameState, now: Long, onOpen: (String) -> Unit) {
     val p = Lif.colors
     var adding by rememberSaveable { mutableStateOf(false) }
     val pairs = s.activePairs()
@@ -98,7 +109,7 @@ fun PairSection(s: GameState, now: Long) {
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (s.pairQuotaBlocked(now)) Text(stringResource(R.string.pair_quota), style = MaterialTheme.typography.bodySmall, color = p.gold)
-        pairs.forEach { PairCard(s, it, now) }
+        pairs.forEach { PairCard(s, it, now, onOpen) }
         if (pairs.isEmpty()) Text(stringResource(R.string.pair_empty_hint), style = MaterialTheme.typography.bodySmall, color = p.muted)
         if (s.canAddPair()) GhostButton(stringResource(R.string.pair_new), onClick = { adding = true }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Groups, color = p.accent)
     }
@@ -124,98 +135,155 @@ private fun recurrenceLabel(r: PairRecurrence): String = when (r.kind) {
 }
 
 @Composable
-private fun PairCard(s: GameState, pair: PairQuest, now: Long) {
+private fun partnerName(pair: PairQuest) = pair.partnerName.ifBlank { stringResource(R.string.pair_partner_unknown) }
+
+@Composable
+private fun PairCard(s: GameState, pair: PairQuest, now: Long, onOpen: (String) -> Unit) {
+    val part = pair.currentPart(now)
+    val q = part?.quest
+    when {
+        !pair.joined -> InviteCard(s, pair, now)
+        q != null -> Column {
+            // The same card as every other mission: progress, timer, XP; a tap opens the mission sheet.
+            QuestCard(q, s.timers[q.id], now, xp = s.xpPreview(q, content, now)) { onOpen(q.id) }
+            PairStatus(s, pair, part, Modifier.padding(start = 12.dp, end = 4.dp, top = 2.dp))
+        }
+        else -> RestingPairCard(s, pair, now)
+    }
+}
+
+/** Under the mission card: who it's with, whether they're done, and "tell them" once you are. */
+@Composable
+private fun PairStatus(s: GameState, pair: PairQuest, part: com.lifup.app.domain.PairPart, modifier: Modifier = Modifier) {
+    val p = Lif.colors
+    val context = LocalContext.current
+    val partner = partnerName(pair)
+    val theirs = pair.partnerDone(part.cycle)
+    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Icon(if (theirs) Icons.Rounded.CheckCircle else Icons.Rounded.HourglassTop, null, tint = if (theirs) p.green else p.dim, modifier = Modifier.size(14.dp))
+        Spacer(Modifier.width(6.dp))
+        Text(
+            stringResource(if (theirs) R.string.pair_partner_done else R.string.pair_partner_pending, partner),
+            style = MaterialTheme.typography.labelMedium, color = if (theirs) p.green else p.muted, modifier = Modifier.weight(1f),
+        )
+        if (pair.streak > 0) {
+            Icon(Icons.Rounded.LocalFireDepartment, null, tint = p.orange, modifier = Modifier.size(14.dp))
+            Text("${pair.streak}", style = MaterialTheme.typography.labelMedium)
+        }
+        if (part.doneAt != null && !theirs) PairService.shareLink(pair, part.cycle)?.let { link ->
+            val message = stringResource(R.string.pair_link_share, defTitle(s, pair.defId), link)
+            TextButton(onClick = { share(context, message) }) {
+                Icon(Icons.Rounded.Share, null, tint = p.accent, modifier = Modifier.size(14.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(stringResource(R.string.pair_tell, partner), color = p.accent, style = MaterialTheme.typography.labelMedium)
+            }
+        }
+    }
+}
+
+/** Inside the mission sheet of a pair mission: the pair, the rules, telling the partner, leaving. */
+@Composable
+fun PairSheetBlock(s: GameState, questId: String) {
+    val p = Lif.colors
+    val context = LocalContext.current
+    val pair = s.pairOf(questId) ?: return
+    val part = pair.parts.firstOrNull { it.quest?.id == questId } ?: return
+    var leaving by remember { mutableStateOf(false) }
+    Panel(background = p.accent.copy(alpha = 0.06f), border = p.accent.copy(alpha = 0.4f)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Rounded.Groups, null, tint = p.accent, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.pair_with, partnerName(pair)) + " · " + recurrenceLabel(pair.recurrence), style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
+        }
+        PairStatus(s, pair, part, Modifier.padding(top = 6.dp))
+        Text(stringResource(R.string.pair_bonus_note), style = MaterialTheme.typography.labelSmall, color = p.muted, modifier = Modifier.padding(top = 6.dp))
+        if (part.doneAt == null) Text(stringResource(R.string.pair_complete_confirm), style = MaterialTheme.typography.labelSmall, color = p.dim)
+        else Text(stringResource(R.string.pair_done_waiting), style = MaterialTheme.typography.labelSmall, color = p.dim)
+        TextButton(onClick = { leaving = true }, modifier = Modifier.align(Alignment.End)) {
+            Text(stringResource(R.string.pair_leave), color = p.dim, style = MaterialTheme.typography.labelMedium)
+        }
+    }
+    if (leaving) ConfirmDialog(
+        stringResource(R.string.pair_leave), stringResource(R.string.pair_leave_confirm), stringResource(R.string.pair_leave),
+        onConfirm = { leaving = false; PairService.leave(context, pair.id) }, onDismiss = { leaving = false }, danger = true,
+    )
+}
+
+/** A pair with no cycle today (weekly, every few days): when the next one is. */
+@Composable
+private fun RestingPairCard(s: GameState, pair: PairQuest, now: Long) {
+    val p = Lif.colors
+    val context = LocalContext.current
+    var leaving by remember { mutableStateOf(false) }
+    Panel {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Rounded.Groups, null, tint = p.dim, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Column(Modifier.weight(1f)) {
+                Text(defTitle(s, pair.defId), style = MaterialTheme.typography.titleSmall)
+                val next = pair.nextCycle(now)?.format(DateTimeFormatter.ofPattern("EEE, d MMM"))
+                Text(
+                    stringResource(R.string.pair_with, partnerName(pair)) + (next?.let { " · " + stringResource(R.string.pair_next, it) } ?: ""),
+                    style = MaterialTheme.typography.labelMedium, color = p.muted,
+                )
+            }
+            TextButton(onClick = { leaving = true }) { Text(stringResource(R.string.pair_leave), color = p.dim, style = MaterialTheme.typography.labelSmall) }
+        }
+    }
+    if (leaving) ConfirmDialog(
+        stringResource(R.string.pair_leave), stringResource(R.string.pair_leave_confirm), stringResource(R.string.pair_leave),
+        onConfirm = { leaving = false; PairService.leave(context, pair.id) }, onDismiss = { leaving = false }, danger = true,
+    )
+}
+
+/** Waiting for the partner to join: the code, big and copyable, and the invite to share. */
+@Composable
+private fun InviteCard(s: GameState, pair: PairQuest, now: Long) {
     val p = Lif.colors
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val title = defTitle(s, pair.defId)
-    val partner = pair.partnerName.ifBlank { stringResource(R.string.pair_partner_unknown) }
     var leaving by remember { mutableStateOf(false) }
-    var confirming by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<PairService.Failure?>(null) }
-    Panel {
+    Panel(border = p.accent.copy(alpha = 0.5f)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Rounded.Groups, null, tint = p.accent, modifier = Modifier.size(20.dp))
             Spacer(Modifier.width(8.dp))
             Column(Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleMedium)
-                Text(
-                    if (pair.joined) stringResource(R.string.pair_with, partner) + " · " + recurrenceLabel(pair.recurrence) else recurrenceLabel(pair.recurrence),
-                    style = MaterialTheme.typography.labelMedium, color = p.muted,
-                )
-            }
-            if (pair.streak > 0) {
-                Icon(Icons.Rounded.LocalFireDepartment, null, tint = p.orange, modifier = Modifier.size(16.dp))
-                Text("${pair.streak}", style = MaterialTheme.typography.labelLarge)
+                Text(recurrenceLabel(pair.recurrence), style = MaterialTheme.typography.labelMedium, color = p.muted)
             }
         }
         Spacer(Modifier.size(10.dp))
-        if (!pair.joined) {
-            Text(stringResource(R.string.pair_waiting_join), style = MaterialTheme.typography.bodyMedium, color = p.muted)
-            val code = pair.invite
-            if (code != null && pair.inviteExpires > now) {
-                var copied by remember(code) { mutableStateOf(false) }
-                // Tapping the code copies it too.
-                Text(
-                    code.chunked(4).joinToString(" "), style = MaterialTheme.typography.headlineSmall, fontFamily = FontFamily.Monospace, color = p.accent,
-                    modifier = Modifier.clickable { copy(context, code); copied = true }.padding(vertical = 6.dp),
-                )
-                val message = stringResource(R.string.pair_invite_share, title, code, PairLink.joinLink(code))
-                PrimaryButton(stringResource(R.string.pair_share_invite), onClick = { share(context, message) }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Share)
-                GhostButton(
-                    stringResource(if (copied) R.string.pair_code_copied else R.string.pair_copy_code),
-                    onClick = { copy(context, code); copied = true },
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp), icon = Icons.Rounded.ContentCopy, color = p.accent,
-                )
-            } else if (pair.creator) {
-                Text(stringResource(R.string.pair_code_expired), style = MaterialTheme.typography.bodySmall, color = p.dim)
-                GhostButton(stringResource(R.string.pair_new_code), onClick = {
-                    scope.launch { PairService.renewInvite(context, pair.id).onFailure { error = PairService.failure(it) } }
-                }, modifier = Modifier.fillMaxWidth(), color = p.accent)
-            }
-        } else {
-            val part = pair.currentPart(now)
-            if (part == null) {
-                pair.nextCycle(now)?.let { next ->
-                    Text(stringResource(R.string.pair_next, next.format(DateTimeFormatter.ofPattern("EEE, d MMM"))), style = MaterialTheme.typography.bodyMedium, color = p.muted)
-                }
-            } else {
-                val unit = s.defOf(pair.defId, content)?.unit.orEmpty()
-                Text(stringResource(R.string.pair_your_part, "${fmtNum(part.target)} ${unitLabel(unit)}".trim()), style = MaterialTheme.typography.bodyLarge)
-                val theirs = pair.partnerDone(part.cycle)
-                Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(if (theirs) Icons.Rounded.CheckCircle else Icons.Rounded.HourglassTop, null, tint = if (theirs) p.green else p.dim, modifier = Modifier.size(16.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text(stringResource(if (theirs) R.string.pair_partner_done else R.string.pair_partner_pending, partner), style = MaterialTheme.typography.bodySmall, color = if (theirs) p.green else p.muted)
-                }
-                Spacer(Modifier.size(10.dp))
-                if (part.doneAt == null) {
-                    PrimaryButton(stringResource(R.string.pair_complete), onClick = { confirming = true }, modifier = Modifier.fillMaxWidth())
-                    Text(stringResource(R.string.pair_bonus_note), style = MaterialTheme.typography.labelSmall, color = p.dim, modifier = Modifier.padding(top = 6.dp))
-                } else {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Pill(stringResource(R.string.pair_done), p.green)
-                        Spacer(Modifier.width(8.dp))
-                        Text(stringResource(R.string.pair_done_waiting), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.weight(1f))
-                    }
-                    if (!theirs) PairService.shareLink(pair, part.cycle)?.let { link ->
-                        val message = stringResource(R.string.pair_link_share, title, link)
-                        GhostButton(stringResource(R.string.pair_tell, partner), onClick = { share(context, message) }, modifier = Modifier.fillMaxWidth().padding(top = 8.dp), icon = Icons.Rounded.Share, color = p.accent)
-                    }
-                }
-            }
+        Text(stringResource(R.string.pair_waiting_join), style = MaterialTheme.typography.bodyMedium, color = p.muted)
+        val code = pair.invite
+        if (code != null && pair.inviteExpires > now) {
+            var copied by remember(code) { mutableStateOf(false) }
+            // Tapping the code copies it too.
+            Text(
+                code.chunked(4).joinToString(" "), style = MaterialTheme.typography.headlineSmall, fontFamily = FontFamily.Monospace, color = p.accent,
+                modifier = Modifier.clickable { copy(context, code); copied = true }.padding(vertical = 6.dp),
+            )
+            val message = stringResource(R.string.pair_invite_share, title, code, PairLink.joinLink(code))
+            PrimaryButton(stringResource(R.string.pair_share_invite), onClick = { share(context, message) }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Share)
+            GhostButton(
+                stringResource(if (copied) R.string.pair_code_copied else R.string.pair_copy_code),
+                onClick = { copy(context, code); copied = true },
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp), icon = Icons.Rounded.ContentCopy, color = p.accent,
+            )
+        } else if (pair.creator) {
+            Text(stringResource(R.string.pair_code_expired), style = MaterialTheme.typography.bodySmall, color = p.dim)
+            GhostButton(stringResource(R.string.pair_new_code), onClick = {
+                scope.launch { PairService.renewInvite(context, pair.id).onFailure { error = PairService.failure(it) } }
+            }, modifier = Modifier.fillMaxWidth(), color = p.accent)
         }
         error?.let { Text(stringResource(failureText(it)), style = MaterialTheme.typography.bodySmall, color = p.red, modifier = Modifier.padding(top = 6.dp)) }
         TextButton(onClick = { leaving = true }, modifier = Modifier.align(Alignment.End)) {
-            Text(stringResource(if (pair.joined) R.string.pair_leave else R.string.pair_cancel), color = p.dim, style = MaterialTheme.typography.labelMedium)
+            Text(stringResource(R.string.pair_cancel), color = p.dim, style = MaterialTheme.typography.labelMedium)
         }
     }
-    if (confirming) ConfirmDialog(
-        stringResource(R.string.pair_complete_confirm_title), stringResource(R.string.pair_complete_confirm), stringResource(R.string.pair_complete),
-        onConfirm = { confirming = false; PairService.complete(context, pair.id) }, onDismiss = { confirming = false },
-    )
     if (leaving) ConfirmDialog(
-        stringResource(R.string.pair_leave), stringResource(if (pair.joined) R.string.pair_leave_confirm else R.string.pair_cancel_confirm), stringResource(if (pair.joined) R.string.pair_leave else R.string.pair_cancel),
+        stringResource(R.string.pair_cancel), stringResource(R.string.pair_cancel_confirm), stringResource(R.string.pair_cancel),
         onConfirm = { leaving = false; PairService.leave(context, pair.id) }, onDismiss = { leaving = false }, danger = true,
     )
 }
@@ -271,15 +339,26 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
                 }, modifier = Modifier.fillMaxWidth())
             } else {
                 Text(stringResource(R.string.pair_pick_mission), style = MaterialTheme.typography.labelLarge, color = p.muted)
-                LazyColumn(Modifier.fillMaxWidth().heightIn(max = 240.dp)) {
+                LazyColumn(Modifier.fillMaxWidth().heightIn(max = 340.dp)) {
                     items(defs, key = { it.id }) { def ->
                         val selected = def.id == defId
+                        val color = def.color(p)
+                        // What this mission would ask of you today, at your own step of it.
+                        val preview = remember(def.id, s.player.level) { buildQuest(def, s.player.level, QuestOrigin.PAIR, step = s.stepOf(def.id)) }
                         Row(
-                            Modifier.fillMaxWidth().clickable { defId = def.id }.padding(vertical = 10.dp, horizontal = 4.dp),
+                            Modifier.fillMaxWidth().padding(vertical = 3.dp).clip(RoundedCornerShape(12.dp))
+                                .background(if (selected) color.copy(alpha = 0.14f) else p.panelHigh)
+                                .border(1.dp, if (selected) color else p.border, RoundedCornerShape(12.dp))
+                                .clickable { defId = def.id }.padding(horizontal = 12.dp, vertical = 10.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(def.title.local(), style = MaterialTheme.typography.bodyLarge, color = if (selected) p.accent else p.text, modifier = Modifier.weight(1f))
-                            if (selected) Icon(Icons.Rounded.CheckCircle, null, tint = p.accent, modifier = Modifier.size(18.dp))
+                            Icon(def.icon(), null, tint = color, modifier = Modifier.size(22.dp))
+                            Spacer(Modifier.width(12.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(def.title.text(language), style = MaterialTheme.typography.bodyLarge, color = p.text)
+                                Text(stringResource(R.string.pair_your_part, "${fmtNum(preview.target)} ${unitLabel(preview.unit)}".trim()), style = MaterialTheme.typography.labelMedium, color = p.muted)
+                            }
+                            if (selected) Icon(Icons.Rounded.CheckCircle, null, tint = color, modifier = Modifier.size(20.dp))
                         }
                     }
                 }

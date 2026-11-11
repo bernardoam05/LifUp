@@ -30,6 +30,7 @@ class LifUpApp : Application() {
         // Portals now roll on the hourly alarm; drop the old periodic job from earlier installs.
         androidx.work.WorkManager.getInstance(this).cancelUniqueWork("portal-roll")
         AutoWorker.schedule(this)
+        com.lifup.app.system.PairService.install(this, store)
         store.fire()
     }
 

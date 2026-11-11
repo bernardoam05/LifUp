@@ -42,6 +42,8 @@ data class PairPart(
     val outcome: PairOutcome? = null,
     /** The evening check for this cycle already ran (one read, one notification at most). */
     val nudged: Boolean = false,
+    /** The part as a mission: same card, sheet, counter, timer and focus credit as any other (null on 2.0.20 saves). */
+    val quest: Quest? = null,
 )
 
 @Serializable
@@ -165,6 +167,14 @@ fun PairQuest.currentPart(now: Long): PairPart? = cycleAt(now)?.toString()?.let 
 fun PairQuest.partnerDone(cycle: String) = partner[cycle]?.let { it.at <= deadline(cycle) } == true
 
 fun GameState.activePairs() = pairs.filter { !it.ended }
+
+fun pairQuestId(pairId: String, cycle: String) = "pair_${pairId}_$cycle"
+
+/** Pair parts still in play, as missions (see [GameState.allQuests]). */
+fun GameState.pairQuests(): List<Quest> = pairs.filter { !it.ended }.flatMap { p -> p.parts.filter { it.outcome == null }.mapNotNull { it.quest } }
+
+/** The pair a pair mission belongs to. */
+fun GameState.pairOf(questId: String): PairQuest? = pairs.firstOrNull { p -> p.parts.any { it.quest?.id == questId } }
 fun GameState.canAddPair() = activePairs().size < PairRules.MAX_ACTIVE
 fun GameState.pairQuotaBlocked(now: Long) = pairSync.quotaBlockedUntil > now
 
@@ -246,10 +256,17 @@ fun Tx.useLinkRead(): Boolean {
     return true
 }
 
-/** Finishes this phone's part of today's cycle: paid like a mission of the same size, right away. */
+/** Finishes this phone's part of today's cycle (see [completePairQuest]). */
 fun Tx.completePairPart(id: String) {
-    val p = s.pairs.firstOrNull { it.id == id && !it.ended && it.joined } ?: return
-    val part = p.currentPart(ctx.now) ?: return
+    val p = s.pairs.firstOrNull { it.id == id } ?: return
+    val q = p.currentPart(ctx.now)?.quest ?: return
+    completePairQuest(q.id)
+}
+
+/** A pair mission completed (by hand, the counter, focus or a run): paid like a mission of the same size, right away. */
+internal fun Tx.completePairQuest(questId: String) {
+    val p = s.pairOf(questId)?.takeIf { !it.ended && it.joined } ?: return
+    val part = p.parts.first { it.quest?.id == questId }
     if (part.doneAt != null || ctx.now >= p.deadline(part.cycle)) return
     val def = s.defOf(p.defId, content)
     val family = def?.drawGroup()
@@ -257,7 +274,15 @@ fun Tx.completePairPart(id: String) {
     val gold = gainGold(part.gold)
     def?.let { gainAttributes(it.drawGroup()) }
     count(StatKey.QUESTS_COMPLETED)
-    updatePair(id) { q -> q.copy(parts = q.parts.map { if (it.cycle == part.cycle) it.copy(doneAt = ctx.now, xpGained = xp, goldGained = gold) else it }) }
+    updatePair(p.id) { q ->
+        q.copy(parts = q.parts.map {
+            if (it.cycle != part.cycle) it
+            else it.copy(
+                doneAt = ctx.now, xpGained = xp, goldGained = gold,
+                quest = it.quest?.copy(status = QuestStatus.DONE, progress = maxOf(it.quest.progress, it.quest.target), xpGained = xp, goldGained = gold, doneHour = ctx.hour),
+            )
+        })
+    }
 }
 
 /**
@@ -272,8 +297,25 @@ fun Tx.ensurePairs() {
         val cycle = cur.cycleAt(ctx.now)?.toString()
         if (!cur.ended && cur.joined && cycle != null && cur.parts.none { it.cycle == cycle }) {
             val def = s.defOf(cur.defId, content) ?: return@forEach
-            val q = buildQuest(def, s.player.level, QuestOrigin.DAILY, step = s.stepOf(def.id))
-            updatePair(p.id) { it.copy(parts = it.parts + PairPart(cycle, q.target, q.xp, q.gold)) }
+            val q = buildQuest(def, s.player.level, QuestOrigin.PAIR, pairQuestId(cur.id, cycle), s.stepOf(def.id), ctx.today)
+            updatePair(p.id) { it.copy(parts = it.parts + PairPart(cycle, q.target, q.xp, q.gold, quest = q)) }
+        }
+        // Parts from 2.0.20 had no mission of their own yet.
+        s.defOf(cur.defId, content)?.let { def ->
+            updatePair(p.id) { pq ->
+                pq.copy(parts = pq.parts.map { part ->
+                    if (part.quest != null) part
+                    else {
+                        val base = buildQuest(def, s.player.level, QuestOrigin.PAIR, pairQuestId(pq.id, part.cycle), s.stepOf(def.id))
+                        val done = part.doneAt != null
+                        part.copy(quest = base.copy(
+                            target = part.target, xp = part.xp, gold = part.gold,
+                            status = if (done) QuestStatus.DONE else QuestStatus.OPEN, progress = if (done) part.target else 0.0,
+                            xpGained = part.xpGained, goldGained = part.goldGained,
+                        ))
+                    }
+                })
+            }
         }
         updatePair(p.id) { q ->
             val noMore = q.recurrence.kind == PairRepeat.ONCE && q.nextCycle(ctx.now) == null && q.parts.all { it.outcome != null }

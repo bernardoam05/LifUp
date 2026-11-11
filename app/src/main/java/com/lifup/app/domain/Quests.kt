@@ -113,6 +113,7 @@ private fun Tx.updateQuest(id: String, f: (Quest) -> Quest) {
         s.boss?.challenge?.id == id -> s.copy(boss = s.boss!!.copy(challenge = f(s.boss!!.challenge)))
         s.boss?.second?.id == id -> s.copy(boss = s.boss!!.copy(second = f(s.boss!!.second!!)))
         s.portal?.quest?.id == id -> s.copy(portal = s.portal!!.copy(quest = f(s.portal!!.quest)))
+        s.pairQuests().any { it.id == id } -> s.copy(pairs = s.pairs.map { p -> p.copy(parts = p.parts.map { part -> if (part.quest?.id == id) part.copy(quest = f(part.quest)) else part }) })
         else -> s
     }
 }
@@ -134,6 +135,7 @@ fun Tx.completeQuest(id: String) {
         }
         QuestOrigin.PORTAL -> completePortal()
         QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY -> completeMission(q)
+        QuestOrigin.PAIR -> completePairQuest(q.id)
     }
     s = s.copy(timers = s.timers - id)
 }

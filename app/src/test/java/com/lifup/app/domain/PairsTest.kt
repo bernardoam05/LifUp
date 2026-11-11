@@ -169,6 +169,30 @@ class PairsTest {
         assertEquals("ABCD2345", PairLink.normalizeCode(" abcd-2345 "))
     }
 
+    @Test fun `the part is a mission - progress counts and reaching the target completes it`() {
+        var s = withPair()
+        val q = s.pairQuests().single()
+        assertEquals(QuestOrigin.PAIR, q.origin)
+        assertTrue(s.allQuests.any { it.id == q.id })
+        s = run(s, "2026-11-11T10:00") { setProgress(q.id, q.target / 2) }
+        assertEquals(q.target / 2, s.pairQuests().single().progress, 0.001)
+        assertNull(s.p().parts.single().doneAt)
+        s = run(s, "2026-11-11T10:05") { setProgress(q.id, q.target) }
+        assertNotNull(s.p().parts.single().doneAt)
+        assertEquals(QuestStatus.DONE, s.p().parts.single().quest?.status)
+        assertTrue(s.p().parts.single().xpGained > 0)
+    }
+
+    @Test fun `parts saved before they were missions get one`() {
+        var s = withPair()
+        s = s.copy(pairs = s.pairs.map { p -> p.copy(parts = p.parts.map { it.copy(quest = null, doneAt = at("2026-11-11T08:00"), xpGained = 7) }) })
+        s = run(s, "2026-11-11T09:30")
+        val q = s.p().parts.single().quest
+        assertNotNull(q)
+        assertEquals(QuestStatus.DONE, q!!.status)
+        assertEquals(7, q.xpGained)
+    }
+
     @Test fun `invite codes come out of whatever was pasted`() {
         val message = "Faz comigo a missão \"Flexões\" no Questborn! Toca para entrar: ${PairLink.joinLink("ABCD2345")} (ou escreve o código ABCD2345)"
         assertEquals("ABCD2345", PairLink.extractCode(message))

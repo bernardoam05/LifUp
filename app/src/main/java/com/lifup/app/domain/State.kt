@@ -8,7 +8,7 @@ enum class Rigor { EASY, NORMAL, HARD }
 
 @Serializable
 /** [WEEKLY]: an "N times a week" mission on a day it doesn't count yet (doing it still counts). */
-enum class QuestOrigin { DAILY, EXTRA, PENALTY, BOSS, PORTAL, WEEKLY }
+enum class QuestOrigin { DAILY, EXTRA, PENALTY, BOSS, PORTAL, WEEKLY, PAIR }
 
 @Serializable
 enum class QuestStatus { OPEN, DONE, FAILED }
@@ -500,5 +500,5 @@ data class GameState(
 
     /** Every open quest of any origin, so progress sources (focus, GPS) can credit them all. */
     val allQuests: List<Quest>
-        get() = quests + penalty.quests + boss?.takeIf { !it.defeated }?.challenges().orEmpty() + listOfNotNull(portal?.quest)
+        get() = quests + penalty.quests + boss?.takeIf { !it.defeated }?.challenges().orEmpty() + listOfNotNull(portal?.quest) + pairQuests()
 }
