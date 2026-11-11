@@ -34,7 +34,11 @@ Em Actions → **Play bundle** → Run workflow. O `.aab` aparece em Artifacts. 
 ## 3. Consola da Play: o que preencher
 
 - **Política de privacidade:** o link para o `PRIVACY.md` deste repositório.
-- **Segurança dos dados:** a app não recolhe nem partilha dados. Tudo fica no dispositivo e não há conta.
+- **Segurança dos dados:** só as missões em par (opcionais) enviam dados, para o Cloud Firestore (ver `docs/PAIRS.md` no main). Declara:
+  - **Recolhidos:** "Identificadores do dispositivo ou outros IDs" (o ID anónimo), "Informações pessoais → Nome" (o nome do herói), "Atividade na app → Outras ações" (as conclusões das missões em par).
+  - **Finalidade:** funcionalidade da app. **Opcional:** sim. **Partilhados com terceiros:** não (a Google é fornecedora de serviços).
+  - **Cifrados em trânsito:** sim. **Pedido de eliminação:** sim, saindo do par.
+  - Tudo o resto fica no dispositivo e não há conta.
 - **Declarações de permissões:**
   - *Alarmes exatos* (`SCHEDULE_EXACT_ALARM`): fechar o dia à meia-noite, terminar sessões de foco e lembretes escolhidos pelo utilizador.
   - *Serviço em primeiro plano `specialUse`*: sessão de foco com bloqueio de apps. Indica o subtipo e explica.
