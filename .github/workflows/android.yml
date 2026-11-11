@@ -17,7 +17,7 @@ jobs:
       - name: Unit tests and debug APK
         run: |
           set -o pipefail
-          ./gradlew testDebugUnitTest assembleDebug 2>&1 | tee build.log
+          ./gradlew testGithubDebugUnitTest assembleGithubDebug assemblePlayDebug 2>&1 | tee build.log
       - name: Compile errors as annotations
         if: failure()
         run: |
@@ -32,4 +32,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lifup-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/github/debug/app-github-debug.apk

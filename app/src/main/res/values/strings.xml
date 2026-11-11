@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">LifUp</string>
+    <string name="app_name" translatable="false">Questborn</string>
 
     <!-- General -->
     <string name="add">Add</string>
@@ -842,7 +842,7 @@
     <string name="pause_today">Paused until %1$s: nothing counts and nothing is lost. Rest up.</string>
     <string name="pause_none_left">You\'ve used all %1$d pause days of the last 12 months.</string>
     <string name="share">Share</string>
-    <string name="share_week_title">LifUp · week of %1$s</string>
+    <string name="share_week_title">Questborn · week of %1$s</string>
     <string name="share_boss_won">⚔️ %1$s: defeated</string>
     <string name="share_boss_lost">⚔️ %1$s: escaped</string>
     <string name="boss_weak">Weak to %1$s: +%2$d%% damage, on %3$d missions a day</string>

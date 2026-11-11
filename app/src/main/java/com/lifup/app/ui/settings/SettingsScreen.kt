@@ -233,7 +233,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
 
             SectionTitle(stringResource(R.string.about))
             Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
-            UpdateRow()
+            if (BuildConfig.SELF_UPDATE) UpdateRow()
             TextButton(onClick = { showNotes = true }) { Text(stringResource(R.string.patch_notes).uppercase()) }
             TextButton(onClick = { confirmReset = true }) { Text(stringResource(R.string.reset_progress).uppercase(), color = Lif.colors.red) }
             Spacer(Modifier.height(24.dp))

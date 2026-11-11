@@ -841,7 +841,7 @@
     <string name="pause_today">Pausiert bis %1$s: Nichts zählt, nichts geht verloren. Erhol dich.</string>
     <string name="pause_none_left">Du hast alle %1$d Pausentage der letzten 12 Monate genutzt.</string>
     <string name="share">Teilen</string>
-    <string name="share_week_title">LifUp · Woche vom %1$s</string>
+    <string name="share_week_title">Questborn · Woche vom %1$s</string>
     <string name="share_boss_won">⚔️ %1$s: besiegt</string>
     <string name="share_boss_lost">⚔️ %1$s: entkommen</string>
     <string name="boss_weak">Schwach gegen %1$s: +%2$d%% Schaden, bei %3$d Missionen pro Tag</string>
