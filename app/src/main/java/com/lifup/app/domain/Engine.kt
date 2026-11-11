@@ -11,6 +11,7 @@ object Engine {
         tx.before()
         tx.ensureDay()
         tx.action()
+        tx.announceUnlocks()
         tx.checkAchievements()
         tx.s = tx.s.copy(rewards = tx.s.rewards.takeLast(MAX_PENDING_REWARDS))
         return tx.s

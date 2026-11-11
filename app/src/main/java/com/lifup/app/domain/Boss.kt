@@ -14,6 +14,7 @@ fun BossDef.activeOn(day: MonthDay): Boolean {
 
 /** Rotates the weekly boss on Mondays. Seasonal bosses take over during their window. */
 fun Tx.ensureBoss() {
+    if (!s.has(Feature.BOSS)) return
     val current = s.boss
     val weekRng = s.weekRandom(ctx, salt = 0)
     if (current != null && current.weekKey >= ctx.weekKey) { // ISO dates: never rotate backwards
@@ -161,7 +162,7 @@ fun Tx.rollPortal() {
     s = s.copy(portalRollHour = hourKey)
     if (s.portalDay != ctx.todayKey) s = s.copy(portalDay = ctx.todayKey, portalsToday = 0)
     expirePortal()
-    if (s.daily.paused) return
+    if (s.daily.paused || !s.has(Feature.PORTAL)) return
     if (s.portal != null || ctx.hour !in Rules.PORTAL_HOURS || s.portalsToday >= Rules.MAX_PORTALS_PER_DAY) return
     if (ctx.rng.nextDouble() >= Rules.PORTAL_CHANCE) return
     openPortal()

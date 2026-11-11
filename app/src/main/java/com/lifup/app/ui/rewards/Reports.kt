@@ -78,7 +78,9 @@ internal fun DayReportCard(r: Reward.DayReport, dismiss: () -> Unit) {
             if (r.sideMissed > 0) StatRow(stringResource(R.string.report_side_label), r.sideMissed.toString(), c.red)
         }
         if (pen != null) {
-            if (pen.absorbedBy != null) Note(c.purple) {
+            if (pen.grace) Note(c.accent) {
+                Text(stringResource(R.string.report_grace), style = MaterialTheme.typography.bodyMedium, color = c.text)
+            } else if (pen.absorbedBy != null) Note(c.purple) {
                 Text(stringResource(R.string.report_absorbed_by, nameOf(pen.absorbedBy)), style = MaterialTheme.typography.bodyMedium, color = c.purple)
             } else Note(c.red) {
                 Text(stringResource(R.string.report_penalty_label).uppercase(), style = MaterialTheme.typography.labelSmall, color = c.red)

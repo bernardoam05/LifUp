@@ -45,6 +45,11 @@ fun Tx.migrateState() {
         s = s.copy(quests = s.quests.map(::stamp), penalty = s.penalty.copy(quests = s.penalty.quests.map(::stamp)), version = 6)
     }
     if (s.version < 7) migrateToMissionSteps()
+    if (s.version < 8) {
+        // Level unlocks came in: whoever was already playing keeps everything, and nothing is announced.
+        val veteran = s.onboarded
+        s = s.copy(unlockAll = veteran, announced = if (veteran) Feature.entries.toSet() else emptySet(), version = 8)
+    }
 }
 
 /** Unlocks every tier whose target has been reached. Rewards are paid unboosted to avoid feedback loops. */

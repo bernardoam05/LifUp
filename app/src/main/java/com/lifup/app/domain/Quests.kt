@@ -332,7 +332,7 @@ private fun Tx.drawOne(defs: List<QuestDef>): QuestDef? = drawBalanced(
  * Extras come one at a time: the next one only once the last is done, so they can't be cherry-picked. A mission
  * that can't be done yet at [hour] (bedtime) doesn't hold them back; it still counts when the day closes.
  */
-fun GameState.canAddExtra(hour: Int) =
+fun GameState.canAddExtra(hour: Int) = has(Feature.EXTRA) &&
     dailyQuests.isNotEmpty() && dailyQuests.all { it.isSuccessful() || (it.status == QuestStatus.OPEN && !it.availableAt(hour)) } &&
         daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY && !extraOpen()
 

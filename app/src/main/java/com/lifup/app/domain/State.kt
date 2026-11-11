@@ -270,7 +270,7 @@ data class DayLog(
 )
 
 @Serializable
-data class PenaltyInfo(val failed: Int, val total: Int, val xpLost: Int, val goldLost: Int, val quests: Int, val absorbedBy: String? = null)
+data class PenaltyInfo(val failed: Int, val total: Int, val xpLost: Int, val goldLost: Int, val quests: Int, val absorbedBy: String? = null, val grace: Boolean = false)
 
 @Serializable
 sealed interface Reward {
@@ -362,6 +362,10 @@ sealed interface Reward {
 
     @Serializable @SerialName("chest")
     data class ChestOpened(override val id: Long, val gold: Int, val xp: Int, val itemId: String?) : Reward
+
+    /** Features that just opened with the level (one card for all of them). */
+    @Serializable @SerialName("unlocked")
+    data class Unlocked(override val id: Long, val features: List<Feature>) : Reward
 
     /** Small, non-blocking notice shown as a snackbar. */
     @Serializable @SerialName("toast")
@@ -490,6 +494,11 @@ data class GameState(
     /** Missions done with someone else (see Pairs.kt). */
     val pairs: List<PairQuest> = emptyList(),
     val pairSync: PairSyncState = PairSyncState(),
+    /** Players from before level unlocks keep every feature open (see Unlocks.kt). */
+    val unlockAll: Boolean = false,
+    /** Features whose opening was already announced. */
+    val announced: Set<Feature> = emptySet(),
+    val starterClaimed: Set<StarterTask> = emptySet(),
 ) {
     fun owned(id: String) = shadows.firstOrNull { it.id == id }
     fun count(key: StatKey) = counters[key] ?: 0L

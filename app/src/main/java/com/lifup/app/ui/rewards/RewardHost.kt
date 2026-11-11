@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.Inventory2
+import androidx.compose.material.icons.rounded.LockOpen
 import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.MilitaryTech
 import androidx.compose.material.icons.rounded.Star
@@ -83,7 +84,7 @@ fun RewardHost(s: GameState) {
     val reward = s.rewards.firstOrNull { it !is Reward.Toast } ?: return
     LaunchedEffect(reward.id) {
         when (reward) {
-            is Reward.LevelUp, is Reward.RankUp, is Reward.StreakMilestone -> Feedback.play(context, Sfx.LEVEL)
+            is Reward.LevelUp, is Reward.RankUp, is Reward.StreakMilestone, is Reward.Unlocked -> Feedback.play(context, Sfx.LEVEL)
             is Reward.BossDefeated, is Reward.AchievementUnlocked -> Feedback.play(context, Sfx.VICTORY)
             is Reward.BossSecondChallenge -> Feedback.play(context, Sfx.PENALTY)
             // Copies get a small cue; new common/rare echoes a bright one; rarer new echoes play during their reveal.
@@ -92,7 +93,7 @@ fun RewardHost(s: GameState) {
                 content.shadowById[reward.shadowId]?.deservesReveal() != true -> Feedback.play(context, Sfx.ECHO_NEW)
                 else -> Unit
             }
-            is Reward.DayReport -> if (reward.penalty != null && reward.penalty.absorbedBy == null) Feedback.play(context, Sfx.PENALTY)
+            is Reward.DayReport -> if (reward.penalty != null && reward.penalty.absorbedBy == null && !reward.penalty.grace) Feedback.play(context, Sfx.PENALTY)
             else -> Unit
         }
         Feedback.buzz(context, strong = !(reward is Reward.ShadowGained && !reward.isNew))
@@ -153,6 +154,12 @@ fun RewardHost(s: GameState) {
                     reward.itemId?.let { Line("+ " + content.itemById[it]?.name?.local().orEmpty()) }
                 }
                 is Reward.DayReport -> DayReportCard(reward, dismiss)
+                is Reward.Unlocked -> RewardCard(Icons.Rounded.LockOpen, Lif.colors.accent, stringResource(R.string.reward_unlock_title), "", dismiss, core = CoreMood.EXCITED) {
+                    reward.features.forEach { f ->
+                        Line(stringResource(com.lifup.app.ui.components.featureName(f)), Lif.colors.accent)
+                        Line(stringResource(com.lifup.app.ui.components.featureHint(f)), Lif.colors.muted)
+                    }
+                }
                 is Reward.WeekReport -> WeekReportCard(s, reward, dismiss)
                 is Reward.MonthReport -> MonthReportCard(s, reward, dismiss)
                 is Reward.Toast -> Unit

@@ -117,7 +117,7 @@ private fun Tx.closeDay(day: LocalDate) {
     if (skipped && !rest && s.player.streak > 0) setStreak(0)
     if (skipped) s = s.copy(recovery = null)
 
-    s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null, rest, passed && !rest, sideFailed)).takeLast(Rules.DAY_LOG_DAYS))
+    s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null && !penaltyInfo.grace, rest, passed && !rest, sideFailed)).takeLast(Rules.DAY_LOG_DAYS))
     // A paused day has nothing to report; a week away shouldn't come back as seven cards.
     if (!s.daily.paused) reward { Reward.DayReport(it, day.toString(), done, daily.size, perfect && !rest, rest, s.player.streak, bonusXp, penaltyInfo, streakSavedBy, passed && !rest, restored, sideFailed) }
     // The perfect day's echo comes once the day is closed: avoid and limit missions can still break until midnight.
@@ -141,7 +141,10 @@ private fun Tx.applyFailure(daily: List<Quest>, failed: Int, total: Int, ratio: 
         toast(ToastKind.PASSIVE_FIRED, shadow.id)
         squadAdded(SquadGain(saves = 1))
         PenaltyInfo(failed, total, 0, 0, 0, absorbedBy = shadow.id)
-    } ?: penalize(daily, failed, total, ratio)
+    } ?: if (s.inGrace()) {
+        // Still learning: the day counts as failed (no streak) but costs nothing, and no weekly save is spent on it.
+        return PenaltyInfo(failed, total, 0, 0, 0, grace = true) to null
+    } else penalize(daily, failed, total, ratio)
     return info to saveStreak(week)
 }
 
