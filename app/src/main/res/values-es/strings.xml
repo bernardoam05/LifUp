@@ -1025,4 +1025,10 @@
     <string name="widget_core_plus">Desbloquéalo con LifUp+</string>
     <string name="plus_perk_widget">Widget del Core</string>
     <string name="plus_perk_widget_text">Tu Core en la pantalla de inicio, con la cara y las misiones del día.</string>
+    <string name="pair_mode">Misión</string>
+    <string name="pair_mode_fixed">Siempre la misma</string>
+    <string name="pair_mode_random">Una nueva cada vez</string>
+    <string name="pair_mode_random_hint">Una misión distinta cada día de la pareja, sorteada, la misma para los dos.</string>
+    <string name="pair_random_title">Misión sorpresa</string>
+    <string name="toast_pair_partner_left">%1$s salió de la pareja: espera a que alguien vuelva a unirse</string>
 </resources>

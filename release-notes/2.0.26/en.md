@@ -1,0 +1,2 @@
+- [new] Pair missions can be "a new one each time": every day of the pair draws a different mission, the same for both of you.
+- [tweak] If your partner leaves, the pair no longer ends: it waits for someone to join again (the same person or another) with a new code, and the day under way counts x1.

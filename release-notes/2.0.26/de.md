@@ -1,0 +1,2 @@
+- [new] Partnermissionen können „jedes Mal eine neue“ sein: An jedem Tag der Partnerschaft wird eine andere Mission ausgelost, für euch beide dieselbe.
+- [tweak] Verlässt dein Partner die Partnerschaft, endet sie nicht mehr: Sie wartet, bis wieder jemand mit einem neuen Code beitritt (dieselbe Person oder eine andere), und der laufende Tag zählt ×1.

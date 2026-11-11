@@ -1,0 +1,2 @@
+- [new] As missões em par podem ser "uma nova de cada vez": em cada dia do par é sorteada uma missão diferente, a mesma para os dois.
+- [tweak] Se o teu par sair, o par já não acaba: fica à espera de que alguém volte a entrar (a mesma pessoa ou outra) com um código novo, e o dia a meio conta ×1.

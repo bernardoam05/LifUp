@@ -193,6 +193,35 @@ class PairsTest {
         assertEquals(7, q.xpGained)
     }
 
+    @Test fun `a random pair draws one mission per cycle, the same on both phones`() {
+        val p = pair().copy(defId = PairRules.RANDOM)
+        val s = GameState(onboarded = true)
+        val a = s.pairDefFor(p, "2026-11-11", content)
+        val again = s.pairDefFor(p.copy(myUid = "rui", creator = false), "2026-11-11", content)
+        assertNotNull(a)
+        assertEquals(a!!.id, again!!.id)
+        assertTrue(PairRules.eligible(a))
+        val week = (11..24).map { s.pairDefFor(p, "2026-11-%02d".format(it), content)!!.id }.toSet()
+        assertTrue("draws vary: $week", week.size > 3)
+        val withPart = withPair(p)
+        assertEquals(a.id, withPart.p().parts.single().quest?.defId)
+    }
+
+    @Test fun `when the partner leaves, the pair waits for someone to join again`() {
+        var s = run(withPair(), "2026-11-11T18:00") { completePairPart("p1") }
+        s = run(s, "2026-11-11T19:00") { pairRead("p1", null, null, emptyMap(), gone = false, partnerLeft = true) }
+        val p = s.p()
+        assertFalse(p.ended)
+        assertFalse(p.joined)
+        assertEquals(PairOutcome.UNKNOWN, p.parts.single().outcome)
+        assertTrue(ToastKind.PAIR_PARTNER_LEFT in toasts(s))
+        // Someone joins with a new code: cycles start again.
+        s = run(s, "2026-11-12T09:00") { pairRead("p1", "eva", "Eva", emptyMap(), gone = false) }
+        assertTrue(s.p().joined)
+        assertEquals("Eva", s.p().partnerName)
+        assertTrue(s.p().parts.any { it.cycle == "2026-11-12" && it.outcome == null })
+    }
+
     @Test fun `invite codes come out of whatever was pasted`() {
         val message = "Faz comigo a missão \"Flexões\" no Questborn! Toca para entrar: ${PairLink.joinLink("ABCD2345")} (ou escreve o código ABCD2345)"
         assertEquals("ABCD2345", PairLink.extractCode(message))

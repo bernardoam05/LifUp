@@ -31,7 +31,7 @@ object PairCloud {
     class PairFull : Exception()
 
     /** What one read of a pair found. [gone]: deleted, or this phone is no longer in it. */
-    data class Snapshot(val partnerUid: String?, val partnerName: String?, val marks: Map<String, PartnerMark>, val gone: Boolean, val membersLeft: Int)
+    data class Snapshot(val partnerUid: String?, val partnerName: String?, val marks: Map<String, PartnerMark>, val gone: Boolean, val membersLeft: Int, val left: Boolean = false)
 
     private const val APP = "pairs"
     private const val EXPIRE_MS = 30L * 24 * 3_600_000
@@ -124,7 +124,8 @@ object PairCloud {
         val pair = ref.get(Source.SERVER).await()
         ref.collection("parts").document(me).set(partDoc(name, level)).await()
         runCatching { db.collection("invites").document(code).delete().await() }
-        val creator = pair.getString("createdBy").orEmpty()
+        // The one already in the pair: its creator, or whoever stayed after the creator left.
+        val creator = (pair.get("members") as? List<*>)?.filterIsInstance<String>()?.firstOrNull { it != me } ?: pair.getString("createdBy").orEmpty()
         val creatorPart = runCatching { ref.collection("parts").document(creator).get(Source.SERVER).await() }.getOrNull()
         PairQuest(
             id = pairId,
@@ -163,8 +164,8 @@ object PairCloud {
         val members = (pair.get("members") as? List<*>)?.filterIsInstance<String>().orEmpty()
         if (p.myUid !in members) return@call Snapshot(null, null, emptyMap(), gone = true, membersLeft = members.size)
         val partner = members.firstOrNull { it != p.myUid }
-        // The partner had joined and is no longer in: they left.
-        if (partner == null && p.partnerUid != null) return@call Snapshot(null, null, emptyMap(), gone = true, membersLeft = members.size)
+        // The partner had joined and is no longer in: they left, and the pair waits for someone to join again.
+        if (partner == null && p.partnerUid != null) return@call Snapshot(null, null, emptyMap(), gone = false, membersLeft = members.size, left = true)
         val part = partner?.let { ref.collection("parts").document(it).get(Source.SERVER).await() }
         Snapshot(partner, part?.getString("name"), marksOf(part?.get("done")), gone = false, membersLeft = members.size)
     }

@@ -384,6 +384,8 @@ enum class ToastKind {
     PAIR_BOTH, PAIR_BOTH_CAPPED, PAIR_CUT, PAIR_UNKNOWN, PAIR_MISSED,
     /** arg: the [CoreSkin] name. */
     CORE_SKIN,
+    /** arg: the partner's name; the pair now waits for someone to join again. */
+    PAIR_PARTNER_LEFT,
 }
 
 @Serializable

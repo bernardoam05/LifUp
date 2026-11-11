@@ -1,0 +1,2 @@
+- [new] Las misiones en pareja pueden ser "una nueva cada vez": cada día de la pareja se sortea una misión distinta, la misma para los dos.
+- [tweak] Si tu pareja sale, la pareja ya no termina: espera a que alguien vuelva a unirse (la misma persona u otra) con un código nuevo, y el día en curso cuenta ×1.

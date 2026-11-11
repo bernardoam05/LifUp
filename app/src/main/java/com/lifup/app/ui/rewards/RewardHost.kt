@@ -236,6 +236,7 @@ private fun toastMessage(s: GameState, t: Reward.Toast): String {
                 name, xp, gold,
             )
         }
+        ToastKind.PAIR_PARTNER_LEFT -> stringResource(R.string.toast_pair_partner_left, t.arg.ifBlank { "?" })
         ToastKind.CORE_SKIN -> stringResource(
             R.string.toast_core_skin,
             com.lifup.app.domain.CoreSkin.entries.firstOrNull { it.name == t.arg }?.let { stringResource(com.lifup.app.ui.hero.skinName(it)) } ?: t.arg,
