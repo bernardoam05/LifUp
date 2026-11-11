@@ -12,6 +12,7 @@ object PlusProducts {
 
 object PlusRules {
     const val SQUAD_SLOTS = 3
+    const val MAX_BLOCK_WINDOWS = 6
 }
 
 /** LifUp+: keeps the current squad in [slot]. */
@@ -57,3 +58,47 @@ fun GameState.missionsCsv(content: Content, lang: String): String = buildString 
         appendLine("\"$title\",${st.done},${st.total},${"%.2f".format(java.util.Locale.ROOT, st.rate)}")
     }
 }
+
+/**
+ * LifUp+: hours when the apps picked for focus are blocked without a session (bedtime, work hours). [days] are ISO
+ * days of week (1 = Monday) on which the window STARTS; [from] and [to] are minutes after midnight, and a window
+ * whose end is not after its start runs past midnight into the next day.
+ */
+@kotlinx.serialization.Serializable
+data class BlockWindow(val days: List<Int>, val from: Int, val to: Int)
+
+private fun BlockWindow.span(day: java.time.LocalDate, zone: java.time.ZoneId): Pair<Long, Long>? {
+    if (day.dayOfWeek.value !in days) return null
+    val start = day.atTime(from / 60, from % 60).atZone(zone).toInstant().toEpochMilli()
+    val endDay = if (to > from) day else day.plusDays(1)
+    val end = endDay.atTime(to / 60, to % 60).atZone(zone).toInstant().toEpochMilli()
+    return start to end
+}
+
+private fun GameState.windowSpans(now: Long, zone: java.time.ZoneId, daysAhead: Long): List<Pair<Long, Long>> {
+    if (!plus || settings.blockedApps.isEmpty()) return emptyList()
+    val today = java.time.Instant.ofEpochMilli(now).atZone(zone).toLocalDate()
+    return (-1L..daysAhead).flatMap { d -> settings.blockWindows.mapNotNull { it.span(today.plusDays(d), zone) } }
+}
+
+/** When the scheduled block running now ends (windows that touch are joined), or null if none is running. */
+fun GameState.scheduledBlockUntil(now: Long, zone: java.time.ZoneId = java.time.ZoneId.systemDefault()): Long? {
+    val spans = windowSpans(now, zone, 8).sortedBy { it.first }
+    var end: Long? = null
+    for ((a, b) in spans) {
+        if (end == null) { if (now in a until b) end = b }
+        else if (a <= end) end = maxOf(end, b)
+    }
+    return end
+}
+
+/** The next moment a scheduled block starts or ends, for the alarm that starts or stops the blocker. */
+fun GameState.nextBlockBoundary(now: Long, zone: java.time.ZoneId = java.time.ZoneId.systemDefault()): Long? =
+    windowSpans(now, zone, 8).flatMap { listOf(it.first, it.second) }.filter { it > now }.minOrNull()
+
+fun Tx.addBlockWindow(w: BlockWindow) {
+    if (w.days.isEmpty() || w.from !in 0 until 1440 || w.to !in 0 until 1440 || w.from == w.to) return
+    updateSettings { it.copy(blockWindows = (it.blockWindows + w.copy(days = w.days.distinct().sorted())).take(PlusRules.MAX_BLOCK_WINDOWS)) }
+}
+
+fun Tx.removeBlockWindow(index: Int) = updateSettings { it.copy(blockWindows = it.blockWindows.filterIndexed { i, _ -> i != index }) }

@@ -1019,4 +1019,15 @@
     <string name="plus_perk_pairs">Jusqu\'à 3 missions en binôme</string>
     <string name="plus_perk_pairs_text">Fais des missions avec plus de monde en même temps.</string>
     <string name="plus_included_github">Dans cette version, installée depuis GitHub, LifUp+ est inclus. Sur Google Play, c\'est un achat unique.</string>
+    <string name="block_schedule_section">Blocage programmé (LifUp+)</string>
+    <string name="block_schedule_hint">Les apps que tu bloques pendant le focus restent bloquées à ces heures, sans session.</string>
+    <string name="block_schedule_no_apps">Choisis d\'abord les apps à bloquer dans l\'onglet Focus.</string>
+    <string name="block_schedule_add">Ajouter un horaire</string>
+    <string name="block_schedule_from">Commence à</string>
+    <string name="block_schedule_to">Se termine à</string>
+    <string name="session_schedule_title">Blocage programmé</string>
+    <string name="block_schedule_title">Bloqué jusqu\'à %1$s</string>
+    <string name="block_schedule_text">Ce sont les heures que tu as fixées dans LifUp. Profite de ce temps pour autre chose.</string>
+    <string name="plus_perk_schedule">Blocage programmé</string>
+    <string name="plus_perk_schedule_text">Les apps que tu choisis restent bloquées aux heures que tu fixes, sans session de focus.</string>
 </resources>

@@ -256,6 +256,8 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit, openPlus: () -> Un
                 }
             }
 
+            BlockScheduleSection(s, openPlus)
+
             SectionTitle(stringResource(R.string.plus_stats_export))
             Text(stringResource(R.string.plus_stats_export_hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 8.dp)) {

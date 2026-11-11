@@ -37,21 +37,26 @@ import com.lifup.app.domain.totalMinutes
 import com.lifup.app.system.Notifications.live
 import com.lifup.app.domain.penaltyBlockActive
 import com.lifup.app.domain.recordBlockedAttempt
+import com.lifup.app.domain.scheduledBlockUntil
 
 /** What the blocker must enforce right now, derived from the game state. */
-data class BlockPlan(val packages: Set<String>, val until: Long, val penalty: Boolean)
+data class BlockPlan(val packages: Set<String>, val until: Long, val penalty: Boolean, val scheduled: Boolean = false)
 
 fun GameState.blockPlan(now: Long): BlockPlan? {
     val apps = settings.blockedApps.toSet()
     if (apps.isEmpty()) return null
     if (penaltyBlockActive(now)) return BlockPlan(apps, penalty.blockEnd, penalty = true)
-    val f = focus ?: return null
-    if (!f.blockApps || f.endsAt() <= now) return null
-    // Pomodoro breaks are real breaks: apps are free until the next work block.
-    val phase = f.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(now)) }
-    if (phase?.work == false) return null
-    val until = phase?.let { f.startedAt + (it.endsAtMin * 60_000).toLong() } ?: f.endsAt()
-    return BlockPlan(apps, until, penalty = false)
+    val f = focus
+    if (f != null && f.blockApps && f.endsAt() > now) {
+        // Pomodoro breaks are real breaks: apps are free until the next work block (unless a scheduled block runs).
+        val phase = f.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(now)) }
+        if (phase?.work != false) {
+            val until = phase?.let { f.startedAt + (it.endsAtMin * 60_000).toLong() } ?: f.endsAt()
+            return BlockPlan(apps, until, penalty = false)
+        }
+    }
+    // LifUp+: the hours the player set.
+    return scheduledBlockUntil(now)?.let { BlockPlan(apps, it, penalty = false, scheduled = true) }
 }
 
 /**
@@ -65,7 +70,7 @@ class SessionService : Service() {
         const val OWN_PACKAGE = "com.lifup.app"
         @Volatile var instance: SessionService? = null
 
-        fun needed(s: GameState, now: Long) = s.focus != null || s.penaltyBlockActive(now)
+        fun needed(s: GameState, now: Long) = s.focus != null || s.penaltyBlockActive(now) || s.scheduledBlockUntil(now) != null
 
         fun sync(context: Context, s: GameState) {
             val now = System.currentTimeMillis()
@@ -313,8 +318,9 @@ class SessionService : Service() {
         val minLeft = ((p.until - System.currentTimeMillis()) / 60_000).coerceAtLeast(0)
         val left = if (minLeft >= 60) "${minLeft / 60}h ${minLeft % 60}m" else "${minLeft}m"
         val quotes = resources.getStringArray(R.array.block_quotes)
-        card.addView(text(getString(if (p.penalty) R.string.block_penalty_title else R.string.block_focus_title), 22f, accent))
-        card.addView(text(if (p.penalty) getString(R.string.block_penalty_text) else quotes.random(), 15f, Color.parseColor("#C8CAD4"), 12))
+        val untilText = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT).format(java.util.Date(p.until))
+        card.addView(text(when { p.penalty -> getString(R.string.block_penalty_title); p.scheduled -> getString(R.string.block_schedule_title, untilText); else -> getString(R.string.block_focus_title) }, 22f, accent))
+        card.addView(text(when { p.penalty -> getString(R.string.block_penalty_text); p.scheduled -> getString(R.string.block_schedule_text); else -> quotes.random() }, 15f, Color.parseColor("#C8CAD4"), 12))
         card.addView(text(getString(R.string.block_time_left, left), 13f, Color.parseColor("#8E8E9F"), 16))
         card.addView(text(getString(R.string.block_close), 15f, Color.parseColor("#E0E0E6"), 28).apply {
             setPadding(0, (28 * dp).toInt(), 0, (8 * dp).toInt())
@@ -361,7 +367,7 @@ class SessionService : Service() {
 
     private fun notificationKey(): String {
         val s = store.current
-        val f = s.focus ?: return "penalty:${s.penalty.blockEnd}"
+        val f = s.focus ?: return if (s.penaltyBlockActive(System.currentTimeMillis())) "penalty:${s.penalty.blockEnd}" else "schedule:${s.scheduledBlockUntil(System.currentTimeMillis())}"
         val phase = f.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(System.currentTimeMillis())) }
         // The bar moves by the minute, so the minute is part of the key.
         return "focus:${f.startedAt}:${phase?.work}:${phase?.cycle}:${f.elapsedMinutes(System.currentTimeMillis()).toInt()}"
@@ -374,12 +380,14 @@ class SessionService : Service() {
         val f = s.focus
         val phase = f?.pomodoro?.let { Pomodoro.phaseAt(it, f.elapsedMinutes(now)) }
         val title = when {
+            f == null && !s.penaltyBlockActive(now) -> getString(R.string.session_schedule_title)
             f == null -> getString(R.string.session_penalty_title)
             phase == null -> getString(R.string.session_focus_title)
             phase.work -> getString(R.string.pomodoro_work_open, phase.cycle)
             else -> getString(R.string.pomodoro_break_open, phase.cycle)
         }
         val end = when {
+            f == null && !s.penaltyBlockActive(now) -> s.scheduledBlockUntil(now) ?: now
             f == null -> s.penalty.blockEnd
             phase != null -> f.startedAt + (phase.endsAtMin * 60_000).toLong()
             else -> f.endsAt()

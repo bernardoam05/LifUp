@@ -232,6 +232,8 @@ data class Settings(
     val fixedIcon: Boolean = false,
     /** The accessory the Core wears (see Skins.kt); null = none. */
     val coreSkin: CoreSkin? = null,
+    /** LifUp+: hours when the blocked apps stay blocked without a focus session. */
+    val blockWindows: List<BlockWindow> = emptyList(),
 )
 
 @Serializable

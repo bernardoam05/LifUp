@@ -1019,4 +1019,15 @@
     <string name="plus_perk_pairs">Até 3 missões em par</string>
     <string name="plus_perk_pairs_text">Faz missões com mais pessoas ao mesmo tempo.</string>
     <string name="plus_included_github">Nesta versão, instalada a partir do GitHub, o LifUp+ vem incluído. Na Google Play é uma compra única.</string>
+    <string name="block_schedule_section">Bloqueio por horário (LifUp+)</string>
+    <string name="block_schedule_hint">As apps que bloqueias no foco ficam bloqueadas nestes horários, sem precisares de sessão.</string>
+    <string name="block_schedule_no_apps">Escolhe primeiro as apps a bloquear no separador Foco.</string>
+    <string name="block_schedule_add">Adicionar horário</string>
+    <string name="block_schedule_from">Começa às</string>
+    <string name="block_schedule_to">Acaba às</string>
+    <string name="session_schedule_title">Bloqueio por horário</string>
+    <string name="block_schedule_title">Bloqueado até às %1$s</string>
+    <string name="block_schedule_text">São as horas que definiste no LifUp. Aproveita o tempo para outra coisa.</string>
+    <string name="plus_perk_schedule">Bloqueio por horário</string>
+    <string name="plus_perk_schedule_text">As apps que escolheres ficam bloqueadas nas horas que marcares, sem sessão de foco.</string>
 </resources>

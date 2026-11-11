@@ -1037,4 +1037,15 @@
     <string name="plus_perk_pairs">Bis zu 3 Partnermissionen</string>
     <string name="plus_perk_pairs_text">Mach Missionen mit mehreren Leuten gleichzeitig.</string>
     <string name="plus_included_github">In dieser von GitHub installierten Version ist LifUp+ enthalten. Bei Google Play ist es ein einmaliger Kauf.</string>
+    <string name="block_schedule_section">Zeitplan-Sperre (LifUp+)</string>
+    <string name="block_schedule_hint">Die Apps, die du im Fokus sperrst, bleiben zu diesen Zeiten gesperrt, auch ohne Sitzung.</string>
+    <string name="block_schedule_no_apps">Wähle zuerst im Tab Fokus die Apps, die gesperrt werden.</string>
+    <string name="block_schedule_add">Zeiten hinzufügen</string>
+    <string name="block_schedule_from">Beginnt um</string>
+    <string name="block_schedule_to">Endet um</string>
+    <string name="session_schedule_title">Zeitplan-Sperre</string>
+    <string name="block_schedule_title">Gesperrt bis %1$s</string>
+    <string name="block_schedule_text">Das sind die Zeiten, die du in LifUp festgelegt hast. Nutze die Zeit für etwas anderes.</string>
+    <string name="plus_perk_schedule">Zeitplan-Sperre</string>
+    <string name="plus_perk_schedule_text">Die gewählten Apps bleiben zu deinen Zeiten gesperrt, ohne Fokussitzung.</string>
 </resources>

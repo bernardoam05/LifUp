@@ -1,5 +1,6 @@
 package com.lifup.app.system
 
+import com.lifup.app.domain.nextBlockBoundary
 import com.lifup.app.domain.openBedtime
 import com.lifup.app.domain.dayGoal
 import com.lifup.app.domain.limitsNearing
@@ -53,6 +54,8 @@ object Alarms {
             if (s.penalty.blockEnd > now) candidates += s.penalty.blockEnd + 500
         }
         s.portal?.let { candidates += it.expiresAt + 500 }
+        // LifUp+: a scheduled block starting or ending starts or stops the blocker.
+        s.nextBlockBoundary(now, ctx.zone)?.let { candidates += it + 500 }
         nextPortalRoll(s, ctx)?.let { candidates += it }
         if (!reminderDone && s.settings.notifications) {
             val at = ctx.atHour(ctx.today, s.settings.reminderHour)
