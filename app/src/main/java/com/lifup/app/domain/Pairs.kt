@@ -91,8 +91,12 @@ data class PairSyncState(
 )
 
 object PairRules {
-    /** A pair's mission when it's a different one each cycle (see [pairDefFor]). */
+    /** A pair's mission when it's a different one each cycle, the same for both (see [pairDefFor]). */
     const val RANDOM = "random"
+    /** A different one each cycle, and each partner draws their own: what counts is that both did theirs. */
+    const val EACH = "each"
+    /** Pairs at once without LifUp+ (with it, [MAX_ACTIVE]). */
+    const val FREE_ACTIVE = 1
     const val BONUS = 0.25
     const val CUT = 0.10
     const val BONUS_PER_DAY = 2
@@ -172,7 +176,7 @@ fun GameState.activePairs() = pairs.filter { !it.ended }
 
 fun pairQuestId(pairId: String, cycle: String) = "pair_${pairId}_$cycle"
 
-val PairQuest.isRandom get() = defId == PairRules.RANDOM
+val PairQuest.isRandom get() = defId == PairRules.RANDOM || defId == PairRules.EACH
 
 /**
  * The mission of [cycle]: the pair's own, or for a random pair one drawn from every built-in pair mission. Both
@@ -182,7 +186,9 @@ fun GameState.pairDefFor(p: PairQuest, cycle: String, content: Content): QuestDe
     if (!p.isRandom) return defOf(p.defId, content)
     val pool = content.quests.filter { PairRules.eligible(it) && !it.optional }.sortedBy { it.id }
     if (pool.isEmpty()) return null
-    val pick = pool[Math.floorMod((p.id + cycle).hashCode(), pool.size)]
+    // "Each their own": the draw also depends on who draws, so the two phones get different missions.
+    val seed = p.id + cycle + if (p.defId == PairRules.EACH) p.myUid else ""
+    val pick = pool[Math.floorMod(seed.hashCode(), pool.size)]
     return defOf(pick.id, content) ?: pick
 }
 
@@ -191,7 +197,8 @@ fun GameState.pairQuests(): List<Quest> = pairs.filter { !it.ended }.flatMap { p
 
 /** The pair a pair mission belongs to. */
 fun GameState.pairOf(questId: String): PairQuest? = pairs.firstOrNull { p -> p.parts.any { it.quest?.id == questId } }
-fun GameState.canAddPair() = activePairs().size < PairRules.MAX_ACTIVE
+fun GameState.pairLimit() = if (plus) PairRules.MAX_ACTIVE else PairRules.FREE_ACTIVE
+fun GameState.canAddPair() = activePairs().size < pairLimit()
 fun GameState.pairQuotaBlocked(now: Long) = pairSync.quotaBlockedUntil > now
 
 fun GameState.pairDefs(content: Content): List<QuestDef> =

@@ -70,6 +70,7 @@ import com.lifup.app.domain.PairRepeat
 import com.lifup.app.domain.PairRules
 import com.lifup.app.domain.activePairs
 import com.lifup.app.domain.canAddPair
+import com.lifup.app.domain.pairLimit
 import com.lifup.app.domain.currentPart
 import com.lifup.app.domain.defOf
 import com.lifup.app.domain.joined
@@ -106,13 +107,14 @@ fun PairSection(s: GameState, now: Long, onOpen: (String) -> Unit) {
     var adding by rememberSaveable { mutableStateOf(false) }
     val pairs = s.activePairs()
     SectionTitle(stringResource(R.string.pair_section)) {
-        if (pairs.isNotEmpty()) Text("${pairs.size}/${PairRules.MAX_ACTIVE}", color = p.dim, style = MaterialTheme.typography.labelMedium)
+        if (pairs.isNotEmpty()) Text("${pairs.size}/${s.pairLimit()}", color = p.dim, style = MaterialTheme.typography.labelMedium)
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (s.pairQuotaBlocked(now)) Text(stringResource(R.string.pair_quota), style = MaterialTheme.typography.bodySmall, color = p.gold)
         pairs.forEach { PairCard(s, it, now, onOpen) }
         if (pairs.isEmpty()) Text(stringResource(R.string.pair_empty_hint), style = MaterialTheme.typography.bodySmall, color = p.muted)
         if (s.canAddPair()) GhostButton(stringResource(R.string.pair_new), onClick = { adding = true }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Groups, color = p.accent)
+        else if (!s.plus) Text(stringResource(R.string.pair_limit_plus), style = MaterialTheme.typography.bodySmall, color = p.dim)
     }
     if (adding) NewPairSheet(s) { adding = false }
 }
@@ -311,7 +313,8 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
     val scope = rememberCoroutineScope()
     var joining by rememberSaveable { mutableStateOf(initialCode != null) }
     var defId by rememberSaveable { mutableStateOf<String?>(null) }
-    var random by rememberSaveable { mutableStateOf(false) }
+    var mode by rememberSaveable { mutableStateOf("fixed") }
+    val random = mode != "fixed"
     var kind by rememberSaveable { mutableStateOf(PairRepeat.DAILY) }
     var days by rememberSaveable { mutableStateOf(listOf(1, 3, 5)) }
     var every by rememberSaveable { mutableStateOf(2) }
@@ -347,10 +350,11 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
             } else {
                 Text(stringResource(R.string.pair_mode), style = MaterialTheme.typography.labelLarge, color = p.muted)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(selected = !random, onClick = { random = false }, label = { Text(stringResource(R.string.pair_mode_fixed)) })
-                    FilterChip(selected = random, onClick = { random = true }, label = { Text(stringResource(R.string.pair_mode_random)) })
+                    FilterChip(selected = mode == "fixed", onClick = { mode = "fixed" }, label = { Text(stringResource(R.string.pair_mode_fixed)) })
+                    FilterChip(selected = mode == PairRules.RANDOM, onClick = { mode = PairRules.RANDOM }, label = { Text(stringResource(R.string.pair_mode_random)) })
+                    FilterChip(selected = mode == PairRules.EACH, onClick = { mode = PairRules.EACH }, label = { Text(stringResource(R.string.pair_mode_each)) })
                 }
-                if (random) Text(stringResource(R.string.pair_mode_random_hint), style = MaterialTheme.typography.bodySmall, color = p.muted)
+                if (random) Text(stringResource(if (mode == PairRules.EACH) R.string.pair_mode_each_hint else R.string.pair_mode_random_hint), style = MaterialTheme.typography.bodySmall, color = p.muted)
                 else Text(stringResource(R.string.pair_pick_mission), style = MaterialTheme.typography.labelLarge, color = p.muted)
                 if (!random) LazyColumn(Modifier.fillMaxWidth().heightIn(max = 340.dp)) {
                     items(defs, key = { it.id }) { def ->
@@ -392,7 +396,7 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
                 }
                 if (kind == PairRepeat.EVERY) Stepper(every, { every = it }, 2..14, stringResource(R.string.pair_every_label), " " + stringResource(R.string.pair_days_suffix))
                 PrimaryButton(stringResource(R.string.pair_create), enabled = (random || defId != null) && !busy, onClick = {
-                    val id = if (random) PairRules.RANDOM else defId ?: return@PrimaryButton
+                    val id = if (random) mode else defId ?: return@PrimaryButton
                     busy = true; error = null
                     scope.launch {
                         PairService.create(context, id, PairRecurrence(kind, if (kind == PairRepeat.WEEKLY) days else emptyList(), every))

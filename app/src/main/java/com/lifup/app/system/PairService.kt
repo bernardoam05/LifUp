@@ -16,6 +16,7 @@ import com.lifup.app.domain.PairRecurrence
 import com.lifup.app.domain.PairRules
 import com.lifup.app.domain.PartnerMark
 import com.lifup.app.domain.activePairs
+import com.lifup.app.domain.canAddPair
 import com.lifup.app.domain.addPair
 import com.lifup.app.domain.completePairPart
 import com.lifup.app.domain.deadline
@@ -105,7 +106,7 @@ object PairService {
 
     suspend fun create(context: Context, defId: String, recurrence: PairRecurrence): Result<PairQuest> = attempt {
         val s = store.current
-        if (s.activePairs().size >= PairRules.MAX_ACTIVE) error("limit")
+        if (!s.canAddPair()) error("limit")
         val zone = ZoneId.systemDefault()
         val p = PairCloud.create(context, defId, recurrence, zone.id, firstCycle(recurrence, zone), s.player.name, s.player.level)
         store.dispatch { addPair(p) }
@@ -115,7 +116,7 @@ object PairService {
 
     suspend fun join(context: Context, code: String): Result<PairQuest> = attempt {
         val s = store.current
-        if (s.activePairs().size >= PairRules.MAX_ACTIVE) error("limit")
+        if (!s.canAddPair()) error("limit")
         val p = PairCloud.join(context, PairLink.normalizeCode(code), s.player.name, s.player.level)
         store.dispatch { addPair(p) }
         schedule(context)

@@ -932,7 +932,7 @@
     <string name="pair_err_quota">O serviço está cheio hoje. Tenta depois das 8h (Lisboa).</string>
     <string name="pair_err_not_found">Código inválido ou expirado.</string>
     <string name="pair_err_full">Esse par já está completo.</string>
-    <string name="pair_err_limit">Já tens 3 missões em par.</string>
+    <string name="pair_err_limit">Chegaste ao limite de missões em par.</string>
     <string name="toast_pair_both">Missão em par com %1$s cumprida pelos dois: +%2$d XP e +%3$d ouro</string>
     <string name="toast_pair_both_capped">Missão em par com %1$s cumprida pelos dois (os bónus de par de hoje já foram usados)</string>
     <string name="toast_pair_cut">%1$s não fez a sua parte: −%2$d XP e −%3$d ouro</string>
@@ -1013,4 +1013,9 @@
     <string name="pair_mode_random_hint">Uma missão diferente em cada dia do par, sorteada, a mesma para os dois.</string>
     <string name="pair_random_title">Missão surpresa</string>
     <string name="toast_pair_partner_left">%1$s saiu do par: fica à espera de que alguém volte a entrar</string>
+    <string name="pair_mode_each">Cada um a sua</string>
+    <string name="pair_mode_each_hint">Cada um tira uma missão diferente todos os dias; o que conta é que os dois façam a sua.</string>
+    <string name="pair_limit_plus">Um par de cada vez. Com o LifUp+ podes ter até 3.</string>
+    <string name="plus_perk_pairs">Até 3 missões em par</string>
+    <string name="plus_perk_pairs_text">Faz missões com mais pessoas ao mesmo tempo.</string>
 </resources>

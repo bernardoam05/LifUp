@@ -951,7 +951,7 @@
     <string name="pair_err_quota">The service is full today. Try again after 8 AM (Lisbon).</string>
     <string name="pair_err_not_found">Invalid or expired code.</string>
     <string name="pair_err_full">That pair is already complete.</string>
-    <string name="pair_err_limit">You already have 3 pair missions.</string>
+    <string name="pair_err_limit">You\'ve reached your pair missions limit.</string>
     <string name="toast_pair_both">Pair mission with %1$s kept by both: +%2$d XP and +%3$d gold</string>
     <string name="toast_pair_both_capped">Pair mission with %1$s kept by both (today\'s pair bonuses are used up)</string>
     <string name="toast_pair_cut">%1$s didn\'t do their part: −%2$d XP and −%3$d gold</string>
@@ -1032,4 +1032,9 @@
     <string name="pair_mode_random_hint">A different mission on each day of the pair, drawn at random, the same for both of you.</string>
     <string name="pair_random_title">Surprise mission</string>
     <string name="toast_pair_partner_left">%1$s left the pair: it\'s waiting for someone to join again</string>
+    <string name="pair_mode_each">Each their own</string>
+    <string name="pair_mode_each_hint">Each of you draws a different mission every day; what counts is that both of you did yours.</string>
+    <string name="pair_limit_plus">One pair at a time. With LifUp+ you can have up to 3.</string>
+    <string name="plus_perk_pairs">Up to 3 pair missions</string>
+    <string name="plus_perk_pairs_text">Do missions with more people at once.</string>
 </resources>

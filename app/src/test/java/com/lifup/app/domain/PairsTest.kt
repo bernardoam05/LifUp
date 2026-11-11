@@ -147,10 +147,23 @@ class PairsTest {
         assertTrue(s.pairs.isEmpty())
     }
 
-    @Test fun `at most three pairs`() {
-        var s = GameState(onboarded = true)
-        repeat(3) { i -> s = run(s, "2026-11-11T09:00") { addPair(pair().copy(id = "p$i")) } }
+    @Test fun `one pair without LifUp+, three with it`() {
+        var s = run(GameState(onboarded = true), "2026-11-11T09:00") { addPair(pair().copy(id = "p0")) }
         assertFalse(s.canAddPair())
+        s = s.copy(plus = true)
+        assertTrue(s.canAddPair())
+        repeat(2) { i -> s = run(s, "2026-11-11T09:00") { addPair(pair().copy(id = "p${i + 1}")) } }
+        assertFalse(s.canAddPair())
+    }
+
+    @Test fun `each their own draws a different mission per partner`() {
+        val ana = pair().copy(defId = PairRules.EACH)
+        val rui = ana.copy(myUid = "rui", creator = false)
+        val s = GameState(onboarded = true)
+        val days = (11..24).map { "2026-11-%02d".format(it) }
+        val differ = days.count { s.pairDefFor(ana, it, content)!!.id != s.pairDefFor(rui, it, content)!!.id }
+        assertTrue("partners usually differ: $differ of ${days.size}", differ > days.size / 2)
+        assertEquals(s.pairDefFor(ana, "2026-11-11", content)!!.id, s.pairDefFor(ana, "2026-11-11", content)!!.id)
     }
 
     @Test fun `links round-trip, and a changed or foreign one fails`() {

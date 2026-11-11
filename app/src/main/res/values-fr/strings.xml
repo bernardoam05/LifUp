@@ -932,7 +932,7 @@
     <string name="pair_err_quota">Le service est plein aujourd\'hui. Réessaie après 8 h (Lisbonne).</string>
     <string name="pair_err_not_found">Code invalide ou expiré.</string>
     <string name="pair_err_full">Ce binôme est déjà complet.</string>
-    <string name="pair_err_limit">Tu as déjà 3 missions en binôme.</string>
+    <string name="pair_err_limit">Tu as atteint la limite de missions en binôme.</string>
     <string name="toast_pair_both">Mission en binôme avec %1$s réussie par les deux : +%2$d XP et +%3$d or</string>
     <string name="toast_pair_both_capped">Mission en binôme avec %1$s réussie par les deux (les bonus du jour sont épuisés)</string>
     <string name="toast_pair_cut">%1$s n\'a pas fait sa part : −%2$d XP et −%3$d or</string>
@@ -1013,4 +1013,9 @@
     <string name="pair_mode_random_hint">Une mission différente chaque jour du binôme, tirée au sort, la même pour vous deux.</string>
     <string name="pair_random_title">Mission surprise</string>
     <string name="toast_pair_partner_left">%1$s a quitté le binôme : il attend que quelqu\'un le rejoigne</string>
+    <string name="pair_mode_each">Chacun la sienne</string>
+    <string name="pair_mode_each_hint">Chacun tire une mission différente chaque jour ; ce qui compte, c\'est que vous fassiez tous les deux la vôtre.</string>
+    <string name="pair_limit_plus">Un binôme à la fois. Avec LifUp+ tu peux en avoir jusqu\'à 3.</string>
+    <string name="plus_perk_pairs">Jusqu\'à 3 missions en binôme</string>
+    <string name="plus_perk_pairs_text">Fais des missions avec plus de monde en même temps.</string>
 </resources>

@@ -950,7 +950,7 @@
     <string name="pair_err_quota">Der Dienst ist heute voll. Versuch es nach 8 Uhr (Lissabon).</string>
     <string name="pair_err_not_found">Ungültiger oder abgelaufener Code.</string>
     <string name="pair_err_full">Diese Partnerschaft ist schon vollständig.</string>
-    <string name="pair_err_limit">Du hast schon 3 Partnermissionen.</string>
+    <string name="pair_err_limit">Du hast die Grenze für Partnermissionen erreicht.</string>
     <string name="toast_pair_both">Partnermission mit %1$s von beiden geschafft: +%2$d XP und +%3$d Gold</string>
     <string name="toast_pair_both_capped">Partnermission mit %1$s von beiden geschafft (die heutigen Boni sind aufgebraucht)</string>
     <string name="toast_pair_cut">%1$s hat den eigenen Teil nicht gemacht: −%2$d XP und −%3$d Gold</string>
@@ -1031,4 +1031,9 @@
     <string name="pair_mode_random_hint">Jeden Tag der Partnerschaft eine andere, ausgeloste Mission, für euch beide dieselbe.</string>
     <string name="pair_random_title">Überraschungsmission</string>
     <string name="toast_pair_partner_left">%1$s hat die Partnerschaft verlassen: Sie wartet, bis wieder jemand beitritt</string>
+    <string name="pair_mode_each">Jeder seine eigene</string>
+    <string name="pair_mode_each_hint">Jeder zieht jeden Tag eine andere Mission; es zählt, dass ihr beide eure erledigt.</string>
+    <string name="pair_limit_plus">Eine Partnerschaft auf einmal. Mit LifUp+ bis zu 3.</string>
+    <string name="plus_perk_pairs">Bis zu 3 Partnermissionen</string>
+    <string name="plus_perk_pairs_text">Mach Missionen mit mehreren Leuten gleichzeitig.</string>
 </resources>
