@@ -95,6 +95,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.lifup.app.R
 import com.lifup.app.domain.GameState
+import com.lifup.app.domain.Feature
+import com.lifup.app.domain.has
+import com.lifup.app.ui.components.LockedScreen
+import androidx.compose.material.icons.rounded.Lock
 import com.lifup.app.domain.HunterRank
 import com.lifup.app.domain.Rules
 import com.lifup.app.ui.components.Bar
@@ -119,6 +123,13 @@ enum class Tab(val route: String, val icon: ImageVector, val label: Int) {
     TODAY("today", Icons.Rounded.TaskAlt, R.string.tab_today),
     FOCUS("focus", Icons.Rounded.Psychology, R.string.tab_focus),
     HERO("hero", Icons.Rounded.Person, R.string.tab_hero),
+}
+
+/** A tab whose feature hasn't opened yet (see Unlocks.kt): its page explains when it will. */
+private fun Tab.locked(s: GameState) = when (this) {
+    Tab.SHOP -> !s.has(Feature.SHOP)
+    Tab.ECHOES -> !s.has(Feature.ECHOES)
+    else -> false
 }
 
 /** What's new behind a tab: echoes gained, items gained. */
@@ -232,7 +243,7 @@ private fun MainScaffold(
                                     // The home tab gets a filled, slightly larger mark.
                                     if (t == Tab.TODAY) Box(Modifier.size(34.dp).clip(CircleShape).background(if (tab == t) Lif.colors.accent else Lif.colors.accent.copy(alpha = 0.18f)), contentAlignment = Alignment.Center) {
                                         Icon(t.icon, null, tint = if (tab == t) Lif.colors.bg else Lif.colors.accent)
-                                    } else Icon(t.icon, null)
+                                    } else Icon(if (t.locked(s)) Icons.Rounded.Lock else t.icon, null)
                                 }
                             },
                             label = { Text(stringResource(t.label).uppercase(), style = MaterialTheme.typography.labelMedium) },
@@ -254,9 +265,9 @@ private fun MainScaffold(
                 when (Tab.entries[page]) {
                     Tab.TODAY -> TodayScreen(s, openForge, openDef, openQuest) { openQuest = null }
                     Tab.FOCUS -> FocusScreen(s, active = pager.settledPage == page)
-                    Tab.ECHOES -> com.lifup.app.ui.hero.EchoesScreen(s, active = pager.settledPage == page)
+                    Tab.ECHOES -> if (s.has(Feature.ECHOES)) com.lifup.app.ui.hero.EchoesScreen(s, active = pager.settledPage == page) else LockedScreen(Feature.ECHOES)
                     Tab.HERO -> HeroScreen(s)
-                    Tab.SHOP -> ShopScreen(s)
+                    Tab.SHOP -> if (s.has(Feature.SHOP)) ShopScreen(s) else LockedScreen(Feature.SHOP)
                 }
             }
         }

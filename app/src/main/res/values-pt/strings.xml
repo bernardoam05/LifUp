@@ -940,4 +940,26 @@
     <string name="notif_pair_waiting_title">%1$s já fez a sua parte</string>
     <string name="notif_pair_open_title">A missão em par com %1$s ainda está por fazer</string>
     <string name="notif_pair_text">Falta a tua parte de \"%1$s\" antes da meia-noite.</string>
+    <!-- Level unlocks and first steps -->
+    <string name="feature_boss">Boss semanal</string>
+    <string name="feature_boss_hint">Um boss por semana: as tuas missões tiram-lhe vida e derrotá-lo dá ouro, itens e um eco.</string>
+    <string name="feature_shop">Loja</string>
+    <string name="feature_shop_hint">Gasta o teu ouro em itens, reforços e ecos.</string>
+    <string name="feature_extra">Missões extra</string>
+    <string name="feature_extra_hint">Acabaste as missões do dia? Pede uma extra para ganhar mais XP.</string>
+    <string name="feature_portal">Portais</string>
+    <string name="feature_portal_hint">Missões-surpresa curtas que abrem durante o dia e fecham se não as fizeres.</string>
+    <string name="feature_echoes">Ecos</string>
+    <string name="feature_echoes_hint">Criaturas que colecionas e evoluis; cada uma traz uma passiva que te ajuda.</string>
+    <string name="feature_pairs">Missões em par</string>
+    <string name="feature_pairs_hint">Faz uma missão com outra pessoa: +25% se os dois cumprirem.</string>
+    <string name="feature_opens_at">Abre no nível %1$d</string>
+    <string name="reward_unlock_title">Novidade!</string>
+    <string name="report_grace">Ainda estás a aprender: este dia não custou nada. A partir de agora, um dia falhado custa XP e ouro.</string>
+    <string name="starter_title">Primeiros passos</string>
+    <string name="starter_hint">Experimenta isto para aprenderes o básico. Os teus dois primeiros dias não custam nada se correrem mal.</string>
+    <string name="starter_mission">Conclui uma missão diária</string>
+    <string name="starter_side">Adiciona e conclui uma tarefa secundária</string>
+    <string name="starter_focus">Faz 5 minutos de foco</string>
+    <string name="starter_claim">Receber +%1$d</string>
 </resources>

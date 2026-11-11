@@ -958,4 +958,26 @@
     <string name="notif_pair_waiting_title">%1$s ist fertig</string>
     <string name="notif_pair_open_title">Deine Partnermission mit %1$s ist noch offen</string>
     <string name="notif_pair_text">Dein Teil von „%1$s“ ist bis Mitternacht fällig.</string>
+    <!-- Level unlocks and first steps -->
+    <string name="feature_boss">Wochenboss</string>
+    <string name="feature_boss_hint">Jede Woche ein Boss: Deine Missionen treffen ihn, und ihn zu besiegen bringt Gold, Gegenstände und ein Echo.</string>
+    <string name="feature_shop">Laden</string>
+    <string name="feature_shop_hint">Gib dein Gold für Gegenstände, Boosts und Echos aus.</string>
+    <string name="feature_extra">Extramissionen</string>
+    <string name="feature_extra_hint">Tagesmissionen erledigt? Nimm eine Extramission für mehr XP.</string>
+    <string name="feature_portal">Portale</string>
+    <string name="feature_portal_hint">Kurze Überraschungsmissionen, die tagsüber öffnen und schließen, wenn du sie nicht machst.</string>
+    <string name="feature_echoes">Echos</string>
+    <string name="feature_echoes_hint">Kreaturen, die du sammelst und verbesserst; jede bringt eine passive Fähigkeit mit.</string>
+    <string name="feature_pairs">Partnermissionen</string>
+    <string name="feature_pairs_hint">Mach eine Mission mit jemandem: +25 %, wenn ihr es beide schafft.</string>
+    <string name="feature_opens_at">Öffnet auf Stufe %1$d</string>
+    <string name="reward_unlock_title">Neu!</string>
+    <string name="report_grace">Du lernst noch: Dieser Tag hat nichts gekostet. Ab jetzt kostet ein verpasster Tag XP und Gold.</string>
+    <string name="starter_title">Erste Schritte</string>
+    <string name="starter_hint">Probier das, um die Grundlagen zu lernen. Deine ersten zwei Tage kosten nichts, wenn sie schiefgehen.</string>
+    <string name="starter_mission">Schließe eine Tagesmission ab</string>
+    <string name="starter_side">Füge eine Nebenaufgabe hinzu und hake sie ab</string>
+    <string name="starter_focus">Mach 5 Minuten Fokus</string>
+    <string name="starter_claim">+%1$d abholen</string>
 </resources>

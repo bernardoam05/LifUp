@@ -940,4 +940,26 @@
     <string name="notif_pair_waiting_title">%1$s a fait sa part</string>
     <string name="notif_pair_open_title">Ta mission en binôme avec %1$s est encore à faire</string>
     <string name="notif_pair_text">Ta part de « %1$s » est à faire avant minuit.</string>
+    <!-- Level unlocks and first steps -->
+    <string name="feature_boss">Boss de la semaine</string>
+    <string name="feature_boss_hint">Un boss chaque semaine : tes missions le frappent, et le vaincre rapporte or, objets et un écho.</string>
+    <string name="feature_shop">Boutique</string>
+    <string name="feature_shop_hint">Dépense ton or en objets, bonus et échos.</string>
+    <string name="feature_extra">Missions bonus</string>
+    <string name="feature_extra_hint">Tu as fini les missions du jour ? Prends-en une en plus pour plus d\'XP.</string>
+    <string name="feature_portal">Portails</string>
+    <string name="feature_portal_hint">Courtes missions surprises qui s\'ouvrent dans la journée et se ferment si tu ne les fais pas.</string>
+    <string name="feature_echoes">Échos</string>
+    <string name="feature_echoes_hint">Des créatures à collectionner et faire évoluer ; chacune apporte une passive qui t\'aide.</string>
+    <string name="feature_pairs">Missions en binôme</string>
+    <string name="feature_pairs_hint">Fais une mission avec quelqu\'un : +25 % si vous réussissez tous les deux.</string>
+    <string name="feature_opens_at">S\'ouvre au niveau %1$d</string>
+    <string name="reward_unlock_title">Nouveau !</string>
+    <string name="report_grace">Tu apprends encore : cette journée n\'a rien coûté. Désormais, une journée ratée coûte de l\'XP et de l\'or.</string>
+    <string name="starter_title">Premiers pas</string>
+    <string name="starter_hint">Essaie ceci pour apprendre l\'essentiel. Tes deux premiers jours ne coûtent rien s\'ils se passent mal.</string>
+    <string name="starter_mission">Termine une mission du jour</string>
+    <string name="starter_side">Ajoute et coche une tâche secondaire</string>
+    <string name="starter_focus">Fais 5 minutes de focus</string>
+    <string name="starter_claim">Récupérer +%1$d</string>
 </resources>

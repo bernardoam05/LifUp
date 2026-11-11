@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.lifup.app.domain.GameState
+import com.lifup.app.domain.Feature
+import com.lifup.app.domain.has
 import com.lifup.app.domain.markGuideSeen
 import com.lifup.app.ui.Tab
 import com.lifup.app.ui.act
@@ -19,14 +21,14 @@ private fun topicsFor(tab: Tab, s: GameState): List<Guide> = when (tab) {
         Guide.WEEKLY.takeIf { s.weekly.isNotEmpty() },
         Guide.PENALTY.takeIf { s.penalty.active },
         Guide.PORTAL.takeIf { s.portal != null },
-        Guide.BOSS,
+        Guide.BOSS.takeIf { s.boss != null },
         Guide.STREAK,
         Guide.SIDE,
     )
     Tab.FOCUS -> listOf(Guide.FOCUS)
-    Tab.ECHOES -> listOf(Guide.SHADOWS)
+    Tab.ECHOES -> listOfNotNull(Guide.SHADOWS.takeIf { s.has(Feature.ECHOES) })
     Tab.HERO -> emptyList()
-    Tab.SHOP -> listOf(Guide.SHOP)
+    Tab.SHOP -> listOfNotNull(Guide.SHOP.takeIf { s.has(Feature.SHOP) })
 }
 
 /** Tabs that already showed a guide since the app started: one new topic per tab per launch. */

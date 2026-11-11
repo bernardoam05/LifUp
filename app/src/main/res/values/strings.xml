@@ -959,4 +959,26 @@
     <string name="notif_pair_waiting_title">%1$s did their part</string>
     <string name="notif_pair_open_title">Your pair mission with %1$s is still open</string>
     <string name="notif_pair_text">Your part of \"%1$s\" is due before midnight.</string>
+    <!-- Level unlocks and first steps -->
+    <string name="feature_boss">Weekly boss</string>
+    <string name="feature_boss_hint">A boss each week: your missions hit it, and beating it brings gold, items and an echo.</string>
+    <string name="feature_shop">Shop</string>
+    <string name="feature_shop_hint">Spend your gold on items, boosts and echoes.</string>
+    <string name="feature_extra">Extra missions</string>
+    <string name="feature_extra_hint">Finished the day\'s missions? Take an extra one for more XP.</string>
+    <string name="feature_portal">Portals</string>
+    <string name="feature_portal_hint">Short surprise missions that open during the day and close if you don\'t take them.</string>
+    <string name="feature_echoes">Echoes</string>
+    <string name="feature_echoes_hint">Creatures you collect and level up; each brings a passive that helps you.</string>
+    <string name="feature_pairs">Pair missions</string>
+    <string name="feature_pairs_hint">Do a mission with someone else: +25% if you both make it.</string>
+    <string name="feature_opens_at">Opens at level %1$d</string>
+    <string name="reward_unlock_title">New!</string>
+    <string name="report_grace">You\'re still learning: this day cost nothing. From now on a failed day costs XP and gold.</string>
+    <string name="starter_title">First steps</string>
+    <string name="starter_hint">Try these to learn the basics. Your first two days don\'t cost anything if they go wrong.</string>
+    <string name="starter_mission">Complete a daily mission</string>
+    <string name="starter_side">Add and tick off a side quest</string>
+    <string name="starter_focus">Do 5 minutes of focus</string>
+    <string name="starter_claim">Claim +%1$d</string>
 </resources>

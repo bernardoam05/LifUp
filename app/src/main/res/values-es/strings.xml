@@ -958,4 +958,26 @@
     <string name="notif_pair_waiting_title">%1$s ya hizo su parte</string>
     <string name="notif_pair_open_title">Tu misión en pareja con %1$s sigue pendiente</string>
     <string name="notif_pair_text">Te falta tu parte de \"%1$s\" antes de medianoche.</string>
+    <!-- Level unlocks and first steps -->
+    <string name="feature_boss">Jefe semanal</string>
+    <string name="feature_boss_hint">Un jefe cada semana: tus misiones le quitan vida y vencerlo da oro, objetos y un eco.</string>
+    <string name="feature_shop">Tienda</string>
+    <string name="feature_shop_hint">Gasta tu oro en objetos, mejoras y ecos.</string>
+    <string name="feature_extra">Misiones extra</string>
+    <string name="feature_extra_hint">¿Terminaste las misiones del día? Pide una extra para ganar más XP.</string>
+    <string name="feature_portal">Portales</string>
+    <string name="feature_portal_hint">Misiones sorpresa cortas que se abren durante el día y se cierran si no las haces.</string>
+    <string name="feature_echoes">Ecos</string>
+    <string name="feature_echoes_hint">Criaturas que coleccionas y mejoras; cada una trae una pasiva que te ayuda.</string>
+    <string name="feature_pairs">Misiones en pareja</string>
+    <string name="feature_pairs_hint">Haz una misión con otra persona: +25 % si los dos cumplís.</string>
+    <string name="feature_opens_at">Se abre en el nivel %1$d</string>
+    <string name="reward_unlock_title">¡Novedad!</string>
+    <string name="report_grace">Aún estás aprendiendo: este día no costó nada. A partir de ahora, un día fallido cuesta XP y oro.</string>
+    <string name="starter_title">Primeros pasos</string>
+    <string name="starter_hint">Prueba esto para aprender lo básico. Tus dos primeros días no cuestan nada si salen mal.</string>
+    <string name="starter_mission">Completa una misión diaria</string>
+    <string name="starter_side">Añade y completa una tarea secundaria</string>
+    <string name="starter_focus">Haz 5 minutos de foco</string>
+    <string name="starter_claim">Recibir +%1$d</string>
 </resources>
