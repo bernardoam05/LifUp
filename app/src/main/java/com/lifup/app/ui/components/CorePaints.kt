@@ -1,0 +1,56 @@
+package com.lifup.app.ui.components
+
+import com.lifup.app.R
+import com.lifup.app.domain.CorePaint
+
+/** The LifUp+ skins' sprites: by skin, then form (1..6), then face in [com.lifup.app.domain.CoreMood] order. Generated. */
+internal val PAINT_SPRITES: Map<CorePaint, List<List<Int>>> = mapOf(
+    CorePaint.AURORA to listOf(
+        listOf(R.drawable.core_aurora_s1_neutral, R.drawable.core_aurora_s1_confident, R.drawable.core_aurora_s1_happy, R.drawable.core_aurora_s1_focused, R.drawable.core_aurora_s1_relaxed, R.drawable.core_aurora_s1_excited, R.drawable.core_aurora_s1_tired, R.drawable.core_aurora_s1_frustrated),
+        listOf(R.drawable.core_aurora_s2_neutral, R.drawable.core_aurora_s2_confident, R.drawable.core_aurora_s2_happy, R.drawable.core_aurora_s2_focused, R.drawable.core_aurora_s2_relaxed, R.drawable.core_aurora_s2_excited, R.drawable.core_aurora_s2_tired, R.drawable.core_aurora_s2_frustrated),
+        listOf(R.drawable.core_aurora_s3_neutral, R.drawable.core_aurora_s3_confident, R.drawable.core_aurora_s3_happy, R.drawable.core_aurora_s3_focused, R.drawable.core_aurora_s3_relaxed, R.drawable.core_aurora_s3_excited, R.drawable.core_aurora_s3_tired, R.drawable.core_aurora_s3_frustrated),
+        listOf(R.drawable.core_aurora_s4_neutral, R.drawable.core_aurora_s4_confident, R.drawable.core_aurora_s4_happy, R.drawable.core_aurora_s4_focused, R.drawable.core_aurora_s4_relaxed, R.drawable.core_aurora_s4_excited, R.drawable.core_aurora_s4_tired, R.drawable.core_aurora_s4_frustrated),
+        listOf(R.drawable.core_aurora_s5_neutral, R.drawable.core_aurora_s5_confident, R.drawable.core_aurora_s5_happy, R.drawable.core_aurora_s5_focused, R.drawable.core_aurora_s5_relaxed, R.drawable.core_aurora_s5_excited, R.drawable.core_aurora_s5_tired, R.drawable.core_aurora_s5_frustrated),
+        listOf(R.drawable.core_aurora_s6_neutral, R.drawable.core_aurora_s6_confident, R.drawable.core_aurora_s6_happy, R.drawable.core_aurora_s6_focused, R.drawable.core_aurora_s6_relaxed, R.drawable.core_aurora_s6_excited, R.drawable.core_aurora_s6_tired, R.drawable.core_aurora_s6_frustrated),
+    ),
+    CorePaint.SHADOW to listOf(
+        listOf(R.drawable.core_sombra_s1_neutral, R.drawable.core_sombra_s1_confident, R.drawable.core_sombra_s1_happy, R.drawable.core_sombra_s1_focused, R.drawable.core_sombra_s1_relaxed, R.drawable.core_sombra_s1_excited, R.drawable.core_sombra_s1_tired, R.drawable.core_sombra_s1_frustrated),
+        listOf(R.drawable.core_sombra_s2_neutral, R.drawable.core_sombra_s2_confident, R.drawable.core_sombra_s2_happy, R.drawable.core_sombra_s2_focused, R.drawable.core_sombra_s2_relaxed, R.drawable.core_sombra_s2_excited, R.drawable.core_sombra_s2_tired, R.drawable.core_sombra_s2_frustrated),
+        listOf(R.drawable.core_sombra_s3_neutral, R.drawable.core_sombra_s3_confident, R.drawable.core_sombra_s3_happy, R.drawable.core_sombra_s3_focused, R.drawable.core_sombra_s3_relaxed, R.drawable.core_sombra_s3_excited, R.drawable.core_sombra_s3_tired, R.drawable.core_sombra_s3_frustrated),
+        listOf(R.drawable.core_sombra_s4_neutral, R.drawable.core_sombra_s4_confident, R.drawable.core_sombra_s4_happy, R.drawable.core_sombra_s4_focused, R.drawable.core_sombra_s4_relaxed, R.drawable.core_sombra_s4_excited, R.drawable.core_sombra_s4_tired, R.drawable.core_sombra_s4_frustrated),
+        listOf(R.drawable.core_sombra_s5_neutral, R.drawable.core_sombra_s5_confident, R.drawable.core_sombra_s5_happy, R.drawable.core_sombra_s5_focused, R.drawable.core_sombra_s5_relaxed, R.drawable.core_sombra_s5_excited, R.drawable.core_sombra_s5_tired, R.drawable.core_sombra_s5_frustrated),
+        listOf(R.drawable.core_sombra_s6_neutral, R.drawable.core_sombra_s6_confident, R.drawable.core_sombra_s6_happy, R.drawable.core_sombra_s6_focused, R.drawable.core_sombra_s6_relaxed, R.drawable.core_sombra_s6_excited, R.drawable.core_sombra_s6_tired, R.drawable.core_sombra_s6_frustrated),
+    ),
+    CorePaint.CRYSTAL to listOf(
+        listOf(R.drawable.core_cristal_s1_neutral, R.drawable.core_cristal_s1_confident, R.drawable.core_cristal_s1_happy, R.drawable.core_cristal_s1_focused, R.drawable.core_cristal_s1_relaxed, R.drawable.core_cristal_s1_excited, R.drawable.core_cristal_s1_tired, R.drawable.core_cristal_s1_frustrated),
+        listOf(R.drawable.core_cristal_s2_neutral, R.drawable.core_cristal_s2_confident, R.drawable.core_cristal_s2_happy, R.drawable.core_cristal_s2_focused, R.drawable.core_cristal_s2_relaxed, R.drawable.core_cristal_s2_excited, R.drawable.core_cristal_s2_tired, R.drawable.core_cristal_s2_frustrated),
+        listOf(R.drawable.core_cristal_s3_neutral, R.drawable.core_cristal_s3_confident, R.drawable.core_cristal_s3_happy, R.drawable.core_cristal_s3_focused, R.drawable.core_cristal_s3_relaxed, R.drawable.core_cristal_s3_excited, R.drawable.core_cristal_s3_tired, R.drawable.core_cristal_s3_frustrated),
+        listOf(R.drawable.core_cristal_s4_neutral, R.drawable.core_cristal_s4_confident, R.drawable.core_cristal_s4_happy, R.drawable.core_cristal_s4_focused, R.drawable.core_cristal_s4_relaxed, R.drawable.core_cristal_s4_excited, R.drawable.core_cristal_s4_tired, R.drawable.core_cristal_s4_frustrated),
+        listOf(R.drawable.core_cristal_s5_neutral, R.drawable.core_cristal_s5_confident, R.drawable.core_cristal_s5_happy, R.drawable.core_cristal_s5_focused, R.drawable.core_cristal_s5_relaxed, R.drawable.core_cristal_s5_excited, R.drawable.core_cristal_s5_tired, R.drawable.core_cristal_s5_frustrated),
+        listOf(R.drawable.core_cristal_s6_neutral, R.drawable.core_cristal_s6_confident, R.drawable.core_cristal_s6_happy, R.drawable.core_cristal_s6_focused, R.drawable.core_cristal_s6_relaxed, R.drawable.core_cristal_s6_excited, R.drawable.core_cristal_s6_tired, R.drawable.core_cristal_s6_frustrated),
+    ),
+    CorePaint.GHOST to listOf(
+        listOf(R.drawable.core_fantasma_s1_neutral, R.drawable.core_fantasma_s1_confident, R.drawable.core_fantasma_s1_happy, R.drawable.core_fantasma_s1_focused, R.drawable.core_fantasma_s1_relaxed, R.drawable.core_fantasma_s1_excited, R.drawable.core_fantasma_s1_tired, R.drawable.core_fantasma_s1_frustrated),
+        listOf(R.drawable.core_fantasma_s2_neutral, R.drawable.core_fantasma_s2_confident, R.drawable.core_fantasma_s2_happy, R.drawable.core_fantasma_s2_focused, R.drawable.core_fantasma_s2_relaxed, R.drawable.core_fantasma_s2_excited, R.drawable.core_fantasma_s2_tired, R.drawable.core_fantasma_s2_frustrated),
+        listOf(R.drawable.core_fantasma_s3_neutral, R.drawable.core_fantasma_s3_confident, R.drawable.core_fantasma_s3_happy, R.drawable.core_fantasma_s3_focused, R.drawable.core_fantasma_s3_relaxed, R.drawable.core_fantasma_s3_excited, R.drawable.core_fantasma_s3_tired, R.drawable.core_fantasma_s3_frustrated),
+        listOf(R.drawable.core_fantasma_s4_neutral, R.drawable.core_fantasma_s4_confident, R.drawable.core_fantasma_s4_happy, R.drawable.core_fantasma_s4_focused, R.drawable.core_fantasma_s4_relaxed, R.drawable.core_fantasma_s4_excited, R.drawable.core_fantasma_s4_tired, R.drawable.core_fantasma_s4_frustrated),
+        listOf(R.drawable.core_fantasma_s5_neutral, R.drawable.core_fantasma_s5_confident, R.drawable.core_fantasma_s5_happy, R.drawable.core_fantasma_s5_focused, R.drawable.core_fantasma_s5_relaxed, R.drawable.core_fantasma_s5_excited, R.drawable.core_fantasma_s5_tired, R.drawable.core_fantasma_s5_frustrated),
+        listOf(R.drawable.core_fantasma_s6_neutral, R.drawable.core_fantasma_s6_confident, R.drawable.core_fantasma_s6_happy, R.drawable.core_fantasma_s6_focused, R.drawable.core_fantasma_s6_relaxed, R.drawable.core_fantasma_s6_excited, R.drawable.core_fantasma_s6_tired, R.drawable.core_fantasma_s6_frustrated),
+    ),
+    CorePaint.LAVA to listOf(
+        listOf(R.drawable.core_lava_s1_neutral, R.drawable.core_lava_s1_confident, R.drawable.core_lava_s1_happy, R.drawable.core_lava_s1_focused, R.drawable.core_lava_s1_relaxed, R.drawable.core_lava_s1_excited, R.drawable.core_lava_s1_tired, R.drawable.core_lava_s1_frustrated),
+        listOf(R.drawable.core_lava_s2_neutral, R.drawable.core_lava_s2_confident, R.drawable.core_lava_s2_happy, R.drawable.core_lava_s2_focused, R.drawable.core_lava_s2_relaxed, R.drawable.core_lava_s2_excited, R.drawable.core_lava_s2_tired, R.drawable.core_lava_s2_frustrated),
+        listOf(R.drawable.core_lava_s3_neutral, R.drawable.core_lava_s3_confident, R.drawable.core_lava_s3_happy, R.drawable.core_lava_s3_focused, R.drawable.core_lava_s3_relaxed, R.drawable.core_lava_s3_excited, R.drawable.core_lava_s3_tired, R.drawable.core_lava_s3_frustrated),
+        listOf(R.drawable.core_lava_s4_neutral, R.drawable.core_lava_s4_confident, R.drawable.core_lava_s4_happy, R.drawable.core_lava_s4_focused, R.drawable.core_lava_s4_relaxed, R.drawable.core_lava_s4_excited, R.drawable.core_lava_s4_tired, R.drawable.core_lava_s4_frustrated),
+        listOf(R.drawable.core_lava_s5_neutral, R.drawable.core_lava_s5_confident, R.drawable.core_lava_s5_happy, R.drawable.core_lava_s5_focused, R.drawable.core_lava_s5_relaxed, R.drawable.core_lava_s5_excited, R.drawable.core_lava_s5_tired, R.drawable.core_lava_s5_frustrated),
+        listOf(R.drawable.core_lava_s6_neutral, R.drawable.core_lava_s6_confident, R.drawable.core_lava_s6_happy, R.drawable.core_lava_s6_focused, R.drawable.core_lava_s6_relaxed, R.drawable.core_lava_s6_excited, R.drawable.core_lava_s6_tired, R.drawable.core_lava_s6_frustrated),
+    ),
+    CorePaint.GALAXY to listOf(
+        listOf(R.drawable.core_galaxia_s1_neutral, R.drawable.core_galaxia_s1_confident, R.drawable.core_galaxia_s1_happy, R.drawable.core_galaxia_s1_focused, R.drawable.core_galaxia_s1_relaxed, R.drawable.core_galaxia_s1_excited, R.drawable.core_galaxia_s1_tired, R.drawable.core_galaxia_s1_frustrated),
+        listOf(R.drawable.core_galaxia_s2_neutral, R.drawable.core_galaxia_s2_confident, R.drawable.core_galaxia_s2_happy, R.drawable.core_galaxia_s2_focused, R.drawable.core_galaxia_s2_relaxed, R.drawable.core_galaxia_s2_excited, R.drawable.core_galaxia_s2_tired, R.drawable.core_galaxia_s2_frustrated),
+        listOf(R.drawable.core_galaxia_s3_neutral, R.drawable.core_galaxia_s3_confident, R.drawable.core_galaxia_s3_happy, R.drawable.core_galaxia_s3_focused, R.drawable.core_galaxia_s3_relaxed, R.drawable.core_galaxia_s3_excited, R.drawable.core_galaxia_s3_tired, R.drawable.core_galaxia_s3_frustrated),
+        listOf(R.drawable.core_galaxia_s4_neutral, R.drawable.core_galaxia_s4_confident, R.drawable.core_galaxia_s4_happy, R.drawable.core_galaxia_s4_focused, R.drawable.core_galaxia_s4_relaxed, R.drawable.core_galaxia_s4_excited, R.drawable.core_galaxia_s4_tired, R.drawable.core_galaxia_s4_frustrated),
+        listOf(R.drawable.core_galaxia_s5_neutral, R.drawable.core_galaxia_s5_confident, R.drawable.core_galaxia_s5_happy, R.drawable.core_galaxia_s5_focused, R.drawable.core_galaxia_s5_relaxed, R.drawable.core_galaxia_s5_excited, R.drawable.core_galaxia_s5_tired, R.drawable.core_galaxia_s5_frustrated),
+        listOf(R.drawable.core_galaxia_s6_neutral, R.drawable.core_galaxia_s6_confident, R.drawable.core_galaxia_s6_happy, R.drawable.core_galaxia_s6_focused, R.drawable.core_galaxia_s6_relaxed, R.drawable.core_galaxia_s6_excited, R.drawable.core_galaxia_s6_tired, R.drawable.core_galaxia_s6_frustrated),
+    ),
+)

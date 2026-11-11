@@ -26,6 +26,7 @@ import com.lifup.app.R
 import com.lifup.app.domain.Core
 import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.countedQuests
+import com.lifup.app.domain.shownPaint
 import com.lifup.app.ui.components.coreSprite
 import java.time.LocalTime
 
@@ -40,7 +41,7 @@ class CoreWidget : GlanceAppWidget() {
             WidgetCard(openLink(context, "today")) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Image(
-                        ImageProvider(coreSprite(Core.stage(s), Core.mood(s, LocalTime.now().hour))), null,
+                        ImageProvider(coreSprite(Core.stage(s), Core.mood(s, LocalTime.now().hour), s.shownPaint)), null,
                         modifier = GlanceModifier.size(side),
                         colorFilter = if (s.plus) null else ColorFilter.tint(ColorProvider(W_TRACK)),
                     )

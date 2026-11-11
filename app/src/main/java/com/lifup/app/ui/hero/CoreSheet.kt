@@ -41,6 +41,8 @@ import com.lifup.app.ui.accentRank
 import com.lifup.app.ui.act
 import com.lifup.app.ui.content
 import com.lifup.app.domain.wearSkin
+import com.lifup.app.domain.wearPaint
+import com.lifup.app.domain.shownPaint
 import androidx.annotation.StringRes
 import com.lifup.app.ui.components.CoreAvatar
 import com.lifup.app.ui.theme.Lif
@@ -103,6 +105,7 @@ fun CoreSheet(s: GameState, onDismiss: () -> Unit) {
                     }
                 }
             }
+            CorePaints(s, shown)
             CoreSkins(s, shown)
         }
     }
@@ -149,6 +152,47 @@ private fun CoreSkins(s: GameState, stage: Int) {
                     val to = java.time.MonthDay.parse("--" + season.to).atYear(2000).format(fmt)
                     Text("$from – $to", style = MaterialTheme.typography.labelSmall, color = c.dim, textAlign = TextAlign.Center)
                 }
+            }
+        }
+    }
+}
+
+@StringRes
+fun paintName(p: com.lifup.app.domain.CorePaint) = when (p) {
+    com.lifup.app.domain.CorePaint.AURORA -> R.string.core_paint_aurora
+    com.lifup.app.domain.CorePaint.SHADOW -> R.string.core_paint_shadow
+    com.lifup.app.domain.CorePaint.CRYSTAL -> R.string.core_paint_crystal
+    com.lifup.app.domain.CorePaint.GHOST -> R.string.core_paint_ghost
+    com.lifup.app.domain.CorePaint.LAVA -> R.string.core_paint_lava
+    com.lifup.app.domain.CorePaint.GALAXY -> R.string.core_paint_galaxy
+}
+
+/** LifUp+ skins: the rank colours or one of the six; without LifUp+ they show, locked. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun CorePaints(s: GameState, stage: Int) {
+    val c = Lif.colors
+    Text(stringResource(R.string.core_paints), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
+    Text(stringResource(if (s.plus) R.string.core_paints_hint else R.string.core_paints_plus), style = MaterialTheme.typography.bodySmall, color = c.muted)
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp), maxItemsInEachRow = 3) {
+        (listOf<com.lifup.app.domain.CorePaint?>(null) + com.lifup.app.domain.CorePaint.entries).forEach { paint ->
+            val usable = paint == null || s.plus
+            val selected = s.shownPaint == paint
+            Column(
+                Modifier.width(96.dp).clip(RoundedCornerShape(12.dp))
+                    .border(if (selected) 2.dp else 1.dp, if (selected) c.accent else c.border, RoundedCornerShape(12.dp))
+                    .clickable(enabled = usable) { act { wearPaint(paint) } }
+                    .padding(vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    CoreAvatar(stage, CoreMood.NEUTRAL, 64.dp, animate = false, skin = null, paint = paint)
+                    if (!usable) Icon(Icons.Rounded.Lock, null, tint = c.gold, modifier = Modifier.align(Alignment.TopEnd).size(16.dp))
+                }
+                Text(
+                    if (paint == null) stringResource(R.string.core_paint_none) else stringResource(paintName(paint)),
+                    style = MaterialTheme.typography.labelMedium, color = if (usable) c.text else c.dim, textAlign = TextAlign.Center,
+                )
             }
         }
     }

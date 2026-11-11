@@ -1049,4 +1049,14 @@
     <string name="block_schedule_text">These are the hours you set in LifUp. Use the time for something better.</string>
     <string name="plus_perk_schedule">Scheduled blocking</string>
     <string name="plus_perk_schedule_text">The apps you choose stay blocked at the hours you set, without a focus session.</string>
+    <string name="core_paints">Skins (LifUp+)</string>
+    <string name="core_paints_hint">The whole Core in another material, on every form and face.</string>
+    <string name="core_paints_plus">Six skins for your Core, included in LifUp+.</string>
+    <string name="core_paint_none">Rank colours</string>
+    <string name="core_paint_aurora">Aurora</string>
+    <string name="core_paint_shadow">Shadow</string>
+    <string name="core_paint_crystal">Crystal</string>
+    <string name="core_paint_ghost">Ghost</string>
+    <string name="core_paint_lava">Lava</string>
+    <string name="core_paint_galaxy">Galaxy</string>
 </resources>

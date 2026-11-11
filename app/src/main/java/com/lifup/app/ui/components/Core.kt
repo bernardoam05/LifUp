@@ -36,6 +36,8 @@ import com.lifup.app.R
 import com.lifup.app.domain.Core
 import com.lifup.app.domain.CoreMood
 import com.lifup.app.domain.CoreSkin
+import com.lifup.app.domain.CorePaint
+import com.lifup.app.domain.shownPaint
 
 /** The sprites, by form (1..6) then face, in [CoreMood] order up to FRUSTRATED. */
 private val SPRITES = listOf(
@@ -47,12 +49,23 @@ private val SPRITES = listOf(
     listOf(R.drawable.core_s6_neutral, R.drawable.core_s6_confident, R.drawable.core_s6_happy, R.drawable.core_s6_focused, R.drawable.core_s6_relaxed, R.drawable.core_s6_excited, R.drawable.core_s6_tired, R.drawable.core_s6_frustrated),
 )
 
-/** The sprite for [stage] and [mood], for places that draw it themselves (the home-screen widget). */
-fun coreSprite(stage: Int, mood: CoreMood): Int = sprite(stage, mood)
+/** The sprite for [stage] and [mood] (in a LifUp+ [paint]), for places that draw it themselves (the widget). */
+fun coreSprite(stage: Int, mood: CoreMood, paint: CorePaint? = null): Int = sprite(stage, mood, paint)
 
-private fun sprite(stage: Int, mood: CoreMood): Int {
+private fun sprite(stage: Int, mood: CoreMood, paint: CorePaint? = null): Int {
     val face = if (mood == CoreMood.SLEEPING) CoreMood.RELAXED else mood
-    return SPRITES[stage.coerceIn(1, Core.STAGES) - 1][face.ordinal]
+    val table = paint?.let { PAINT_SPRITES[it] } ?: SPRITES
+    return table[stage.coerceIn(1, Core.STAGES) - 1][face.ordinal]
+}
+
+/** A skin's own glow colour (the rank's otherwise). */
+fun paintColor(paint: CorePaint): Color = when (paint) {
+    CorePaint.AURORA -> Color(0xFF7DD3FC)
+    CorePaint.SHADOW -> Color(0xFF22D3EE)
+    CorePaint.CRYSTAL -> Color(0xFFBAE6FD)
+    CorePaint.GHOST -> Color(0xFFC4B5FD)
+    CorePaint.LAVA -> Color(0xFFF97316)
+    CorePaint.GALAXY -> Color(0xFF818CF8)
 }
 
 /** Each form wears its rank's colour (E/D green, C blue, B purple, A pink, S gold, SS red). */
@@ -85,8 +98,9 @@ private val FACES = listOf(
 fun CoreAvatar(
     stage: Int, mood: CoreMood, size: Dp, modifier: Modifier = Modifier, glow: Color? = null, locked: Boolean = false,
     animate: Boolean = true, bust: Boolean = size < 100.dp, skin: CoreSkin? = com.lifup.app.ui.gameState().settings.coreSkin,
+    paint: CorePaint? = com.lifup.app.ui.gameState().shownPaint,
 ) {
-    val tint = glow ?: coreColor(stage)
+    val tint = glow ?: paint?.let { paintColor(it) } ?: coreColor(stage)
     val t = rememberInfiniteTransition(label = "core")
     val breath by t.animateFloat(0f, 1f, infiniteRepeatable(tween(if (mood == CoreMood.EXCITED) 520 else 2600, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "breath")
     val b = if (animate && !locked) breath else 0.5f
@@ -113,7 +127,7 @@ fun CoreAvatar(
             },
         ) {
             Image(
-                painterResource(sprite(stage, mood)), null,
+                painterResource(sprite(stage, mood, paint)), null,
                 colorFilter = if (locked) ColorFilter.tint(Color(0xFF2A3140)) else null,
                 modifier = Modifier.fillMaxSize(),
             )

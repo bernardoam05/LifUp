@@ -102,3 +102,16 @@ fun Tx.addBlockWindow(w: BlockWindow) {
 }
 
 fun Tx.removeBlockWindow(index: Int) = updateSettings { it.copy(blockWindows = it.blockWindows.filterIndexed { i, _ -> i != index }) }
+
+/** LifUp+ skins: the whole Core redrawn in another material, on every form and face. Looks only. */
+@kotlinx.serialization.Serializable
+enum class CorePaint { AURORA, SHADOW, CRYSTAL, GHOST, LAVA, GALAXY }
+
+/** Puts on a LifUp+ skin, or back to the rank colours with null. */
+fun Tx.wearPaint(paint: CorePaint?) {
+    if (paint != null && !s.plus) return
+    updateSettings { it.copy(corePaint = paint) }
+}
+
+/** The skin actually shown: none without LifUp+ (it comes back if LifUp+ does). */
+val GameState.shownPaint: CorePaint? get() = settings.corePaint.takeIf { plus }

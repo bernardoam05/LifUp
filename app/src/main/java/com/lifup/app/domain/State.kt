@@ -234,6 +234,8 @@ data class Settings(
     val coreSkin: CoreSkin? = null,
     /** LifUp+: hours when the blocked apps stay blocked without a focus session. */
     val blockWindows: List<BlockWindow> = emptyList(),
+    /** LifUp+: the Core's skin; null = its rank colours. */
+    val corePaint: CorePaint? = null,
 )
 
 @Serializable

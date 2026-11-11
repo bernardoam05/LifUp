@@ -1048,4 +1048,14 @@
     <string name="block_schedule_text">Das sind die Zeiten, die du in LifUp festgelegt hast. Nutze die Zeit für etwas anderes.</string>
     <string name="plus_perk_schedule">Zeitplan-Sperre</string>
     <string name="plus_perk_schedule_text">Die gewählten Apps bleiben zu deinen Zeiten gesperrt, ohne Fokussitzung.</string>
+    <string name="core_paints">Skins (LifUp+)</string>
+    <string name="core_paints_hint">Der ganze Core in einem anderen Material, in jeder Form und mit jedem Gesicht.</string>
+    <string name="core_paints_plus">Sechs Skins für deinen Core, in LifUp+ enthalten.</string>
+    <string name="core_paint_none">Rangfarben</string>
+    <string name="core_paint_aurora">Polarlicht</string>
+    <string name="core_paint_shadow">Schatten</string>
+    <string name="core_paint_crystal">Kristall</string>
+    <string name="core_paint_ghost">Geist</string>
+    <string name="core_paint_lava">Lava</string>
+    <string name="core_paint_galaxy">Galaxie</string>
 </resources>
