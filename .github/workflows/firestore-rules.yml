@@ -1,0 +1,28 @@
+name: Firestore rules
+
+on:
+  push:
+    paths: ['firebase/**', '.github/workflows/firestore-rules.yml']
+  pull_request:
+    paths: ['firebase/**', '.github/workflows/firestore-rules.yml']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: firebase
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: firebase/package-lock.json
+      - run: npm ci
+      - name: Rules tests on the Firestore emulator
+        run: npm test

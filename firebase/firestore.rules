@@ -1,0 +1,131 @@
+rules_version = '2';
+
+// Pair quests. Design: docs/PAIRS.md.
+//
+//   invites/{code}                  short-lived code that lets one person join a pair
+//   pairs/{pairId}                  the pair: who is in it, the mission, the recurrence
+//   pairs/{pairId}/parts/{uid}      each member's own progress; only its owner writes it
+//
+// Every phone signs in anonymously. Nobody can list collections: you can only read
+// a document whose id you already know, and only if you are in that pair.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+    function pairPath(pairId) { return /databases/$(database)/documents/pairs/$(pairId); }
+    function invitePath(code) { return /databases/$(database)/documents/invites/$(code); }
+
+    // Documents left behind (an uninstalled app, a lost phone) expire by TTL on this field.
+    function expiresSoon(data) {
+      return data.expireAt is timestamp
+        && data.expireAt > request.time
+        && data.expireAt < request.time + duration.value(40, 'd');
+    }
+    function cycleKey(k) { return k is string && k.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'); }
+    function shortText(s, max) { return s is string && s.size() <= max; }
+
+    match /invites/{code} {
+      // 8 characters from an alphabet without look-alikes; ~10^12 codes, valid for a day.
+      allow get: if signedIn() && resource.data.expireAt > request.time;
+      allow list: if false;
+      allow create: if signedIn()
+        && code.matches('^[A-HJ-NP-Z2-9]{8}$')
+        && request.resource.data.keys().hasOnly(['pairId', 'by', 'expireAt'])
+        && request.resource.data.by == me()
+        && request.resource.data.expireAt is timestamp
+        && request.resource.data.expireAt > request.time
+        && request.resource.data.expireAt <= request.time + duration.value(1, 'd')
+        && get(pairPath(request.resource.data.pairId)).data.members == [me()];
+      allow update: if false;
+      allow delete: if signedIn()
+        && (resource.data.by == me()
+            || me() in get(pairPath(resource.data.pairId)).data.members);
+    }
+
+    match /pairs/{pairId} {
+      function members() { return resource.data.members; }
+      function newMembers() { return request.resource.data.members; }
+      function only(fields) {
+        return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+      }
+
+      allow get: if signedIn() && me() in members();
+      allow list: if false;
+
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['createdBy', 'members', 'quest', 'recurrence', 'tz', 'start', 'expireAt'])
+        && request.resource.data.keys().hasAll(['createdBy', 'members', 'quest', 'recurrence', 'tz', 'start', 'expireAt'])
+        && request.resource.data.createdBy == me()
+        && newMembers() == [me()]
+        && shortText(request.resource.data.quest, 64)
+        && request.resource.data.recurrence is map
+        && request.resource.data.recurrence.kind in ['once', 'daily', 'weekly', 'every']
+        && shortText(request.resource.data.tz, 64)
+        && cycleKey(request.resource.data.start)
+        && expiresSoon(request.resource.data);
+
+      // Joining: alone in the pair, with a live invite to it, adding only yourself.
+      function joining() {
+        let code = request.resource.data.invite;
+        return !(me() in members())
+          && members().size() == 1
+          && newMembers() == members().concat([me()])
+          && code is string
+          && exists(invitePath(code))
+          && get(invitePath(code)).data.pairId == pairId
+          && get(invitePath(code)).data.expireAt > request.time
+          && only(['members', 'invite', 'expireAt'])
+          && expiresSoon(request.resource.data);
+      }
+      // A member keeps the pair alive, or leaves it.
+      function staying() {
+        return me() in members() && newMembers() == members()
+          && only(['expireAt']) && expiresSoon(request.resource.data);
+      }
+      function leaving() {
+        return me() in members() && newMembers() == members().removeAll([me()])
+          && only(['members']);
+      }
+      allow update: if signedIn() && (joining() || staying() || leaving());
+
+      // Either member can end the pair for both.
+      allow delete: if signedIn() && me() in members();
+
+      match /parts/{uid} {
+        function inPair() { return me() in get(pairPath(pairId)).data.members; }
+        function validPart(data) {
+          return data.keys().hasOnly(['name', 'level', 'last', 'done', 'expireAt'])
+            && data.keys().hasAll(['name', 'level', 'done', 'expireAt'])
+            && shortText(data.name, 24)
+            && data.level is int && data.level >= 1 && data.level <= 1000
+            && data.done is map && data.done.size() <= 14
+            && expiresSoon(data);
+        }
+        // done: { "<cycle>": { at: <server time>, amount: <int> } }. Entries can be added (only
+        // the cycle named in `last`, stamped with the server's time) or pruned, never changed.
+        function validDone(before) {
+          let d = request.resource.data.done.diff(before);
+          let k = request.resource.data.get('last', null);
+          return d.changedKeys().size() == 0
+            && (d.addedKeys().size() == 0
+                || (d.addedKeys().hasOnly([k]) && cycleKey(k)
+                    && request.resource.data.done[k].keys().hasOnly(['at', 'amount'])
+                    && request.resource.data.done[k].at == request.time
+                    && request.resource.data.done[k].amount is int
+                    && request.resource.data.done[k].amount >= 0
+                    && request.resource.data.done[k].amount <= 100000));
+        }
+
+        allow get: if signedIn() && inPair();
+        allow list: if signedIn() && inPair();
+        allow create: if signedIn() && uid == me() && inPair()
+          && validPart(request.resource.data) && validDone({});
+        allow update: if signedIn() && uid == me() && inPair()
+          && validPart(request.resource.data) && validDone(resource.data.done);
+        // Your own part goes when you leave; anyone in the pair may clear it when ending the pair.
+        allow delete: if signedIn() && (uid == me() || inPair());
+      }
+    }
+  }
+}

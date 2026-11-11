@@ -1,0 +1,14 @@
+{
+  "name": "pair-quests-rules",
+  "private": true,
+  "description": "Firestore security rules for pair quests, and their tests (docs/PAIRS.md)",
+  "type": "module",
+  "scripts": {
+    "test": "firebase emulators:exec --only firestore --project demo-pairs \"node --test test/rules.test.js\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "firebase": "13.2.0",
+    "firebase-tools": "15.35.0"
+  }
+}
