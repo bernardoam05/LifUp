@@ -1,0 +1,3 @@
+- [new] New players meet the game a piece at a time: the weekly boss opens at level 2, the shop at 3, extra missions and portals at 4, echoes at 5 and pair missions at 6. Jumping several levels at once opens everything up to there on a single card; if you were already playing, nothing changes for you.
+- [new] A "First steps" card on day one pays a little gold for trying the basics: a daily mission, a side quest and 5 minutes of focus.
+- [tweak] The first two failed days of a new player cost nothing, while they learn how the game works.

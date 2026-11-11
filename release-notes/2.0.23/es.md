@@ -1,0 +1,3 @@
+- [new] Quien empieza conoce el juego poco a poco: el jefe semanal se abre en el nivel 2, la tienda en el 3, las misiones extra y los portales en el 4, los ecos en el 5 y las misiones en pareja en el 6. Subir varios niveles de golpe abre todo hasta ahí en una sola tarjeta; si ya jugabas, nada cambia para ti.
+- [new] Una tarjeta "Primeros pasos" el primer día da un poco de oro por probar lo básico: una misión diaria, una tarea secundaria y 5 minutos de foco.
+- [tweak] Los dos primeros días fallidos de un jugador nuevo no cuestan nada, mientras aprende cómo funciona el juego.

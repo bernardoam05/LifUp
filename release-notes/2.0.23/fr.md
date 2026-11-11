@@ -1,0 +1,3 @@
+- [new] Les nouveaux joueurs découvrent le jeu petit à petit : le boss de la semaine s'ouvre au niveau 2, la boutique au 3, les missions bonus et les portails au 4, les échos au 5 et les missions en binôme au 6. Monter plusieurs niveaux d'un coup ouvre tout jusque-là sur une seule carte ; si tu jouais déjà, rien ne change pour toi.
+- [new] Une carte « Premiers pas » le premier jour rapporte un peu d'or pour essayer l'essentiel : une mission du jour, une tâche secondaire et 5 minutes de focus.
+- [tweak] Les deux premières journées ratées d'un nouveau joueur ne coûtent rien, le temps d'apprendre comment le jeu fonctionne.

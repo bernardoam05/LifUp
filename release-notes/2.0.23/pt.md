@@ -1,0 +1,3 @@
+- [new] Quem começa conhece o jogo aos poucos: o boss semanal abre no nível 2, a loja no 3, as missões extra e os portais no 4, os ecos no 5 e as missões em par no 6. Subir vários níveis de uma vez abre tudo até lá num só cartão; se já jogavas, nada muda para ti.
+- [new] Um cartão "Primeiros passos" no primeiro dia dá um pouco de ouro por experimentares o básico: uma missão diária, uma tarefa secundária e 5 minutos de foco.
+- [tweak] Os dois primeiros dias falhados de um jogador novo não custam nada, enquanto aprende como o jogo funciona.

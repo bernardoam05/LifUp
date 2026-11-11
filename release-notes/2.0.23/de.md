@@ -1,0 +1,3 @@
+- [new] Neue Spieler lernen das Spiel Stück für Stück kennen: Der Wochenboss öffnet auf Stufe 2, der Laden auf 3, Extramissionen und Portale auf 4, Echos auf 5 und Partnermissionen auf 6. Wer mehrere Stufen auf einmal aufsteigt, bekommt alles bis dahin auf einer einzigen Karte; wer schon gespielt hat, für den ändert sich nichts.
+- [new] Eine Karte „Erste Schritte“ am ersten Tag bringt etwas Gold fürs Ausprobieren der Grundlagen: eine Tagesmission, eine Nebenaufgabe und 5 Minuten Fokus.
+- [tweak] Die ersten zwei verpassten Tage eines neuen Spielers kosten nichts, solange er lernt, wie das Spiel funktioniert.
