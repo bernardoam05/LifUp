@@ -39,6 +39,9 @@ import com.lifup.app.domain.GameState
 import com.lifup.app.domain.updateSettings
 import com.lifup.app.ui.accentRank
 import com.lifup.app.ui.act
+import com.lifup.app.ui.content
+import com.lifup.app.domain.wearSkin
+import androidx.annotation.StringRes
 import com.lifup.app.ui.components.CoreAvatar
 import com.lifup.app.ui.theme.Lif
 
@@ -98,6 +101,53 @@ fun CoreSheet(s: GameState, onDismiss: () -> Unit) {
                             color = if (open) accentRank(rank) else c.dim,
                         )
                     }
+                }
+            }
+            CoreSkins(s, shown)
+        }
+    }
+}
+
+@StringRes
+fun skinName(skin: com.lifup.app.domain.CoreSkin) = when (skin) {
+    com.lifup.app.domain.CoreSkin.PUMPKIN -> R.string.core_skin_pumpkin
+    com.lifup.app.domain.CoreSkin.SCARF -> R.string.core_skin_scarf
+    com.lifup.app.domain.CoreSkin.PARTY_HAT -> R.string.core_skin_party_hat
+    com.lifup.app.domain.CoreSkin.FLOWER_CROWN -> R.string.core_skin_flower_crown
+    com.lifup.app.domain.CoreSkin.SUNGLASSES -> R.string.core_skin_sunglasses
+}
+
+/** Accessories: the ones won from seasonal bosses to wear, the others with the event that gives them. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun CoreSkins(s: GameState, stage: Int) {
+    val c = Lif.colors
+    Text(stringResource(R.string.core_skins), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
+    Text(stringResource(R.string.core_skins_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
+    val fmt = java.time.format.DateTimeFormatter.ofPattern("d MMM")
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp), maxItemsInEachRow = 3) {
+        (listOf<com.lifup.app.domain.CoreSkin?>(null) + com.lifup.app.domain.CoreSkin.entries).forEach { skin ->
+            val owned = skin == null || skin in s.coreSkins
+            val selected = s.settings.coreSkin == skin
+            Column(
+                Modifier.width(96.dp).clip(RoundedCornerShape(12.dp))
+                    .border(if (selected) 2.dp else 1.dp, if (selected) c.accent else c.border, RoundedCornerShape(12.dp))
+                    .clickable(enabled = owned) { act { wearSkin(skin) } }
+                    .padding(vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    CoreAvatar(stage, CoreMood.NEUTRAL, 64.dp, animate = false, skin = skin, locked = !owned)
+                    if (!owned) Icon(Icons.Rounded.Lock, null, tint = c.dim, modifier = Modifier.size(18.dp))
+                }
+                Text(
+                    if (skin == null) stringResource(R.string.core_skin_none) else stringResource(skinName(skin)),
+                    style = MaterialTheme.typography.labelMedium, color = if (owned) c.text else c.dim, textAlign = TextAlign.Center,
+                )
+                if (!owned) content.bossById[skin!!.bossId]?.season?.let { season ->
+                    val from = java.time.MonthDay.parse("--" + season.from).atYear(2000).format(fmt)
+                    val to = java.time.MonthDay.parse("--" + season.to).atYear(2000).format(fmt)
+                    Text("$from – $to", style = MaterialTheme.typography.labelSmall, color = c.dim, textAlign = TextAlign.Center)
                 }
             }
         }

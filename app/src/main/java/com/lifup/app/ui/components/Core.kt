@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.lifup.app.R
 import com.lifup.app.domain.Core
 import com.lifup.app.domain.CoreMood
+import com.lifup.app.domain.CoreSkin
 
 /** The sprites, by form (1..6) then face, in [CoreMood] order up to FRUSTRATED. */
 private val SPRITES = listOf(
@@ -80,7 +81,7 @@ private val FACES = listOf(
 @Composable
 fun CoreAvatar(
     stage: Int, mood: CoreMood, size: Dp, modifier: Modifier = Modifier, glow: Color? = null, locked: Boolean = false,
-    animate: Boolean = true, bust: Boolean = size < 100.dp,
+    animate: Boolean = true, bust: Boolean = size < 100.dp, skin: CoreSkin? = com.lifup.app.ui.gameState().settings.coreSkin,
 ) {
     val tint = glow ?: coreColor(stage)
     val t = rememberInfiniteTransition(label = "core")
@@ -96,10 +97,9 @@ fun CoreAvatar(
         val face = FACES[stage.coerceIn(1, Core.STAGES) - 1]
         // Bust: the face takes about a third of the width, a little above the middle; the big forms stop at 2.2x.
         val zoom = if (bust) (0.33f / face[2]).coerceIn(1f, 2.2f) else 1f
-        Image(
-            painterResource(sprite(stage, mood)), null,
-            colorFilter = if (locked) ColorFilter.tint(Color(0xFF2A3140)) else null,
-            modifier = Modifier.fillMaxSize().graphicsLayer {
+        // The sprite and its accessory move together (breathing, bust framing).
+        Box(
+            Modifier.fillMaxSize().graphicsLayer {
                 val sc = (if (mood == CoreMood.SLEEPING) 1f + 0.015f * b else 1f) * zoom
                 scaleX = sc; scaleY = sc
                 if (bust) {
@@ -108,7 +108,14 @@ fun CoreAvatar(
                     translationY = (0.46f - face[1]) * sizePx - sizePx * lift * b
                 } else translationY = -sizePx * lift * b
             },
-        )
+        ) {
+            Image(
+                painterResource(sprite(stage, mood)), null,
+                colorFilter = if (locked) ColorFilter.tint(Color(0xFF2A3140)) else null,
+                modifier = Modifier.fillMaxSize(),
+            )
+            if (skin != null && !locked) Accessory(skin, stage, face, size)
+        }
         if (mood == CoreMood.SLEEPING && animate && !locked) {
             val z by t.animateFloat(0f, 1f, infiniteRepeatable(tween(2400, easing = LinearEasing)), label = "z")
             listOf(0f, 0.5f).forEach { phase ->
@@ -121,4 +128,36 @@ fun CoreAvatar(
             }
         }
     }
+}
+
+/** Each accessory's picture, its height/width, and where it sits: width and anchor in face widths, anchored edge, tilt. */
+private class Wear(val res: Int, val aspect: Float, val width: Float, val dy: Float, val edge: Int, val tilt: Float)
+
+private const val BOTTOM = 0
+private const val CENTER = 1
+private const val TOP = 2
+
+private fun wear(skin: CoreSkin) = when (skin) {
+    CoreSkin.PUMPKIN -> Wear(R.drawable.core_acc_pumpkin, 0.869f, 1.50f, -0.40f, BOTTOM, 0f)
+    CoreSkin.SCARF -> Wear(R.drawable.core_acc_scarf, 0.887f, 1.50f, 0.40f, TOP, 0f)
+    CoreSkin.PARTY_HAT -> Wear(R.drawable.core_acc_party_hat, 1.081f, 0.85f, -0.48f, BOTTOM, 12f)
+    CoreSkin.FLOWER_CROWN -> Wear(R.drawable.core_acc_flower_crown, 0.625f, 1.45f, -0.36f, BOTTOM, 0f)
+    // Pushed up on the hood: the eyes carry the expressions.
+    CoreSkin.SUNGLASSES -> Wear(R.drawable.core_acc_sunglasses, 0.434f, 1.00f, -0.56f, CENTER, 0f)
+}
+
+/** The accessory on the Core's head (or neck), placed from where the form's face is (see [FACES]). */
+@Composable
+private fun Accessory(skin: CoreSkin, stage: Int, face: FloatArray, size: Dp) {
+    val w = wear(skin)
+    // The last two forms have a small face inside a big hood: measure them a bit larger.
+    val fw = face[2] * when (stage) { 5 -> 1.45f; 6 -> 1.75f; else -> 1f }
+    val width = size * (w.width * fw)
+    val height = width * w.aspect
+    val anchorY = size * (face[1] + w.dy * fw)
+    val top = when (w.edge) { BOTTOM -> anchorY - height; CENTER -> anchorY - height / 2; else -> anchorY }
+    Image(
+        painterResource(w.res), null,
+        modifier = Modifier.offset(x = size * face[0] - width / 2, y = top).size(width, height).graphicsLayer { rotationZ = w.tilt },
+    )
 }

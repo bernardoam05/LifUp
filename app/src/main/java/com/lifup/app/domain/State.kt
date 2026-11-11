@@ -230,6 +230,8 @@ data class Settings(
     val coreStage: Int? = null,
     /** Keeps the first form's launcher icon instead of following the Core's. */
     val fixedIcon: Boolean = false,
+    /** The accessory the Core wears (see Skins.kt); null = none. */
+    val coreSkin: CoreSkin? = null,
 )
 
 @Serializable
@@ -380,6 +382,8 @@ enum class ToastKind {
     REDEEMED,
     /** Pair quests, arg "partner:xp:gold" (the bonus, the cut or the loss); the others carry the partner's name. */
     PAIR_BOTH, PAIR_BOTH_CAPPED, PAIR_CUT, PAIR_UNKNOWN, PAIR_MISSED,
+    /** arg: the [CoreSkin] name. */
+    CORE_SKIN,
 }
 
 @Serializable
@@ -499,6 +503,8 @@ data class GameState(
     /** Features whose opening was already announced. */
     val announced: Set<Feature> = emptySet(),
     val starterClaimed: Set<StarterTask> = emptySet(),
+    /** Accessories won from seasonal bosses. */
+    val coreSkins: Set<CoreSkin> = emptySet(),
 ) {
     fun owned(id: String) = shadows.firstOrNull { it.id == id }
     fun count(key: StatKey) = counters[key] ?: 0L

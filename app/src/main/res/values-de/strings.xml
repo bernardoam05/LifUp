@@ -981,4 +981,14 @@
     <string name="starter_side">Füge eine Nebenaufgabe hinzu und hake sie ab</string>
     <string name="starter_focus">Mach 5 Minuten Fokus</string>
     <string name="starter_claim">+%1$d abholen</string>
+    <!-- Core accessories -->
+    <string name="core_skins">Accessoires</string>
+    <string name="core_skins_hint">Besiege einen saisonalen Boss, um sein Accessoire für immer zu bekommen. Sie sind nur optisch.</string>
+    <string name="core_skin_none">Keins</string>
+    <string name="core_skin_pumpkin">Kürbishut</string>
+    <string name="core_skin_scarf">Winterschal</string>
+    <string name="core_skin_party_hat">Partyhut</string>
+    <string name="core_skin_flower_crown">Blumenkranz</string>
+    <string name="core_skin_sunglasses">Sonnenbrille</string>
+    <string name="toast_core_skin">Neues Accessoire für deinen Core: %1$s</string>
 </resources>

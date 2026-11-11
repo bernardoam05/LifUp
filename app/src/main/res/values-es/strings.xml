@@ -981,4 +981,14 @@
     <string name="starter_side">Añade y completa una tarea secundaria</string>
     <string name="starter_focus">Haz 5 minutos de foco</string>
     <string name="starter_claim">Recibir +%1$d</string>
+    <!-- Core accessories -->
+    <string name="core_skins">Accesorios</string>
+    <string name="core_skins_hint">Derrota a un jefe de temporada para ganar su accesorio para siempre. Solo son estéticos.</string>
+    <string name="core_skin_none">Ninguno</string>
+    <string name="core_skin_pumpkin">Sombrero de calabaza</string>
+    <string name="core_skin_scarf">Bufanda de invierno</string>
+    <string name="core_skin_party_hat">Gorro de fiesta</string>
+    <string name="core_skin_flower_crown">Corona de flores</string>
+    <string name="core_skin_sunglasses">Gafas de sol</string>
+    <string name="toast_core_skin">Nuevo accesorio para tu Core: %1$s</string>
 </resources>

@@ -963,4 +963,14 @@
     <string name="starter_side">Adiciona e conclui uma tarefa secundária</string>
     <string name="starter_focus">Faz 5 minutos de foco</string>
     <string name="starter_claim">Receber +%1$d</string>
+    <!-- Core accessories -->
+    <string name="core_skins">Acessórios</string>
+    <string name="core_skins_hint">Derrota um boss sazonal para ganhares o acessório dele para sempre. São só visuais.</string>
+    <string name="core_skin_none">Nenhum</string>
+    <string name="core_skin_pumpkin">Chapéu de abóbora</string>
+    <string name="core_skin_scarf">Cachecol de inverno</string>
+    <string name="core_skin_party_hat">Chapéu de festa</string>
+    <string name="core_skin_flower_crown">Coroa de flores</string>
+    <string name="core_skin_sunglasses">Óculos de sol</string>
+    <string name="toast_core_skin">Novo acessório para a tua Core: %1$s</string>
 </resources>

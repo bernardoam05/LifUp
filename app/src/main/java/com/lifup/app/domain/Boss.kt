@@ -135,6 +135,7 @@ private fun Tx.defeatBoss() {
     s = s.copy(boss = s.boss?.copy(spoils = BossSpoils(xp, gold), lootGiven = true))
     reward { Reward.BossDefeated(it, def.id, xp, gold, loot) }
     if (!b.lootGiven) gainShadow(def.shadowId, SourceType.BOSS, EchoOrigin.BOSS, def.id)
+    CoreSkin.forBoss(def.id)?.let { gainSkin(it) }
 }
 
 /** Gives back HP removed by an undone quest. A boss that fell to it comes back and takes its XP and gold back. */

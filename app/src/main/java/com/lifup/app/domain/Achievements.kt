@@ -51,6 +51,10 @@ fun Tx.migrateState() {
         val veteran = s.onboarded
         s = s.copy(unlockAll = veteran, announced = if (veteran) Feature.entries.toSet() else emptySet(), version = 8)
     }
+    if (s.version < 9) {
+        // Seasonal bosses beaten before the Core had accessories give theirs now, quietly.
+        s = s.copy(coreSkins = s.coreSkins + s.bossHistory.mapNotNull { CoreSkin.forBoss(it) }, version = 9)
+    }
 }
 
 /** Unlocks every tier whose target has been reached. Rewards are paid unboosted to avoid feedback loops. */
