@@ -74,7 +74,9 @@ import com.lifup.app.ui.components.Stepper
 import com.lifup.app.ui.content
 import com.lifup.app.ui.defTitle
 import com.lifup.app.ui.fmtNum
+import com.lifup.app.ui.lang
 import com.lifup.app.ui.local
+import com.lifup.app.domain.text
 import com.lifup.app.ui.theme.Lif
 import com.lifup.app.ui.unitLabel
 import kotlinx.coroutines.launch
@@ -223,7 +225,8 @@ private fun NewPairSheet(s: GameState, onDismiss: () -> Unit) {
     var code by rememberSaveable { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<PairService.Failure?>(null) }
-    val defs = remember(s.enabledDefIds, s.disabledDefIds, s.customDefs) { s.pairDefs(content).sortedBy { it.title.local() } }
+    val language = lang()
+    val defs = remember(s.enabledDefIds, s.disabledDefIds, s.customDefs, language) { s.pairDefs(content).sortedBy { it.title.text(language) } }
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = p.panel) {
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
