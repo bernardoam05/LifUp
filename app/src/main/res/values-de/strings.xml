@@ -991,4 +991,27 @@
     <string name="core_skin_flower_crown">Blumenkranz</string>
     <string name="core_skin_sunglasses">Sonnenbrille</string>
     <string name="toast_core_skin">Neues Accessoire für deinen Core: %1$s</string>
+    <!-- LifUp+ -->
+    <string name="plus_tagline">Unterstütze die App und schalte Extras frei. Alles Wesentliche bleibt kostenlos.</string>
+    <string name="plus_includes">Was dazugehört</string>
+    <string name="plus_perk_skins">Core-Skins</string>
+    <string name="plus_perk_skins_text">Neue Looks für deinen Core, in jeder Form und mit jedem Gesicht.</string>
+    <string name="plus_perk_stats">Statistik-Export</string>
+    <string name="plus_perk_stats_text">Dein Tagesverlauf und die Bilanz jeder Mission als CSV, für eine Tabelle.</string>
+    <string name="plus_more_coming">Weitere Extras kommen, ohne Aufpreis inklusive.</string>
+    <string name="plus_play_only">LifUp+ wird über Google Play gekauft. Diese von GitHub installierte Version kann es nicht verkaufen.</string>
+    <string name="plus_owned">LifUp+ ist aktiv. Danke!</string>
+    <string name="plus_one_time">Einmalzahlung</string>
+    <string name="plus_buy">LifUp+ freischalten</string>
+    <string name="plus_buy_note">Für immer, kein Abo. Bezahlt über Google Play.</string>
+    <string name="plus_tip_title">Ich will nur helfen</string>
+    <string name="plus_tip_text">Ein Trinkgeld für die Macher der App. Es ändert nichts im Spiel.</string>
+    <string name="plus_tip_thanks">Vielen Dank für das Trinkgeld!</string>
+    <string name="plus_never_progress">Gold, XP, Essenzen und Serien sind nie käuflich.</string>
+    <string name="plus_restore">Kauf wiederherstellen</string>
+    <string name="plus_settings_hint">Extras für alle, die die App unterstützen</string>
+    <string name="plus_stats_export">Statistik (LifUp+)</string>
+    <string name="plus_stats_export_hint">Speichere deinen Verlauf als CSV-Dateien für eine Tabelle.</string>
+    <string name="plus_export_days">Tage</string>
+    <string name="plus_export_missions">Missionen</string>
 </resources>

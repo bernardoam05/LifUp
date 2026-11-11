@@ -1,5 +1,9 @@
 package com.lifup.app.ui.settings
 
+import androidx.compose.material.icons.rounded.AutoAwesome
+import com.lifup.app.domain.daysCsv
+import com.lifup.app.domain.missionsCsv
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.imePadding
 import com.lifup.app.ui.DrawMode
 import com.lifup.app.ui.drawMode
@@ -85,7 +89,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
+fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit, openPlus: () -> Unit = {}) {
     val s = gameState()
     val set = s.settings
     val context = LocalContext.current
@@ -107,6 +111,17 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
             message = if (ok) okMsg else badMsg
         }
     }
+    // LifUp+: the day history and each mission's record as CSV files, for a spreadsheet.
+    fun csvSaver(make: () -> String) = { uri: android.net.Uri? ->
+        if (uri != null) scope.launch {
+            val ok = withContext(Dispatchers.IO) { runCatching { context.contentResolver.openOutputStream(uri)?.use { it.write(make().toByteArray()) } }.isSuccess }
+            message = if (ok) okMsg else badMsg
+        }
+        Unit
+    }
+    val lang = java.util.Locale.getDefault().language
+    val daysCsv = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv"), csvSaver { LifUpApp.store.current.daysCsv() })
+    val missionsCsv = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv"), csvSaver { LifUpApp.store.current.missionsCsv(content, lang) })
     val importer = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         scope.launch {
@@ -123,6 +138,18 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
         }
         Column(Modifier.imePadding().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding()) {
             message?.let { Text(it, color = Lif.colors.accent, style = MaterialTheme.typography.labelLarge) }
+
+            // LifUp+ at the top: what it is, or that it's on.
+            com.lifup.app.ui.components.Panel(onClick = openPlus, border = Lif.colors.gold.copy(alpha = 0.6f), modifier = Modifier.padding(top = 8.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Rounded.AutoAwesome, null, tint = Lif.colors.gold)
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text("LifUp+", style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(if (s.plus) R.string.plus_owned else R.string.plus_settings_hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+                    }
+                }
+            }
 
             SectionTitle(stringResource(R.string.profile))
             var name by remember { mutableStateOf(s.player.name) }
@@ -227,6 +254,13 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit) {
                         }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.History)
                     }
                 }
+            }
+
+            SectionTitle(stringResource(R.string.plus_stats_export))
+            Text(stringResource(R.string.plus_stats_export_hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 8.dp)) {
+                GhostButton(stringResource(R.string.plus_export_days), onClick = { if (s.plus) daysCsv.launch("lifup-days.csv") else openPlus() }, modifier = Modifier.weight(1f))
+                GhostButton(stringResource(R.string.plus_export_missions), onClick = { if (s.plus) missionsCsv.launch("lifup-missions.csv") else openPlus() }, modifier = Modifier.weight(1f))
             }
 
             CrashReportRow()

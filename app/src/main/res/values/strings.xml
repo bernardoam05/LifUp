@@ -992,4 +992,27 @@
     <string name="core_skin_flower_crown">Flower crown</string>
     <string name="core_skin_sunglasses">Sunglasses</string>
     <string name="toast_core_skin">New accessory for your Core: %1$s</string>
+    <!-- LifUp+ -->
+    <string name="plus_tagline">Support the app and unlock extras. Everything essential stays free.</string>
+    <string name="plus_includes">What\'s included</string>
+    <string name="plus_perk_skins">Core skins</string>
+    <string name="plus_perk_skins_text">New looks for your Core, on every form and face.</string>
+    <string name="plus_perk_stats">Statistics export</string>
+    <string name="plus_perk_stats_text">Your day history and each mission\'s record as CSV, for a spreadsheet.</string>
+    <string name="plus_more_coming">More extras are on the way, included at no extra cost.</string>
+    <string name="plus_play_only">LifUp+ is bought through Google Play. This version, installed from GitHub, can\'t sell it.</string>
+    <string name="plus_owned">LifUp+ is on. Thank you!</string>
+    <string name="plus_one_time">One-time payment</string>
+    <string name="plus_buy">Unlock LifUp+</string>
+    <string name="plus_buy_note">Yours for good, no subscription. Paid through Google Play.</string>
+    <string name="plus_tip_title">Just want to help</string>
+    <string name="plus_tip_text">A tip for whoever makes the app. It changes nothing in the game.</string>
+    <string name="plus_tip_thanks">Thank you so much for the tip!</string>
+    <string name="plus_never_progress">Gold, XP, essences and streaks are never for sale.</string>
+    <string name="plus_restore">Restore purchase</string>
+    <string name="plus_settings_hint">Extras for those who support the app</string>
+    <string name="plus_stats_export">Statistics (LifUp+)</string>
+    <string name="plus_stats_export_hint">Save your history as CSV files to open in a spreadsheet.</string>
+    <string name="plus_export_days">Days</string>
+    <string name="plus_export_missions">Missions</string>
 </resources>

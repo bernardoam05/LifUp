@@ -973,4 +973,27 @@
     <string name="core_skin_flower_crown">Couronne de fleurs</string>
     <string name="core_skin_sunglasses">Lunettes de soleil</string>
     <string name="toast_core_skin">Nouvel accessoire pour ton Core : %1$s</string>
+    <!-- LifUp+ -->
+    <string name="plus_tagline">Soutiens l\'app et débloque des extras. Tout l\'essentiel reste gratuit.</string>
+    <string name="plus_includes">Ce qui est inclus</string>
+    <string name="plus_perk_skins">Apparences du Core</string>
+    <string name="plus_perk_skins_text">De nouveaux looks pour ton Core, sur toutes les formes et tous les visages.</string>
+    <string name="plus_perk_stats">Export des statistiques</string>
+    <string name="plus_perk_stats_text">L\'historique de tes journées et le bilan de chaque mission en CSV, pour un tableur.</string>
+    <string name="plus_more_coming">D\'autres extras arrivent, inclus sans payer plus.</string>
+    <string name="plus_play_only">LifUp+ s\'achète via Google Play. Cette version, installée depuis GitHub, ne peut pas le vendre.</string>
+    <string name="plus_owned">LifUp+ est actif. Merci !</string>
+    <string name="plus_one_time">Paiement unique</string>
+    <string name="plus_buy">Débloquer LifUp+</string>
+    <string name="plus_buy_note">Pour toujours, sans abonnement. Payé via Google Play.</string>
+    <string name="plus_tip_title">Je veux juste aider</string>
+    <string name="plus_tip_text">Un pourboire pour qui fait l\'app. Ça ne change rien au jeu.</string>
+    <string name="plus_tip_thanks">Merci beaucoup pour le pourboire !</string>
+    <string name="plus_never_progress">L\'or, l\'XP, les essences et les séries ne sont jamais à vendre.</string>
+    <string name="plus_restore">Restaurer l\'achat</string>
+    <string name="plus_settings_hint">Des extras pour qui soutient l\'app</string>
+    <string name="plus_stats_export">Statistiques (LifUp+)</string>
+    <string name="plus_stats_export_hint">Enregistre ton historique en fichiers CSV à ouvrir dans un tableur.</string>
+    <string name="plus_export_days">Jours</string>
+    <string name="plus_export_missions">Missions</string>
 </resources>

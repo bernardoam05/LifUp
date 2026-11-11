@@ -505,6 +505,8 @@ data class GameState(
     val starterClaimed: Set<StarterTask> = emptySet(),
     /** Accessories won from seasonal bosses. */
     val coreSkins: Set<CoreSkin> = emptySet(),
+    /** LifUp+ bought (kept in sync with Google Play; see system/PlusBilling). */
+    val plus: Boolean = false,
 ) {
     fun owned(id: String) = shadows.firstOrNull { it.id == id }
     fun count(key: StatKey) = counters[key] ?: 0L

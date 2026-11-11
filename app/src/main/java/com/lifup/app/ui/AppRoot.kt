@@ -165,7 +165,8 @@ fun AppRoot(deepLink: String?, onDeepLinkConsumed: () -> Unit) {
                         openDef = { nav.navigate("forge/$it") },
                     )
                 }
-                composable("settings") { SettingsScreen(onBack = { nav.popBackStack() }, openForge = { nav.navigate("forge") }) }
+                composable("settings") { SettingsScreen(onBack = { nav.popBackStack() }, openForge = { nav.navigate("forge") }, openPlus = { nav.navigate("plus") }) }
+                composable("plus") { com.lifup.app.ui.plus.PlusScreen(onBack = { nav.popBackStack() }) }
                 composable("forge") { ForgeScreen(onBack = { nav.popBackStack() }, onEdit = { nav.navigate("forge/${it ?: "new"}") }) }
                 composable("forge/{id}") { entry ->
                     DefEditorScreen(entry.arguments?.getString("id")?.takeIf { it != "new" }, onBack = { nav.popBackStack() })

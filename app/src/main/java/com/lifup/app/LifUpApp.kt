@@ -31,6 +31,8 @@ class LifUpApp : Application() {
         androidx.work.WorkManager.getInstance(this).cancelUniqueWork("portal-roll")
         AutoWorker.schedule(this)
         com.lifup.app.system.PairService.install(this, store)
+        // Asks Google Play what's owned (Play build only), so LifUp+ follows a refund or a new phone.
+        com.lifup.app.system.PlusBilling.start(this)
         store.fire()
     }
 

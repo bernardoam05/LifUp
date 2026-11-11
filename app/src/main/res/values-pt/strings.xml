@@ -973,4 +973,27 @@
     <string name="core_skin_flower_crown">Coroa de flores</string>
     <string name="core_skin_sunglasses">Óculos de sol</string>
     <string name="toast_core_skin">Novo acessório para a tua Core: %1$s</string>
+    <!-- LifUp+ -->
+    <string name="plus_tagline">Apoia a app e desbloqueia extras. Tudo o que é essencial continua grátis.</string>
+    <string name="plus_includes">O que inclui</string>
+    <string name="plus_perk_skins">Peles da Core</string>
+    <string name="plus_perk_skins_text">Novos visuais para a tua Core, em todas as formas e caras.</string>
+    <string name="plus_perk_stats">Exportação de estatísticas</string>
+    <string name="plus_perk_stats_text">O histórico dos teus dias e o registo de cada missão em CSV, para uma folha de cálculo.</string>
+    <string name="plus_more_coming">Há mais extras a caminho, incluídos sem pagar mais.</string>
+    <string name="plus_play_only">O LifUp+ compra-se pela Google Play. Esta versão, instalada a partir do GitHub, não o consegue vender.</string>
+    <string name="plus_owned">O LifUp+ está ativo. Obrigado!</string>
+    <string name="plus_one_time">Pagamento único</string>
+    <string name="plus_buy">Desbloquear LifUp+</string>
+    <string name="plus_buy_note">Para sempre, sem subscrição. Pagas pela Google Play.</string>
+    <string name="plus_tip_title">Só quero ajudar</string>
+    <string name="plus_tip_text">Uma gorjeta para quem faz a app. Não muda nada no jogo.</string>
+    <string name="plus_tip_thanks">Muito obrigado pela gorjeta!</string>
+    <string name="plus_never_progress">Ouro, XP, essências e sequências nunca estão à venda.</string>
+    <string name="plus_restore">Restaurar compra</string>
+    <string name="plus_settings_hint">Extras para quem apoia a app</string>
+    <string name="plus_stats_export">Estatísticas (LifUp+)</string>
+    <string name="plus_stats_export_hint">Guarda o teu histórico em ficheiros CSV para abrires numa folha de cálculo.</string>
+    <string name="plus_export_days">Dias</string>
+    <string name="plus_export_missions">Missões</string>
 </resources>

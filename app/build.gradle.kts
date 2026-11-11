@@ -131,6 +131,8 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    // LifUp+ through Google Play Billing: only the Play build sells anything.
+    "playImplementation"("com.android.billingclient:billing:8.0.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     testImplementation("junit:junit:4.13.2")
