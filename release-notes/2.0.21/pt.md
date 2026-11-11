@@ -1,0 +1,2 @@
+- [new] Os convites de par levam um link: ao tocar, o Questborn abre em "Entrar com código" com o código já preenchido.
+- [tweak] O código do convite copia-se com um toque (ou com o novo botão "Copiar código"), e colar a mensagem inteira no campo do código encontra o código.

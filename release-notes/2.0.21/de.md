@@ -1,0 +1,2 @@
+- [new] Partnereinladungen enthalten einen Link: Antippen öffnet Questborn bei „Mit Code beitreten“, der Code ist schon eingetragen.
+- [tweak] Der Einladungscode lässt sich per Antippen kopieren (oder mit dem neuen Button „Code kopieren“), und wer die ganze Einladung ins Codefeld einfügt, bekommt den Code herausgesucht.

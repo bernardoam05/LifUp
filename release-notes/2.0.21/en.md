@@ -1,0 +1,2 @@
+- [new] Pair invites carry a link: tapping it opens Questborn on "Join with a code" with the code already filled in.
+- [tweak] The invite code copies with a tap (or the new "Copy code" button), and pasting the whole invite message into the code field finds the code.

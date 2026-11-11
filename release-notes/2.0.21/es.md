@@ -1,0 +1,2 @@
+- [new] Las invitaciones de pareja llevan un enlace: al tocarlo, Questborn se abre en "Unirse con código" con el código ya puesto.
+- [tweak] El código de invitación se copia con un toque (o con el nuevo botón "Copiar código"), y pegar el mensaje entero en el campo del código encuentra el código.

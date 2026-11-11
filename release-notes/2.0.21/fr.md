@@ -1,0 +1,2 @@
+- [new] Les invitations de binôme contiennent un lien : en le touchant, Questborn s'ouvre sur « Rejoindre avec un code » avec le code déjà rempli.
+- [tweak] Le code d'invitation se copie d'un toucher (ou avec le nouveau bouton « Copier le code »), et coller tout le message d'invitation dans le champ du code retrouve le code.
