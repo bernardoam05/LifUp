@@ -20,7 +20,8 @@ jobs:
           ./gradlew testDebugUnitTest assembleDebug 2>&1 | tee build.log
       - name: Compile errors as annotations
         if: failure()
-        run: grep -E '^e: |^> |error:' build.log | head -30 | sed 's/^/::error::/' || true
+        run: |
+          grep -E '^e: |^> |error:' build.log | head -30 | sed 's/^/::error::/' || true
       - name: Test report
         if: failure()
         uses: actions/upload-artifact@v4
