@@ -984,7 +984,7 @@
     <string name="starter_claim">Claim +%1$d</string>
     <!-- Core accessories -->
     <string name="core_skins">Accessories</string>
-    <string name="core_skins_hint">Beat a seasonal boss to win its accessory for good. They're only for looks.</string>
+    <string name="core_skins_hint">Beat a seasonal boss to win its accessory for good. They\'re only for looks.</string>
     <string name="core_skin_none">None</string>
     <string name="core_skin_pumpkin">Pumpkin hat</string>
     <string name="core_skin_scarf">Winter scarf</string>
