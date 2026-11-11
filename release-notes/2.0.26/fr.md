@@ -1,0 +1,2 @@
+- [new] Les missions en binôme peuvent être « une nouvelle à chaque fois » : chaque jour du binôme tire une mission différente, la même pour vous deux.
+- [tweak] Si ton binôme part, le binôme ne s'arrête plus : il attend que quelqu'un le rejoigne (la même personne ou une autre) avec un nouveau code, et la journée en cours compte ×1.
