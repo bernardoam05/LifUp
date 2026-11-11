@@ -47,6 +47,9 @@ private val SPRITES = listOf(
     listOf(R.drawable.core_s6_neutral, R.drawable.core_s6_confident, R.drawable.core_s6_happy, R.drawable.core_s6_focused, R.drawable.core_s6_relaxed, R.drawable.core_s6_excited, R.drawable.core_s6_tired, R.drawable.core_s6_frustrated),
 )
 
+/** The sprite for [stage] and [mood], for places that draw it themselves (the home-screen widget). */
+fun coreSprite(stage: Int, mood: CoreMood): Int = sprite(stage, mood)
+
 private fun sprite(stage: Int, mood: CoreMood): Int {
     val face = if (mood == CoreMood.SLEEPING) CoreMood.RELAXED else mood
     return SPRITES[stage.coerceIn(1, Core.STAGES) - 1][face.ordinal]

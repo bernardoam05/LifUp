@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Insights
 import androidx.compose.material.icons.rounded.Groups
+import androidx.compose.material.icons.rounded.Widgets
 import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -77,6 +78,7 @@ fun PlusScreen(onBack: () -> Unit) {
             Perk(Icons.Rounded.AutoAwesome, p.purple, R.string.plus_perk_skins, R.string.plus_perk_skins_text)
             Perk(Icons.Rounded.Insights, p.green, R.string.plus_perk_stats, R.string.plus_perk_stats_text)
             Perk(Icons.Rounded.Groups, p.purple, R.string.plus_perk_squads, R.string.plus_perk_squads_text)
+            Perk(Icons.Rounded.Widgets, p.accent, R.string.plus_perk_widget, R.string.plus_perk_widget_text)
             Text(stringResource(R.string.plus_more_coming), style = MaterialTheme.typography.bodySmall, color = p.dim, modifier = Modifier.padding(start = 4.dp))
         }
 

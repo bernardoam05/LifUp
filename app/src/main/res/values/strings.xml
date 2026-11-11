@@ -1021,4 +1021,9 @@
     <string name="squad_saved_plus">Save up to 3 squads and switch with one tap with LifUp+.</string>
     <string name="plus_perk_squads">Saved echo squads</string>
     <string name="plus_perk_squads_text">Keep up to 3 squads and switch with one tap.</string>
+    <string name="widget_core_name">Core</string>
+    <string name="widget_core_desc">Your Core with today\'s face (LifUp+)</string>
+    <string name="widget_core_plus">Unlock with LifUp+</string>
+    <string name="plus_perk_widget">Core widget</string>
+    <string name="plus_perk_widget_text">Your Core on the home screen, with today\'s face and missions.</string>
 </resources>

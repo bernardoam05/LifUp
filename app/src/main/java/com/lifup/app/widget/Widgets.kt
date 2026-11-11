@@ -73,6 +73,7 @@ object Widgets {
             runCatching { TodayWidget().updateAll(context) }
             runCatching { FocusWidget().updateAll(context) }
             runCatching { HeroWidget().updateAll(context) }
+            runCatching { CoreWidget().updateAll(context) }
         }
     }
 }

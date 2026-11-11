@@ -1020,4 +1020,9 @@
     <string name="squad_saved_plus">Speichere bis zu 3 Teams und wechsle mit einem Tipp mit LifUp+.</string>
     <string name="plus_perk_squads">Gespeicherte Echo-Teams</string>
     <string name="plus_perk_squads_text">Bis zu 3 Teams speichern und mit einem Tipp wechseln.</string>
+    <string name="widget_core_name">Core</string>
+    <string name="widget_core_desc">Dein Core mit dem Gesicht des Tages (LifUp+)</string>
+    <string name="widget_core_plus">Mit LifUp+ freischalten</string>
+    <string name="plus_perk_widget">Core-Widget</string>
+    <string name="plus_perk_widget_text">Dein Core auf dem Startbildschirm, mit Gesicht und Missionen des Tages.</string>
 </resources>

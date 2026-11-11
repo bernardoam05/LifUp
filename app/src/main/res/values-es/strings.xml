@@ -1020,4 +1020,9 @@
     <string name="squad_saved_plus">Guarda hasta 3 equipos y cambia con un toque con LifUp+.</string>
     <string name="plus_perk_squads">Equipos de ecos guardados</string>
     <string name="plus_perk_squads_text">Guarda hasta 3 equipos y cambia con un toque.</string>
+    <string name="widget_core_name">Core</string>
+    <string name="widget_core_desc">Tu Core con la cara del día (LifUp+)</string>
+    <string name="widget_core_plus">Desbloquéalo con LifUp+</string>
+    <string name="plus_perk_widget">Widget del Core</string>
+    <string name="plus_perk_widget_text">Tu Core en la pantalla de inicio, con la cara y las misiones del día.</string>
 </resources>

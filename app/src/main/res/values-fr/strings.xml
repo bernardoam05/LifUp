@@ -1002,4 +1002,9 @@
     <string name="squad_saved_plus">Enregistre jusqu\'à 3 équipes et change d\'un toucher avec LifUp+.</string>
     <string name="plus_perk_squads">Équipes d\'échos enregistrées</string>
     <string name="plus_perk_squads_text">Garde jusqu\'à 3 équipes et change d\'un toucher.</string>
+    <string name="widget_core_name">Core</string>
+    <string name="widget_core_desc">Ton Core avec le visage du jour (LifUp+)</string>
+    <string name="widget_core_plus">Débloque avec LifUp+</string>
+    <string name="plus_perk_widget">Widget du Core</string>
+    <string name="plus_perk_widget_text">Ton Core sur l\'écran d\'accueil, avec le visage et les missions du jour.</string>
 </resources>

@@ -184,6 +184,11 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_hero" />
         </receiver>
 
+        <receiver android:name=".widget.CoreWidgetReceiver" android:exported="true" android:label="@string/widget_core_name">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_core" />
+        </receiver>
+
         <receiver android:name=".system.TickReceiver" android:exported="false" />
         <receiver android:name=".system.NotificationActionReceiver" android:exported="false" />
         <receiver android:name=".system.UpdateReceiver" android:exported="false" />
