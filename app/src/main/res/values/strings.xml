@@ -992,4 +992,10 @@
     <string name="core_skin_flower_crown">Flower crown</string>
     <string name="core_skin_sunglasses">Sunglasses</string>
     <string name="toast_core_skin">New accessory for your Core: %1$s</string>
+    <string name="pair_mode">Mission</string>
+    <string name="pair_mode_fixed">Always the same</string>
+    <string name="pair_mode_random">A new one each time</string>
+    <string name="pair_mode_random_hint">A different mission on each day of the pair, drawn at random, the same for both of you.</string>
+    <string name="pair_random_title">Surprise mission</string>
+    <string name="toast_pair_partner_left">%1$s left the pair: it\'s waiting for someone to join again</string>
 </resources>

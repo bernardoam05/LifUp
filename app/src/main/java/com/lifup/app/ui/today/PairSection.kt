@@ -10,6 +10,7 @@ import com.lifup.app.domain.QuestOrigin
 import com.lifup.app.domain.buildQuest
 import com.lifup.app.domain.stepOf
 import com.lifup.app.domain.pairOf
+import com.lifup.app.domain.isRandom
 import com.lifup.app.domain.xpPreview
 import com.lifup.app.ui.color
 import com.lifup.app.ui.icon
@@ -134,6 +135,11 @@ private fun recurrenceLabel(r: PairRecurrence): String = when (r.kind) {
     PairRepeat.EVERY -> stringResource(R.string.pair_every_n, r.every)
 }
 
+/** The mission's name: today's (a random pair draws one per cycle), else the pair's own. */
+@Composable
+private fun pairTitle(s: GameState, pair: PairQuest, part: com.lifup.app.domain.PairPart?): String =
+    part?.quest?.title?.local() ?: if (pair.isRandom) stringResource(R.string.pair_random_title) else defTitle(s, pair.defId)
+
 @Composable
 private fun partnerName(pair: PairQuest) = pair.partnerName.ifBlank { stringResource(R.string.pair_partner_unknown) }
 
@@ -171,7 +177,7 @@ private fun PairStatus(s: GameState, pair: PairQuest, part: com.lifup.app.domain
             Text("${pair.streak}", style = MaterialTheme.typography.labelMedium)
         }
         if (part.doneAt != null && !theirs) PairService.shareLink(pair, part.cycle)?.let { link ->
-            val message = stringResource(R.string.pair_link_share, defTitle(s, pair.defId), link)
+            val message = stringResource(R.string.pair_link_share, pairTitle(s, pair, part), link)
             TextButton(onClick = { share(context, message) }) {
                 Icon(Icons.Rounded.Share, null, tint = p.accent, modifier = Modifier.size(14.dp))
                 Spacer(Modifier.width(4.dp))
@@ -220,7 +226,7 @@ private fun RestingPairCard(s: GameState, pair: PairQuest, now: Long) {
             Icon(Icons.Rounded.Groups, null, tint = p.dim, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
             Column(Modifier.weight(1f)) {
-                Text(defTitle(s, pair.defId), style = MaterialTheme.typography.titleSmall)
+                Text(pairTitle(s, pair, null), style = MaterialTheme.typography.titleSmall)
                 val next = pair.nextCycle(now)?.format(DateTimeFormatter.ofPattern("EEE, d MMM"))
                 Text(
                     stringResource(R.string.pair_with, partnerName(pair)) + (next?.let { " · " + stringResource(R.string.pair_next, it) } ?: ""),
@@ -242,7 +248,7 @@ private fun InviteCard(s: GameState, pair: PairQuest, now: Long) {
     val p = Lif.colors
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val title = defTitle(s, pair.defId)
+    val title = pairTitle(s, pair, null)
     var leaving by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<PairService.Failure?>(null) }
     Panel(border = p.accent.copy(alpha = 0.5f)) {
@@ -271,7 +277,7 @@ private fun InviteCard(s: GameState, pair: PairQuest, now: Long) {
                 onClick = { copy(context, code); copied = true },
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp), icon = Icons.Rounded.ContentCopy, color = p.accent,
             )
-        } else if (pair.creator) {
+        } else {
             Text(stringResource(R.string.pair_code_expired), style = MaterialTheme.typography.bodySmall, color = p.dim)
             GhostButton(stringResource(R.string.pair_new_code), onClick = {
                 scope.launch { PairService.renewInvite(context, pair.id).onFailure { error = PairService.failure(it) } }
@@ -305,6 +311,7 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
     val scope = rememberCoroutineScope()
     var joining by rememberSaveable { mutableStateOf(initialCode != null) }
     var defId by rememberSaveable { mutableStateOf<String?>(null) }
+    var random by rememberSaveable { mutableStateOf(false) }
     var kind by rememberSaveable { mutableStateOf(PairRepeat.DAILY) }
     var days by rememberSaveable { mutableStateOf(listOf(1, 3, 5)) }
     var every by rememberSaveable { mutableStateOf(2) }
@@ -338,8 +345,14 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
                     }
                 }, modifier = Modifier.fillMaxWidth())
             } else {
-                Text(stringResource(R.string.pair_pick_mission), style = MaterialTheme.typography.labelLarge, color = p.muted)
-                LazyColumn(Modifier.fillMaxWidth().heightIn(max = 340.dp)) {
+                Text(stringResource(R.string.pair_mode), style = MaterialTheme.typography.labelLarge, color = p.muted)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(selected = !random, onClick = { random = false }, label = { Text(stringResource(R.string.pair_mode_fixed)) })
+                    FilterChip(selected = random, onClick = { random = true }, label = { Text(stringResource(R.string.pair_mode_random)) })
+                }
+                if (random) Text(stringResource(R.string.pair_mode_random_hint), style = MaterialTheme.typography.bodySmall, color = p.muted)
+                else Text(stringResource(R.string.pair_pick_mission), style = MaterialTheme.typography.labelLarge, color = p.muted)
+                if (!random) LazyColumn(Modifier.fillMaxWidth().heightIn(max = 340.dp)) {
                     items(defs, key = { it.id }) { def ->
                         val selected = def.id == defId
                         val color = def.color(p)
@@ -378,8 +391,8 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
                     }
                 }
                 if (kind == PairRepeat.EVERY) Stepper(every, { every = it }, 2..14, stringResource(R.string.pair_every_label), " " + stringResource(R.string.pair_days_suffix))
-                PrimaryButton(stringResource(R.string.pair_create), enabled = defId != null && !busy, onClick = {
-                    val id = defId ?: return@PrimaryButton
+                PrimaryButton(stringResource(R.string.pair_create), enabled = (random || defId != null) && !busy, onClick = {
+                    val id = if (random) PairRules.RANDOM else defId ?: return@PrimaryButton
                     busy = true; error = null
                     scope.launch {
                         PairService.create(context, id, PairRecurrence(kind, if (kind == PairRepeat.WEEKLY) days else emptyList(), every))

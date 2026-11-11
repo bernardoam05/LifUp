@@ -222,7 +222,7 @@ object PairService {
         val now = System.currentTimeMillis()
         store.current.activePairs().filter { it.id in force || needsRead(it, now, foreground) }.forEach { p ->
             val snap = PairCloud.read(context, p)
-            store.dispatch { pairRead(p.id, snap.partnerUid, snap.partnerName, snap.marks, snap.gone) }
+            store.dispatch { pairRead(p.id, snap.partnerUid, snap.partnerName, snap.marks, snap.gone, snap.left) }
         }
     }
 
@@ -233,7 +233,7 @@ object PairService {
         s.activePairs().forEach { p ->
             val part = p.nudgeDue(now) ?: return@forEach
             if (s.settings.notifications) {
-                val mission = s.defOf(p.defId, store.content)?.title?.text(java.util.Locale.getDefault().language).orEmpty()
+                val mission = part.quest?.title?.text(java.util.Locale.getDefault().language).orEmpty()
                 Notifications.pairNudge(context, p.id, p.partnerName, mission, p.partnerDone(part.cycle))
             }
             store.dispatch { pairNudged(p.id, part.cycle) }

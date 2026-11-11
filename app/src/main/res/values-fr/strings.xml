@@ -973,4 +973,10 @@
     <string name="core_skin_flower_crown">Couronne de fleurs</string>
     <string name="core_skin_sunglasses">Lunettes de soleil</string>
     <string name="toast_core_skin">Nouvel accessoire pour ton Core : %1$s</string>
+    <string name="pair_mode">Mission</string>
+    <string name="pair_mode_fixed">Toujours la même</string>
+    <string name="pair_mode_random">Une nouvelle à chaque fois</string>
+    <string name="pair_mode_random_hint">Une mission différente chaque jour du binôme, tirée au sort, la même pour vous deux.</string>
+    <string name="pair_random_title">Mission surprise</string>
+    <string name="toast_pair_partner_left">%1$s a quitté le binôme : il attend que quelqu\'un le rejoigne</string>
 </resources>

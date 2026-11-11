@@ -91,6 +91,8 @@ data class PairSyncState(
 )
 
 object PairRules {
+    /** A pair's mission when it's a different one each cycle (see [pairDefFor]). */
+    const val RANDOM = "random"
     const val BONUS = 0.25
     const val CUT = 0.10
     const val BONUS_PER_DAY = 2
@@ -170,6 +172,20 @@ fun GameState.activePairs() = pairs.filter { !it.ended }
 
 fun pairQuestId(pairId: String, cycle: String) = "pair_${pairId}_$cycle"
 
+val PairQuest.isRandom get() = defId == PairRules.RANDOM
+
+/**
+ * The mission of [cycle]: the pair's own, or for a random pair one drawn from every built-in pair mission. Both
+ * phones draw the same one without talking: the pick only depends on the pair and the date.
+ */
+fun GameState.pairDefFor(p: PairQuest, cycle: String, content: Content): QuestDef? {
+    if (!p.isRandom) return defOf(p.defId, content)
+    val pool = content.quests.filter { PairRules.eligible(it) && !it.optional }.sortedBy { it.id }
+    if (pool.isEmpty()) return null
+    val pick = pool[Math.floorMod((p.id + cycle).hashCode(), pool.size)]
+    return defOf(pick.id, content) ?: pick
+}
+
 /** Pair parts still in play, as missions (see [GameState.allQuests]). */
 fun GameState.pairQuests(): List<Quest> = pairs.filter { !it.ended }.flatMap { p -> p.parts.filter { it.outcome == null }.mapNotNull { it.quest } }
 
@@ -198,7 +214,8 @@ fun Tx.pairInvite(id: String, code: String, expires: Long) = updatePair(id) { it
  * What one read of the cloud found. [partnerUid] null with [gone] false: nobody joined yet. [gone]: the pair no
  * longer exists, or the partner left; cycles still open settle as if the partner did nothing from then on.
  */
-fun Tx.pairRead(id: String, partnerUid: String?, partnerName: String?, marks: Map<String, PartnerMark>, gone: Boolean) {
+fun Tx.pairRead(id: String, partnerUid: String?, partnerName: String?, marks: Map<String, PartnerMark>, gone: Boolean, partnerLeft: Boolean = false) {
+    if (partnerLeft) return pairPartnerLeft(id)
     updatePair(id) { p ->
         // What the cloud says wins over a link: it carries the server's time.
         val merged = p.partner + marks
@@ -212,6 +229,28 @@ fun Tx.pairRead(id: String, partnerUid: String?, partnerName: String?, marks: Ma
         )
     }
     ensurePairs()
+}
+
+/**
+ * The partner left, but this phone is still in the pair: it waits for someone to join again (the same person or
+ * another) instead of ending. Cycles under way count x1 (nobody to blame), and today's undone part goes.
+ */
+fun Tx.pairPartnerLeft(id: String) {
+    val p = s.pairs.firstOrNull { it.id == id } ?: return
+    if (p.partnerUid == null) return
+    updatePair(id) { q ->
+        q.copy(
+            partnerUid = null, partnerName = "", invite = null, inviteExpires = 0, partner = emptyMap(), lastRead = ctx.now, streak = 0,
+            parts = q.parts.mapNotNull { part ->
+                when {
+                    part.outcome != null -> part
+                    part.doneAt != null -> part.copy(outcome = PairOutcome.UNKNOWN)
+                    else -> null
+                }
+            },
+        )
+    }
+    toast(ToastKind.PAIR_PARTNER_LEFT, p.partnerName)
 }
 
 /** The partner's link: a completion this phone may not be able to read from the cloud (quota, no network). */
@@ -268,7 +307,7 @@ internal fun Tx.completePairQuest(questId: String) {
     val p = s.pairOf(questId)?.takeIf { !it.ended && it.joined } ?: return
     val part = p.parts.first { it.quest?.id == questId }
     if (part.doneAt != null || ctx.now >= p.deadline(part.cycle)) return
-    val def = s.defOf(p.defId, content)
+    val def = s.defOf(part.quest?.defId ?: p.defId, content)
     val family = def?.drawGroup()
     val xp = gainXp(part.xp, family)
     val gold = gainGold(part.gold)
@@ -296,12 +335,12 @@ fun Tx.ensurePairs() {
         val cur = s.pairs.first { it.id == p.id }
         val cycle = cur.cycleAt(ctx.now)?.toString()
         if (!cur.ended && cur.joined && cycle != null && cur.parts.none { it.cycle == cycle }) {
-            val def = s.defOf(cur.defId, content) ?: return@forEach
+            val def = s.pairDefFor(cur, cycle, content) ?: return@forEach
             val q = buildQuest(def, s.player.level, QuestOrigin.PAIR, pairQuestId(cur.id, cycle), s.stepOf(def.id), ctx.today)
             updatePair(p.id) { it.copy(parts = it.parts + PairPart(cycle, q.target, q.xp, q.gold, quest = q)) }
         }
         // Parts from 2.0.20 had no mission of their own yet.
-        s.defOf(cur.defId, content)?.let { def ->
+        (if (cur.isRandom) null else s.defOf(cur.defId, content))?.let { def ->
             updatePair(p.id) { pq ->
                 pq.copy(parts = pq.parts.map { part ->
                     if (part.quest != null) part
