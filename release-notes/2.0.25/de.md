@@ -1,0 +1,1 @@
+- [new] Dein Core kann Accessoires tragen: Kürbishut, Winterschal, Partyhut, Blumenkranz und Sonnenbrille. Jedes bekommst du für immer, wenn du den Boss seiner Saison besiegst (Halloween, Weihnachten, Neujahr, Frühling, Sommer), und wählst es im Core-Blatt. Bereits besiegte Bosse geben ihres jetzt.

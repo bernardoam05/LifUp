@@ -1,0 +1,1 @@
+- [new] Ton Core peut porter des accessoires : chapeau citrouille, écharpe d'hiver, chapeau de fête, couronne de fleurs et lunettes de soleil. Chacun se gagne pour toujours en battant le boss de sa saison (Halloween, Noël, Nouvel An, printemps, été) et se choisit dans la fiche du Core. Les boss déjà battus donnent le leur dès maintenant.

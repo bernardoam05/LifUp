@@ -1,0 +1,1 @@
+- [new] Your Core can wear accessories: a pumpkin hat, a winter scarf, a party hat, a flower crown and sunglasses. Each one is won for good by beating its season's boss (Halloween, Christmas, New Year, spring, summer), and you pick it in the Core's sheet. Bosses you already beat give theirs now.

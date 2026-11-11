@@ -1,0 +1,1 @@
+- [new] Tu Core puede llevar accesorios: sombrero de calabaza, bufanda de invierno, gorro de fiesta, corona de flores y gafas de sol. Cada uno se gana para siempre al derrotar al jefe de su temporada (Halloween, Navidad, Año Nuevo, primavera, verano) y se elige en la hoja del Core. Los jefes que ya derrotaste dan el suyo ahora.

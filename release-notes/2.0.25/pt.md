@@ -1,0 +1,1 @@
+- [new] A tua Core pode usar acessórios: chapéu de abóbora, cachecol de inverno, chapéu de festa, coroa de flores e óculos de sol. Cada um ganha-se para sempre ao derrotar o boss da sua época (Halloween, Natal, Ano Novo, primavera, verão) e escolhe-se no ecrã da Core. Os bosses que já derrotaste dão já o deles.
