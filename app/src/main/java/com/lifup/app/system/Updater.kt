@@ -49,6 +49,7 @@ object Updater {
 
     /** Checks for a newer release and installs it. Without [force], debug builds skip it and a recent "up to date" is trusted. */
     suspend fun check(context: Context, force: Boolean = false) {
+        if (!BuildConfig.SELF_UPDATE) return // the store updates it
         if (!force && BuildConfig.DEBUG) return
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         if (!force && System.currentTimeMillis() - prefs.getLong("upToDateAt", 0) < CHECK_EVERY_MS) return

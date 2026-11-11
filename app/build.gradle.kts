@@ -27,6 +27,13 @@ android {
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
+        // Google Play: the upload key, from the environment (a CI secret or a local file); Play re-signs with its own.
+        create("upload") {
+            System.getenv("UPLOAD_KEYSTORE")?.let { storeFile = file(it) }
+            storePassword = System.getenv("UPLOAD_KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("UPLOAD_KEY_ALIAS")
+            keyPassword = System.getenv("UPLOAD_KEY_PASSWORD")
+        }
     }
 
     buildTypes {
@@ -34,7 +41,23 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+
+    // Where the app is distributed. github: APKs on GitHub releases that update themselves (signed with the key
+    // the installed base already has). play: the Play Store, which updates it; no self-updater, no install permission.
+    flavorDimensions += "store"
+    productFlavors {
+        create("github") {
+            dimension = "store"
+            isDefault = true
+            buildConfigField("boolean", "SELF_UPDATE", "true")
             signingConfig = signingConfigs.getByName("debug")
+        }
+        create("play") {
+            dimension = "store"
+            buildConfigField("boolean", "SELF_UPDATE", "false")
+            signingConfig = signingConfigs.getByName(if (System.getenv("UPLOAD_KEYSTORE") != null) "upload" else "debug")
         }
     }
 
