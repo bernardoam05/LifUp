@@ -42,7 +42,7 @@ import com.lifup.app.ui.act
 import com.lifup.app.ui.components.CoreAvatar
 import com.lifup.app.ui.theme.Lif
 
-val CORE_STAGE_NAMES = listOf(R.string.core_stage_1, R.string.core_stage_2, R.string.core_stage_3, R.string.core_stage_4, R.string.core_stage_5)
+val CORE_STAGE_NAMES = listOf(R.string.core_stage_1, R.string.core_stage_2, R.string.core_stage_3, R.string.core_stage_4, R.string.core_stage_5, R.string.core_stage_6)
 
 /** Picks the Core's form among the unlocked ones (or "automatic": always the latest); locked ones show the rank they need. */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -89,7 +89,7 @@ fun CoreSheet(s: GameState, onDismiss: () -> Unit) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Box(contentAlignment = Alignment.Center) {
-                            CoreAvatar(stage, CoreMood.NEUTRAL, 72.dp, locked = !open, animate = selected || (auto && stage == shown))
+                            CoreAvatar(stage, CoreMood.NEUTRAL, 72.dp, locked = !open, animate = selected || (auto && stage == shown), bust = false)
                             if (!open) Icon(Icons.Rounded.Lock, null, tint = c.dim, modifier = Modifier.size(18.dp))
                         }
                         Text(stringResource(CORE_STAGE_NAMES[stage - 1]), style = MaterialTheme.typography.labelLarge, color = if (open) c.text else c.dim, textAlign = TextAlign.Center)

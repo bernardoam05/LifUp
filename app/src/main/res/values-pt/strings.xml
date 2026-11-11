@@ -879,6 +879,7 @@
     <string name="core_stage_2">Foco</string>
     <string name="core_stage_3">Disciplina</string>
     <string name="core_stage_4">Maestria</string>
+    <string name="core_stage_6">Ascensão</string>
     <string name="core_stage_5">Lenda</string>
     <string name="perm_autostart_row">Arranque automático</string>
     <string name="perm_autostart_why">Sem isto o sistema fecha a app, e lembretes, portais e o fecho do dia só chegam quando desbloqueias o telemóvel. Na Oppo/Realme: Info da app → Bateria → permitir início automático e atividade em segundo plano.</string>

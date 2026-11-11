@@ -12,7 +12,7 @@ import com.lifup.app.domain.GameState
  * focus session or a run (a launcher that closes the app would cut them), and only when the form changed.
  */
 object IconSwitcher {
-    private val ALIASES = listOf("MainActivity", "CoreIcon2", "CoreIcon3", "CoreIcon4", "CoreIcon5")
+    private val ALIASES = listOf("MainActivity", "CoreIcon2", "CoreIcon3", "CoreIcon4", "CoreIcon5", "CoreIcon6")
 
     fun wanted(s: GameState): Int = if (s.settings.fixedIcon) 1 else Core.stage(s)
 

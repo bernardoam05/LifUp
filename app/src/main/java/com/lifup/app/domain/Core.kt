@@ -5,20 +5,21 @@ import java.time.LocalDate
 /** How the Core looks right now; the UI picks the sprite (SLEEPING is the relaxed face with drifting Zs). */
 enum class CoreMood { NEUTRAL, CONFIDENT, HAPPY, FOCUSED, RELAXED, EXCITED, TIRED, FRUSTRATED, SLEEPING }
 
-/** The Core, LifUp's companion: five forms unlocked by hunter rank and a face that follows the day. */
+/** The Core, LifUp's companion: six forms unlocked by hunter rank and a face that follows the day. */
 object Core {
-    const val STAGES = 5
+    const val STAGES = 6
     /** From this hour (and until [WAKE_HOUR]) an idle Core sleeps. */
     const val SLEEP_HOUR = 23
     const val WAKE_HOUR = 6
 
-    /** The most evolved form a rank has unlocked: E and D the first, then one per rank, S and SS the last. */
+    /** The most evolved form a rank has unlocked: E and D the first, then one per rank up to SS. */
     fun unlockedStage(rank: HunterRank): Int = when (rank) {
         HunterRank.E, HunterRank.D -> 1
         HunterRank.C -> 2
         HunterRank.B -> 3
         HunterRank.A -> 4
-        HunterRank.S, HunterRank.N -> 5
+        HunterRank.S -> 5
+        HunterRank.N -> 6
     }
 
     /** The rank that unlocks [stage]. */

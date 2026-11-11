@@ -897,6 +897,7 @@
     <string name="core_stage_2">Fokus</string>
     <string name="core_stage_3">Disziplin</string>
     <string name="core_stage_4">Meisterschaft</string>
+    <string name="core_stage_6">Aufstieg</string>
     <string name="core_stage_5">Legende</string>
     <string name="perm_autostart_row">Autostart</string>
     <string name="perm_autostart_why">Ohne das schließt das System die App, und Erinnerungen, Portale und der Tagesabschluss kommen erst beim Entsperren. Bei Oppo/Realme: App-Info → Akku → automatischen Start und Hintergrundaktivität erlauben.</string>
