@@ -507,6 +507,8 @@ data class GameState(
     val coreSkins: Set<CoreSkin> = emptySet(),
     /** LifUp+ bought (kept in sync with Google Play; see system/PlusBilling). */
     val plus: Boolean = false,
+    /** LifUp+: up to [PlusRules.SQUAD_SLOTS] saved echo squads (empty list = empty slot). */
+    val savedSquads: List<List<String>> = emptyList(),
 ) {
     fun owned(id: String) = shadows.firstOrNull { it.id == id }
     fun count(key: StatKey) = counters[key] ?: 0L

@@ -10,6 +10,34 @@ object PlusProducts {
     val TIPS = listOf("tip_2", "tip_5", "tip_10")
 }
 
+object PlusRules {
+    const val SQUAD_SLOTS = 3
+}
+
+/** LifUp+: keeps the current squad in [slot]. */
+fun Tx.saveSquad(slot: Int) {
+    if (!s.plus || slot !in 0 until PlusRules.SQUAD_SLOTS || s.squad.isEmpty()) return
+    val slots = (s.savedSquads + List(PlusRules.SQUAD_SLOTS) { emptyList<String>() }).take(PlusRules.SQUAD_SLOTS).toMutableList()
+    slots[slot] = s.squad
+    s = s.copy(savedSquads = slots)
+}
+
+/**
+ * LifUp+: puts the squad in [slot] on. The usual rule still holds: an echo that joined today stays until tomorrow,
+ * and those coming in now are locked until tomorrow too, so a saved squad can't be swapped in for one action.
+ */
+fun Tx.loadSquad(slot: Int) {
+    val saved = s.savedSquads.getOrNull(slot)?.filter { s.owned(it) != null } ?: return
+    if (!s.plus || saved.isEmpty()) return
+    val stay = s.squad.filter { s.squadLocked(it) }
+    val next = (stay + saved.filterNot { it in stay }).take(Rules.SQUAD_SIZE)
+    s = s.copy(
+        squad = next,
+        // Those already in keep their date (or none); only newcomers are locked until tomorrow.
+        squadSince = next.mapNotNull { id -> if (id in s.squad) s.squadSince[id]?.let { id to it } else id to s.day }.toMap(),
+    )
+}
+
 /** What Google Play says the player owns. */
 fun Tx.setPlus(owned: Boolean) {
     if (s.plus != owned) s = s.copy(plus = owned)

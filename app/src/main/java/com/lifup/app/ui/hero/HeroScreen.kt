@@ -1,5 +1,9 @@
 package com.lifup.app.ui.hero
 
+import com.lifup.app.ui.act
+import com.lifup.app.domain.loadSquad
+import com.lifup.app.domain.saveSquad
+import androidx.compose.foundation.combinedClickable
 import com.lifup.app.domain.defOf
 import com.lifup.app.ui.fmtCompact
 import com.lifup.app.ui.fmtNum
@@ -211,7 +215,41 @@ internal fun Squad(s: GameState, onOpen: (String) -> Unit) {
             }
         }
     }
+    SavedSquads(s)
     if (s.squad.isNotEmpty()) SquadEffects(s, passives.luck)
+}
+
+/** LifUp+: three saved squads; a tap puts one on (or saves into an empty slot), a long press saves over it. */
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@Composable
+private fun SavedSquads(s: GameState) {
+    val c = Lif.colors
+    Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        repeat(com.lifup.app.domain.PlusRules.SQUAD_SLOTS) { i ->
+            val saved = s.savedSquads.getOrNull(i).orEmpty()
+            val current = saved.isNotEmpty() && saved.toSet() == s.squad.toSet()
+            Box(
+                Modifier.weight(1f).height(40.dp).clip(RoundedCornerShape(10.dp))
+                    .background(if (current) c.accent.copy(alpha = 0.15f) else c.panel)
+                    .border(1.dp, if (current) c.accent else c.border, RoundedCornerShape(10.dp))
+                    .combinedClickable(
+                        enabled = s.plus,
+                        onClick = { act { if (saved.isEmpty()) saveSquad(i) else loadSquad(i) } },
+                        onLongClick = { act { saveSquad(i) } },
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    if (saved.isEmpty()) stringResource(R.string.squad_slot_empty, i + 1) else stringResource(R.string.squad_slot, i + 1),
+                    style = MaterialTheme.typography.labelLarge, color = if (!s.plus) c.dim else if (current) c.accent else c.text,
+                )
+            }
+        }
+    }
+    Text(
+        stringResource(if (s.plus) R.string.squad_saved_hint else R.string.squad_saved_plus),
+        style = MaterialTheme.typography.labelSmall, color = c.dim, modifier = Modifier.padding(top = 4.dp),
+    )
 }
 
 /**

@@ -996,4 +996,10 @@
     <string name="plus_stats_export_hint">Guarda o teu histórico em ficheiros CSV para abrires numa folha de cálculo.</string>
     <string name="plus_export_days">Dias</string>
     <string name="plus_export_missions">Missões</string>
+    <string name="squad_slot">Equipa %1$d</string>
+    <string name="squad_slot_empty">Guardar %1$d</string>
+    <string name="squad_saved_hint">Toca para usar uma equipa; toque longo para guardar a atual por cima. Os ecos que entram ficam até amanhã.</string>
+    <string name="squad_saved_plus">Guarda até 3 equipas e troca num toque com o LifUp+.</string>
+    <string name="plus_perk_squads">Equipas de ecos guardadas</string>
+    <string name="plus_perk_squads_text">Guarda até 3 equipas e troca num toque.</string>
 </resources>

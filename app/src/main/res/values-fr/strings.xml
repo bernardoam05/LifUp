@@ -996,4 +996,10 @@
     <string name="plus_stats_export_hint">Enregistre ton historique en fichiers CSV à ouvrir dans un tableur.</string>
     <string name="plus_export_days">Jours</string>
     <string name="plus_export_missions">Missions</string>
+    <string name="squad_slot">Équipe %1$d</string>
+    <string name="squad_slot_empty">Enregistrer %1$d</string>
+    <string name="squad_saved_hint">Touche pour mettre une équipe ; appui long pour y enregistrer l\'actuelle. Les échos qui entrent restent jusqu\'à demain.</string>
+    <string name="squad_saved_plus">Enregistre jusqu\'à 3 équipes et change d\'un toucher avec LifUp+.</string>
+    <string name="plus_perk_squads">Équipes d\'échos enregistrées</string>
+    <string name="plus_perk_squads_text">Garde jusqu\'à 3 équipes et change d\'un toucher.</string>
 </resources>

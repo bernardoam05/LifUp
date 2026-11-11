@@ -1015,4 +1015,10 @@
     <string name="plus_stats_export_hint">Save your history as CSV files to open in a spreadsheet.</string>
     <string name="plus_export_days">Days</string>
     <string name="plus_export_missions">Missions</string>
+    <string name="squad_slot">Squad %1$d</string>
+    <string name="squad_slot_empty">Save %1$d</string>
+    <string name="squad_saved_hint">Tap to put a squad on; long-press to save the current one over it. Echoes that join stay until tomorrow.</string>
+    <string name="squad_saved_plus">Save up to 3 squads and switch with one tap with LifUp+.</string>
+    <string name="plus_perk_squads">Saved echo squads</string>
+    <string name="plus_perk_squads_text">Keep up to 3 squads and switch with one tap.</string>
 </resources>
