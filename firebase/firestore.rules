@@ -54,8 +54,8 @@ service cloud.firestore {
       allow list: if false;
 
       allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['createdBy', 'members', 'quest', 'recurrence', 'tz', 'start', 'expireAt'])
-        && request.resource.data.keys().hasAll(['createdBy', 'members', 'quest', 'recurrence', 'tz', 'start', 'expireAt'])
+        && request.resource.data.keys().hasOnly(['createdBy', 'members', 'quest', 'recurrence', 'tz', 'start', 'secret', 'expireAt'])
+        && request.resource.data.keys().hasAll(['createdBy', 'members', 'quest', 'recurrence', 'tz', 'start', 'secret', 'expireAt'])
         && request.resource.data.createdBy == me()
         && newMembers() == [me()]
         && shortText(request.resource.data.quest, 64)
@@ -63,6 +63,8 @@ service cloud.firestore {
         && request.resource.data.recurrence.kind in ['once', 'daily', 'weekly', 'every']
         && shortText(request.resource.data.tz, 64)
         && cycleKey(request.resource.data.start)
+        && request.resource.data.secret is string
+        && request.resource.data.secret.matches('^[A-Za-z0-9_-]{43}$')
         && expiresSoon(request.resource.data);
 
       // Joining: alone in the pair, with a live invite to it, adding only yourself.

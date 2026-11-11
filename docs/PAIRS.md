@@ -4,11 +4,11 @@ Duas pessoas fazem a mesma missão, cada uma a sua parte. A recompensa extra só
 
 ## 1. Regras do jogo
 
-### A parte de cada um
+### 1.1 A parte de cada um
 
 Cada pessoa faz o que a missão lhe pediria se a fizesse sozinha, no passo em que está nessa missão (`QuestDef.targetAt(step)`). Quem está mais avançado faz mais: 20 + 40 flexões = 60 no total. Não há uma divisão a combinar e nenhum dos dois precisa de saber o nível do outro para calcular a sua parte. A parte do colega aparece só para mostrar o total.
 
-### Recompensas
+### 1.2 Recompensas
 
 | Resultado | Quem cumpriu | Quem falhou |
 |---|---|---|
@@ -22,14 +22,14 @@ Cada pessoa faz o que a missão lhe pediria se a fizesse sozinha, no passo em qu
 - No máximo **3 missões de par ativas** por pessoa.
 - **A parte de par não entra no fecho do dia local.** O fecho do dia não lhe dá recompensa nem penalização: tudo é tratado no momento em que concluis e no acerto. Assim, quem está noutro fuso horário não fica com a missão partida entre dois dias.
 
-### Prazo e recorrência
+### 1.3 Prazo e recorrência
 
 - **O prazo de cada ciclo é a meia-noite de quem criou o par**, no fuso guardado em `tz`. Para o colega é um instante absoluto, que pode não ser a meia-noite dele.
 - **Recorrência:** `once` (uma vez), `daily` (todos os dias), `weekly` (dias da semana escolhidos) e `every` (de N em N dias, a contar de `start`). A aleatória não existe, porque cada telemóvel sorteia de forma diferente.
 - **O ciclo é identificado pela data de quem criou** (`2026-11-11`). Os dois telemóveis calculam o ciclo e o prazo da mesma forma, a partir de `start`, `recurrence` e `tz`, sem escreverem nada no Firestore para isso.
 - **Sequência do par:** quantos ciclos seguidos os dois cumpriram. É só para mostrar e não dá recompensa.
 
-### Acerto, sincronização atrasada e quota esgotada
+### 1.4 Acerto, sincronização atrasada e quota esgotada
 
 O acerto é feito em cada telemóvel. A regra é: **as boas notícias chegam logo, as más só depois de confirmadas.**
 
@@ -38,13 +38,25 @@ O acerto é feito em cada telemóvel. A regra é: **as boas notícias chegam log
    - Se o colega continua a não aparecer, o resultado é "colega falhou" (−10%).
    - Se aparece com `at > prazo`, o resultado é **desconhecido (×1)**. Isto cobre o caso de alguém que concluiu a tempo mas não conseguiu enviar porque estava sem rede ou com a quota esgotada: a escrita só chegou depois do prazo, com a hora do servidor dessa altura.
 3. **Se não for possível ler** (falta de rede, ou a quota esgotada com `RESOURCE_EXHAUSTED`), o telemóvel volta a tentar até **36 horas depois do prazo**. Passado esse tempo, o resultado é **desconhecido (×1)**, e conta 1 vez para esse dia.
-4. **Verificar agora:** o cartão do par tem um botão que faz uma leitura imediata, no máximo uma por minuto. Serve para quem não quer esperar pelo worker.
+4. **Aviso por link (em vez de um botão):** não há nenhum botão que leia o Firestore à mão, para ninguém o carregar sem parar. Quem conclui a sua parte pode tocar em "Avisar o par", que abre a folha de partilha do Android com um link (ver 1.5). Abrir esse link é a única forma de forçar uma verificação, e conta como prova se o servidor não responder.
 
 **Quando a quota esgota:**
 - Ao receber `RESOURCE_EXHAUSTED`, a app guarda `quotaBlockedUntil` = próximo reset + 10 minutos.
-- Até lá, não lê nem escreve nada que não seja essencial: sem aviso das 20h, sem atualização com a app aberta e com o botão "Verificar agora" desativado ("Serviço cheio hoje; volta a funcionar por volta das 8h").
+- Até lá, não lê nem escreve nada que não seja essencial: sem aviso das 20h e sem atualização com a app aberta. O cartão do par mostra "Serviço cheio hoje; volta a funcionar por volta das 8h. Podes avisar o teu par por link."
 - As conclusões ficam numa fila local (`pairOutbox` no `GameStore`) e são enviadas depois do reset. Não confiamos só na fila do SDK, porque o SDK pode rejeitar uma escrita em vez de a guardar.
 - O progresso local nunca se perde. O pior que pode acontecer é o resultado sair ×1.
+
+### 1.5 O link de aviso
+
+- **Formato:** `https://bernardoam05.github.io/LifUp/p/#<dados>`. É uma página estática no GitHub Pages, ligada à app por App Links (`assetlinks.json` com os dois SHA-256). Se a app não estiver instalada, a página manda para a loja.
+- **Tudo vai no fragmento (`#`)**, que nunca chega ao servidor. Os dados são o `pairId`, o ciclo, o uid de quem concluiu, a quantidade, a hora local da conclusão e uma assinatura HMAC-SHA256 com o `secret` do par. O `secret` são 32 bytes aleatórios guardados no documento do par, que só os membros leem.
+- **Ao abrir o link,** a app confirma a assinatura e guarda localmente "o colega concluiu o ciclo X às HH:MM". Depois faz **uma** leitura do Firestore, se a quota não estiver esgotada, para atualizar o resto.
+- **No acerto,** conta primeiro a entrada no servidor. Se ela não existir, conta a do link, que vale como dentro do prazo se a hora indicada for anterior ao prazo. Com isto, o caso da quota esgotada deixa de dar ×1 sempre que o colega mandou o link.
+- **Contra o spam:**
+  - só há um link por ciclo e por pessoa, e só depois de concluíres;
+  - abrir o mesmo link outra vez, ou um link de um ciclo já acertado, não faz nenhuma leitura;
+  - no máximo 3 leituras por dia são feitas a partir de links.
+- A hora no link vem do relógio do telemóvel e não é provada. A app já confia em quem diz que fez a missão, por isso não fica menos segura.
 
 Quem falhou nunca depende do servidor para saber o seu próprio resultado. O telemóvel sabe se concluiu antes do prazo, pelo relógio local, e aplica a penalização normal se não concluiu.
 
@@ -63,7 +75,7 @@ A alternativa era o ntfy. Só fazia sentido com verificações frequentes, porqu
 ```
 invites/{code}                 { pairId, by, expireAt }                       código de 8 letras, válido 24 h
 pairs/{pairId}                 { createdBy, members[≤2], quest, recurrence,
-                                 tz, start, invite?, expireAt }
+                                 tz, start, secret, invite?, expireAt }
 pairs/{pairId}/parts/{uid}     { name, level, last, done: { "<ciclo>": { at, amount } }, expireAt }
 ```
 
@@ -71,6 +83,7 @@ pairs/{pairId}/parts/{uid}     { name, level, last, done: { "<ciclo>": { at, amo
 - **`quest`:** o id da missão no catálogo. O texto nas 5 línguas vem do catálogo local de cada telemóvel, por isso uma missão personalizada não pode ser usada em par na primeira versão.
 - **`done`:** um mapa por ciclo. Só se acrescenta o ciclo indicado em `last`, com `at` igual à hora do servidor. Uma entrada nunca é reescrita e as antigas podem ser apagadas. Guardam-se as últimas 7, num máximo de 14.
 - **`expireAt`:** daqui a 30 dias (as regras aceitam no máximo 40), renovado sempre que há uma escrita. Uma política de TTL apaga o que ficar abandonado, por exemplo de uma app desinstalada.
+- **`secret`:** a chave que assina os links de aviso (1.5). É gerada por quem cria o par e nunca muda.
 - **`name`:** o nome do herói (`Player.name`), com 24 caracteres no máximo. É o único dado pessoal.
 
 ### O que as regras garantem
@@ -96,7 +109,7 @@ Os testes estão em `firebase/test/rules.test.js`.
 | Acerto (1 ou 2 leituras) | — | 2 a 6 |
 | Sair ou terminar | 1 a 3 | 1 a 2 |
 
-A partilha do código é feita por QR no ecrã ou pela folha de partilha do Android. Os links de sincronização continuam fora: o código só serve para entrar no par.
+A partilha do código é feita por QR no ecrã ou pela folha de partilha do Android. A sincronização normal não depende de links: o código só serve para entrar no par, e o link de aviso (1.5) é opcional.
 
 ### Orçamento diário (plano Spark: 50 000 leituras, 20 000 escritas, 20 000 apagamentos)
 
@@ -146,7 +159,7 @@ Num dia normal, por par recorrente, há ~2 escritas (as duas conclusões) e ~8 a
 2. **Authentication → Sign-in method → Anónimo → Ativar.**
    - **Não faças o upgrade para o Identity Platform.** Com ele, o plano Spark limita a autenticação a 3 000 utilizadores ativos por dia.
    - Em Authentication → Settings, confirma que o upgrade não está ativo. Se estiver, avisa-me.
-   - Ativa também a limpeza automática de contas anónimas com mais de 30 dias, se aparecer a opção.
+   - **Não ativas a limpeza automática de contas anónimas.** Ela apaga as contas 30 dias depois de criadas, mesmo que estejam a ser usadas, e um par com mais de um mês deixava de funcionar. Sem o Identity Platform, as contas anónimas não contam para nenhum limite. O que fica abandonado é apagado pelo TTL dos documentos (passo 5).
 3. **Firestore Database → Criar base de dados:**
    - edição **Standard**, base de dados **(default)** (só uma é gratuita);
    - localização **`eur3`** (multi-região na UE) ou `europe-west1`; esta escolha não pode ser mudada depois;

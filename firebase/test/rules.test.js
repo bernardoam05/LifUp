@@ -13,7 +13,7 @@ const db = (uid) => (uid ? env.authenticatedContext(uid) : env.unauthenticatedCo
 
 const pair = (over = {}) => ({
   createdBy: 'ana', members: ['ana'], quest: 'pushups',
-  recurrence: { kind: 'daily' }, tz: 'Europe/Lisbon', start: '2026-11-11', expireAt: days(30), ...over,
+  recurrence: { kind: 'daily' }, tz: 'Europe/Lisbon', start: '2026-11-11', secret: 'k'.repeat(43), expireAt: days(30), ...over,
 });
 const part = (over = {}) => ({ name: 'Ana', level: 12, done: {}, expireAt: days(30), ...over });
 
@@ -48,6 +48,7 @@ describe('pairs', () => {
     await assertFails(setDoc(doc(db('ana'), 'pairs/p3'), pair({ createdBy: 'rui', members: ['rui'] })));
     await assertFails(setDoc(doc(db('ana'), 'pairs/p4'), pair({ extra: 1 })));
     await assertFails(setDoc(doc(db('ana'), 'pairs/p5'), pair({ expireAt: days(400) })));
+    await assertFails(setDoc(doc(db('ana'), 'pairs/p6'), pair({ secret: 'short' })));
   });
 
   it('never lists pairs or invites', async () => {
@@ -95,6 +96,7 @@ describe('pairs', () => {
     await seed({ joined: true });
     await assertSucceeds(updateDoc(doc(db('rui'), 'pairs/p1'), { expireAt: days(30) }));
     await assertFails(updateDoc(doc(db('rui'), 'pairs/p1'), { quest: 'run' }));
+    await assertFails(updateDoc(doc(db('ana'), 'pairs/p1'), { secret: 'x'.repeat(43) }));
     await assertFails(updateDoc(doc(db('rui'), 'pairs/p1'), { members: ['rui'] }));           // removing Ana
     await assertSucceeds(updateDoc(doc(db('rui'), 'pairs/p1'), { members: ['ana'] }));         // leaving
     await assertFails(deleteDoc(doc(db('eva'), 'pairs/p1')));
