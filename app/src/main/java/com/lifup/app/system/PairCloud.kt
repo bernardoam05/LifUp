@@ -189,6 +189,7 @@ object PairCloud {
             .update(FieldPath.of("done", cycle), mapOf("at" to FieldValue.serverTimestamp(), "amount" to amount.coerceIn(0, 100_000)), *more.toTypedArray())
             .await()
         if (bump) runCatching { ref.update("expireAt", expiry()).await() }
+        Unit
     }
 
     /**
@@ -210,5 +211,6 @@ object PairCloud {
             runCatching { ref.collection("parts").document(p.myUid).delete().await() }
             ref.update("members", members - p.myUid).await()
         }
+        Unit
     }
 }
