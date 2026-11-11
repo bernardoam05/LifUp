@@ -60,6 +60,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -248,6 +249,9 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
             onConfirm = { act { removeSideQuest(id) }; confirmDelete = null }, onDismiss = { confirmDelete = null }, danger = true,
         )
     }
+    // A partner's join link: "join with a code", already filled in.
+    val joinCode by com.lifup.app.system.PairService.pendingJoin.collectAsState()
+    joinCode?.let { code -> NewPairSheet(s, code) { com.lifup.app.system.PairService.pendingJoin.value = null } }
     selected?.let { id ->
         if (s.allQuests.any { it.id == id }) MissionSheet(s, id, onEdit = { defId -> selected = null; openDef(defId) }) { selected = null }
         else androidx.compose.runtime.LaunchedEffect(id) { selected = null }

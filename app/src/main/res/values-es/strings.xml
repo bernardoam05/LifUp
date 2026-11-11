@@ -922,8 +922,10 @@
     <string name="pair_waiting_join">Esperando a que tu pareja se una. Envíale el código:</string>
     <string name="pair_code_expired">El código ha caducado.</string>
     <string name="pair_new_code">Nuevo código</string>
+    <string name="pair_copy_code">Copiar código</string>
+    <string name="pair_code_copied">Código copiado</string>
     <string name="pair_share_invite">Compartir invitación</string>
-    <string name="pair_invite_share">¡Haz conmigo la misión \"%1$s\" en Questborn! En la app: Hoy → Misiones en pareja → Misión en pareja → Unirse con código: %2$s</string>
+    <string name="pair_invite_share">¡Haz conmigo la misión \"%1$s\" en Questborn! Toca para unirte: %3$s (o escribe el código %2$s en Hoy → Misiones en pareja → Unirse con código)</string>
     <string name="pair_with">con %1$s</string>
     <string name="pair_your_part">Tu parte: %1$s</string>
     <string name="pair_partner_done">%1$s ya hizo su parte</string>

@@ -36,13 +36,22 @@
 <script>
   const text = {
     en: ['Your pair finished their part', 'Open this link on the phone where Questborn is installed to count it.', 'Open Questborn', 'Get Questborn'],
-    pt: ['O teu par já fez a parte dele', 'Abre este link no telemóvel onde tens o Questborn para contar.', 'Abrir o Questborn', 'Instalar o Questborn'],
+    pt: ['O teu par já fez a sua parte', 'Abre este link no telemóvel onde tens o Questborn para contar.', 'Abrir o Questborn', 'Instalar o Questborn'],
     es: ['Tu pareja ya hizo su parte', 'Abre este enlace en el móvil donde tienes Questborn para que cuente.', 'Abrir Questborn', 'Instalar Questborn'],
     fr: ['Ton binôme a fini sa part', 'Ouvre ce lien sur le téléphone où Questborn est installé pour qu’il compte.', 'Ouvrir Questborn', 'Installer Questborn'],
-    de: ['Dein Partner hat seinen Teil erledigt', 'Öffne diesen Link auf dem Handy mit Questborn, damit er zählt.', 'Questborn öffnen', 'Questborn holen'],
+    de: ['Dein Partner ist mit dem eigenen Teil fertig', 'Öffne diesen Link auf dem Handy mit Questborn, damit er zählt.', 'Questborn öffnen', 'Questborn holen'],
+  };
+  // Join links (#j-CODE) invite someone into a pair instead.
+  const invite = {
+    en: ['You\'re invited to a pair mission', 'Open this link on your phone with Questborn installed to join.', 'Open Questborn', 'Get Questborn'],
+    pt: ['Tens um convite para uma missão em par', 'Abre este link no telemóvel onde tens o Questborn para entrares.', 'Abrir o Questborn', 'Instalar o Questborn'],
+    es: ['Te han invitado a una misión en pareja', 'Abre este enlace en el móvil donde tienes Questborn para unirte.', 'Abrir Questborn', 'Instalar Questborn'],
+    fr: ['Invitation à une mission en binôme', 'Ouvre ce lien sur le téléphone où Questborn est installé pour rejoindre.', 'Ouvrir Questborn', 'Installer Questborn'],
+    de: ['Du bist zu einer Partnermission eingeladen', 'Öffne diesen Link auf dem Handy mit Questborn, um beizutreten.', 'Questborn öffnen', 'Questborn holen'],
   };
   const lang = (navigator.language || 'en').slice(0, 2);
-  const [t, d, o, g] = text[lang] || text.en;
+  const table = location.hash.startsWith('#j-') ? invite : text;
+  const [t, d, o, g] = table[lang] || table.en;
   document.documentElement.lang = text[lang] ? lang : 'en';
   document.getElementById('t').textContent = t;
   document.getElementById('d').textContent = d;

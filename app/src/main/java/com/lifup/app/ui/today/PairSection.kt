@@ -21,6 +21,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Groups
 import androidx.compose.material.icons.rounded.HourglassTop
 import androidx.compose.material.icons.rounded.LocalFireDepartment
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.lifup.app.R
 import com.lifup.app.domain.GameState
+import com.lifup.app.domain.PairLink
 import com.lifup.app.domain.PairQuest
 import com.lifup.app.domain.PairRecurrence
 import com.lifup.app.domain.PairRepeat
@@ -103,6 +105,11 @@ fun PairSection(s: GameState, now: Long) {
     if (adding) NewPairSheet(s) { adding = false }
 }
 
+private fun copy(context: Context, text: String) {
+    context.getSystemService(android.content.ClipboardManager::class.java)
+        ?.setPrimaryClip(android.content.ClipData.newPlainText("Questborn", text))
+}
+
 private fun share(context: Context, text: String) {
     val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
     context.startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
@@ -147,9 +154,19 @@ private fun PairCard(s: GameState, pair: PairQuest, now: Long) {
             Text(stringResource(R.string.pair_waiting_join), style = MaterialTheme.typography.bodyMedium, color = p.muted)
             val code = pair.invite
             if (code != null && pair.inviteExpires > now) {
-                Text(code.chunked(4).joinToString(" "), style = MaterialTheme.typography.headlineSmall, fontFamily = FontFamily.Monospace, color = p.accent, modifier = Modifier.padding(vertical = 6.dp))
-                val message = stringResource(R.string.pair_invite_share, title, code)
+                var copied by remember(code) { mutableStateOf(false) }
+                // Tapping the code copies it too.
+                Text(
+                    code.chunked(4).joinToString(" "), style = MaterialTheme.typography.headlineSmall, fontFamily = FontFamily.Monospace, color = p.accent,
+                    modifier = Modifier.clickable { copy(context, code); copied = true }.padding(vertical = 6.dp),
+                )
+                val message = stringResource(R.string.pair_invite_share, title, code, PairLink.joinLink(code))
                 PrimaryButton(stringResource(R.string.pair_share_invite), onClick = { share(context, message) }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Share)
+                GhostButton(
+                    stringResource(if (copied) R.string.pair_code_copied else R.string.pair_copy_code),
+                    onClick = { copy(context, code); copied = true },
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp), icon = Icons.Rounded.ContentCopy, color = p.accent,
+                )
             } else if (pair.creator) {
                 Text(stringResource(R.string.pair_code_expired), style = MaterialTheme.typography.bodySmall, color = p.dim)
                 GhostButton(stringResource(R.string.pair_new_code), onClick = {
@@ -211,18 +228,19 @@ private fun failureText(f: PairService.Failure) = when (f) {
     PairService.Failure.LIMIT -> R.string.pair_err_limit
 }
 
+/** Create a pair, or join one; [initialCode] (from a join link) opens straight on joining, the code filled in. */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun NewPairSheet(s: GameState, onDismiss: () -> Unit) {
+fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Unit) {
     val p = Lif.colors
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var joining by rememberSaveable { mutableStateOf(false) }
+    var joining by rememberSaveable { mutableStateOf(initialCode != null) }
     var defId by rememberSaveable { mutableStateOf<String?>(null) }
     var kind by rememberSaveable { mutableStateOf(PairRepeat.DAILY) }
     var days by rememberSaveable { mutableStateOf(listOf(1, 3, 5)) }
     var every by rememberSaveable { mutableStateOf(2) }
-    var code by rememberSaveable { mutableStateOf("") }
+    var code by rememberSaveable { mutableStateOf(initialCode.orEmpty()) }
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<PairService.Failure?>(null) }
     val language = lang()
@@ -238,7 +256,7 @@ private fun NewPairSheet(s: GameState, onDismiss: () -> Unit) {
             }
             if (joining) {
                 OutlinedTextField(
-                    value = code, onValueChange = { code = it.uppercase().filter { c -> c.isLetterOrDigit() }.take(8) }, singleLine = true,
+                    value = code, onValueChange = { code = PairLink.extractCode(it) }, singleLine = true,
                     label = { Text(stringResource(R.string.pair_code_hint)) },
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
                     textStyle = MaterialTheme.typography.titleLarge.copy(fontFamily = FontFamily.Monospace),

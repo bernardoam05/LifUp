@@ -923,8 +923,10 @@
     <string name="pair_waiting_join">Waiting for your partner to join. Send them the code:</string>
     <string name="pair_code_expired">The code expired.</string>
     <string name="pair_new_code">New code</string>
+    <string name="pair_copy_code">Copy code</string>
+    <string name="pair_code_copied">Code copied</string>
     <string name="pair_share_invite">Share invite</string>
-    <string name="pair_invite_share">Do the mission \"%1$s\" with me in Questborn! In the app: Today → Pair missions → Pair mission → Join with a code: %2$s</string>
+    <string name="pair_invite_share">Do the mission \"%1$s\" with me in Questborn! Tap to join: %3$s (or enter the code %2$s in Today → Pair missions → Join with a code)</string>
     <string name="pair_with">with %1$s</string>
     <string name="pair_your_part">Your part: %1$s</string>
     <string name="pair_partner_done">%1$s did their part</string>

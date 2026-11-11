@@ -39,8 +39,12 @@ class AppActivity : ComponentActivity() {
         val uri = intent?.data ?: return null
         if (uri.scheme == "https" && uri.host == PairLink.HOST) {
             PairLink.dataOf(uri.encodedFragment, uri.getQueryParameter("d"))?.let { data ->
-                val app = applicationContext
-                LifUpApp.store.scope.launch { PairService.openLink(app, data) }
+                val join = PairLink.joinCodeOf(data)
+                if (join != null) PairService.pendingJoin.value = join
+                else {
+                    val app = applicationContext
+                    LifUpApp.store.scope.launch { PairService.openLink(app, data) }
+                }
             }
             return "today"
         }

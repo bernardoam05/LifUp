@@ -904,8 +904,10 @@
     <string name="pair_waiting_join">En attente de ton binôme. Envoie-lui le code :</string>
     <string name="pair_code_expired">Le code a expiré.</string>
     <string name="pair_new_code">Nouveau code</string>
+    <string name="pair_copy_code">Copier le code</string>
+    <string name="pair_code_copied">Code copié</string>
     <string name="pair_share_invite">Partager l\'invitation</string>
-    <string name="pair_invite_share">Fais avec moi la mission « %1$s » dans Questborn ! Dans l\'app : Aujourd\'hui → Missions en binôme → Mission en binôme → Rejoindre avec un code : %2$s</string>
+    <string name="pair_invite_share">Fais avec moi la mission « %1$s » dans Questborn ! Touche pour rejoindre : %3$s (ou saisis le code %2$s dans Aujourd\'hui → Missions en binôme → Rejoindre avec un code)</string>
     <string name="pair_with">avec %1$s</string>
     <string name="pair_your_part">Ta part : %1$s</string>
     <string name="pair_partner_done">%1$s a fait sa part</string>

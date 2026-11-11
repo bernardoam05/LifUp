@@ -30,6 +30,25 @@ object PairLink {
 
     fun normalizeCode(text: String) = text.uppercase().filter { it.isLetterOrDigit() }.take(8)
 
+    private val CODE = Regex("(?<![A-Z0-9])([A-HJ-NP-Z2-9]{4})[ -]?([A-HJ-NP-Z2-9]{4})(?![A-Z0-9])")
+
+    /**
+     * The invite code in whatever was pasted: just the code, or the whole invite message (link included).
+     * Falls back to [normalizeCode] while the person is still typing it.
+     */
+    fun extractCode(text: String): String {
+        val up = text.uppercase()
+        Regex("#J-([A-HJ-NP-Z2-9]{8})").find(up)?.let { return it.groupValues[1] }
+        return CODE.findAll(up).lastOrNull()?.let { it.groupValues[1] + it.groupValues[2] } ?: normalizeCode(text)
+    }
+
+    /** Opens the app straight into "join with a code", the code filled in. */
+    fun joinLink(code: String) = "https://$HOST$PATH#j-$code"
+
+    /** The code in a join link's data (its fragment), or null if this is another kind of link. */
+    fun joinCodeOf(data: String): String? =
+        data.trim().takeIf { it.startsWith("j-") }?.removePrefix("j-")?.uppercase()?.takeIf { it.matches(Regex("^[A-HJ-NP-Z2-9]{8}$")) }
+
     fun build(d: Done, secret: String): String {
         val payload = b64.encodeToString(listOf(VERSION, d.pairId, d.cycle, d.uid, d.amount.toString(), d.at.toString()).joinToString("|").encodeToByteArray())
         return "https://$HOST$PATH#$payload.${sign(payload, secret)}"

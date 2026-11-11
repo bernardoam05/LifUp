@@ -169,6 +169,17 @@ class PairsTest {
         assertEquals("ABCD2345", PairLink.normalizeCode(" abcd-2345 "))
     }
 
+    @Test fun `invite codes come out of whatever was pasted`() {
+        val message = "Faz comigo a missão \"Flexões\" no Questborn! Toca para entrar: ${PairLink.joinLink("ABCD2345")} (ou escreve o código ABCD2345)"
+        assertEquals("ABCD2345", PairLink.extractCode(message))
+        assertEquals("ABCD2345", PairLink.extractCode("abcd 2345"))
+        assertEquals("ABCD2345", PairLink.extractCode("Code: ABCD-2345."))
+        assertEquals("AB", PairLink.extractCode("ab"))
+        assertEquals("ABCD2345", PairLink.joinCodeOf("j-abcd2345"))
+        assertNull(PairLink.joinCodeOf("j-ABCD"))
+        assertNull(PairLink.joinCodeOf(PairLink.build(PairLink.Done("p", "2026-11-11", "u", 1, 1), PairLink.newSecret()).substringAfter('#')))
+    }
+
     @Test fun `the next wake-up follows the pending work`() {
         val s = run(withPair(), "2026-11-11T18:00") { completePairPart("p1") }
         // Done but not sent: right away.

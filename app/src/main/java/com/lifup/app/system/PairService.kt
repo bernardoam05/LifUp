@@ -63,6 +63,9 @@ object PairService {
 
     private val store get() = LifUpApp.store
 
+    /** A join link was opened: Today shows "join with a code" with this code until it's handled. */
+    val pendingJoin = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
+
     private fun failureOf(e: Throwable) = when (e) {
         is PairCloud.QuotaExhausted -> Failure.QUOTA
         is PairCloud.NotFound -> Failure.NOT_FOUND
