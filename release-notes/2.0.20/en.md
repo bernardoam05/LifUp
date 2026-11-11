@@ -1,0 +1,3 @@
+- [new] Pair missions: do a mission with someone else, each your own part (sized to your own progress). Create one in Today → Pair missions and send the 8-letter code; it can be once, every day, on chosen weekdays or every few days. If you both make it by the creator's midnight you get +25% (up to 2 pair bonuses a day); if your partner doesn't, −10%; if there's no word in time it counts ×1.
+- [new] Tell your partner with a link once you're done: opening it counts your part on their phone even when the service can't be reached.
+- [new] At 20:00 a reminder says whether your partner already did their part.

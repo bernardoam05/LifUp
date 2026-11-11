@@ -1,0 +1,3 @@
+- [new] Misiones en pareja: haz una misión con otra persona, cada uno su parte (a la medida de su propio progreso). Crea una en Hoy → Misiones en pareja y envía el código de 8 letras; puede ser una vez, todos los días, en días de la semana elegidos o cada N días. Si los dos cumplís antes de la medianoche de quien la creó, ganáis un +25 % (hasta 2 bonus de pareja al día); si tu pareja falla, −10 %; si no hay confirmación a tiempo, cuenta ×1.
+- [new] Avisa a tu pareja con un enlace cuando termines: al abrirlo, tu parte cuenta en su móvil aunque el servicio no responda.
+- [new] A las 20:00, un recordatorio te dice si tu pareja ya hizo su parte.

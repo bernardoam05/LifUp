@@ -1,0 +1,3 @@
+- [new] Missões em par: faz uma missão com outra pessoa, cada um a sua parte (à medida do progresso de cada um). Cria uma em Hoje → Missões em par e envia o código de 8 letras; pode ser uma vez, todos os dias, em dias da semana escolhidos ou de N em N dias. Se os dois cumprirem até à meia-noite de quem criou, ganham +25% (até 2 bónus de par por dia); se o teu par falhar, −10%; se não houver confirmação a tempo, conta ×1.
+- [new] Avisa o teu par com um link quando acabares: ao abri-lo, a tua parte conta no telemóvel do teu par mesmo que o serviço não responda.
+- [new] Às 20h, um lembrete diz se o teu par já fez a sua parte.

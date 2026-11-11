@@ -1,12 +1,13 @@
 # LifUp
 
-Hábitos como um RPG. Cada dia traz um conjunto de missões (exercício, sono, foco, estudo, casa…); cumpri-las dá XP, ouro e atributos, e falhá-las tem custo real. A app é Android nativa (Kotlin + Jetpack Compose), funciona sem conta nem servidor, e o progresso fica só no telemóvel.
+Hábitos como um RPG. Cada dia traz um conjunto de missões (exercício, sono, foco, estudo, casa…); cumpri-las dá XP, ouro e atributos, e falhá-las tem custo real. A app é Android nativa (Kotlin + Jetpack Compose), funciona sem conta nem servidor, e o progresso fica só no telemóvel (a única exceção, opcional, são as missões em par).
 
 ## O que faz
 
 - **Missões diárias** sorteadas de um catálogo de 95, com carga que sobe à medida que manténs os dias. Missões opcionais (meditação, natação, instrumento, medicação…) ficam na **Forja** até as ativares.
 - **Penalizações**: um dia falhado custa parte do que as missões teriam dado e pode trazer missões de castigo. A dificuldade (Fácil, Normal, Difícil) define o peso.
 - **Streak e pausa**: dias de descanso por semana (2 em Fácil, 1 em Normal, nenhum em Difícil) e pausas para férias ou doença que não quebram a sequência.
+- **Missões em par**: uma missão feita a dois, cada um a sua parte, com +25% se ambos cumprirem e −10% se o par falhar. Os dois telemóveis sincronizam-se pelo Firestore (só quem usa pares; ver [docs/PAIRS.md](docs/PAIRS.md)).
 - **Foco**: sessões cronometradas que bloqueiam as apps que escolheres, com Não Incomodar e som ambiente opcionais. Também há um atalho nas definições rápidas.
 - **Boss semanal e portais**: 27 bosses, cada um fraco a uma família de missões, e portais que aparecem ao longo do dia.
 - **Ecos**: 117 criaturas para colecionar, evoluir e equipar, cada uma com uma passiva; a loja tem 3 diferentes todos os dias (um comum ou raro, um épico e um lendário ou, de vez em quando, um mítico).

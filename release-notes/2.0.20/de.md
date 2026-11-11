@@ -1,0 +1,3 @@
+- [new] Partnermissionen: Mach eine Mission mit jemandem, jeder den eigenen Teil (passend zum eigenen Fortschritt). Erstelle eine unter Heute → Partnermissionen und schick den 8-stelligen Code; sie kann einmalig sein, täglich, an gewählten Wochentagen oder alle N Tage. Schafft ihr es beide bis Mitternacht (beim Ersteller), gibt es +25 % (bis zu 2 Partnerboni am Tag); schafft es dein Partner nicht, −10 %; ohne rechtzeitige Bestätigung zählt sie ×1.
+- [new] Gib deinem Partner per Link Bescheid, wenn du fertig bist: Wird er geöffnet, zählt dein Teil auf dem anderen Handy, auch wenn der Dienst nicht erreichbar ist.
+- [new] Um 20 Uhr sagt dir eine Erinnerung, ob dein Partner mit dem eigenen Teil schon fertig ist.

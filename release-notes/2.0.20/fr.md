@@ -1,0 +1,3 @@
+- [new] Missions en binôme : fais une mission avec quelqu'un, chacun sa part (à la mesure de sa propre progression). Crée-en une dans Aujourd'hui → Missions en binôme et envoie le code à 8 lettres ; elle peut être unique, quotidienne, sur des jours choisis ou tous les N jours. Si vous réussissez tous les deux avant minuit (heure du créateur), vous gagnez +25 % (jusqu'à 2 bonus de binôme par jour) ; si ton binôme échoue, −10 % ; sans confirmation à temps, elle compte ×1.
+- [new] Préviens ton binôme avec un lien quand tu as fini : en l'ouvrant, ta part compte sur son téléphone même si le service ne répond pas.
+- [new] À 20 h, un rappel te dit si ton binôme a déjà fait sa part.
