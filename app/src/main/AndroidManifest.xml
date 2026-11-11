@@ -63,6 +63,13 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="lifup" />
             </intent-filter>
+            <!-- Pair quests: a partner's "I'm done" link (docs/PAIRS.md, 1.5), verified through assetlinks.json. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="questborn-38f2a.web.app" android:pathPrefix="/p" />
+            </intent-filter>
         </activity>
 
         <!-- Launcher entries, one per Core form; IconSwitcher keeps exactly one enabled. The first keeps the old

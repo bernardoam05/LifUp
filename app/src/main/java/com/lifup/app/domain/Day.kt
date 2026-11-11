@@ -43,6 +43,7 @@ fun Tx.ensureDay() {
     ensureSecondChallenge()
     ensureShop()
     expirePortal()
+    ensurePairs()
 }
 
 private fun Tx.closeDay(day: LocalDate) {

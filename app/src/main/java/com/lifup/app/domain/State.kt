@@ -374,6 +374,8 @@ enum class ToastKind {
     PORTAL_CLEARED, SHADOW_UPGRADED, PASSIVE_FIRED, BUFF_ACTIVE, BOSS_HIT, BOSS_REVIVED, WEEK_GOAL, ACHIEVEMENT, LOAD_UP, LOAD_DOWN,
     /** arg "shadowId:xp:gold": what a redemption echo gave back. */
     REDEEMED,
+    /** Pair quests, arg "partner:xp:gold" (the bonus, the cut or the loss); the others carry the partner's name. */
+    PAIR_BOTH, PAIR_BOTH_CAPPED, PAIR_CUT, PAIR_UNKNOWN, PAIR_MISSED,
 }
 
 @Serializable
@@ -485,6 +487,9 @@ data class GameState(
     val doubleXpNext: Boolean = false,
     val rewards: List<Reward> = emptyList(),
     val nextId: Long = 1,
+    /** Missions done with someone else (see Pairs.kt). */
+    val pairs: List<PairQuest> = emptyList(),
+    val pairSync: PairSyncState = PairSyncState(),
 ) {
     fun owned(id: String) = shadows.firstOrNull { it.id == id }
     fun count(key: StatKey) = counters[key] ?: 0L

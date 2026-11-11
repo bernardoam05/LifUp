@@ -187,6 +187,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
             item { SectionTitle(stringResource(R.string.weekly_section)) { InfoButton(Guide.WEEKLY) } }
             items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q), s.hitsWeakness(q)) { selected = q.id } }
         }
+        item(key = "pairs") { PairSection(s, now) }
         item { BossCard(s, now) { selected = it } }
 
         val canExtra = s.canAddExtra(java.time.Instant.ofEpochMilli(now).atZone(java.time.ZoneId.systemDefault()).hour)

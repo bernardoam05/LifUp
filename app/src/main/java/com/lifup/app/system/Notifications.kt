@@ -37,6 +37,7 @@ object Notifications {
     const val ID_LIMIT = 2010
     const val ID_AVOID = 2020
     private const val ID_REMIND = 3000
+    private const val ID_PAIR = 4000
 
     /** One notification per reminded mission or side quest, steady across days. */
     fun remindId(itemId: String) = ID_REMIND + (itemId.hashCode() and 0x3FF)
@@ -231,6 +232,13 @@ object Notifications {
             .build()
         runCatching { nm.notify(ID_TIMER, n) }
     }
+
+    /** 20:00 with a pair part still open: the partner already did theirs, or not yet. */
+    fun pairNudge(context: Context, pairId: String, partner: String, mission: String, partnerDone: Boolean) = post(
+        context, ID_PAIR + (pairId.hashCode() and 0x3F), CH_REMINDERS,
+        context.getString(if (partnerDone) R.string.notif_pair_waiting_title else R.string.notif_pair_open_title, partner.ifBlank { "?" }),
+        context.getString(R.string.notif_pair_text, mission), "today",
+    )
 
     fun bossLastDay(context: Context, boss: String, hp: Int) = post(
         context, ID_BOSS, CH_REMINDERS, context.getString(R.string.notif_boss_title, boss),

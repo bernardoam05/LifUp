@@ -215,6 +215,22 @@ private fun toastMessage(s: GameState, t: Reward.Toast): String {
             stringResource(R.string.toast_redeemed, content.shadowById[parts[0]]?.name?.local().orEmpty(), parts.getOrNull(1)?.toIntOrNull() ?: 0, parts.getOrNull(2)?.toIntOrNull() ?: 0)
         }
         ToastKind.BOSS_HIT -> ""
+        ToastKind.PAIR_BOTH, ToastKind.PAIR_CUT, ToastKind.PAIR_MISSED -> t.arg.split(':').let { parts ->
+            // The name may hold a colon itself: xp and gold are always the last two.
+            val name = parts.dropLast(2).joinToString(":").ifBlank { "?" }
+            val xp = parts.getOrNull(parts.size - 2)?.toIntOrNull() ?: 0
+            val gold = parts.lastOrNull()?.toIntOrNull() ?: 0
+            stringResource(
+                when (t.kind) {
+                    ToastKind.PAIR_BOTH -> R.string.toast_pair_both
+                    ToastKind.PAIR_CUT -> R.string.toast_pair_cut
+                    else -> R.string.toast_pair_missed
+                },
+                name, xp, gold,
+            )
+        }
+        ToastKind.PAIR_BOTH_CAPPED -> stringResource(R.string.toast_pair_both_capped, t.arg.ifBlank { "?" })
+        ToastKind.PAIR_UNKNOWN -> stringResource(R.string.toast_pair_unknown, t.arg.ifBlank { "?" })
     }
 }
 

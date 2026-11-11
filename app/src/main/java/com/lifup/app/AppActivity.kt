@@ -11,6 +11,8 @@ import com.lifup.app.domain.rollPortal
 import com.lifup.app.system.AppVisibility
 import com.lifup.app.system.AutoTracker
 import com.lifup.app.system.Updater
+import com.lifup.app.system.PairService
+import com.lifup.app.domain.PairLink
 import kotlinx.coroutines.launch
 import com.lifup.app.ui.AppRoot
 import com.lifup.app.ui.Feedback
@@ -22,14 +24,27 @@ class AppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(0), navigationBarStyle = SystemBarStyle.dark(0))
-        deepLink.value = intent?.data?.let { (it.host ?: "") + (it.path ?: "") }
+        deepLink.value = route(intent)
         Feedback.warmUp(this)
         setContent { AppRoot(deepLink.value) { deepLink.value = null } }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        deepLink.value = intent.data?.let { (it.host ?: "") + (it.path ?: "") }
+        deepLink.value = route(intent)
+    }
+
+    /** Where a link leads; a pair partner's "I'm done" link is handed to the pair sync and lands on Today. */
+    private fun route(intent: Intent?): String? {
+        val uri = intent?.data ?: return null
+        if (uri.scheme == "https" && uri.host == PairLink.HOST) {
+            PairLink.dataOf(uri.encodedFragment, uri.getQueryParameter("d"))?.let { data ->
+                val app = applicationContext
+                LifUpApp.store.scope.launch { PairService.openLink(app, data) }
+            }
+            return "today"
+        }
+        return (uri.host ?: "") + (uri.path ?: "")
     }
 
     override fun onStart() {
@@ -41,6 +56,7 @@ class AppActivity : ComponentActivity() {
             AutoTracker.sync(app)
         }
         LifUpApp.store.scope.launch { Updater.check(app) }
+        if (LifUpApp.store.current.pairs.isNotEmpty()) LifUpApp.store.scope.launch { PairService.sync(app, foreground = true) }
     }
 
     override fun onStop() {

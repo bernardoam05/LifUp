@@ -18,6 +18,11 @@ android {
         val (major, minor, patch) = (appVersion.split('.').map { it.toInt() } + listOf(0, 0)).take(3)
         versionCode = major * 10_000 + minor * 100 + patch
         versionName = appVersion
+        // Pair quests' Firebase project (docs/PAIRS.md, section 5). Not secrets: the key only works for this app,
+        // and the security rules decide what any client may do.
+        buildConfigField("String", "FIREBASE_PROJECT", "\"questborn-38f2a\"")
+        buildConfigField("String", "FIREBASE_APP_ID", "\"1:382154712615:android:79cd702cd5c23e3fd4d002\"")
+        buildConfigField("String", "FIREBASE_API_KEY", "\"AIzaSyD-0xUx5exVsBbFFckaUDBSZaaerGP8ju8\"")
     }
 
     signingConfigs {
@@ -99,6 +104,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
     implementation("com.google.android.gms:play-services-fitness:21.2.0")
+    // Pair quests only; started by hand (no google-services plugin), and only once someone uses them.
+    implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     testImplementation("junit:junit:4.13.2")
