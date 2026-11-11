@@ -1036,4 +1036,5 @@
     <string name="pair_limit_plus">Eine Partnerschaft auf einmal. Mit LifUp+ bis zu 3.</string>
     <string name="plus_perk_pairs">Bis zu 3 Partnermissionen</string>
     <string name="plus_perk_pairs_text">Mach Missionen mit mehreren Leuten gleichzeitig.</string>
+    <string name="plus_included_github">In dieser von GitHub installierten Version ist LifUp+ enthalten. Bei Google Play ist es ein einmaliger Kauf.</string>
 </resources>

@@ -85,7 +85,7 @@ fun PlusScreen(onBack: () -> Unit) {
 
         Spacer(Modifier.size(16.dp))
         when {
-            !PlusBilling.available -> Panel { Text(stringResource(R.string.plus_play_only), style = MaterialTheme.typography.bodyMedium, color = p.muted) }
+            !PlusBilling.available -> Panel(border = p.green.copy(alpha = 0.6f)) { Text(stringResource(R.string.plus_included_github), style = MaterialTheme.typography.bodyMedium, color = p.text) }
             s.plus -> Panel(border = p.green.copy(alpha = 0.6f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Rounded.CheckCircle, null, tint = p.green)

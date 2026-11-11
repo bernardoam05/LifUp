@@ -1037,4 +1037,5 @@
     <string name="pair_limit_plus">One pair at a time. With LifUp+ you can have up to 3.</string>
     <string name="plus_perk_pairs">Up to 3 pair missions</string>
     <string name="plus_perk_pairs_text">Do missions with more people at once.</string>
+    <string name="plus_included_github">In this version, installed from GitHub, LifUp+ comes included. On Google Play it\'s a one-time purchase.</string>
 </resources>
