@@ -794,5 +794,30 @@
    "fr": "Atteins l'objectif hebdomadaire d'une mission.",
    "de": "Erreiche das Wochenziel einer Mission."
   }
+ },
+ {
+  "id": "core_evolution",
+  "stat": "CORE_FORMS",
+  "tiers": [
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "title": {
+   "pt": "Evolução da Core",
+   "en": "Core Evolution",
+   "es": "Evolución del Core",
+   "fr": "Évolution du Core",
+   "de": "Core-Evolution"
+  },
+  "description": {
+   "pt": "Desbloqueia a forma {target} da Core.",
+   "en": "Unlock the Core's form {target}.",
+   "es": "Desbloquea la forma {target} del Core.",
+   "fr": "Débloque la forme {target} du Core.",
+   "de": "Schalte die Form {target} des Core frei."
+  }
  }
 ]

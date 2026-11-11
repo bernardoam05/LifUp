@@ -9,6 +9,7 @@ fun GameState.statValue(key: StatKey): Long = when (key) {
     StatKey.GPS_KM -> count(StatKey.GPS_METERS) / 1000
     // Today's steps count before the day closes, so the total moves while you walk.
     StatKey.STEPS -> count(StatKey.STEPS) + daily.steps
+    StatKey.CORE_FORMS -> Core.unlocked(this).toLong()
     else -> count(key)
 }
 

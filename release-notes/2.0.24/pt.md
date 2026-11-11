@@ -1,0 +1,4 @@
+- [new] A Core foi redesenhada: seis formas que crescem de um rebento até um espírito com asas e auréola, cada uma na cor do seu rank e com oito caras. O SS passa a ter uma forma só sua.
+- [new] O ícone da app passa a ser a cabeça da tua Core sobre a cor do rank, e há um sexto ícone para a forma SS.
+- [new] Nova conquista, Evolução da Core: cada forma nova dá uma medalha dourada com a silhueta dela gravada.
+- [tweak] Nos tamanhos pequenos aparece só a cabeça da Core, para a cara se ler bem nas formas maiores.

@@ -246,7 +246,9 @@ private fun toastMessage(s: GameState, t: Reward.Toast): String {
 private fun AchievementCard(unlocked: List<Reward.AchievementUnlocked>, dismiss: () -> Unit) {
     val first = content.achievementById[unlocked.first().achievementId]
     val title = if (unlocked.size == 1) first?.title?.local().orEmpty() else stringResource(R.string.reward_achievements_n, unlocked.size)
-    RewardCard(Icons.Rounded.EmojiEvents, Lif.colors.gold, stringResource(R.string.reward_achievement_title), title, dismiss) {
+    val medal = unlocked.singleOrNull()?.takeIf { first?.stat == com.lifup.app.domain.StatKey.CORE_FORMS }
+    RewardCard(if (medal != null) null else Icons.Rounded.EmojiEvents, Lif.colors.gold, stringResource(R.string.reward_achievement_title), title, dismiss) {
+        if (medal != null) com.lifup.app.ui.hero.AchievementIcon(first, medal.tier, 96.dp)
         unlocked.forEach { a ->
             val def = content.achievementById[a.achievementId]
             val tier = stringResource(R.string.tier_n, a.tier, def?.tiers?.size ?: a.tier)

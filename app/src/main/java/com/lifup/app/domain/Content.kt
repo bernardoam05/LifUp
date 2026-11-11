@@ -191,6 +191,8 @@ enum class StatKey {
     BLOCKED_ATTEMPTS, CUSTOM_QUESTS, STEPS, BEDTIMES_KEPT, SEASONAL_BOSSES, WEEK_GOALS,
     /** Pair-quest cycles both partners kept. */
     PAIR_CYCLES,
+    /** The Core's most evolved form unlocked (read from the rank, not counted). */
+    CORE_FORMS,
 }
 
 @Serializable

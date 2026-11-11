@@ -1,0 +1,4 @@
+- [new] El Core se ha redibujado: seis formas que crecen de un brote hasta un espíritu con alas y aureola, cada una con el color de su rango y ocho caras. El SS tiene ahora una forma propia.
+- [new] El icono de la app pasa a ser la cabeza de tu Core sobre el color del rango, y hay un sexto icono para la forma SS.
+- [new] Nuevo logro, Evolución del Core: cada forma nueva da una medalla dorada con su silueta grabada.
+- [tweak] En tamaños pequeños se ve solo la cabeza del Core, para que su cara se lea bien en las formas más grandes.

@@ -1,0 +1,4 @@
+- [new] The Core has been redrawn: six forms that grow from a sprout into a winged, haloed spirit, each in its rank's colour, with eight faces each. SS now has a form of its own.
+- [new] The launcher icon is now your Core's head on its rank's colour, and a sixth icon comes with the SS form.
+- [new] New achievement, Core Evolution: each new form earns a gold medal engraved with its silhouette.
+- [tweak] Small avatars frame the Core's head, so its face stays readable on the bigger forms.

@@ -366,7 +366,7 @@ private fun AchievementRow(s: GameState, def: com.lifup.app.domain.AchievementDe
     val value = s.statValue(def.stat)
     Panel(border = if (maxed) c.gold.copy(alpha = 0.5f) else c.border, onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Rounded.EmojiEvents, null, tint = tierColor(tier), modifier = Modifier.size(28.dp))
+            AchievementIcon(def, tier, 28.dp)
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
                 Text(def.title.local(), style = MaterialTheme.typography.titleMedium)

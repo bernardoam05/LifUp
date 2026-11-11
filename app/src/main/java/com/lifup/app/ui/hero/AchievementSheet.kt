@@ -65,7 +65,7 @@ fun AchievementSheet(s: GameState, def: AchievementDef, onDismiss: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Rounded.EmojiEvents, null, tint = tierColor(tier), modifier = Modifier.size(40.dp))
+                AchievementIcon(def, tier, 40.dp)
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(def.title.local(), style = MaterialTheme.typography.titleLarge)
@@ -106,4 +106,24 @@ private fun TierRow(def: AchievementDef, tier: Int, target: Long, value: Long, r
             Text("${com.lifup.app.ui.fmtCompact(value)} / ${com.lifup.app.ui.fmtCompact(target)}", style = MaterialTheme.typography.labelSmall, color = c.dim)
         }
     }
+}
+
+private val CORE_MEDALS = listOf(
+    R.drawable.medal_core_s1, R.drawable.medal_core_s2, R.drawable.medal_core_s3,
+    R.drawable.medal_core_s4, R.drawable.medal_core_s5, R.drawable.medal_core_s6,
+)
+
+/**
+ * An achievement's icon: the trophy in its tier's colour, or, for the Core's evolution, a medal with the
+ * silhouette of the form that tier unlocked (the next one, greyed, before the first).
+ */
+@Composable
+fun AchievementIcon(def: AchievementDef?, tier: Int, size: androidx.compose.ui.unit.Dp) {
+    if (def?.stat == com.lifup.app.domain.StatKey.CORE_FORMS) {
+        val stage = (tier + 1).coerceIn(2, CORE_MEDALS.size)
+        androidx.compose.foundation.Image(
+            androidx.compose.ui.res.painterResource(CORE_MEDALS[stage - 1]), null, Modifier.size(size),
+            alpha = if (tier == 0) 0.35f else 1f,
+        )
+    } else Icon(Icons.Rounded.EmojiEvents, null, tint = tierColor(tier), modifier = Modifier.size(size))
 }

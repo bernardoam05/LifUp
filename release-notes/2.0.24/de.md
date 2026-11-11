@@ -1,0 +1,4 @@
+- [new] Der Core wurde neu gezeichnet: sechs Formen, die von einem Spross zu einem geflügelten Geist mit Heiligenschein wachsen, jede in der Farbe ihres Rangs und mit acht Gesichtern. SS hat jetzt eine eigene Form.
+- [new] Das App-Symbol ist jetzt der Kopf deines Core auf der Farbe deines Rangs, mit einem sechsten Symbol für die SS-Form.
+- [new] Neuer Erfolg, Core-Evolution: Jede neue Form bringt eine goldene Medaille mit ihrer eingravierten Silhouette.
+- [tweak] Klein dargestellt zeigt der Core nur seinen Kopf, damit sein Gesicht auch bei den großen Formen lesbar bleibt.
