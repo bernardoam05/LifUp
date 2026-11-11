@@ -1,0 +1,3 @@
+- [tweak] As missões em par têm o aspeto e o funcionamento das outras missões: o mesmo cartão com o progresso, e um toque abre o mesmo modal (contador, cronómetro, foco, corrida, dica, Concluir) com o estado do teu par, o aviso e a saída do par lá dentro.
+- [tweak] As sessões de foco e as corridas também contam para uma missão em par, e ao concluí-la o teu par fica logo a saber.
+- [tweak] Ao escolher uma missão em par, cada uma mostra o ícone e quanto seria a tua parte.

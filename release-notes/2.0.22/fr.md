@@ -1,0 +1,3 @@
+- [tweak] Les missions en binôme ressemblent et fonctionnent comme tes autres missions : la même carte avec sa progression, et un toucher ouvre la même fiche (compteur, chrono, focus, course, conseil, Terminer) avec l'état de ton binôme, le prévenir et quitter le binôme à l'intérieur.
+- [tweak] Les sessions de focus et les courses comptent désormais aussi pour une mission en binôme, et la terminer prévient ton binôme aussitôt.
+- [tweak] En choisissant une mission en binôme, chacune montre son icône et la taille de ta part.

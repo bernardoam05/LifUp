@@ -1,0 +1,3 @@
+- [tweak] Pair missions look and work like your other missions: the same card with its progress, and a tap opens the same sheet (counter, stopwatch, focus, run, tip, Complete) with your partner's status, telling them and leaving the pair inside.
+- [tweak] Focus sessions and runs now count towards a pair mission too, and finishing it reaches your partner straight away.
+- [tweak] When choosing a pair mission, each one shows its icon and how much your part would be.

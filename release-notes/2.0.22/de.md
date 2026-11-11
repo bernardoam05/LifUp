@@ -1,0 +1,3 @@
+- [tweak] Partnermissionen sehen aus und funktionieren wie deine anderen Missionen: dieselbe Karte mit Fortschritt, und Antippen öffnet dasselbe Blatt (Zähler, Stoppuhr, Fokus, Lauf, Tipp, Abschließen) mit dem Stand deines Partners, Bescheid geben und Verlassen darin.
+- [tweak] Fokussitzungen und Läufe zählen jetzt auch für eine Partnermission, und wenn du sie abschließt, erfährt es dein Partner sofort.
+- [tweak] Bei der Wahl einer Partnermission zeigt jede ihr Symbol und wie groß dein Teil wäre.

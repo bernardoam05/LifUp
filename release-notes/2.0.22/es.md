@@ -1,0 +1,3 @@
+- [tweak] Las misiones en pareja se ven y funcionan como tus otras misiones: la misma tarjeta con su progreso, y un toque abre la misma hoja (contador, cronómetro, foco, carrera, consejo, Completar) con el estado de tu pareja, el aviso y la salida de la pareja dentro.
+- [tweak] Las sesiones de foco y las carreras ahora también cuentan para una misión en pareja, y al completarla tu pareja se entera al momento.
+- [tweak] Al elegir una misión en pareja, cada una muestra su icono y cuánto sería tu parte.
