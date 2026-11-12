@@ -1,0 +1,6 @@
+- [new] The app opens on your own Core, whole, in its form, skin and accessory; later forms are bigger.
+- [new] The Core presents the tutorial: the guides and the first steps come from it, with a face for each topic.
+- [new] The launcher icon follows your Core's CoreQuest+ skin too.
+- [new] Report a problem from Settings: it opens an email to corequest.app@gmail.com with the app version and your phone filled in.
+- [tweak] LifUp+ is now called CoreQuest+.
+- [fix] The Galaxy skin's first and third forms have their white eyes back.

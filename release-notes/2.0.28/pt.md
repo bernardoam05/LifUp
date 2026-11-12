@@ -1,0 +1,6 @@
+- [new] A app abre com a tua Core em corpo inteiro, na sua forma, pele e acessório; as formas mais avançadas aparecem maiores.
+- [new] A Core apresenta o tutorial: os guias e os primeiros passos vêm dela, com uma expressão para cada tema.
+- [new] O ícone da app também segue a pele CoreQuest+ da tua Core.
+- [new] Reportar um problema nas Definições: abre um email para corequest.app@gmail.com já com a versão da app e o teu telemóvel.
+- [tweak] O LifUp+ passa a chamar-se CoreQuest+.
+- [fix] A primeira e a terceira forma da pele Galáxia voltam a ter os olhos brancos.

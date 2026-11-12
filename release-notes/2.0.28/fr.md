@@ -1,0 +1,6 @@
+- [new] L'app s'ouvre sur ton Core en entier, dans sa forme, son apparence et son accessoire ; les formes avancées sont plus grandes.
+- [new] Le Core présente le tutoriel : les guides et les premiers pas viennent de lui, avec un visage pour chaque sujet.
+- [new] L'icône de l'app suit aussi l'apparence CoreQuest+ de ton Core.
+- [new] Signaler un problème dans les Réglages : ouvre un e-mail à corequest.app@gmail.com avec la version de l'app et ton téléphone déjà remplis.
+- [tweak] LifUp+ s'appelle désormais CoreQuest+.
+- [fix] La première et la troisième forme de l'apparence Galaxie retrouvent leurs yeux blancs.

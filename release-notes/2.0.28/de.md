@@ -1,0 +1,6 @@
+- [new] Die App öffnet mit deinem ganzen Core, in seiner Form, seinem Skin und seinem Accessoire; spätere Formen sind größer.
+- [new] Der Core stellt das Tutorial vor: Die Anleitungen und ersten Schritte kommen von ihm, mit einem Gesicht für jedes Thema.
+- [new] Das App-Symbol folgt jetzt auch dem CoreQuest+-Skin deines Core.
+- [new] Problem melden in den Einstellungen: öffnet eine E-Mail an corequest.app@gmail.com, App-Version und Handy schon eingetragen.
+- [tweak] LifUp+ heißt jetzt CoreQuest+.
+- [fix] Die erste und dritte Form des Galaxie-Skins haben wieder weiße Augen.
