@@ -30,7 +30,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.SportsEsports
+import androidx.compose.material.icons.rounded.Palette
+import androidx.compose.material.icons.rounded.Save
+import androidx.compose.material.icons.rounded.HelpOutline
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Upload
@@ -131,149 +135,161 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit, openPlus: () -> Un
         }
     }
 
+    var page by rememberSaveable { mutableStateOf<SettingsPage?>(null) }
+    androidx.activity.compose.BackHandler(page != null) { page = null }
     Column(Modifier.fillMaxSize().statusBarsPadding()) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(4.dp)) {
-            IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back)) }
-            Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
+            IconButton(onClick = { if (page != null) page = null else onBack() }) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back)) }
+            Text(stringResource(page?.title ?: R.string.settings), style = MaterialTheme.typography.titleLarge)
         }
         Column(Modifier.imePadding().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding()) {
             message?.let { Text(it, color = Lif.colors.accent, style = MaterialTheme.typography.labelLarge) }
 
-            // CoreQuest+ at the top: what it is, or that it's on.
-            com.lifup.app.ui.components.Panel(onClick = openPlus, border = Lif.colors.gold.copy(alpha = 0.6f), modifier = Modifier.padding(top = 8.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.AutoAwesome, null, tint = Lif.colors.gold)
-                    Spacer(Modifier.width(12.dp))
-                    Column(Modifier.weight(1f)) {
-                        Text("CoreQuest+", style = MaterialTheme.typography.titleMedium)
-                        Text(stringResource(if (s.plus) R.string.plus_owned else R.string.plus_settings_hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
-                    }
-                }
-            }
-
-            SectionTitle(stringResource(R.string.profile))
-            var name by remember { mutableStateOf(s.player.name) }
-            OutlinedTextField(
-                name, { v -> name = v.take(24); val n = name; act { rename(n) } },
-                label = { Text(stringResource(R.string.hunter_name)) }, singleLine = true, modifier = Modifier.fillMaxWidth(),
-            )
-
-            SectionTitle(stringResource(R.string.difficulty)) { com.lifup.app.ui.guide.InfoButton(com.lifup.app.ui.guide.Guide.STREAK) }
-            Panel {
-                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                    Rigor.entries.forEachIndexed { i, r ->
-                        SegmentedButton(selected = set.rigor == r, onClick = { act { updateSettings { it.copy(rigor = r) } } }, shape = SegmentedButtonDefaults.itemShape(i, 3)) {
-                            Text(stringResource(rigorName(r)))
+            when (page) {
+                null -> {
+                // CoreQuest+ at the top: what it is, or that it's on.
+                com.lifup.app.ui.components.Panel(onClick = openPlus, border = Lif.colors.gold.copy(alpha = 0.6f), modifier = Modifier.padding(top = 8.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Rounded.AutoAwesome, null, tint = Lif.colors.gold)
+                        Spacer(Modifier.width(12.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text("CoreQuest+", style = MaterialTheme.typography.titleMedium)
+                            Text(stringResource(if (s.plus) R.string.plus_owned else R.string.plus_settings_hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
                         }
                     }
                 }
-                Spacer(Modifier.height(8.dp))
-                Text(stringResource(rigorInfo(set.rigor)), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
-                Spacer(Modifier.height(8.dp))
-                val auto = set.dailyPoolOverride == null
-                val autoCount = s.copy(settings = set.copy(dailyPoolOverride = null)).drawnCount()
-                val next = s.copy(settings = set.copy(dailyPoolOverride = null)).daysToNextMission()
-                ToggleRow(
-                    stringResource(R.string.auto_missions),
-                    stringResource(R.string.auto_missions_info, autoCount) + " " +
-                        (next?.let { stringResource(R.string.load_next, it, Rules.MAX_DAY_MISSIONS) } ?: stringResource(R.string.load_max, Rules.MAX_DAY_MISSIONS)),
-                    auto,
-                ) { on -> act { updateSettings { it.copy(dailyPoolOverride = if (on) null else autoCount) } } }
-                if (!auto) Stepper(set.dailyPoolOverride!!, { v -> act { updateSettings { it.copy(dailyPoolOverride = v) } } }, 1..10, stringResource(R.string.extra_daily_missions))
-                Spacer(Modifier.height(12.dp))
-                Text(stringResource(R.string.attr_focus_title), style = MaterialTheme.typography.titleSmall)
-                Spacer(Modifier.height(4.dp))
-                com.lifup.app.ui.FocusPicker(
-                    set.focusAttrs, { f -> act { updateSettings { it.copy(focusAttrs = f) } } },
-                    mode = set.drawMode(), lagging = s.player.attrXp.lagging(),
-                    onMode = { m -> act { updateSettings { it.copy(catchUp = m == DrawMode.ADAPTIVE, randomDraw = m == DrawMode.RANDOM) } } },
-                )
-            }
 
-            FoldSection(stringResource(R.string.penalties), trailing = { com.lifup.app.ui.guide.InfoButton(com.lifup.app.ui.guide.Guide.PENALTY) }) {
-                Panel {
-                    com.lifup.app.ui.guide.PenaltyBlockToggle(s)
-                    ToggleRow(stringResource(R.string.side_penalize), stringResource(R.string.side_penalize_info), set.sidePenalize) { v ->
-                        act { updateSettings { it.copy(sidePenalize = v) } }
-                    }
-                }
-            }
-
-            FoldSection(stringResource(R.string.pause_section)) { PausePanel(s) }
-
-            FoldSection(stringResource(R.string.body)) {
-                Panel {
-                    Stepper(set.heightCm, { v -> act { updateSettings { it.copy(heightCm = v) } } }, 120..220, stringResource(R.string.height), " cm", step = 2)
-                    Text(stringResource(R.string.height_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
-                }
-            }
-
-            com.lifup.app.ui.focus.PermissionsPanel(s)
-
-            FoldSection(stringResource(R.string.notifications)) {
-                Panel {
-                    ToggleRow(stringResource(R.string.notifications), stringResource(R.string.notifications_info), set.notifications) { v -> act { updateSettings { it.copy(notifications = v) } } }
-                    if (set.notifications) Stepper(set.reminderHour, { v -> act { updateSettings { it.copy(reminderHour = v) } } }, 12..23, stringResource(R.string.reminder_hour), "h")
-                    ToggleRow(stringResource(R.string.sound), stringResource(R.string.sound_info), set.sound) { v -> act { updateSettings { it.copy(sound = v) } } }
-                    ToggleRow(stringResource(R.string.vibration), stringResource(R.string.vibration_info), set.vibration) { v -> act { updateSettings { it.copy(vibration = v) } } }
-                }
-            }
-
-            FoldSection(stringResource(R.string.theme)) {
-                Panel {
-                    val current = HunterRank.of(s.player.level)
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        FilterChip(selected = set.themeRank == null, onClick = { act { updateSettings { it.copy(themeRank = null) } } }, label = { Text(stringResource(R.string.theme_auto)) })
-                        HunterRank.entries.filter { it.ordinal <= current.ordinal }.forEach { r ->
-                            FilterChip(selected = set.themeRank == r, onClick = { act { updateSettings { it.copy(themeRank = r) } } }, label = { Text(r.label, color = accentRank(r)) })
-                        }
-                    }
-                    Text(stringResource(R.string.theme_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
-                }
-            }
-
-            FoldSection(stringResource(R.string.guide_section)) { com.lifup.app.ui.guide.GuideTopics(s) }
-
-            SectionTitle(stringResource(R.string.missions))
-            GhostButton(stringResource(R.string.forge), onClick = openForge, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Build)
-
-            FoldSection(stringResource(R.string.backup)) {
-                Panel {
-                    Text(stringResource(R.string.backup_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
                     Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        GhostButton(stringResource(R.string.export), onClick = { exporter.launch("lifup-backup.json") }, modifier = Modifier.weight(1f), icon = Icons.Rounded.Upload)
-                        GhostButton(stringResource(R.string.import_), onClick = { importer.launch(arrayOf("application/json", "text/plain", "*/*")) }, modifier = Modifier.weight(1f), icon = Icons.Rounded.Download)
+                    SettingsPage.entries.forEach { pg -> MenuEntry(pg) { page = pg } }
+                }
+                SettingsPage.GAME -> {
+                    SectionTitle(stringResource(R.string.profile))
+                    var name by remember { mutableStateOf(s.player.name) }
+                    OutlinedTextField(
+                        name, { v -> name = v.take(24); val n = name; act { rename(n) } },
+                        label = { Text(stringResource(R.string.hunter_name)) }, singleLine = true, modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    SectionTitle(stringResource(R.string.difficulty)) { com.lifup.app.ui.guide.InfoButton(com.lifup.app.ui.guide.Guide.STREAK) }
+                    Panel {
+                        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+                            Rigor.entries.forEachIndexed { i, r ->
+                                SegmentedButton(selected = set.rigor == r, onClick = { act { updateSettings { it.copy(rigor = r) } } }, shape = SegmentedButtonDefaults.itemShape(i, 3)) {
+                                    Text(stringResource(rigorName(r)))
+                                }
+                            }
+                        }
+                        Spacer(Modifier.height(8.dp))
+                        Text(stringResource(rigorInfo(set.rigor)), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+                        Spacer(Modifier.height(8.dp))
+                        val auto = set.dailyPoolOverride == null
+                        val autoCount = s.copy(settings = set.copy(dailyPoolOverride = null)).drawnCount()
+                        val next = s.copy(settings = set.copy(dailyPoolOverride = null)).daysToNextMission()
+                        ToggleRow(
+                            stringResource(R.string.auto_missions),
+                            stringResource(R.string.auto_missions_info, autoCount) + " " +
+                                (next?.let { stringResource(R.string.load_next, it, Rules.MAX_DAY_MISSIONS) } ?: stringResource(R.string.load_max, Rules.MAX_DAY_MISSIONS)),
+                            auto,
+                        ) { on -> act { updateSettings { it.copy(dailyPoolOverride = if (on) null else autoCount) } } }
+                        if (!auto) Stepper(set.dailyPoolOverride!!, { v -> act { updateSettings { it.copy(dailyPoolOverride = v) } } }, 1..10, stringResource(R.string.extra_daily_missions))
+                        Spacer(Modifier.height(12.dp))
+                        Text(stringResource(R.string.attr_focus_title), style = MaterialTheme.typography.titleSmall)
+                        Spacer(Modifier.height(4.dp))
+                        com.lifup.app.ui.FocusPicker(
+                            set.focusAttrs, { f -> act { updateSettings { it.copy(focusAttrs = f) } } },
+                            mode = set.drawMode(), lagging = s.player.attrXp.lagging(),
+                            onMode = { m -> act { updateSettings { it.copy(catchUp = m == DrawMode.ADAPTIVE, randomDraw = m == DrawMode.RANDOM) } } },
+                        )
                     }
-                    TextButton(onClick = { pasteOpen = true }) { Text(stringResource(R.string.paste_old_backup).uppercase()) }
-                    AutoBackups { pendingImport = it }
-                    val legacy = remember { LegacyImport.readAsyncStorage(context) }
-                    if (legacy != null) {
-                        GhostButton(stringResource(R.string.import_old_app), onClick = {
-                            pendingImport = LegacyImport.decodeBackup(legacy)?.let { LegacyImport.toState(it, content) }
-                        }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.History)
+
+                    FoldSection(stringResource(R.string.penalties), trailing = { com.lifup.app.ui.guide.InfoButton(com.lifup.app.ui.guide.Guide.PENALTY) }) {
+                        Panel {
+                            com.lifup.app.ui.guide.PenaltyBlockToggle(s)
+                            ToggleRow(stringResource(R.string.side_penalize), stringResource(R.string.side_penalize_info), set.sidePenalize) { v ->
+                                act { updateSettings { it.copy(sidePenalize = v) } }
+                            }
+                        }
                     }
+
+                    FoldSection(stringResource(R.string.pause_section)) { PausePanel(s) }
+
+                    FoldSection(stringResource(R.string.body)) {
+                        Panel {
+                            Stepper(set.heightCm, { v -> act { updateSettings { it.copy(heightCm = v) } } }, 120..220, stringResource(R.string.height), " cm", step = 2)
+                            Text(stringResource(R.string.height_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+                        }
+                    }
+
+                }
+                SettingsPage.ALERTS -> {
+                    com.lifup.app.ui.focus.PermissionsPanel(s)
+
+                    FoldSection(stringResource(R.string.notifications)) {
+                        Panel {
+                            ToggleRow(stringResource(R.string.notifications), stringResource(R.string.notifications_info), set.notifications) { v -> act { updateSettings { it.copy(notifications = v) } } }
+                            if (set.notifications) Stepper(set.reminderHour, { v -> act { updateSettings { it.copy(reminderHour = v) } } }, 12..23, stringResource(R.string.reminder_hour), "h")
+                            ToggleRow(stringResource(R.string.sound), stringResource(R.string.sound_info), set.sound) { v -> act { updateSettings { it.copy(sound = v) } } }
+                            ToggleRow(stringResource(R.string.vibration), stringResource(R.string.vibration_info), set.vibration) { v -> act { updateSettings { it.copy(vibration = v) } } }
+                        }
+                    }
+
+                    FoldSection(stringResource(R.string.theme)) {
+                        Panel {
+                            val current = HunterRank.of(s.player.level)
+                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                FilterChip(selected = set.themeRank == null, onClick = { act { updateSettings { it.copy(themeRank = null) } } }, label = { Text(stringResource(R.string.theme_auto)) })
+                                HunterRank.entries.filter { it.ordinal <= current.ordinal }.forEach { r ->
+                                    FilterChip(selected = set.themeRank == r, onClick = { act { updateSettings { it.copy(themeRank = r) } } }, label = { Text(r.label, color = accentRank(r)) })
+                                }
+                            }
+                            Text(stringResource(R.string.theme_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+                        }
+                    }
+
+                    BlockScheduleSection(s, openPlus)
+                }
+                SettingsPage.DATA -> {
+                    FoldSection(stringResource(R.string.backup)) {
+                        Panel {
+                            Text(stringResource(R.string.backup_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+                            Spacer(Modifier.height(8.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                GhostButton(stringResource(R.string.export), onClick = { exporter.launch("lifup-backup.json") }, modifier = Modifier.weight(1f), icon = Icons.Rounded.Upload)
+                                GhostButton(stringResource(R.string.import_), onClick = { importer.launch(arrayOf("application/json", "text/plain", "*/*")) }, modifier = Modifier.weight(1f), icon = Icons.Rounded.Download)
+                            }
+                            TextButton(onClick = { pasteOpen = true }) { Text(stringResource(R.string.paste_old_backup).uppercase()) }
+                            AutoBackups { pendingImport = it }
+                            val legacy = remember { LegacyImport.readAsyncStorage(context) }
+                            if (legacy != null) {
+                                GhostButton(stringResource(R.string.import_old_app), onClick = {
+                                    pendingImport = LegacyImport.decodeBackup(legacy)?.let { LegacyImport.toState(it, content) }
+                                }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.History)
+                            }
+                        }
+                    }
+
+                    SectionTitle(stringResource(R.string.plus_stats_export))
+                    Text(stringResource(R.string.plus_stats_export_hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 8.dp)) {
+                        GhostButton(stringResource(R.string.plus_export_days), onClick = { if (s.plus) daysCsv.launch("lifup-days.csv") else openPlus() }, modifier = Modifier.weight(1f))
+                        GhostButton(stringResource(R.string.plus_export_missions), onClick = { if (s.plus) missionsCsv.launch("lifup-missions.csv") else openPlus() }, modifier = Modifier.weight(1f))
+                    }
+
+                }
+                SettingsPage.HELP -> {
+                    FoldSection(stringResource(R.string.guide_section)) { com.lifup.app.ui.guide.GuideTopics(s) }
+
+                    CrashReportRow()
+
+                    SectionTitle(stringResource(R.string.about))
+                    Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+                    if (BuildConfig.SELF_UPDATE) UpdateRow()
+                    val reportIntro = stringResource(R.string.report_problem_intro)
+                    TextButton(onClick = { com.lifup.app.system.CrashLog.reportProblem(context, reportIntro) }) { Text(stringResource(R.string.report_problem).uppercase()) }
+                    TextButton(onClick = { showNotes = true }) { Text(stringResource(R.string.patch_notes).uppercase()) }
+                    TextButton(onClick = { confirmReset = true }) { Text(stringResource(R.string.reset_progress).uppercase(), color = Lif.colors.red) }
                 }
             }
-
-            BlockScheduleSection(s, openPlus)
-
-            SectionTitle(stringResource(R.string.plus_stats_export))
-            Text(stringResource(R.string.plus_stats_export_hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 8.dp)) {
-                GhostButton(stringResource(R.string.plus_export_days), onClick = { if (s.plus) daysCsv.launch("lifup-days.csv") else openPlus() }, modifier = Modifier.weight(1f))
-                GhostButton(stringResource(R.string.plus_export_missions), onClick = { if (s.plus) missionsCsv.launch("lifup-missions.csv") else openPlus() }, modifier = Modifier.weight(1f))
-            }
-
-            CrashReportRow()
-
-            SectionTitle(stringResource(R.string.about))
-            Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
-            if (BuildConfig.SELF_UPDATE) UpdateRow()
-            val reportIntro = stringResource(R.string.report_problem_intro)
-            TextButton(onClick = { com.lifup.app.system.CrashLog.reportProblem(context, reportIntro) }) { Text(stringResource(R.string.report_problem).uppercase()) }
-            TextButton(onClick = { showNotes = true }) { Text(stringResource(R.string.patch_notes).uppercase()) }
-            TextButton(onClick = { confirmReset = true }) { Text(stringResource(R.string.reset_progress).uppercase(), color = Lif.colors.red) }
             Spacer(Modifier.height(24.dp))
         }
     }
@@ -372,10 +388,33 @@ private fun CrashReportRow() {
 /** A settings group that opens on tap, so the page reads as a short list of topics. */
 @Composable
 private fun FoldSection(title: String, trailing: @Composable () -> Unit = {}, content: @Composable () -> Unit) {
-    var open by rememberSaveable(title) { mutableStateOf(false) }
+    var open by rememberSaveable(title) { mutableStateOf(true) }
     SectionTitle(title, Modifier.clickable { open = !open }) {
         trailing()
         Icon(if (open) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore, null, tint = Lif.colors.muted)
     }
     AnimatedVisibility(open) { Column { content() } }
+}
+
+/** The four groups the settings open into; the first screen lists only these. */
+enum class SettingsPage(val title: Int, val hint: Int, val icon: androidx.compose.ui.graphics.vector.ImageVector) {
+    GAME(R.string.settings_game, R.string.settings_game_hint, Icons.Rounded.SportsEsports),
+    ALERTS(R.string.settings_alerts, R.string.settings_alerts_hint, Icons.Rounded.Palette),
+    DATA(R.string.settings_data, R.string.settings_data_hint, Icons.Rounded.Save),
+    HELP(R.string.settings_help, R.string.settings_help_hint, Icons.Rounded.HelpOutline),
+}
+
+@Composable
+private fun MenuEntry(page: SettingsPage, onClick: () -> Unit) {
+    Panel(onClick = onClick, modifier = Modifier.padding(top = 8.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(page.icon, null, tint = Lif.colors.accent)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(page.title), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(page.hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
+            }
+            Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, null, tint = Lif.colors.muted)
+        }
+    }
 }

@@ -11,6 +11,14 @@
     <string name="save_n">Guardar (%1$d)</string>
     <string name="search">Pesquisar</string>
     <string name="settings">Definições</string>
+    <string name="settings_game">Jogo</string>
+    <string name="settings_game_hint">Perfil, missões, dificuldade e corpo</string>
+    <string name="settings_alerts">Aspeto e alertas</string>
+    <string name="settings_alerts_hint">Permissões, notificações, horários e tema</string>
+    <string name="settings_data">Dados</string>
+    <string name="settings_data_hint">Cópias de segurança e exportações</string>
+    <string name="settings_help">Ajuda e informações</string>
+    <string name="settings_help_hint">Guias, relatórios e informações da app</string>
     <string name="undo">Desfazer</string>
     <string name="use">Usar</string>
     <string name="fix">Resolver</string>

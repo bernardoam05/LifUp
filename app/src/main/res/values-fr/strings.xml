@@ -11,6 +11,14 @@
     <string name="save_n">Enregistrer (%1$d)</string>
     <string name="search">Rechercher</string>
     <string name="settings">Paramètres</string>
+    <string name="settings_game">Jeu</string>
+    <string name="settings_game_hint">Profil, missions, difficulté et corps</string>
+    <string name="settings_alerts">Apparence et alertes</string>
+    <string name="settings_alerts_hint">Autorisations, notifications, horaires et thème</string>
+    <string name="settings_data">Données</string>
+    <string name="settings_data_hint">Sauvegardes et exportations</string>
+    <string name="settings_help">Aide et à propos</string>
+    <string name="settings_help_hint">Guides, rapports et informations sur l’application</string>
     <string name="undo">Annuler</string>
     <string name="use">Utiliser</string>
     <string name="fix">Régler</string>
