@@ -44,4 +44,28 @@ object CrashLog {
         appendLine()
         append(error.stackTraceToString())
     }
+
+    const val SUPPORT_EMAIL = "corequest.app@gmail.com"
+
+    /**
+     * Opens the mail app on a message to [SUPPORT_EMAIL] with the app version, the phone and Android version, and
+     * the last crash report if there is one; the player writes what happened and decides whether to send it.
+     */
+    fun reportProblem(context: Context, intro: String) {
+        val body = buildString {
+            appendLine(intro); appendLine(); appendLine(); appendLine("—")
+            appendLine("CoreQuest ${com.lifup.app.BuildConfig.VERSION_NAME} (${com.lifup.app.BuildConfig.FLAVOR})")
+            appendLine("${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}, Android ${android.os.Build.VERSION.RELEASE}")
+            read(context)?.let { appendLine(); appendLine(it.take(6_000)) }
+        }
+        val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO, android.net.Uri.parse("mailto:"))
+            .putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf(SUPPORT_EMAIL))
+            .putExtra(android.content.Intent.EXTRA_SUBJECT, "CoreQuest ${com.lifup.app.BuildConfig.VERSION_NAME}")
+            .putExtra(android.content.Intent.EXTRA_TEXT, body)
+            .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        runCatching { context.startActivity(intent) }.onFailure {
+            // No mail app: hand the same text to whatever can take it.
+            share(context, "$SUPPORT_EMAIL\n\n$body")
+        }
+    }
 }

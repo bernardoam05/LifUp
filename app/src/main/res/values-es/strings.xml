@@ -1058,4 +1058,6 @@
     <string name="core_paint_ghost">Fantasma</string>
     <string name="core_paint_lava">Lava</string>
     <string name="core_paint_galaxy">Galaxia</string>
+    <string name="report_problem">Informar de un problema</string>
+    <string name="report_problem_intro">¿Qué pasó? (qué estabas haciendo, qué esperabas y qué viste)</string>
 </resources>

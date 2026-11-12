@@ -1059,4 +1059,6 @@
     <string name="core_paint_ghost">Ghost</string>
     <string name="core_paint_lava">Lava</string>
     <string name="core_paint_galaxy">Galaxy</string>
+    <string name="report_problem">Report a problem</string>
+    <string name="report_problem_intro">What happened? (what you were doing, what you expected, what you saw)</string>
 </resources>

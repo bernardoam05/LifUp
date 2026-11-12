@@ -49,7 +49,7 @@ fun Splash() {
         Box(Modifier.graphicsLayer { scaleX = scale.value; scaleY = scale.value }) {
             // Later forms are bigger: the evolution shows from the first second.
             val stage = Core.stage(s)
-            CoreAvatar(stage, CoreMood.HAPPY, (140 + 20 * (stage - 1)).dp, bust = false, animate = false)
+            CoreAvatar(stage, CoreMood.HAPPY, (160 + 16 * (stage - 1)).dp, bust = false, animate = false)
         }
     }
 }

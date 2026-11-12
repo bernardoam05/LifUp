@@ -33,6 +33,8 @@ Em Actions → **Play bundle** → Run workflow. O `.aab` aparece em Artifacts. 
 
 ## 3. Consola da Play: o que preencher
 
+- **Email de contacto (público na ficha):** corequest.app@gmail.com. É também para onde vai o botão "Reportar um problema" da app.
+
 - **Política de privacidade:** o link para o `PRIVACY.md` deste repositório.
 - **Segurança dos dados:** só as missões em par (opcionais) enviam dados, para o Cloud Firestore (ver `docs/PAIRS.md` no main). Declara:
   - **Recolhidos:** "Identificadores do dispositivo ou outros IDs" (o ID anónimo), "Informações pessoais → Nome" (o nome do herói), "Atividade na app → Outras ações" (as conclusões das missões em par).

@@ -270,6 +270,8 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit, openPlus: () -> Un
             SectionTitle(stringResource(R.string.about))
             Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
             if (BuildConfig.SELF_UPDATE) UpdateRow()
+            val reportIntro = stringResource(R.string.report_problem_intro)
+            TextButton(onClick = { com.lifup.app.system.CrashLog.reportProblem(context, reportIntro) }) { Text(stringResource(R.string.report_problem).uppercase()) }
             TextButton(onClick = { showNotes = true }) { Text(stringResource(R.string.patch_notes).uppercase()) }
             TextButton(onClick = { confirmReset = true }) { Text(stringResource(R.string.reset_progress).uppercase(), color = Lif.colors.red) }
             Spacer(Modifier.height(24.dp))

@@ -1040,4 +1040,6 @@
     <string name="core_paint_ghost">Fantasma</string>
     <string name="core_paint_lava">Lava</string>
     <string name="core_paint_galaxy">Galáxia</string>
+    <string name="report_problem">Reportar um problema</string>
+    <string name="report_problem_intro">O que aconteceu? (o que estavas a fazer, o que esperavas e o que viste)</string>
 </resources>

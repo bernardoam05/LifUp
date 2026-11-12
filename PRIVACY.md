@@ -19,7 +19,7 @@ CoreQuest does not sell any personal data and has no account. Everything you do 
 - **Internet** is only used for pair missions (above) and to read the release notes of new versions from GitHub (and, in the version installed from GitHub, to download its updates). Nothing about you is sent.
 - **Children:** the app is not directed at children under 13.
 
-Deleting the app deletes all its data. Questions: open an issue at https://github.com/bernardoam05/LifUp/issues.
+Deleting the app deletes all its data. Questions: write to corequest.app@gmail.com or open an issue at https://github.com/bernardoam05/LifUp/issues.
 
 ## Português
 
@@ -38,7 +38,7 @@ A CoreQuest não vende dados pessoais e não tem conta. Tudo o que fazes na app 
 - **A internet** só é usada para as missões em par (acima) e para ler as notas das versões novas no GitHub (e, na versão instalada a partir do GitHub, para descarregar as atualizações). Nada sobre ti é enviado.
 - **Crianças:** a app não se destina a menores de 13 anos.
 
-Desinstalar a app apaga todos os dados. Dúvidas: abre uma issue em https://github.com/bernardoam05/LifUp/issues.
+Desinstalar a app apaga todos os dados. Dúvidas: escreve para corequest.app@gmail.com ou abre uma issue em https://github.com/bernardoam05/LifUp/issues.
 
 ## Español
 
@@ -57,7 +57,7 @@ CoreQuest no vende datos personales y no tiene cuenta. Todo lo que haces en la a
 - **Internet** solo se usa para las misiones en pareja (arriba) y para leer en GitHub las notas de las versiones nuevas (y, en la versión instalada desde GitHub, para descargar sus actualizaciones). No se envía nada sobre ti.
 - **Menores:** la app no está dirigida a menores de 13 años.
 
-Desinstalar la app borra todos sus datos. Dudas: abre una issue en https://github.com/bernardoam05/LifUp/issues.
+Desinstalar la app borra todos sus datos. Dudas: escribe a corequest.app@gmail.com o abre una issue en https://github.com/bernardoam05/LifUp/issues.
 
 ## Français
 
@@ -76,7 +76,7 @@ CoreQuest ne vend aucune donnée personnelle et n'a pas de compte. Tout ce que t
 - **Internet** sert uniquement aux missions en binôme (ci-dessus) et à lire sur GitHub les notes des nouvelles versions (et, dans la version installée depuis GitHub, à télécharger ses mises à jour). Rien te concernant n'est envoyé.
 - **Enfants :** l'app ne s'adresse pas aux moins de 13 ans.
 
-Désinstaller l'app efface toutes ses données. Questions : ouvre une issue sur https://github.com/bernardoam05/LifUp/issues.
+Désinstaller l'app efface toutes ses données. Questions : écris à corequest.app@gmail.com ou ouvre une issue sur https://github.com/bernardoam05/LifUp/issues.
 
 ## Deutsch
 
@@ -95,4 +95,4 @@ CoreQuest verkauft keine personenbezogenen Daten und hat kein Konto. Alles, was 
 - **Internet** wird nur für Partnermissionen (oben) genutzt und um die Hinweise zu neuen Versionen von GitHub zu lesen (und in der von GitHub installierten Version, um Updates herunterzuladen). Über dich wird nichts gesendet.
 - **Kinder:** Die App richtet sich nicht an Kinder unter 13 Jahren.
 
-Wird die App deinstalliert, werden alle ihre Daten gelöscht. Fragen: Eröffne ein Issue auf https://github.com/bernardoam05/LifUp/issues.
+Wird die App deinstalliert, werden alle ihre Daten gelöscht. Fragen: Schreib an corequest.app@gmail.com oder eröffne ein Issue auf https://github.com/bernardoam05/LifUp/issues.
