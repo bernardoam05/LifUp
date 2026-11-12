@@ -1,0 +1,1 @@
+- [fix] A criação de missões em par passa a dar acesso à lista, à recorrência e ao botão Criar.

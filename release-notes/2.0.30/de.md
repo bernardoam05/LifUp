@@ -1,0 +1,1 @@
+- [fix] Beim Erstellen einer Partnermission sind Missionsliste, Wiederholung und die Schaltfläche „Erstellen“ jetzt erreichbar.

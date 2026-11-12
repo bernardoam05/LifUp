@@ -1,0 +1,1 @@
+- [fix] La liste des missions, la récurrence et le bouton Créer sont désormais accessibles lors de la création d’une mission en binôme.

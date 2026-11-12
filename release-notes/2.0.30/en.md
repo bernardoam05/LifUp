@@ -1,0 +1,1 @@
+- [fix] Pair mission creation now keeps the mission list, recurrence, and Create button reachable.

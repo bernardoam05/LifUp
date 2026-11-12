@@ -1,0 +1,1 @@
+- [fix] Ahora puedes acceder a la lista de misiones, la repetición y el botón Crear al crear una misión en pareja.
