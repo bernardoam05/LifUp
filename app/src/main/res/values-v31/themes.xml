@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Android 12+ draws its own splash: the whole Core on the icon's dark green, then the app's own background. -->
+    <!-- Android 12+ draws its own splash with the launcher icon, which follows the Core's form and skin
+         (system/IconSwitcher), so the app opens on the player's own Core. -->
     <style name="Theme.LifUp.Launch">
         <item name="android:windowBackground">@drawable/background_splash</item>
         <item name="android:windowSplashScreenBackground">@color/splash_bg</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_core</item>
     </style>
 </resources>
