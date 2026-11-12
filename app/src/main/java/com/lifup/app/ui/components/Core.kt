@@ -127,13 +127,13 @@ fun CoreAvatar(
             },
         ) {
             // The scarf's back band goes behind the Core: only its ends show beside the neck.
-            if (skin == CoreSkin.SCARF && !locked) Accessory(skin, stage, face, size, back = true)
+            if (skin == CoreSkin.SCARF && !locked) Accessory(skin, stage, size, back = true)
             Image(
                 painterResource(sprite(stage, mood, paint)), null,
                 colorFilter = if (locked) ColorFilter.tint(Color(0xFF2A3140)) else null,
                 modifier = Modifier.fillMaxSize(),
             )
-            if (skin != null && !locked) Accessory(skin, stage, face, size)
+            if (skin != null && !locked) Accessory(skin, stage, size)
         }
         if (mood == CoreMood.SLEEPING && animate && !locked) {
             val z by t.animateFloat(0f, 1f, infiniteRepeatable(tween(2400, easing = LinearEasing)), label = "z")
@@ -149,49 +149,38 @@ fun CoreAvatar(
     }
 }
 
-/** Each accessory's picture, its height/width, and where it sits: width and anchor in face widths, anchored edge, tilt. */
-private class Wear(val res: Int, val aspect: Float, val width: Float, val dy: Float, val edge: Int, val tilt: Float, val back: Int? = null)
-
-private const val BOTTOM = 0
-private const val CENTER = 1
-private const val TOP = 2
-
-private fun wear(skin: CoreSkin) = when (skin) {
-    CoreSkin.PUMPKIN -> Wear(R.drawable.core_acc_pumpkin, 0.869f, 1.75f, -0.12f, BOTTOM, 0f)
-    CoreSkin.SCARF -> Wear(R.drawable.core_acc_scarf, 0.887f, 1.35f, 0.04f, TOP, 0f, back = R.drawable.core_acc_scarf_back)
-    CoreSkin.PARTY_HAT -> Wear(R.drawable.core_acc_party_hat, 1.081f, 1.00f, -0.22f, BOTTOM, 12f)
-    CoreSkin.FLOWER_CROWN -> Wear(R.drawable.core_acc_flower_crown, 0.625f, 1.55f, -0.18f, BOTTOM, 0f)
-    // Pushed up on the hood: the eyes carry the expressions.
-    CoreSkin.SUNGLASSES -> Wear(R.drawable.core_acc_sunglasses, 0.434f, 1.05f, -0.42f, CENTER, 0f)
+/** Each accessory's picture (and the scarf's back band, drawn behind the Core). */
+private fun art(skin: CoreSkin) = when (skin) {
+    CoreSkin.PUMPKIN -> R.drawable.core_acc_pumpkin
+    CoreSkin.SCARF -> R.drawable.core_acc_scarf
+    CoreSkin.PARTY_HAT -> R.drawable.core_acc_party_hat
+    CoreSkin.FLOWER_CROWN -> R.drawable.core_acc_flower_crown
+    CoreSkin.SUNGLASSES -> R.drawable.core_acc_sunglasses
 }
 
-/**
- * Fine-tuning by form, (size factor, anchor shift in face widths): on the last two forms hats sit under the halo
- * instead of growing into it.
- */
-private fun adjust(skin: CoreSkin, stage: Int): Pair<Float, Float> = when {
-    skin == CoreSkin.PUMPKIN && stage == 5 -> 0.72f to 0.16f
-    skin == CoreSkin.PUMPKIN && stage == 6 -> 0.8f to 0.08f
-    skin == CoreSkin.FLOWER_CROWN && stage == 5 -> 0.85f to 0.16f
-    skin == CoreSkin.FLOWER_CROWN && stage == 6 -> 0.9f to 0.06f
-    skin == CoreSkin.PARTY_HAT && stage == 5 -> 0.85f to 0.1f
-    else -> 1f to 0f
+private fun aspect(skin: CoreSkin) = when (skin) {
+    CoreSkin.PUMPKIN -> 0.869f
+    CoreSkin.SCARF -> 0.887f
+    CoreSkin.PARTY_HAT -> 1.081f
+    CoreSkin.FLOWER_CROWN -> 0.625f
+    CoreSkin.SUNGLASSES -> 0.434f
 }
 
-/** The accessory on the Core's head (or neck), placed from where the form's face is (see [FACES]). */
+/** Where each accessory sits on each form: left, top and width as fractions of the sprite, fitted form by form. */
+private val PLACE: Map<CoreSkin, List<FloatArray>> = mapOf(
+    CoreSkin.PUMPKIN to listOf(floatArrayOf(0.265f, 0.075f, 0.500f), floatArrayOf(0.249f, 0.067f, 0.517f), floatArrayOf(0.268f, 0.062f, 0.517f), floatArrayOf(0.283f, 0.071f, 0.506f), floatArrayOf(0.280f, 0.085f, 0.460f), floatArrayOf(0.300f, 0.090f, 0.410f)),
+    CoreSkin.SCARF to listOf(floatArrayOf(0.335f, 0.534f, 0.381f), floatArrayOf(0.310f, 0.451f, 0.407f), floatArrayOf(0.337f, 0.455f, 0.394f), floatArrayOf(0.355f, 0.447f, 0.390f), floatArrayOf(0.320f, 0.470f, 0.380f), floatArrayOf(0.315f, 0.500f, 0.380f)),
+    CoreSkin.PARTY_HAT to listOf(floatArrayOf(0.389f, 0.065f, 0.295f), floatArrayOf(0.376f, 0.049f, 0.299f), floatArrayOf(0.390f, 0.060f, 0.290f), floatArrayOf(0.397f, 0.044f, 0.280f), floatArrayOf(0.424f, 0.062f, 0.262f), floatArrayOf(0.423f, 0.061f, 0.249f)),
+    CoreSkin.FLOWER_CROWN to listOf(floatArrayOf(0.274f, 0.221f, 0.489f), floatArrayOf(0.265f, 0.182f, 0.498f), floatArrayOf(0.255f, 0.183f, 0.528f), floatArrayOf(0.264f, 0.155f, 0.533f), floatArrayOf(0.274f, 0.198f, 0.498f), floatArrayOf(0.241f, 0.202f, 0.499f)),
+    CoreSkin.SUNGLASSES to listOf(floatArrayOf(0.310f, 0.330f, 0.420f), floatArrayOf(0.315f, 0.240f, 0.400f), floatArrayOf(0.308f, 0.236f, 0.441f), floatArrayOf(0.318f, 0.246f, 0.434f), floatArrayOf(0.335f, 0.220f, 0.380f), floatArrayOf(0.335f, 0.235f, 0.360f)),
+)
+
 @Composable
-private fun Accessory(skin: CoreSkin, stage: Int, face: FloatArray, size: Dp, back: Boolean = false) {
-    val w = wear(skin)
-    val res = if (back) w.back ?: return else w.res
-    val (k, shift) = adjust(skin, stage)
-    // The last two forms have a small face inside a big hood: measure them a bit larger.
-    val fw = face[2] * when (stage) { 5 -> 1.7f; 6 -> 2.2f; else -> 1f }
-    val width = size * (w.width * fw * k)
-    val height = width * w.aspect
-    val anchorY = size * (face[1] + (w.dy + shift) * fw)
-    val top = when (w.edge) { BOTTOM -> anchorY - height; CENTER -> anchorY - height / 2; else -> anchorY }
+private fun Accessory(skin: CoreSkin, stage: Int, size: Dp, back: Boolean = false) {
+    val res = if (back) { if (skin == CoreSkin.SCARF) R.drawable.core_acc_scarf_back else return } else art(skin)
+    val (left, top, width) = PLACE.getValue(skin)[stage.coerceIn(1, Core.STAGES) - 1].let { Triple(it[0], it[1], it[2]) }
     Image(
         painterResource(res), null,
-        modifier = Modifier.offset(x = size * face[0] - width / 2, y = top).size(width, height).graphicsLayer { rotationZ = w.tilt },
+        modifier = Modifier.offset(x = size * left, y = size * top).size(size * width, size * width * aspect(skin)),
     )
 }
