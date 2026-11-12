@@ -12,6 +12,14 @@
     <string name="save_n">Speichern (%1$d)</string>
     <string name="search">Suchen</string>
     <string name="settings">Einstellungen</string>
+    <string name="settings_game">Spiel</string>
+    <string name="settings_game_hint">Profil, Missionen, Schwierigkeit und Körper</string>
+    <string name="settings_alerts">Darstellung und Hinweise</string>
+    <string name="settings_alerts_hint">Berechtigungen, Benachrichtigungen, Zeitplan und Design</string>
+    <string name="settings_data">Daten</string>
+    <string name="settings_data_hint">Sicherungen und Exporte</string>
+    <string name="settings_help">Hilfe und Info</string>
+    <string name="settings_help_hint">Anleitungen, Berichte und App-Informationen</string>
     <string name="undo">Rückgängig</string>
     <string name="use">Nutzen</string>
     <string name="fix">Beheben</string>
@@ -912,6 +920,7 @@
     <string name="pair_join">Mit Code beitreten</string>
     <string name="pair_pick_mission">Mission</string>
     <string name="pair_repeat">Wiederholung</string>
+    <string name="pair_select_mission_hint">Wähle oben eine Mission aus, um „Erstellen“ zu aktivieren.</string>
     <string name="pair_once">Einmal</string>
     <string name="pair_daily">Jeden Tag</string>
     <string name="pair_weekly">Wochentage</string>

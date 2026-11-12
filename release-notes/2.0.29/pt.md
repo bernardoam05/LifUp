@@ -1,0 +1,2 @@
+- [new] Ao abrir a app, és avisado de novas atualizações; podes escolher Atualizar agora ou Mais tarde, que espera pela próxima versão.
+- [tweak] As Definições estão organizadas por páginas: jogo, alertas e aspeto, dados e ajuda.

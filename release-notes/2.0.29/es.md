@@ -1,0 +1,2 @@
+- [new] Al abrir la app, se te avisa de las actualizaciones; puedes elegir Actualizar ahora o Más tarde, que espera a una nueva versión.
+- [tweak] Los ajustes se organizan en páginas: juego, avisos y aspecto, datos y ayuda.

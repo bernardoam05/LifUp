@@ -1,0 +1,2 @@
+- [new] Beim Öffnen wirst du über Updates informiert. Wähle Jetzt aktualisieren oder Später, wodurch die nächste Version abgewartet wird.
+- [tweak] Die Einstellungen sind in Seiten gegliedert: Spiel, Hinweise und Darstellung, Daten und Hilfe.

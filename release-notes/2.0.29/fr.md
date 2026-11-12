@@ -1,0 +1,2 @@
+- [new] À l’ouverture de l’app, tu es averti des mises à jour ; choisis Mettre à jour ou Plus tard, qui attend une nouvelle version.
+- [tweak] Les réglages sont regroupés en pages : jeu, alertes et apparence, données et aide.
