@@ -168,11 +168,11 @@ private fun aspect(skin: CoreSkin) = when (skin) {
 
 /** Where each accessory sits on each form: left, top and width as fractions of the sprite, fitted form by form. */
 private val PLACE: Map<CoreSkin, List<FloatArray>> = mapOf(
-    CoreSkin.PUMPKIN to listOf(floatArrayOf(0.265f, 0.075f, 0.500f), floatArrayOf(0.249f, 0.067f, 0.517f), floatArrayOf(0.268f, 0.062f, 0.517f), floatArrayOf(0.283f, 0.071f, 0.506f), floatArrayOf(0.280f, 0.085f, 0.460f), floatArrayOf(0.300f, 0.090f, 0.410f)),
-    CoreSkin.SCARF to listOf(floatArrayOf(0.335f, 0.534f, 0.381f), floatArrayOf(0.310f, 0.451f, 0.407f), floatArrayOf(0.337f, 0.455f, 0.394f), floatArrayOf(0.355f, 0.447f, 0.390f), floatArrayOf(0.320f, 0.470f, 0.380f), floatArrayOf(0.315f, 0.500f, 0.380f)),
-    CoreSkin.PARTY_HAT to listOf(floatArrayOf(0.389f, 0.065f, 0.295f), floatArrayOf(0.376f, 0.049f, 0.299f), floatArrayOf(0.390f, 0.060f, 0.290f), floatArrayOf(0.397f, 0.044f, 0.280f), floatArrayOf(0.424f, 0.062f, 0.262f), floatArrayOf(0.423f, 0.061f, 0.249f)),
-    CoreSkin.FLOWER_CROWN to listOf(floatArrayOf(0.274f, 0.221f, 0.489f), floatArrayOf(0.265f, 0.182f, 0.498f), floatArrayOf(0.255f, 0.183f, 0.528f), floatArrayOf(0.264f, 0.155f, 0.533f), floatArrayOf(0.274f, 0.198f, 0.498f), floatArrayOf(0.241f, 0.202f, 0.499f)),
-    CoreSkin.SUNGLASSES to listOf(floatArrayOf(0.310f, 0.330f, 0.420f), floatArrayOf(0.315f, 0.240f, 0.400f), floatArrayOf(0.308f, 0.236f, 0.441f), floatArrayOf(0.318f, 0.246f, 0.434f), floatArrayOf(0.335f, 0.220f, 0.380f), floatArrayOf(0.335f, 0.235f, 0.360f)),
+    CoreSkin.PUMPKIN to listOf(floatArrayOf(0.265f, 0.075f, 0.500f), floatArrayOf(0.249f, 0.067f, 0.517f), floatArrayOf(0.299f, 0.109f, 0.455f), floatArrayOf(0.321f, 0.124f, 0.430f), floatArrayOf(0.344f, 0.181f, 0.331f), floatArrayOf(0.357f, 0.180f, 0.295f)),
+    CoreSkin.SCARF to listOf(floatArrayOf(0.354f, 0.511f, 0.343f), floatArrayOf(0.294f, 0.386f, 0.440f), floatArrayOf(0.321f, 0.391f, 0.426f), floatArrayOf(0.355f, 0.397f, 0.390f), floatArrayOf(0.349f, 0.455f, 0.323f), floatArrayOf(0.344f, 0.485f, 0.323f)),
+    CoreSkin.PARTY_HAT to listOf(floatArrayOf(0.367f, 0.021f, 0.339f), floatArrayOf(0.354f, 0.005f, 0.344f), floatArrayOf(0.361f, -0.001f, 0.348f), floatArrayOf(0.380f, 0.006f, 0.314f), floatArrayOf(0.444f, 0.103f, 0.223f), floatArrayOf(0.442f, 0.101f, 0.212f)),
+    CoreSkin.FLOWER_CROWN to listOf(floatArrayOf(0.311f, 0.274f, 0.416f), floatArrayOf(0.302f, 0.235f, 0.423f), floatArrayOf(0.295f, 0.238f, 0.449f), floatArrayOf(0.304f, 0.210f, 0.453f), floatArrayOf(0.311f, 0.251f, 0.423f), floatArrayOf(0.278f, 0.255f, 0.424f)),
+    CoreSkin.SUNGLASSES to listOf(floatArrayOf(0.342f, 0.359f, 0.357f), floatArrayOf(0.345f, 0.268f, 0.340f), floatArrayOf(0.341f, 0.265f, 0.375f), floatArrayOf(0.351f, 0.275f, 0.369f), floatArrayOf(0.364f, 0.247f, 0.323f), floatArrayOf(0.362f, 0.262f, 0.306f)),
 )
 
 @Composable
