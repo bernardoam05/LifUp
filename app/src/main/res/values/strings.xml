@@ -921,6 +921,7 @@
     <string name="pair_join">Join with a code</string>
     <string name="pair_pick_mission">Mission</string>
     <string name="pair_repeat">Repeats</string>
+    <string name="pair_select_mission_hint">Choose a mission above to enable Create.</string>
     <string name="pair_once">Once</string>
     <string name="pair_daily">Every day</string>
     <string name="pair_weekly">Days of the week</string>
