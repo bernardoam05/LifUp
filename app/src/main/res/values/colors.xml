@@ -2,5 +2,5 @@
 <resources>
     <color name="app_bg">#FF0B0D14</color>
     <!-- The icon gradient's middle, behind the Core on the splash. -->
-    <color name="splash_bg">#FF0B271B</color>
+    <color name="splash_bg">#FF0B0D12</color>
 </resources>

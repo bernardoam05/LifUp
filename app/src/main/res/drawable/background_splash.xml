@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Launch background: the icon's dark green with the whole Core centred (the launcher icon only has room for her head). -->
+<!-- Launch background: just the splash colour; the app then shows the player's own Core (ui/Splash). -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
-    <item android:drawable="@drawable/ic_launcher_background" />
-    <item android:width="200dp" android:height="200dp" android:gravity="center" android:drawable="@drawable/splash_core_full" />
+    <item><color android:color="@color/splash_bg" /></item>
 </layer-list>

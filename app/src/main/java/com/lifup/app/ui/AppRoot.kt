@@ -151,6 +151,7 @@ fun AppRoot(deepLink: String?, onDeepLinkConsumed: () -> Unit) {
         Box(Modifier.fillMaxSize().background(Lif.colors.bg)) {
             if (!s.onboarded) {
                 OnboardingScreen()
+                Splash()
                 return@Box
             }
             CrashPrompt()
@@ -172,6 +173,7 @@ fun AppRoot(deepLink: String?, onDeepLinkConsumed: () -> Unit) {
                     DefEditorScreen(entry.arguments?.getString("id")?.takeIf { it != "new" }, onBack = { nav.popBackStack() })
                 }
             }
+            Splash()
         }
     }
 }
