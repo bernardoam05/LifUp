@@ -1,0 +1,2 @@
+- [new] Updates are announced when you open the app; choose Update now or Later, which waits for a newer release.
+- [tweak] Settings are grouped into pages for game, alerts and appearance, data, and help.
