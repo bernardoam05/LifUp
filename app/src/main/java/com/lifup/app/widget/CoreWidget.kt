@@ -30,7 +30,7 @@ import com.lifup.app.domain.shownPaint
 import com.lifup.app.ui.components.coreSprite
 import java.time.LocalTime
 
-/** LifUp+: the Core on the home screen, in its form and with today's face, and today's missions under it. */
+/** CoreQuest+: the Core on the home screen, in its form and with today's face, and today's missions under it. */
 class CoreWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Responsive(setOf(DpSize(110.dp, 110.dp), DpSize(180.dp, 180.dp)))
 

@@ -95,7 +95,7 @@ object PairRules {
     const val RANDOM = "random"
     /** A different one each cycle, and each partner draws their own: what counts is that both did theirs. */
     const val EACH = "each"
-    /** Pairs at once without LifUp+ (with it, [MAX_ACTIVE]). */
+    /** Pairs at once without CoreQuest+ (with it, [MAX_ACTIVE]). */
     const val FREE_ACTIVE = 1
     const val BONUS = 0.25
     const val CUT = 0.10

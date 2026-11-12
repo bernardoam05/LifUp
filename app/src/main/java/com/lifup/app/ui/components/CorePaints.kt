@@ -3,7 +3,7 @@ package com.lifup.app.ui.components
 import com.lifup.app.R
 import com.lifup.app.domain.CorePaint
 
-/** The LifUp+ skins' sprites: by skin, then form (1..6), then face in [com.lifup.app.domain.CoreMood] order. Generated. */
+/** The CoreQuest+ skins' sprites: by skin, then form (1..6), then face in [com.lifup.app.domain.CoreMood] order. Generated. */
 internal val PAINT_SPRITES: Map<CorePaint, List<List<Int>>> = mapOf(
     CorePaint.AURORA to listOf(
         listOf(R.drawable.core_aurora_s1_neutral, R.drawable.core_aurora_s1_confident, R.drawable.core_aurora_s1_happy, R.drawable.core_aurora_s1_focused, R.drawable.core_aurora_s1_relaxed, R.drawable.core_aurora_s1_excited, R.drawable.core_aurora_s1_tired, R.drawable.core_aurora_s1_frustrated),

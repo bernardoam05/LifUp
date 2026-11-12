@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import com.lifup.app.domain.setPlus
 
 /**
- * The GitHub build sells nothing: there LifUp+ comes included (it's where things get tested). A backup taken
+ * The GitHub build sells nothing: there CoreQuest+ comes included (it's where things get tested). A backup taken
  * here and restored on the Play build doesn't carry it over: Play's own check turns it off unless it was bought.
  */
 object PlusBilling {

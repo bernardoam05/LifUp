@@ -1,6 +1,7 @@
 package com.lifup.app.ui.today
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
-import androidx.compose.material.icons.rounded.School
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,12 +38,17 @@ private fun StarterTask.label() = when (this) {
 fun StarterCard(s: GameState) {
     val p = Lif.colors
     Panel(border = p.accent.copy(alpha = 0.6f), background = p.accent.copy(alpha = 0.06f)) {
+        // The Core shows the way on day one.
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Rounded.School, null, tint = p.accent)
+            com.lifup.app.ui.components.CoreAvatar(com.lifup.app.domain.Core.stage(s), com.lifup.app.domain.CoreMood.HAPPY, 56.dp)
             Spacer(Modifier.width(10.dp))
-            Text(stringResource(R.string.starter_title), style = MaterialTheme.typography.titleMedium)
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.starter_title), style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.size(4.dp))
+                com.lifup.app.ui.guide.SpeechBubble(stringResource(R.string.starter_hint), p.accent)
+            }
         }
-        Text(stringResource(R.string.starter_hint), style = MaterialTheme.typography.bodySmall, color = p.muted, modifier = Modifier.padding(top = 4.dp, bottom = 4.dp))
+        Spacer(Modifier.size(6.dp))
         StarterTask.entries.forEach { t ->
             val claimed = t in s.starterClaimed
             val done = s.starterDone(t)

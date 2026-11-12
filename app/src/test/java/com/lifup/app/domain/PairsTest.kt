@@ -147,7 +147,7 @@ class PairsTest {
         assertTrue(s.pairs.isEmpty())
     }
 
-    @Test fun `one pair without LifUp+, three with it`() {
+    @Test fun `one pair without CoreQuest+, three with it`() {
         var s = run(GameState(onboarded = true), "2026-11-11T09:00") { addPair(pair().copy(id = "p0")) }
         assertFalse(s.canAddPair())
         s = s.copy(plus = true)

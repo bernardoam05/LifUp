@@ -16,7 +16,7 @@ import com.lifup.app.domain.shownPaint
 object IconSwitcher {
     private val PLAIN = listOf("MainActivity", "CoreIcon2", "CoreIcon3", "CoreIcon4", "CoreIcon5", "CoreIcon6")
 
-    /** Every launcher entry: the six forms, then each LifUp+ skin's six forms (".CoreIcon<n><Skin>"). */
+    /** Every launcher entry: the six forms, then each CoreQuest+ skin's six forms (".CoreIcon<n><Skin>"). */
     private val ALIASES = PLAIN + CorePaint.entries.flatMap { p -> (1..6).map { n -> "CoreIcon$n${p.name.lowercase().replaceFirstChar { it.uppercase() }}" } }
 
     /** 1-based index into [ALIASES]: the form, in the skin worn (if any). */

@@ -21,9 +21,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * LifUp+ and tips through Google Play Billing. LifUp+ is a one-time product, acknowledged once bought; tips are
+ * CoreQuest+ and tips through Google Play Billing. CoreQuest+ is a one-time product, acknowledged once bought; tips are
  * consumed so they can be given again. What Play reports as owned is the truth: the game state only mirrors it,
- * and a failed query never takes LifUp+ away.
+ * and a failed query never takes CoreQuest+ away.
  */
 object PlusBilling {
     private const val TAG = "PlusBilling"
@@ -70,7 +70,7 @@ object PlusBilling {
         }
     }
 
-    /** What Play says is owned: LifUp+ on or off (only when the answer came back fine). */
+    /** What Play says is owned: CoreQuest+ on or off (only when the answer came back fine). */
     fun restore() {
         val c = client ?: return
         c.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build()) { result, purchases ->

@@ -16,7 +16,7 @@ class PlusTest {
 
     private val echoes = listOf("a", "b", "c", "d", "e").map { OwnedShadow(it) }
 
-    @Test fun `saved squads need LifUp+`() {
+    @Test fun `saved squads need CoreQuest+`() {
         val s = run(GameState(onboarded = true, shadows = echoes, squad = listOf("a", "b")), "2026-11-11T09:00") { saveSquad(0) }
         assertTrue(s.savedSquads.isEmpty())
     }
@@ -50,7 +50,7 @@ class PlusTest {
         assertEquals(null, s.scheduledBlockUntil(at("2026-11-12T08:00"), zone))
         assertEquals(at("2026-11-12T13:00"), s.scheduledBlockUntil(at("2026-11-12T10:00"), zone))
         assertEquals(at("2026-11-12T09:00"), s.nextBlockBoundary(at("2026-11-12T08:00"), zone))
-        // Not on the wrong day, nor without LifUp+ or apps to block.
+        // Not on the wrong day, nor without CoreQuest+ or apps to block.
         assertEquals(null, s.scheduledBlockUntil(at("2026-11-13T10:00"), zone))
         assertEquals(null, s.copy(plus = false).scheduledBlockUntil(at("2026-11-12T10:00"), zone))
         assertEquals(null, s.copy(settings = s.settings.copy(blockedApps = emptyList())).scheduledBlockUntil(at("2026-11-12T10:00"), zone))

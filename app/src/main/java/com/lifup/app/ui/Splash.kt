@@ -47,7 +47,9 @@ fun Splash() {
     }
     Box(Modifier.fillMaxSize().alpha(fade.value).background(Color(0xFF0B0D12)), contentAlignment = Alignment.Center) {
         Box(Modifier.graphicsLayer { scaleX = scale.value; scaleY = scale.value }) {
-            CoreAvatar(Core.stage(s), CoreMood.HAPPY, 200.dp, bust = false, animate = false)
+            // Later forms are bigger: the evolution shows from the first second.
+            val stage = Core.stage(s)
+            CoreAvatar(stage, CoreMood.HAPPY, (140 + 20 * (stage - 1)).dp, bust = false, animate = false)
         }
     }
 }

@@ -991,7 +991,7 @@
     <string name="core_skin_flower_crown">Corona de flores</string>
     <string name="core_skin_sunglasses">Gafas de sol</string>
     <string name="toast_core_skin">Nuevo accesorio para tu Core: %1$s</string>
-    <!-- LifUp+ -->
+    <!-- CoreQuest+ -->
     <string name="plus_tagline">Apoya la app y desbloquea extras. Todo lo esencial sigue siendo gratis.</string>
     <string name="plus_includes">Qué incluye</string>
     <string name="plus_perk_skins">Pieles del Core</string>
@@ -999,10 +999,10 @@
     <string name="plus_perk_stats">Exportación de estadísticas</string>
     <string name="plus_perk_stats_text">Tu historial de días y el registro de cada misión en CSV, para una hoja de cálculo.</string>
     <string name="plus_more_coming">Hay más extras en camino, incluidos sin pagar más.</string>
-    <string name="plus_play_only">LifUp+ se compra a través de Google Play. Esta versión, instalada desde GitHub, no puede venderlo.</string>
-    <string name="plus_owned">LifUp+ está activo. ¡Gracias!</string>
+    <string name="plus_play_only">CoreQuest+ se compra a través de Google Play. Esta versión, instalada desde GitHub, no puede venderlo.</string>
+    <string name="plus_owned">CoreQuest+ está activo. ¡Gracias!</string>
     <string name="plus_one_time">Pago único</string>
-    <string name="plus_buy">Desbloquear LifUp+</string>
+    <string name="plus_buy">Desbloquear CoreQuest+</string>
     <string name="plus_buy_note">Para siempre, sin suscripción. Pagas con Google Play.</string>
     <string name="plus_tip_title">Solo quiero ayudar</string>
     <string name="plus_tip_text">Una propina para quien hace la app. No cambia nada en el juego.</string>
@@ -1010,19 +1010,19 @@
     <string name="plus_never_progress">El oro, la XP, las esencias y las rachas nunca están a la venta.</string>
     <string name="plus_restore">Restaurar compra</string>
     <string name="plus_settings_hint">Extras para quien apoya la app</string>
-    <string name="plus_stats_export">Estadísticas (LifUp+)</string>
+    <string name="plus_stats_export">Estadísticas (CoreQuest+)</string>
     <string name="plus_stats_export_hint">Guarda tu historial en archivos CSV para abrirlos en una hoja de cálculo.</string>
     <string name="plus_export_days">Días</string>
     <string name="plus_export_missions">Misiones</string>
     <string name="squad_slot">Equipo %1$d</string>
     <string name="squad_slot_empty">Guardar %1$d</string>
     <string name="squad_saved_hint">Toca para usar un equipo; mantén pulsado para guardar el actual encima. Los ecos que entran se quedan hasta mañana.</string>
-    <string name="squad_saved_plus">Guarda hasta 3 equipos y cambia con un toque con LifUp+.</string>
+    <string name="squad_saved_plus">Guarda hasta 3 equipos y cambia con un toque con CoreQuest+.</string>
     <string name="plus_perk_squads">Equipos de ecos guardados</string>
     <string name="plus_perk_squads_text">Guarda hasta 3 equipos y cambia con un toque.</string>
     <string name="widget_core_name">Core</string>
-    <string name="widget_core_desc">Tu Core con la cara del día (LifUp+)</string>
-    <string name="widget_core_plus">Desbloquéalo con LifUp+</string>
+    <string name="widget_core_desc">Tu Core con la cara del día (CoreQuest+)</string>
+    <string name="widget_core_plus">Desbloquéalo con CoreQuest+</string>
     <string name="plus_perk_widget">Widget del Core</string>
     <string name="plus_perk_widget_text">Tu Core en la pantalla de inicio, con la cara y las misiones del día.</string>
     <string name="pair_mode">Misión</string>
@@ -1033,11 +1033,11 @@
     <string name="toast_pair_partner_left">%1$s salió de la pareja: espera a que alguien vuelva a unirse</string>
     <string name="pair_mode_each">Cada uno la suya</string>
     <string name="pair_mode_each_hint">Cada uno saca una misión distinta cada día; lo que cuenta es que los dos hagáis la vuestra.</string>
-    <string name="pair_limit_plus">Una pareja a la vez. Con LifUp+ puedes tener hasta 3.</string>
+    <string name="pair_limit_plus">Una pareja a la vez. Con CoreQuest+ puedes tener hasta 3.</string>
     <string name="plus_perk_pairs">Hasta 3 misiones en pareja</string>
     <string name="plus_perk_pairs_text">Haz misiones con más personas a la vez.</string>
-    <string name="plus_included_github">En esta versión, instalada desde GitHub, LifUp+ viene incluido. En Google Play es una compra única.</string>
-    <string name="block_schedule_section">Bloqueo por horario (LifUp+)</string>
+    <string name="plus_included_github">En esta versión, instalada desde GitHub, CoreQuest+ viene incluido. En Google Play es una compra única.</string>
+    <string name="block_schedule_section">Bloqueo por horario (CoreQuest+)</string>
     <string name="block_schedule_hint">Las apps que bloqueas en el foco quedan bloqueadas en estos horarios, sin necesidad de sesión.</string>
     <string name="block_schedule_no_apps">Elige primero las apps que bloquear en la pestaña Foco.</string>
     <string name="block_schedule_add">Añadir horario</string>
@@ -1048,9 +1048,9 @@
     <string name="block_schedule_text">Son las horas que definiste en LifUp. Aprovecha el tiempo para otra cosa.</string>
     <string name="plus_perk_schedule">Bloqueo por horario</string>
     <string name="plus_perk_schedule_text">Las apps que elijas quedan bloqueadas a las horas que marques, sin sesión de foco.</string>
-    <string name="core_paints">Pieles (LifUp+)</string>
+    <string name="core_paints">Pieles (CoreQuest+)</string>
     <string name="core_paints_hint">El Core entero en otro material, en todas las formas y caras.</string>
-    <string name="core_paints_plus">Seis pieles para tu Core, incluidas en LifUp+.</string>
+    <string name="core_paints_plus">Seis pieles para tu Core, incluidas en CoreQuest+.</string>
     <string name="core_paint_none">Colores del rango</string>
     <string name="core_paint_aurora">Aurora</string>
     <string name="core_paint_shadow">Sombra</string>

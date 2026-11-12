@@ -52,7 +52,7 @@ import com.lifup.app.ui.components.SectionTitle
 import com.lifup.app.ui.gameState
 import com.lifup.app.ui.theme.Lif
 
-/** LifUp+: what it adds, the one-time purchase, tips, and the promise that progress is never for sale. */
+/** CoreQuest+: what it adds, the one-time purchase, tips, and the promise that progress is never for sale. */
 @Composable
 fun PlusScreen(onBack: () -> Unit) {
     val p = Lif.colors
@@ -70,7 +70,7 @@ fun PlusScreen(onBack: () -> Unit) {
         }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
             CoreAvatar(Core.stage(s), CoreMood.EXCITED, 150.dp)
-            Text("LifUp+", style = MaterialTheme.typography.displaySmall)
+            Text("CoreQuest+", style = MaterialTheme.typography.displaySmall)
             Text(stringResource(R.string.plus_tagline), style = MaterialTheme.typography.bodyMedium, color = p.muted, textAlign = TextAlign.Center)
         }
 

@@ -167,7 +167,7 @@ fun paintName(p: com.lifup.app.domain.CorePaint) = when (p) {
     com.lifup.app.domain.CorePaint.GALAXY -> R.string.core_paint_galaxy
 }
 
-/** LifUp+ skins: the rank colours or one of the six; without LifUp+ they show, locked. */
+/** CoreQuest+ skins: the rank colours or one of the six; without CoreQuest+ they show, locked. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CorePaints(s: GameState, stage: Int) {

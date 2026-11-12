@@ -219,7 +219,7 @@ internal fun Squad(s: GameState, onOpen: (String) -> Unit) {
     if (s.squad.isNotEmpty()) SquadEffects(s, passives.luck)
 }
 
-/** LifUp+: three saved squads; a tap puts one on (or saves into an empty slot), a long press saves over it. */
+/** CoreQuest+: three saved squads; a tap puts one on (or saves into an empty slot), a long press saves over it. */
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 private fun SavedSquads(s: GameState) {

@@ -232,9 +232,9 @@ data class Settings(
     val fixedIcon: Boolean = false,
     /** The accessory the Core wears (see Skins.kt); null = none. */
     val coreSkin: CoreSkin? = null,
-    /** LifUp+: hours when the blocked apps stay blocked without a focus session. */
+    /** CoreQuest+: hours when the blocked apps stay blocked without a focus session. */
     val blockWindows: List<BlockWindow> = emptyList(),
-    /** LifUp+: the Core's skin; null = its rank colours. */
+    /** CoreQuest+: the Core's skin; null = its rank colours. */
     val corePaint: CorePaint? = null,
 )
 
@@ -511,9 +511,9 @@ data class GameState(
     val starterClaimed: Set<StarterTask> = emptySet(),
     /** Accessories won from seasonal bosses. */
     val coreSkins: Set<CoreSkin> = emptySet(),
-    /** LifUp+ bought (kept in sync with Google Play; see system/PlusBilling). */
+    /** CoreQuest+ bought (kept in sync with Google Play; see system/PlusBilling). */
     val plus: Boolean = false,
-    /** LifUp+: up to [PlusRules.SQUAD_SLOTS] saved echo squads (empty list = empty slot). */
+    /** CoreQuest+: up to [PlusRules.SQUAD_SLOTS] saved echo squads (empty list = empty slot). */
     val savedSquads: List<List<String>> = emptyList(),
 ) {
     fun owned(id: String) = shadows.firstOrNull { it.id == id }

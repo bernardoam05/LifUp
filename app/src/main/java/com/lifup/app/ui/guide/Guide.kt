@@ -154,18 +154,40 @@ fun GuideSheet(topic: Guide, s: GameState?, onDismiss: () -> Unit) {
     }
 }
 
+/** The Core's face for each topic: it's the one explaining the game. */
+private fun Guide.mood() = when (this) {
+    Guide.FOCUS -> com.lifup.app.domain.CoreMood.FOCUSED
+    Guide.PENALTY, Guide.STREAK -> com.lifup.app.domain.CoreMood.CONFIDENT
+    Guide.SHOP, Guide.PORTAL, Guide.SHADOWS, Guide.BOSS -> com.lifup.app.domain.CoreMood.EXCITED
+    else -> com.lifup.app.domain.CoreMood.HAPPY
+}
+
+/** The Core introduces the topic: its avatar, and the topic's hook in a speech bubble next to it. */
 @Composable
 private fun Header(topic: Guide, color: Color) {
+    val s = com.lifup.app.ui.gameState()
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(52.dp).clip(CircleShape).background(color.copy(alpha = 0.16f)), contentAlignment = Alignment.Center) {
-            Icon(topic.icon, null, tint = color, modifier = Modifier.size(28.dp))
-        }
-        Spacer(Modifier.width(14.dp))
-        Column {
-            Text(stringResource(topic.title), style = MaterialTheme.typography.titleLarge)
-            Text(stringResource(topic.hook), style = MaterialTheme.typography.bodyMedium, color = color)
+        com.lifup.app.ui.components.CoreAvatar(com.lifup.app.domain.Core.stage(s), topic.mood(), 72.dp)
+        Spacer(Modifier.width(10.dp))
+        Column(Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(topic.icon, null, tint = color, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(6.dp))
+                Text(stringResource(topic.title), style = MaterialTheme.typography.titleLarge)
+            }
+            Spacer(Modifier.height(4.dp))
+            SpeechBubble(stringResource(topic.hook), color)
         }
     }
+}
+
+/** What the Core says: a rounded bubble with its tail towards the avatar. */
+@Composable
+fun SpeechBubble(text: String, color: Color) {
+    Box(
+        Modifier.clip(RoundedCornerShape(topStart = 4.dp, topEnd = 14.dp, bottomEnd = 14.dp, bottomStart = 14.dp))
+            .background(color.copy(alpha = 0.14f)).padding(horizontal = 12.dp, vertical = 8.dp),
+    ) { Text(text, style = MaterialTheme.typography.bodyMedium, color = Lif.colors.text) }
 }
 
 @Composable

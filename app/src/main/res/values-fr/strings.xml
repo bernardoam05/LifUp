@@ -973,7 +973,7 @@
     <string name="core_skin_flower_crown">Couronne de fleurs</string>
     <string name="core_skin_sunglasses">Lunettes de soleil</string>
     <string name="toast_core_skin">Nouvel accessoire pour ton Core : %1$s</string>
-    <!-- LifUp+ -->
+    <!-- CoreQuest+ -->
     <string name="plus_tagline">Soutiens l\'app et débloque des extras. Tout l\'essentiel reste gratuit.</string>
     <string name="plus_includes">Ce qui est inclus</string>
     <string name="plus_perk_skins">Apparences du Core</string>
@@ -981,10 +981,10 @@
     <string name="plus_perk_stats">Export des statistiques</string>
     <string name="plus_perk_stats_text">L\'historique de tes journées et le bilan de chaque mission en CSV, pour un tableur.</string>
     <string name="plus_more_coming">D\'autres extras arrivent, inclus sans payer plus.</string>
-    <string name="plus_play_only">LifUp+ s\'achète via Google Play. Cette version, installée depuis GitHub, ne peut pas le vendre.</string>
-    <string name="plus_owned">LifUp+ est actif. Merci !</string>
+    <string name="plus_play_only">CoreQuest+ s\'achète via Google Play. Cette version, installée depuis GitHub, ne peut pas le vendre.</string>
+    <string name="plus_owned">CoreQuest+ est actif. Merci !</string>
     <string name="plus_one_time">Paiement unique</string>
-    <string name="plus_buy">Débloquer LifUp+</string>
+    <string name="plus_buy">Débloquer CoreQuest+</string>
     <string name="plus_buy_note">Pour toujours, sans abonnement. Payé via Google Play.</string>
     <string name="plus_tip_title">Je veux juste aider</string>
     <string name="plus_tip_text">Un pourboire pour qui fait l\'app. Ça ne change rien au jeu.</string>
@@ -992,19 +992,19 @@
     <string name="plus_never_progress">L\'or, l\'XP, les essences et les séries ne sont jamais à vendre.</string>
     <string name="plus_restore">Restaurer l\'achat</string>
     <string name="plus_settings_hint">Des extras pour qui soutient l\'app</string>
-    <string name="plus_stats_export">Statistiques (LifUp+)</string>
+    <string name="plus_stats_export">Statistiques (CoreQuest+)</string>
     <string name="plus_stats_export_hint">Enregistre ton historique en fichiers CSV à ouvrir dans un tableur.</string>
     <string name="plus_export_days">Jours</string>
     <string name="plus_export_missions">Missions</string>
     <string name="squad_slot">Équipe %1$d</string>
     <string name="squad_slot_empty">Enregistrer %1$d</string>
     <string name="squad_saved_hint">Touche pour mettre une équipe ; appui long pour y enregistrer l\'actuelle. Les échos qui entrent restent jusqu\'à demain.</string>
-    <string name="squad_saved_plus">Enregistre jusqu\'à 3 équipes et change d\'un toucher avec LifUp+.</string>
+    <string name="squad_saved_plus">Enregistre jusqu\'à 3 équipes et change d\'un toucher avec CoreQuest+.</string>
     <string name="plus_perk_squads">Équipes d\'échos enregistrées</string>
     <string name="plus_perk_squads_text">Garde jusqu\'à 3 équipes et change d\'un toucher.</string>
     <string name="widget_core_name">Core</string>
-    <string name="widget_core_desc">Ton Core avec le visage du jour (LifUp+)</string>
-    <string name="widget_core_plus">Débloque avec LifUp+</string>
+    <string name="widget_core_desc">Ton Core avec le visage du jour (CoreQuest+)</string>
+    <string name="widget_core_plus">Débloque avec CoreQuest+</string>
     <string name="plus_perk_widget">Widget du Core</string>
     <string name="plus_perk_widget_text">Ton Core sur l\'écran d\'accueil, avec le visage et les missions du jour.</string>
     <string name="pair_mode">Mission</string>
@@ -1015,11 +1015,11 @@
     <string name="toast_pair_partner_left">%1$s a quitté le binôme : il attend que quelqu\'un le rejoigne</string>
     <string name="pair_mode_each">Chacun la sienne</string>
     <string name="pair_mode_each_hint">Chacun tire une mission différente chaque jour ; ce qui compte, c\'est que vous fassiez tous les deux la vôtre.</string>
-    <string name="pair_limit_plus">Un binôme à la fois. Avec LifUp+ tu peux en avoir jusqu\'à 3.</string>
+    <string name="pair_limit_plus">Un binôme à la fois. Avec CoreQuest+ tu peux en avoir jusqu\'à 3.</string>
     <string name="plus_perk_pairs">Jusqu\'à 3 missions en binôme</string>
     <string name="plus_perk_pairs_text">Fais des missions avec plus de monde en même temps.</string>
-    <string name="plus_included_github">Dans cette version, installée depuis GitHub, LifUp+ est inclus. Sur Google Play, c\'est un achat unique.</string>
-    <string name="block_schedule_section">Blocage programmé (LifUp+)</string>
+    <string name="plus_included_github">Dans cette version, installée depuis GitHub, CoreQuest+ est inclus. Sur Google Play, c\'est un achat unique.</string>
+    <string name="block_schedule_section">Blocage programmé (CoreQuest+)</string>
     <string name="block_schedule_hint">Les apps que tu bloques pendant le focus restent bloquées à ces heures, sans session.</string>
     <string name="block_schedule_no_apps">Choisis d\'abord les apps à bloquer dans l\'onglet Focus.</string>
     <string name="block_schedule_add">Ajouter un horaire</string>
@@ -1030,9 +1030,9 @@
     <string name="block_schedule_text">Ce sont les heures que tu as fixées dans LifUp. Profite de ce temps pour autre chose.</string>
     <string name="plus_perk_schedule">Blocage programmé</string>
     <string name="plus_perk_schedule_text">Les apps que tu choisis restent bloquées aux heures que tu fixes, sans session de focus.</string>
-    <string name="core_paints">Apparences (LifUp+)</string>
+    <string name="core_paints">Apparences (CoreQuest+)</string>
     <string name="core_paints_hint">Le Core entier dans une autre matière, sur toutes les formes et tous les visages.</string>
-    <string name="core_paints_plus">Six apparences pour ton Core, incluses dans LifUp+.</string>
+    <string name="core_paints_plus">Six apparences pour ton Core, incluses dans CoreQuest+.</string>
     <string name="core_paint_none">Couleurs du rang</string>
     <string name="core_paint_aurora">Aurore</string>
     <string name="core_paint_shadow">Ombre</string>

@@ -49,7 +49,7 @@ private val SPRITES = listOf(
     listOf(R.drawable.core_s6_neutral, R.drawable.core_s6_confident, R.drawable.core_s6_happy, R.drawable.core_s6_focused, R.drawable.core_s6_relaxed, R.drawable.core_s6_excited, R.drawable.core_s6_tired, R.drawable.core_s6_frustrated),
 )
 
-/** The sprite for [stage] and [mood] (in a LifUp+ [paint]), for places that draw it themselves (the widget). */
+/** The sprite for [stage] and [mood] (in a CoreQuest+ [paint]), for places that draw it themselves (the widget). */
 fun coreSprite(stage: Int, mood: CoreMood, paint: CorePaint? = null): Int = sprite(stage, mood, paint)
 
 private fun sprite(stage: Int, mood: CoreMood, paint: CorePaint? = null): Int {

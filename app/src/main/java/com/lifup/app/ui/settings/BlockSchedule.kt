@@ -42,7 +42,7 @@ import java.util.Locale
 
 private fun dayName(d: Int) = DayOfWeek.of(d).getDisplayName(TextStyle.SHORT, Locale.getDefault())
 
-/** LifUp+: hours when the focus apps stay blocked without a session. */
+/** CoreQuest+: hours when the focus apps stay blocked without a session. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun BlockScheduleSection(s: GameState, openPlus: () -> Unit) {

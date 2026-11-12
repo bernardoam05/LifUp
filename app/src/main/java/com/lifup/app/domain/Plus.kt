@@ -1,7 +1,7 @@
 package com.lifup.app.domain
 
 /**
- * LifUp+: a one-time purchase with extras (looks, tools, comfort). It never sells progress: gold, XP, essences or
+ * CoreQuest+: a one-time purchase with extras (looks, tools, comfort). It never sells progress: gold, XP, essences or
  * streaks are not for sale, and everything the game needs stays free.
  */
 object PlusProducts {
@@ -15,7 +15,7 @@ object PlusRules {
     const val MAX_BLOCK_WINDOWS = 6
 }
 
-/** LifUp+: keeps the current squad in [slot]. */
+/** CoreQuest+: keeps the current squad in [slot]. */
 fun Tx.saveSquad(slot: Int) {
     if (!s.plus || slot !in 0 until PlusRules.SQUAD_SLOTS || s.squad.isEmpty()) return
     val slots = (s.savedSquads + List(PlusRules.SQUAD_SLOTS) { emptyList<String>() }).take(PlusRules.SQUAD_SLOTS).toMutableList()
@@ -24,7 +24,7 @@ fun Tx.saveSquad(slot: Int) {
 }
 
 /**
- * LifUp+: puts the squad in [slot] on. The usual rule still holds: an echo that joined today stays until tomorrow,
+ * CoreQuest+: puts the squad in [slot] on. The usual rule still holds: an echo that joined today stays until tomorrow,
  * and those coming in now are locked until tomorrow too, so a saved squad can't be swapped in for one action.
  */
 fun Tx.loadSquad(slot: Int) {
@@ -60,7 +60,7 @@ fun GameState.missionsCsv(content: Content, lang: String): String = buildString 
 }
 
 /**
- * LifUp+: hours when the apps picked for focus are blocked without a session (bedtime, work hours). [days] are ISO
+ * CoreQuest+: hours when the apps picked for focus are blocked without a session (bedtime, work hours). [days] are ISO
  * days of week (1 = Monday) on which the window STARTS; [from] and [to] are minutes after midnight, and a window
  * whose end is not after its start runs past midnight into the next day.
  */
@@ -103,15 +103,15 @@ fun Tx.addBlockWindow(w: BlockWindow) {
 
 fun Tx.removeBlockWindow(index: Int) = updateSettings { it.copy(blockWindows = it.blockWindows.filterIndexed { i, _ -> i != index }) }
 
-/** LifUp+ skins: the whole Core redrawn in another material, on every form and face. Looks only. */
+/** CoreQuest+ skins: the whole Core redrawn in another material, on every form and face. Looks only. */
 @kotlinx.serialization.Serializable
 enum class CorePaint { AURORA, SHADOW, CRYSTAL, GHOST, LAVA, GALAXY }
 
-/** Puts on a LifUp+ skin, or back to the rank colours with null. */
+/** Puts on a CoreQuest+ skin, or back to the rank colours with null. */
 fun Tx.wearPaint(paint: CorePaint?) {
     if (paint != null && !s.plus) return
     updateSettings { it.copy(corePaint = paint) }
 }
 
-/** The skin actually shown: none without LifUp+ (it comes back if LifUp+ does). */
+/** The skin actually shown: none without CoreQuest+ (it comes back if CoreQuest+ does). */
 val GameState.shownPaint: CorePaint? get() = settings.corePaint.takeIf { plus }

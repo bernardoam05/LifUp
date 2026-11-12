@@ -55,7 +55,7 @@ fun GameState.blockPlan(now: Long): BlockPlan? {
             return BlockPlan(apps, until, penalty = false)
         }
     }
-    // LifUp+: the hours the player set.
+    // CoreQuest+: the hours the player set.
     return scheduledBlockUntil(now)?.let { BlockPlan(apps, it, penalty = false, scheduled = true) }
 }
 

@@ -111,7 +111,7 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit, openPlus: () -> Un
             message = if (ok) okMsg else badMsg
         }
     }
-    // LifUp+: the day history and each mission's record as CSV files, for a spreadsheet.
+    // CoreQuest+: the day history and each mission's record as CSV files, for a spreadsheet.
     fun csvSaver(make: () -> String) = { uri: android.net.Uri? ->
         if (uri != null) scope.launch {
             val ok = withContext(Dispatchers.IO) { runCatching { context.contentResolver.openOutputStream(uri)?.use { it.write(make().toByteArray()) } }.isSuccess }
@@ -139,13 +139,13 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit, openPlus: () -> Un
         Column(Modifier.imePadding().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding()) {
             message?.let { Text(it, color = Lif.colors.accent, style = MaterialTheme.typography.labelLarge) }
 
-            // LifUp+ at the top: what it is, or that it's on.
+            // CoreQuest+ at the top: what it is, or that it's on.
             com.lifup.app.ui.components.Panel(onClick = openPlus, border = Lif.colors.gold.copy(alpha = 0.6f), modifier = Modifier.padding(top = 8.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Rounded.AutoAwesome, null, tint = Lif.colors.gold)
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
-                        Text("LifUp+", style = MaterialTheme.typography.titleMedium)
+                        Text("CoreQuest+", style = MaterialTheme.typography.titleMedium)
                         Text(stringResource(if (s.plus) R.string.plus_owned else R.string.plus_settings_hint), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
                     }
                 }
