@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.lifup.app.domain.Core
 import com.lifup.app.domain.GameState
+import com.lifup.app.domain.CorePaint
+import com.lifup.app.domain.shownPaint
 
 /**
  * The launcher icon follows the Core's form: one activity-alias per form, exactly one enabled. Switching only
@@ -12,9 +14,18 @@ import com.lifup.app.domain.GameState
  * focus session or a run (a launcher that closes the app would cut them), and only when the form changed.
  */
 object IconSwitcher {
-    private val ALIASES = listOf("MainActivity", "CoreIcon2", "CoreIcon3", "CoreIcon4", "CoreIcon5", "CoreIcon6")
+    private val PLAIN = listOf("MainActivity", "CoreIcon2", "CoreIcon3", "CoreIcon4", "CoreIcon5", "CoreIcon6")
 
-    fun wanted(s: GameState): Int = if (s.settings.fixedIcon) 1 else Core.stage(s)
+    /** Every launcher entry: the six forms, then each LifUp+ skin's six forms (".CoreIcon<n><Skin>"). */
+    private val ALIASES = PLAIN + CorePaint.entries.flatMap { p -> (1..6).map { n -> "CoreIcon$n${p.name.lowercase().replaceFirstChar { it.uppercase() }}" } }
+
+    /** 1-based index into [ALIASES]: the form, in the skin worn (if any). */
+    fun wanted(s: GameState): Int {
+        if (s.settings.fixedIcon) return 1
+        val stage = Core.stage(s)
+        val paint = s.shownPaint ?: return stage
+        return PLAIN.size + paint.ordinal * 6 + stage
+    }
 
     fun apply(context: Context, s: GameState) {
         if (s.focus != null || s.run?.running == true) return

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The launcher icon for the Core's form 2 in the CRYSTAL skin (see system/IconSwitcher). -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background_cristal" />
+    <foreground android:drawable="@drawable/ic_fg_cristal_s2" />
+    <monochrome android:drawable="@mipmap/ic_launcher_monochrome_s2" />
+</adaptive-icon>
