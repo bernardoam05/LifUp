@@ -823,7 +823,7 @@
     <string name="pause_today">Em pausa até %1$s: nada conta nem se perde. Descansa.</string>
     <string name="pause_none_left">Já usaste os %1$d dias de pausa dos últimos 12 meses.</string>
     <string name="share">Partilhar</string>
-    <string name="share_week_title">Questborn · semana de %1$s</string>
+    <string name="share_week_title">CoreQuest · semana de %1$s</string>
     <string name="share_boss_won">⚔️ %1$s: vencido</string>
     <string name="share_boss_lost">⚔️ %1$s: fugiu</string>
     <string name="boss_weak">Fraco contra %1$s: +%2$d%% de dano, em %3$d missões por dia</string>
@@ -908,7 +908,7 @@
     <string name="pair_copy_code">Copiar código</string>
     <string name="pair_code_copied">Código copiado</string>
     <string name="pair_share_invite">Partilhar convite</string>
-    <string name="pair_invite_share">Faz comigo a missão \"%1$s\" no Questborn! Toca para entrar: %3$s (ou escreve o código %2$s em Hoje → Missões em par → Entrar com código)</string>
+    <string name="pair_invite_share">Faz comigo a missão \"%1$s\" no CoreQuest! Toca para entrar: %3$s (ou escreve o código %2$s em Hoje → Missões em par → Entrar com código)</string>
     <string name="pair_with">com %1$s</string>
     <string name="pair_your_part">A tua parte: %1$s</string>
     <string name="pair_partner_done">%1$s já fez a sua parte</string>
@@ -921,7 +921,7 @@
     <string name="pair_done">Feito</string>
     <string name="pair_done_waiting">O resultado do par sai depois da meia-noite.</string>
     <string name="pair_tell">Avisar %1$s</string>
-    <string name="pair_link_share">Já fiz a minha parte de \"%1$s\" no Questborn. %2$s</string>
+    <string name="pair_link_share">Já fiz a minha parte de \"%1$s\" no CoreQuest. %2$s</string>
     <string name="pair_next">Próximo: %1$s</string>
     <string name="pair_leave">Sair do par</string>
     <string name="pair_leave_confirm">Sais desta missão em par. O que já fizeste continua a contar, mas deixa de haver bónus ou corte de par.</string>

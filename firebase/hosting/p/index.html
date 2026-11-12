@@ -9,7 +9,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Questborn</title>
+<title>CoreQuest</title>
 <style>
   :root { --bg: #f6f4ef; --fg: #1d1b18; --muted: #6b665d; --accent: #b8860b; --card: #ffffff; }
   @media (prefers-color-scheme: dark) { :root { --bg: #121110; --fg: #f1ede4; --muted: #a39d91; --accent: #e0b23c; --card: #1d1b19; } }
@@ -29,25 +29,25 @@
 <main>
   <div class="mark" aria-hidden="true">!</div>
   <h1 id="t">Your pair finished their part</h1>
-  <p id="d">Open this link on the phone where Questborn is installed to count it.</p>
-  <a class="btn" id="open" href="#">Open Questborn</a>
-  <a class="alt" id="get" href="https://play.google.com/store/apps/details?id=com.lifup.app">Get Questborn</a>
+  <p id="d">Open this link on the phone where CoreQuest is installed to count it.</p>
+  <a class="btn" id="open" href="#">Open CoreQuest</a>
+  <a class="alt" id="get" href="https://play.google.com/store/apps/details?id=com.lifup.app">Get CoreQuest</a>
 </main>
 <script>
   const text = {
-    en: ['Your pair finished their part', 'Open this link on the phone where Questborn is installed to count it.', 'Open Questborn', 'Get Questborn'],
-    pt: ['O teu par já fez a sua parte', 'Abre este link no telemóvel onde tens o Questborn para contar.', 'Abrir o Questborn', 'Instalar o Questborn'],
-    es: ['Tu pareja ya hizo su parte', 'Abre este enlace en el móvil donde tienes Questborn para que cuente.', 'Abrir Questborn', 'Instalar Questborn'],
-    fr: ['Ton binôme a fini sa part', 'Ouvre ce lien sur le téléphone où Questborn est installé pour qu’il compte.', 'Ouvrir Questborn', 'Installer Questborn'],
-    de: ['Dein Partner ist mit dem eigenen Teil fertig', 'Öffne diesen Link auf dem Handy mit Questborn, damit er zählt.', 'Questborn öffnen', 'Questborn holen'],
+    en: ['Your pair finished their part', 'Open this link on the phone where CoreQuest is installed to count it.', 'Open CoreQuest', 'Get CoreQuest'],
+    pt: ['O teu par já fez a sua parte', 'Abre este link no telemóvel onde tens o CoreQuest para contar.', 'Abrir o CoreQuest', 'Instalar o CoreQuest'],
+    es: ['Tu pareja ya hizo su parte', 'Abre este enlace en el móvil donde tienes CoreQuest para que cuente.', 'Abrir CoreQuest', 'Instalar CoreQuest'],
+    fr: ['Ton binôme a fini sa part', 'Ouvre ce lien sur le téléphone où CoreQuest est installé pour qu’il compte.', 'Ouvrir CoreQuest', 'Installer CoreQuest'],
+    de: ['Dein Partner ist mit dem eigenen Teil fertig', 'Öffne diesen Link auf dem Handy mit CoreQuest, damit er zählt.', 'CoreQuest öffnen', 'CoreQuest holen'],
   };
   // Join links (#j-CODE) invite someone into a pair instead.
   const invite = {
-    en: ['You\'re invited to a pair mission', 'Open this link on your phone with Questborn installed to join.', 'Open Questborn', 'Get Questborn'],
-    pt: ['Tens um convite para uma missão em par', 'Abre este link no telemóvel onde tens o Questborn para entrares.', 'Abrir o Questborn', 'Instalar o Questborn'],
-    es: ['Te han invitado a una misión en pareja', 'Abre este enlace en el móvil donde tienes Questborn para unirte.', 'Abrir Questborn', 'Instalar Questborn'],
-    fr: ['Invitation à une mission en binôme', 'Ouvre ce lien sur le téléphone où Questborn est installé pour rejoindre.', 'Ouvrir Questborn', 'Installer Questborn'],
-    de: ['Du bist zu einer Partnermission eingeladen', 'Öffne diesen Link auf dem Handy mit Questborn, um beizutreten.', 'Questborn öffnen', 'Questborn holen'],
+    en: ['You\'re invited to a pair mission', 'Open this link on your phone with CoreQuest installed to join.', 'Open CoreQuest', 'Get CoreQuest'],
+    pt: ['Tens um convite para uma missão em par', 'Abre este link no telemóvel onde tens o CoreQuest para entrares.', 'Abrir o CoreQuest', 'Instalar o CoreQuest'],
+    es: ['Te han invitado a una misión en pareja', 'Abre este enlace en el móvil donde tienes CoreQuest para unirte.', 'Abrir CoreQuest', 'Instalar CoreQuest'],
+    fr: ['Invitation à une mission en binôme', 'Ouvre ce lien sur le téléphone où CoreQuest est installé pour rejoindre.', 'Ouvrir CoreQuest', 'Installer CoreQuest'],
+    de: ['Du bist zu einer Partnermission eingeladen', 'Öffne diesen Link auf dem Handy mit CoreQuest, um beizutreten.', 'CoreQuest öffnen', 'CoreQuest holen'],
   };
   const lang = (navigator.language || 'en').slice(0, 2);
   const table = location.hash.startsWith('#j-') ? invite : text;

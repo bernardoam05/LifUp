@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Questborn</string>
+    <string name="app_name" translatable="false">CoreQuest</string>
 
     <!-- General -->
     <string name="add">Add</string>
@@ -842,7 +842,7 @@
     <string name="pause_today">Paused until %1$s: nothing counts and nothing is lost. Rest up.</string>
     <string name="pause_none_left">You\'ve used all %1$d pause days of the last 12 months.</string>
     <string name="share">Share</string>
-    <string name="share_week_title">Questborn · week of %1$s</string>
+    <string name="share_week_title">CoreQuest · week of %1$s</string>
     <string name="share_boss_won">⚔️ %1$s: defeated</string>
     <string name="share_boss_lost">⚔️ %1$s: escaped</string>
     <string name="boss_weak">Weak to %1$s: +%2$d%% damage, on %3$d missions a day</string>
@@ -927,7 +927,7 @@
     <string name="pair_copy_code">Copy code</string>
     <string name="pair_code_copied">Code copied</string>
     <string name="pair_share_invite">Share invite</string>
-    <string name="pair_invite_share">Do the mission \"%1$s\" with me in Questborn! Tap to join: %3$s (or enter the code %2$s in Today → Pair missions → Join with a code)</string>
+    <string name="pair_invite_share">Do the mission \"%1$s\" with me in CoreQuest! Tap to join: %3$s (or enter the code %2$s in Today → Pair missions → Join with a code)</string>
     <string name="pair_with">with %1$s</string>
     <string name="pair_your_part">Your part: %1$s</string>
     <string name="pair_partner_done">%1$s did their part</string>
@@ -940,7 +940,7 @@
     <string name="pair_done">Done</string>
     <string name="pair_done_waiting">The pair result comes after midnight.</string>
     <string name="pair_tell">Tell %1$s</string>
-    <string name="pair_link_share">I did my part of \"%1$s\" in Questborn. %2$s</string>
+    <string name="pair_link_share">I did my part of \"%1$s\" in CoreQuest. %2$s</string>
     <string name="pair_next">Next: %1$s</string>
     <string name="pair_leave">Leave pair</string>
     <string name="pair_leave_confirm">You leave this pair mission. What you already did still counts; there\'s no pair bonus or cut from here on.</string>

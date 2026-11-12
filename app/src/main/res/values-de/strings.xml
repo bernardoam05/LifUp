@@ -841,7 +841,7 @@
     <string name="pause_today">Pausiert bis %1$s: Nichts zählt, nichts geht verloren. Erhol dich.</string>
     <string name="pause_none_left">Du hast alle %1$d Pausentage der letzten 12 Monate genutzt.</string>
     <string name="share">Teilen</string>
-    <string name="share_week_title">Questborn · Woche vom %1$s</string>
+    <string name="share_week_title">CoreQuest · Woche vom %1$s</string>
     <string name="share_boss_won">⚔️ %1$s: besiegt</string>
     <string name="share_boss_lost">⚔️ %1$s: entkommen</string>
     <string name="boss_weak">Schwach gegen %1$s: +%2$d%% Schaden, bei %3$d Missionen pro Tag</string>
@@ -926,7 +926,7 @@
     <string name="pair_copy_code">Code kopieren</string>
     <string name="pair_code_copied">Code kopiert</string>
     <string name="pair_share_invite">Einladung teilen</string>
-    <string name="pair_invite_share">Mach mit mir die Mission „%1$s“ in Questborn! Tippen zum Beitreten: %3$s (oder gib den Code %2$s unter Heute → Partnermissionen → Mit Code beitreten ein)</string>
+    <string name="pair_invite_share">Mach mit mir die Mission „%1$s“ in CoreQuest! Tippen zum Beitreten: %3$s (oder gib den Code %2$s unter Heute → Partnermissionen → Mit Code beitreten ein)</string>
     <string name="pair_with">mit %1$s</string>
     <string name="pair_your_part">Dein Teil: %1$s</string>
     <string name="pair_partner_done">%1$s ist mit dem eigenen Teil fertig</string>
@@ -939,7 +939,7 @@
     <string name="pair_done">Erledigt</string>
     <string name="pair_done_waiting">Das Ergebnis kommt nach Mitternacht.</string>
     <string name="pair_tell">%1$s Bescheid geben</string>
-    <string name="pair_link_share">Ich habe meinen Teil von „%1$s“ in Questborn erledigt. %2$s</string>
+    <string name="pair_link_share">Ich habe meinen Teil von „%1$s“ in CoreQuest erledigt. %2$s</string>
     <string name="pair_next">Nächstes Mal: %1$s</string>
     <string name="pair_leave">Partnerschaft verlassen</string>
     <string name="pair_leave_confirm">Du verlässt diese Partnermission. Was du schon gemacht hast, zählt weiter, aber es gibt keinen Bonus und keinen Abzug mehr.</string>

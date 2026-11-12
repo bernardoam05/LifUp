@@ -4,7 +4,7 @@ _Last updated: November 2026_
 
 ## English
 
-Questborn does not sell any personal data and has no account. Everything you do in the app (missions, progress, settings, statistics) is stored only on your phone, with one optional exception: pair missions, described below.
+CoreQuest does not sell any personal data and has no account. Everything you do in the app (missions, progress, settings, statistics) is stored only on your phone, with one optional exception: pair missions, described below.
 
 - **Permissions** are used on the device only:
   - *Usage access* and *display over other apps* block the apps you choose during focus sessions and measure screen time for missions.
@@ -23,7 +23,7 @@ Deleting the app deletes all its data. Questions: open an issue at https://githu
 
 ## Português
 
-A Questborn não vende dados pessoais e não tem conta. Tudo o que fazes na app (missões, progresso, definições, estatísticas) fica guardado apenas no teu telemóvel, com uma exceção opcional: as missões em par, descritas abaixo.
+A CoreQuest não vende dados pessoais e não tem conta. Tudo o que fazes na app (missões, progresso, definições, estatísticas) fica guardado apenas no teu telemóvel, com uma exceção opcional: as missões em par, descritas abaixo.
 
 - **As permissões** são usadas só no dispositivo:
   - O *acesso de utilização* e o *sobrepor a outras apps* bloqueiam as apps que escolheres durante o foco e medem o tempo de ecrã das missões.
@@ -42,7 +42,7 @@ Desinstalar a app apaga todos os dados. Dúvidas: abre uma issue em https://gith
 
 ## Español
 
-Questborn no vende datos personales y no tiene cuenta. Todo lo que haces en la app (misiones, progreso, ajustes, estadísticas) se guarda solo en tu móvil, con una excepción opcional: las misiones en pareja, descritas abajo.
+CoreQuest no vende datos personales y no tiene cuenta. Todo lo que haces en la app (misiones, progreso, ajustes, estadísticas) se guarda solo en tu móvil, con una excepción opcional: las misiones en pareja, descritas abajo.
 
 - **Los permisos** se usan solo en el dispositivo:
   - El *acceso de uso* y *mostrar sobre otras apps* bloquean las apps que elijas durante la concentración y miden el tiempo de pantalla de las misiones.
@@ -61,7 +61,7 @@ Desinstalar la app borra todos sus datos. Dudas: abre una issue en https://githu
 
 ## Français
 
-Questborn ne vend aucune donnée personnelle et n'a pas de compte. Tout ce que tu fais dans l'app (missions, progression, réglages, statistiques) est enregistré uniquement sur ton téléphone, avec une exception facultative : les missions en binôme, décrites ci-dessous.
+CoreQuest ne vend aucune donnée personnelle et n'a pas de compte. Tout ce que tu fais dans l'app (missions, progression, réglages, statistiques) est enregistré uniquement sur ton téléphone, avec une exception facultative : les missions en binôme, décrites ci-dessous.
 
 - **Les autorisations** sont utilisées uniquement sur l'appareil :
   - L'*accès aux données d'utilisation* et l'*affichage par-dessus les autres apps* bloquent les apps de ton choix pendant la concentration et mesurent le temps d'écran des missions.
@@ -80,7 +80,7 @@ Désinstaller l'app efface toutes ses données. Questions : ouvre une issue sur 
 
 ## Deutsch
 
-Questborn verkauft keine personenbezogenen Daten und hat kein Konto. Alles, was du in der App tust (Missionen, Fortschritt, Einstellungen, Statistiken), wird nur auf deinem Handy gespeichert, mit einer optionalen Ausnahme: Partnermissionen, siehe unten.
+CoreQuest verkauft keine personenbezogenen Daten und hat kein Konto. Alles, was du in der App tust (Missionen, Fortschritt, Einstellungen, Statistiken), wird nur auf deinem Handy gespeichert, mit einer optionalen Ausnahme: Partnermissionen, siehe unten.
 
 - **Berechtigungen** werden nur auf dem Gerät genutzt:
   - *Nutzungszugriff* und *Über anderen Apps einblenden* sperren die Apps deiner Wahl während des Fokus und messen die Bildschirmzeit für Missionen.

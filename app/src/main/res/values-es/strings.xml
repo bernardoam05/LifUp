@@ -841,7 +841,7 @@
     <string name="pause_today">En pausa hasta el %1$s: nada cuenta ni se pierde. Descansa.</string>
     <string name="pause_none_left">Ya has usado los %1$d días de pausa de los últimos 12 meses.</string>
     <string name="share">Compartir</string>
-    <string name="share_week_title">Questborn · semana del %1$s</string>
+    <string name="share_week_title">CoreQuest · semana del %1$s</string>
     <string name="share_boss_won">⚔️ %1$s: vencido</string>
     <string name="share_boss_lost">⚔️ %1$s: escapó</string>
     <string name="boss_weak">Débil contra %1$s: +%2$d%% de daño, en %3$d misiones al día</string>
@@ -926,7 +926,7 @@
     <string name="pair_copy_code">Copiar código</string>
     <string name="pair_code_copied">Código copiado</string>
     <string name="pair_share_invite">Compartir invitación</string>
-    <string name="pair_invite_share">¡Haz conmigo la misión \"%1$s\" en Questborn! Toca para unirte: %3$s (o escribe el código %2$s en Hoy → Misiones en pareja → Unirse con código)</string>
+    <string name="pair_invite_share">¡Haz conmigo la misión \"%1$s\" en CoreQuest! Toca para unirte: %3$s (o escribe el código %2$s en Hoy → Misiones en pareja → Unirse con código)</string>
     <string name="pair_with">con %1$s</string>
     <string name="pair_your_part">Tu parte: %1$s</string>
     <string name="pair_partner_done">%1$s ya hizo su parte</string>
@@ -939,7 +939,7 @@
     <string name="pair_done">Hecho</string>
     <string name="pair_done_waiting">El resultado de la pareja llega después de medianoche.</string>
     <string name="pair_tell">Avisar a %1$s</string>
-    <string name="pair_link_share">Ya hice mi parte de \"%1$s\" en Questborn. %2$s</string>
+    <string name="pair_link_share">Ya hice mi parte de \"%1$s\" en CoreQuest. %2$s</string>
     <string name="pair_next">Próximo: %1$s</string>
     <string name="pair_leave">Salir de la pareja</string>
     <string name="pair_leave_confirm">Sales de esta misión en pareja. Lo que ya hiciste sigue contando, pero ya no habrá bonus ni recorte de pareja.</string>

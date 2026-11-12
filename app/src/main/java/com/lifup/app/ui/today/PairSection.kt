@@ -121,7 +121,7 @@ fun PairSection(s: GameState, now: Long, onOpen: (String) -> Unit) {
 
 private fun copy(context: Context, text: String) {
     context.getSystemService(android.content.ClipboardManager::class.java)
-        ?.setPrimaryClip(android.content.ClipData.newPlainText("Questborn", text))
+        ?.setPrimaryClip(android.content.ClipData.newPlainText("CoreQuest", text))
 }
 
 private fun share(context: Context, text: String) {

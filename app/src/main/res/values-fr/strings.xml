@@ -823,7 +823,7 @@
     <string name="pause_today">En pause jusqu\'au %1$s : rien ne compte, rien ne se perd. Repose-toi.</string>
     <string name="pause_none_left">Tu as utilisé les %1$d jours de pause des 12 derniers mois.</string>
     <string name="share">Partager</string>
-    <string name="share_week_title">Questborn · semaine du %1$s</string>
+    <string name="share_week_title">CoreQuest · semaine du %1$s</string>
     <string name="share_boss_won">⚔️ %1$s : vaincu</string>
     <string name="share_boss_lost">⚔️ %1$s : enfui</string>
     <string name="boss_weak">Faible contre %1$s : +%2$d%% de dégâts, sur %3$d missions par jour</string>
@@ -908,7 +908,7 @@
     <string name="pair_copy_code">Copier le code</string>
     <string name="pair_code_copied">Code copié</string>
     <string name="pair_share_invite">Partager l\'invitation</string>
-    <string name="pair_invite_share">Fais avec moi la mission « %1$s » dans Questborn ! Touche pour rejoindre : %3$s (ou saisis le code %2$s dans Aujourd\'hui → Missions en binôme → Rejoindre avec un code)</string>
+    <string name="pair_invite_share">Fais avec moi la mission « %1$s » dans CoreQuest ! Touche pour rejoindre : %3$s (ou saisis le code %2$s dans Aujourd\'hui → Missions en binôme → Rejoindre avec un code)</string>
     <string name="pair_with">avec %1$s</string>
     <string name="pair_your_part">Ta part : %1$s</string>
     <string name="pair_partner_done">%1$s a fait sa part</string>
@@ -921,7 +921,7 @@
     <string name="pair_done">Fait</string>
     <string name="pair_done_waiting">Le résultat du binôme arrive après minuit.</string>
     <string name="pair_tell">Prévenir %1$s</string>
-    <string name="pair_link_share">J\'ai fait ma part de « %1$s » dans Questborn. %2$s</string>
+    <string name="pair_link_share">J\'ai fait ma part de « %1$s » dans CoreQuest. %2$s</string>
     <string name="pair_next">Prochain : %1$s</string>
     <string name="pair_leave">Quitter le binôme</string>
     <string name="pair_leave_confirm">Tu quittes cette mission en binôme. Ce que tu as déjà fait compte toujours, mais il n\'y a plus de bonus ni de retenue.</string>
