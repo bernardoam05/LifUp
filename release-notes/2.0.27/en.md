@@ -1,0 +1,7 @@
+- [new] The app is now called CoreQuest.
+- [new] LifUp+ (included in this GitHub version): six Core skins (Aurora, Shadow, Crystal, Ghost, Lava, Galaxy), a Core widget for the home screen, scheduled app blocking at the hours you choose, three saved echo squads, up to three pair missions at once, and your history as CSV files.
+- [new] Pair missions get a third mode, "each their own": each of you draws a different mission every day, and what counts is that both did theirs.
+- [tweak] Without LifUp+, one pair mission at a time.
+- [fix] Event accessories sit properly on every form of the Core, and the scarf is a crossed one.
+- [fix] The Core's second form wears its crystal under the face, like the others.
+- [tweak] On Android 12 and later, the app opens on your Core's current form.

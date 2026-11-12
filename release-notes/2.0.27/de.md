@@ -1,0 +1,7 @@
+- [new] Die App heißt jetzt CoreQuest.
+- [new] LifUp+ (in dieser GitHub-Version enthalten): sechs Skins für den Core (Polarlicht, Schatten, Kristall, Geist, Lava, Galaxie), ein Core-Widget für den Startbildschirm, App-Sperre zu den Zeiten deiner Wahl, drei gespeicherte Echo-Teams, bis zu drei Partnermissionen gleichzeitig und dein Verlauf als CSV-Dateien.
+- [new] Partnermissionen bekommen einen dritten Modus, „jeder seine eigene“: Jeder zieht jeden Tag eine andere Mission, und es zählt, dass ihr beide eure erledigt.
+- [tweak] Ohne LifUp+ eine Partnermission auf einmal.
+- [fix] Event-Accessoires sitzen auf jeder Form des Core richtig, und der Schal ist jetzt gekreuzt.
+- [fix] Die zweite Form des Core trägt ihren Kristall unter dem Gesicht, wie die anderen.
+- [tweak] Ab Android 12 öffnet die App mit der aktuellen Form deines Core.

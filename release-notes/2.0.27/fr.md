@@ -1,0 +1,7 @@
+- [new] L'app s'appelle désormais CoreQuest.
+- [new] LifUp+ (inclus dans cette version GitHub) : six apparences pour le Core (Aurore, Ombre, Cristal, Fantôme, Lave, Galaxie), un widget du Core pour l'écran d'accueil, le blocage des apps aux heures que tu choisis, trois équipes d'échos enregistrées, jusqu'à trois missions en binôme à la fois et ton historique en fichiers CSV.
+- [new] Les missions en binôme ont un troisième mode, « chacun la sienne » : chacun tire une mission différente chaque jour, et ce qui compte, c'est que vous fassiez tous les deux la vôtre.
+- [tweak] Sans LifUp+, une mission en binôme à la fois.
+- [fix] Les accessoires d'événement tombent bien sur toutes les formes du Core, et l'écharpe est désormais croisée.
+- [fix] La deuxième forme du Core porte son cristal sous le visage, comme les autres.
+- [tweak] Sur Android 12 et plus, l'app s'ouvre sur la forme actuelle de ton Core.
