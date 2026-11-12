@@ -155,6 +155,7 @@ fun AppRoot(deepLink: String?, onDeepLinkConsumed: () -> Unit) {
                 return@Box
             }
             CrashPrompt()
+            UpdatePrompt()
             WhatsNew()
             val nav = rememberNavController()
             NavHost(nav, startDestination = "main") {

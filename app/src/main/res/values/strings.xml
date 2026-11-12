@@ -1061,4 +1061,9 @@
     <string name="core_paint_galaxy">Galaxy</string>
     <string name="report_problem">Report a problem</string>
     <string name="report_problem_intro">What happened? (what you were doing, what you expected, what you saw)</string>
+    <string name="update_available">Version %1$s is available</string>
+    <string name="update_now">Update now</string>
+    <string name="update_later">Later</string>
+    <string name="update_prompt_title">New version %1$s</string>
+    <string name="update_prompt_text">Update now? It downloads in the background and Android will ask you to confirm. Your progress stays as it is.</string>
 </resources>

@@ -38,6 +38,8 @@ object Updater {
         data object Idle : State
         data object Checking : State
         data object UpToDate : State
+        /** A newer release exists: nothing is downloaded until the player agrees. */
+        data class Available(val version: String, val apkUrl: String) : State
         data class Downloading(val version: String) : State
         data class Installing(val version: String) : State
         data object Failed : State
@@ -47,12 +49,14 @@ object Updater {
     val state: StateFlow<State> = _state
     private val busy = Mutex()
 
-    /** Checks for a newer release and installs it. Without [force], debug builds skip it and a recent "up to date" is trusted. */
+    /** Checks for a newer release and says so ([State.Available]); [install] downloads it once the player agrees. Without [force], debug builds skip it and a recent "up to date" is trusted. */
     suspend fun check(context: Context, force: Boolean = false) {
         if (!BuildConfig.SELF_UPDATE) return // the store updates it
         if (!force && BuildConfig.DEBUG) return
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         if (!force && System.currentTimeMillis() - prefs.getLong("upToDateAt", 0) < CHECK_EVERY_MS) return
+        if (_state.value is State.Available || _state.value is State.Downloading || _state.value is State.Installing) return
+        if (!force && prefs.getString("later", null)?.let { later -> latestSeen == later } == true) return
         if (!busy.tryLock()) return
         try {
             _state.value = State.Checking
@@ -62,15 +66,36 @@ object Updater {
                 _state.value = State.UpToDate
                 return
             }
-            _state.value = State.Downloading(release.version)
-            val apk = withContext(Dispatchers.IO) { download(context, release.apkUrl) }
-            _state.value = State.Installing(release.version)
+            latestSeen = release.version
+            _state.value = if (!force && prefs.getString("later", null) == release.version) State.UpToDate else State.Available(release.version, release.apkUrl)
+        } catch (e: Exception) {
+            _state.value = State.Failed
+        } finally {
+            busy.unlock()
+        }
+    }
+
+    private var latestSeen: String? = null
+
+    /** The player agreed: download the release and hand it to the system installer. */
+    suspend fun install(context: Context, available: State.Available) {
+        if (!busy.tryLock()) return
+        try {
+            _state.value = State.Downloading(available.version)
+            val apk = withContext(Dispatchers.IO) { download(context, available.apkUrl) }
+            _state.value = State.Installing(available.version)
             withContext(Dispatchers.IO) { install(context, apk) }
         } catch (e: Exception) {
             _state.value = State.Failed
         } finally {
             busy.unlock()
         }
+    }
+
+    /** "Later": the prompt stays away until a release newer than this one comes out (Settings still offers it). */
+    fun later(context: Context, available: State.Available) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString("later", available.version).apply()
+        _state.value = State.UpToDate
     }
 
     /**

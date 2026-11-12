@@ -1042,4 +1042,9 @@
     <string name="core_paint_galaxy">Galaxie</string>
     <string name="report_problem">Signaler un problème</string>
     <string name="report_problem_intro">Que s\'est-il passé ? (ce que tu faisais, ce que tu attendais, ce que tu as vu)</string>
+    <string name="update_available">La version %1$s est disponible</string>
+    <string name="update_now">Mettre à jour</string>
+    <string name="update_later">Plus tard</string>
+    <string name="update_prompt_title">Nouvelle version %1$s</string>
+    <string name="update_prompt_text">Mettre à jour maintenant ? Le téléchargement se fait en arrière-plan et Android te demandera de confirmer. Ta progression reste intacte.</string>
 </resources>

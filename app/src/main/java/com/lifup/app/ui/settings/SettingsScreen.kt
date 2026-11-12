@@ -340,12 +340,15 @@ private fun UpdateRow() {
         Updater.State.Idle -> null
         Updater.State.Checking -> stringResource(R.string.update_checking)
         Updater.State.UpToDate -> stringResource(R.string.update_latest)
+        is Updater.State.Available -> stringResource(R.string.update_available, st.version)
         is Updater.State.Downloading -> stringResource(R.string.update_downloading, st.version)
         is Updater.State.Installing -> stringResource(R.string.update_installing, st.version)
         Updater.State.Failed -> stringResource(R.string.update_failed)
     }?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = if (state == Updater.State.Failed) Lif.colors.red else Lif.colors.muted) }
     val idle = state == Updater.State.Idle || state == Updater.State.UpToDate || state == Updater.State.Failed
-    TextButton(onClick = { scope.launch { Updater.check(context.applicationContext, force = true) } }, enabled = idle) {
+    (state as? Updater.State.Available)?.let { av ->
+        TextButton(onClick = { scope.launch { Updater.install(context.applicationContext, av) } }) { Text(stringResource(R.string.update_now).uppercase()) }
+    } ?: TextButton(onClick = { scope.launch { Updater.check(context.applicationContext, force = true) } }, enabled = idle) {
         Text(stringResource(R.string.update_check).uppercase())
     }
 }
