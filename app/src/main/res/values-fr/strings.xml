@@ -902,6 +902,7 @@
     <string name="pair_join">Rejoindre avec un code</string>
     <string name="pair_pick_mission">Mission</string>
     <string name="pair_repeat">Répétition</string>
+    <string name="pair_select_mission_hint">Choisis une mission ci-dessus pour activer « Créer ».</string>
     <string name="pair_once">Une fois</string>
     <string name="pair_daily">Tous les jours</string>
     <string name="pair_weekly">Jours de la semaine</string>

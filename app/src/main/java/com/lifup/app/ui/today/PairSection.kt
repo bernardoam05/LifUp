@@ -23,10 +23,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -325,7 +328,11 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
     val defs = remember(s.enabledDefIds, s.disabledDefIds, s.customDefs, language) { s.pairDefs(content).sortedBy { it.title.text(language) } }
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = p.panel) {
-        Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            Modifier.fillMaxWidth().heightIn(max = 640.dp).verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp).padding(bottom = 24.dp).imePadding().navigationBarsPadding(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             Text(stringResource(R.string.pair_new), style = MaterialTheme.typography.titleLarge)
             Text(stringResource(R.string.pair_empty_hint), style = MaterialTheme.typography.bodySmall, color = p.muted)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -356,7 +363,7 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
                 }
                 if (random) Text(stringResource(if (mode == PairRules.EACH) R.string.pair_mode_each_hint else R.string.pair_mode_random_hint), style = MaterialTheme.typography.bodySmall, color = p.muted)
                 else Text(stringResource(R.string.pair_pick_mission), style = MaterialTheme.typography.labelLarge, color = p.muted)
-                if (!random) LazyColumn(Modifier.fillMaxWidth().heightIn(max = 340.dp)) {
+                if (!random) LazyColumn(Modifier.fillMaxWidth().heightIn(max = 220.dp)) {
                     items(defs, key = { it.id }) { def ->
                         val selected = def.id == defId
                         val color = def.color(p)
@@ -395,6 +402,7 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
                     }
                 }
                 if (kind == PairRepeat.EVERY) Stepper(every, { every = it }, 2..14, stringResource(R.string.pair_every_label), " " + stringResource(R.string.pair_days_suffix))
+                if (!random && defId == null) Text(stringResource(R.string.pair_select_mission_hint), style = MaterialTheme.typography.bodySmall, color = p.dim)
                 PrimaryButton(stringResource(R.string.pair_create), enabled = (random || defId != null) && !busy, onClick = {
                     val id = if (random) mode else defId ?: return@PrimaryButton
                     busy = true; error = null
