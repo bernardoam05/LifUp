@@ -126,8 +126,6 @@ fun CoreAvatar(
                 } else translationY = -sizePx * lift * b
             },
         ) {
-            // The scarf's back band goes behind the Core: only its ends show beside the neck.
-            if (skin == CoreSkin.SCARF && !locked) Accessory(skin, stage, size, back = true)
             Image(
                 painterResource(sprite(stage, mood, paint)), null,
                 colorFilter = if (locked) ColorFilter.tint(Color(0xFF2A3140)) else null,
@@ -160,27 +158,28 @@ private fun art(skin: CoreSkin) = when (skin) {
 
 private fun aspect(skin: CoreSkin) = when (skin) {
     CoreSkin.PUMPKIN -> 0.869f
-    CoreSkin.SCARF -> 0.887f
+    CoreSkin.SCARF -> 0.817f
     CoreSkin.PARTY_HAT -> 1.081f
     CoreSkin.FLOWER_CROWN -> 0.625f
     CoreSkin.SUNGLASSES -> 0.434f
 }
 
-/** Where each accessory sits on each form: left, top and width as fractions of the sprite, fitted form by form. */
+/** Where each accessory sits on each form: left, top and width as fractions of the sprite, and its tilt in degrees (laid out by hand). */
 private val PLACE: Map<CoreSkin, List<FloatArray>> = mapOf(
-    CoreSkin.PUMPKIN to listOf(floatArrayOf(0.265f, 0.075f, 0.500f), floatArrayOf(0.249f, 0.067f, 0.517f), floatArrayOf(0.299f, 0.109f, 0.455f), floatArrayOf(0.321f, 0.124f, 0.430f), floatArrayOf(0.344f, 0.181f, 0.331f), floatArrayOf(0.357f, 0.180f, 0.295f)),
-    CoreSkin.SCARF to listOf(floatArrayOf(0.354f, 0.511f, 0.343f), floatArrayOf(0.294f, 0.386f, 0.440f), floatArrayOf(0.321f, 0.391f, 0.426f), floatArrayOf(0.355f, 0.397f, 0.390f), floatArrayOf(0.349f, 0.455f, 0.323f), floatArrayOf(0.344f, 0.485f, 0.323f)),
-    CoreSkin.PARTY_HAT to listOf(floatArrayOf(0.367f, 0.021f, 0.339f), floatArrayOf(0.354f, 0.005f, 0.344f), floatArrayOf(0.361f, -0.001f, 0.348f), floatArrayOf(0.380f, 0.006f, 0.314f), floatArrayOf(0.444f, 0.103f, 0.223f), floatArrayOf(0.442f, 0.101f, 0.212f)),
-    CoreSkin.FLOWER_CROWN to listOf(floatArrayOf(0.311f, 0.274f, 0.416f), floatArrayOf(0.302f, 0.235f, 0.423f), floatArrayOf(0.295f, 0.238f, 0.449f), floatArrayOf(0.304f, 0.210f, 0.453f), floatArrayOf(0.311f, 0.251f, 0.423f), floatArrayOf(0.278f, 0.255f, 0.424f)),
-    CoreSkin.SUNGLASSES to listOf(floatArrayOf(0.342f, 0.359f, 0.357f), floatArrayOf(0.345f, 0.268f, 0.340f), floatArrayOf(0.341f, 0.265f, 0.375f), floatArrayOf(0.351f, 0.275f, 0.369f), floatArrayOf(0.364f, 0.247f, 0.323f), floatArrayOf(0.362f, 0.262f, 0.306f)),
+    CoreSkin.PUMPKIN to listOf(floatArrayOf(0.2636f, 0.1402f, 0.5357f, 6.6f), floatArrayOf(0.2602f, 0.1003f, 0.4872f, 0.0f), floatArrayOf(0.2868f, 0.0722f, 0.4650f, 0.0f), floatArrayOf(0.3407f, 0.1286f, 0.4104f, 0.0f), floatArrayOf(0.4187f, 0.1799f, 0.2790f, 11.5f), floatArrayOf(0.3713f, 0.2131f, 0.2851f, -6.5f)),
+    CoreSkin.SCARF to listOf(floatArrayOf(0.3906f, 0.6393f, 0.2828f, 0.0f), floatArrayOf(0.2887f, 0.5330f, 0.4334f, 0.0f), floatArrayOf(0.3309f, 0.5233f, 0.4022f, 0.0f), floatArrayOf(0.3965f, 0.5133f, 0.3145f, 0.0f), floatArrayOf(0.4111f, 0.4685f, 0.2487f, 0.0f), floatArrayOf(0.4196f, 0.4936f, 0.2249f, 0.0f)),
+    CoreSkin.PARTY_HAT to listOf(floatArrayOf(0.2606f, 0.0328f, 0.3879f, -9.1f), floatArrayOf(0.2840f, -0.0223f, 0.3832f, -7.3f), floatArrayOf(0.2929f, -0.0499f, 0.3832f, -7.3f), floatArrayOf(0.3010f, -0.0061f, 0.3631f, -9.1f), floatArrayOf(0.3790f, 0.1242f, 0.2225f, -16.0f), floatArrayOf(0.3625f, 0.1557f, 0.2303f, -17.8f)),
+    CoreSkin.FLOWER_CROWN to listOf(floatArrayOf(0.3075f, 0.3172f, 0.4464f, 0.0f), floatArrayOf(0.2944f, 0.2493f, 0.4464f, 0.0f), floatArrayOf(0.3095f, 0.2101f, 0.4464f, 0.0f), floatArrayOf(0.3738f, 0.2735f, 0.3087f, -10.9f), floatArrayOf(0.3910f, 0.2678f, 0.2733f, -3.1f), floatArrayOf(0.3906f, 0.3070f, 0.2733f, -3.1f)),
+    CoreSkin.SUNGLASSES to listOf(floatArrayOf(0.3480f, 0.3131f, 0.3674f, 0.0f), floatArrayOf(0.3211f, 0.2423f, 0.4033f, 0.0f), floatArrayOf(0.3333f, 0.2199f, 0.4033f, 0.0f), floatArrayOf(0.4024f, 0.2752f, 0.2914f, 0.0f), floatArrayOf(0.4171f, 0.2735f, 0.2429f, 0.0f), floatArrayOf(0.4230f, 0.3105f, 0.2217f, 0.0f)),
 )
 
 @Composable
 private fun Accessory(skin: CoreSkin, stage: Int, size: Dp, back: Boolean = false) {
-    val res = if (back) { if (skin == CoreSkin.SCARF) R.drawable.core_acc_scarf_back else return } else art(skin)
-    val (left, top, width) = PLACE.getValue(skin)[stage.coerceIn(1, Core.STAGES) - 1].let { Triple(it[0], it[1], it[2]) }
+    if (back) return
+    val p = PLACE.getValue(skin)[stage.coerceIn(1, Core.STAGES) - 1]
     Image(
-        painterResource(res), null,
-        modifier = Modifier.offset(x = size * left, y = size * top).size(size * width, size * width * aspect(skin)),
+        painterResource(art(skin)), null,
+        modifier = Modifier.offset(x = size * p[0], y = size * p[1]).size(size * p[2], size * p[2] * aspect(skin))
+            .graphicsLayer { rotationZ = p[3] },
     )
 }
