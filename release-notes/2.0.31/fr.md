@@ -1,0 +1,6 @@
+- [new] Les missions en binôme ont désormais des paliers de série à 3, 10, 25 et 50 cycles.
+- [new] De nouveaux échos et passifs de binôme récompensent les missions durables avec un partenaire.
+- [new] Votre meilleur record de série en binôme et le partenaire avec lequel vous l’avez atteint apparaissent dans votre profil.
+- [fix] Les missions en binôme utilisent la sélection active de chaque joueur et peuvent coïncider par hasard.
+- [tweak] Les missions en binôme infligent 50 % des dégâts normaux au boss et ne reçoivent pas de bonus de faiblesse.
+- [fix] Les missions « Éviter » comptent désormais dans la barre de série quotidienne tant qu’elles ne sont pas enfreintes.

@@ -1,0 +1,6 @@
+- [new] Las misiones en pareja ahora tienen hitos de racha en 3, 10, 25 y 50 ciclos.
+- [new] Nuevos ecos y pasivas de pareja recompensan las misiones duraderas con un compañero.
+- [new] Tu mejor racha recurrente en pareja y el compañero con quien la lograste aparecen en tu perfil.
+- [fix] Las misiones en pareja usan la reserva activa de cada jugador y pueden coincidir por casualidad.
+- [tweak] Las misiones en pareja infligen un 50% del daño normal al jefe y no reciben bonificaciones de debilidad.
+- [fix] Las misiones “Evitar” ahora cuentan para la barra de racha diaria mientras no se hayan incumplido.

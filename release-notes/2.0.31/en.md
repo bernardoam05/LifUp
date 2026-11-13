@@ -1,0 +1,6 @@
+- [new] Pair missions now have recurring streak milestones at 3, 10, 25, and 50 cycles.
+- [new] New pair echoes and passives reward long-running missions with a partner.
+- [new] Your best recurring pair streak and partner are shown in your profile.
+- [fix] Pair missions use each player's active mission pool and may now match by coincidence.
+- [tweak] Pair missions deal 50% boss damage and do not receive weakness bonuses.
+- [fix] Avoid missions now count towards the daily streak progress bar while they remain unbroken.

@@ -1,0 +1,6 @@
+- [new] Partnermissionen haben jetzt Serien-Meilensteine nach 3, 10, 25 und 50 Zyklen.
+- [new] Neue Partner-Echos und Passiven belohnen langfristige Missionen mit einem Partner.
+- [new] Deine beste wiederkehrende Partnerserie und der Partner, mit dem du sie erreicht hast, werden im Profil angezeigt.
+- [fix] Partnermissionen verwenden den aktiven Missionspool jedes Spielers und dürfen sich zufällig überschneiden.
+- [tweak] Partnermissionen verursachen 50 % des normalen Boss-Schadens und erhalten keine Schwächenboni.
+- [fix] „Vermeiden“-Missionen zählen jetzt zum täglichen Serienfortschritt, solange sie nicht gebrochen wurden.

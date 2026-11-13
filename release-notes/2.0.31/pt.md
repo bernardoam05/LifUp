@@ -1,0 +1,6 @@
+- [new] As missões em par têm agora conquistas de sequência aos 3, 10, 25 e 50 ciclos.
+- [new] Novos ecos e passivas de par recompensam missões duradouras com um colega.
+- [new] O teu melhor recorde de sequência em par e o colega com quem o alcançaste aparecem no perfil.
+- [fix] As missões em par usam a pool ativa de cada jogador e podem coincidir por acaso.
+- [tweak] As missões em par causam 50% do dano normal ao boss e não recebem bónus de fraqueza.
+- [fix] As missões “Evitar” passam a contar para a barra da sequência diária enquanto não forem quebradas.
