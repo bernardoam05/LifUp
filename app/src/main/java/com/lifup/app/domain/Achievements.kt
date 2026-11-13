@@ -3,6 +3,7 @@ package com.lifup.app.domain
 fun GameState.statValue(key: StatKey): Long = when (key) {
     StatKey.LEVEL -> player.level.toLong()
     StatKey.BEST_STREAK -> player.bestStreak.toLong()
+    StatKey.BEST_PAIR_STREAK -> bestPairStreak.toLong()
     StatKey.SHADOWS_OWNED -> shadows.size.toLong()
     StatKey.MAX_SHADOW_LEVEL -> (shadows.maxOfOrNull { it.level } ?: 0).toLong()
     StatKey.SQUAD_FULL -> if (squad.size >= Rules.SQUAD_SIZE) 1 else 0
@@ -55,6 +56,15 @@ fun Tx.migrateState() {
         // Seasonal bosses beaten before the Core had accessories give theirs now, quietly.
         s = s.copy(coreSkins = s.coreSkins + s.bossHistory.mapNotNull { CoreSkin.forBoss(it) }, version = 9)
     }
+    if (s.version < 10) {
+        // Pair streak records arrived after live pairs already had a current streak: preserve the best one visible.
+        val best = s.pairs.filter { it.recurrence.kind != PairRepeat.ONCE }.maxByOrNull { it.streak }
+        s = s.copy(
+            bestPairStreak = maxOf(s.bestPairStreak, best?.streak ?: 0),
+            bestPairPartner = if ((best?.streak ?: 0) > s.bestPairStreak) best?.partnerName.orEmpty() else s.bestPairPartner,
+            version = 10,
+        )
+    }
 }
 
 /** Unlocks every tier whose target has been reached. Rewards are paid unboosted to avoid feedback loops. */
@@ -68,7 +78,7 @@ fun Tx.checkAchievements() {
             s = s.copy(achievements = s.achievements + (def.id to tier), player = s.player.copy(gold = s.player.gold + gold))
             count(StatKey.GOLD_EARNED, gold.toLong())
             val t = tier
-            val shadow = def.shadowReward?.takeIf { it.tier == t }?.shadowId
+            val shadow = def.echoRewards().firstOrNull { it.tier == t }?.shadowId
             val items = if (t >= Rules.ACHIEVEMENT_CHEST_TIER) listOf(Rules.ACHIEVEMENT_CHEST) else emptyList()
             items.forEach { addItem(it) }
             reward { Reward.AchievementUnlocked(it, def.id, t, gold, items, shadow) }

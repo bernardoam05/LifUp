@@ -239,6 +239,9 @@ fun passiveText(p: Passive, value: Double): String {
         Passive.REDEMPTION -> stringResource(R.string.passive_redemption, pct)
         Passive.EXTRA_BOOST -> stringResource(R.string.passive_extra, pct)
         Passive.BOSS_SPOILS -> stringResource(R.string.passive_spoils, pct)
+        Passive.PAIR_BOOST -> stringResource(R.string.passive_pair, pct)
+        Passive.PAIR_GUARD -> stringResource(R.string.passive_pair_guard, pct)
+        Passive.PAIR_BOND -> stringResource(R.string.passive_pair_bond, pct)
     }
 }
 

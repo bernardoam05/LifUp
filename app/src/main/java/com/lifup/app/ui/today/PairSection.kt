@@ -356,10 +356,10 @@ fun NewPairSheet(s: GameState, initialCode: String? = null, onDismiss: () -> Uni
                 }, modifier = Modifier.fillMaxWidth())
             } else {
                 Text(stringResource(R.string.pair_mode), style = MaterialTheme.typography.labelLarge, color = p.muted)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(selected = mode == "fixed", onClick = { mode = "fixed" }, label = { Text(stringResource(R.string.pair_mode_fixed)) })
-                    FilterChip(selected = mode == PairRules.RANDOM, onClick = { mode = PairRules.RANDOM }, label = { Text(stringResource(R.string.pair_mode_random)) })
-                    FilterChip(selected = mode == PairRules.EACH, onClick = { mode = PairRules.EACH }, label = { Text(stringResource(R.string.pair_mode_each)) })
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    FilterChip(selected = mode == "fixed", onClick = { mode = "fixed" }, label = { Text(stringResource(R.string.pair_mode_fixed_short), maxLines = 1) }, modifier = Modifier.weight(1f))
+                    FilterChip(selected = mode == PairRules.RANDOM, onClick = { mode = PairRules.RANDOM }, label = { Text(stringResource(R.string.pair_mode_random_short), maxLines = 1) }, modifier = Modifier.weight(1f))
+                    FilterChip(selected = mode == PairRules.EACH, onClick = { mode = PairRules.EACH }, label = { Text(stringResource(R.string.pair_mode_each_short), maxLines = 1) }, modifier = Modifier.weight(1f))
                 }
                 if (random) Text(stringResource(if (mode == PairRules.EACH) R.string.pair_mode_each_hint else R.string.pair_mode_random_hint), style = MaterialTheme.typography.bodySmall, color = p.muted)
                 else Text(stringResource(R.string.pair_pick_mission), style = MaterialTheme.typography.labelLarge, color = p.muted)

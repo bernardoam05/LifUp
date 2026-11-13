@@ -1,6 +1,6 @@
 # Missões em par
 
-Duas pessoas fazem a mesma missão, cada uma a sua parte. A recompensa extra só abre quando ambas acabam. Este documento é o desenho: regras do jogo, sincronização, custos e configuração do Firebase. As regras de segurança estão em [`firebase/firestore.rules`](../firebase/firestore.rules), com testes no emulador (`cd firebase && npm ci && npm test`; corre também no workflow `Firestore rules`).
+Duas pessoas cumprem uma missão em conjunto: fixa, sorteada igual para ambas ou sorteada da pool ativa de cada uma. A recompensa extra só abre quando ambas acabam. Este documento é o desenho: regras do jogo, sincronização, custos e configuração do Firebase. As regras de segurança estão em [`firebase/firestore.rules`](../firebase/firestore.rules), com testes no emulador (`cd firebase && npm ci && npm test`; corre também no workflow `Firestore rules`).
 
 ## 1. Regras do jogo
 
@@ -13,11 +13,12 @@ Cada pessoa faz o que a missão lhe pediria se a fizesse sozinha, no passo em qu
 | Resultado | Quem cumpriu | Quem falhou |
 |---|---|---|
 | Ambos cumpriram | recompensa normal + **25%** | — |
-| O colega falhou | recompensa normal **−10%** | penalização normal de missão falhada |
+| O colega falhou | recompensa normal **−10%**, se havia sequência ativa | penalização normal de missão falhada, se havia sequência ativa |
 | Desconhecido (ver 1.4) | recompensa normal (**×1**) | penalização normal, decidida pelo próprio telemóvel |
 
 - **A recompensa normal chega quando concluis a tua parte**, como numa missão solo. Os +25% ou os −10% chegam no acerto, depois do prazo, como entrada própria na fila de recompensas ("Bónus de par de ontem").
 - **Com o −10%, entrar num par compensa** desde que o colega cumpra pelo menos 3 vezes em cada 10.
+- **Sem sequência, não há perdas.** A primeira falha, ou novas falhas depois de a sequência quebrar, não retiram XP nem ouro. Assim, um par abandonado não drena recursos todos os ciclos.
 - **Contra o farm:** criar e abandonar pares não dá nada, porque só se ganha pelo que se fez. O bónus de +25% conta apenas nas **2 primeiras missões de par de cada dia**, com o mesmo par ou com pares diferentes. As seguintes valem ×1, e o −10% continua a aplicar-se.
 - No máximo **3 missões de par ativas** por pessoa.
 - **A parte de par não entra no fecho do dia local.** O fecho do dia não lhe dá recompensa nem penalização: tudo é tratado no momento em que concluis e no acerto. Assim, quem está noutro fuso horário não fica com a missão partida entre dois dias.
@@ -25,7 +26,8 @@ Cada pessoa faz o que a missão lhe pediria se a fizesse sozinha, no passo em qu
 ### 1.3 Prazo e recorrência
 
 - **O prazo de cada ciclo é a meia-noite de quem criou o par**, no fuso guardado em `tz`. Para o colega é um instante absoluto, que pode não ser a meia-noite dele.
-- **Recorrência:** `once` (uma vez), `daily` (todos os dias), `weekly` (dias da semana escolhidos) e `every` (de N em N dias, a contar de `start`). A aleatória não existe, porque cada telemóvel sorteia de forma diferente.
+- **Recorrência:** `once` (uma vez), `daily` (todos os dias), `weekly` (dias da semana escolhidos) e `every` (de N em N dias, a contar de `start`). A sequência avança por ciclo agendado, não por dia de calendário; pares `once` não têm sequência.
+- **Modo da missão:** fixa; uma sorteada deterministicamente e igual para ambos; ou cada pessoa sorteia da própria pool ativa. No último modo as duas missões podem coincidir.
 - **O ciclo é identificado pela data de quem criou** (`2026-11-11`). Os dois telemóveis calculam o ciclo e o prazo da mesma forma, a partir de `start`, `recurrence` e `tz`, sem escreverem nada no Firestore para isso.
 - **Sequência do par:** quantos ciclos seguidos os dois cumpriram. É só para mostrar e não dá recompensa.
 

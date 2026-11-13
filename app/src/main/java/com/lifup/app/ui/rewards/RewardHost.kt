@@ -237,6 +237,8 @@ private fun toastMessage(s: GameState, t: Reward.Toast): String {
             )
         }
         ToastKind.PAIR_PARTNER_LEFT -> stringResource(R.string.toast_pair_partner_left, t.arg.ifBlank { "?" })
+        ToastKind.PAIR_CUT_GRACE -> stringResource(R.string.toast_pair_cut_grace, t.arg.ifBlank { "?" })
+        ToastKind.PAIR_MISSED_GRACE -> stringResource(R.string.toast_pair_missed_grace, t.arg.ifBlank { "?" })
         ToastKind.CORE_SKIN -> stringResource(
             R.string.toast_core_skin,
             com.lifup.app.domain.CoreSkin.entries.firstOrNull { it.name == t.arg }?.let { stringResource(com.lifup.app.ui.hero.skinName(it)) } ?: t.arg,

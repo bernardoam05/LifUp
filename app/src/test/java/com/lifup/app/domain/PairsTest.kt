@@ -100,7 +100,7 @@ class PairsTest {
     }
 
     @Test fun `partner missed - cut only after the read past the quota reset`() {
-        var s = run(withPair(), "2026-11-11T18:00") { completePairPart("p1") }
+        var s = run(withPair(pair().copy(streak = 1)), "2026-11-11T18:00") { completePairPart("p1") }
         val gained = s.p().parts.single().goldGained
         s = run(s, "2026-11-12T00:06") { pairRead("p1", "rui", "Rui", emptyMap(), gone = false) }
         assertNull(s.p().parts.first { it.cycle == "2026-11-11" }.outcome)
@@ -109,6 +109,42 @@ class PairsTest {
         assertEquals(PairOutcome.PARTNER_MISSED, s.p().parts.first { it.cycle == "2026-11-11" }.outcome)
         assertEquals(gold - (gained * PairRules.CUT).roundToInt(), s.player.gold)
         assertEquals(0, s.p().streak)
+    }
+
+    @Test fun `a missed part only costs resources when a pair streak was active`() {
+        var grace = withPair(pair().copy(streak = 0)).let { it.copy(daily = it.daily.copy(rest = true)) }
+        val graceXp = grace.player.xp
+        val graceGold = grace.player.gold
+        grace = run(grace, "2026-11-12T00:06")
+        assertEquals(PairOutcome.MISSED, grace.p().parts.first().outcome)
+        assertEquals(graceXp, grace.player.xp)
+        assertEquals(graceGold, grace.player.gold)
+        assertTrue(ToastKind.PAIR_MISSED_GRACE in toasts(grace))
+
+        var staked = withPair(pair().copy(streak = 3)).let { it.copy(daily = it.daily.copy(rest = true)) }
+        val stakedXp = staked.player.xp
+        val stakedGold = staked.player.gold
+        staked = run(staked, "2026-11-12T00:06")
+        assertTrue(staked.player.xp < stakedXp || staked.player.gold < stakedGold)
+        assertEquals(0, staked.p().streak)
+        assertTrue(ToastKind.PAIR_MISSED in toasts(staked))
+    }
+
+    @Test fun `recurring pair records its best streak and one-off pairs do not`() {
+        var recurring = run(withPair(pair().copy(streak = 2)), "2026-11-11T18:00") { completePairPart("p1") }
+        recurring = run(recurring, "2026-11-12T00:06") {
+            pairRead("p1", "rui", "Rui", mapOf("2026-11-11" to mark("2026-11-11T21:00")), gone = false)
+        }
+        assertEquals(3, recurring.bestPairStreak)
+        assertEquals("Rui", recurring.bestPairPartner)
+        assertEquals(1, recurring.achievements["pair_streak"])
+
+        var once = run(withPair(pair(PairRepeat.ONCE)), "2026-11-11T18:00") { completePairPart("p1") }
+        once = run(once, "2026-11-12T00:06") {
+            pairRead("p1", "rui", "Rui", mapOf("2026-11-11" to mark("2026-11-11T21:00")), gone = false)
+        }
+        assertEquals(0, once.bestPairStreak)
+        assertEquals(0L, once.count(StatKey.PAIR_CYCLES))
     }
 
     @Test fun `no answer for 36 hours counts as x1`() {
@@ -126,7 +162,7 @@ class PairsTest {
     }
 
     @Test fun `missing your own part costs like a missed mission`() {
-        var s = withPair()
+        var s = withPair(pair().copy(streak = 1))
         val part = s.p().parts.single()
         val gold = s.player.gold
         s = run(s, "2026-11-12T00:10")
@@ -166,6 +202,14 @@ class PairsTest {
         assertEquals(s.pairDefFor(ana, "2026-11-11", content)!!.id, s.pairDefFor(ana, "2026-11-11", content)!!.id)
     }
 
+    @Test fun `each their own only draws from this players active pair pool`() {
+        val only = content.quests.first { PairRules.eligible(it) && !it.optional }
+        val disabled = content.quests.filter { PairRules.eligible(it) && it.id != only.id }.map { it.id }.toSet()
+        val s = GameState(onboarded = true, disabledDefIds = disabled)
+        val picked = s.pairDefFor(pair().copy(defId = PairRules.EACH), "2026-11-11", content)
+        assertEquals(only.id, picked?.id)
+    }
+
     @Test fun `links round-trip, and a changed or foreign one fails`() {
         val secret = PairLink.newSecret()
         val done = PairLink.Done("p1", "2026-11-11", "rui", 40, 1_700_000_000_000)
@@ -194,6 +238,15 @@ class PairsTest {
         assertNotNull(s.p().parts.single().doneAt)
         assertEquals(QuestStatus.DONE, s.p().parts.single().quest?.status)
         assertTrue(s.p().parts.single().xpGained > 0)
+    }
+
+    @Test fun `a pair mission deals half its earned xp to the boss`() {
+        var s = withPair()
+        val q = s.p().parts.single().quest!!
+        s = s.copy(boss = BossState("2026-11-09", "test", 10_000, 10_000, q.copy(origin = QuestOrigin.BOSS), Long.MAX_VALUE))
+        s = run(s, "2026-11-11T10:00") { completePairPart("p1") }
+        val part = s.p().parts.single()
+        assertEquals((part.xpGained * PairRules.BOSS_SHARE).roundToInt(), 10_000 - s.boss!!.hp)
     }
 
     @Test fun `parts saved before they were missions get one`() {

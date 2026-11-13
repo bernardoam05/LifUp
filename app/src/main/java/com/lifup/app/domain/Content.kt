@@ -122,6 +122,12 @@ enum class Passive {
     EXTRA_BOOST,
     /** More XP and gold when the weekly boss falls: the hoard goes to whoever brings it down. */
     BOSS_SPOILS,
+    /** More XP and gold from pair missions. */
+    PAIR_BOOST,
+    /** Reduces XP and gold lost when a live pair sequence breaks. */
+    PAIR_GUARD,
+    /** Adds to the +25% reward when both partners keep a cycle. */
+    PAIR_BOND,
 }
 
 enum class Difficulty { EASY, MEDIUM, HARD }
@@ -131,10 +137,10 @@ enum class PowerKind { GROWTH, WEALTH, COMBAT, PROTECTION, FORTUNE }
 
 fun Passive.kind(): PowerKind = when (this) {
     Passive.XP_BOOST, Passive.TRAINING_XP, Passive.MIND_XP, Passive.EXPLORER_XP, Passive.DAILY_BONUS, Passive.STREAK_XP,
-    Passive.EARLY_XP, Passive.COMEBACK, Passive.EXTRA_BOOST -> PowerKind.GROWTH
+    Passive.EARLY_XP, Passive.COMEBACK, Passive.EXTRA_BOOST, Passive.PAIR_BOOST, Passive.PAIR_BOND -> PowerKind.GROWTH
     Passive.GOLD_BOOST, Passive.SHOP_DISCOUNT, Passive.ALL_BOOST -> PowerKind.WEALTH
     Passive.BOSS_DAMAGE, Passive.BOSS_SPOILS -> PowerKind.COMBAT
-    Passive.PENALTY_REDUCE, Passive.PENALTY_IMMUNITY, Passive.STREAK_PROTECT, Passive.REDEMPTION -> PowerKind.PROTECTION
+    Passive.PENALTY_REDUCE, Passive.PENALTY_IMMUNITY, Passive.STREAK_PROTECT, Passive.REDEMPTION, Passive.PAIR_GUARD -> PowerKind.PROTECTION
     Passive.FOCUS_MASTERY, Passive.SHADOW_LUCK, Passive.PORTAL_BOOST, Passive.EXTRA_SWAP -> PowerKind.FORTUNE
 }
 
@@ -191,6 +197,8 @@ enum class StatKey {
     BLOCKED_ATTEMPTS, CUSTOM_QUESTS, STEPS, BEDTIMES_KEPT, SEASONAL_BOSSES, WEEK_GOALS,
     /** Pair-quest cycles both partners kept. */
     PAIR_CYCLES,
+    /** Best sequence in a recurring pair quest. */
+    BEST_PAIR_STREAK,
     /** The Core's most evolved form unlocked (read from the rank, not counted). */
     CORE_FORMS,
 }
@@ -204,11 +212,17 @@ data class AchievementDef(
     val stat: StatKey,
     val tiers: List<Long>,
     val shadowReward: ShadowReward? = null,
+    /** New achievements may grant different echoes at different tiers; the singular field keeps old content compatible. */
+    val shadowRewards: List<ShadowReward> = emptyList(),
+    /** Optional name for each tier, used by staged achievements. */
+    val tierTitles: List<L10n> = emptyList(),
     val title: L10n,
     val description: L10n,
     /** Singular wording for a target of 1. */
     val descriptionOne: L10n? = null,
 )
+
+fun AchievementDef.echoRewards(): List<ShadowReward> = listOfNotNull(shadowReward) + shadowRewards
 
 @Serializable
 private data class QuestCatalog(val quests: List<QuestDef>, val penalty: List<QuestDef>, val portal: List<QuestDef> = emptyList())

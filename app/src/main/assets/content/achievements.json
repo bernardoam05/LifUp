@@ -819,5 +819,32 @@
    "fr": "Débloque la forme {target} du Core.",
    "de": "Schalte die Form {target} des Core frei."
   }
+ },
+ {
+  "id": "pair_streak",
+  "stat": "BEST_PAIR_STREAK",
+  "tiers": [3, 10, 25, 50],
+  "tierTitles": [
+   { "pt": "Dupla Afinada", "en": "In Sync", "es": "Dúo Afinado", "fr": "Duo Accordé", "de": "Eingespieltes Duo" },
+   { "pt": "Companheiros", "en": "Companions", "es": "Compañeros", "fr": "Compagnons", "de": "Gefährten" },
+   { "pt": "Esquadrão Imparável", "en": "Unstoppable Squad", "es": "Escuadrón Imparable", "fr": "Escouade Imbattable", "de": "Unaufhaltsames Team" },
+   { "pt": "Ligação Inquebrável", "en": "Unbreakable Bond", "es": "Vínculo Inquebrantable", "fr": "Lien Indestructible", "de": "Unzerbrechliches Band" }
+  ],
+  "shadowRewards": [
+   { "tier": 2, "shadowId": "oath_companion" },
+   { "tier": 3, "shadowId": "bond_guardian" },
+   { "tier": 4, "shadowId": "eternal_link" }
+  ],
+  "title": {
+   "pt": "Laços de Batalha", "en": "Bonds of Battle", "es": "Lazos de Batalla",
+   "fr": "Liens de Bataille", "de": "Bande der Schlacht"
+  },
+  "description": {
+   "pt": "Mantém uma sequência de {target} ciclos com o mesmo colega.",
+   "en": "Keep a {target}-cycle streak with the same partner.",
+   "es": "Mantén una racha de {target} ciclos con la misma pareja.",
+   "fr": "Maintiens une série de {target} cycles avec le même partenaire.",
+   "de": "Halte mit demselben Partner eine Serie von {target} Zyklen."
+  }
  }
 ]

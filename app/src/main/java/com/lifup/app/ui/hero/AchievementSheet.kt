@@ -33,6 +33,7 @@ import com.lifup.app.domain.AchievementDef
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.achievementGold
 import com.lifup.app.domain.statValue
+import com.lifup.app.domain.echoRewards
 import com.lifup.app.ui.components.Bar
 import com.lifup.app.ui.components.Panel
 import com.lifup.app.ui.components.Pill
@@ -82,7 +83,7 @@ fun AchievementSheet(s: GameState, def: AchievementDef, onDismiss: () -> Unit) {
 @Composable
 private fun TierRow(def: AchievementDef, tier: Int, target: Long, value: Long, reached: Boolean, next: Boolean) {
     val c = Lif.colors
-    val shadow = def.shadowReward?.takeIf { it.tier == tier }?.let { content.shadowById[it.shadowId] }
+    val shadow = def.echoRewards().firstOrNull { it.tier == tier }?.let { content.shadowById[it.shadowId] }
     Panel(border = if (next) c.gold.copy(alpha = 0.6f) else c.border, background = if (reached) c.green.copy(alpha = 0.06f) else c.panel) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -91,7 +92,11 @@ private fun TierRow(def: AchievementDef, tier: Int, target: Long, value: Long, r
             )
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
-                Text(stringResource(R.string.achievement_tier, tier), style = MaterialTheme.typography.labelMedium, color = tierColor(tier))
+                val stage = def.tierTitles.getOrNull(tier - 1)?.local()
+                Text(
+                    listOfNotNull(stringResource(R.string.achievement_tier, tier), stage).joinToString(" · "),
+                    style = MaterialTheme.typography.labelMedium, color = tierColor(tier),
+                )
                 Text(def.text(target), style = MaterialTheme.typography.bodyMedium)
             }
             Pill(stringResource(R.string.achievement_gold, achievementGold(tier)), c.gold)

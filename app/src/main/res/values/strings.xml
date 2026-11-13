@@ -178,6 +178,8 @@
     <string name="hero_stats">Stats</string>
     <string name="streak">Streak</string>
     <string name="best_streak">Best</string>
+    <string name="best_pair_streak">Best pair streak</string>
+    <string name="best_pair_streak_value">%1$d with %2$s</string>
     <string name="bosses">Bosses</string>
     <string name="squad">Squad</string>
     <string name="collection">Collection</string>
@@ -247,6 +249,9 @@
     <string name="passive_comeback">+%1$s XP and gold the day after a failed day</string>
     <string name="passive_extra">+%1$s XP and gold from extra missions</string>
     <string name="passive_spoils">+%1$s XP and gold when you defeat a boss</string>
+    <string name="passive_pair">+%1$s XP and gold from pair missions</string>
+    <string name="passive_pair_guard">−%1$s losses when a pair streak breaks</string>
+    <string name="passive_pair_bond">+%1$s reward when both partners finish</string>
     <string name="passive_redemption">Clearing a penalty gives back %1$s of the XP and gold lost</string>
 
     <!-- Shop -->
@@ -562,7 +567,7 @@
     <string name="guide_side_title">Side quests</string>
     <string name="guide_side">Free-form::Write any task, no targets or rules.\n5 with rewards::The first 5 finished each day give XP and gold (they don\'t hurt the boss).\nAfter that::They keep working as a to-do list.\nNo cheating::Unticking or deleting takes the reward back.</string>
     <string name="guide_boss_title">Weekly boss</string>
-    <string name="guide_boss">Missions are damage::Every mission you do takes its health; extra ones and focus hit for half.\nBoss challenges::Two a week: one on Monday, another on Thursday. Each rips off 15%.\nLoot::Beat it for XP, gold, a chest and its echo.\nWeakness::Every boss is weak to one family, drawn when it shows up. Those missions hit it for +50%, on 2 a day.\nIf not…::On Sunday night it ends — and another one comes.</string>
+    <string name="guide_boss">Missions are damage::Every mission you do takes its health; extra, focus and pair missions hit for half.\nBoss challenges::Two a week: one on Monday, another on Thursday. Each rips off 15%.\nLoot::Beat it for XP, gold, a chest and its echo.\nWeakness::Every boss is weak to one family, drawn when it shows up. Those missions hit it for +50%, on 2 a day.\nIf not…::On Sunday night it ends — and another one comes.</string>
     <string name="guide_portal_title">Portals</string>
     <string name="guide_portal">They show up on their own::Between 8 AM and 10 PM, up to 2 a day.\nDouble rewards::A bigger mission with twice the XP and gold.\nNew ally::Clearing it may bring you an echo.\nOn the clock::There\'s always enough time, but the portal closes when it runs out.</string>
     <string name="guide_shadows_title">Echoes</string>
@@ -945,7 +950,7 @@
     <string name="pair_complete">Complete my part</string>
     <string name="pair_complete_confirm_title">Complete your part?</string>
     <string name="pair_complete_confirm">Once it\'s sent to your partner it can\'t be undone.</string>
-    <string name="pair_bonus_note">+25% if you both make it · −10% if your partner doesn\'t</string>
+    <string name="pair_bonus_note">+25% if you both make it · with an active streak, −10% if your partner doesn\'t</string>
     <string name="pair_done">Done</string>
     <string name="pair_done_waiting">The pair result comes after midnight.</string>
     <string name="pair_tell">Tell %1$s</string>
@@ -1041,7 +1046,12 @@
     <string name="pair_mode_random_hint">A different mission on each day of the pair, drawn at random, the same for both of you.</string>
     <string name="pair_random_title">Surprise mission</string>
     <string name="toast_pair_partner_left">%1$s left the pair: it\'s waiting for someone to join again</string>
+    <string name="toast_pair_cut_grace">%1$s missed their part; no loss because there was no active pair streak</string>
+    <string name="toast_pair_missed_grace">You missed your part with %1$s; no loss because there was no active pair streak</string>
     <string name="pair_mode_each">Each their own</string>
+    <string name="pair_mode_fixed_short">Fixed</string>
+    <string name="pair_mode_random_short">Same</string>
+    <string name="pair_mode_each_short">Each</string>
     <string name="pair_mode_each_hint">Each of you draws a different mission every day; what counts is that both of you did yours.</string>
     <string name="pair_limit_plus">One pair at a time. With CoreQuest+ you can have up to 3.</string>
     <string name="plus_perk_pairs">Up to 3 pair missions</string>

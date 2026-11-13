@@ -9,7 +9,6 @@ import androidx.compose.material.icons.rounded.Alarm
 import com.lifup.app.ui.defTitle
 import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.rounded.EventRepeat
-import androidx.compose.material.icons.rounded.Tune
 import com.lifup.app.domain.dismissWeeklyHint
 import com.lifup.app.domain.markGuideSeen
 import com.lifup.app.domain.hitsWeakness
@@ -131,7 +130,9 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
     }
     val daily = s.dailyQuests
     val counted = s.countedQuests()
-    val done = counted.count { it.status == QuestStatus.DONE }
+    // Avoid/limit missions are kept while they remain unbroken, even though they stay OPEN until midnight.
+    // Use the same rule as the day close and streak calculation so the header and goal bar agree with them.
+    val done = counted.count { it.isSuccessful() }
 
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item {

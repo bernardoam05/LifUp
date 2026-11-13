@@ -385,7 +385,7 @@ enum class ToastKind {
     /** arg "shadowId:xp:gold": what a redemption echo gave back. */
     REDEEMED,
     /** Pair quests, arg "partner:xp:gold" (the bonus, the cut or the loss); the others carry the partner's name. */
-    PAIR_BOTH, PAIR_BOTH_CAPPED, PAIR_CUT, PAIR_UNKNOWN, PAIR_MISSED,
+    PAIR_BOTH, PAIR_BOTH_CAPPED, PAIR_CUT, PAIR_UNKNOWN, PAIR_MISSED, PAIR_CUT_GRACE, PAIR_MISSED_GRACE,
     /** arg: the [CoreSkin] name. */
     CORE_SKIN,
     /** arg: the partner's name; the pair now waits for someone to join again. */
@@ -504,6 +504,9 @@ data class GameState(
     /** Missions done with someone else (see Pairs.kt). */
     val pairs: List<PairQuest> = emptyList(),
     val pairSync: PairSyncState = PairSyncState(),
+    /** Best recurring pair sequence and the partner with whom it was reached. */
+    val bestPairStreak: Int = 0,
+    val bestPairPartner: String = "",
     /** Players from before level unlocks keep every feature open (see Unlocks.kt). */
     val unlockAll: Boolean = false,
     /** Features whose opening was already announced. */

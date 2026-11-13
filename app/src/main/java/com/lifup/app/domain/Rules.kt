@@ -271,6 +271,11 @@ object Rules {
         Passive.EXTRA_BOOST to doubleArrayOf(.10, .20, .30, .45, .60),
         // Once a week at most, like the comeback: strong on the day, small over the week.
         Passive.BOSS_SPOILS to doubleArrayOf(.15, .25, .40, .60, .80),
+        // Pair missions are optional and limited to three at once, so the focused passive can be generous.
+        Passive.PAIR_BOOST to doubleArrayOf(.10, .20, .30, .45, .60),
+        Passive.PAIR_GUARD to doubleArrayOf(.10, .15, .20, .30, .40),
+        // Added to the normal 25% pair bonus; it is still subject to the two-bonuses-per-day limit.
+        Passive.PAIR_BOND to doubleArrayOf(.03, .05, .08, .12, .15),
     )
     /** Missions finished before this hour count as early. */
     const val EARLY_HOUR = 10
@@ -297,6 +302,8 @@ object Rules {
     const val MAX_FOCUS_MASTERY = 0.5
     /** Redemption gives back at most everything the failed day cost. */
     const val MAX_REDEMPTION = 1.0
+    const val MAX_PAIR_GUARD = 0.5
+    const val MAX_PAIR_BOND = 0.5
 
     fun isFlag(p: Passive) = p == Passive.PENALTY_IMMUNITY || p == Passive.STREAK_PROTECT
 

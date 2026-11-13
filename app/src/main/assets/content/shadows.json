@@ -2040,5 +2040,32 @@
    "de": "Chordirigent"
   },
   "icon": "LibraryMusic"
+ },
+ {
+  "id": "oath_companion", "rank": "KNIGHT", "shadowClass": "WARRIOR", "passive": "PAIR_BOOST",
+  "source": { "type": "ACHIEVEMENT" },
+  "name": {
+   "pt": "Companheiro do Juramento", "en": "Oath Companion", "es": "Compañero del Juramento",
+   "fr": "Compagnon du Serment", "de": "Gefährte des Eides"
+  },
+  "icon": "Handshake"
+ },
+ {
+  "id": "bond_guardian", "rank": "COMMANDER", "shadowClass": "TANK", "passive": "PAIR_GUARD",
+  "source": { "type": "ACHIEVEMENT" },
+  "name": {
+   "pt": "Guardião do Elo", "en": "Bond Guardian", "es": "Guardián del Vínculo",
+   "fr": "Gardien du Lien", "de": "Wächter des Bundes"
+  },
+  "icon": "VolunteerActivism"
+ },
+ {
+  "id": "eternal_link", "rank": "MARSHAL", "shadowClass": "SPIRIT", "passive": "PAIR_BOND",
+  "source": { "type": "ACHIEVEMENT" },
+  "name": {
+   "pt": "Elo Eterno", "en": "Eternal Link", "es": "Vínculo Eterno",
+   "fr": "Lien Éternel", "de": "Ewiges Band"
+  },
+  "icon": "Link", "aura": "ORBIT"
  }
 ]

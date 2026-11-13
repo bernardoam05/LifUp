@@ -166,6 +166,8 @@
     <string name="hero_stats">Estatísticas</string>
     <string name="streak">Sequência</string>
     <string name="best_streak">Recorde</string>
+    <string name="best_pair_streak">Melhor sequência em par</string>
+    <string name="best_pair_streak_value">%1$d com %2$s</string>
     <string name="bosses">Bosses</string>
     <string name="squad">Esquadrão</string>
     <string name="collection">Coleção</string>
@@ -234,6 +236,9 @@
     <string name="passive_comeback">+%1$s XP e ouro no dia a seguir a um dia falhado</string>
     <string name="passive_extra">+%1$s XP e ouro nas missões extra</string>
     <string name="passive_spoils">+%1$s XP e ouro ao derrotar um boss</string>
+    <string name="passive_pair">+%1$s XP e ouro em missões em par</string>
+    <string name="passive_pair_guard">−%1$s nas perdas ao quebrar uma sequência em par</string>
+    <string name="passive_pair_bond">+%1$s de recompensa quando os dois cumprem</string>
     <string name="passive_redemption">Cumprir uma penalização devolve %1$s do XP e ouro perdidos</string>
 
     <string name="inventory">Inventário</string>
@@ -543,7 +548,7 @@
     <string name="guide_side_title">Tarefas</string>
     <string name="guide_side">Livres::Escreve qualquer tarefa, sem objetivos nem regras.\n5 com recompensa::As primeiras 5 concluídas por dia dão XP e ouro (não ferem o boss).\nDepois disso::Continuam a funcionar como lista de tarefas.\nSem batota::Desmarcar ou apagar devolve a recompensa.</string>
     <string name="guide_boss_title">Boss semanal</string>
-    <string name="guide_boss">Missões são dano::Cada missão que fazes tira-lhe vida; as extra e o foco tiram metade.\nDesafios do boss::Dois por semana: um na segunda e outro na quinta. Cada um arranca-lhe 15%.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nFraqueza::Cada boss é fraco contra uma família, sorteada quando aparece. Essas missões tiram-lhe +50%, em 2 por dia.\nSe não…::No domingo à noite acaba — e vem outro.</string>
+    <string name="guide_boss">Missões são dano::Cada missão que fazes tira-lhe vida; as extra, de foco e em par tiram metade.\nDesafios do boss::Dois por semana: um na segunda e outro na quinta. Cada um arranca-lhe 15%.\nSaque::Derrota-o e ganhas XP, ouro, um baú e o seu eco.\nFraqueza::Cada boss é fraco contra uma família, sorteada quando aparece. Essas missões tiram-lhe +50%, em 2 por dia.\nSe não…::No domingo à noite acaba — e vem outro.</string>
     <string name="guide_portal_title">Portais</string>
     <string name="guide_portal">Aparecem sozinhos::Entre as 8h e as 22h, até 2 por dia.\nRecompensa a dobrar::Uma missão maior, com o dobro de XP e ouro.\nNovo aliado::Concluí-lo pode trazer-te um eco.\nTempo contado::Dá sempre para a fazer, mas o portal fecha quando o tempo acaba.</string>
     <string name="guide_shadows_title">Ecos</string>
@@ -926,7 +931,7 @@
     <string name="pair_complete">Concluir a minha parte</string>
     <string name="pair_complete_confirm_title">Concluir a tua parte?</string>
     <string name="pair_complete_confirm">Depois de enviada ao teu par, não dá para desfazer.</string>
-    <string name="pair_bonus_note">+25% se os dois cumprirem · −10% se o par falhar</string>
+    <string name="pair_bonus_note">+25% se os dois cumprirem · com sequência ativa, −10% se o par falhar</string>
     <string name="pair_done">Feito</string>
     <string name="pair_done_waiting">O resultado do par sai depois da meia-noite.</string>
     <string name="pair_tell">Avisar %1$s</string>
@@ -1022,7 +1027,12 @@
     <string name="pair_mode_random_hint">Uma missão diferente em cada dia do par, sorteada, a mesma para os dois.</string>
     <string name="pair_random_title">Missão surpresa</string>
     <string name="toast_pair_partner_left">%1$s saiu do par: fica à espera de que alguém volte a entrar</string>
+    <string name="toast_pair_cut_grace">%1$s não fez a sua parte; sem perda porque não havia sequência ativa</string>
+    <string name="toast_pair_missed_grace">Não fizeste a tua parte com %1$s; sem perda porque não havia sequência ativa</string>
     <string name="pair_mode_each">Cada um a sua</string>
+    <string name="pair_mode_fixed_short">Fixa</string>
+    <string name="pair_mode_random_short">Igual</string>
+    <string name="pair_mode_each_short">Cada um</string>
     <string name="pair_mode_each_hint">Cada um tira uma missão diferente todos os dias; o que conta é que os dois façam a sua.</string>
     <string name="pair_limit_plus">Um par de cada vez. Com o CoreQuest+ podes ter até 3.</string>
     <string name="plus_perk_pairs">Até 3 missões em par</string>

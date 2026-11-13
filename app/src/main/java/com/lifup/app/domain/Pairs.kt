@@ -99,6 +99,7 @@ object PairRules {
     const val FREE_ACTIVE = 1
     const val BONUS = 0.25
     const val CUT = 0.10
+    const val BOSS_SHARE = 0.50
     const val BONUS_PER_DAY = 2
     const val MAX_ACTIVE = 3
     const val LINK_READS_PER_DAY = 3
@@ -184,9 +185,10 @@ val PairQuest.isRandom get() = defId == PairRules.RANDOM || defId == PairRules.E
  */
 fun GameState.pairDefFor(p: PairQuest, cycle: String, content: Content): QuestDef? {
     if (!p.isRandom) return defOf(p.defId, content)
-    val pool = content.quests.filter { PairRules.eligible(it) && !it.optional }.sortedBy { it.id }
+    val pool = (if (p.defId == PairRules.EACH) pairDefs(content)
+        else content.quests.filter { PairRules.eligible(it) && !it.optional }).sortedBy { it.id }
     if (pool.isEmpty()) return null
-    // "Each their own": the draw also depends on who draws, so the two phones get different missions.
+    // "Each their own": the draw depends on the member and their local active pool. Picks may coincide.
     val seed = p.id + cycle + if (p.defId == PairRules.EACH) p.myUid else ""
     val pick = pool[Math.floorMod(seed.hashCode(), pool.size)]
     return defOf(pick.id, content) ?: pick
@@ -316,8 +318,11 @@ internal fun Tx.completePairQuest(questId: String) {
     if (part.doneAt != null || ctx.now >= p.deadline(part.cycle)) return
     val def = s.defOf(part.quest?.defId ?: p.defId, content)
     val family = def?.drawGroup()
-    val xp = gainXp(part.xp, family)
-    val gold = gainGold(part.gold)
+    val pairBoost = s.passives(content, ctx.now).pairBoost
+    // Pair missions are optional extra work: they help against the boss, but only for half their XP and never
+    // receive the boss-weakness multiplier. Their dedicated echo can still improve their own XP and gold.
+    val xp = gainXp(part.xp, family, bossShare = PairRules.BOSS_SHARE, extra = pairBoost)
+    val gold = gainGold(part.gold, extra = pairBoost)
     def?.let { gainAttributes(it.drawGroup()) }
     count(StatKey.QUESTS_COMPLETED)
     updatePair(p.id) { q ->
@@ -391,40 +396,53 @@ private fun Tx.settlePart(id: String, cycle: String) {
         PairOutcome.BOTH -> {
             val sync = s.pairSync.let { if (it.bonusDay != ctx.todayKey) it.copy(bonusDay = ctx.todayKey, bonusUsed = 0) else it }
             if (sync.bonusUsed < PairRules.BONUS_PER_DAY) {
-                val xp = gainXp((part.xpGained * PairRules.BONUS).roundToInt(), hitsBoss = false, boosted = false)
-                val gold = gainGold((part.goldGained * PairRules.BONUS).roundToInt(), boosted = false)
+                val bonus = PairRules.BONUS + s.passives(content, ctx.now).pairBond
+                val xp = gainXp((part.xpGained * bonus).roundToInt(), hitsBoss = false, boosted = false)
+                val gold = gainGold((part.goldGained * bonus).roundToInt(), boosted = false)
                 s = s.copy(pairSync = sync.copy(bonusUsed = sync.bonusUsed + 1))
                 toast(ToastKind.PAIR_BOTH, "$name:$xp:$gold")
             } else {
                 s = s.copy(pairSync = sync)
                 toast(ToastKind.PAIR_BOTH_CAPPED, name)
             }
-            count(StatKey.PAIR_CYCLES)
         }
         PairOutcome.PARTNER_MISSED -> {
-            val xp = (part.xpGained * PairRules.CUT).roundToInt()
-            val gold = (part.goldGained * PairRules.CUT).roundToInt()
-            loseXp(xp)
-            refundGold(gold)
-            toast(ToastKind.PAIR_CUT, "$name:$xp:$gold")
+            // No repeated drain from an abandoned pair: only an active pair sequence carries a stake.
+            if (p.streak > 0) {
+                val kept = 1 - s.passives(content, ctx.now).pairGuard
+                val xp = (part.xpGained * PairRules.CUT * kept).roundToInt()
+                val gold = (part.goldGained * PairRules.CUT * kept).roundToInt()
+                loseXp(xp)
+                refundGold(gold)
+                toast(ToastKind.PAIR_CUT, "$name:$xp:$gold")
+            } else toast(ToastKind.PAIR_CUT_GRACE, name)
         }
         PairOutcome.UNKNOWN -> toast(ToastKind.PAIR_UNKNOWN, name)
         PairOutcome.MISSED -> {
-            // What one failed mission of this size costs on a failed day, with the same protections.
-            val share = Rules.lossMultiplier(s.settings.rigor)
-            val reduce = s.passives(content, ctx.now).penaltyReduce
-            val xp = floor(part.xp * share * (1 - reduce)).toInt()
-            val gold = floor(part.gold * share * (1 - reduce)).toInt()
-            loseXp(xp)
-            loseGold(gold)
-            toast(ToastKind.PAIR_MISSED, "$name:$xp:$gold")
+            if (p.streak > 0) {
+                // What one failed mission of this size costs on a failed day, with the same protections.
+                val share = Rules.lossMultiplier(s.settings.rigor)
+                val reduce = s.passives(content, ctx.now).penaltyReduce
+                val guard = s.passives(content, ctx.now).pairGuard
+                val xp = floor(part.xp * share * (1 - reduce) * (1 - guard)).toInt()
+                val gold = floor(part.gold * share * (1 - reduce) * (1 - guard)).toInt()
+                loseXp(xp)
+                loseGold(gold)
+                toast(ToastKind.PAIR_MISSED, "$name:$xp:$gold")
+            } else toast(ToastKind.PAIR_MISSED_GRACE, name)
         }
     }
+    val recurringBoth = outcome == PairOutcome.BOTH && p.recurrence.kind != PairRepeat.ONCE
+    val nextStreak = when { recurringBoth -> p.streak + 1; outcome == PairOutcome.UNKNOWN -> p.streak; else -> 0 }
     updatePair(id) { q ->
         q.copy(
             parts = q.parts.map { if (it.cycle == cycle) it.copy(outcome = outcome) else it },
-            streak = when (outcome) { PairOutcome.BOTH -> q.streak + 1; PairOutcome.UNKNOWN -> q.streak; else -> 0 },
+            streak = nextStreak,
         )
+    }
+    if (recurringBoth) {
+        count(StatKey.PAIR_CYCLES)
+        if (nextStreak > s.bestPairStreak) s = s.copy(bestPairStreak = nextStreak, bestPairPartner = name)
     }
 }
 

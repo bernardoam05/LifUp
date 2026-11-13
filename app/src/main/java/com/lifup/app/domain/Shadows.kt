@@ -20,6 +20,9 @@ data class Passives(
     val redemption: Double = 0.0,
     val extraBoost: Double = 0.0,
     val bossSpoils: Double = 0.0,
+    val pairBoost: Double = 0.0,
+    val pairGuard: Double = 0.0,
+    val pairBond: Double = 0.0,
     val immunity: Boolean = false,
     val streakProtect: Boolean = false,
     /** The parts of [xp] and [gold] that come from item buffs rather than the squad. */
@@ -86,6 +89,9 @@ fun GameState.passives(content: Content, now: Long): Passives {
         redemption = v(Passive.REDEMPTION).coerceAtMost(Rules.MAX_REDEMPTION),
         extraBoost = v(Passive.EXTRA_BOOST),
         bossSpoils = v(Passive.BOSS_SPOILS),
+        pairBoost = v(Passive.PAIR_BOOST),
+        pairGuard = v(Passive.PAIR_GUARD).coerceAtMost(Rules.MAX_PAIR_GUARD),
+        pairBond = v(Passive.PAIR_BOND).coerceAtMost(Rules.MAX_PAIR_BOND),
         immunity = immunity,
         streakProtect = streak,
     )

@@ -76,6 +76,7 @@ import com.lifup.app.domain.ShadowRank
 import com.lifup.app.domain.StatKey
 import com.lifup.app.domain.passives
 import com.lifup.app.domain.statValue
+import com.lifup.app.domain.echoRewards
 import com.lifup.app.ui.accentRank
 import com.lifup.app.ui.components.Bar
 import com.lifup.app.ui.components.Panel
@@ -190,6 +191,18 @@ private fun Profile(s: GameState) {
             StatTile(stringResource(R.string.streak), "${p.streak}", c.red, Modifier.weight(1f))
             StatTile(stringResource(R.string.best_streak), "${p.bestStreak}", c.gold, Modifier.weight(1f))
             StatTile(stringResource(R.string.bosses), "${s.count(StatKey.BOSSES_DEFEATED)}", c.purple, Modifier.weight(1f))
+        }
+        if (s.bestPairStreak > 0) {
+            Spacer(Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.best_pair_streak), style = MaterialTheme.typography.labelMedium, color = c.muted)
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    stringResource(R.string.best_pair_streak_value, s.bestPairStreak, s.bestPairPartner.ifBlank { "?" }),
+                    style = MaterialTheme.typography.labelMedium, color = c.purple, maxLines = 1,
+                    overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f), textAlign = TextAlign.End,
+                )
+            }
         }
     }
 }
@@ -417,7 +430,7 @@ private fun AchievementRow(s: GameState, def: com.lifup.app.domain.AchievementDe
             Bar(value / target.toFloat(), c.gold)
             Row {
                 Text("${fmtCompact(value)} / ${fmtCompact(target)}", style = MaterialTheme.typography.labelSmall, color = c.dim, modifier = Modifier.weight(1f))
-                val shadowNext = def.shadowReward?.tier == tier + 1
+                val shadowNext = def.echoRewards().any { it.tier == tier + 1 }
                 Text(
                     stringResource(if (shadowNext) R.string.achievement_next_shadow else R.string.achievement_next, com.lifup.app.domain.achievementGold(tier + 1)),
                     style = MaterialTheme.typography.labelSmall, color = if (shadowNext) c.purple else c.gold,
