@@ -1,0 +1,1 @@
+- [fix] Das Starten eines Updates über den Versionshinweis bricht den Download nicht mehr ab, wenn der Hinweis geschlossen wird.

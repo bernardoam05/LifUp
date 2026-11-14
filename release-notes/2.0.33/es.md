@@ -1,0 +1,1 @@
+- [fix] Iniciar una actualización desde el aviso de nueva versión ya no cancela la descarga cuando se cierra el aviso.

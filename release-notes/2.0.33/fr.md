@@ -1,0 +1,1 @@
+- [fix] Lancer une mise à jour depuis l’avertissement de nouvelle version n’annule plus le téléchargement lorsque l’avertissement se ferme.

@@ -1,0 +1,1 @@
+- [fix] Starting an update from the release prompt no longer cancels the download when the prompt closes.

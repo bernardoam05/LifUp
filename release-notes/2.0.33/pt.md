@@ -1,0 +1,1 @@
+- [fix] Iniciar uma atualização pelo aviso de nova versão já não cancela a transferência quando o aviso fecha.

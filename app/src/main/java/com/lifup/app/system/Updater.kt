@@ -8,9 +8,12 @@ import android.content.pm.PackageInstaller
 import android.os.Build
 import android.util.Log
 import com.lifup.app.BuildConfig
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -52,6 +55,8 @@ object Updater {
     private val _state = MutableStateFlow<State>(State.Idle)
     val state: StateFlow<State> = _state
     private val busy = Mutex()
+    /** Update transfers must outlive the prompt that starts them. */
+    private val updateScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /** Checks for a newer release and says so ([State.Available]); [install] downloads it once the player agrees. Without [force], debug builds skip it and a recent "up to date" is trusted. */
     suspend fun check(context: Context, force: Boolean = false) {
@@ -82,7 +87,12 @@ object Updater {
     private var latestSeen: String? = null
 
     /** The player agreed: download the release and hand it to the system installer. */
-    suspend fun install(context: Context, available: State.Available) {
+    fun install(context: Context, available: State.Available) {
+        val appContext = context.applicationContext
+        updateScope.launch { installInBackground(appContext, available) }
+    }
+
+    private suspend fun installInBackground(context: Context, available: State.Available) {
         if (!busy.tryLock()) return
         var step = FailureStep.DOWNLOAD
         try {

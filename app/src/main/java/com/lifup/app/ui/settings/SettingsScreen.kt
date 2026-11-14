@@ -371,7 +371,7 @@ private fun UpdateRow() {
     }?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = if (state is Updater.State.Failed) Lif.colors.red else Lif.colors.muted) }
     val idle = state == Updater.State.Idle || state == Updater.State.UpToDate || state is Updater.State.Failed
     (state as? Updater.State.Available)?.let { av ->
-        TextButton(onClick = { scope.launch { Updater.install(context.applicationContext, av) } }) { Text(stringResource(R.string.update_now).uppercase()) }
+        TextButton(onClick = { Updater.install(context.applicationContext, av) }) { Text(stringResource(R.string.update_now).uppercase()) }
     } ?: TextButton(onClick = { scope.launch { Updater.check(context.applicationContext, force = true) } }, enabled = idle) {
         Text(stringResource(R.string.update_check).uppercase())
     }
