@@ -1,0 +1,1 @@
+- [fix] As atualizações dos widgets usam agora diretamente os IDs Android de cada provider, impedindo que o widget da Core seja substituído pelo widget de nível.

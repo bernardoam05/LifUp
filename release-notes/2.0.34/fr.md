@@ -1,0 +1,1 @@
+- [fix] Les actualisations ciblent désormais directement les identifiants Android de chaque widget, empêchant le widget du Core d’être remplacé par celui du niveau.

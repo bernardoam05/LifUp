@@ -1,0 +1,1 @@
+- [fix] Widget refreshes now target the Android IDs of each provider directly, preventing the Core widget from being replaced by the level widget.

@@ -1,0 +1,1 @@
+- [fix] Widget-Aktualisierungen verwenden jetzt direkt die Android-IDs jedes Providers, sodass das Core-Widget nicht mehr durch das Level-Widget ersetzt wird.

@@ -1,5 +1,7 @@
 package com.lifup.app.widget
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -14,10 +16,11 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.AppWidgetId
+import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.LinearProgressIndicator
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
-import androidx.glance.appwidget.updateAll
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -70,11 +73,21 @@ object Widgets {
         pending?.cancel()
         pending = scope.launch {
             delay(delayMs)
-            runCatching { TodayWidget().updateAll(context) }
-            runCatching { FocusWidget().updateAll(context) }
-            runCatching { HeroWidget().updateAll(context) }
-            runCatching { CoreWidget().updateAll(context) }
+            updateProvider(context, TodayWidget(), TodayWidgetReceiver::class.java)
+            updateProvider(context, FocusWidget(), FocusWidgetReceiver::class.java)
+            updateProvider(context, HeroWidget(), HeroWidgetReceiver::class.java)
+            updateProvider(context, CoreWidget(), CoreWidgetReceiver::class.java)
         }
+    }
+
+    /**
+     * Resolve IDs from Android's provider binding instead of Glance's cached class map. Some launchers can leave
+     * that map stale after an app update, which allowed one widget's RemoteViews to replace another widget.
+     */
+    private suspend fun updateProvider(context: Context, widget: GlanceAppWidget, receiver: Class<*>) {
+        val appContext = context.applicationContext
+        val ids = AppWidgetManager.getInstance(appContext).getAppWidgetIds(ComponentName(appContext, receiver))
+        ids.forEach { id -> runCatching { widget.update(appContext, AppWidgetId(id)) } }
     }
 }
 
