@@ -92,12 +92,12 @@ private val FACES = listOf(
 /**
  * The Core: the form [stage] with the face [mood], breathing gently, with a soft glow behind it in the form's
  * colour unless [glow] says otherwise. Asleep, Zs drift up; excited, it bounces. [locked] shows only its
- * silhouette. [bust] (small sizes by default) frames the head instead of the whole body.
+ * silhouette. [bust] can deliberately frame the head; by default the whole sprite remains visible at every size.
  */
 @Composable
 fun CoreAvatar(
     stage: Int, mood: CoreMood, size: Dp, modifier: Modifier = Modifier, glow: Color? = null, locked: Boolean = false,
-    animate: Boolean = true, bust: Boolean = size < 100.dp, skin: CoreSkin? = com.lifup.app.ui.gameState().settings.coreSkin,
+    animate: Boolean = true, bust: Boolean = false, skin: CoreSkin? = com.lifup.app.ui.gameState().settings.coreSkin,
     paint: CorePaint? = com.lifup.app.ui.gameState().shownPaint,
 ) {
     val tint = glow ?: paint?.let { paintColor(it) } ?: coreColor(stage)

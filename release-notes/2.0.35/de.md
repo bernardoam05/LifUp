@@ -1,0 +1,1 @@
+- [fix] Core-Bilder zeigen jetzt in der gesamten App die vollständige Figur, ohne kleine Avatare automatisch zu vergrößern und zuzuschneiden.

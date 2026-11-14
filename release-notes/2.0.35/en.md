@@ -1,0 +1,1 @@
+- [fix] Core images now show the complete sprite throughout the app instead of automatically zooming and cropping smaller avatars.

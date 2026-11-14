@@ -1,0 +1,1 @@
+- [fix] Les images du Core affichent désormais le personnage entier dans toute l’application, sans zoom ni recadrage automatique des petits avatars.
