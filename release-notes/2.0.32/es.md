@@ -1,0 +1,4 @@
+- [new] Las misiones de portal ahora se pueden desactivar, editar o crear en la Forja, mientras el sistema sigue controlando las recompensas.
+- [new] Las misiones en pareja tienen ahora su propia guía, disponible en la sección Hoy y en Ajustes.
+- [fix] Los fallos de actualización indican ahora si el problema ocurrió al buscar, descargar o instalar y muestran el error de Android en vez de un mensaje genérico.
+- [fix] El widget del Core está centrado, se adapta de forma segura al tamaño y muestra una barra de progreso en su formato grande.

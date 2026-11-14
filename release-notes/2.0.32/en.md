@@ -1,0 +1,4 @@
+- [new] Portal missions can now be switched off, edited, or created in the Mission Forge while rewards remain controlled by the system.
+- [new] Pair missions now have their own guide, available from the Today section and Settings.
+- [fix] Update failures now identify whether checking, downloading, or installation failed and show the Android error instead of a generic message.
+- [fix] The Core widget is centred, adapts safely to its size, and shows a progress bar in its large layout.

@@ -353,6 +353,10 @@
     <string name="no_custom">Aún no tienes misiones propias. Toca + para forjar una.</string>
     <string name="kind_core">Fija</string>
     <string name="kind_pool">Sorteo</string>
+    <string name="kind_portal">Portal</string>
+    <string name="portal_missions">Misiones de portal</string>
+    <string name="portal_missions_info">Elige qué misiones pueden aparecer en los portales, edita sus objetivos o crea las tuyas.</string>
+    <string name="portal_reward_system">Las recompensas del portal las define el sistema y se duplican al completarlo.</string>
     <string name="kind_core_info">Siempre en tu lista, en los días o las veces que elijas.</string>
     <string name="kind_pool_info">Entra en el sorteo de las misiones diarias.</string>
     <string name="new_mission">Nueva misión</string>
@@ -559,6 +563,8 @@
     <string name="guide_section">Cómo funciona</string>
     <string name="guide_daily_title">Misiones diarias</string>
     <string name="guide_daily">Fijas y sorteadas::1 misión fija y varias sorteadas que cambian cada día.\nMínimo para la racha::En Normal te basta con el 75% de las misiones. Un 60% en Fácil, 100% en Difícil.\nDía perfecto::Hazlas todas: a medianoche ganas XP extra y un eco nuevo. Las de evitar cuentan cuando aguantan todo el día.\n¿Hoy no te encaja?::Cambia una sorteada al día gratis, o crea las tuyas en la Forja. Si algo solo cabe algunos días, hazlo semanal.</string>
+    <string name="guide_pairs_title">Misiones en pareja</string>
+    <string name="guide_pairs">Invita a alguien::Crea una misión en pareja y envíale el código o el enlace. Puede unirse desde Hoy → Misiones en pareja.\nTu parte::Cada uno recibe su propia misión y progreso; al terminar, el resultado se envía a tu pareja.\nHorario::Elige una vez, cada día, ciertos días de la semana o cada pocos días. Los modos aleatorios pueden dar la misma misión o una distinta a cada uno.\nLa recompensa::Cuando los dos terminan, ganáis +25%. Con una racha activa, no hacer la parte cuesta un 10%.</string>
     <string name="guide_streak_title">Racha y descanso</string>
     <string name="guide_streak">Sube cada día::+1 por cada día que llegas al mínimo.\nSegunda oportunidad::¿La perdiste? Un día perfecto justo después la recupera (una vez por semana).\nDías de descanso::Márcalo antes del mediodía y ese día no cuenta ni a favor ni en contra. 2 por semana en Fácil, 1 en Normal.\nProtección extra::El Escudo de la Constancia y algunos ecos la salvan por ti. Solo un rescate por semana, contando la segunda oportunidad.</string>
     <string name="guide_penalty_title">Penalización</string>
@@ -714,6 +720,7 @@
     <string name="power_empty">Aún no tienes ecos con estos filtros.</string>
     <string name="guide_extra_title">Misiones extra</string>
     <string name="guide_extra_hook">Para cuando ya cumpliste el día y quieres más.</string>
+    <string name="guide_pairs_hook">Un poco de responsabilidad compartida hace más fuerte la misión.</string>
     <string name="guide_extra">Después del día::Aparecen cuando todas las diarias están cumplidas, hasta 3 al día. Una que solo se abre más tarde, como la de acostarse, no las bloquea.\nUna a la vez::La siguiente solo sale tras cumplir la anterior, así que no puedes elegir las que te convienen.\nSegún la hora::Solo salen misiones que aún tienen sentido a esa hora.\nSin riesgo::Dan XP, oro y botín, pero no cuentan para la racha ni para la penalización.</string>
     <string name="guide_weekly_title">Misiones semanales</string>
     <string name="guide_weekly_hook">Para lo que haces unas veces por semana, en días que cambian.</string>
@@ -875,6 +882,10 @@
     <string name="update_downloading">Descargando %1$s…</string>
     <string name="update_installing">Instalando %1$s…</string>
     <string name="update_failed">No se pudo actualizar. Inténtalo más tarde.</string>
+    <string name="update_failed_detail">Error durante %1$s: %2$s</string>
+    <string name="update_step_check">la búsqueda de actualizaciones</string>
+    <string name="update_step_download">la descarga</string>
+    <string name="update_step_install">la instalación</string>
     <string name="whats_new_title">Novedades de la %1$s</string>
     <string name="whats_new_ok">Entendido</string>
     <string name="patch_notes">Notas de la versión</string>

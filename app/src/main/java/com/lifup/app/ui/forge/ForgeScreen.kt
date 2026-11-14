@@ -95,7 +95,7 @@ private fun TopBar(title: String, onBack: () -> Unit, action: @Composable () -> 
 }
 
 @Composable
-fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
+fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit, onEditPortal: (String?) -> Unit) {
     val s = gameState()
     Column(Modifier.fillMaxSize().statusBarsPadding()) {
         TopBar(stringResource(R.string.forge), onBack) {
@@ -104,7 +104,7 @@ fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
         LazyColumn(contentPadding = PaddingValues(16.dp, 0.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.navigationBarsPadding()) {
             item { Text(stringResource(R.string.forge_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted) }
             item { SectionTitle(stringResource(R.string.your_missions)) }
-            val own = s.customDefs.filter { content.questDefById[it.id] == null }
+            val own = s.customDefs.filter { it.kind != DefKind.PORTAL && content.questDefById[it.id] == null }
             if (own.isEmpty()) item { EmptyNote(stringResource(R.string.no_custom)) }
             items(own, key = { it.id }) { def -> DefRow(def, enabled = s.isOn(def, content), onEdit = { onEdit(def.id) }) }
             // System missions grouped by family, the attribute each one grows.
@@ -122,6 +122,18 @@ fun ForgeScreen(onBack: () -> Unit, onEdit: (String?) -> Unit) {
                     val shown = s.defOf(def.id, content) ?: def
                     DefRow(shown, enabled = s.isOn(def, content), onEdit = { onEdit(def.id) }, edited = shown !== def, optional = def.optional)
                 }
+            }
+            item(key = "portal_header") {
+                SectionTitle(stringResource(R.string.portal_missions)) {
+                    IconButton(onClick = { onEditPortal(null) }) { Icon(Icons.Rounded.Add, stringResource(R.string.add), tint = Lif.colors.purple) }
+                }
+            }
+            item(key = "portal_info") { Text(stringResource(R.string.portal_missions_info), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted) }
+            val customPortals = s.customDefs.filter { it.kind == DefKind.PORTAL && content.questDefById[it.id] == null }
+            val portalDefs = content.portalQuests.map { s.defOf(it.id, content) ?: it } + customPortals
+            items(portalDefs, key = { "portal_${it.id}" }) { def ->
+                val original = content.portalQuests.firstOrNull { it.id == def.id }
+                DefRow(def, enabled = s.isOn(def, content), onEdit = { onEditPortal(def.id) }, edited = original != null && def !== original)
             }
         }
     }
@@ -151,7 +163,12 @@ private fun DefRow(def: QuestDef, enabled: Boolean, onEdit: (() -> Unit)?, edite
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Pill(stringResource(familyName(def.drawGroup())), color)
             if (def.type == QuestType.FOCUS || def.type == QuestType.FORBIDDEN || def.type == QuestType.LIMIT) Pill(stringResource(questTypeName(def.type)), c.muted)
-            Pill(stringResource(if (def.kind == DefKind.CORE) R.string.kind_core else R.string.kind_pool), c.muted)
+            Pill(stringResource(when (def.kind) {
+                DefKind.CORE -> R.string.kind_core
+                DefKind.POOL -> R.string.kind_pool
+                DefKind.PORTAL -> R.string.kind_portal
+                DefKind.PENALTY -> R.string.penalty_section
+            }), c.muted)
             def.auto?.let { Pill(stringResource(R.string.auto_badge) + " · " + stringResource(autoName(it)), c.green) }
             Pill("${fmtNum(def.baseTarget)} $unit", c.text)
             if (def.scalingAmount > 0) Pill(
@@ -176,10 +193,11 @@ private val PRESETS = listOf(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun DefEditorScreen(id: String?, onBack: () -> Unit) {
+fun DefEditorScreen(id: String?, onBack: () -> Unit, portalMode: Boolean = false) {
     val s = gameState()
     val existing = id?.let { s.defOf(it, content) }
     val builtIn = id != null && content.questDefById[id] != null
+    val portal = portalMode || existing?.kind == DefKind.PORTAL
     val edited = builtIn && s.customDefs.any { it.id == id }
     val c = Lif.colors
     val lang = lang()
@@ -212,67 +230,75 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
             if (existing != null) Text(stringResource(R.string.edit_from_tomorrow), style = MaterialTheme.typography.bodySmall, color = c.muted)
             OutlinedTextField(title, { title = it.take(60) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.field_title)) }, singleLine = true)
             OutlinedTextField(description, { description = it.take(240) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.field_description)) }, supportingText = { Text(stringResource(R.string.field_description_hint)) })
-            Text(stringResource(R.string.field_auto), style = MaterialTheme.typography.labelLarge, color = c.muted)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                FilterChip(selected = auto == null, onClick = { auto = null }, label = { Text(stringResource(R.string.auto_none)) })
-                AutoKind.entries.forEach { k ->
-                    FilterChip(selected = auto == k, onClick = {
-                        auto = k
-                        when (k) {
-                            AutoKind.STEPS -> { type = QuestType.TRAINING; unit = "steps"; target = "6000" }
-                            AutoKind.WALK_DISTANCE -> { type = QuestType.GPS; unit = "km"; target = "4" }
-                            AutoKind.SCREEN_TIME -> { type = QuestType.LIMIT; unit = "h"; target = "3" }
-                            AutoKind.DISTRACTION_TIME -> { type = QuestType.LIMIT; unit = "h"; target = "1" }
-                        }
-                    }, label = { Text(stringResource(autoName(k))) })
+            if (!portal) {
+                Text(stringResource(R.string.field_auto), style = MaterialTheme.typography.labelLarge, color = c.muted)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    FilterChip(selected = auto == null, onClick = { auto = null }, label = { Text(stringResource(R.string.auto_none)) })
+                    AutoKind.entries.forEach { k ->
+                        FilterChip(selected = auto == k, onClick = {
+                            auto = k
+                            when (k) {
+                                AutoKind.STEPS -> { type = QuestType.TRAINING; unit = "steps"; target = "6000" }
+                                AutoKind.WALK_DISTANCE -> { type = QuestType.GPS; unit = "km"; target = "4" }
+                                AutoKind.SCREEN_TIME -> { type = QuestType.LIMIT; unit = "h"; target = "3" }
+                                AutoKind.DISTRACTION_TIME -> { type = QuestType.LIMIT; unit = "h"; target = "1" }
+                            }
+                        }, label = { Text(stringResource(autoName(k))) })
+                    }
                 }
+                if (auto != null) Text(stringResource(R.string.field_auto_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
             }
-            if (auto != null) Text(stringResource(R.string.field_auto_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
             Text(stringResource(R.string.field_type), style = MaterialTheme.typography.labelLarge, color = c.muted)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                QuestType.entries.forEach { t -> FilterChip(selected = type == t, enabled = auto == null, onClick = { type = t; if (t == QuestType.FOCUS) unit = "min"; if (t == QuestType.GPS) unit = "km" }, label = { Text(stringResource(questTypeName(t))) }) }
+                QuestType.entries.filter { !portal || it !in setOf(QuestType.FORBIDDEN, QuestType.LIMIT) }.forEach { t ->
+                    FilterChip(selected = type == t, enabled = auto == null, onClick = { type = t; if (t == QuestType.FOCUS) unit = "min"; if (t == QuestType.GPS) unit = "km" }, label = { Text(stringResource(questTypeName(t))) })
+                }
             }
             if (type == QuestType.FOCUS) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 FilterChip(selected = !pomodoro, onClick = { pomodoro = false }, label = { Text(stringResource(R.string.mode_timer)) })
                 FilterChip(selected = pomodoro, onClick = { pomodoro = true }, label = { Text(stringResource(R.string.mode_pomodoro)) })
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                FilterChip(selected = core, onClick = { core = true }, label = { Text(stringResource(R.string.kind_core)) })
-                FilterChip(selected = !core, onClick = { core = false }, label = { Text(stringResource(R.string.kind_pool)) })
+            if (!portal) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    FilterChip(selected = core, onClick = { core = true }, label = { Text(stringResource(R.string.kind_core)) })
+                    FilterChip(selected = !core, onClick = { core = false }, label = { Text(stringResource(R.string.kind_pool)) })
+                }
+                Text(stringResource(if (core) R.string.kind_core_info else R.string.kind_pool_info), style = MaterialTheme.typography.bodySmall, color = c.muted)
             }
-            Text(stringResource(if (core) R.string.kind_core_info else R.string.kind_pool_info), style = MaterialTheme.typography.bodySmall, color = c.muted)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(target, { target = it.filter { ch -> ch.isDigit() || ch == '.' }.take(6) }, Modifier.weight(1f), label = { Text(stringResource(R.string.field_target)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
                 OutlinedTextField(unit, { unit = it.take(12) }, Modifier.weight(1f), label = { Text(stringResource(R.string.field_unit)) }, singleLine = true, enabled = auto == null && type != QuestType.FOCUS && type != QuestType.GPS)
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (!portal) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(scaling, { scaling = it.filter { ch -> ch.isDigit() || ch == '.' }.take(5) }, Modifier.weight(1f), label = { Text(stringResource(R.string.field_scaling)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
                 OutlinedTextField(interval, { interval = it.filter(Char::isDigit).take(3) }, Modifier.weight(1f), label = { Text(stringResource(R.string.field_interval)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
             }
-            Text(stringResource(R.string.field_scaling_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
-            Text(stringResource(R.string.field_reward), style = MaterialTheme.typography.labelLarge, color = c.muted)
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                PRESETS.forEachIndexed { i, p -> FilterChip(selected = preset == i, onClick = { preset = i }, label = { Text(stringResource(p.label)) }) }
-            }
-            Text("+${reward.first} XP · +${reward.second}", style = MaterialTheme.typography.labelMedium, color = c.accent)
-            PRESETS.getOrNull(preset)?.let { Text(stringResource(it.example), style = MaterialTheme.typography.bodySmall, color = c.muted) }
-            Text(stringResource(R.string.field_days), style = MaterialTheme.typography.labelLarge, color = c.muted)
+            if (!portal) {
+                Text(stringResource(R.string.field_scaling_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
+                Text(stringResource(R.string.field_reward), style = MaterialTheme.typography.labelLarge, color = c.muted)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    PRESETS.forEachIndexed { i, p -> FilterChip(selected = preset == i, onClick = { preset = i }, label = { Text(stringResource(p.label)) }) }
+                }
+                Text("+${reward.first} XP · +${reward.second}", style = MaterialTheme.typography.labelMedium, color = c.accent)
+                PRESETS.getOrNull(preset)?.let { Text(stringResource(it.example), style = MaterialTheme.typography.bodySmall, color = c.muted) }
+            } else Text(stringResource(R.string.portal_reward_system), style = MaterialTheme.typography.bodySmall, color = c.purple)
+            if (!portal) Text(stringResource(R.string.field_days), style = MaterialTheme.typography.labelLarge, color = c.muted)
             // "N times a week" only makes sense for fixed missions you actively do.
             val weeklyAllowed = core && type != QuestType.FORBIDDEN && type != QuestType.LIMIT
             val isWeekly = weekly && weeklyAllowed
-            if (weeklyAllowed) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            if (!portal && weeklyAllowed) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 FilterChip(selected = !weekly, onClick = { weekly = false }, label = { Text(stringResource(R.string.freq_days)) })
                 FilterChip(selected = weekly, onClick = { weekly = true }, label = { Text(stringResource(R.string.freq_weekly)) })
             }
-            if (isWeekly) {
+            if (!portal && isWeekly) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     (1..6).forEach { n -> FilterChip(selected = perWeek == n, onClick = { perWeek = n }, label = { Text("$n×") }) }
                 }
                 Text(stringResource(R.string.freq_weekly_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
-            } else Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            } else if (!portal) Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 (1..7).forEach { d -> FilterChip(selected = d in days, onClick = { if (d in days) days.remove(d) else days.add(d) }, label = { Text(dayNames[d - 1]) }) }
             }
-            if (existing == null) Row(verticalAlignment = Alignment.CenterVertically) {
+            if (existing == null && !portal) Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(addToday, { addToday = it })
                 Text(stringResource(R.string.add_today), style = MaterialTheme.typography.bodyMedium)
             }
@@ -282,19 +308,19 @@ fun DefEditorScreen(id: String?, onBack: () -> Unit) {
                 val keepTitle = existing != null && title.trim() == existing.title.text(lang)
                 val keepDescription = existing != null && description.trim() == existing.description.text(lang)
                 val def = (existing ?: QuestDef("custom_${System.currentTimeMillis()}", DefKind.CORE, type, plainText(""), plainText(""), 1.0, baseXp = 0, baseGold = 0)).copy(
-                    kind = if (core) DefKind.CORE else DefKind.POOL,
+                    kind = if (portal) DefKind.PORTAL else if (core) DefKind.CORE else DefKind.POOL,
                     type = type,
                     title = if (keepTitle) existing!!.title else plainText(title.trim()),
                     description = if (keepDescription) existing!!.description else plainText(description.trim().ifEmpty { "{target} {unit}" }),
                     baseTarget = target.toDoubleOrNull() ?: 1.0,
-                    scalingAmount = scaling.toDoubleOrNull() ?: 0.0,
+                    scalingAmount = if (portal) 0.0 else scaling.toDoubleOrNull() ?: 0.0,
                     scalingInterval = (interval.toIntOrNull() ?: 3).coerceAtLeast(1),
                     unit = unit.trim(),
-                    baseXp = reward.first,
-                    baseGold = reward.second,
-                    daysOfWeek = days.sorted().takeIf { it.size < 7 && !isWeekly },
-                    perWeek = perWeek.takeIf { isWeekly },
-                    auto = auto,
+                    baseXp = if (portal) existing?.baseXp ?: 45 else reward.first,
+                    baseGold = if (portal) existing?.baseGold ?: 12 else reward.second,
+                    daysOfWeek = if (portal) null else days.sorted().takeIf { it.size < 7 && !isWeekly },
+                    perWeek = if (portal) null else perWeek.takeIf { isWeekly },
+                    auto = if (portal) null else auto,
                     pomodoro = pomodoro && type == QuestType.FOCUS,
                     descending = if (builtIn) existing!!.descending else auto == AutoKind.SCREEN_TIME || auto == AutoKind.DISTRACTION_TIME,
                 )

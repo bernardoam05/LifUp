@@ -92,6 +92,8 @@ import com.lifup.app.ui.components.Stepper
 import com.lifup.app.ui.content
 import com.lifup.app.ui.defTitle
 import com.lifup.app.ui.fmtNum
+import com.lifup.app.ui.guide.Guide
+import com.lifup.app.ui.guide.InfoButton
 import com.lifup.app.ui.lang
 import com.lifup.app.ui.local
 import com.lifup.app.domain.text
@@ -111,6 +113,7 @@ fun PairSection(s: GameState, now: Long, onOpen: (String) -> Unit) {
     val pairs = s.activePairs()
     SectionTitle(stringResource(R.string.pair_section)) {
         if (pairs.isNotEmpty()) Text("${pairs.size}/${s.pairLimit()}", color = p.dim, style = MaterialTheme.typography.labelMedium)
+        InfoButton(Guide.PAIRS)
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (s.pairQuotaBlocked(now)) Text(stringResource(R.string.pair_quota), style = MaterialTheme.typography.bodySmall, color = p.gold)

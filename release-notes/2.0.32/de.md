@@ -1,0 +1,4 @@
+- [new] Portalmissionen können jetzt in der Missionsschmiede deaktiviert, bearbeitet oder erstellt werden, während die Belohnungen vom System festgelegt bleiben.
+- [new] Partnermissionen haben jetzt eine eigene Anleitung, die im Heute-Bereich und in den Einstellungen verfügbar ist.
+- [fix] Updatefehler zeigen jetzt, ob die Suche, der Download oder die Installation fehlgeschlagen ist, und nennen den Android-Fehler statt einer allgemeinen Meldung.
+- [fix] Das Core-Widget ist zentriert, passt sich sicher an seine Größe an und zeigt im großen Format einen Fortschrittsbalken.

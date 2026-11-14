@@ -1,0 +1,4 @@
+- [new] As missões de portal podem agora ser desligadas, editadas ou criadas na Forja, mantendo as recompensas controladas pelo sistema.
+- [new] As missões em par têm agora um guia próprio, disponível na secção Hoje e nas Definições.
+- [fix] As falhas de atualização indicam agora se o problema ocorreu na procura, transferência ou instalação e mostram o erro do Android em vez de uma mensagem genérica.
+- [fix] O widget da Core está centrado, adapta-se com segurança ao tamanho e mostra uma barra de progresso no formato grande.

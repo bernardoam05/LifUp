@@ -353,6 +353,10 @@
     <string name="no_custom">Noch keine eigenen Missionen. Tippe auf +, um eine zu schmieden.</string>
     <string name="kind_core">Fest</string>
     <string name="kind_pool">Zufall</string>
+    <string name="kind_portal">Portal</string>
+    <string name="portal_missions">Portalmissionen</string>
+    <string name="portal_missions_info">Wähle, welche Missionen in Portalen erscheinen, ändere ihre Ziele oder erstelle eigene.</string>
+    <string name="portal_reward_system">Portalbelohnungen werden vom System festgelegt und beim Abschluss verdoppelt.</string>
     <string name="kind_core_info">Immer in deiner Liste, an den Tagen oder so oft, wie du wählst.</string>
     <string name="kind_pool_info">Kommt in den Pool für die tägliche Auslosung.</string>
     <string name="new_mission">Neue Mission</string>
@@ -559,6 +563,8 @@
     <string name="guide_section">So funktioniert es</string>
     <string name="guide_daily_title">Tägliche Missionen</string>
     <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nSerien-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle: Um Mitternacht gibt es Bonus-XP und ein neues Echo. Vermeiden-Missionen zählen, wenn sie den ganzen Tag halten.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede. Passt etwas nur an manchen Tagen, mach es wöchentlich.</string>
+    <string name="guide_pairs_title">Partnermissionen</string>
+    <string name="guide_pairs">Jemanden einladen::Erstelle eine Partnermission und schicke den Code oder Link. Beitreten geht über Heute → Partnermissionen.\nDein Teil::Ihr bekommt jeweils eine eigene Mission und einen eigenen Fortschritt; wenn du fertig bist, wird das Ergebnis deinem Partner geschickt.\nZeitplan::Einmalig, täglich, an bestimmten Wochentagen oder alle paar Tage. Zufallsmodi können euch dieselbe oder jeweils eine andere Mission geben.\nDie Belohnung::Wenn ihr beide fertig werdet, gibt es +25 %. Bei einer aktiven Serie kostet ein verpasster Teil 10 %.</string>
     <string name="guide_streak_title">Serie und Ruhetage</string>
     <string name="guide_streak">Wächst jeden Tag::+1 für jeden Tag, an dem du das Minimum erreichst.\nZweite Chance::Verloren? Ein perfekter Tag direkt danach holt sie zurück (einmal pro Woche).\nRuhetage::Melde ihn vor Mittag an und der Tag zählt weder dafür noch dagegen. 2 pro Woche auf Leicht, 1 auf Normal.\nExtra-Schutz::Der Schild der Beständigkeit und manche Echos retten sie für dich. Nur eine Rettung pro Woche, die zweite Chance eingeschlossen.</string>
     <string name="guide_penalty_title">Strafe</string>
@@ -714,6 +720,7 @@
     <string name="power_empty">Du hast noch keine Echos mit diesen Filtern.</string>
     <string name="guide_extra_title">Zusatzmissionen</string>
     <string name="guide_extra_hook">Für wenn der Tag geschafft ist und du mehr willst.</string>
+    <string name="guide_pairs_hook">Ein wenig gemeinsame Verantwortung macht die Quest stärker.</string>
     <string name="guide_extra">Nach dem Tag::Sie erscheinen, wenn alle Tagesmissionen geschafft sind, bis zu 3 pro Tag. Eine, die erst später öffnet, wie die zum Schlafengehen, hält sie nicht auf.\nEine nach der anderen::Die nächste kommt erst, wenn die letzte geschafft ist, also kein Rosinenpicken.\nPassend zur Uhrzeit::Es kommen nur Missionen, die zu dieser Zeit noch Sinn ergeben.\nOhne Risiko::Sie geben XP, Gold und Beute, zählen aber nicht für die Serie oder die Strafe.</string>
     <string name="guide_weekly_title">Wochenmissionen</string>
     <string name="guide_weekly_hook">Für Dinge, die du ein paarmal pro Woche machst, an wechselnden Tagen.</string>
@@ -875,6 +882,10 @@
     <string name="update_downloading">%1$s wird heruntergeladen…</string>
     <string name="update_installing">%1$s wird installiert…</string>
     <string name="update_failed">Update fehlgeschlagen. Versuch es später noch einmal.</string>
+    <string name="update_failed_detail">Fehler bei %1$s: %2$s</string>
+    <string name="update_step_check">der Update-Suche</string>
+    <string name="update_step_download">dem Download</string>
+    <string name="update_step_install">der Installation</string>
     <string name="whats_new_title">Neu in %1$s</string>
     <string name="whats_new_ok">Verstanden</string>
     <string name="patch_notes">Versionshinweise</string>

@@ -170,7 +170,11 @@ fun Tx.rollPortal() {
 }
 
 fun Tx.openPortal() {
-    val quest = content.portalQuests
+    val edited = s.customDefs.associateBy { it.id }
+    val portalDefs = content.portalQuests.map { edited[it.id] ?: it } +
+        s.customDefs.filter { it.kind == DefKind.PORTAL && content.questDefById[it.id] == null }
+    val quest = portalDefs
+        .filter { s.isOn(it, content) }
         .map { portalQuest(it) }
         .filter { it.estimatedMinutes(s.settings, content) <= Rules.PORTAL_MAX_TASK_MIN }
         .randomOrNull(ctx.rng) ?: return
@@ -185,7 +189,11 @@ fun Tx.openPortal() {
 }
 
 private fun Tx.portalQuest(def: QuestDef): Quest {
-    val base = buildQuest(def, s.player.level, QuestOrigin.PORTAL, "portal_${s.nextId}")
+    // Objectives are personalisable, rewards are not: built-ins keep the catalog reward and custom portals use
+    // the system's standard portal reward. This also protects imported/hand-edited saves from inflating rewards.
+    val system = content.portalQuests.firstOrNull { it.id == def.id }
+    val rewarded = def.copy(baseXp = system?.baseXp ?: 45, baseGold = system?.baseGold ?: 12)
+    val base = buildQuest(rewarded, s.player.level, QuestOrigin.PORTAL, "portal_${s.nextId}")
     return base.copy(xp = base.xp * 2, gold = base.gold * 2)
 }
 

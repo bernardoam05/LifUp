@@ -337,6 +337,10 @@
     <string name="no_custom">Pas encore de missions perso. Touche + pour en forger une.</string>
     <string name="kind_core">Fixe</string>
     <string name="kind_pool">Tirage</string>
+    <string name="kind_portal">Portail</string>
+    <string name="portal_missions">Missions de portail</string>
+    <string name="portal_missions_info">Choisis les missions proposées par les portails, modifie leurs objectifs ou crée les tiennes.</string>
+    <string name="portal_reward_system">Les récompenses du portail sont fixées par le système et doublées une fois le portail terminé.</string>
     <string name="kind_core_info">Toujours dans ta liste, les jours ou le nombre de fois que tu choisis.</string>
     <string name="kind_pool_info">Rejoint le tirage des missions quotidiennes.</string>
     <string name="new_mission">Nouvelle mission</string>
@@ -541,6 +545,8 @@
     <string name="guide_section">Comment ça marche</string>
     <string name="guide_daily_title">Missions quotidiennes</string>
     <string name="guide_daily">Fixes et tirées au sort::1 mission fixe et plusieurs tirées au sort, qui changent chaque jour.\nMinimum pour la série::En Normal, 75 % des missions suffisent. 60 % en Facile, 100 % en Difficile.\nJournée parfaite::Fais-les toutes : à minuit tu gagnes de l\'XP bonus et un nouvel écho. Les missions à éviter comptent si elles tiennent toute la journée.\nÇa ne passe pas aujourd\'hui ?::Change une tirée au sort par jour gratuitement, ou crée les tiennes dans la Forge. Si quelque chose ne tient que certains jours, rends-le hebdomadaire.</string>
+    <string name="guide_pairs_title">Missions en binôme</string>
+    <string name="guide_pairs">Invite quelqu\'un::Crée une mission en binôme et envoie le code ou le lien. Ton binôme rejoint depuis Aujourd\'hui → Missions en binôme.\nTa part::Vous avez chacun votre mission et votre progression ; finir la tienne envoie le résultat à ton binôme.\nPlanning::Choisis une fois, tous les jours, certains jours ou tous les quelques jours. Les modes aléatoires peuvent donner la même mission ou une différente à chacun.\nLa récompense::Quand vous finissez tous les deux, vous gagnez +25 %. Avec une série active, manquer sa part coûte 10 %.</string>
     <string name="guide_streak_title">Série et repos</string>
     <string name="guide_streak">Monte chaque jour::+1 pour chaque jour où tu atteins le minimum.\nSeconde chance::Perdue ? Une journée parfaite juste après la ramène (une fois par semaine).\nJours de repos::Déclare-le avant midi et la journée ne compte ni pour ni contre toi. 2 par semaine en Facile, 1 en Normal.\nProtection en plus::Le Bouclier de Constance et certains échos la sauvent à ta place. Un seul sauvetage par semaine, seconde chance comprise.</string>
     <string name="guide_penalty_title">Pénalité</string>
@@ -696,6 +702,7 @@
     <string name="power_empty">Tu n\'as pas encore d\'échos avec ces filtres.</string>
     <string name="guide_extra_title">Missions en plus</string>
     <string name="guide_extra_hook">Pour quand la journée est faite et que tu en veux plus.</string>
+    <string name="guide_pairs_hook">Un peu de responsabilité partagée rend la quête plus forte.</string>
     <string name="guide_extra">Après la journée::Elles apparaissent quand toutes les quotidiennes sont faites, jusqu\'à 3 par jour. Une mission qui n\'ouvre que plus tard, comme celle du coucher, ne les bloque pas.\nUne à la fois::La suivante n\'arrive qu\'après avoir fini la précédente, donc pas de tri des plus faciles.\nSelon l\'heure::Seules sortent les missions qui ont encore du sens à cette heure.\nSans risque::Elles donnent XP, or et butin, mais ne comptent ni pour la série ni pour la pénalité.</string>
     <string name="guide_weekly_title">Missions hebdomadaires</string>
     <string name="guide_weekly_hook">Pour ce que tu fais quelques fois par semaine, à des jours variables.</string>
@@ -857,6 +864,10 @@
     <string name="update_downloading">Téléchargement de %1$s…</string>
     <string name="update_installing">Installation de %1$s…</string>
     <string name="update_failed">Mise à jour impossible. Réessaie plus tard.</string>
+    <string name="update_failed_detail">Échec pendant %1$s : %2$s</string>
+    <string name="update_step_check">la recherche de mise à jour</string>
+    <string name="update_step_download">le téléchargement</string>
+    <string name="update_step_install">l’installation</string>
     <string name="whats_new_title">Nouveautés de la %1$s</string>
     <string name="whats_new_ok">Compris</string>
     <string name="patch_notes">Notes de version</string>

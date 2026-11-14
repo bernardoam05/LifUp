@@ -621,6 +621,29 @@ class EngineTest {
         assertEquals(1L, s.count(StatKey.PORTALS_CLEARED))
     }
 
+    @Test fun `portal draw respects disabled and custom missions`() {
+        val custom = QuestDef("custom_portal", DefKind.PORTAL, QuestType.KNOWLEDGE, plainText("Custom"), plainText("Do it"), 7.0, unit = "pages", baseXp = 45, baseGold = 12)
+        val start = fresh().copy(
+            customDefs = listOf(custom),
+            disabledDefIds = content.portalQuests.mapTo(mutableSetOf()) { it.id },
+        )
+        val s = run(start, "2026-10-14T10:00") { openPortal() }
+        assertEquals(custom.id, s.portal!!.quest.defId)
+        assertEquals(7.0, s.portal!!.quest.target, 0.0)
+    }
+
+    @Test fun `portal draw uses an edited built in objective`() {
+        val original = content.portalQuests.first()
+        val edited = original.copy(baseTarget = 3.0)
+        val start = fresh().copy(
+            customDefs = listOf(edited),
+            disabledDefIds = content.portalQuests.drop(1).mapTo(mutableSetOf()) { it.id },
+        )
+        val s = run(start, "2026-10-14T10:00") { openPortal() }
+        assertEquals(original.id, s.portal!!.quest.defId)
+        assertEquals(3.0, s.portal!!.quest.target, 0.0)
+    }
+
     @Test fun `undoing a mission heals the boss`() {
         var s = fresh()
         val maxHp = s.boss!!.maxHp

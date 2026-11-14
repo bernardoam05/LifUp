@@ -337,6 +337,10 @@
     <string name="no_custom">Ainda não tens missões tuas. Toca em + para forjar uma.</string>
     <string name="kind_core">Fixa</string>
     <string name="kind_pool">Sorteio</string>
+    <string name="kind_portal">Portal</string>
+    <string name="portal_missions">Missões de portal</string>
+    <string name="portal_missions_info">Escolhe que missões podem sair nos portais, edita os objetivos ou cria as tuas.</string>
+    <string name="portal_reward_system">As recompensas do portal são definidas pelo sistema e duplicadas ao concluí-lo.</string>
     <string name="kind_core_info">Fica sempre na tua lista, nos dias ou nas vezes que escolheres.</string>
     <string name="kind_pool_info">Entra no sorteio das missões diárias.</string>
     <string name="new_mission">Nova missão</string>
@@ -541,6 +545,8 @@
     <string name="guide_section">Como funciona</string>
     <string name="guide_daily_title">Missões diárias</string>
     <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para a sequência::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas: à meia-noite ganhas XP extra e um eco novo. As de evitar contam quando aguentam o dia todo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja. Se algo só cabe em alguns dias, torna-o semanal.</string>
+    <string name="guide_pairs_title">Missões em par</string>
+    <string name="guide_pairs">Convida alguém::Cria uma missão em par e envia o código ou o link. A outra pessoa entra em Hoje → Missões em par.\nA tua parte::Cada um recebe a sua missão e progresso; quando acabas, o resultado é enviado ao teu par.\nHorário::Escolhe uma vez, todos os dias, certos dias da semana ou de poucos em poucos dias. Os modos aleatórios podem dar a mesma missão ou uma a cada um.\nA recompensa::Quando os dois acabam, ganham +25%. Com uma sequência ativa, não fazer a parte custa 10%.</string>
     <string name="guide_streak_title">Sequência e descanso</string>
     <string name="guide_streak">Sobe todos os dias::+1 por cada dia em que chegas ao mínimo.\nSegunda oportunidade::Perdeste-a? Um dia perfeito logo a seguir devolve-a (uma vez por semana).\nDias de descanso::Marca antes do meio-dia e o dia não conta nem a favor nem contra. 2 por semana no Fácil, 1 no Normal.\nProteção extra::O Escudo da Constância e alguns ecos salvam-na por ti. Só um salvamento por semana, contando com a segunda oportunidade.</string>
     <string name="guide_penalty_title">Penalização</string>
@@ -696,6 +702,7 @@
     <string name="power_empty">Ainda não tens ecos com estes filtros.</string>
     <string name="guide_extra_title">Missões extra</string>
     <string name="guide_extra_hook">Para quando já cumpriste o dia e queres mais.</string>
+    <string name="guide_pairs_hook">Um pouco de compromisso torna a missão mais forte.</string>
     <string name="guide_extra">Depois do dia::Aparecem quando todas as diárias estão cumpridas, até 3 por dia. Uma que só abre mais tarde, como a de deitar, não as bloqueia.\nUma de cada vez::A próxima só sai depois de cumprires a anterior, por isso não dá para escolher as que dão jeito.\nÀ medida da hora::Só saem missões que ainda fazem sentido a essa hora.\nSem risco::Dão XP, ouro e drops, mas não contam para a sequência nem para a penalização.</string>
     <string name="guide_weekly_title">Missões semanais</string>
     <string name="guide_weekly_hook">Para o que fazes algumas vezes por semana, em dias que variam.</string>
@@ -857,6 +864,10 @@
     <string name="update_downloading">A transferir %1$s…</string>
     <string name="update_installing">A instalar %1$s…</string>
     <string name="update_failed">Não foi possível atualizar. Tenta mais tarde.</string>
+    <string name="update_failed_detail">Falha durante %1$s: %2$s</string>
+    <string name="update_step_check">a procura da atualização</string>
+    <string name="update_step_download">a transferência</string>
+    <string name="update_step_install">a instalação</string>
     <string name="whats_new_title">Novidades da %1$s</string>
     <string name="whats_new_ok">Fixe</string>
     <string name="patch_notes">Notas de versão</string>

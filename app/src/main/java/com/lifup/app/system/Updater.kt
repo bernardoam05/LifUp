@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.os.Build
+import android.util.Log
 import com.lifup.app.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,7 @@ import java.net.URL
  * through without a prompt.
  */
 object Updater {
+    private const val TAG = "Updater"
     private const val RELEASES = "https://api.github.com/repos/bernardoam05/LifUp/releases"
     private const val NOTES = "https://raw.githubusercontent.com/bernardoam05/LifUp"
     private const val PREFS = "updater"
@@ -42,8 +44,10 @@ object Updater {
         data class Available(val version: String, val apkUrl: String) : State
         data class Downloading(val version: String) : State
         data class Installing(val version: String) : State
-        data object Failed : State
+        data class Failed(val step: FailureStep, val detail: String) : State
     }
+
+    enum class FailureStep { CHECK, DOWNLOAD, INSTALL }
 
     private val _state = MutableStateFlow<State>(State.Idle)
     val state: StateFlow<State> = _state
@@ -69,7 +73,7 @@ object Updater {
             latestSeen = release.version
             _state.value = if (!force && prefs.getString("later", null) == release.version) State.UpToDate else State.Available(release.version, release.apkUrl)
         } catch (e: Exception) {
-            _state.value = State.Failed
+            fail(FailureStep.CHECK, e)
         } finally {
             busy.unlock()
         }
@@ -80,13 +84,15 @@ object Updater {
     /** The player agreed: download the release and hand it to the system installer. */
     suspend fun install(context: Context, available: State.Available) {
         if (!busy.tryLock()) return
+        var step = FailureStep.DOWNLOAD
         try {
             _state.value = State.Downloading(available.version)
             val apk = withContext(Dispatchers.IO) { download(context, available.apkUrl) }
+            step = FailureStep.INSTALL
             _state.value = State.Installing(available.version)
             withContext(Dispatchers.IO) { install(context, apk) }
         } catch (e: Exception) {
-            _state.value = State.Failed
+            fail(step, e)
         } finally {
             busy.unlock()
         }
@@ -149,14 +155,30 @@ object Updater {
 
     private fun download(context: Context, url: String): File {
         val file = File(context.cacheDir, "update.apk")
-        open(url).inputStream.use { input -> file.outputStream().use { input.copyTo(it) } }
+        val partial = File(context.cacheDir, "update.apk.part")
+        val connection = open(url).apply {
+            setRequestProperty("Accept", "application/vnd.android.package-archive")
+        }
+        try {
+            check(connection.responseCode in HttpURLConnection.HTTP_OK..HttpURLConnection.HTTP_PARTIAL) {
+                "Update download returned HTTP ${connection.responseCode}"
+            }
+            connection.inputStream.use { input -> partial.outputStream().use { input.copyTo(it) } }
+            check(partial.length() > 0L) { "Update download was empty" }
+            if (file.exists()) check(file.delete()) { "Could not replace previous update APK" }
+            check(partial.renameTo(file)) { "Could not save update APK" }
+        } finally {
+            connection.disconnect()
+            partial.delete()
+        }
         return file
     }
 
     private fun open(url: String) = (URL(url).openConnection() as HttpURLConnection).apply {
-        connectTimeout = 15_000
-        readTimeout = 30_000
-        setRequestProperty("User-Agent", "LifUp/${BuildConfig.VERSION_NAME}")
+        instanceFollowRedirects = true
+        connectTimeout = 30_000
+        readTimeout = 120_000
+        setRequestProperty("User-Agent", "CoreQuest/${BuildConfig.VERSION_NAME}")
     }
 
     private fun install(context: Context, apk: File) {
@@ -192,16 +214,34 @@ object Updater {
     }
 
     internal fun onResult(context: Context, intent: Intent) {
-        when (intent.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE)) {
+        val status = intent.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE)
+        when (status) {
             // First update, or before Android 12: the system asks the user to confirm.
             PackageInstaller.STATUS_PENDING_USER_ACTION -> {
                 @Suppress("DEPRECATION")
-                val confirm = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT) ?: return
+                val confirm = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
+                if (confirm == null) {
+                    fail(FailureStep.INSTALL, "Android did not provide the confirmation screen")
+                    return
+                }
                 context.startActivity(confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             }
             PackageInstaller.STATUS_SUCCESS -> File(context.cacheDir, "update.apk").delete()
-            else -> _state.value = State.Failed
+            else -> {
+                val message = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE)
+                fail(FailureStep.INSTALL, "Android installer $status${message?.let { ": $it" }.orEmpty()}")
+            }
         }
+    }
+
+    private fun fail(step: FailureStep, error: Throwable) {
+        Log.e(TAG, "Update failed during ${step.name.lowercase()}", error)
+        fail(step, error.message ?: error.javaClass.simpleName)
+    }
+
+    private fun fail(step: FailureStep, detail: String) {
+        Log.e(TAG, "Update failed during ${step.name.lowercase()}: $detail")
+        _state.value = State.Failed(step, detail.take(240))
     }
 }
 

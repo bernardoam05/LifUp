@@ -359,9 +359,17 @@ private fun UpdateRow() {
         is Updater.State.Available -> stringResource(R.string.update_available, st.version)
         is Updater.State.Downloading -> stringResource(R.string.update_downloading, st.version)
         is Updater.State.Installing -> stringResource(R.string.update_installing, st.version)
-        Updater.State.Failed -> stringResource(R.string.update_failed)
-    }?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = if (state == Updater.State.Failed) Lif.colors.red else Lif.colors.muted) }
-    val idle = state == Updater.State.Idle || state == Updater.State.UpToDate || state == Updater.State.Failed
+        is Updater.State.Failed -> stringResource(
+            R.string.update_failed_detail,
+            stringResource(when (st.step) {
+                Updater.FailureStep.CHECK -> R.string.update_step_check
+                Updater.FailureStep.DOWNLOAD -> R.string.update_step_download
+                Updater.FailureStep.INSTALL -> R.string.update_step_install
+            }),
+            st.detail,
+        )
+    }?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = if (state is Updater.State.Failed) Lif.colors.red else Lif.colors.muted) }
+    val idle = state == Updater.State.Idle || state == Updater.State.UpToDate || state is Updater.State.Failed
     (state as? Updater.State.Available)?.let { av ->
         TextButton(onClick = { scope.launch { Updater.install(context.applicationContext, av) } }) { Text(stringResource(R.string.update_now).uppercase()) }
     } ?: TextButton(onClick = { scope.launch { Updater.check(context.applicationContext, force = true) } }, enabled = idle) {

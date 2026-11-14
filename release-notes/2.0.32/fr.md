@@ -1,0 +1,4 @@
+- [new] Les missions de portail peuvent désormais être désactivées, modifiées ou créées dans la Forge, tandis que les récompenses restent contrôlées par le système.
+- [new] Les missions en binôme disposent maintenant de leur propre guide, accessible depuis la section Aujourd’hui et les Réglages.
+- [fix] Les échecs de mise à jour précisent maintenant si le problème vient de la recherche, du téléchargement ou de l’installation et affichent l’erreur Android au lieu d’un message générique.
+- [fix] Le widget du Core est centré, s’adapte correctement à sa taille et affiche une barre de progression dans son grand format.
