@@ -50,6 +50,75 @@ class EngineTest {
         assertEquals(stock, s.shop.stock)
     }
 
+    @Test fun `chest price follows level and rises per purchase until midnight`() {
+        val chest = content.itemById.getValue("bau_cacador")
+        var s = fresh().copy(player = Player(level = 90, gold = 20_000))
+        assertEquals(2_500, s.itemPrice(content, chest, at("2026-10-14T10:00")))
+        s = run(s, "2026-10-14T10:00") { buyItem(chest.id) }
+        assertEquals(1, s.shop.dailyPurchases[chest.id])
+        assertEquals(3_750, s.itemPrice(content, chest, at("2026-10-14T10:01")))
+        s = run(s, "2026-10-15T08:00")
+        assertTrue(s.shop.dailyPurchases.isEmpty())
+        assertEquals(2_500, s.itemPrice(content, chest, at("2026-10-15T08:00")))
+    }
+
+    @Test fun `shop offer refresh costs more each time and resets next day`() {
+        var s = fresh().copy(player = Player(gold = 10_000))
+        val first = s.shop.shadowOffers
+        assertEquals(600, s.shadowRerollCost(content, at("2026-10-14T10:00")))
+        s = run(s, "2026-10-14T10:00") { rerollShadowOffers() }
+        assertNotEquals(first, s.shop.shadowOffers)
+        assertEquals(1_200, s.shadowRerollCost(content, at("2026-10-14T10:01")))
+        s = run(s, "2026-10-15T08:00")
+        assertEquals(600, s.shadowRerollCost(content, at("2026-10-15T08:00")))
+    }
+
+    @Test fun `daily purchases reset even if offers were already stamped for today`() {
+        val stale = ShopState(
+            offersDay = "2026-10-15",
+            purchasesDay = "2026-10-14",
+            dailyPurchases = mapOf("bau_cacador" to 3),
+        )
+        val s = run(fresh().copy(shop = stale), "2026-10-15T08:00")
+        assertEquals("2026-10-15", s.shop.purchasesDay)
+        assertTrue(s.shop.dailyPurchases.isEmpty())
+    }
+
+    @Test fun `shop accessories cost gold and can then be worn`() {
+        val skin = CoreSkin.HEADPHONES
+        var s = fresh().copy(player = Player(gold = skin.goldCost!!))
+        s = run(s, "2026-10-14T10:00") { assertTrue(buySkin(skin)); wearSkin(skin) }
+        assertTrue(skin in s.coreSkins)
+        assertEquals(skin, s.settings.coreSkin)
+        assertEquals(skin.goldCost!!.toLong(), s.count(StatKey.GOLD_SPENT))
+    }
+
+    @Test fun `dismissed notices remain in history until the player reads them`() {
+        var s = fresh()
+        s = run(s, "2026-10-14T10:00") { toast(ToastKind.ITEM_FOUND, "bau_cacador") }
+        val notice = s.rewards.filterIsInstance<Reward.Toast>().last()
+        s = run(s, "2026-10-14T10:01") { dismissReward(notice.id, seen = false) }
+        assertEquals(notice, s.noticeHistory.last())
+        assertTrue(notice.id in s.unreadNotices)
+        s = run(s, "2026-10-14T10:02") { markNoticesRead() }
+        assertTrue(s.unreadNotices.isEmpty())
+    }
+
+    @Test fun `a notice the player saw goes to the history already read`() {
+        var s = run(fresh(), "2026-10-14T10:00") { toast(ToastKind.ITEM_FOUND, "bau_cacador") }
+        val notice = s.rewards.filterIsInstance<Reward.Toast>().last()
+        s = run(s, "2026-10-14T10:01") { dismissReward(notice.id) }
+        assertEquals(notice, s.noticeHistory.last())
+        assertTrue(s.unreadNotices.isEmpty())
+    }
+
+    @Test fun `a dearer chest never takes back what the squad saved`() {
+        val chest = content.itemById.getValue("bau_cacador")
+        var s = fresh().copy(player = Player(level = 90, gold = 20_000), squadTotal = SquadGain(gold = 300))
+        s = run(s, "2026-10-14T10:00") { buyItem(chest.id); buyItem(chest.id) }
+        assertTrue(s.squadTotal.gold >= 300)
+    }
+
     @Test fun `marshals stay rare in the shop`() {
         var s = fresh("2026-01-01T09:00")
         var marshals = 0
@@ -1488,6 +1557,9 @@ class EngineTest {
         val lucky = luckOdds(30, 0.3)
         assertEquals(0.2, base.portalEcho, 1e-9)
         assertEquals(0.26, lucky.portalEcho, 1e-9)
+        assertEquals(0.06, base.chest, 1e-9)
+        assertEquals(0.03, base.essence, 1e-9)
+        assertEquals(0.039, lucky.essence, 1e-9)
         assertEquals(0.45, base.atLeast.getValue(ShadowRank.KNIGHT), 0.01)
         assertTrue(lucky.atLeast.getValue(ShadowRank.MARSHAL) > base.atLeast.getValue(ShadowRank.MARSHAL))
     }

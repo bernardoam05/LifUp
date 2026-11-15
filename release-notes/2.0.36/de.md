@@ -1,0 +1,11 @@
+- [new] Drei neue CoreQuest+-Skins für den Core: Uhrwerk, Tiefsee und Sakura-Porzellan.
+- [new] Drei Accessoires, die du im Core-Blatt mit Gold kaufen kannst: Jägerdiadem, Blatt-Kopfhörer und Abenteurer-Stirnband.
+- [new] Der Core hat in jeder Form und jedem Skin ein eigenes schlafendes Gesicht.
+- [new] Letzte Aktivitäten: Die Glocke oben bewahrt die kurzen Hinweise auf und markiert die, die hinter einem Blatt oder Dialog abliefen.
+- [new] Die Echo-Angebote im Shop lassen sich für Gold erneuern; jede Erneuerung kostet bis Mitternacht mehr.
+- [new] Zwei neue Missionen, Bereit für Morgen und Digital Aufräumen, und mehrere „Vermeiden“-Missionen wurden zu Dingen, die man tut.
+- [tweak] Die Heldentruhe im Shop kostet mit steigendem Level mehr und 50 % mehr für jede an diesem Tag gekaufte.
+- [tweak] Paar-Missionen „Jeder seine“ können auch die Missionen ziehen, die du erstellt hast.
+- [tweak] Die Glückschancen zeigen Truhe und Echo-Essenz getrennt.
+- [fix] Widgets zählen noch ungebrochene Vermeiden-Missionen wie der Heute-Bildschirm.
+- [fix] Tippen außerhalb des Update-Hinweises blendet ihn nur bis zum nächsten Öffnen der App aus, statt diese Version stummzuschalten.

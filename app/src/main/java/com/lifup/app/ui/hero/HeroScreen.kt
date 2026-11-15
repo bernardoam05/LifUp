@@ -321,7 +321,8 @@ internal fun LuckOddsLines(level: Int, luck: Double, title: Int) {
         Text("  →  ", style = MaterialTheme.typography.labelMedium, color = c.dim)
         Text(pct(to), style = MaterialTheme.typography.labelMedium, color = c.purple)
     }
-    row(stringResource(R.string.luck_item), base.item, lucky.item)
+    row(stringResource(R.string.luck_item), base.chest, lucky.chest)
+    row(stringResource(R.string.luck_essence), base.essence, lucky.essence)
     row(stringResource(R.string.luck_portal), base.portalEcho, lucky.portalEcho)
     // The two best ranks reachable at this level say the most.
     lucky.atLeast.keys.sortedDescending().take(2).sorted().forEach { r ->

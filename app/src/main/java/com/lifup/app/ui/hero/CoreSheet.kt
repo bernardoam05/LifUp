@@ -26,6 +26,11 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.rounded.Paid
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +46,8 @@ import com.lifup.app.ui.accentRank
 import com.lifup.app.ui.act
 import com.lifup.app.ui.content
 import com.lifup.app.domain.wearSkin
+import com.lifup.app.domain.buySkin
+import com.lifup.app.domain.price
 import com.lifup.app.domain.wearPaint
 import com.lifup.app.domain.shownPaint
 import androidx.annotation.StringRes
@@ -118,6 +125,9 @@ fun skinName(skin: com.lifup.app.domain.CoreSkin) = when (skin) {
     com.lifup.app.domain.CoreSkin.PARTY_HAT -> R.string.core_skin_party_hat
     com.lifup.app.domain.CoreSkin.FLOWER_CROWN -> R.string.core_skin_flower_crown
     com.lifup.app.domain.CoreSkin.SUNGLASSES -> R.string.core_skin_sunglasses
+    com.lifup.app.domain.CoreSkin.HUNTER_CROWN -> R.string.core_skin_hunter_crown
+    com.lifup.app.domain.CoreSkin.HEADPHONES -> R.string.core_skin_headphones
+    com.lifup.app.domain.CoreSkin.ADVENTURER_BAND -> R.string.core_skin_adventurer_band
 }
 
 /** Accessories: the ones won from seasonal bosses to wear, the others with the event that gives them. */
@@ -128,6 +138,17 @@ private fun CoreSkins(s: GameState, stage: Int) {
     Text(stringResource(R.string.core_skins), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 8.dp))
     Text(stringResource(R.string.core_skins_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
     val fmt = java.time.format.DateTimeFormatter.ofPattern("d MMM")
+    var buying by remember { mutableStateOf<com.lifup.app.domain.CoreSkin?>(null) }
+    buying?.let { skin ->
+        val cost = s.price(content, skin.goldCost ?: 0, System.currentTimeMillis())
+        com.lifup.app.ui.components.ConfirmDialog(
+            title = stringResource(R.string.buy_confirm_title),
+            text = stringResource(R.string.buy_confirm_text, stringResource(skinName(skin)), cost, s.player.gold - cost),
+            confirm = stringResource(R.string.buy),
+            onConfirm = { act { buySkin(skin) } },
+            onDismiss = { buying = null },
+        )
+    }
     FlowRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp), maxItemsInEachRow = 3) {
         (listOf<com.lifup.app.domain.CoreSkin?>(null) + com.lifup.app.domain.CoreSkin.entries).forEach { skin ->
             val owned = skin == null || skin in s.coreSkins
@@ -147,7 +168,14 @@ private fun CoreSkins(s: GameState, stage: Int) {
                     if (skin == null) stringResource(R.string.core_skin_none) else stringResource(skinName(skin)),
                     style = MaterialTheme.typography.labelMedium, color = if (owned) c.text else c.dim, textAlign = TextAlign.Center,
                 )
-                if (!owned) content.bossById[skin!!.bossId]?.season?.let { season ->
+                if (!owned && skin?.goldCost != null) {
+                    val cost = s.price(content, skin.goldCost, System.currentTimeMillis())
+                    androidx.compose.material3.TextButton(onClick = { buying = skin }, enabled = s.player.gold >= cost) {
+                        Icon(Icons.Rounded.Paid, null, tint = if (s.player.gold >= cost) c.gold else c.dim, modifier = Modifier.size(14.dp))
+                        Text(" $cost", color = if (s.player.gold >= cost) c.gold else c.dim)
+                    }
+                }
+                if (!owned) skin?.bossId?.let(content.bossById::get)?.season?.let { season ->
                     val from = java.time.MonthDay.parse("--" + season.from).atYear(2000).format(fmt)
                     val to = java.time.MonthDay.parse("--" + season.to).atYear(2000).format(fmt)
                     Text("$from – $to", style = MaterialTheme.typography.labelSmall, color = c.dim, textAlign = TextAlign.Center)
@@ -165,9 +193,12 @@ fun paintName(p: com.lifup.app.domain.CorePaint) = when (p) {
     com.lifup.app.domain.CorePaint.GHOST -> R.string.core_paint_ghost
     com.lifup.app.domain.CorePaint.LAVA -> R.string.core_paint_lava
     com.lifup.app.domain.CorePaint.GALAXY -> R.string.core_paint_galaxy
+    com.lifup.app.domain.CorePaint.CLOCKWORK -> R.string.core_paint_clockwork
+    com.lifup.app.domain.CorePaint.ABYSSAL_OCEAN -> R.string.core_paint_abyssal_ocean
+    com.lifup.app.domain.CorePaint.SAKURA_PORCELAIN -> R.string.core_paint_sakura_porcelain
 }
 
-/** CoreQuest+ skins: the rank colours or one of the six; without CoreQuest+ they show, locked. */
+/** CoreQuest+ skins: the rank colours or a full-Core paint; without CoreQuest+ they show, locked. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CorePaints(s: GameState, stage: Int) {

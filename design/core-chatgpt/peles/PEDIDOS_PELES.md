@@ -71,4 +71,4 @@ In every cell the character is identical to image 1: same skin, colours, effects
 
 Para as formas seguintes, na mesma conversa: *"Same sheet, same rules, now for this stage"* e anexas as duas imagens dessa forma.
 
-Guarda cada folha como `peles/<pele>/caras_formaN.png`. Eu corto as células, alinho tudo e integro na app.
+Guarda cada folha como `peles/<pele>/caraN.png`. Eu corto as células, alinho tudo e integro na app.

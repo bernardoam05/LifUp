@@ -169,6 +169,9 @@ data class ShopState(
     val shadowOffers: List<String> = emptyList(),
     /** The day [shadowOffers] were drawn for: they rotate daily, the item stock weekly. */
     val offersDay: String = "",
+    /** Purchases whose price grows during the day (currently the chest), reset at local midnight. */
+    val purchasesDay: String = "",
+    val dailyPurchases: Map<String, Int> = emptyMap(),
 )
 
 @Serializable
@@ -500,6 +503,9 @@ data class GameState(
     val passiveCooldowns: Map<Passive, Long> = emptyMap(),
     val doubleXpNext: Boolean = false,
     val rewards: List<Reward> = emptyList(),
+    /** Small notices already shown. Kept so a snackbar hidden by a sheet or dialog is never lost. */
+    val noticeHistory: List<Reward.Toast> = emptyList(),
+    val unreadNotices: Set<Long> = emptySet(),
     val nextId: Long = 1,
     /** Missions done with someone else (see Pairs.kt). */
     val pairs: List<PairQuest> = emptyList(),

@@ -278,6 +278,7 @@
    "unit": "h",
    "baseXp": 80,
    "baseGold": 20,
+   "retired": true,
    "tip": {
     "pt": "Sai das redes no telemóvel ou põe-nas na lista de bloqueio do Foco durante essas horas.",
     "en": "Log out of social apps on your phone or add them to the Focus block list for those hours.",
@@ -1029,6 +1030,27 @@
      "es": "Hoy: algo que quede terminado en esta sesión.",
      "fr": "Aujourd'hui : quelque chose de fini en une séance.",
      "de": "Heute: etwas, das in dieser Sitzung fertig wird."
+    },
+    {
+     "pt": "Hoje: um desenho pequeno com apenas 3 cores, acabado.",
+     "en": "Today: one small finished drawing using only 3 colours.",
+     "es": "Hoy: un dibujo pequeño y terminado usando solo 3 colores.",
+     "fr": "Aujourd'hui : un petit dessin terminé avec seulement 3 couleurs.",
+     "de": "Heute: eine kleine fertige Zeichnung mit nur 3 Farben."
+    },
+    {
+     "pt": "Hoje: um texto de 100 palavras, com princípio e fim.",
+     "en": "Today: a 100-word piece with a beginning and an ending.",
+     "es": "Hoy: un texto de 100 palabras con principio y final.",
+     "fr": "Aujourd'hui : un texte de 100 mots avec un début et une fin.",
+     "de": "Heute: ein Text mit 100 Wörtern, Anfang und Ende."
+    },
+    {
+     "pt": "Hoje: uma melodia curta, um pequeno programa ou uma fotografia editada até ao fim.",
+     "en": "Today: finish a short melody, a tiny program or one edited photo.",
+     "es": "Hoy: termina una melodía corta, un programa pequeño o una foto editada.",
+     "fr": "Aujourd'hui : termine une courte mélodie, un petit programme ou une photo retouchée.",
+     "de": "Heute: eine kurze Melodie, ein kleines Programm oder ein bearbeitetes Foto fertigstellen."
     }
    ]
   },
@@ -1710,7 +1732,8 @@
   {
    "id": "pool_nobuy",
    "kind": "POOL",
-   "type": "FORBIDDEN",
+   "type": "KNOWLEDGE",
+   "group": "SELF_CONTROL",
    "title": {
     "pt": "Carteira Fechada",
     "en": "Closed Wallet",
@@ -1719,11 +1742,11 @@
     "de": "Geschlossene Geldbörse"
    },
    "description": {
-    "pt": "Nenhuma compra por impulso hoje, só o necessário.",
-    "en": "No impulse buys today, only what you need.",
-    "es": "Ninguna compra por impulso hoy, solo lo necesario.",
-    "fr": "Aucun achat impulsif aujourd'hui, seulement le nécessaire.",
-    "de": "Heute keine Spontankäufe, nur das Nötige."
+    "pt": "Põe uma compra não essencial numa lista e adia-a até amanhã.",
+    "en": "Put one non-essential purchase on a list and delay it until tomorrow.",
+    "es": "Pon una compra no esencial en una lista y aplázala hasta mañana.",
+    "fr": "Mets un achat non essentiel sur une liste et reporte-le à demain.",
+    "de": "Setze einen nicht notwendigen Kauf auf eine Liste und verschiebe ihn auf morgen."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -1762,22 +1785,23 @@
   {
    "id": "pool_nocomplain",
    "kind": "POOL",
-   "type": "FORBIDDEN",
+   "type": "KNOWLEDGE",
+   "group": "SELF_CONTROL",
    "title": {
-    "pt": "Sem Queixas",
-    "en": "No Complaints",
-    "es": "Sin Quejas",
-    "fr": "Zéro Plainte",
-    "de": "Keine Klagen"
+    "pt": "Mudar a Perspetiva",
+    "en": "Change the Frame",
+    "es": "Cambiar la Perspectiva",
+    "fr": "Changer de Perspective",
+    "de": "Blickwinkel Ändern"
    },
    "description": {
-    "pt": "Passa o dia sem te queixares em voz alta.",
-    "en": "Go through the day without complaining out loud.",
-    "es": "Pasa el día sin quejarte en voz alta.",
-    "fr": "Passe la journée sans te plaindre à voix haute.",
-    "de": "Verbring den Tag, ohne laut zu klagen."
+    "pt": "Apanha e reformula {target} queixas tuas em voz alta.",
+    "en": "Catch and reframe {target} complaints you say out loud.",
+    "es": "Detecta y reformula {target} quejas tuyas en voz alta.",
+    "fr": "Repère et reformule {target} plaintes que tu dis à voix haute.",
+    "de": "Bemerke und formuliere {target} eigene laut ausgesprochene Beschwerden neu."
    },
-   "baseTarget": 1,
+   "baseTarget": 3,
    "scalingAmount": 0,
    "scalingInterval": 1,
    "unit": "",
@@ -2314,11 +2338,11 @@
     "de": "Das Schwerste Zuerst"
    },
    "description": {
-    "pt": "Começa o dia pela tarefa que mais andas a adiar, antes de qualquer outra.",
-    "en": "Start the day with the task you have been putting off most, before anything else.",
-    "es": "Empieza el día por la tarea que más estás aplazando, antes que cualquier otra.",
-    "fr": "Commence la journée par la tâche que tu repousses le plus, avant toute autre.",
-    "de": "Beginne den Tag mit der Aufgabe, die du am längsten aufschiebst, vor allem anderen."
+    "pt": "Trabalha 15 min na tarefa que mais andas a adiar.",
+    "en": "Work for 15 min on the task you have been putting off most.",
+    "es": "Trabaja 15 min en la tarea que más estás aplazando.",
+    "fr": "Travaille 15 min sur la tâche que tu repousses le plus.",
+    "de": "Arbeite 15 Min. an der Aufgabe, die du am längsten aufschiebst."
    },
    "baseTarget": 1,
    "scalingAmount": 0,
@@ -2333,7 +2357,7 @@
     "fr": "Choisis-la la veille. Ça compte si tu y travailles 15 min : le plus dur, c'est de commencer.",
     "de": "Wähle sie am Abend vorher. Es zählt, wenn du 15 Min. daran arbeitest: Anfangen ist das Schwerste."
    },
-   "untilHour": 12
+   "untilHour": 22
   },
   {
    "id": "pool_noalcohol",
@@ -2398,7 +2422,7 @@
   {
    "id": "pool_nointerrupt",
    "kind": "POOL",
-   "type": "FORBIDDEN",
+   "type": "KNOWLEDGE",
    "group": "SELF_CONTROL",
    "title": {
     "pt": "Ouvir Até ao Fim",
@@ -2408,13 +2432,13 @@
     "de": "Ausreden Lassen"
    },
    "description": {
-    "pt": "Hoje não interrompes ninguém enquanto fala.",
-    "en": "Today you don't interrupt anyone while they're speaking.",
-    "es": "Hoy no interrumpes a nadie mientras habla.",
-    "fr": "Aujourd'hui, tu ne coupes la parole à personne.",
-    "de": "Heute unterbrichst du niemanden beim Reden."
+    "pt": "Em {target} conversas, deixa a pessoa acabar e faz uma pausa antes de responder.",
+    "en": "In {target} conversations, let the person finish and pause before answering.",
+    "es": "En {target} conversaciones, deja que la persona termine y haz una pausa antes de responder.",
+    "fr": "Dans {target} conversations, laisse la personne finir et marque une pause avant de répondre.",
+    "de": "Lass in {target} Gesprächen die Person ausreden und pausiere vor deiner Antwort."
    },
-   "baseTarget": 1,
+   "baseTarget": 3,
    "scalingAmount": 0,
    "scalingInterval": 1,
    "unit": "",
@@ -3030,6 +3054,83 @@
    "baseXp": 45,
    "baseGold": 12,
    "optional": true
+  },
+  {
+   "id": "pool_prepare_tomorrow",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Amanhã Preparado",
+    "en": "Ready for Tomorrow",
+    "es": "Mañana Preparado",
+    "fr": "Prêt pour Demain",
+    "de": "Bereit für Morgen"
+   },
+   "description": {
+    "pt": "Prepara {target} coisa que te poupe trabalho amanhã.",
+    "en": "Prepare {target} thing that will save you work tomorrow.",
+    "es": "Prepara {target} cosa que te ahorre trabajo mañana.",
+    "fr": "Prépare {target} chose qui t'évitera du travail demain.",
+    "de": "Bereite {target} Sache vor, die dir morgen Arbeit spart."
+   },
+   "baseTarget": 1,
+   "scalingAmount": 0,
+   "scalingInterval": 1,
+   "unit": "things",
+   "baseXp": 45,
+   "baseGold": 12,
+   "prompts": [
+    {
+     "pt": "Hoje: deixa a roupa de amanhã pronta.",
+     "en": "Today: lay out tomorrow's clothes.",
+     "es": "Hoy: deja preparada la ropa de mañana.",
+     "fr": "Aujourd'hui : prépare les vêtements de demain.",
+     "de": "Heute: Lege die Kleidung für morgen bereit."
+    },
+    {
+     "pt": "Hoje: prepara a mochila, mala ou saco de treino.",
+     "en": "Today: pack your backpack, work bag or gym bag.",
+     "es": "Hoy: prepara la mochila, el bolso o la bolsa de deporte.",
+     "fr": "Aujourd'hui : prépare ton sac à dos, ton sac de travail ou ton sac de sport.",
+     "de": "Heute: Packe Rucksack, Arbeitstasche oder Sporttasche."
+    },
+    {
+     "pt": "Hoje: deixa documentos, chaves e o essencial junto à saída.",
+     "en": "Today: leave documents, keys and essentials by the exit.",
+     "es": "Hoy: deja documentos, llaves y lo esencial junto a la salida.",
+     "fr": "Aujourd'hui : place papiers, clés et essentiels près de la sortie.",
+     "de": "Heute: Lege Dokumente, Schlüssel und Wichtiges am Ausgang bereit."
+    }
+   ]
+  },
+  {
+   "id": "pool_digital_cleanup",
+   "kind": "POOL",
+   "type": "KNOWLEDGE",
+   "group": "SELF_CONTROL",
+   "title": {
+    "pt": "Limpeza Digital",
+    "en": "Digital Cleanup",
+    "es": "Limpieza Digital",
+    "fr": "Ménage Numérique",
+    "de": "Digital Aufräumen"
+   },
+   "description": {
+    "pt": "Revê e elimina {target} ficheiros, fotografias ou emails de que não precisas.",
+    "en": "Review and delete {target} files, photos or emails you do not need.",
+    "es": "Revisa y elimina {target} archivos, fotos o correos que no necesitas.",
+    "fr": "Passe en revue et supprime {target} fichiers, photos ou mails inutiles.",
+    "de": "Prüfe und lösche {target} unnötige Dateien, Fotos oder E-Mails."
+   },
+   "baseTarget": 5,
+   "scalingAmount": 1,
+   "scalingInterval": 5,
+   "unit": "things",
+   "baseXp": 45,
+   "baseGold": 12,
+   "maxTarget": 15,
+   "peakTarget": 30
   }
  ],
  "penalty": [

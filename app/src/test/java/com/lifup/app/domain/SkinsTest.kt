@@ -16,8 +16,9 @@ class SkinsTest {
     private fun run(state: GameState, time: String, action: Tx.() -> Unit = {}) =
         Engine.run(state, Ctx(content, LocalDateTime.parse(time).atZone(zone).toInstant().toEpochMilli(), zone, Random(1)), action = action)
 
-    @Test fun `every accessory belongs to a real seasonal boss`() {
-        CoreSkin.entries.forEach { assertTrue(it.name, content.bossById[it.bossId]?.season != null) }
+    @Test fun `every seasonal accessory belongs to a real seasonal boss`() {
+        CoreSkin.entries.filter { it.bossId != null }.forEach { assertTrue(it.name, content.bossById[it.bossId]?.season != null) }
+        CoreSkin.entries.filter { it.goldCost != null }.forEach { assertTrue(it.name, it.goldCost!! > 0) }
     }
 
     @Test fun `beating a seasonal boss gives its accessory once`() {

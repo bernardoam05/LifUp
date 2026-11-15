@@ -18,8 +18,20 @@ object Engine {
     }
 }
 
-fun Tx.dismissReward(id: Long) {
-    s = s.copy(rewards = s.rewards.filterNot { it.id == id })
+/** [seen] is false when a brief notice ran its time behind a sheet or a dialog: it then counts as unread in the history. */
+fun Tx.dismissReward(id: Long, seen: Boolean = true) {
+    val notice = s.rewards.firstOrNull { it.id == id } as? Reward.Toast
+    val history = if (notice == null) s.noticeHistory else (s.noticeHistory + notice).takeLast(50)
+    val kept = history.mapTo(mutableSetOf()) { it.id }
+    s = s.copy(
+        rewards = s.rewards.filterNot { it.id == id },
+        noticeHistory = history,
+        unreadNotices = (if (notice == null || seen) s.unreadNotices else s.unreadNotices + id).filterTo(mutableSetOf()) { it in kept },
+    )
+}
+
+fun Tx.markNoticesRead() {
+    s = s.copy(unreadNotices = emptySet())
 }
 
 fun Tx.finishOnboarding(name: String, rigor: Rigor, focus: Set<Attr> = emptySet(), blockOnPenalty: Boolean = false) {

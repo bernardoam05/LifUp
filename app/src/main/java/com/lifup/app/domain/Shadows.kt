@@ -205,8 +205,11 @@ fun Tx.toggleFavoriteEcho(id: String) {
     s = s.copy(favoriteEchoes = if (id in s.favoriteEchoes) s.favoriteEchoes - id else s.favoriteEchoes + id)
 }
 
-/** The chances luck changes, for showing them: an item after a mission, an echo from a portal, and a found echo's rank. */
-data class LuckOdds(val item: Double, val portalEcho: Double, val atLeast: Map<ShadowRank, Double>)
+/**
+ * The chances luck changes, for showing them: a chest or an echo essence after a mission (one roll gives one or the
+ * other, so they add up to [Rules.MISSION_DROP_CHANCE]), an echo from a portal, and a found echo's rank.
+ */
+data class LuckOdds(val chest: Double, val essence: Double, val portalEcho: Double, val atLeast: Map<ShadowRank, Double>)
 
 fun luckOdds(level: Int, luck: Double): LuckOdds {
     val k = 1 + luck
@@ -214,5 +217,11 @@ fun luckOdds(level: Int, luck: Double): LuckOdds {
     val samples = 2000
     val ranks = (0 until samples).map { Rules.extractionRank(level, (it + 0.5) / samples / k) }
     val atLeast = ShadowRank.entries.drop(1).associateWith { r -> ranks.count { it >= r } / samples.toDouble() }.filterValues { it > 0 }
-    return LuckOdds((Rules.MISSION_DROP_CHANCE * k).coerceAtMost(1.0), (Rules.PORTAL_ECHO_CHANCE * k).coerceAtMost(1.0), atLeast)
+    val essence = (Rules.MISSION_ESSENCE_CHANCE * k).coerceAtMost(1.0)
+    return LuckOdds(
+        (Rules.MISSION_DROP_CHANCE * k).coerceAtMost(1.0) - essence,
+        essence,
+        (Rules.PORTAL_ECHO_CHANCE * k).coerceAtMost(1.0),
+        atLeast,
+    )
 }

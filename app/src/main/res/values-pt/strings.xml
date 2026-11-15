@@ -26,6 +26,10 @@
     <string name="shop_echo_new">Novo</string>
     <string name="shop_echo_copies">%1$d/%2$d cópias</string>
     <string name="shop_echoes_renew">novos em %1$s</string>
+    <string name="shop_reroll">Renovar · %1$d</string>
+    <string name="chest_price_rule">Escala com o nível · +50% por compra hoje</string>
+    <string name="recent_activity">Atividade recente</string>
+    <string name="recent_activity_empty">Itens encontrados e outros avisos breves ficam guardados aqui.</string>
     <string name="automatic">Automático</string>
     <string name="default_hunter">Herói</string>
     <string name="level_short">Nv %1$d</string>
@@ -224,7 +228,8 @@
     <string name="passive_luck">+%1$s de sorte em drops e ecos raros</string>
     <string name="luck_odds_echo">Só com este eco (sem → com)</string>
     <string name="luck_odds_squad">Sorte do esquadrão (sem → com)</string>
-    <string name="luck_item">Item depois de uma missão</string>
+    <string name="luck_item">Baú depois de uma missão</string>
+    <string name="luck_essence">Essência de eco depois de uma missão</string>
     <string name="luck_portal">Eco ao fechar um portal</string>
     <string name="luck_rank">Eco encontrado %1$s ou melhor</string>
     <string name="luck_rank_top">Eco encontrado %1$s</string>
@@ -997,6 +1002,9 @@
     <string name="core_skin_party_hat">Chapéu de festa</string>
     <string name="core_skin_flower_crown">Coroa de flores</string>
     <string name="core_skin_sunglasses">Óculos de sol</string>
+    <string name="core_skin_hunter_crown">Diadema de caçador</string>
+    <string name="core_skin_headphones">Auscultadores de folhas</string>
+    <string name="core_skin_adventurer_band">Faixa de aventureiro</string>
     <string name="toast_core_skin">Novo acessório para a tua Core: %1$s</string>
     <!-- CoreQuest+ -->
     <string name="plus_tagline">Apoia a app e desbloqueia extras. Tudo o que é essencial continua grátis.</string>
@@ -1062,7 +1070,7 @@
     <string name="plus_perk_schedule_text">As apps que escolheres ficam bloqueadas nas horas que marcares, sem sessão de foco.</string>
     <string name="core_paints">Peles (CoreQuest+)</string>
     <string name="core_paints_hint">A Core inteira noutro material, em todas as formas e caras.</string>
-    <string name="core_paints_plus">Seis peles para a tua Core, incluídas no CoreQuest+.</string>
+    <string name="core_paints_plus">Nove peles para a tua Core, incluídas no CoreQuest+.</string>
     <string name="core_paint_none">Cores do rank</string>
     <string name="core_paint_aurora">Aurora</string>
     <string name="core_paint_shadow">Sombra</string>
@@ -1070,6 +1078,9 @@
     <string name="core_paint_ghost">Fantasma</string>
     <string name="core_paint_lava">Lava</string>
     <string name="core_paint_galaxy">Galáxia</string>
+    <string name="core_paint_clockwork">Mecânica</string>
+    <string name="core_paint_abyssal_ocean">Oceano Abissal</string>
+    <string name="core_paint_sakura_porcelain">Porcelana Sakura</string>
     <string name="report_problem">Reportar um problema</string>
     <string name="report_problem_intro">O que aconteceu? (o que estavas a fazer, o que esperavas e o que viste)</string>
     <string name="update_available">A versão %1$s está disponível</string>

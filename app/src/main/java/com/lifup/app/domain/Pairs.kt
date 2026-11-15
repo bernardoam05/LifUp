@@ -185,7 +185,7 @@ val PairQuest.isRandom get() = defId == PairRules.RANDOM || defId == PairRules.E
  */
 fun GameState.pairDefFor(p: PairQuest, cycle: String, content: Content): QuestDef? {
     if (!p.isRandom) return defOf(p.defId, content)
-    val pool = (if (p.defId == PairRules.EACH) pairDefs(content)
+    val pool = (if (p.defId == PairRules.EACH) eachPairDefs(content)
         else content.quests.filter { PairRules.eligible(it) && !it.optional }).sortedBy { it.id }
     if (pool.isEmpty()) return null
     // "Each their own": the draw depends on the member and their local active pool. Picks may coincide.
@@ -205,6 +205,10 @@ fun GameState.pairQuotaBlocked(now: Long) = pairSync.quotaBlockedUntil > now
 
 fun GameState.pairDefs(content: Content): List<QuestDef> =
     availableDefs(content).filter { content.questDefById[it.id] != null && PairRules.eligible(it) }
+
+/** Local pool for "each their own": custom missions are safe because they never cross phones. */
+fun GameState.eachPairDefs(content: Content): List<QuestDef> =
+    availableDefs(content).filter { PairRules.eligible(it) }
 
 private fun Tx.updatePair(id: String, f: (PairQuest) -> PairQuest) {
     s = s.copy(pairs = s.pairs.map { if (it.id == id) f(it) else it })

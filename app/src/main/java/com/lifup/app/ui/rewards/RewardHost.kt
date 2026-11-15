@@ -39,6 +39,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -71,17 +74,26 @@ import com.lifup.app.ui.theme.Lif
 fun RewardHost(s: GameState) {
     val context = LocalContext.current
     val snackbar = LocalSnackbar.current
+    val reward = s.rewards.firstOrNull { it !is Reward.Toast }
     val toast = s.rewards.firstOrNull { it is Reward.Toast } as Reward.Toast?
     val toastText = toast?.let { toastMessage(s, it) }
-    LaunchedEffect(toast?.id) {
-        if (toast != null && toastText != null) {
+    val window = LocalWindowInfo.current
+    LaunchedEffect(toast?.id, reward?.id) {
+        // Large rewards use a dialog. Leave brief notices queued until that dialog is gone so
+        // their snackbar timer cannot run invisibly behind it.
+        if (reward == null && toast != null && toastText != null) {
+            // Sheets and dialogs are windows of their own: while one has the focus, the snackbar under it
+            // can't be read, and the notice goes to the history as unread.
+            var covered = !window.isWindowFocused
+            val watch = launch { snapshotFlow { window.isWindowFocused }.collect { if (!it) covered = true } }
             snackbar.showSnackbar(toastText)
-            act { dismissReward(toast.id) }
+            watch.cancel()
+            act { dismissReward(toast.id, seen = !covered) }
         }
     }
 
     val revealed = remember { mutableStateListOf<Long>() }
-    val reward = s.rewards.firstOrNull { it !is Reward.Toast } ?: return
+    reward ?: return
     LaunchedEffect(reward.id) {
         when (reward) {
             is Reward.LevelUp, is Reward.RankUp, is Reward.StreakMilestone, is Reward.Unlocked -> Feedback.play(context, Sfx.LEVEL)
@@ -196,7 +208,7 @@ private fun Line(text: String, color: Color = Lif.colors.text) {
 }
 
 @Composable
-private fun toastMessage(s: GameState, t: Reward.Toast): String {
+internal fun toastMessage(s: GameState, t: Reward.Toast): String {
     val shadowName = content.shadowById[t.arg]?.name?.local() ?: t.arg
     val itemName = content.itemById[t.arg]?.name?.local() ?: t.arg
     return when (t.kind) {

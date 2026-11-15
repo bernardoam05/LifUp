@@ -3,16 +3,19 @@ package com.lifup.app.domain
 import kotlinx.serialization.Serializable
 
 /**
- * Accessories the Core can wear, one per seasonal event: beating that season's boss gives it for good. They're
- * looks only: no stats, never sold. The UI draws them over any form and face.
+ * Accessories the Core can wear: one per seasonal event (beating that season's boss gives it for good) and a few
+ * bought with gold. They're looks only: no stats, never sold for money. The UI draws them over any form and face.
  */
 @Serializable
-enum class CoreSkin(val bossId: String) {
+enum class CoreSkin(val bossId: String? = null, val goldCost: Int? = null) {
     PUMPKIN("season_halloween"),
     SCARF("season_yule"),
     PARTY_HAT("season_newyear"),
     FLOWER_CROWN("season_spring"),
-    SUNGLASSES("season_summer");
+    SUNGLASSES("season_summer"),
+    HUNTER_CROWN(goldCost = 2_500),
+    HEADPHONES(goldCost = 1_800),
+    ADVENTURER_BAND(goldCost = 1_500);
 
     companion object {
         fun forBoss(bossId: String) = entries.firstOrNull { it.bossId == bossId }
@@ -30,4 +33,15 @@ fun Tx.gainSkin(skin: CoreSkin) {
 fun Tx.wearSkin(skin: CoreSkin?) {
     if (skin != null && skin !in s.coreSkins) return
     updateSettings { it.copy(coreSkin = skin) }
+}
+
+/** Cosmetics are a permanent gold sink: no stats, no resale and no effect on progression. */
+fun Tx.buySkin(skin: CoreSkin): Boolean {
+    val base = skin.goldCost ?: return false
+    if (skin in s.coreSkins) return false
+    val cost = s.price(content, base, ctx.now)
+    if (s.player.gold < cost) return false
+    s = s.copy(player = s.player.copy(gold = s.player.gold - cost), coreSkins = s.coreSkins + skin)
+    count(StatKey.GOLD_SPENT, cost.toLong())
+    return true
 }

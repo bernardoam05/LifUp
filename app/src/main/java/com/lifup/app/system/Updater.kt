@@ -66,6 +66,7 @@ object Updater {
         if (!force && System.currentTimeMillis() - prefs.getLong("upToDateAt", 0) < CHECK_EVERY_MS) return
         if (_state.value is State.Available || _state.value is State.Downloading || _state.value is State.Installing) return
         if (!force && prefs.getString("later", null)?.let { later -> latestSeen == later } == true) return
+        if (!force && snoozed != null && snoozed == latestSeen) return
         if (!busy.tryLock()) return
         try {
             _state.value = State.Checking
@@ -76,7 +77,7 @@ object Updater {
                 return
             }
             latestSeen = release.version
-            _state.value = if (!force && prefs.getString("later", null) == release.version) State.UpToDate else State.Available(release.version, release.apkUrl)
+            _state.value = if (!force && (prefs.getString("later", null) == release.version || snoozed == release.version)) State.UpToDate else State.Available(release.version, release.apkUrl)
         } catch (e: Exception) {
             fail(FailureStep.CHECK, e)
         } finally {
@@ -85,6 +86,13 @@ object Updater {
     }
 
     private var latestSeen: String? = null
+    private var snoozed: String? = null
+
+    /** The prompt was closed without an answer: it stays away until the app starts again, and nothing is remembered. */
+    fun snooze(available: State.Available) {
+        snoozed = available.version
+        _state.value = State.UpToDate
+    }
 
     /** The player agreed: download the release and hand it to the system installer. */
     fun install(context: Context, available: State.Available) {

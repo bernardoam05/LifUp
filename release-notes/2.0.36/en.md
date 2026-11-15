@@ -1,0 +1,11 @@
+- [new] Three new CoreQuest+ skins for the Core: Clockwork, Abyssal Ocean and Sakura Porcelain.
+- [new] Three accessories to buy with gold in the Core sheet: Hunter diadem, Leaf headphones and Adventurer band.
+- [new] The Core has its own sleeping face on every form and skin.
+- [new] Recent activity: the bell at the top keeps the brief notices, and marks the ones that ran behind a sheet or a dialog.
+- [new] The shop's echo offers can be refreshed for gold; each refresh costs more until midnight.
+- [new] Two new missions, Ready for Tomorrow and Digital Cleanup, and several "avoid" missions became things to do.
+- [tweak] The Hero's Chest in the shop costs more as you level up and 50% more for each one bought that day.
+- [tweak] "Each their own" pair missions can also draw the missions you created.
+- [tweak] Luck odds show the chest and the echo essence separately.
+- [fix] Widgets count unbroken avoid missions like the Today screen does.
+- [fix] Tapping outside the update prompt only hides it until the app is opened again, instead of silencing that version.

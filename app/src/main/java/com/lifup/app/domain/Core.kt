@@ -2,7 +2,7 @@ package com.lifup.app.domain
 
 import java.time.LocalDate
 
-/** How the Core looks right now; the UI picks the sprite (SLEEPING is the relaxed face with drifting Zs). */
+/** How the Core looks right now; the UI picks the matching sprite and adds drifting Zs while sleeping. */
 enum class CoreMood { NEUTRAL, CONFIDENT, HAPPY, FOCUSED, RELAXED, EXCITED, TIRED, FRUSTRATED, SLEEPING }
 
 /** The Core, LifUp's companion: six forms unlocked by hunter rank and a face that follows the day. */

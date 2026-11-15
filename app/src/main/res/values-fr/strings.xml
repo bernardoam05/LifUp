@@ -26,6 +26,10 @@
     <string name="shop_echo_new">Nouveau</string>
     <string name="shop_echo_copies">%1$d/%2$d copies</string>
     <string name="shop_echoes_renew">nouveaux dans %1$s</string>
+    <string name="shop_reroll">Renouveler · %1$d</string>
+    <string name="chest_price_rule">Évolue avec le niveau · +50 % par achat aujourd’hui</string>
+    <string name="recent_activity">Activité récente</string>
+    <string name="recent_activity_empty">Les objets trouvés et autres avis brefs resteront ici.</string>
     <string name="automatic">Automatique</string>
     <string name="default_hunter">Héros</string>
     <string name="level_short">Nv %1$d</string>
@@ -224,7 +228,8 @@
     <string name="passive_luck">+%1$s de chance pour le butin et les échos rares</string>
     <string name="luck_odds_echo">Avec cet écho seul (sans → avec)</string>
     <string name="luck_odds_squad">Chance de l\'escouade (sans → avec)</string>
-    <string name="luck_item">Objet après une mission</string>
+    <string name="luck_item">Coffre après une mission</string>
+    <string name="luck_essence">Essence d’écho après une mission</string>
     <string name="luck_portal">Écho en fermant un portail</string>
     <string name="luck_rank">Écho trouvé %1$s ou mieux</string>
     <string name="luck_rank_top">Écho trouvé %1$s</string>
@@ -997,6 +1002,9 @@
     <string name="core_skin_party_hat">Chapeau de fête</string>
     <string name="core_skin_flower_crown">Couronne de fleurs</string>
     <string name="core_skin_sunglasses">Lunettes de soleil</string>
+    <string name="core_skin_hunter_crown">Diadème de chasseur</string>
+    <string name="core_skin_headphones">Casque feuillu</string>
+    <string name="core_skin_adventurer_band">Bandeau d’aventurier</string>
     <string name="toast_core_skin">Nouvel accessoire pour ton Core : %1$s</string>
     <!-- CoreQuest+ -->
     <string name="plus_tagline">Soutiens l\'app et débloque des extras. Tout l\'essentiel reste gratuit.</string>
@@ -1062,7 +1070,7 @@
     <string name="plus_perk_schedule_text">Les apps que tu choisis restent bloquées aux heures que tu fixes, sans session de focus.</string>
     <string name="core_paints">Apparences (CoreQuest+)</string>
     <string name="core_paints_hint">Le Core entier dans une autre matière, sur toutes les formes et tous les visages.</string>
-    <string name="core_paints_plus">Six apparences pour ton Core, incluses dans CoreQuest+.</string>
+    <string name="core_paints_plus">Neuf apparences pour ton Core, incluses dans CoreQuest+.</string>
     <string name="core_paint_none">Couleurs du rang</string>
     <string name="core_paint_aurora">Aurore</string>
     <string name="core_paint_shadow">Ombre</string>
@@ -1070,6 +1078,9 @@
     <string name="core_paint_ghost">Fantôme</string>
     <string name="core_paint_lava">Lave</string>
     <string name="core_paint_galaxy">Galaxie</string>
+    <string name="core_paint_clockwork">Mécanique</string>
+    <string name="core_paint_abyssal_ocean">Océan abyssal</string>
+    <string name="core_paint_sakura_porcelain">Porcelaine sakura</string>
     <string name="report_problem">Signaler un problème</string>
     <string name="report_problem_intro">Que s\'est-il passé ? (ce que tu faisais, ce que tu attendais, ce que tu as vu)</string>
     <string name="update_available">La version %1$s est disponible</string>

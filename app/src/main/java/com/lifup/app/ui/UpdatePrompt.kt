@@ -18,7 +18,7 @@ fun UpdatePrompt() {
     val av = state as? Updater.State.Available ?: return
     val context = LocalContext.current.applicationContext
     AlertDialog(
-        onDismissRequest = { Updater.later(context, av) },
+        onDismissRequest = { Updater.snooze(av) },
         title = { Text(stringResource(R.string.update_prompt_title, av.version)) },
         text = { Text(stringResource(R.string.update_prompt_text)) },
         confirmButton = { TextButton(onClick = { Updater.install(context, av) }) { Text(stringResource(R.string.update_now).uppercase()) } },

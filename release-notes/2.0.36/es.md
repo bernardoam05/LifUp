@@ -1,0 +1,11 @@
+- [new] Tres aspectos nuevos de CoreQuest+ para el Core: Mecánica, Océano abisal y Porcelana sakura.
+- [new] Tres accesorios para comprar con oro en la hoja del Core: Diadema de cazador, Auriculares de hojas y Banda de aventurero.
+- [new] El Core tiene su propia cara dormida en todas las formas y aspectos.
+- [new] Actividad reciente: la campana de arriba guarda los avisos breves y señala los que pasaron detrás de una hoja o un diálogo.
+- [new] Las ofertas de ecos de la tienda se pueden renovar con oro; cada renovación cuesta más hasta la medianoche.
+- [new] Dos misiones nuevas, Mañana Preparado y Limpieza Digital, y varias misiones de "evitar" pasaron a ser cosas que hacer.
+- [tweak] El Cofre del Héroe de la tienda cuesta más a medida que subes de nivel y un 50% más por cada uno comprado ese día.
+- [tweak] Las misiones en pareja "cada uno la suya" también pueden sortear las misiones que creaste.
+- [tweak] Las probabilidades de suerte muestran el cofre y la esencia de eco por separado.
+- [fix] Los widgets cuentan las misiones de evitar aún intactas como la pantalla Hoy.
+- [fix] Tocar fuera del aviso de actualización solo lo oculta hasta que la app se vuelva a abrir, en lugar de silenciar esa versión.

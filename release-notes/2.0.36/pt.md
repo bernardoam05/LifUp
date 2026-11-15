@@ -1,0 +1,11 @@
+- [new] Três peles novas do CoreQuest+ para a Core: Mecânica, Oceano Abissal e Porcelana Sakura.
+- [new] Três acessórios para comprar com ouro na folha da Core: Diadema de caçador, Auscultadores de folhas e Faixa de aventureiro.
+- [new] A Core tem uma cara própria a dormir em todas as formas e peles.
+- [new] Atividade recente: o sino no topo guarda os avisos breves e assinala os que passaram atrás de uma folha ou de um diálogo.
+- [new] As ofertas de ecos da loja podem ser renovadas com ouro; cada renovação custa mais até à meia-noite.
+- [new] Duas missões novas, Amanhã Preparado e Limpeza Digital, e várias missões de "evitar" passaram a ser coisas para fazer.
+- [tweak] O Baú do Herói na loja custa mais à medida que sobes de nível e mais 50% por cada um comprado nesse dia.
+- [tweak] As missões de par "cada um a sua" também podem sortear as missões que criaste.
+- [tweak] As probabilidades de sorte mostram o baú e a essência de eco em separado.
+- [fix] Os widgets contam as missões de evitar ainda intactas como o ecrã Hoje.
+- [fix] Tocar fora do aviso de atualização só o esconde até a app voltar a abrir, em vez de silenciar essa versão.

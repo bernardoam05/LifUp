@@ -32,6 +32,7 @@ import androidx.compose.material.icons.rounded.Paid
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Psychology
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.material.icons.rounded.Storefront
 import androidx.compose.material.icons.rounded.TaskAlt
 import androidx.compose.material.icons.rounded.Warning
@@ -296,6 +297,7 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
     val p = s.player
     val rank = HunterRank.of(p.level)
     val now = rememberNow(30_000)
+    var notices by remember { mutableStateOf(false) }
     Column(Modifier.background(Lif.colors.panel).statusBarsPadding()) {
         Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 10.dp), verticalAlignment = Alignment.CenterVertically) {
             // Rank, name and XP open the progression: what the next levels bring.
@@ -320,6 +322,13 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
             HudChip(Icons.Rounded.Paid, fmtCompact(p.gold.toLong()), Lif.colors.gold, text = if (p.gold < 0) Lif.colors.red else Lif.colors.text)
             Spacer(Modifier.width(8.dp))
             StreakFlame(s)
+            IconButton(onClick = { notices = true }) {
+                BadgedBox(badge = {
+                    if (s.unreadNotices.isNotEmpty()) Badge(containerColor = Lif.colors.accent, contentColor = Lif.colors.bg) {
+                        Text("${s.unreadNotices.size.coerceAtMost(99)}")
+                    }
+                }) { Icon(Icons.Rounded.Notifications, stringResource(R.string.recent_activity), tint = Lif.colors.muted) }
+            }
             IconButton(onClick = openSettings) { Icon(Icons.Rounded.Settings, stringResource(R.string.settings), tint = Lif.colors.muted) }
         }
         if (s.penalty.active) {
@@ -344,6 +353,7 @@ private fun Hud(s: GameState, openSettings: () -> Unit) {
             }
         }
     }
+    if (notices) com.lifup.app.ui.rewards.NoticeHistorySheet(s) { notices = false }
 }
 
 /**

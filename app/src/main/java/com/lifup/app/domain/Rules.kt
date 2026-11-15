@@ -46,6 +46,9 @@ object Rules {
     const val PORTAL_CHANCE = 0.25
     /** Portals never ask for more than this much effort, so they fit in an evening. */
     const val PORTAL_MAX_TASK_MIN = 150.0
+    /** What a portal mission made in the Forge is worth before the portal doubles it (the catalogue's usual portal reward). */
+    const val CUSTOM_PORTAL_XP = 45
+    const val CUSTOM_PORTAL_GOLD = 12
     const val MIN_PER_KM = 10.0
     const val STEPS_PER_MIN = 100.0
     const val DEFAULT_TASK_MIN = 15.0

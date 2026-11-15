@@ -28,6 +28,10 @@
     <string name="shop_echo_new">New</string>
     <string name="shop_echo_copies">%1$d/%2$d copies</string>
     <string name="shop_echoes_renew">new in %1$s</string>
+    <string name="shop_reroll">Refresh · %1$d</string>
+    <string name="chest_price_rule">Scales with level · +50% each purchase today</string>
+    <string name="recent_activity">Recent activity</string>
+    <string name="recent_activity_empty">Items found and other brief notices will stay here.</string>
     <string name="automatic">Automatic</string>
     <string name="default_hunter">Hero</string>
     <string name="level_short">Lv %1$d</string>
@@ -237,7 +241,8 @@
     <string name="passive_luck">+%1$s luck for drops and rare echoes</string>
     <string name="luck_odds_echo">This echo alone (without → with)</string>
     <string name="luck_odds_squad">Your squad\'s luck (without → with)</string>
-    <string name="luck_item">Item after a mission</string>
+    <string name="luck_item">Chest after a mission</string>
+    <string name="luck_essence">Echo essence after a mission</string>
     <string name="luck_portal">Echo when clearing a portal</string>
     <string name="luck_rank">Found echo %1$s or better</string>
     <string name="luck_rank_top">Found echo %1$s</string>
@@ -1016,6 +1021,9 @@
     <string name="core_skin_party_hat">Party hat</string>
     <string name="core_skin_flower_crown">Flower crown</string>
     <string name="core_skin_sunglasses">Sunglasses</string>
+    <string name="core_skin_hunter_crown">Hunter diadem</string>
+    <string name="core_skin_headphones">Leaf headphones</string>
+    <string name="core_skin_adventurer_band">Adventurer band</string>
     <string name="toast_core_skin">New accessory for your Core: %1$s</string>
     <!-- CoreQuest+ -->
     <string name="plus_tagline">Support the app and unlock extras. Everything essential stays free.</string>
@@ -1081,7 +1089,7 @@
     <string name="plus_perk_schedule_text">The apps you choose stay blocked at the hours you set, without a focus session.</string>
     <string name="core_paints">Skins (CoreQuest+)</string>
     <string name="core_paints_hint">The whole Core in another material, on every form and face.</string>
-    <string name="core_paints_plus">Six skins for your Core, included in CoreQuest+.</string>
+    <string name="core_paints_plus">Nine skins for your Core, included in CoreQuest+.</string>
     <string name="core_paint_none">Rank colours</string>
     <string name="core_paint_aurora">Aurora</string>
     <string name="core_paint_shadow">Shadow</string>
@@ -1089,6 +1097,9 @@
     <string name="core_paint_ghost">Ghost</string>
     <string name="core_paint_lava">Lava</string>
     <string name="core_paint_galaxy">Galaxy</string>
+    <string name="core_paint_clockwork">Clockwork</string>
+    <string name="core_paint_abyssal_ocean">Abyssal Ocean</string>
+    <string name="core_paint_sakura_porcelain">Sakura Porcelain</string>
     <string name="report_problem">Report a problem</string>
     <string name="report_problem_intro">What happened? (what you were doing, what you expected, what you saw)</string>
     <string name="update_available">Version %1$s is available</string>

@@ -54,10 +54,13 @@ import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.buyItem
 import com.lifup.app.domain.itemXp
+import com.lifup.app.domain.itemPrice
 import com.lifup.app.domain.usedOnBuy
 import com.lifup.app.domain.buyShadow
 import com.lifup.app.domain.price
 import com.lifup.app.domain.useItem
+import com.lifup.app.domain.rerollShadowOffers
+import com.lifup.app.domain.shadowRerollCost
 import com.lifup.app.ui.Feedback
 import com.lifup.app.ui.act
 import com.lifup.app.ui.components.ConfirmDialog
@@ -90,6 +93,10 @@ fun ShopScreen(s: GameState) {
                 val midnight = java.time.LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
                 SectionTitle(stringResource(R.string.shadow_offers)) {
                     Text(stringResource(R.string.shop_echoes_renew, fmtShort((midnight - now).coerceAtLeast(0))), color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium)
+                    val reroll = s.shadowRerollCost(content, now)
+                    TextButton(onClick = { act { rerollShadowOffers() } }, enabled = s.player.gold >= reroll) {
+                        Text(stringResource(R.string.shop_reroll, reroll), color = if (s.player.gold >= reroll) Lif.colors.gold else Lif.colors.dim)
+                    }
                     InfoButton(Guide.SHOP)
                 }
             }
@@ -131,7 +138,7 @@ private fun BuyConfirm(s: GameState, key: String, now: Long, onDismiss: () -> Un
     val shadow = if (kind == "shadow") content.shadowById[id] else null
     val item = if (kind == "item") content.itemById[id] else null
     val name = shadow?.name?.local() ?: item?.name?.local() ?: return onDismiss()
-    val cost = s.price(content, shadow?.let { Rules.shopShadowPrice(it.rank) } ?: item!!.cost, now)
+    val cost = shadow?.let { s.price(content, Rules.shopShadowPrice(it.rank), now) } ?: s.itemPrice(content, item!!, now)
     val snackbar = com.lifup.app.ui.LocalSnackbar.current
     val goTo = com.lifup.app.ui.LocalTabSwitcher.current
     val scope = rememberCoroutineScope()
@@ -158,7 +165,7 @@ private fun BuyConfirm(s: GameState, key: String, now: Long, onDismiss: () -> Un
 @Composable
 private fun ShopRow(s: GameState, item: ItemDef, now: Long, onBuy: () -> Unit) {
     val c = Lif.colors
-    val cost = s.price(content, item.cost, now)
+    val cost = s.itemPrice(content, item, now)
     val left = s.shop.stock[item.id]
     val soldOut = left != null && left <= 0
     val affordable = s.player.gold >= cost && !soldOut
@@ -172,6 +179,7 @@ private fun ShopRow(s: GameState, item: ItemDef, now: Long, onBuy: () -> Unit) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(top = 4.dp)) {
                     if (left != null) Pill(stringResource(R.string.stock_left, left, item.weeklyStock ?: 0), if (soldOut) c.red else c.muted)
                     if (s.items(item.id) > 0) Pill(stringResource(R.string.owned_n, s.items(item.id)), c.green)
+                    if (item.id == Rules.ACHIEVEMENT_CHEST) Pill(stringResource(R.string.chest_price_rule), c.gold)
                 }
             }
             TextButton(onClick = onBuy, enabled = affordable) {

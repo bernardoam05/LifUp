@@ -30,8 +30,8 @@ import androidx.glance.background
 import androidx.glance.unit.ColorProvider
 import com.lifup.app.LifUpApp
 import com.lifup.app.R
+import com.lifup.app.domain.isSuccessful
 import com.lifup.app.domain.Core
-import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.countedQuests
 import com.lifup.app.domain.shownPaint
 import com.lifup.app.ui.components.coreSprite
@@ -59,10 +59,10 @@ class CoreWidget : GlanceAppWidget() {
                     Spacer(GlanceModifier.height(4.dp))
                     if (s.plus) {
                         val counted = s.countedQuests()
-                        Label("${counted.count { it.status == QuestStatus.DONE }} / ${counted.size}", W_TEXT, 14, bold = true)
+                        Label("${counted.count { it.isSuccessful() }} / ${counted.size}", W_TEXT, 14, bold = true)
                         if (large) {
                             Spacer(GlanceModifier.height(5.dp))
-                            Bar(counted.count { it.status == QuestStatus.DONE } / counted.size.coerceAtLeast(1).toFloat(), W_PURPLE, 5.dp)
+                            Bar(counted.count { it.isSuccessful() } / counted.size.coerceAtLeast(1).toFloat(), W_PURPLE, 5.dp)
                         }
                     } else Label(context.getString(R.string.widget_core_plus), W_MUTED, 11)
                 }

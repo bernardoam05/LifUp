@@ -210,6 +210,14 @@ class PairsTest {
         assertEquals(only.id, picked?.id)
     }
 
+    @Test fun `each their own includes local custom missions but shared modes do not`() {
+        val custom = def.copy(id = "custom_pair", title = plainText("My mission"))
+        val builtIns = content.quests.filter { PairRules.eligible(it) }.map { it.id }.toSet()
+        val s = GameState(onboarded = true, customDefs = listOf(custom), disabledDefIds = builtIns)
+        assertEquals(custom.id, s.pairDefFor(pair().copy(defId = PairRules.EACH), "2026-11-11", content)?.id)
+        assertTrue(s.pairDefs(content).none { it.id == custom.id })
+    }
+
     @Test fun `links round-trip, and a changed or foreign one fails`() {
         val secret = PairLink.newSecret()
         val done = PairLink.Done("p1", "2026-11-11", "rui", 40, 1_700_000_000_000)

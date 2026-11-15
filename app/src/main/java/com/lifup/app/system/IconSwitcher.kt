@@ -15,16 +15,18 @@ import com.lifup.app.domain.shownPaint
  */
 object IconSwitcher {
     private val PLAIN = listOf("MainActivity", "CoreIcon2", "CoreIcon3", "CoreIcon4", "CoreIcon5", "CoreIcon6")
+    private val ICON_PAINTS = listOf(CorePaint.AURORA, CorePaint.SHADOW, CorePaint.CRYSTAL, CorePaint.GHOST, CorePaint.LAVA, CorePaint.GALAXY)
 
     /** Every launcher entry: the six forms, then each CoreQuest+ skin's six forms (".CoreIcon<n><Skin>"). */
-    private val ALIASES = PLAIN + CorePaint.entries.flatMap { p -> (1..6).map { n -> "CoreIcon$n${p.name.lowercase().replaceFirstChar { it.uppercase() }}" } }
+    private val ALIASES = PLAIN + ICON_PAINTS.flatMap { p -> (1..6).map { n -> "CoreIcon$n${p.name.lowercase().replaceFirstChar { it.uppercase() }}" } }
 
     /** 1-based index into [ALIASES]: the form, in the skin worn (if any). */
     fun wanted(s: GameState): Int {
         if (s.settings.fixedIcon) return 1
         val stage = Core.stage(s)
-        val paint = s.shownPaint ?: return stage
-        return PLAIN.size + paint.ordinal * 6 + stage
+        val paintIndex = ICON_PAINTS.indexOf(s.shownPaint)
+        if (paintIndex < 0) return stage
+        return PLAIN.size + paintIndex * 6 + stage
     }
 
     fun apply(context: Context, s: GameState) {

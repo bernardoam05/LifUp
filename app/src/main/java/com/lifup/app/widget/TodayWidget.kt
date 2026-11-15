@@ -38,6 +38,7 @@ import com.lifup.app.domain.QuestStatus
 import com.lifup.app.domain.QuestType
 import com.lifup.app.domain.availableAt
 import com.lifup.app.domain.dayGoal
+import com.lifup.app.domain.isSuccessful
 import com.lifup.app.domain.text
 import java.util.Locale
 
@@ -76,7 +77,7 @@ class TodayWidget : GlanceAppWidget() {
 @Composable
 private fun Compact(context: Context, s: GameState) {
     val counted = s.countedQuests()
-    val done = counted.count { it.status == QuestStatus.DONE }
+    val done = counted.count { it.isSuccessful() }
     val goal = s.dayGoal().copy(kept = done)
     Row(verticalAlignment = Alignment.CenterVertically, modifier = GlanceModifier.fillMaxWidth()) {
         Label(context.getString(R.string.tab_today).uppercase(), W_MUTED, 11, bold = true, modifier = GlanceModifier.defaultWeight())
@@ -95,7 +96,7 @@ private fun Full(context: Context, s: GameState, rows: Int) {
     val lang = Locale.getDefault().language
     val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
     val daily = s.countedQuests()
-    val done = daily.count { it.status == QuestStatus.DONE }
+    val done = daily.count { it.isSuccessful() }
     val goal = s.dayGoal().copy(kept = done)
     Row(verticalAlignment = Alignment.CenterVertically, modifier = GlanceModifier.fillMaxWidth()) {
         Label(context.getString(R.string.tab_today).uppercase(), W_PURPLE, 12, bold = true)

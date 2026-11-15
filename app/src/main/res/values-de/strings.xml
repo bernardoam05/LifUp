@@ -27,6 +27,10 @@
     <string name="shop_echo_new">Neu</string>
     <string name="shop_echo_copies">%1$d/%2$d Kopien</string>
     <string name="shop_echoes_renew">neu in %1$s</string>
+    <string name="shop_reroll">Erneuern · %1$d</string>
+    <string name="chest_price_rule">Skaliert mit der Stufe · heute +50 % je Kauf</string>
+    <string name="recent_activity">Letzte Aktivitäten</string>
+    <string name="recent_activity_empty">Gefundene Gegenstände und andere kurze Hinweise bleiben hier.</string>
     <string name="automatic">Automatisch</string>
     <string name="default_hunter">Held</string>
     <string name="level_short">Lv %1$d</string>
@@ -236,7 +240,8 @@
     <string name="passive_luck">+%1$s Glück für Beute und seltene Echos</string>
     <string name="luck_odds_echo">Nur mit diesem Echo (ohne → mit)</string>
     <string name="luck_odds_squad">Glück des Trupps (ohne → mit)</string>
-    <string name="luck_item">Gegenstand nach einer Mission</string>
+    <string name="luck_item">Truhe nach einer Mission</string>
+    <string name="luck_essence">Echo-Essenz nach einer Mission</string>
     <string name="luck_portal">Echo beim Schließen eines Portals</string>
     <string name="luck_rank">Gefundenes Echo %1$s oder besser</string>
     <string name="luck_rank_top">Gefundenes Echo %1$s</string>
@@ -1015,6 +1020,9 @@
     <string name="core_skin_party_hat">Partyhut</string>
     <string name="core_skin_flower_crown">Blumenkranz</string>
     <string name="core_skin_sunglasses">Sonnenbrille</string>
+    <string name="core_skin_hunter_crown">Jägerdiadem</string>
+    <string name="core_skin_headphones">Blatt-Kopfhörer</string>
+    <string name="core_skin_adventurer_band">Abenteurer-Stirnband</string>
     <string name="toast_core_skin">Neues Accessoire für deinen Core: %1$s</string>
     <!-- CoreQuest+ -->
     <string name="plus_tagline">Unterstütze die App und schalte Extras frei. Alles Wesentliche bleibt kostenlos.</string>
@@ -1080,7 +1088,7 @@
     <string name="plus_perk_schedule_text">Die gewählten Apps bleiben zu deinen Zeiten gesperrt, ohne Fokussitzung.</string>
     <string name="core_paints">Skins (CoreQuest+)</string>
     <string name="core_paints_hint">Der ganze Core in einem anderen Material, in jeder Form und mit jedem Gesicht.</string>
-    <string name="core_paints_plus">Sechs Skins für deinen Core, in CoreQuest+ enthalten.</string>
+    <string name="core_paints_plus">Neun Skins für deinen Core, in CoreQuest+ enthalten.</string>
     <string name="core_paint_none">Rangfarben</string>
     <string name="core_paint_aurora">Polarlicht</string>
     <string name="core_paint_shadow">Schatten</string>
@@ -1088,6 +1096,9 @@
     <string name="core_paint_ghost">Geist</string>
     <string name="core_paint_lava">Lava</string>
     <string name="core_paint_galaxy">Galaxie</string>
+    <string name="core_paint_clockwork">Uhrwerk</string>
+    <string name="core_paint_abyssal_ocean">Tiefsee</string>
+    <string name="core_paint_sakura_porcelain">Sakura-Porzellan</string>
     <string name="report_problem">Problem melden</string>
     <string name="report_problem_intro">Was ist passiert? (was du gemacht hast, was du erwartet und was du gesehen hast)</string>
     <string name="update_available">Version %1$s ist verfügbar</string>

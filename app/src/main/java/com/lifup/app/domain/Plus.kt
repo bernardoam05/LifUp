@@ -105,7 +105,7 @@ fun Tx.removeBlockWindow(index: Int) = updateSettings { it.copy(blockWindows = i
 
 /** CoreQuest+ skins: the whole Core redrawn in another material, on every form and face. Looks only. */
 @kotlinx.serialization.Serializable
-enum class CorePaint { AURORA, SHADOW, CRYSTAL, GHOST, LAVA, GALAXY }
+enum class CorePaint { AURORA, SHADOW, CRYSTAL, GHOST, LAVA, GALAXY, CLOCKWORK, ABYSSAL_OCEAN, SAKURA_PORCELAIN }
 
 /** Puts on a CoreQuest+ skin, or back to the rank colours with null. */
 fun Tx.wearPaint(paint: CorePaint?) {

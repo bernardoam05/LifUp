@@ -9,8 +9,16 @@ fun Tx.ensureShop() {
         val stock = content.items.mapNotNull { item -> item.weeklyStock?.let { item.id to it } }.toMap()
         s = s.copy(shop = s.shop.copy(weekKey = ctx.weekKey, stock = stock))
     }
+    // Keep the purchase counter independent from offer rotation. This also repairs saves created
+    // between the introduction of daily purchases and their first natural offer refresh.
+    if (s.shop.purchasesDay < ctx.todayKey) {
+        s = s.copy(shop = s.shop.copy(purchasesDay = ctx.todayKey, dailyPurchases = emptyMap()))
+    }
     if (s.shop.offersDay >= ctx.todayKey) return // ISO dates: never rotate backwards
-    s = s.copy(shop = s.shop.copy(offersDay = ctx.todayKey, shadowOffers = dailyShadowOffers(s, content, ctx)))
+    s = s.copy(shop = s.shop.copy(
+        offersDay = ctx.todayKey,
+        shadowOffers = dailyShadowOffers(s, content, ctx),
+    ))
 }
 
 /**
@@ -19,9 +27,9 @@ fun Tx.ensureShop() {
  * [Rules.SHOP_MARSHAL_CHANCE] of days, so they stay rare). The same all day for this install; a tier
  * skips yesterday's echo while it has another.
  */
-internal fun dailyShadowOffers(s: GameState, content: Content, ctx: Ctx): List<String> {
+internal fun dailyShadowOffers(s: GameState, content: Content, ctx: Ctx, salt: Int = 0): List<String> {
     val pool = content.shadowPool(SourceType.SHOP)
-    val rng = Random(ctx.todayKey.hashCode().toLong() * 31 + 7 xor s.seed)
+    val rng = Random((ctx.todayKey.hashCode().toLong() * 31 + 7 xor s.seed) + salt * 104_729L)
     val yesterday = s.shop.shadowOffers.toSet()
     fun pick(ranks: Set<ShadowRank>): ShadowDef? {
         val tier = pool.filter { it.rank in ranks }
@@ -32,18 +40,53 @@ internal fun dailyShadowOffers(s: GameState, content: Content, ctx: Ctx): List<S
     return listOfNotNull(pick(setOf(ShadowRank.NORMAL, ShadowRank.ELITE)), pick(setOf(ShadowRank.KNIGHT)), high).map { it.id }
 }
 
+fun GameState.shadowRerollCost(content: Content, now: Long): Int {
+    val used = shop.dailyPurchases["shadow_reroll"] ?: 0
+    return price(content, 600 * (used + 1), now)
+}
+
+/** Replaces all three offers; repeated refreshes cost more until midnight. */
+fun Tx.rerollShadowOffers(): Boolean {
+    val key = "shadow_reroll"
+    val used = s.shop.dailyPurchases[key] ?: 0
+    val cost = s.shadowRerollCost(content, ctx.now)
+    if (s.player.gold < cost) return false
+    val offers = dailyShadowOffers(s, content, ctx, salt = used + 1)
+    if (offers.isEmpty()) return false
+    s = s.copy(
+        player = s.player.copy(gold = s.player.gold - cost),
+        shop = s.shop.copy(dailyPurchases = s.shop.dailyPurchases + (key to used + 1), shadowOffers = offers),
+    )
+    count(StatKey.GOLD_SPENT, cost.toLong())
+    return true
+}
+
 fun GameState.price(content: Content, base: Int, now: Long): Int =
     (base * (1 - passives(content, now).shopDiscount)).roundToInt()
+
+/** An item's price before the squad's discount. Chests grow with their level-scaled rewards and by 50% for each one already bought today. */
+fun GameState.itemBasePrice(item: ItemDef): Int {
+    if (item.id != Rules.ACHIEVEMENT_CHEST) return item.cost
+    val bought = shop.dailyPurchases[item.id] ?: 0
+    return (item.cost * Rules.tierMultiplier(player.level) * (1.0 + bought * 0.5)).roundToInt()
+}
+
+fun GameState.itemPrice(content: Content, item: ItemDef, now: Long): Int = price(content, itemBasePrice(item), now)
 
 fun Tx.buyItem(id: String): Boolean {
     val item = content.itemById[id] ?: return false
     val left = s.shop.stock[id]
     if (left != null && left <= 0) return false
-    val cost = s.price(content, item.cost, ctx.now)
+    val cost = s.itemPrice(content, item, ctx.now)
     if (s.player.gold < cost) return false
     s = s.copy(player = s.player.copy(gold = s.player.gold - cost))
-    squadAdded(SquadGain(gold = item.cost - cost))
+    // What the squad's discount saved, against today's full price (the chest's is not its catalogue cost).
+    squadAdded(SquadGain(gold = s.itemBasePrice(item) - cost))
     if (left != null) s = s.copy(shop = s.shop.copy(stock = s.shop.stock + (id to left - 1)))
+    if (id == Rules.ACHIEVEMENT_CHEST) s = s.copy(shop = s.shop.copy(
+        purchasesDay = ctx.todayKey,
+        dailyPurchases = s.shop.dailyPurchases + (id to ((s.shop.dailyPurchases[id] ?: 0) + 1)),
+    ))
     addItem(id)
     count(StatKey.GOLD_SPENT, cost.toLong())
     if (item.usedOnBuy()) useItem(id)

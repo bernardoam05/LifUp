@@ -1,0 +1,11 @@
+- [new] Trois nouvelles apparences CoreQuest+ pour le Core : Mécanique, Océan abyssal et Porcelaine sakura.
+- [new] Trois accessoires à acheter avec de l'or dans la fiche du Core : Diadème de chasseur, Casque feuillu et Bandeau d'aventurier.
+- [new] Le Core a son propre visage endormi sur toutes les formes et apparences.
+- [new] Activité récente : la cloche en haut garde les brèves notifications et signale celles passées derrière une fiche ou une boîte de dialogue.
+- [new] Les offres d'échos de la boutique peuvent être renouvelées contre de l'or ; chaque renouvellement coûte plus cher jusqu'à minuit.
+- [new] Deux nouvelles missions, Prêt pour Demain et Ménage Numérique, et plusieurs missions « à éviter » sont devenues des choses à faire.
+- [tweak] Le Coffre du Héros de la boutique coûte plus cher à mesure que tu montes de niveau et 50 % de plus pour chacun acheté ce jour-là.
+- [tweak] Les missions en duo « chacun la sienne » peuvent aussi tirer les missions que tu as créées.
+- [tweak] Les chances liées à la chance affichent le coffre et l'essence d'écho séparément.
+- [fix] Les widgets comptent les missions à éviter encore intactes comme l'écran Aujourd'hui.
+- [fix] Toucher en dehors de l'avis de mise à jour le masque seulement jusqu'à la prochaine ouverture de l'app, au lieu de faire taire cette version.

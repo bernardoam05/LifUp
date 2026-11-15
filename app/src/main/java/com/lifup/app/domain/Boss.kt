@@ -192,7 +192,7 @@ private fun Tx.portalQuest(def: QuestDef): Quest {
     // Objectives are personalisable, rewards are not: built-ins keep the catalog reward and custom portals use
     // the system's standard portal reward. This also protects imported/hand-edited saves from inflating rewards.
     val system = content.portalQuests.firstOrNull { it.id == def.id }
-    val rewarded = def.copy(baseXp = system?.baseXp ?: 45, baseGold = system?.baseGold ?: 12)
+    val rewarded = def.copy(baseXp = system?.baseXp ?: Rules.CUSTOM_PORTAL_XP, baseGold = system?.baseGold ?: Rules.CUSTOM_PORTAL_GOLD)
     val base = buildQuest(rewarded, s.player.level, QuestOrigin.PORTAL, "portal_${s.nextId}")
     return base.copy(xp = base.xp * 2, gold = base.gold * 2)
 }
