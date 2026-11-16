@@ -31,7 +31,7 @@ object PairCloud {
     class PairFull : Exception()
 
     /** What one read of a pair found. [gone]: deleted, or this phone is no longer in it. */
-    data class Snapshot(val partnerUid: String?, val partnerName: String?, val marks: Map<String, PartnerMark>, val gone: Boolean, val membersLeft: Int, val left: Boolean = false)
+    data class Snapshot(val partnerUid: String?, val partnerName: String?, val marks: Map<String, PartnerMark>, val gone: Boolean, val membersLeft: Int, val left: Boolean = false, val pause: String? = null)
 
     private const val APP = "pairs"
     private const val EXPIRE_MS = 30L * 24 * 3_600_000
@@ -167,7 +167,7 @@ object PairCloud {
         // The partner had joined and is no longer in: they left, and the pair waits for someone to join again.
         if (partner == null && p.partnerUid != null) return@call Snapshot(null, null, emptyMap(), gone = false, membersLeft = members.size, left = true)
         val part = partner?.let { ref.collection("parts").document(it).get(Source.SERVER).await() }
-        Snapshot(partner, part?.getString("name"), marksOf(part?.get("done")), gone = false, membersLeft = members.size)
+        Snapshot(partner, part?.getString("name"), marksOf(part?.get("done")), gone = false, membersLeft = members.size, pause = part?.getString("pause"))
     }
 
     /**
@@ -190,6 +190,15 @@ object PairCloud {
             .update(FieldPath.of("done", cycle), mapOf("at" to FieldValue.serverTimestamp(), "amount" to amount.coerceIn(0, 100_000)), *more.toTypedArray())
             .await()
         if (bump) runCatching { ref.update("expireAt", expiry()).await() }
+        Unit
+    }
+
+    /** Tells the partner about this player's pause ("first/last" day), or with null that it is over. */
+    suspend fun setPause(context: Context, p: PairQuest, pause: String?) = call {
+        uid(context)
+        db(context).collection("pairs").document(p.id).collection("parts").document(p.myUid)
+            .update(mapOf("pause" to (pause ?: FieldValue.delete()), "expireAt" to expiry()))
+            .await()
         Unit
     }
 

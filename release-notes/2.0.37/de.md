@@ -1,0 +1,14 @@
+- [new] Wähle deine Missionen gleich zu Beginn: die Bereiche, an denen du arbeiten willst, die Missionen, die nichts für dich sind, und deine feste tägliche Gewohnheit.
+- [new] Tagesende: Unter Einstellungen → Spiel kann der Tag zwischen 00:00 und 05:00 Uhr enden. Missionen bis dahin zählen für den Vortag, auch die Schlafenszeit.
+- [new] Pausen zählen für Paare: Ein Zyklus, der in deiner Pause oder der deines Partners verpasst wird, kostet niemanden etwas und unterbricht die Serie nicht.
+- [fix] Bei den Skins Uhrwerk, Tiefsee und Sakura-Porzellan waren die Formen vertauscht: Jede Form zeigt jetzt die richtige Entwicklung.
+- [fix] Die App-Sperre verbraucht bei ausgeschaltetem Bildschirm keinen Akku mehr, bei Strafen und geplanten Sperren.
+- [fix] Schritte und Bildschirmzeit der letzten Minuten des Tages zählen jetzt, wenn der Tag bei geschlossener App endet.
+- [fix] Tage, an denen die App nie geöffnet wurde, brechen die Serie auch nach einem Ruhetag; und der wöchentliche Schutz der Echos verfehlt sein Ziel nicht mehr um wenige Stunden.
+- [fix] Eine Strafe ohne die Berechtigung „Über anderen Apps einblenden“ halbiert die Belohnungen, wie der Text sagte, statt nichts zu tun.
+- [fix] Gewonnene Sitzungen „ohne Aufgeben“ zählen ihre echten Minuten in der Fokus-Statistik.
+- [fix] Fortschritt zurücksetzen verlässt die Paare, ein importiertes Backup behält die aktuellen Paare und CoreQuest+, und ein saisonaler Boss erscheint nicht mehr zweimal in derselben Saison.
+- [tweak] Ein neuer Schwierigkeitsgrad gilt ab dem nächsten Tag.
+- [tweak] Solange eine Strafe Apps sperrt oder während einer Fokus-Sitzung ohne Aufgeben, lässt sich die Sperre nicht ausschalten und keine App von der Liste entfernen.
+- [tweak] Die Belohnungen des Wochenbosses wachsen mit deinem Level.
+- [tweak] Den Ruhetag nach 12 Uhr aufzuheben fragt nach, weil er an dem Tag nicht wieder aktiviert werden kann.

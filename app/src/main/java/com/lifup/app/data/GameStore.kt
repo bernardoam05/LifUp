@@ -48,9 +48,28 @@ class GameStore(
         listeners += listener
     }
 
+    /**
+     * Runs ahead of every dispatch, under the same lock, and returns what to apply before the day check (the final
+     * step and screen readings of a day about to close), or null. Here rather than at the call sites, so whichever
+     * dispatch comes first after midnight closes the day with them.
+     */
+    /** Told when a dispatch failed and the state was kept as it was, so the app can say so. */
+    @Volatile var onEngineError: ((Throwable) -> Unit)? = null
+
+    @Volatile var catchUp: (suspend (GameState) -> (Tx.() -> Unit)?)? = null
+
     suspend fun dispatch(before: Tx.() -> Unit = {}, action: Tx.() -> Unit = {}): GameState = mutex.withLock {
         val old = _state.value
-        val new = withContext(serial) { Engine.run(old, Ctx(content, System.currentTimeMillis()), before, action) }
+        val pre = catchUp?.let { hook -> runCatching { hook(old) }.onFailure { e -> Log.e(TAG, "catch-up failed", e) }.getOrNull() }
+        // A failing rule must not take the app down on every launch: the state stays as it was, Settings stays reachable.
+        val new = runCatching {
+            withContext(serial) { Engine.run(old, Ctx(content, System.currentTimeMillis(), dayEnd = old.settings.dayEndHour), { pre?.invoke(this); before() }, action) }
+        }.getOrElse { e ->
+            if (e is kotlinx.coroutines.CancellationException) throw e
+            Log.e(TAG, "engine failed, state kept", e)
+            runCatching { onEngineError?.invoke(e) }
+            return@withLock old
+        }
         if (new != old || !file.exists()) {
             _state.value = new
             withContext(Dispatchers.IO) { write(new) }

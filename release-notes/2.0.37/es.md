@@ -1,0 +1,14 @@
+- [new] Elige tus misiones desde el principio: las áreas que quieres trabajar, las misiones que no son para ti y tu hábito fijo de cada día.
+- [new] Hora de fin del día: en Ajustes → Juego puedes hacer que el día acabe entre las 00:00 y las 05:00. Las misiones hechas hasta entonces cuentan para el día anterior, incluida la de acostarse.
+- [new] Las pausas cuentan para las parejas: un ciclo fallado durante tu pausa o la de tu compañero no le cuesta nada a nadie y no rompe la racha.
+- [fix] Los aspectos Mecánica, Océano abisal y Porcelana sakura tenían las formas cambiadas: cada forma muestra ahora la evolución correcta.
+- [fix] El bloqueo de apps ya no gasta batería con la pantalla apagada, durante penalizaciones y bloqueos programados.
+- [fix] Los pasos y el tiempo de pantalla de los últimos minutos del día ya cuentan cuando el día se cierra con la app cerrada.
+- [fix] Los días en que la app no se abrió rompen la racha incluso después de un día de descanso; y las protecciones semanales de los ecos ya no fallan por pocas horas.
+- [fix] Una penalización sin el permiso de mostrar sobre otras apps reduce las recompensas a la mitad, como decía el texto, en lugar de no hacer nada.
+- [fix] Las sesiones "sin rendirse" ganadas cuentan sus minutos reales en las estadísticas de enfoque.
+- [fix] Reiniciar el progreso sale de las parejas, importar una copia mantiene las parejas y el CoreQuest+ actuales, y un jefe de temporada ya no aparece dos veces en la misma temporada.
+- [tweak] Cambiar la dificultad vale a partir del día siguiente.
+- [tweak] Mientras una penalización bloquea apps, o durante un enfoque sin rendirse, no se puede desactivar el bloqueo ni quitar apps de la lista.
+- [tweak] Las recompensas del jefe semanal crecen con tu nivel.
+- [tweak] Quitar el descanso después del mediodía pide confirmación, porque ya no se puede volver a activar ese día.

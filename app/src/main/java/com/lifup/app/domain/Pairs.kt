@@ -78,7 +78,27 @@ data class PairQuest(
     val ended: Boolean = false,
     /** Cycles whose completion this phone wrote to the cloud (for pruning). */
     val sentCycles: List<String> = emptyList(),
+    /** The partner's pause as the cloud last had it, "first/last" day inclusive; null = none. */
+    val partnerPause: String? = null,
+    /** This phone's pause as last written to the cloud for this pair ("" = told there is none; null = never told). */
+    val pauseSent: String? = null,
 )
+
+/** Whether [day] (ISO date) falls inside a pause written as "first/last". */
+fun pauseCovers(pause: String?, day: String): Boolean {
+    val (from, until) = pause?.split('/')?.takeIf { it.size == 2 } ?: return false
+    return day >= from && day <= until
+}
+
+/** This player's pause for the partner to know about, as "first/last", or "" when none is running or ahead. */
+fun GameState.pauseToShare(todayKey: String): String =
+    pauseUntil?.takeIf { it >= todayKey }?.let { "${pauseFrom ?: it}/$it" }.orEmpty()
+
+/** Pairs whose partner hasn't been told about this player's pause (or its end) yet. */
+fun GameState.pairsOwedPause(todayKey: String): List<PairQuest> =
+    activePairs().filter { it.joined && (it.pauseSent ?: "") != pauseToShare(todayKey) }
+
+fun Tx.pairPauseSent(id: String, pause: String) = updatePair(id) { it.copy(pauseSent = pause) }
 
 /** Sync bookkeeping: the free quota, the bonus cap and links opened today. */
 @Serializable
@@ -227,7 +247,7 @@ fun Tx.pairInvite(id: String, code: String, expires: Long) = updatePair(id) { it
  * What one read of the cloud found. [partnerUid] null with [gone] false: nobody joined yet. [gone]: the pair no
  * longer exists, or the partner left; cycles still open settle as if the partner did nothing from then on.
  */
-fun Tx.pairRead(id: String, partnerUid: String?, partnerName: String?, marks: Map<String, PartnerMark>, gone: Boolean, partnerLeft: Boolean = false) {
+fun Tx.pairRead(id: String, partnerUid: String?, partnerName: String?, marks: Map<String, PartnerMark>, gone: Boolean, partnerLeft: Boolean = false, partnerPause: String? = null) {
     if (partnerLeft) return pairPartnerLeft(id)
     updatePair(id) { p ->
         // What the cloud says wins over a link: it carries the server's time.
@@ -237,6 +257,7 @@ fun Tx.pairRead(id: String, partnerUid: String?, partnerName: String?, marks: Ma
             partnerName = partnerName?.takeIf { it.isNotBlank() } ?: p.partnerName,
             invite = if (partnerUid != null) null else p.invite,
             partner = merged,
+            partnerPause = if (partnerUid != null) partnerPause else p.partnerPause,
             lastRead = ctx.now,
             ended = p.ended || gone,
         )
@@ -253,7 +274,7 @@ fun Tx.pairPartnerLeft(id: String) {
     if (p.partnerUid == null) return
     updatePair(id) { q ->
         q.copy(
-            partnerUid = null, partnerName = "", invite = null, inviteExpires = 0, partner = emptyMap(), lastRead = ctx.now, streak = 0,
+            partnerUid = null, partnerName = "", invite = null, inviteExpires = 0, partner = emptyMap(), partnerPause = null, lastRead = ctx.now, streak = 0,
             parts = q.parts.mapNotNull { part ->
                 when {
                     part.outcome != null -> part
@@ -334,7 +355,7 @@ internal fun Tx.completePairQuest(questId: String) {
             if (it.cycle != part.cycle) it
             else it.copy(
                 doneAt = ctx.now, xpGained = xp, goldGained = gold,
-                quest = it.quest?.copy(status = QuestStatus.DONE, progress = maxOf(it.quest.progress, it.quest.target), xpGained = xp, goldGained = gold, doneHour = ctx.hour),
+                quest = it.quest?.copy(status = QuestStatus.DONE, progress = maxOf(it.quest.progress, it.quest.target), xpGained = xp, goldGained = gold, doneHour = ctx.clockHour),
             )
         })
     }
@@ -396,6 +417,15 @@ private fun Tx.settlePart(id: String, cycle: String) {
     // Nobody to blame once the pair is over (one of the two left): no cut, just x1.
     val outcome = if (p.ended && decided == PairOutcome.PARTNER_MISSED) PairOutcome.UNKNOWN else decided
     val name = p.partnerName
+    // A pause is a break for the pair too: a cycle missed inside one (mine or the partner's) costs nobody anything
+    // and leaves the pair's sequence where it was.
+    val myPause = outcome == PairOutcome.MISSED && (cycle in s.pausedDays || s.pausedOn(cycle))
+    val theirPause = outcome == PairOutcome.PARTNER_MISSED && pauseCovers(p.partnerPause, cycle)
+    if (myPause || theirPause) {
+        toast(if (myPause) ToastKind.PAIR_PAUSED_SELF else ToastKind.PAIR_PAUSED_PARTNER, name)
+        updatePair(id) { q -> q.copy(parts = q.parts.map { if (it.cycle == cycle) it.copy(outcome = if (myPause) PairOutcome.MISSED else PairOutcome.UNKNOWN) else it }) }
+        return
+    }
     when (outcome) {
         PairOutcome.BOTH -> {
             val sync = s.pairSync.let { if (it.bonusDay != ctx.todayKey) it.copy(bonusDay = ctx.todayKey, bonusUsed = 0) else it }

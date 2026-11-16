@@ -29,7 +29,10 @@ fun Tx.ensureBoss() {
     // starting on the weekend before doesn't get it for two days and then miss the real week. Once per season,
     // even if the window covers two Mondays.
     val monday = MonthDay.from(ctx.weekStart)
-    val seasonal = content.bosses.firstOrNull { it.activeOn(monday) && it.id != current?.bossId }
+    // A window can cover three Mondays: the same boss within a few weeks is the same season.
+    val sameSeason = s.seasonalWeek.isNotEmpty() && java.time.temporal.ChronoUnit.WEEKS.between(java.time.LocalDate.parse(s.seasonalWeek), ctx.weekStart) <= 4
+    val seasonal = content.bosses.firstOrNull { it.activeOn(monday) && it.id != current?.bossId && !(sameSeason && it.id == s.seasonalBoss) }
+    if (seasonal != null) s = s.copy(seasonalBoss = seasonal.id, seasonalWeek = ctx.weekKey)
     val def = seasonal ?: run {
         val regular = content.bosses.filter { it.season == null && it.minLevel <= level }
         // S-rank weeks get likelier as more S bosses unlock (12% each, up to 60%).
@@ -128,8 +131,10 @@ private fun Tx.defeatBoss() {
     count(StatKey.BOSSES_DEFEATED)
     if (def.season != null) count(StatKey.SEASONAL_BOSSES)
     val spoils = s.passives(content, ctx.now).bossSpoils
-    val xp = gainXp(def.baseXp, hitsBoss = false, extra = spoils)
-    val gold = gainGold(def.baseGold, extra = spoils)
+    // Spoils grow with level like missions and chests, so a kill stays worth the week at any rank.
+    val level = s.player.level
+    val xp = gainXp((def.baseXp * Rules.xpMultiplier(level)).roundToInt(), hitsBoss = false, extra = spoils)
+    val gold = gainGold((def.baseGold * Rules.tierMultiplier(level)).roundToInt(), extra = spoils)
     val loot = if (b.lootGiven) emptyList() else listOf("bau_cacador")
     loot.forEach { addItem(it) }
     s = s.copy(boss = s.boss?.copy(spoils = BossSpoils(xp, gold), lootGiven = true))

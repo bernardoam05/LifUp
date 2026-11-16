@@ -222,7 +222,7 @@ private fun Tx.finishFocus(f: FocusSession, minutes: Double, completed: Boolean)
     // Minutes towards a penalty mission pay off the penalty, nothing else.
     val owed = f.questId != null && s.penalty.quests.any { it.id == f.questId }
     val xp = if (owed) 0 else payFocus(minutes, won)
-    creditFocus(if (won) minutes * Rules.STRICT_BONUS else minutes, f.questId, pomodoro = f.pomodoro != null)
+    creditFocus(if (won) minutes * Rules.STRICT_BONUS else minutes, f.questId, pomodoro = f.pomodoro != null, counted = minutes)
     toast(ToastKind.FOCUS_DONE, "${minutes.roundToInt()}:$xp")
 }
 

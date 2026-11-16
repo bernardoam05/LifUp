@@ -1,5 +1,6 @@
 package com.lifup.app.ui.shop
 
+import com.lifup.app.domain.ctx
 import com.lifup.app.ui.hero.HeroNav
 import com.lifup.app.ui.Tab
 import kotlinx.coroutines.launch
@@ -90,7 +91,7 @@ fun ShopScreen(s: GameState) {
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             item {
                 // The echoes change at midnight: say when, so a missed one isn't a surprise.
-                val midnight = java.time.LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                val midnight = s.ctx(content, now).nextMidnight()
                 SectionTitle(stringResource(R.string.shadow_offers)) {
                     Text(stringResource(R.string.shop_echoes_renew, fmtShort((midnight - now).coerceAtLeast(0))), color = Lif.colors.dim, style = MaterialTheme.typography.labelMedium)
                     val reroll = s.shadowRerollCost(content, now)

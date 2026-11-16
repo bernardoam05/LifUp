@@ -97,11 +97,13 @@ service cloud.firestore {
       match /parts/{uid} {
         function inPair() { return me() in get(pairPath(pairId)).data.members; }
         function validPart(data) {
-          return data.keys().hasOnly(['name', 'level', 'last', 'done', 'expireAt'])
+          return data.keys().hasOnly(['name', 'level', 'last', 'done', 'expireAt', 'pause'])
             && data.keys().hasAll(['name', 'level', 'done', 'expireAt'])
             && shortText(data.name, 24)
             && data.level is int && data.level >= 1 && data.level <= 1000
             && data.done is map && data.done.size() <= 14
+            // A pause the partner should know about, as "first/last" ISO days.
+            && (!('pause' in data) || (data.pause is string && data.pause.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}/[0-9]{4}-[0-9]{2}-[0-9]{2}$')))
             && expiresSoon(data);
         }
         // done: { "<cycle>": { at: <server time>, amount: <int> } }. Entries can be added (only

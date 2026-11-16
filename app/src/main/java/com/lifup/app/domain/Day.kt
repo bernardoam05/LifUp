@@ -19,6 +19,7 @@ fun Tx.ensureDay() {
         // Only move forward: a clock set back (manual change, timezone hop) never re-closes a day.
         val last = LocalDate.parse(s.day)
         closeDay(last)
+        s.settings.rigorNext?.let { r -> s = s.copy(settings = s.settings.copy(rigor = r, rigorNext = null)) }
         rollWeek()
         syncWeekly()
         // The day before's missions, swapped-away ones too, come up less today; after a gap they're forgotten.
@@ -114,7 +115,7 @@ private fun Tx.closeDay(day: LocalDate) {
         (passed || penaltyInfo?.absorbedBy != null) && !rest, perfect && !rest, rest, skipped = skipped,
         restored = restored, held = streakSavedBy != null && penaltyInfo?.absorbedBy == null,
     )
-    if (skipped && !rest && s.player.streak > 0) setStreak(0)
+    if (skipped && s.player.streak > 0) setStreak(0)
     if (skipped) s = s.copy(recovery = null)
 
     s = s.copy(dayLog = (s.dayLog + DayLog(day.toString(), done, daily.size, perfect && !rest, penaltyInfo != null && penaltyInfo.absorbedBy == null && !penaltyInfo.grace, rest, passed && !rest, sideFailed)).takeLast(Rules.DAY_LOG_DAYS))
@@ -137,14 +138,13 @@ private fun Tx.setStreak(value: Int) {
 
 /** Returns the penalty summary and, if the streak survived, what saved it. Immunity spares the losses, not the streak. */
 private fun Tx.applyFailure(daily: List<Quest>, failed: Int, total: Int, ratio: Double, week: String): Pair<PenaltyInfo, String?> {
+    // Still learning: the day counts as failed (no streak) but costs nothing, and no immunity or weekly save is spent on it.
+    if (s.inGrace()) return PenaltyInfo(failed, total, 0, 0, 0, grace = true) to null
     val info = tryCooldownPassive(Passive.PENALTY_IMMUNITY)?.let { shadow ->
         toast(ToastKind.PASSIVE_FIRED, shadow.id)
         squadAdded(SquadGain(saves = 1))
         PenaltyInfo(failed, total, 0, 0, 0, absorbedBy = shadow.id)
-    } ?: if (s.inGrace()) {
-        // Still learning: the day counts as failed (no streak) but costs nothing, and no weekly save is spent on it.
-        return PenaltyInfo(failed, total, 0, 0, 0, grace = true) to null
-    } else penalize(daily, failed, total, ratio)
+    } ?: penalize(daily, failed, total, ratio)
     return info to saveStreak(week)
 }
 
@@ -213,9 +213,24 @@ fun Tx.expirePenalty() {
  * Whether a penalty blocks the distracting apps: the player wants it, picked some and the phone can tell
  * which app is open. Otherwise the penalty halves mission rewards instead ([penaltyCut]).
  */
-fun GameState.penaltyBlocks() = settings.blockOnPenalty && settings.blockedApps.isNotEmpty() && screenMeasurable
+fun GameState.penaltyBlocks() = settings.blockOnPenalty && settings.blockedApps.isNotEmpty() && screenMeasurable && overlayAllowed
 
-fun Tx.setBlockOnPenalty(on: Boolean) = updateSettings { it.copy(blockOnPenalty = on) }
+/**
+ * While apps are being held (a penalty that blocks, or a no-quitting focus session with blocking), the block can't be
+ * switched off and no app can be taken off the list: the ways out are the penalty's missions, its item, or finishing.
+ */
+fun GameState.blockLocked(now: Long) =
+    (penalty.active && penalty.blockEnd > now && penaltyBlocks()) || focus?.let { it.strict && it.blockApps && it.endsAt() > now } == true
+
+fun Tx.setBlockOnPenalty(on: Boolean) {
+    if (!on && s.blockLocked(ctx.now)) return
+    updateSettings { it.copy(blockOnPenalty = on) }
+}
+
+fun Tx.setBlockedApps(apps: List<String>) {
+    val kept = if (s.blockLocked(ctx.now)) s.settings.blockedApps.filterNot { it in apps } else emptyList()
+    updateSettings { it.copy(blockedApps = apps + kept) }
+}
 
 fun Tx.clearPenalty(cleared: Boolean) {
     if (!s.penalty.active) return

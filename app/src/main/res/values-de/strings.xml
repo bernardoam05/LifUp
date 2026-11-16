@@ -91,8 +91,8 @@
     <string name="side_section">Aufgaben</string>
     <string name="side_hint">Eine Aufgabe für heute…</string>
     <string name="side_empty">Keine Aufgaben. Füge kleine Aufgaben für Bonus-XP hinzu.</string>
-    <string name="forbidden_keep">Zählt um Mitternacht von selbst</string>
-    <string name="avoid_info">Nichts abzuhaken: Um Mitternacht zählt sie als geschafft. Wenn du ausrutschst, tippe auf „Ausgerutscht“.</string>
+    <string name="forbidden_keep">Zählt am Tagesende von selbst</string>
+    <string name="avoid_info">Nichts abzuhaken: Am Tagesende zählt sie als geschafft. Wenn du ausrutschst, tippe auf „Ausgerutscht“.</string>
     <string name="forbidden_broken">Heute gebrochen</string>
     <string name="forbidden_fail">Ausgerutscht</string>
     <string name="forbidden_undo">Doch nicht</string>
@@ -113,7 +113,7 @@
     <!-- Mission sheet -->
     <string name="double_xp_active">Sanduhr aktiv: die nächste Mission gibt doppelte XP</string>
     <string name="complete">Abschließen</string>
-    <string name="available_from">Verfügbar von %1$d:00 bis Mitternacht</string>
+    <string name="available_from">Verfügbar von %1$d:00 bis zum Tagesende</string>
     <string name="mark_done_manual">Als erledigt markieren</string>
     <string name="swap_free">Tauschen (heute gratis)</string>
     <string name="swap_scroll">Tauschen (Schriftrollen: %1$d)</string>
@@ -326,7 +326,7 @@
     <string name="block_on_penalty">Apps bei Strafen sperren</string>
     <string name="block_on_penalty_info">Die gewählten Apps bleiben während einer Strafe gesperrt (bis zu 24 h).</string>
     <string name="side_penalize">Aufgaben zählen</string>
-    <string name="side_penalize_info">Eine unerledigte Aufgabe zählt einmal als gescheitert, um Mitternacht des Tages, an dem du sie geschrieben hast.</string>
+    <string name="side_penalize_info">Eine unerledigte Aufgabe zählt einmal als gescheitert, am Ende des Tages, an dem du sie geschrieben hast.</string>
     <string name="notifications">Benachrichtigungen</string>
     <string name="notifications_info">Portale, beendete Sessions, Strafen und eine Erinnerung am Abend.</string>
     <string name="reminder_hour">Erinnerungszeit</string>
@@ -384,7 +384,7 @@
     <string name="preset_hard_eg">Wie 3 km laufen oder eine Stunde konzentriert arbeiten.</string>
     <string name="field_days">Tage</string>
     <string name="add_today">Auch zu den heutigen Missionen hinzufügen</string>
-    <string name="delete_mission_text">Diese Mission löschen? Die heutige Kopie bleibt bis Mitternacht.</string>
+    <string name="delete_mission_text">Diese Mission löschen? Die heutige Kopie bleibt bis zum Tagesende.</string>
     <string-array name="weekdays_short">
         <item>M</item><item>D</item><item>M</item><item>D</item><item>F</item><item>S</item><item>S</item>
     </string-array>
@@ -397,7 +397,7 @@
     <string name="onb_f_missions">Tägliche Missionen</string>
     <string name="onb_f_missions_text">Feste Gewohnheiten plus eine tägliche Auslosung. Jedes Ziel wächst, während du es schaffst.</string>
     <string name="onb_f_penalty">Strafen</string>
-    <string name="onb_f_penalty_text">Um Mitternacht kosten gescheiterte Missionen XP und Gold und bringen Strafmissionen. Bis du sie erledigst: gesperrte Apps oder halbe Belohnungen, du entscheidest.</string>
+    <string name="onb_f_penalty_text">Am Tagesende kosten gescheiterte Missionen XP und Gold und bringen Strafmissionen. Bis du sie erledigst: gesperrte Apps oder halbe Belohnungen, du entscheidest.</string>
     <string name="onb_f_focus">Fokus</string>
     <string name="onb_f_focus_text">Timer oder Pomodoro mit App-Sperre und Umgebungsklang. Die Minuten zählen für Fokus-Missionen.</string>
     <string name="onb_f_boss">Wochenboss</string>
@@ -543,7 +543,7 @@
         <item quantity="other">Noch %1$d Missionen, dann zählt heute.</item>
     </plurals>
     <string name="flame_safe">Heute zählt schon. Schaffe alle für einen perfekten Tag: Bonus-XP und ein Echo.</string>
-    <string name="flame_perfect">Alle geschafft. Um Mitternacht wird es ein perfekter Tag, wenn die Vermeiden-Missionen halten.</string>
+    <string name="flame_perfect">Alle geschafft. Am Tagesende wird es ein perfekter Tag, wenn die Vermeiden-Missionen halten.</string>
     <string name="report_passed">Tag geschafft</string>
     <string name="report_streak_restored">Serie zurückgeholt</string>
     <string name="pomodoro_work_open">Fokus · Zyklus %1$d</string>
@@ -567,7 +567,7 @@
     <string name="perm_activity_why">Schritte für Geh-Missionen und Läufe zählen.</string>
     <string name="guide_section">So funktioniert es</string>
     <string name="guide_daily_title">Tägliche Missionen</string>
-    <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nSerien-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle: Um Mitternacht gibt es Bonus-XP und ein neues Echo. Vermeiden-Missionen zählen, wenn sie den ganzen Tag halten.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede. Passt etwas nur an manchen Tagen, mach es wöchentlich.</string>
+    <string name="guide_daily">Feste und gezogene::1 feste Mission und mehrere gezogene, die sich jeden Tag ändern.\nSerien-Minimum::Auf Normal reichen 75 % der Missionen. Auf Leicht 60 %, auf Schwer 100 %.\nPerfekter Tag::Schaffe alle: Am Tagesende gibt es Bonus-XP und ein neues Echo. Vermeiden-Missionen zählen, wenn sie den ganzen Tag halten.\nPasst heute nicht?::Tausche täglich eine gezogene Mission gratis aus, oder erstelle eigene in der Schmiede. Passt etwas nur an manchen Tagen, mach es wöchentlich.</string>
     <string name="guide_pairs_title">Partnermissionen</string>
     <string name="guide_pairs">Jemanden einladen::Erstelle eine Partnermission und schicke den Code oder Link. Beitreten geht über Heute → Partnermissionen.\nDein Teil::Ihr bekommt jeweils eine eigene Mission und einen eigenen Fortschritt; wenn du fertig bist, wird das Ergebnis deinem Partner geschickt.\nZeitplan::Einmalig, täglich, an bestimmten Wochentagen oder alle paar Tage. Zufallsmodi können euch dieselbe oder jeweils eine andere Mission geben.\nDie Belohnung::Wenn ihr beide fertig werdet, gibt es +25 %. Bei einer aktiven Serie kostet ein verpasster Teil 10 %.</string>
     <string name="guide_streak_title">Serie und Ruhetage</string>
@@ -622,7 +622,7 @@
         <item quantity="one">%1$d von %2$d Mal</item>
         <item quantity="other">%1$d von %2$d Mal</item>
     </plurals>
-    <string name="habit_none_yet">Jeder Tag mit dieser Mission kommt um Mitternacht hierher. Das letzte Feld ist heute, live.</string>
+    <string name="habit_none_yet">Jeder Tag mit dieser Mission kommt am Tagesende hierher. Das letzte Feld ist heute, live.</string>
     <string name="habit_recent">Letzte 30 Tage: %1$d von %2$d</string>
     <string name="habit_trend">Letzte 30 Tage: %1$d von %2$d (%3$d %%) · 30 davor: %4$d %%</string>
     <string name="prog_from">Start bei %1$s</string>
@@ -648,14 +648,14 @@
     <string name="notif_reminder_safe_title">Serie gesichert</string>
     <string name="notif_reminder_safe_text">Noch %1$d für einen perfekten Tag, mit Bonus-XP und einem Echo.</string>
     <string name="notif_avoid_title">Wie lief der Tag?</string>
-    <string name="notif_avoid_text">Diese zählen um Mitternacht. Bist du bei einer ausgerutscht, markiere sie jetzt: %1$s.</string>
+    <string name="notif_avoid_text">Diese zählen am Tagesende. Bist du bei einer ausgerutscht, markiere sie jetzt: %1$s.</string>
     <string name="notif_avoid_fail">Ausgerutscht: %1$s</string>
     <string name="notif_bedtime_title">Zeit zum Ausruhen</string>
-    <string name="notif_bedtime_text">Bestätige deinen Schlaf-Check-in vor Mitternacht.</string>
+    <string name="notif_bedtime_text">Bestätige deinen Schlaf-Check-in vor dem Tagesende.</string>
     <string name="notif_bedtime_confirm">Ich gehe schlafen</string>
     <string name="widget_goal">Noch %1$d für die Serie</string>
     <string name="widget_goal_safe">Serie gesichert ✓</string>
-    <string name="widget_hours_left">%1$d h bis Mitternacht</string>
+    <string name="widget_hours_left">%1$d h bis zum Tagesende</string>
     <string name="widget_under_hour">unter 1 h</string>
     <string name="a11y_decrease">Verringern</string>
     <string name="a11y_increase">Erhöhen</string>
@@ -828,7 +828,7 @@
     <string name="notif_remind_side">Aufgabe</string>
     <string name="notif_reminder_also">Jetzt auch: %1$s</string>
     <string name="report_missions_done">Missionen erledigt</string>
-    <string name="report_paid_close">Um Mitternacht gezahlt</string>
+    <string name="report_paid_close">Am Tagesende gezahlt</string>
     <string name="report_side_label">Offene Aufgaben</string>
     <string name="report_penalty_label">Strafe</string>
     <string name="report_penalty_quests_n">%1$d Missionen zu erfüllen</string>
@@ -1106,4 +1106,24 @@
     <string name="update_later">Später</string>
     <string name="update_prompt_title">Neue Version %1$s</string>
     <string name="update_prompt_text">Jetzt aktualisieren? Der Download läuft im Hintergrund und Android bittet dich um Bestätigung. Dein Fortschritt bleibt erhalten.</string>
+    <string name="rest_off_yes">Ruhetag aufheben</string>
+    <string name="rest_off_confirm">Es ist nach 12 Uhr: Wenn du den Ruhetag aufhebst, kannst du ihn heute nicht wieder aktivieren und die heutigen Missionen zählen.</string>
+    <string name="rigor_from_tomorrow">Ab morgen. Heute bleibt es bei %1$s.</string>
+    <string name="block_locked">Solange eine Strafe oder eine Fokus-Sitzung ohne Aufgeben Apps sperrt, kannst du die Sperre nicht ausschalten und keine Apps entfernen.</string>
+    <string name="day_end">Der Tag endet um</string>
+    <string name="day_end_info">Missionen bis zu dieser Uhrzeit zählen noch für den Vortag, auch die Schlafenszeit. Für alle, die nach Mitternacht noch wach sind.</string>
+    <string name="day_end_wait">Kann erst nach %1$d:00 Uhr geändert werden.</string>
+    <string name="onb_missions">Deine Missionen</string>
+    <string name="onb_areas_q">Woran willst du arbeiten?</string>
+    <string name="onb_areas_hint">Die Missionen jedes Tages werden aus diesen Bereichen gezogen. Schalte aus, was nichts für dich ist.</string>
+    <string name="onb_family_count">%1$d von %2$d Missionen</string>
+    <string name="onb_review">Ansehen</string>
+    <string name="onb_review_close">Schließen</string>
+    <string name="onb_fixed">Deine tägliche Gewohnheit</string>
+    <string name="onb_fixed_hint">Diese Mission kommt jeden Tag. Die anderen werden gezogen.</string>
+    <string name="onb_change">Ändern</string>
+    <string name="onb_too_few">Lass mindestens %1$d Missionen an.</string>
+    <string name="onb_penalty_note">Ein verpasster Tag kostet XP und Gold. Die ersten zwei Tage sind Übung: Sie kosten nichts.</string>
+    <string name="toast_pair_paused_self">Du warst in einer Pause: Die Paarmission mit %1$s zählte nicht, nichts verloren</string>
+    <string name="toast_pair_paused_partner">%1$s macht Pause: Dein Teil zählt ×1, ohne Abzug</string>
 </resources>

@@ -34,10 +34,44 @@ fun Tx.markNoticesRead() {
     s = s.copy(unreadNotices = emptySet())
 }
 
-fun Tx.finishOnboarding(name: String, rigor: Rigor, focus: Set<Attr> = emptySet(), blockOnPenalty: Boolean = false) {
-    s = s.copy(onboarded = true, player = s.player.copy(name = name.trim().take(24)), settings = s.settings.copy(rigor = rigor, focusAttrs = focus, blockOnPenalty = blockOnPenalty))
+/**
+ * [off]: missions the player left out (whole areas, or one by one), which start switched off in the Forge.
+ * [fixed]: the mission they want every day; when it isn't the built-in fixed one, it takes its place.
+ */
+fun Tx.finishOnboarding(name: String, rigor: Rigor, focus: Set<Attr> = emptySet(), blockOnPenalty: Boolean = false, off: Set<String> = emptySet(), fixed: String? = null) {
+    s = s.copy(
+        onboarded = true, player = s.player.copy(name = name.trim().take(24)),
+        settings = s.settings.copy(rigor = rigor, focusAttrs = focus, blockOnPenalty = blockOnPenalty),
+        disabledDefIds = s.disabledDefIds + off.filter { content.questDefById[it]?.optional == false },
+    )
+    val builtIn = content.quests.filter { it.kind == DefKind.CORE && !it.retired && !it.isWeekly() }.map { it.id }
+    val habit = fixed?.let { content.questDefById[it] }
+    if (habit != null && habit.id !in builtIn) {
+        saveCustomDef(habit.copy(kind = DefKind.CORE))
+        s = s.copy(disabledDefIds = s.disabledDefIds + builtIn)
+    }
+    if (habit != null) s = s.copy(disabledDefIds = s.disabledDefIds - habit.id)
     // Today's list was drawn before the choices: redraw it while nothing has been done yet.
     if (s.quests.none { it.status != QuestStatus.OPEN }) s = s.copy(quests = generateDailyQuests(s, content, ctx.today))
+}
+
+/** Changes the difficulty from tomorrow on; before the first day is played it applies at once. */
+fun Tx.setRigor(r: Rigor) = updateSettings {
+    if (r == it.rigor || s.dayLog.isEmpty() && s.quests.none { q -> q.status != QuestStatus.OPEN }) it.copy(rigor = r, rigorNext = null) else it.copy(rigorNext = r)
+}
+
+/**
+ * The hour the day ends at can only move once the clock is past the latest one it can be set to: before that,
+ * "today" would be a different day under the old hour and the new one.
+ */
+fun canSetDayEnd(ctx: Ctx) = ctx.clockHour >= Rules.MAX_DAY_END
+
+fun Tx.setDayEnd(hour: Int) {
+    if (!canSetDayEnd(ctx)) return
+    val h = hour.coerceIn(0, Rules.MAX_DAY_END)
+    updateSettings { it.copy(dayEndHour = h) }
+    // The standing boss leaves when the week ends, which just moved.
+    s.boss?.let { b -> s = s.copy(boss = b.copy(endsAt = Ctx(content, ctx.now, ctx.zone, ctx.rng, h).nextWeekStartMs)) }
 }
 
 fun Tx.updateSettings(f: (Settings) -> Settings) {

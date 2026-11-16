@@ -59,6 +59,22 @@ import com.lifup.app.ui.theme.Lif
 import kotlinx.coroutines.delay
 
 /** Current time that refreshes every [intervalMs] while on screen. */
+/**
+ * The clock as a state, for screens where only a few parts tick: read it inside those parts (a list item, a card)
+ * and the rest of the screen isn't redrawn every interval.
+ */
+@Composable
+fun rememberNowState(intervalMs: Long = 1_000): androidx.compose.runtime.LongState {
+    val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(intervalMs) {
+        while (true) {
+            now.longValue = System.currentTimeMillis()
+            delay(intervalMs - now.longValue % intervalMs)
+        }
+    }
+    return now
+}
+
 @Composable
 fun rememberNow(intervalMs: Long = 1_000): Long {
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }

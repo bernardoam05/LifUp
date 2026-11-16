@@ -39,6 +39,17 @@ fun Tx.loadSquad(slot: Int) {
     )
 }
 
+/**
+ * A backup put over the running game: what belongs to this install and not to the save stays as it is. CoreQuest+
+ * follows the store, and the pairs this phone is in right now win over the backup's older copy of them (pairs only
+ * the backup has are kept, for a save moved from another phone).
+ */
+fun GameState.keepingLive(current: GameState): GameState = copy(
+    plus = current.plus,
+    pairs = current.pairs + pairs.filter { p -> current.pairs.none { it.id == p.id } },
+    pairSync = current.pairSync,
+)
+
 /** What Google Play says the player owns. */
 fun Tx.setPlus(owned: Boolean) {
     if (s.plus != owned) s = s.copy(plus = owned)

@@ -24,7 +24,9 @@ import com.lifup.app.LifUpApp
 import com.lifup.app.domain.AutoReading
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.applyAuto
+import com.lifup.app.domain.ctx
 import com.lifup.app.domain.runCheckpoint
+import com.lifup.app.domain.setOverlayAllowed
 import com.lifup.app.domain.setScreenMeasurable
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
@@ -45,13 +47,14 @@ object AutoTracker {
 
     /** Measurements for [day]. Today's reading also advances the step baseline. */
     suspend fun read(c: Context, day: LocalDate, s: GameState): AutoReading {
-        val zone = ZoneId.systemDefault()
-        val start = day.atStartOfDay(zone).toInstant().toEpochMilli()
-        val end = minOf(day.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli(), System.currentTimeMillis())
+        // The player's day, which may end after midnight (Settings.dayEndHour).
+        val ctx = s.ctx(LifUpApp.store.content, System.currentTimeMillis())
+        val start = ctx.dayStart(day)
+        val end = minOf(ctx.dayStart(day.plusDays(1)), ctx.now)
         val usage = if (Permissions.usageAccess(c)) runCatching { screenMinutes(c, start, end, s.settings.blockedApps.toSet()) }.getOrNull() else null
         return AutoReading(
             day = day.toString(),
-            steps = listOfNotNull(stepCounter(c)?.let { stepsFor(c, day.toString(), it) }, StepHistory.steps(c, day)).maxOrNull(),
+            steps = listOfNotNull(stepCounter(c)?.let { stepsFor(c, day.toString(), it, ctx.today) }, StepHistory.steps(c, start, end)).maxOrNull(),
             screenMinutes = usage?.first,
             distractionMinutes = usage?.second?.takeIf { s.settings.blockedApps.isNotEmpty() },
         )
@@ -96,9 +99,8 @@ object AutoTracker {
      * the day still count. Returns (today's steps, yesterday's final steps or null).
      */
     @Synchronized
-    private fun observe(c: Context, counter: Long): Pair<Int, Pair<String, Int>?> {
+    private fun observe(c: Context, counter: Long, today: LocalDate): Pair<Int, Pair<String, Int>?> {
         val p = prefs(c)
-        val today = LocalDate.now()
         var day = p.getString("day", null)
         var base = p.getLong("base", counter)
         var carry = p.getLong("carry", 0)
@@ -122,10 +124,10 @@ object AutoTracker {
     }
 
     /** Steps for [day] from a fresh counter value: today's count, or the final count of the day before. */
-    private fun stepsFor(c: Context, day: String, counter: Long): Int? {
-        val (today, prev) = observe(c, counter)
+    private fun stepsFor(c: Context, day: String, counter: Long, now: LocalDate): Int? {
+        val (today, prev) = observe(c, counter, now)
         return when (day) {
-            LocalDate.now().toString() -> today
+            now.toString() -> today
             prev?.first -> prev.second
             else -> null
         }
@@ -174,22 +176,28 @@ object AutoTracker {
         val store = LifUpApp.store
         val s = store.current
         if (s.run?.running == true) stepCounter(c)?.let { n -> store.dispatch { runCheckpoint(n) } }
-        val reading = read(c, LocalDate.now(), s)
+        val reading = read(c, s.ctx(store.content, System.currentTimeMillis()).today, s)
         Alarms.maybeWarnLimits(c, store.dispatch { applyAuto(reading) })
     }
 
     /** Dispatches [action] after recording the final values of a day that is about to close. */
     suspend fun dispatchCatchingUp(c: Context, action: com.lifup.app.domain.Tx.() -> Unit = {}): GameState {
-        val store = LifUpApp.store
-        val final = readBeforeClose(c, store.current)
         val measurable = Permissions.usageAccess(c)
-        // Before the day rolls over, so tomorrow's draw knows whether screen limits can be measured.
-        return store.dispatch(before = { setScreenMeasurable(measurable); final?.let { applyAuto(it) } }, action = action)
+        val overlay = Permissions.overlay(c)
+        // Before the day rolls over, so tomorrow's draw knows whether screen limits can be measured. The closing
+        // day's final readings come from [closing], which the store runs ahead of every dispatch.
+        return LifUpApp.store.dispatch(before = { setScreenMeasurable(measurable); setOverlayAllowed(overlay) }, action = action)
+    }
+
+    /** The store's catch-up hook: the final values of a day about to close, applied before it does. */
+    suspend fun closing(c: Context, s: GameState): (com.lifup.app.domain.Tx.() -> Unit)? {
+        val final = readBeforeClose(c, s) ?: return null
+        return { applyAuto(final) }
     }
 
     /** Before a day closes, record its final values so the close-out judges them correctly. */
     suspend fun readBeforeClose(c: Context, s: GameState): AutoReading? {
-        if (s.day.isEmpty() || s.day >= LocalDate.now().toString()) return null
+        if (s.day.isEmpty() || s.day >= s.ctx(LifUpApp.store.content, System.currentTimeMillis()).todayKey) return null
         return read(c, LocalDate.parse(s.day), s)
     }
 }

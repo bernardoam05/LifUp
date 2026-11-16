@@ -1,5 +1,6 @@
 package com.lifup.app.ui.hero
 
+import com.lifup.app.domain.gameToday
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.rememberUpdatedState
@@ -60,7 +61,7 @@ private val LABEL_W = 16.dp
 @Composable
 fun ActivityCalendar(s: GameState) {
     val c = Lif.colors
-    val today = LocalDate.now()
+    val today = s.gameToday()
     val days = remember(s.dayLog, s.quests, s.daily.rest) { calendarDays(s, today) }
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
 

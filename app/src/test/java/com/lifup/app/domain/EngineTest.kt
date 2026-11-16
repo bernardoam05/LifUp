@@ -1432,7 +1432,7 @@ class EngineTest {
         val xp2 = s.totalXp()
         s = run(s, "2026-10-14T13:30") { settleFocus() }
         assertEquals(xp2, s.totalXp())
-        assertEquals(30, s.count(StatKey.FOCUS_MINUTES) - 50 - 125) // the stats keep counting
+        assertEquals(30, s.count(StatKey.FOCUS_MINUTES) - 50 - 100) // the stats keep counting, real minutes only (no won-session bonus)
         // A new day starts a new allowance.
         s = run(s, "2026-10-15T10:00") { startFocus(FocusSession(0, 25)) }
         s = run(s, "2026-10-15T10:25") { settleFocus() }

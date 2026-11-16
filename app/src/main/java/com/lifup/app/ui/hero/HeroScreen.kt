@@ -1,5 +1,6 @@
 package com.lifup.app.ui.hero
 
+import com.lifup.app.domain.gameToday
 import com.lifup.app.ui.act
 import com.lifup.app.domain.loadSquad
 import com.lifup.app.domain.saveSquad
@@ -636,7 +637,7 @@ private fun MissionRates(s: GameState) {
 @Composable
 private fun HabitHistory(s: GameState, id: String) {
     val c = Lif.colors
-    val today = java.time.LocalDate.now()
+    val today = s.gameToday()
     Column(Modifier.padding(top = 8.dp, bottom = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         // Closed days come from the history; today shows live: done, failed, or still open (outlined).
         val live = s.dailyQuests.firstOrNull { it.defId == id }?.takeIf { s.day == today.toString() }

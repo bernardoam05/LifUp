@@ -1,5 +1,6 @@
 package com.lifup.app.ui.settings
 
+import com.lifup.app.domain.ctx
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,7 +42,7 @@ private fun fmtDay(d: LocalDate) = d.format(DateTimeFormatter.ofPattern("d MMM")
 @Composable
 internal fun PausePanel(s: GameState) {
     val c = Lif.colors
-    val ctx = Ctx(content, System.currentTimeMillis())
+    val ctx = s.ctx(content, System.currentTimeMillis())
     val until = s.pauseUntil?.takeIf { it >= ctx.todayKey }
     var days by rememberSaveable { mutableIntStateOf(7) }
     var confirm by rememberSaveable { mutableStateOf(false) }

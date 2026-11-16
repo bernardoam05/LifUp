@@ -1,0 +1,14 @@
+- [new] Choisis tes missions dès le début : les domaines que tu veux travailler, les missions qui ne sont pas pour toi et ton habitude fixe de tous les jours.
+- [new] Heure de fin de journée : dans Réglages → Jeu, la journée peut finir entre 00:00 et 05:00. Les missions faites jusque-là comptent pour la veille, coucher compris.
+- [new] Les pauses comptent pour les duos : un cycle manqué pendant ta pause ou celle de ton partenaire ne coûte rien à personne et ne casse pas la série.
+- [fix] Les apparences Mécanique, Océan abyssal et Porcelaine sakura avaient leurs formes dans le désordre : chaque forme montre maintenant la bonne évolution.
+- [fix] Le blocage d'applis ne vide plus la batterie écran éteint, pendant les pénalités et les blocages programmés.
+- [fix] Les pas et le temps d'écran des dernières minutes de la journée comptent quand la journée se ferme avec l'appli fermée.
+- [fix] Les jours où l'appli n'a jamais été ouverte cassent la série même après un jour de repos ; et les protections hebdomadaires des échos ne ratent plus à quelques heures près.
+- [fix] Une pénalité sans l'autorisation d'affichage par-dessus les applis divise les récompenses par deux, comme le texte le disait, au lieu de ne rien faire.
+- [fix] Les sessions « sans abandon » réussies comptent leurs minutes réelles dans les statistiques de concentration.
+- [fix] Réinitialiser la progression quitte les duos, importer une sauvegarde garde les duos et le CoreQuest+ actuels, et un boss saisonnier n'apparaît plus deux fois dans la même saison.
+- [tweak] Un changement de difficulté s'applique à partir du lendemain.
+- [tweak] Tant qu'une pénalité bloque des applis, ou pendant une session sans abandon, on ne peut ni désactiver le blocage ni retirer d'applis de la liste.
+- [tweak] Les récompenses du boss hebdomadaire augmentent avec ton niveau.
+- [tweak] Annuler le repos après midi demande confirmation, car il ne peut plus être réactivé ce jour-là.

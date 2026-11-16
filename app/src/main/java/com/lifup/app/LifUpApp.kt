@@ -24,6 +24,15 @@ class LifUpApp : Application() {
             LegacyImport.readAsyncStorage(this)?.let { LegacyImport.decodeBackup(it) }?.let { LegacyImport.toState(it, content) }
         } else null
         store = GameStore(content, file, migrated)
+        // Set before anything dispatches: the first dispatch after midnight closes the day.
+        store.onEngineError = { e ->
+            // Once per launch: the save is untouched, and the prompt offers to send the report.
+            if (com.lifup.app.ui.CrashUi.report == null) {
+                com.lifup.app.system.CrashLog.record(this, e)
+                com.lifup.app.ui.CrashUi.report = com.lifup.app.system.CrashLog.read(this)
+            }
+        }
+        store.catchUp = { s -> com.lifup.app.system.AutoTracker.closing(this, s) }
         Notifications.createChannels(this)
         SystemSync.onApply(Widgets::refresh)
         SystemSync.install(this, store)

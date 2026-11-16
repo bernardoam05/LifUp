@@ -25,6 +25,9 @@ import com.lifup.app.domain.dropPair
 import com.lifup.app.domain.droppable
 import com.lifup.app.domain.isCycleDay
 import com.lifup.app.domain.joined
+import com.lifup.app.domain.pairPauseSent
+import com.lifup.app.domain.pairsOwedPause
+import com.lifup.app.domain.pauseToShare
 import com.lifup.app.domain.leavePair
 import com.lifup.app.domain.nextPairWake
 import com.lifup.app.domain.nudgeDue
@@ -73,6 +76,8 @@ object PairService {
         store.addListener { old, new ->
             fun done(s: com.lifup.app.domain.GameState) = s.pairs.flatMap { p -> p.parts.filter { it.doneAt != null }.map { p.id + it.cycle } }.toSet()
             if ((done(new) - done(old)).isNotEmpty()) store.scope.launch { sync(app, foreground = true) }
+            // A pause called or ended: the partners hear about it now rather than at the next scheduled sync.
+            else if ((old.pauseFrom != new.pauseFrom || old.pauseUntil != new.pauseUntil) && new.pairsOwedPause(new.day).isNotEmpty()) store.scope.launch { sync(app, foreground = true) }
         }
     }
 
@@ -191,6 +196,7 @@ object PairService {
         try {
             sendCompletions(context)
             readPartners(context, foreground, force)
+            sendPause(context)
             nudge(context)
             clearEnded(context)
         } catch (e: PairCloud.QuotaExhausted) {
@@ -219,11 +225,37 @@ object PairService {
         }
     }
 
+    /**
+     * Lets each partner know about this player's pause (and its end), so cycles missed during it aren't held against
+     * either of them. A refusal (rules not updated yet, a pair that changed) is left for the next sync.
+     */
+    private suspend fun sendPause(context: Context) {
+        val today = store.current.day
+        store.current.pairsOwedPause(today).forEach { p ->
+            val pause = store.current.pauseToShare(today)
+            try {
+                PairCloud.setPause(context, p, pause.ifEmpty { null })
+                store.dispatch { pairPauseSent(p.id, pause) }
+            } catch (e: PairCloud.QuotaExhausted) {
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "pause not shared", e)
+            }
+        }
+    }
+
+    /** Leaves every pair in the cloud, as far as the network allows: for a reset, which forgets them here. */
+    suspend fun leaveAll(context: Context) {
+        kotlinx.coroutines.withTimeoutOrNull(8_000) {
+            store.current.pairs.filter { !it.ended }.forEach { p -> runCatching { PairCloud.leave(context, p) } }
+        }
+    }
+
     private suspend fun readPartners(context: Context, foreground: Boolean, force: Set<String>) {
         val now = System.currentTimeMillis()
         store.current.activePairs().filter { it.id in force || needsRead(it, now, foreground) }.forEach { p ->
             val snap = PairCloud.read(context, p)
-            store.dispatch { pairRead(p.id, snap.partnerUid, snap.partnerName, snap.marks, snap.gone, snap.left) }
+            store.dispatch { pairRead(p.id, snap.partnerUid, snap.partnerName, snap.marks, snap.gone, snap.left, snap.pause) }
         }
     }
 

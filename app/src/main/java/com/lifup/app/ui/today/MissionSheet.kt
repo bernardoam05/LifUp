@@ -1,5 +1,6 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.domain.ctx
 import com.lifup.app.ui.difficultyLabel
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalView
@@ -281,7 +282,7 @@ private fun CompleteAction(q: Quest, onDismiss: () -> Unit) {
     // Tracked missions normally fill themselves, so marking them by hand is the secondary action.
     val tracked = q.type == QuestType.FOCUS || q.type == QuestType.GPS || q.auto != null
     val complete = { act { completeQuest(q.id) }; onDismiss() }
-    val available = q.availableAt(java.time.LocalTime.now().hour)
+    val available = q.availableAt(com.lifup.app.LifUpApp.store.current.ctx(content, System.currentTimeMillis()).hour)
     if (!available) Text(stringResource(R.string.available_from, q.fromHour ?: 0), style = MaterialTheme.typography.bodySmall, color = p.gold)
     if (tracked) GhostButton(stringResource(R.string.mark_done_manual), onClick = complete, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Check)
     else PrimaryButton(stringResource(R.string.complete), onClick = complete, modifier = Modifier.fillMaxWidth(), enabled = available, icon = Icons.Rounded.Check)

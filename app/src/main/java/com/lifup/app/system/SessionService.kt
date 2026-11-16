@@ -5,7 +5,9 @@ import android.app.Notification
 import android.app.Service
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.IntentFilter
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.graphics.Color
@@ -107,6 +109,13 @@ class SessionService : Service() {
 
     private val store get() = LifUpApp.store
 
+    /** Nothing can be opened with the screen off: the blocker sleeps until it comes back on. */
+    private val screenReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            handler.post { syncPolling() }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
@@ -114,6 +123,11 @@ class SessionService : Service() {
         usage = getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         pollThread.start()
         pollHandler = Handler(pollThread.looper)
+        ContextCompat.registerReceiver(
+            this, screenReceiver,
+            IntentFilter().apply { addAction(Intent.ACTION_SCREEN_OFF); addAction(Intent.ACTION_SCREEN_ON) },
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -127,6 +141,7 @@ class SessionService : Service() {
 
     override fun onDestroy() {
         instance = null
+        runCatching { unregisterReceiver(screenReceiver) }
         handler.removeCallbacksAndMessages(null)
         pollHandler.removeCallbacksAndMessages(null)
         pollThread.quitSafely()
@@ -149,7 +164,7 @@ class SessionService : Service() {
         }
         val newPlan = s.blockPlan(now)
         plan = newPlan
-        if (newPlan != null) { acquireWakeLock(); schedulePoll() } else { releaseWakeLock(); removeOverlay() }
+        syncPolling()
         syncAmbient(s.focus)
         handler.removeCallbacks(tick)
         handler.post(tick)
@@ -244,6 +259,19 @@ class SessionService : Service() {
             val top = runCatching { foregroundPackage(now) }.getOrNull()
             if (top != null) handler.post { onDetected(top) }
             pollHandler.postDelayed(this, 500)
+        }
+    }
+
+    /**
+     * Polls (and keeps the CPU awake for it) only while there is something to block and the screen is on: a
+     * penalty lasts a day and a scheduled block a whole night, most of it with the phone lying still.
+     */
+    private fun syncPolling() {
+        val interactive = (getSystemService(POWER_SERVICE) as PowerManager).isInteractive
+        when {
+            plan == null -> { pollHandler.removeCallbacks(poll); releaseWakeLock(); removeOverlay() }
+            interactive -> { acquireWakeLock(); schedulePoll() }
+            else -> { pollHandler.removeCallbacks(poll); releaseWakeLock() }
         }
     }
 

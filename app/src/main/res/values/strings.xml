@@ -92,8 +92,8 @@
     <string name="side_section">Side quests</string>
     <string name="side_hint">A task for today…</string>
     <string name="side_empty">No side quests. Add small tasks for bonus XP.</string>
-    <string name="forbidden_keep">Counts by itself at midnight</string>
-    <string name="avoid_info">Nothing to tick: at midnight it counts as kept. If you slip, tap "I slipped" so the day stays honest.</string>
+    <string name="forbidden_keep">Counts by itself when the day ends</string>
+    <string name="avoid_info">Nothing to tick: when the day ends it counts as kept. If you slip, tap "I slipped" so the day stays honest.</string>
     <string name="forbidden_broken">Broken today</string>
     <string name="forbidden_fail">I slipped</string>
     <string name="forbidden_undo">Undo</string>
@@ -114,7 +114,7 @@
     <!-- Mission sheet -->
     <string name="double_xp_active">Hourglass active: next mission gives double XP</string>
     <string name="complete">Complete</string>
-    <string name="available_from">Available from %1$d:00 until midnight</string>
+    <string name="available_from">Available from %1$d:00 until the day ends</string>
     <string name="mark_done_manual">Mark as done</string>
     <string name="swap_free">Swap (free today)</string>
     <string name="swap_scroll">Swap (scrolls: %1$d)</string>
@@ -327,7 +327,7 @@
     <string name="block_on_penalty">Block apps during penalties</string>
     <string name="block_on_penalty_info">Your chosen apps stay blocked during a penalty (up to 24 h).</string>
     <string name="side_penalize">Side quests count</string>
-    <string name="side_penalize_info">An unfinished side quest counts as a failure at midnight on the day you wrote it, once.</string>
+    <string name="side_penalize_info">An unfinished side quest counts as a failure once, at the end of the day you wrote it.</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_info">Portals, finished sessions, penalties and an evening reminder.</string>
     <string name="reminder_hour">Reminder hour</string>
@@ -385,7 +385,7 @@
     <string name="preset_hard_eg">Like a 3 km run or an hour of deep work.</string>
     <string name="field_days">Days</string>
     <string name="add_today">Add to today\'s missions as well</string>
-    <string name="delete_mission_text">Delete this mission? Today\'s copy stays until midnight.</string>
+    <string name="delete_mission_text">Delete this mission? Today\'s copy stays until the day ends.</string>
     <string-array name="weekdays_short">
         <item>M</item><item>T</item><item>W</item><item>T</item><item>F</item><item>S</item><item>S</item>
     </string-array>
@@ -398,7 +398,7 @@
     <string name="onb_f_missions">Daily missions</string>
     <string name="onb_f_missions_text">Fixed habits plus a daily draw. Each goal grows as you keep it.</string>
     <string name="onb_f_penalty">Penalties</string>
-    <string name="onb_f_penalty_text">At midnight, failed missions cost XP and gold and add penalty missions. Until you do them: blocked apps or half the rewards, your choice.</string>
+    <string name="onb_f_penalty_text">When the day ends, failed missions cost XP and gold and add penalty missions. Until you do them: blocked apps or half the rewards, your choice.</string>
     <string name="onb_f_focus">Focus</string>
     <string name="onb_f_focus_text">Timer or Pomodoro with app blocking and ambient sound. Minutes count toward focus missions.</string>
     <string name="onb_f_boss">Weekly boss</string>
@@ -544,7 +544,7 @@
         <item quantity="other">%1$d more missions and today counts.</item>
     </plurals>
     <string name="flame_safe">Today already counts. Do them all for a perfect day: bonus XP and an echo.</string>
-    <string name="flame_perfect">All kept. At midnight it becomes a perfect day, if the avoid missions hold.</string>
+    <string name="flame_perfect">All kept. When the day ends it becomes a perfect day, if the avoid missions hold.</string>
     <string name="report_passed">Day kept</string>
     <string name="report_streak_restored">Streak recovered</string>
     <string name="pomodoro_work_open">Focus · cycle %1$d</string>
@@ -568,7 +568,7 @@
     <string name="perm_activity_why">Counting steps for walking missions and runs.</string>
     <string name="guide_section">How it works</string>
     <string name="guide_daily_title">Daily missions</string>
-    <string name="guide_daily">Fixed and drawn::1 fixed mission plus several drawn ones that change every day.\nStreak minimum::On Normal 75% of the missions is enough. 60% on Easy, 100% on Hard.\nPerfect day::Do them all: at midnight you get bonus XP and a new echo. Avoid missions count once they last the whole day.\nDoesn\'t fit today?::Swap one drawn mission a day for free, or create your own in the Forge. If something only fits some days, make it weekly.</string>
+    <string name="guide_daily">Fixed and drawn::1 fixed mission plus several drawn ones that change every day.\nStreak minimum::On Normal 75% of the missions is enough. 60% on Easy, 100% on Hard.\nPerfect day::Do them all: when the day ends you get bonus XP and a new echo. Avoid missions count once they last the whole day.\nDoesn\'t fit today?::Swap one drawn mission a day for free, or create your own in the Forge. If something only fits some days, make it weekly.</string>
     <string name="guide_pairs_title">Pair missions</string>
     <string name="guide_pairs">Invite someone::Create a pair mission and send them the code or link. They join from Today → Pair missions.\nYour part::You each get your own mission and progress; finishing yours sends the result to your partner.\nSchedule::Choose once, every day, certain weekdays or every few days. Random modes can give you the same mission or one each.\nThe reward::When both finish, you get +25%. With an active streak, missing a partner costs 10%.</string>
     <string name="guide_streak_title">Streak and rest</string>
@@ -623,7 +623,7 @@
         <item quantity="one">%1$d of %2$d time</item>
         <item quantity="other">%1$d of %2$d times</item>
     </plurals>
-    <string name="habit_none_yet">Each day this mission comes up is added here at midnight. The last square is today, live.</string>
+    <string name="habit_none_yet">Each day this mission comes up is added here when the day ends. The last square is today, live.</string>
     <string name="habit_recent">Last 30 days: %1$d of %2$d</string>
     <string name="habit_trend">Last 30 days: %1$d of %2$d (%3$d%%) · the 30 before: %4$d%%</string>
     <string name="prog_from">Started at %1$s</string>
@@ -649,14 +649,14 @@
     <string name="notif_reminder_safe_title">Streak secured</string>
     <string name="notif_reminder_safe_text">%1$d more for a perfect day, with bonus XP and an echo.</string>
     <string name="notif_avoid_title">How did the day go?</string>
-    <string name="notif_avoid_text">These count at midnight. If you slipped on one, mark it now: %1$s.</string>
+    <string name="notif_avoid_text">These count when the day ends. If you slipped on one, mark it now: %1$s.</string>
     <string name="notif_avoid_fail">Slipped: %1$s</string>
     <string name="notif_bedtime_title">Time to rest</string>
-    <string name="notif_bedtime_text">Confirm your bedtime check-in before midnight.</string>
+    <string name="notif_bedtime_text">Confirm your bedtime check-in before the day ends.</string>
     <string name="notif_bedtime_confirm">I\'m going to bed</string>
     <string name="widget_goal">%1$d more for the streak</string>
     <string name="widget_goal_safe">Streak secured ✓</string>
-    <string name="widget_hours_left">%1$d h to midnight</string>
+    <string name="widget_hours_left">%1$d h until the day ends</string>
     <string name="widget_under_hour">under 1 h</string>
     <string name="a11y_decrease">Decrease</string>
     <string name="a11y_increase">Increase</string>
@@ -829,7 +829,7 @@
     <string name="notif_remind_side">Side quest</string>
     <string name="notif_reminder_also">Also now: %1$s</string>
     <string name="report_missions_done">missions done</string>
-    <string name="report_paid_close">Paid at midnight</string>
+    <string name="report_paid_close">Paid when the day ends</string>
     <string name="report_side_label">Unfinished tasks</string>
     <string name="report_penalty_label">Penalty</string>
     <string name="report_penalty_quests_n">%1$d missions to clear</string>
@@ -1107,4 +1107,24 @@
     <string name="update_later">Later</string>
     <string name="update_prompt_title">New version %1$s</string>
     <string name="update_prompt_text">Update now? It downloads in the background and Android will ask you to confirm. Your progress stays as it is.</string>
+    <string name="rest_off_yes">Turn rest off</string>
+    <string name="rest_off_confirm">It\'s past noon: if you turn rest off you can\'t turn it back on today, and today\'s missions count.</string>
+    <string name="rigor_from_tomorrow">From tomorrow. Today stays on %1$s.</string>
+    <string name="block_locked">While a penalty or a no-quitting focus session is blocking apps, the block can\'t be turned off and apps can\'t be removed.</string>
+    <string name="day_end">Day ends at</string>
+    <string name="day_end_info">Missions done until this hour still count for the day before, bedtime included. For those up past midnight.</string>
+    <string name="day_end_wait">Can only be changed after %1$d:00.</string>
+    <string name="onb_missions">Your missions</string>
+    <string name="onb_areas_q">What do you want to work on?</string>
+    <string name="onb_areas_hint">Each day\'s missions are drawn from these areas. Turn off the ones that aren\'t for you.</string>
+    <string name="onb_family_count">%1$d of %2$d missions</string>
+    <string name="onb_review">Review</string>
+    <string name="onb_review_close">Close</string>
+    <string name="onb_fixed">Your everyday habit</string>
+    <string name="onb_fixed_hint">This mission comes up every day. The others are drawn.</string>
+    <string name="onb_change">Change</string>
+    <string name="onb_too_few">Keep at least %1$d missions on.</string>
+    <string name="onb_penalty_note">A failed day costs XP and gold. The first two days are practice: they cost nothing.</string>
+    <string name="toast_pair_paused_self">You were on a pause: the pair mission with %1$s didn\'t count, nothing lost</string>
+    <string name="toast_pair_paused_partner">%1$s is on a pause: your part counts ×1, no cut</string>
 </resources>

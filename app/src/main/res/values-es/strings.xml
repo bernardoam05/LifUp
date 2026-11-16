@@ -91,8 +91,8 @@
     <string name="side_section">Tareas</string>
     <string name="side_hint">Una tarea para hoy…</string>
     <string name="side_empty">Sin tareas. Añade pequeñas tareas del día para ganar XP extra.</string>
-    <string name="forbidden_keep">Cuenta sola a medianoche</string>
-    <string name="avoid_info">No hace falta marcar nada: a medianoche cuenta como cumplida. Si fallas, toca "Fallé".</string>
+    <string name="forbidden_keep">Cuenta sola al acabar el día</string>
+    <string name="avoid_info">No hace falta marcar nada: al acabar el día cuenta como cumplida. Si fallas, toca "Fallé".</string>
     <string name="forbidden_broken">Fallada hoy</string>
     <string name="forbidden_fail">Fallé</string>
     <string name="forbidden_undo">Deshacer</string>
@@ -113,7 +113,7 @@
     <!-- Mission sheet -->
     <string name="double_xp_active">Reloj de arena activo: la próxima misión da XP doble</string>
     <string name="complete">Completar</string>
-    <string name="available_from">Disponible desde las %1$d:00 hasta medianoche</string>
+    <string name="available_from">Disponible desde las %1$d:00 hasta el fin del día</string>
     <string name="mark_done_manual">Marcar como hecha</string>
     <string name="swap_free">Cambiar (gratis hoy)</string>
     <string name="swap_scroll">Cambiar (pergaminos: %1$d)</string>
@@ -326,7 +326,7 @@
     <string name="block_on_penalty">Bloquear apps en penalizaciones</string>
     <string name="block_on_penalty_info">Las apps elegidas quedan bloqueadas durante la penalización (hasta 24 h).</string>
     <string name="side_penalize">Las tareas cuentan</string>
-    <string name="side_penalize_info">Una tarea pendiente cuenta como fallo una vez, a medianoche del día en que la escribiste.</string>
+    <string name="side_penalize_info">Una tarea pendiente cuenta como fallo una vez, al acabar el día en que la escribiste.</string>
     <string name="notifications">Notificaciones</string>
     <string name="notifications_info">Portales, sesiones terminadas, penalizaciones y un recordatorio por la noche.</string>
     <string name="reminder_hour">Hora del recordatorio</string>
@@ -384,7 +384,7 @@
     <string name="preset_hard_eg">Como correr 3 km o una hora de trabajo profundo.</string>
     <string name="field_days">Días</string>
     <string name="add_today">Añadir también a las misiones de hoy</string>
-    <string name="delete_mission_text">¿Eliminar esta misión? La copia de hoy se queda hasta medianoche.</string>
+    <string name="delete_mission_text">¿Eliminar esta misión? La copia de hoy se queda hasta el fin del día.</string>
     <string-array name="weekdays_short">
         <item>L</item><item>M</item><item>X</item><item>J</item><item>V</item><item>S</item><item>D</item>
     </string-array>
@@ -397,7 +397,7 @@
     <string name="onb_f_missions">Misiones diarias</string>
     <string name="onb_f_missions_text">Hábitos fijos más un sorteo diario. Cada objetivo crece a medida que lo cumples.</string>
     <string name="onb_f_penalty">Penalizaciones</string>
-    <string name="onb_f_penalty_text">A medianoche, las misiones falladas cuestan XP y oro y añaden misiones de penalización. Hasta que las hagas: apps bloqueadas o la mitad de las recompensas, tú eliges.</string>
+    <string name="onb_f_penalty_text">Al acabar el día, las misiones falladas cuestan XP y oro y añaden misiones de penalización. Hasta que las hagas: apps bloqueadas o la mitad de las recompensas, tú eliges.</string>
     <string name="onb_f_focus">Foco</string>
     <string name="onb_f_focus_text">Temporizador o Pomodoro con bloqueo de apps y sonido ambiente. Los minutos cuentan para las misiones de foco.</string>
     <string name="onb_f_boss">Jefe semanal</string>
@@ -543,7 +543,7 @@
         <item quantity="other">Faltan %1$d misiones para que hoy cuente.</item>
     </plurals>
     <string name="flame_safe">Hoy ya cuenta. Hazlas todas para un día perfecto: XP extra y un eco.</string>
-    <string name="flame_perfect">Todas cumplidas. A medianoche será día perfecto, si las de evitar aguantan.</string>
+    <string name="flame_perfect">Todas cumplidas. Al acabar el día será día perfecto, si las de evitar aguantan.</string>
     <string name="report_passed">Día cumplido</string>
     <string name="report_streak_restored">Racha recuperada</string>
     <string name="pomodoro_work_open">Foco · ciclo %1$d</string>
@@ -567,7 +567,7 @@
     <string name="perm_activity_why">Contar pasos en misiones de caminar y carreras.</string>
     <string name="guide_section">Cómo funciona</string>
     <string name="guide_daily_title">Misiones diarias</string>
-    <string name="guide_daily">Fijas y sorteadas::1 misión fija y varias sorteadas que cambian cada día.\nMínimo para la racha::En Normal te basta con el 75% de las misiones. Un 60% en Fácil, 100% en Difícil.\nDía perfecto::Hazlas todas: a medianoche ganas XP extra y un eco nuevo. Las de evitar cuentan cuando aguantan todo el día.\n¿Hoy no te encaja?::Cambia una sorteada al día gratis, o crea las tuyas en la Forja. Si algo solo cabe algunos días, hazlo semanal.</string>
+    <string name="guide_daily">Fijas y sorteadas::1 misión fija y varias sorteadas que cambian cada día.\nMínimo para la racha::En Normal te basta con el 75% de las misiones. Un 60% en Fácil, 100% en Difícil.\nDía perfecto::Hazlas todas: al acabar el día ganas XP extra y un eco nuevo. Las de evitar cuentan cuando aguantan todo el día.\n¿Hoy no te encaja?::Cambia una sorteada al día gratis, o crea las tuyas en la Forja. Si algo solo cabe algunos días, hazlo semanal.</string>
     <string name="guide_pairs_title">Misiones en pareja</string>
     <string name="guide_pairs">Invita a alguien::Crea una misión en pareja y envíale el código o el enlace. Puede unirse desde Hoy → Misiones en pareja.\nTu parte::Cada uno recibe su propia misión y progreso; al terminar, el resultado se envía a tu pareja.\nHorario::Elige una vez, cada día, ciertos días de la semana o cada pocos días. Los modos aleatorios pueden dar la misma misión o una distinta a cada uno.\nLa recompensa::Cuando los dos terminan, ganáis +25%. Con una racha activa, no hacer la parte cuesta un 10%.</string>
     <string name="guide_streak_title">Racha y descanso</string>
@@ -622,7 +622,7 @@
         <item quantity="one">%1$d de %2$d vez</item>
         <item quantity="other">%1$d de %2$d veces</item>
     </plurals>
-    <string name="habit_none_yet">Cada día que sale esta misión se añade aquí a medianoche. El último cuadro es hoy, en directo.</string>
+    <string name="habit_none_yet">Cada día que sale esta misión se añade aquí al acabar el día. El último cuadro es hoy, en directo.</string>
     <string name="habit_recent">Últimos 30 días: %1$d de %2$d</string>
     <string name="habit_trend">Últimos 30 días: %1$d de %2$d (%3$d%%) · 30 anteriores: %4$d%%</string>
     <string name="prog_from">Empezó en %1$s</string>
@@ -648,14 +648,14 @@
     <string name="notif_reminder_safe_title">Racha asegurada</string>
     <string name="notif_reminder_safe_text">Te faltan %1$d para un día perfecto, con XP extra y un eco.</string>
     <string name="notif_avoid_title">¿Qué tal el día?</string>
-    <string name="notif_avoid_text">Estas cuentan a medianoche. Si fallaste alguna, márcala ahora: %1$s.</string>
+    <string name="notif_avoid_text">Estas cuentan al acabar el día. Si fallaste alguna, márcala ahora: %1$s.</string>
     <string name="notif_avoid_fail">Fallé: %1$s</string>
     <string name="notif_bedtime_title">Hora de descansar</string>
-    <string name="notif_bedtime_text">Confirma el check-in de dormir antes de medianoche.</string>
+    <string name="notif_bedtime_text">Confirma el check-in de dormir antes de que acabe el día.</string>
     <string name="notif_bedtime_confirm">Me voy a dormir</string>
     <string name="widget_goal">Faltan %1$d para la racha</string>
     <string name="widget_goal_safe">Racha asegurada ✓</string>
-    <string name="widget_hours_left">%1$d h hasta medianoche</string>
+    <string name="widget_hours_left">%1$d h hasta el fin del día</string>
     <string name="widget_under_hour">menos de 1 h</string>
     <string name="a11y_decrease">Disminuir</string>
     <string name="a11y_increase">Aumentar</string>
@@ -828,7 +828,7 @@
     <string name="notif_remind_side">Tarea</string>
     <string name="notif_reminder_also">También ahora: %1$s</string>
     <string name="report_missions_done">misiones hechas</string>
-    <string name="report_paid_close">Pagado a medianoche</string>
+    <string name="report_paid_close">Pagado al acabar el día</string>
     <string name="report_side_label">Tareas sin hacer</string>
     <string name="report_penalty_label">Penalización</string>
     <string name="report_penalty_quests_n">%1$d misiones por cumplir</string>
@@ -1106,4 +1106,24 @@
     <string name="update_later">Más tarde</string>
     <string name="update_prompt_title">Nueva versión %1$s</string>
     <string name="update_prompt_text">¿Actualizar ahora? Se descarga en segundo plano y Android te pedirá confirmar. Tu progreso se queda como está.</string>
+    <string name="rest_off_yes">Quitar descanso</string>
+    <string name="rest_off_confirm">Ya pasó el mediodía: si quitas el descanso, hoy no podrás volver a activarlo y las misiones de hoy cuentan.</string>
+    <string name="rigor_from_tomorrow">Desde mañana. Hoy sigue en %1$s.</string>
+    <string name="block_locked">Mientras una penalización o un enfoque sin rendirse bloquea apps, no puedes desactivar el bloqueo ni quitar apps.</string>
+    <string name="day_end">El día acaba a las</string>
+    <string name="day_end_info">Las misiones hechas hasta esta hora cuentan para el día anterior, incluida la de acostarse. Para quien sigue despierto pasada la medianoche.</string>
+    <string name="day_end_wait">Solo se puede cambiar después de las %1$d:00.</string>
+    <string name="onb_missions">Tus misiones</string>
+    <string name="onb_areas_q">¿Qué quieres trabajar?</string>
+    <string name="onb_areas_hint">Las misiones de cada día se sortean de estas áreas. Desactiva las que no son para ti.</string>
+    <string name="onb_family_count">%1$d de %2$d misiones</string>
+    <string name="onb_review">Revisar</string>
+    <string name="onb_review_close">Cerrar</string>
+    <string name="onb_fixed">Tu hábito de cada día</string>
+    <string name="onb_fixed_hint">Esta misión aparece todos los días. Las demás se sortean.</string>
+    <string name="onb_change">Cambiar</string>
+    <string name="onb_too_few">Deja al menos %1$d misiones activas.</string>
+    <string name="onb_penalty_note">Un día fallado cuesta XP y oro. Los dos primeros días son de práctica: no cuestan nada.</string>
+    <string name="toast_pair_paused_self">Estabas en pausa: la misión en pareja con %1$s no contó, sin pérdidas</string>
+    <string name="toast_pair_paused_partner">%1$s está en pausa: tu parte cuenta ×1, sin recorte</string>
 </resources>

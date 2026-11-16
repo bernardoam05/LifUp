@@ -1,0 +1,14 @@
+- [new] Escolhe as tuas missões logo no início: as áreas que queres trabalhar, as missões que não são para ti e o hábito fixo de todos os dias.
+- [new] Hora de fim do dia: em Definições → Jogo podes pôr o dia a acabar entre as 00:00 e as 05:00. As missões feitas até lá contam para o dia anterior, incluindo a de deitar.
+- [new] As pausas contam para os pares: um ciclo falhado durante a tua pausa ou a do parceiro não custa nada a ninguém e não quebra a sequência.
+- [fix] As peles Mecânica, Oceano Abissal e Porcelana Sakura tinham as formas trocadas: cada forma mostra agora a evolução certa.
+- [fix] O bloqueio de apps deixou de gastar bateria com o ecrã desligado, durante penalizações e bloqueios agendados.
+- [fix] Os passos e o tempo de ecrã dos últimos minutos do dia já contam quando o dia fecha com a app fechada.
+- [fix] A sequência quebra com dias em que a app nunca abriu, mesmo depois de um dia de descanso; e as proteções semanais dos ecos deixaram de falhar por poucas horas.
+- [fix] Uma penalização sem a permissão de sobreposição corta as recompensas a metade, como o texto dizia, em vez de não fazer nada.
+- [fix] As sessões "sem desistir" ganhas contam os minutos reais nas estatísticas de foco.
+- [fix] Repor o progresso sai dos pares, importar um backup mantém os pares e o CoreQuest+ atuais, e um boss sazonal já não aparece duas vezes na mesma época.
+- [tweak] Mudar a dificuldade vale a partir do dia seguinte.
+- [tweak] Durante uma penalização que bloqueia apps ou um foco sem desistir, não dá para desligar o bloqueio nem tirar apps da lista.
+- [tweak] As recompensas do boss semanal crescem com o teu nível.
+- [tweak] Desligar o descanso depois do meio-dia pede confirmação, porque já não dá para o voltar a ligar nesse dia.

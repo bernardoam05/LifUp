@@ -1,5 +1,6 @@
 package com.lifup.app.widget
 
+import com.lifup.app.domain.gameToday
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -94,7 +95,7 @@ private fun Boss(context: Context, s: GameState) {
 /** Five weeks of days, Monday first: green for kept, red for penalties, purple for rest. */
 @Composable
 private fun Weeks(s: GameState) {
-    val today = LocalDate.now()
+    val today = s.gameToday()
     val logs = s.dayLog.associateBy { it.day }
     val start = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).minusWeeks(4)
     // Widgets allow at most 10 children per row/column: gaps are padding, not spacers.

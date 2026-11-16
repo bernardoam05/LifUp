@@ -73,7 +73,7 @@
     <string name="block_ends_in">Bloqueio acaba em %1$s</string>
 
     <string name="rest_day">Descanso</string>
-    <string name="rest_day_info">Dia de descanso: sem penalização à meia-noite, mas a sequência também não cresce.</string>
+    <string name="rest_day_info">Dia de descanso: sem penalização ao fim do dia, mas a sequência também não cresce.</string>
     <string name="forge">Forja de missões</string>
     <string name="penalty_section">Penalização</string>
     <string name="penalty_info">Faz estas missões para a levantar mais cedo. Até lá, as tuas apps de distração ficam bloqueadas.</string>
@@ -85,8 +85,8 @@
     <string name="side_section">Tarefas</string>
     <string name="side_hint">Uma tarefa para hoje…</string>
     <string name="side_empty">Sem tarefas. Junta pequenas tarefas para ganhar XP extra.</string>
-    <string name="forbidden_keep">Conta sozinha à meia-noite</string>
-    <string name="avoid_info">Não precisas de marcar nada: à meia-noite conta como cumprida. Se falhares, toca em "Falhei".</string>
+    <string name="forbidden_keep">Conta sozinha ao fim do dia</string>
+    <string name="avoid_info">Não precisas de marcar nada: ao fim do dia conta como cumprida. Se falhares, toca em "Falhei".</string>
     <string name="forbidden_broken">Falhada hoje</string>
     <string name="forbidden_fail">Falhei</string>
     <string name="forbidden_undo">Afinal não</string>
@@ -105,7 +105,7 @@
 
     <string name="double_xp_active">Ampulheta ativa: a próxima missão dá XP a dobrar</string>
     <string name="complete">Concluir</string>
-    <string name="available_from">Disponível das %1$d:00 até à meia-noite</string>
+    <string name="available_from">Disponível das %1$d:00 até ao fim do dia</string>
     <string name="mark_done_manual">Marcar como feita</string>
     <string name="swap_free">Trocar (grátis hoje)</string>
     <string name="swap_scroll">Trocar (pergaminhos: %1$d)</string>
@@ -311,7 +311,7 @@
     <string name="block_on_penalty">Bloquear apps nas penalizações</string>
     <string name="block_on_penalty_info">As apps escolhidas ficam bloqueadas durante a penalização (até 24 h).</string>
     <string name="side_penalize">Tarefas contam</string>
-    <string name="side_penalize_info">Uma tarefa por fazer conta como falha uma vez, à meia-noite do dia em que a escreveste.</string>
+    <string name="side_penalize_info">Uma tarefa por fazer conta como falha uma vez, no fim do dia em que a escreveste.</string>
     <string name="notifications">Notificações</string>
     <string name="notifications_info">Portais, sessões terminadas, penalizações e um lembrete ao fim do dia.</string>
     <string name="reminder_hour">Hora do lembrete</string>
@@ -368,7 +368,7 @@
     <string name="preset_hard_eg">Como correr 3 km ou uma hora de trabalho profundo.</string>
     <string name="field_days">Dias</string>
     <string name="add_today">Adicionar também às missões de hoje</string>
-    <string name="delete_mission_text">Apagar esta missão? A cópia de hoje fica até à meia-noite.</string>
+    <string name="delete_mission_text">Apagar esta missão? A cópia de hoje fica até ao fim do dia.</string>
     <string-array name="weekdays_short">
         <item>S</item><item>T</item><item>Q</item><item>Q</item><item>S</item><item>S</item><item>D</item>
     </string-array>
@@ -380,7 +380,7 @@
     <string name="onb_f_missions">Missões diárias</string>
     <string name="onb_f_missions_text">Hábitos fixos mais um sorteio diário. Cada objetivo cresce à medida que o vais cumprindo.</string>
     <string name="onb_f_penalty">Penalizações</string>
-    <string name="onb_f_penalty_text">À meia-noite, missões falhadas custam XP e ouro e juntam missões de penalização. Até as fazeres: apps bloqueadas ou metade das recompensas, à tua escolha.</string>
+    <string name="onb_f_penalty_text">Ao fim do dia, missões falhadas custam XP e ouro e juntam missões de penalização. Até as fazeres: apps bloqueadas ou metade das recompensas, à tua escolha.</string>
     <string name="onb_f_focus">Foco</string>
     <string name="onb_f_focus_text">Temporizador ou Pomodoro com bloqueio de apps e som ambiente. Os minutos contam para as missões de foco.</string>
     <string name="onb_f_boss">Boss semanal</string>
@@ -525,7 +525,7 @@
         <item quantity="other">Faltam %1$d missões para hoje contar.</item>
     </plurals>
     <string name="flame_safe">Hoje já conta. Faz todas para um dia perfeito: XP extra e um eco.</string>
-    <string name="flame_perfect">Todas cumpridas. À meia-noite fica dia perfeito, se as de evitar aguentarem.</string>
+    <string name="flame_perfect">Todas cumpridas. Ao fim do dia fica dia perfeito, se as de evitar aguentarem.</string>
     <string name="report_passed">Dia cumprido</string>
     <string name="report_streak_restored">Sequência recuperada</string>
     <string name="pomodoro_work_open">Foco · ciclo %1$d</string>
@@ -549,7 +549,7 @@
     <string name="perm_activity_why">Contar passos nas missões de caminhar e corridas.</string>
     <string name="guide_section">Como funciona</string>
     <string name="guide_daily_title">Missões diárias</string>
-    <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para a sequência::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas: à meia-noite ganhas XP extra e um eco novo. As de evitar contam quando aguentam o dia todo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja. Se algo só cabe em alguns dias, torna-o semanal.</string>
+    <string name="guide_daily">Fixas e sorteadas::1 missão fixa e várias sorteadas, que mudam todos os dias.\nMínimo para a sequência::No Normal chegas lá com 75% das missões. No Fácil 60%, no Difícil 100%.\nDia perfeito::Faz todas: ao fim do dia ganhas XP extra e um eco novo. As de evitar contam quando aguentam o dia todo.\nNão encaixa hoje?::Troca uma sorteada por dia de graça, ou cria as tuas na Forja. Se algo só cabe em alguns dias, torna-o semanal.</string>
     <string name="guide_pairs_title">Missões em par</string>
     <string name="guide_pairs">Convida alguém::Cria uma missão em par e envia o código ou o link. A outra pessoa entra em Hoje → Missões em par.\nA tua parte::Cada um recebe a sua missão e progresso; quando acabas, o resultado é enviado ao teu par.\nHorário::Escolhe uma vez, todos os dias, certos dias da semana ou de poucos em poucos dias. Os modos aleatórios podem dar a mesma missão ou uma a cada um.\nA recompensa::Quando os dois acabam, ganham +25%. Com uma sequência ativa, não fazer a parte custa 10%.</string>
     <string name="guide_streak_title">Sequência e descanso</string>
@@ -604,7 +604,7 @@
         <item quantity="one">%1$d de %2$d vez</item>
         <item quantity="other">%1$d de %2$d vezes</item>
     </plurals>
-    <string name="habit_none_yet">Cada dia em que esta missão sai fica aqui à meia-noite. O último quadrado é hoje, em tempo real.</string>
+    <string name="habit_none_yet">Cada dia em que esta missão sai fica aqui ao fim do dia. O último quadrado é hoje, em tempo real.</string>
     <string name="habit_recent">Últimos 30 dias: %1$d de %2$d</string>
     <string name="habit_trend">Últimos 30 dias: %1$d de %2$d (%3$d%%) · 30 antes: %4$d%%</string>
     <string name="prog_from">Começou em %1$s</string>
@@ -630,14 +630,14 @@
     <string name="notif_reminder_safe_title">Sequência garantida</string>
     <string name="notif_reminder_safe_text">Faltam %1$d para um dia perfeito, com bónus de XP e um eco.</string>
     <string name="notif_avoid_title">Correu bem o dia?</string>
-    <string name="notif_avoid_text">Estas contam à meia-noite. Se falhaste alguma, marca agora: %1$s.</string>
+    <string name="notif_avoid_text">Estas contam ao fim do dia. Se falhaste alguma, marca agora: %1$s.</string>
     <string name="notif_avoid_fail">Falhei: %1$s</string>
     <string name="notif_bedtime_title">Hora de descansar</string>
-    <string name="notif_bedtime_text">Confirma o check-in de dormir antes da meia-noite.</string>
+    <string name="notif_bedtime_text">Confirma o check-in de dormir antes do fim do dia.</string>
     <string name="notif_bedtime_confirm">Vou deitar-me</string>
     <string name="widget_goal">Faltam %1$d para a sequência</string>
     <string name="widget_goal_safe">Sequência garantida ✓</string>
-    <string name="widget_hours_left">%1$d h até à meia-noite</string>
+    <string name="widget_hours_left">%1$d h até ao fim do dia</string>
     <string name="widget_under_hour">menos de 1 h</string>
     <string name="a11y_decrease">Diminuir</string>
     <string name="a11y_increase">Aumentar</string>
@@ -810,7 +810,7 @@
     <string name="notif_remind_side">Tarefa</string>
     <string name="notif_reminder_also">Também agora: %1$s</string>
     <string name="report_missions_done">missões feitas</string>
-    <string name="report_paid_close">Pago à meia-noite</string>
+    <string name="report_paid_close">Pago ao fim do dia</string>
     <string name="report_side_label">Tarefas por fazer</string>
     <string name="report_penalty_label">Penalização</string>
     <string name="report_penalty_quests_n">%1$d missões para cumprir</string>
@@ -1088,4 +1088,24 @@
     <string name="update_later">Mais tarde</string>
     <string name="update_prompt_title">Nova versão %1$s</string>
     <string name="update_prompt_text">Atualizar agora? Descarrega em segundo plano e o Android pede-te para confirmar. O teu progresso fica como está.</string>
+    <string name="rest_off_yes">Desligar descanso</string>
+    <string name="rest_off_confirm">Já passa do meio-dia: se desligares o descanso, hoje já não o podes voltar a ligar e as missões de hoje contam.</string>
+    <string name="rigor_from_tomorrow">A partir de amanhã. Hoje continua em %1$s.</string>
+    <string name="block_locked">Enquanto uma penalização ou um foco sem desistir bloqueia apps, não podes desligar o bloqueio nem tirar apps.</string>
+    <string name="day_end">O dia acaba às</string>
+    <string name="day_end_info">As missões feitas até esta hora ainda contam para o dia anterior, incluindo a de deitar. Para quem fica acordado depois da meia-noite.</string>
+    <string name="day_end_wait">Só dá para mudar depois das %1$d:00.</string>
+    <string name="onb_missions">As tuas missões</string>
+    <string name="onb_areas_q">O que queres trabalhar?</string>
+    <string name="onb_areas_hint">As missões de cada dia são sorteadas destas áreas. Desliga as que não são para ti.</string>
+    <string name="onb_family_count">%1$d de %2$d missões</string>
+    <string name="onb_review">Rever</string>
+    <string name="onb_review_close">Fechar</string>
+    <string name="onb_fixed">O teu hábito de todos os dias</string>
+    <string name="onb_fixed_hint">Esta missão aparece todos os dias. As outras são sorteadas.</string>
+    <string name="onb_change">Mudar</string>
+    <string name="onb_too_few">Deixa pelo menos %1$d missões ligadas.</string>
+    <string name="onb_penalty_note">Um dia falhado custa XP e ouro. Os dois primeiros dias são de treino: não custam nada.</string>
+    <string name="toast_pair_paused_self">Estavas em pausa: a missão em par com %1$s não contou, sem perdas</string>
+    <string name="toast_pair_paused_partner">%1$s está em pausa: a tua parte conta ×1, sem corte</string>
 </resources>

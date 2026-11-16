@@ -24,6 +24,7 @@ import android.content.Intent
 import android.os.Build
 import com.lifup.app.LifUpApp
 import com.lifup.app.domain.Ctx
+import com.lifup.app.domain.ctx
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.Pomodoro
 import com.lifup.app.domain.allDailyDone
@@ -94,7 +95,7 @@ object Alarms {
     }
 
     fun schedule(context: Context, s: GameState) {
-        val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
+        val ctx = s.ctx(LifUpApp.store.content, System.currentTimeMillis())
         val at = nextWake(s, ctx, reminderSentToday(context, ctx.todayKey))
         val am = context.getSystemService(AlarmManager::class.java)
         val pi = PendingIntent.getBroadcast(
@@ -116,7 +117,7 @@ object Alarms {
      * the evening one when they ring together), plus a late one for an open bedtime check-in.
      */
     fun maybeRemind(context: Context, s: GameState) {
-        val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
+        val ctx = s.ctx(LifUpApp.store.content, System.currentTimeMillis())
         if (!s.settings.notifications) return
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val lang = java.util.Locale.getDefault().language
@@ -152,7 +153,7 @@ object Alarms {
             val name = LifUpApp.store.content.bossById[boss!!.bossId]?.title?.let { it.text(java.util.Locale.getDefault().language) }.orEmpty()
             Notifications.bossSecond(context, name)
         }
-        val minute = ctx.dateTime.hour * 60 + ctx.dateTime.minute
+        val minute = ctx.hour * 60 + ctx.dateTime.minute
         if (minute >= Rules.AVOID_CHECK_MIN && prefs.getString("avoid", "") != ctx.todayKey && s.openAvoids().isNotEmpty()) {
             prefs.edit().putString("avoid", ctx.todayKey).apply()
             Notifications.avoidCheck(context, s.openAvoids())
@@ -194,7 +195,7 @@ object Alarms {
      * or they were yesterday's. Only acts when that set changes, since it runs on every state change.
      */
     fun dismissResolved(context: Context, s: GameState) {
-        val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
+        val ctx = s.ctx(LifUpApp.store.content, System.currentTimeMillis())
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         fun today(key: String) = prefs.getString(key, "") == ctx.todayKey
         val gone = buildList {

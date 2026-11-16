@@ -24,6 +24,11 @@ object CrashLog {
         }
     }
 
+    /** A failure that didn't end the app (the engine kept the state): written like a crash so it can be reported. */
+    fun record(context: Context, error: Throwable) {
+        runCatching { File(context.filesDir, FILE).writeText(report(Thread.currentThread(), error).take(MAX_CHARS)) }
+    }
+
     fun read(context: Context): String? = File(context.filesDir, FILE).takeIf { it.exists() }?.readText()
 
     fun clear(context: Context) {

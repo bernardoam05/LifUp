@@ -137,6 +137,8 @@ describe('parts', () => {
     await assertFails(updateDoc(ref, { name: 'x'.repeat(25) }));
     await assertFails(updateDoc(ref, { level: 0 }));
     await assertFails(updateDoc(ref, { note: 'hi' }));
+    await assertFails(updateDoc(ref, { pause: 'next week' }));
+    await assertSucceeds(updateDoc(ref, { pause: '2026-11-20/2026-11-27' }));
     await assertFails(updateDoc(ref, { expireAt: days(90) }));
   });
 

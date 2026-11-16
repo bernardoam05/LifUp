@@ -256,6 +256,8 @@ internal fun toastMessage(s: GameState, t: Reward.Toast): String {
             com.lifup.app.domain.CoreSkin.entries.firstOrNull { it.name == t.arg }?.let { stringResource(com.lifup.app.ui.hero.skinName(it)) } ?: t.arg,
         )
         ToastKind.PAIR_BOTH_CAPPED -> stringResource(R.string.toast_pair_both_capped, t.arg.ifBlank { "?" })
+        ToastKind.PAIR_PAUSED_SELF -> stringResource(R.string.toast_pair_paused_self, t.arg.ifBlank { "?" })
+        ToastKind.PAIR_PAUSED_PARTNER -> stringResource(R.string.toast_pair_paused_partner, t.arg.ifBlank { "?" })
         ToastKind.PAIR_UNKNOWN -> stringResource(R.string.toast_pair_unknown, t.arg.ifBlank { "?" })
     }
 }

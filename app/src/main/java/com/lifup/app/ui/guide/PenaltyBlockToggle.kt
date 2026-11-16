@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import com.lifup.app.R
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.setBlockOnPenalty
+import com.lifup.app.domain.blockLocked
 import com.lifup.app.system.Permissions
 import com.lifup.app.ui.act
 import com.lifup.app.ui.focus.AppPickerSheet
@@ -32,8 +33,9 @@ fun PenaltyBlockToggle(s: GameState) {
         s.settings.blockedApps.isEmpty() -> R.string.block_needs_apps
         else -> R.string.block_on_penalty_info
     }
+    val locked = s.blockLocked(System.currentTimeMillis())
     val consequence = if (s.penaltyBlocks() && ready) "" else " " + stringResource(R.string.penalty_cut_instead)
-    ToggleRow(stringResource(R.string.block_on_penalty), stringResource(info) + consequence, s.settings.blockOnPenalty && ready) { on ->
+    ToggleRow(stringResource(R.string.block_on_penalty), if (locked) stringResource(R.string.block_locked) else stringResource(info) + consequence, s.settings.blockOnPenalty && ready, enabled = !locked) { on ->
         when {
             on && !ready -> showPerms = true
             on && s.settings.blockedApps.isEmpty() -> { act { setBlockOnPenalty(true) }; pickApps = true }

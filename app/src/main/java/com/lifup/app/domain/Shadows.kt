@@ -117,8 +117,9 @@ fun GameState.squadEffects(content: Content): List<Pair<Passive, Double>> {
 fun Tx.tryCooldownPassive(passive: Passive): ShadowDef? {
     fun days(d: ShadowDef) = Rules.flagDays(d, s.owned(d.id)?.level ?: 1)
     val shadow = s.squad.mapNotNull { content.shadowById[it] }.filter { it.passive == passive }.minByOrNull(::days) ?: return null
-    val last = s.passiveCooldowns[passive] ?: 0L
-    if (ctx.now - last < days(shadow) * Rules.DAY_MS) return null
+    // By the calendar: a day closed a few hours earlier than last week's must not miss a weekly passive.
+    val last = s.passiveCooldowns[passive]?.let { java.time.Instant.ofEpochMilli(it).atZone(ctx.zone).toLocalDate() }
+    if (last != null && java.time.temporal.ChronoUnit.DAYS.between(last, ctx.today) < days(shadow)) return null
     s = s.copy(passiveCooldowns = s.passiveCooldowns + (passive to ctx.now))
     return shadow
 }

@@ -157,13 +157,13 @@ private fun Tx.completeMission(q: Quest) {
     updateQuest(q.id) {
         it.copy(
             status = QuestStatus.DONE, progress = maxOf(it.progress, it.target), xpGained = xp, goldGained = gold, bossDamage = dealt, squad = squad,
-            doneHour = ctx.hour, dropRolled = true, doubled = doubled, bossWeak = weak,
+            doneHour = ctx.clockHour, dropRolled = true, doubled = doubled, bossWeak = weak,
         )
     }
     count(StatKey.QUESTS_COMPLETED)
     if (q.origin == QuestOrigin.EXTRA) count(StatKey.EXTRA_COMPLETED)
     if (q.fromHour != null) count(StatKey.BEDTIMES_KEPT)
-    when (ctx.hour) {
+    when (ctx.clockHour) {
         in 0..3 -> count(StatKey.NIGHT_QUESTS)
         // An early riser's morning, not a night owl's 4 a.m.
         in 5..7 -> count(StatKey.EARLY_QUESTS)
@@ -244,9 +244,10 @@ fun Tx.setProgress(id: String, value: Double, autoComplete: Boolean = true) {
 fun Quest.usesPomodoro(content: Content) = pomodoro || content.questDefById[defId]?.pomodoro == true
 
 /** Counts focus minutes, and credits them to the session's mission only when done in that mission's mode. */
-fun Tx.creditFocus(minutes: Double, questId: String?, pomodoro: Boolean) {
+fun Tx.creditFocus(minutes: Double, questId: String?, pomodoro: Boolean, counted: Double = minutes) {
     if (minutes <= 0) return
-    count(StatKey.FOCUS_MINUTES, minutes.roundToInt().toLong())
+    // [counted]: the minutes really focused, for the statistics; [minutes] may carry a bonus for the mission.
+    count(StatKey.FOCUS_MINUTES, counted.roundToInt().toLong())
     val q = s.allQuests.firstOrNull { it.id == questId } ?: return
     if (q.type != QuestType.FOCUS || q.status != QuestStatus.OPEN || q.usesPomodoro(content) != pomodoro) return
     val next = q.progress + minutes * (1 + s.passives(content, ctx.now).focusMastery)

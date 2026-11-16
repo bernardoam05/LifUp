@@ -1349,11 +1349,11 @@
     "de": "Zapfenstreich"
    },
    "description": {
-    "pt": "Confirma quando te fores deitar, entre as 21h e a meia-noite. Se não confirmares antes da meia-noite, falha.",
-    "en": "Confirm when you go to bed, between 9 PM and midnight. If it isn't confirmed before midnight, it fails.",
-    "es": "Confirma cuándo te acuestas, entre las 21:00 y la medianoche. Si no lo confirmas antes de la medianoche, fallas.",
-    "fr": "Confirme quand tu vas te coucher, entre 21h et minuit. Sans confirmation avant minuit, c'est raté.",
-    "de": "Bestätige, wenn du ins Bett gehst, zwischen 21 Uhr und Mitternacht. Wenn du nicht vor Mitternacht bestätigst, schlägt sie fehl."
+    "pt": "Confirma quando te fores deitar, a partir das 21h. Se não confirmares antes de o dia acabar, falha.",
+    "en": "Confirm when you go to bed, from 9 PM on. If it isn't confirmed before the day ends, it fails.",
+    "es": "Confirma cuándo te acuestas, a partir de las 21:00. Si no lo confirmas antes de que acabe el día, fallas.",
+    "fr": "Confirme quand tu vas te coucher, à partir de 21h. Sans confirmation avant la fin de la journée, c'est raté.",
+    "de": "Bestätige, wenn du ins Bett gehst, ab 21 Uhr. Wenn du nicht vor dem Tagesende bestätigst, schlägt sie fehl."
    },
    "baseTarget": 1,
    "scalingAmount": 0,

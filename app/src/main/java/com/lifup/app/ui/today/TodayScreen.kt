@@ -1,5 +1,6 @@
 package com.lifup.app.ui.today
 
+import com.lifup.app.domain.ctx
 import com.lifup.app.domain.penaltyBlocks
 import com.lifup.app.domain.has
 import com.lifup.app.domain.showStarter
@@ -121,10 +122,15 @@ import java.time.format.FormatStyle
 @Composable
 fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, openQuest: String? = null, onQuestOpened: () -> Unit = {}) {
     val p = Lif.colors
-    val now = rememberNow(1_000)
+    // The screen follows the clock by the half minute; only what counts seconds (a running stopwatch, the portal's
+    // countdown) reads the second-by-second one, inside its own item, so the list isn't redrawn every second.
+    val now = rememberNow(30_000)
+    val tick = com.lifup.app.ui.components.rememberNowState(1_000)
+    fun cardNow(timer: com.lifup.app.domain.MissionTimer?) = if (timer?.running == true) tick.longValue else 0L
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
     var confirmDelete by rememberSaveable { mutableStateOf<String?>(null) }
     var remindSide by rememberSaveable { mutableStateOf<String?>(null) }
+    var confirmRestOff by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(openQuest) {
         if (openQuest != null) { selected = openQuest; onQuestOpened() }
     }
@@ -136,7 +142,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
 
     LazyColumn(contentPadding = PaddingValues(16.dp, 8.dp, 16.dp, 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         item {
-            val ctx = Ctx(content, now)
+            val ctx = s.ctx(content, now)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // One line: the count that matters, with the date as a quiet suffix.
                 Text("$done / ${counted.size}", style = MaterialTheme.typography.headlineSmall)
@@ -145,7 +151,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
                 Text(stringResource(R.string.today_count_suffix, date), style = MaterialTheme.typography.labelMedium, color = p.muted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
                 FilterChip(
                     selected = s.daily.rest,
-                    onClick = { act { toggleRestDay() } },
+                    onClick = { if (s.daily.rest && ctx.hour >= Rules.REST_DEADLINE_HOUR) confirmRestOff = true else act { toggleRestDay() } },
                     enabled = s.canRest(ctx),
                     label = { Text(if (s.daily.rest) stringResource(R.string.rest_day) else stringResource(R.string.rest_day_left, s.restDaysLeft(ctx.weekKey).coerceAtLeast(0))) },
                     leadingIcon = { Icon(Icons.Rounded.Bedtime, null, Modifier.size(16.dp)) },
@@ -172,12 +178,12 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
             item { SectionTitle(stringResource(R.string.penalty_section)) { InfoButton(Guide.PENALTY, s) } }
             item { Text(stringResource(if (s.penaltyBlocks()) R.string.penalty_info else R.string.penalty_info_cut), style = MaterialTheme.typography.bodySmall, color = p.red) }
             if (!s.settings.blockOnPenalty) item { Panel { PenaltyBlockToggle(s) } }
-            items(s.penalty.quests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now) { selected = q.id } }
+            items(s.penalty.quests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], cardNow(s.timers[q.id])) { selected = q.id } }
         }
 
         s.portal?.let { portal ->
-            item { SectionTitle(stringResource(R.string.portal_section)) { Text(fmtShort(portal.expiresAt - now), color = p.purple, style = MaterialTheme.typography.labelLarge); InfoButton(Guide.PORTAL) } }
-            item(key = portal.quest.id) { QuestCard(portal.quest, s.timers[portal.quest.id], now, xp = s.xpPreview(portal.quest, content, now)) { selected = portal.quest.id } }
+            item { SectionTitle(stringResource(R.string.portal_section)) { Text(fmtShort(portal.expiresAt - tick.longValue), color = p.purple, style = MaterialTheme.typography.labelLarge); InfoButton(Guide.PORTAL) } }
+            item(key = portal.quest.id) { QuestCard(portal.quest, s.timers[portal.quest.id], cardNow(s.timers[portal.quest.id]), xp = s.xpPreview(portal.quest, content, now)) { selected = portal.quest.id } }
         }
 
         // A hint saved before the bar was raised stays hidden.
@@ -186,19 +192,19 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
 
         if (s.showStarter()) item(key = "starter") { StarterCard(s) }
         item { SectionTitle(stringResource(R.string.daily_section)) { ManageAction(openForge); InfoButton(Guide.DAILY) } }
-        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q), s.hitsWeakness(q)) { selected = q.id } }
+        items(daily, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], cardNow(s.timers[q.id]), s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q), s.hitsWeakness(q)) { selected = q.id } }
 
         if (s.weeklyQuests.isNotEmpty()) {
             item { SectionTitle(stringResource(R.string.weekly_section)) { InfoButton(Guide.WEEKLY) } }
-            items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q), s.hitsWeakness(q)) { selected = q.id } }
+            items(s.weeklyQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], cardNow(s.timers[q.id]), s.weekly[q.defId], s.xpPreview(q, content, now), s.reminderMinute(q), s.hitsWeakness(q)) { selected = q.id } }
         }
         if (s.has(com.lifup.app.domain.Feature.PAIRS)) item(key = "pairs") { PairSection(s, now) { selected = it } }
         item { BossCard(s, now) { selected = it } }
 
-        val canExtra = s.canAddExtra(java.time.Instant.ofEpochMilli(now).atZone(java.time.ZoneId.systemDefault()).hour)
+        val canExtra = s.canAddExtra(s.ctx(content, now).hour)
         if (s.extraQuests.isNotEmpty() || canExtra) {
             item { SectionTitle(stringResource(R.string.extra_section)) { Text("${s.daily.extrasAdded}/${Rules.MAX_EXTRAS_PER_DAY}", color = p.dim, style = MaterialTheme.typography.labelMedium); InfoButton(Guide.EXTRA) } }
-            items(s.extraQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], now, xp = s.xpPreview(q, content, now), remindAt = s.reminderMinute(q), weak = s.hitsWeakness(q)) { selected = q.id } }
+            items(s.extraQuests, key = { it.id }) { q -> QuestCard(q, s.timers[q.id], cardNow(s.timers[q.id]), xp = s.xpPreview(q, content, now), remindAt = s.reminderMinute(q), weak = s.hitsWeakness(q)) { selected = q.id } }
             if (canExtra) item {
                 GhostButton(stringResource(R.string.add_extra), onClick = { act { addExtraQuest() } }, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Add, color = p.accent)
             } else if (s.extraOpen() && s.daily.extrasAdded < Rules.MAX_EXTRAS_PER_DAY) item {
@@ -247,6 +253,10 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
             onDismiss = { remindSide = null },
         )
     }
+    if (confirmRestOff) com.lifup.app.ui.components.ConfirmDialog(
+        stringResource(R.string.rest_day), stringResource(R.string.rest_off_confirm), stringResource(R.string.rest_off_yes),
+        onConfirm = { act { toggleRestDay() }; confirmRestOff = false }, onDismiss = { confirmRestOff = false }, danger = true,
+    )
     confirmDelete?.let { id ->
         com.lifup.app.ui.components.ConfirmDialog(
             stringResource(R.string.delete), stringResource(R.string.side_delete_paid), stringResource(R.string.delete),

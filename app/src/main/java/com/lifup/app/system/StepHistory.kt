@@ -33,12 +33,11 @@ object StepHistory {
         return subscribed
     }
 
-    /** Steps recorded on [day] up to now, or null when Play services can't provide them. */
-    suspend fun steps(c: Context, day: LocalDate): Int? {
+    /** Steps recorded between [startMs] and [endMs] (a player's day, up to now), or null when Play services can't provide them. */
+    suspend fun steps(c: Context, startMs: Long, endMs: Long): Int? {
         if (!AutoTracker.stepsAvailable(c) || !supported(c) || !subscribe(c)) return null
-        val zone = ZoneId.systemDefault()
-        val start = day.atStartOfDay(zone).toEpochSecond()
-        val end = minOf(day.plusDays(1).atStartOfDay(zone).toEpochSecond(), System.currentTimeMillis() / 1000)
+        val start = startMs / 1000
+        val end = endMs / 1000
         if (end <= start) return 0
         val request = LocalDataReadRequest.Builder()
             .aggregate(LocalDataType.TYPE_STEP_COUNT_DELTA)

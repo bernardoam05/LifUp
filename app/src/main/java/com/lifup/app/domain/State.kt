@@ -202,6 +202,10 @@ data class FocusSession(
 @Serializable
 data class Settings(
     val rigor: Rigor = Rigor.NORMAL,
+    /** A difficulty picked today: it takes over when the next day opens, so today can't be made easier at 23:59. */
+    val rigorNext: Rigor? = null,
+    /** The hour the day ends at, for those up past midnight: 0 = midnight, up to [Rules.MAX_DAY_END]. */
+    val dayEndHour: Int = 0,
     /** null = automatic by rigor and level. */
     val dailyPoolOverride: Int? = null,
     /** Attributes the player wants to grow most: their missions come up twice as often. */
@@ -393,6 +397,8 @@ enum class ToastKind {
     CORE_SKIN,
     /** arg: the partner's name; the pair now waits for someone to join again. */
     PAIR_PARTNER_LEFT,
+    /** A pair cycle that fell in a pause, this player's or the partner's (arg: the partner's name): nothing lost. */
+    PAIR_PAUSED_SELF, PAIR_PAUSED_PARTNER,
 }
 
 @Serializable
@@ -440,6 +446,9 @@ data class GameState(
     val penalty: Penalty = Penalty(),
     val boss: BossState? = null,
     val bossHistory: List<String> = emptyList(),
+    /** The last seasonal boss and the week it came, so one season's window never brings it twice. */
+    val seasonalBoss: String = "",
+    val seasonalWeek: String = "",
     /** Per-install random seed, so weekly bosses, shop offers and drawn missions differ between players. */
     val seed: Long = 0,
     val portal: PortalState? = null,
@@ -486,6 +495,8 @@ data class GameState(
     val load: MissionLoad = MissionLoad(),
     /** Whether the phone lets the app read screen time (usage access); limits aren't drawn without it. */
     val screenMeasurable: Boolean = true,
+    /** Whether the app may draw over other apps: without it nothing can be blocked, so a penalty cuts rewards instead. */
+    val overlayAllowed: Boolean = true,
     /** What the squad brought this week (for the weekly report) and since always. */
     val squadWeek: SquadGain = SquadGain(),
     val squadTotal: SquadGain = SquadGain(),

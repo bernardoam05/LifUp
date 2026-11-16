@@ -315,4 +315,41 @@ class PairsTest {
         // Then tomorrow's cycle opening, just after midnight.
         assertEquals(at("2026-11-12T00:01"), sent.nextPairWake(at("2026-11-11T18:40"), zone))
     }
+
+    @Test fun `a partner on a pause is not held against the pair`() {
+        var s = run(withPair(pair().copy(streak = 3)), "2026-11-11T18:00") { completePairPart("p1") }
+        s = run(s, "2026-11-12T00:06") // the day closes first, with whatever that costs
+        val gold = s.player.gold
+        s = run(s, "2026-11-12T08:40") { pairRead("p1", "rui", "Rui", emptyMap(), gone = false, partnerPause = "2026-11-11/2026-11-18") }
+        assertEquals(PairOutcome.UNKNOWN, s.p().parts.first { it.cycle == "2026-11-11" }.outcome)
+        assertEquals(gold, s.player.gold)
+        assertEquals(3, s.p().streak)
+        assertTrue(ToastKind.PAIR_PAUSED_PARTNER in toasts(s))
+        assertFalse(pauseCovers("2026-11-11/2026-11-18", "2026-11-19"))
+    }
+
+    @Test fun `a cycle missed during my own pause costs nothing and keeps the pair's sequence`() {
+        var s = withPair(pair().copy(streak = 3))
+        s = run(s, "2026-11-11T09:30") { startPause(3) }
+        assertEquals("2026-11-11/2026-11-13", s.pauseToShare("2026-11-11"))
+        assertEquals(listOf("p1"), s.pairsOwedPause("2026-11-11").map { it.id })
+        val xp = s.player.xp
+        val gold = s.player.gold
+        s = run(s, "2026-11-12T00:06") { pairPauseSent("p1", "2026-11-11/2026-11-13") }
+        assertEquals(PairOutcome.MISSED, s.p().parts.first { it.cycle == "2026-11-11" }.outcome)
+        assertEquals(xp, s.player.xp)
+        assertEquals(gold, s.player.gold)
+        assertEquals(3, s.p().streak)
+        assertTrue(ToastKind.PAIR_PAUSED_SELF in toasts(s))
+        assertTrue(s.pairsOwedPause("2026-11-12").isEmpty())
+    }
+
+    @Test fun `a backup put over the game keeps the pairs this phone is in`() {
+        val live = withPair(pair().copy(streak = 5))
+        val backup = GameState(onboarded = true, plus = true, pairs = listOf(pair().copy(streak = 1), pair().copy(id = "old")))
+        val merged = backup.keepingLive(live)
+        assertEquals(listOf("p1", "old"), merged.pairs.map { it.id })
+        assertEquals(5, merged.pairs.first().streak)
+        assertFalse(merged.plus)
+    }
 }

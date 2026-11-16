@@ -1,5 +1,6 @@
 package com.lifup.app.widget
 
+import com.lifup.app.domain.ctx
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -94,7 +95,7 @@ private fun Compact(context: Context, s: GameState) {
 @Composable
 private fun Full(context: Context, s: GameState, rows: Int) {
     val lang = Locale.getDefault().language
-    val ctx = Ctx(LifUpApp.store.content, System.currentTimeMillis())
+    val ctx = s.ctx(LifUpApp.store.content, System.currentTimeMillis())
     val daily = s.countedQuests()
     val done = daily.count { it.isSuccessful() }
     val goal = s.dayGoal().copy(kept = done)

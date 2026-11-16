@@ -1,0 +1,14 @@
+- [new] Choose your missions from the start: the areas you want to work on, the missions that aren't for you and your fixed everyday habit.
+- [new] Day-end hour: in Settings → Game you can make the day end between 00:00 and 05:00. Missions done until then count for the day before, bedtime included.
+- [new] Pauses count for pairs: a cycle missed during your pause or your partner's costs nobody anything and doesn't break the sequence.
+- [fix] The Clockwork, Abyssal Ocean and Sakura Porcelain skins had their forms out of order: each form now shows the right evolution.
+- [fix] App blocking no longer drains the battery with the screen off, during penalties and scheduled blocks.
+- [fix] Steps and screen time from the last minutes of the day now count when the day closes with the app closed.
+- [fix] Days when the app was never opened break the streak even after a rest day; and the echoes' weekly protections no longer miss by a few hours.
+- [fix] A penalty without the display-over-apps permission halves rewards, as the text said, instead of doing nothing.
+- [fix] Won "no quitting" sessions count their real minutes in the focus statistics.
+- [fix] Resetting progress leaves your pairs, importing a backup keeps your current pairs and CoreQuest+, and a seasonal boss no longer shows up twice in one season.
+- [tweak] A new difficulty applies from the next day.
+- [tweak] While a penalty is blocking apps, or during a no-quitting focus session, the block can't be turned off and apps can't be removed from the list.
+- [tweak] The weekly boss's rewards grow with your level.
+- [tweak] Turning rest off after noon asks first, because it can't be turned back on that day.

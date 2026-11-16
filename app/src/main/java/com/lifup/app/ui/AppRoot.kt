@@ -1,5 +1,6 @@
 package com.lifup.app.ui
 
+import com.lifup.app.domain.ctx
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import com.lifup.app.domain.penaltyBlocks
@@ -206,7 +207,7 @@ private fun MainScaffold(
     // With the app open across midnight the day closes on the dot, report included, instead of waiting for the
     // alarm (late on phones that delay it) or for the next tap, which would close it silently and land on the new day.
     LaunchedEffect(s.day) {
-        val nextDay = java.time.LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val nextDay = s.ctx(content, System.currentTimeMillis()).nextMidnight()
         kotlinx.coroutines.delay((nextDay - System.currentTimeMillis()).coerceAtLeast(0) + 1_000)
         act { }
     }

@@ -73,6 +73,10 @@ import com.lifup.app.domain.Rigor
 import com.lifup.app.domain.Rules
 import com.lifup.app.domain.rename
 import com.lifup.app.domain.setBlockOnPenalty
+import com.lifup.app.domain.keepingLive
+import com.lifup.app.domain.setRigor
+import com.lifup.app.domain.setDayEnd
+import com.lifup.app.domain.ctx
 import com.lifup.app.domain.updateSettings
 import com.lifup.app.system.Permissions
 import com.lifup.app.system.Updater
@@ -174,11 +178,15 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit, openPlus: () -> Un
                     Panel {
                         SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                             Rigor.entries.forEachIndexed { i, r ->
-                                SegmentedButton(selected = set.rigor == r, onClick = { act { updateSettings { it.copy(rigor = r) } } }, shape = SegmentedButtonDefaults.itemShape(i, 3)) {
+                                SegmentedButton(selected = (set.rigorNext ?: set.rigor) == r, onClick = { act { setRigor(r) } }, shape = SegmentedButtonDefaults.itemShape(i, 3)) {
                                     Text(stringResource(rigorName(r)))
                                 }
                             }
                         }
+                        if (set.rigorNext != null) Text(
+                            stringResource(R.string.rigor_from_tomorrow, stringResource(rigorName(set.rigor))),
+                            style = MaterialTheme.typography.bodySmall, color = Lif.colors.gold, modifier = Modifier.padding(top = 6.dp),
+                        )
                         Spacer(Modifier.height(8.dp))
                         Text(stringResource(rigorInfo(set.rigor)), style = MaterialTheme.typography.bodySmall, color = Lif.colors.muted)
                         Spacer(Modifier.height(8.dp))
@@ -192,6 +200,15 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit, openPlus: () -> Un
                             auto,
                         ) { on -> act { updateSettings { it.copy(dailyPoolOverride = if (on) null else autoCount) } } }
                         if (!auto) Stepper(set.dailyPoolOverride!!, { v -> act { updateSettings { it.copy(dailyPoolOverride = v) } } }, 1..10, stringResource(R.string.extra_daily_missions))
+                        Spacer(Modifier.height(12.dp))
+                        // For those up past midnight: the small hours still count for the day before.
+                        val canMove = com.lifup.app.domain.canSetDayEnd(s.ctx(content, System.currentTimeMillis()))
+                        Text(stringResource(R.string.day_end), style = MaterialTheme.typography.titleSmall)
+                        Text(
+                            stringResource(if (canMove) R.string.day_end_info else R.string.day_end_wait, Rules.MAX_DAY_END),
+                            style = MaterialTheme.typography.bodySmall, color = if (canMove) Lif.colors.muted else Lif.colors.gold,
+                        )
+                        Stepper(set.dayEndHour, { v -> act { setDayEnd(v) } }, if (canMove) 0..Rules.MAX_DAY_END else set.dayEndHour..set.dayEndHour, "", suffix = ":00")
                         Spacer(Modifier.height(12.dp))
                         Text(stringResource(R.string.attr_focus_title), style = MaterialTheme.typography.titleSmall)
                         Spacer(Modifier.height(4.dp))
@@ -298,13 +315,13 @@ fun SettingsScreen(onBack: () -> Unit, openForge: () -> Unit, openPlus: () -> Un
 
     if (confirmReset) ConfirmDialog(
         stringResource(R.string.reset_progress), stringResource(R.string.reset_text), stringResource(R.string.reset_confirm),
-        onConfirm = { scope.launch { LifUpApp.store.replace(GameState()); LifUpApp.store.dispatch() } },
+        onConfirm = { val app = context.applicationContext; scope.launch { com.lifup.app.system.PairService.leaveAll(app); LifUpApp.store.replace(GameState(plus = LifUpApp.store.current.plus)); LifUpApp.store.dispatch() } },
         onDismiss = { confirmReset = false }, danger = true,
     )
     pendingImport?.let { imported ->
         ConfirmDialog(
             stringResource(R.string.import_), stringResource(R.string.import_confirm_text, imported.player.level, imported.shadows.size), stringResource(R.string.import_),
-            onConfirm = { scope.launch { LifUpApp.store.replace(imported); LifUpApp.store.dispatch() } },
+            onConfirm = { scope.launch { LifUpApp.store.replace(imported.keepingLive(LifUpApp.store.current)); LifUpApp.store.dispatch() } },
             onDismiss = { pendingImport = null }, danger = true,
         )
     }

@@ -159,7 +159,9 @@ private fun PairCard(s: GameState, pair: PairQuest, now: Long, onOpen: (String) 
         !pair.joined -> InviteCard(s, pair, now)
         q != null -> Column {
             // The same card as every other mission: progress, timer, XP; a tap opens the mission sheet.
-            QuestCard(q, s.timers[q.id], now, xp = s.xpPreview(q, content, now)) { onOpen(q.id) }
+            // A running stopwatch counts by the second; otherwise the section keeps the screen's slower clock.
+            val cardNow = if (s.timers[q.id]?.running == true) com.lifup.app.ui.components.rememberNow(1_000) else now
+            QuestCard(q, s.timers[q.id], cardNow, xp = s.xpPreview(q, content, now)) { onOpen(q.id) }
             PairStatus(s, pair, part, Modifier.padding(start = 12.dp, end = 4.dp, top = 2.dp))
         }
         else -> RestingPairCard(s, pair, now)

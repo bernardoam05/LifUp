@@ -70,6 +70,9 @@ object Rules {
 
     const val MAX_LEVEL = 1000
 
+    /** The latest hour a player's day can end at (see [Settings.dayEndHour]). */
+    const val MAX_DAY_END = 5
+
     /** XP to go from [level] to the next: grows by 100 a level up to 100, then by 50 (about 4 days a level for good). */
     fun xpForLevel(level: Int) = level.coerceIn(1, MAX_LEVEL).let { if (it <= 100) 100 * it else 10_000 + 50 * (it - 100) }
 
@@ -483,21 +486,40 @@ fun FocusSession.creditableMinutes(now: Long): Double {
 fun GameState.weekRandom(ctx: Ctx, salt: Int): Random = Random(ctx.weekKey.hashCode().toLong() * 31 + salt xor seed)
 
 /** Everything an action needs from the outside world. */
-class Ctx(val content: Content, val now: Long, val zone: ZoneId = ZoneId.systemDefault(), val rng: Random = Random.Default) {
+class Ctx(val content: Content, val now: Long, val zone: ZoneId = ZoneId.systemDefault(), val rng: Random = Random.Default, dayEnd: Int = 0) {
+    /** The hour the player's day ends at (0 = midnight): until then the small hours still belong to the day before. */
+    val dayEnd: Int = dayEnd.coerceIn(0, Rules.MAX_DAY_END)
     val dateTime: ZonedDateTime = Instant.ofEpochMilli(now).atZone(zone)
-    val today: LocalDate = dateTime.toLocalDate()
+    val today: LocalDate = dateTime.minusHours(this.dayEnd.toLong()).toLocalDate()
     val todayKey: String = today.toString()
-    val hour: Int = dateTime.hour
+    /** The hour on the clock (0..23). */
+    val clockHour: Int = dateTime.hour
+    /** The hour within the player's day: the small hours before [dayEnd] read 24 and up, so "from 21h" still holds at 00:30. */
+    val hour: Int = if (clockHour < this.dayEnd) clockHour + 24 else clockHour
 
     val weekStart: LocalDate = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
     val weekKey: String = weekStart.toString()
-    val nextWeekStartMs: Long = weekStart.plusWeeks(1).atStartOfDay(zone).toInstant().toEpochMilli()
+    val nextWeekStartMs: Long = dayStart(weekStart.plusWeeks(1))
 
-    fun atHour(date: LocalDate, hour: Int): Long = date.atTime(hour, 0).atZone(zone).toInstant().toEpochMilli()
-    /** Wall-clock time on [date], right on the days the clocks change (adding minutes to midnight would be an hour off). */
-    fun atMinute(date: LocalDate, minute: Int): Long = date.atTime(minute / 60, minute % 60).atZone(zone).toInstant().toEpochMilli()
-    fun nextMidnight(): Long = today.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli()
+    /** When the player's day [date] begins: midnight, or [dayEnd] o'clock. */
+    fun dayStart(date: LocalDate): Long = date.atTime(dayEnd, 0).atZone(zone).toInstant().toEpochMilli()
+
+    fun atHour(date: LocalDate, hour: Int): Long = atMinute(date, hour * 60)
+    /**
+     * Wall-clock time within the player's day [date], right on the days the clocks change (adding minutes to midnight
+     * would be an hour off). A time before [dayEnd] falls on the next calendar day, still inside that player's day.
+     */
+    fun atMinute(date: LocalDate, minute: Int): Long =
+        (if (minute < dayEnd * 60) date.plusDays(1) else date).atTime(minute / 60, minute % 60).atZone(zone).toInstant().toEpochMilli()
+    /** When the player's day ends and the next one opens. */
+    fun nextMidnight(): Long = dayStart(today.plusDays(1))
 }
+
+/** The clock as this player's game reads it (see [Settings.dayEndHour]). */
+fun GameState.ctx(content: Content, now: Long) = Ctx(content, now, dayEnd = settings.dayEndHour)
+
+/** The player's current day as a date (the open day, or the calendar's before the first one). */
+fun GameState.gameToday(): LocalDate = day.takeIf { it.isNotEmpty() }?.let(LocalDate::parse) ?: LocalDate.now()
 
 /** Mutable wrapper used inside a single action so rules read as a sequence of steps. */
 class Tx(var s: GameState, val ctx: Ctx) {

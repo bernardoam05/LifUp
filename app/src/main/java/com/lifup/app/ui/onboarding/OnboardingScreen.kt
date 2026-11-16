@@ -1,5 +1,23 @@
 package com.lifup.app.ui.onboarding
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.TextButton
+import com.lifup.app.domain.DefKind
+import com.lifup.app.domain.DrawGroup
+import com.lifup.app.domain.QuestDef
+import com.lifup.app.domain.QuestType
+import com.lifup.app.domain.drawGroup
+import com.lifup.app.domain.isWeekly
+import com.lifup.app.ui.color
+import com.lifup.app.ui.familyName
+import com.lifup.app.ui.fmtNum
+import com.lifup.app.ui.icon
+import com.lifup.app.ui.local
+import com.lifup.app.ui.unitLabel
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.icons.automirrored.rounded.TrendingDown
 import androidx.compose.material.icons.rounded.Block
@@ -97,8 +115,17 @@ fun OnboardingScreen() {
     var page by rememberSaveable { mutableIntStateOf(0) }
     var name by rememberSaveable { mutableStateOf("") }
     var rigor by rememberSaveable { mutableStateOf(Rigor.NORMAL) }
-    var focus by rememberSaveable { mutableStateOf(emptySet<Attr>()) }
-    var block by rememberSaveable { mutableStateOf(false) }
+    // What the player wants to work on: families left out and missions taken off start switched off in the Forge.
+    val all = remember { content.quests.filter { !it.retired && !it.optional && !it.isWeekly() && (it.kind == DefKind.CORE || it.kind == DefKind.POOL) } }
+    var families by rememberSaveable { mutableStateOf(DrawGroup.entries.toSet()) }
+    var removed by rememberSaveable { mutableStateOf(emptySet<String>()) }
+    var fixed by rememberSaveable { mutableStateOf<String?>(null) }
+    val kept = all.filter { it.drawGroup() in families && it.id !in removed }
+    // The everyday mission: one a tap can settle, with no permission or hour attached.
+    val fixable = kept.filter { it.auto == null && it.fromHour == null && it.type != QuestType.LIMIT && it.type != QuestType.FORBIDDEN }
+    val fixedDef = fixable.firstOrNull { it.id == fixed } ?: fixable.firstOrNull { it.kind == DefKind.CORE } ?: fixable.firstOrNull()
+    val poolLeft = kept.count { it.kind == DefKind.POOL && it.id != fixedDef?.id }
+    val ready = fixedDef != null && poolLeft >= MIN_POOL
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val legacy = remember { LegacyImport.readAsyncStorage(context) }
@@ -125,29 +152,31 @@ fun OnboardingScreen() {
                     }
                     1 -> {
                         Spacer(Modifier.height(16.dp))
-                        Text(stringResource(R.string.onb_how).uppercase(), style = MaterialTheme.typography.titleSmall, color = c.accent)
-                        val features = listOf(
-                            Triple(Icons.Rounded.TaskAlt, c.accent, R.string.onb_f_missions to R.string.onb_f_missions_text),
-                            Triple(Icons.Rounded.Warning, c.red, R.string.onb_f_penalty to R.string.onb_f_penalty_text),
-                            Triple(Icons.Rounded.Psychology, c.purple, R.string.onb_f_focus to R.string.onb_f_focus_text),
-                            Triple(Icons.Rounded.Whatshot, c.gold, R.string.onb_f_boss to R.string.onb_f_boss_text),
-                            Triple(Icons.Rounded.AutoAwesome, c.green, R.string.onb_f_shadows to R.string.onb_f_shadows_text),
-                        )
-                        features.forEachIndexed { i, (icon, color, texts) -> Feature(icon, color, texts.first, texts.second, delayMs = i * 90) }
-                    }
-                    else -> {
-                        Spacer(Modifier.height(16.dp))
                         Text(stringResource(R.string.onb_register).uppercase(), style = MaterialTheme.typography.titleSmall, color = c.accent)
                         OutlinedTextField(name, { name = it.take(24) }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.hunter_name)) }, singleLine = true)
                         Text(stringResource(R.string.difficulty), style = MaterialTheme.typography.titleMedium)
                         Rigor.entries.forEach { r -> RigorCard(r, rigor == r) { rigor = r } }
-                        Text(stringResource(R.string.onb_penalty_question), style = MaterialTheme.typography.titleMedium)
-                        ConsequenceCard(Icons.Rounded.Block, c.red, R.string.onb_penalty_block, R.string.onb_penalty_block_text, block) { block = true }
-                        ConsequenceCard(Icons.AutoMirrored.Rounded.TrendingDown, c.gold, R.string.onb_penalty_cut, R.string.onb_penalty_cut_text, !block) { block = false }
-                        if (block) Text(stringResource(R.string.onb_penalty_block_setup), style = MaterialTheme.typography.bodySmall, color = c.muted)
-                        Text(stringResource(R.string.attr_focus_question), style = MaterialTheme.typography.titleMedium)
-                        FocusPicker(focus, { focus = it })
+                        Text(stringResource(R.string.onb_penalty_note), style = MaterialTheme.typography.bodySmall, color = c.muted)
                         Text(stringResource(R.string.onb_change_later), style = MaterialTheme.typography.bodySmall, color = c.dim)
+                    }
+                    else -> {
+                        Spacer(Modifier.height(16.dp))
+                        Text(stringResource(R.string.onb_missions).uppercase(), style = MaterialTheme.typography.titleSmall, color = c.accent)
+                        Text(stringResource(R.string.onb_areas_q), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.onb_areas_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
+                        DrawGroup.entries.forEach { g ->
+                            val defs = all.filter { it.drawGroup() == g }
+                            if (defs.isNotEmpty()) FamilyCard(
+                                g, defs, g in families, removed,
+                                // Two areas at least, so the daily draw has something to balance.
+                                onToggle = { if (g !in families) families = families + g else if (families.size > 2) families = families - g },
+                                onMission = { id -> removed = if (id in removed) removed - id else removed + id },
+                            )
+                        }
+                        Text(stringResource(R.string.onb_fixed), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.onb_fixed_hint), style = MaterialTheme.typography.bodySmall, color = c.muted)
+                        if (fixedDef != null) FixedHabit(fixedDef, fixable) { fixed = it }
+                        if (!ready) Text(stringResource(R.string.onb_too_few, MIN_POOL), style = MaterialTheme.typography.bodySmall, color = c.red)
                     }
                 }
             }
@@ -160,12 +189,14 @@ fun OnboardingScreen() {
             Spacer(Modifier.weight(1f))
             if (page > 0) GhostButton(stringResource(R.string.back), onClick = { page-- })
             Spacer(Modifier.width(8.dp))
-            PrimaryButton(stringResource(if (page < 2) R.string.next else R.string.onb_start), onClick = {
+            PrimaryButton(stringResource(if (page < 2) R.string.next else R.string.onb_start), enabled = page < 2 || ready, onClick = {
                 if (page < 2) page++
                 else {
                     if (Build.VERSION.SDK_INT >= 33) notif.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    val n = name; val r = rigor; val f = focus; val b = block
-                    act { finishOnboarding(n, r, f, b) }
+                    val n = name; val r = rigor
+                    val off = all.filter { it !in kept }.map { it.id }.toSet()
+                    val habit = fixedDef?.id
+                    act { finishOnboarding(n, r, off = off, fixed = habit) }
                 }
             })
         }
@@ -207,41 +238,87 @@ private fun EarnChip(icon: ImageVector, label: String, color: Color) {
     }
 }
 
-/** A feature row that fades and slides in a moment after the previous one. */
+/** Pool missions that must stay on for the daily draw to have a choice. */
+private const val MIN_POOL = 6
+
 @Composable
-private fun Feature(icon: ImageVector, color: Color, title: Int, text: Int, delayMs: Int) {
-    var shown by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { delay(delayMs.toLong()); shown = true }
-    AnimatedVisibility(shown, enter = fadeIn(tween(350)) + slideInVertically(tween(350)) { it / 3 }) {
-        Row {
-            IconBadge(icon, color, 42.dp)
-            Spacer(Modifier.width(14.dp))
-            Column {
-                Text(stringResource(title), style = MaterialTheme.typography.titleMedium)
-                Text(stringResource(text), style = MaterialTheme.typography.bodyMedium, color = Lif.colors.muted)
+private fun defDetail(def: QuestDef) = def.description.local().replace("{target}", fmtNum(def.baseTarget)).replace("{unit}", unitLabel(def.unit))
+
+/** One area: on or off as a whole, and its missions one by one for whoever wants to take some off. */
+@Composable
+private fun FamilyCard(g: DrawGroup, defs: List<QuestDef>, selected: Boolean, removed: Set<String>, onToggle: () -> Unit, onMission: (String) -> Unit) {
+    val c = Lif.colors
+    val color = defs.first().color(c)
+    var open by rememberSaveable(g) { mutableStateOf(false) }
+    Panel(border = if (selected) color else c.border, background = if (selected) color.copy(alpha = 0.08f) else c.panel, onClick = onToggle) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconBadge(defs.first().icon(), if (selected) color else c.dim, 40.dp)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(familyName(g)), style = MaterialTheme.typography.titleMedium, color = if (selected) color else c.dim)
+                if (selected) Text(
+                    stringResource(R.string.onb_family_count, defs.count { it.id !in removed }, defs.size),
+                    style = MaterialTheme.typography.bodySmall, color = c.muted,
+                )
+            }
+            if (selected) TextButton(onClick = { open = !open }) { Text(stringResource(if (open) R.string.onb_review_close else R.string.onb_review).uppercase(), color = c.muted) }
+            if (selected) Icon(Icons.Rounded.CheckCircle, null, tint = color)
+        }
+        if (selected && open) Column(Modifier.padding(top = 8.dp)) {
+            defs.forEach { def ->
+                val on = def.id !in removed
+                Row(Modifier.fillMaxWidth().clickable { onMission(def.id) }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = on, onCheckedChange = null)
+                    Spacer(Modifier.width(10.dp))
+                    Column {
+                        Text(def.title.local(), style = MaterialTheme.typography.bodyLarge, color = if (on) c.text else c.dim)
+                        Text(defDetail(def), style = MaterialTheme.typography.bodySmall, color = if (on) c.muted else c.dim)
+                    }
+                }
             }
         }
     }
+}
+
+/** The mission that comes up every day, and a list to pick another. */
+@Composable
+private fun FixedHabit(def: QuestDef, options: List<QuestDef>, onPick: (String) -> Unit) {
+    val c = Lif.colors
+    var picking by rememberSaveable { mutableStateOf(false) }
+    Panel(border = c.accent, onClick = { picking = true }) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconBadge(def.icon(), def.color(c), 40.dp)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(def.title.local(), style = MaterialTheme.typography.titleMedium)
+                Text(defDetail(def), style = MaterialTheme.typography.bodySmall, color = c.muted)
+            }
+            Text(stringResource(R.string.onb_change).uppercase(), style = MaterialTheme.typography.labelLarge, color = c.accent)
+        }
+    }
+    if (picking) AlertDialog(
+        onDismissRequest = { picking = false },
+        containerColor = c.panel,
+        title = { Text(stringResource(R.string.onb_fixed)) },
+        text = {
+            LazyColumn(Modifier.height(380.dp)) {
+                items(options, key = { it.id }) { o ->
+                    Row(Modifier.fillMaxWidth().clickable { onPick(o.id); picking = false }.padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        IconBadge(o.icon(), o.color(c), 32.dp)
+                        Spacer(Modifier.width(10.dp))
+                        Column {
+                            Text(o.title.local(), style = MaterialTheme.typography.bodyLarge, color = if (o.id == def.id) c.accent else c.text)
+                            Text(defDetail(o), style = MaterialTheme.typography.bodySmall, color = c.muted)
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = { picking = false }) { Text(stringResource(R.string.back).uppercase(), color = c.muted) } },
+    )
 }
 
 /** Difficulty as a card: icon, name and the one line that tells them apart. */
-/** One way a failed day can cost you; same look as the difficulty cards above. */
-@Composable
-private fun ConsequenceCard(icon: ImageVector, color: Color, title: Int, text: Int, selected: Boolean, onClick: () -> Unit) {
-    val c = Lif.colors
-    Panel(border = if (selected) color else c.border, background = if (selected) color.copy(alpha = 0.08f) else c.panel, onClick = onClick) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconBadge(icon, color, 40.dp)
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
-                Text(stringResource(title), style = MaterialTheme.typography.titleMedium, color = if (selected) color else c.text)
-                Text(stringResource(text), style = MaterialTheme.typography.bodySmall, color = c.muted)
-            }
-            if (selected) Icon(Icons.Rounded.CheckCircle, null, tint = color)
-        }
-    }
-}
-
 @Composable
 private fun RigorCard(r: Rigor, selected: Boolean, onClick: () -> Unit) {
     val c = Lif.colors

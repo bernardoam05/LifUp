@@ -50,6 +50,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.lifup.app.R
 import com.lifup.app.domain.GameState
 import com.lifup.app.domain.updateSettings
+import com.lifup.app.domain.setBlockedApps
 import com.lifup.app.system.InstalledApp
 import com.lifup.app.system.Permissions
 import com.lifup.app.ui.act
@@ -184,7 +185,7 @@ fun AppPickerSheet(current: List<String>, onDismiss: () -> Unit) {
             Spacer(Modifier.height(8.dp))
             PrimaryButton(stringResource(R.string.save_n, chosen.size), onClick = {
                 val result = chosen.toList()
-                act { updateSettings { it.copy(blockedApps = result) } }
+                act { setBlockedApps(result) }
                 onDismiss()
             }, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(12.dp))
