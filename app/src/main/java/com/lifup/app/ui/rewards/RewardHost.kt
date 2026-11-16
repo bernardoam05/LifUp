@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -189,7 +190,7 @@ internal fun RewardCard(icon: ImageVector?, color: Color, title: String, subtitl
                 Modifier.fillMaxWidth().weight(1f, fill = false).verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                if (core != null) CoreAvatar(Core.stage(LifUpApp.store.state.value), core, 96.dp, glow = color)
+                if (core != null) CoreAvatar(Core.stage(LifUpApp.store.state.collectAsState().value), core, 96.dp, glow = color)
                 else if (icon != null) Icon(icon, null, tint = color, modifier = Modifier.padding(bottom = 4.dp).height(44.dp).width(44.dp))
                 Text(title.uppercase(), style = MaterialTheme.typography.titleSmall, color = color, textAlign = TextAlign.Center)
                 if (subtitle.isNotEmpty()) Text(subtitle, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)

@@ -2,4 +2,6 @@
 <!-- GitHub builds install their own updates (system/Updater); the Play build leaves that to the store. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Play only allows this one for a few app types; there the battery row opens the general list instead. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 </manifest>

@@ -18,7 +18,8 @@ import com.lifup.app.ui.theme.Lif
 @Composable
 fun CrashPrompt() {
     val context = LocalContext.current
-    remember { CrashUi.load(context) }
+    // Reads the saved report once, before the first frame, so the dialog shows straight away.
+    remember { CrashUi.load(context); true }
     val text = CrashUi.report ?: return
     val close = { CrashUi.report = null }
     AlertDialog(

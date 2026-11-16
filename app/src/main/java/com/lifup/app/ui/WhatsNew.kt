@@ -24,6 +24,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,7 +64,7 @@ fun WhatsNew() {
     AlertDialog(
         onDismissRequest = close,
         containerColor = Lif.colors.panel,
-        icon = { com.lifup.app.ui.components.CoreAvatar(com.lifup.app.domain.Core.stage(LifUpApp.store.state.value), com.lifup.app.domain.CoreMood.HAPPY, 72.dp) },
+        icon = { com.lifup.app.ui.components.CoreAvatar(com.lifup.app.domain.Core.stage(LifUpApp.store.state.collectAsState().value), com.lifup.app.domain.CoreMood.HAPPY, 72.dp) },
         title = { Text(stringResource(R.string.whats_new_title, BuildConfig.VERSION_NAME)) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(14.dp)) {

@@ -157,7 +157,7 @@ private fun Profile(s: GameState) {
     var coreSheet by remember { mutableStateOf(false) }
     if (progression) ProgressionSheet(s) { progression = false }
     if (coreSheet) CoreSheet(s) { coreSheet = false }
-    val hour = java.time.LocalTime.ofInstant(java.time.Instant.ofEpochMilli(com.lifup.app.ui.components.rememberNow(60_000)), java.time.ZoneId.systemDefault()).hour
+    val hour = java.time.Instant.ofEpochMilli(com.lifup.app.ui.components.rememberNow(60_000)).atZone(java.time.ZoneId.systemDefault()).hour
     Panel(onClick = { progression = true }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             // The Core, with the rank on its corner; tapping it picks its form.
