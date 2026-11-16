@@ -52,8 +52,10 @@ object Permissions {
     }
 
     fun openBattery(c: Context) {
+        // Only the GitHub build declares REQUEST_IGNORE_BATTERY_OPTIMIZATIONS (a normal permission: declared = granted).
+        val canAsk = c.checkSelfPermission(android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED
         @Suppress("BatteryLife")
-        val ok = open(c, Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:${c.packageName}")))
+        val ok = canAsk && open(c, Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:${c.packageName}")))
         if (!ok) open(c, Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
     }
 
