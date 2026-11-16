@@ -1,0 +1,2 @@
+- [fix] A app já não fecha ao abrir o ecrã do Herói no Android 8 a 11.
+- [tweak] Versão da Play Store: «Sem restrições de bateria» abre a lista de bateria do sistema, onde escolhes o CoreQuest.

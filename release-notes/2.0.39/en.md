@@ -1,0 +1,2 @@
+- [fix] The app no longer closes when you open the Hero screen on Android 8 to 11.
+- [tweak] Play Store version: "No battery restrictions" opens the system's battery list, where you pick CoreQuest yourself.

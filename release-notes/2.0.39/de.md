@@ -1,0 +1,2 @@
+- [fix] Die App schließt sich nicht mehr beim Öffnen des Helden-Bildschirms unter Android 8 bis 11.
+- [tweak] Play-Store-Version: „Keine Akku-Einschränkungen“ öffnet die Akku-Liste des Systems, in der du CoreQuest auswählst.
