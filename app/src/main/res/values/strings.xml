@@ -81,6 +81,7 @@
     <!-- Today -->
     <string name="rest_day">Rest</string>
     <string name="rest_day_info">Rest day: no penalty tonight, but the streak won\'t grow either.</string>
+    <string name="rest_too_late">Rest days are called before %1$d:00.</string>
     <string name="forge">Mission forge</string>
     <string name="penalty_section">Penalty</string>
     <string name="penalty_info">Do these missions to lift it early. Meanwhile your distracting apps are blocked.</string>
@@ -250,7 +251,7 @@
     <string name="passive_streak_xp">+%1$s XP with a %2$d-day streak (building up to it)</string>
     <string name="passive_portal">+%1$s XP and gold from portals</string>
     <string name="passive_swap">+1 free swap a day</string>
-    <string name="passive_early">+%1$s XP on missions done before %2$d:00</string>
+    <string name="passive_early">+%1$s XP on missions done between %2$d:00 and %3$d:00</string>
     <string name="passive_comeback">+%1$s XP and gold the day after a failed day</string>
     <string name="passive_extra">+%1$s XP and gold from extra missions</string>
     <string name="passive_spoils">+%1$s XP and gold when you defeat a boss</string>
@@ -982,6 +983,7 @@
     <string name="pair_err_not_found">Invalid or expired code.</string>
     <string name="pair_err_full">That pair is already complete.</string>
     <string name="pair_err_limit">You\'ve reached your pair missions limit.</string>
+    <string name="pair_err_daily">You\'ve started too many pair missions today. Try again tomorrow.</string>
     <string name="toast_pair_both">Pair mission with %1$s kept by both: +%2$d XP and +%3$d gold</string>
     <string name="toast_pair_both_capped">Pair mission with %1$s kept by both (today\'s pair bonuses are used up)</string>
     <string name="toast_pair_cut">%1$s didn\'t do their part: −%2$d XP and −%3$d gold</string>

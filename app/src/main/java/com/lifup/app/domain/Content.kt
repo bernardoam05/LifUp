@@ -186,7 +186,16 @@ data class ItemDef(
     val hours: Int = 0,
     val name: L10n,
     val description: L10n,
+    /** How [cost] follows the player's level (see [GameState.itemBasePrice]). */
+    val scale: PriceScale = PriceScale.FIXED,
 )
+
+/**
+ * Gold earned grows with level, so an item whose worth grows with it does too: [TIER] follows mission gold (always
+ * the same share of a week's income), [XP] follows mission XP (an XP item gives the same XP per gold at any level).
+ */
+@Serializable
+enum class PriceScale { FIXED, TIER, XP }
 
 @Serializable
 enum class StatKey {

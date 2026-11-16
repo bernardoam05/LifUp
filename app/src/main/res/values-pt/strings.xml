@@ -74,6 +74,7 @@
 
     <string name="rest_day">Descanso</string>
     <string name="rest_day_info">Dia de descanso: sem penalização ao fim do dia, mas a sequência também não cresce.</string>
+    <string name="rest_too_late">O dia de descanso pede-se antes das %1$dh.</string>
     <string name="forge">Forja de missões</string>
     <string name="penalty_section">Penalização</string>
     <string name="penalty_info">Faz estas missões para a levantar mais cedo. Até lá, as tuas apps de distração ficam bloqueadas.</string>
@@ -237,7 +238,7 @@
     <string name="passive_streak_xp">+%1$s XP com %2$d dias de sequência (cresce até lá)</string>
     <string name="passive_portal">+%1$s XP e ouro nos portais</string>
     <string name="passive_swap">+1 troca grátis por dia</string>
-    <string name="passive_early">+%1$s XP nas missões feitas antes das %2$dh</string>
+    <string name="passive_early">+%1$s XP nas missões feitas entre as %2$dh e as %3$dh</string>
     <string name="passive_comeback">+%1$s XP e ouro no dia a seguir a um dia falhado</string>
     <string name="passive_extra">+%1$s XP e ouro nas missões extra</string>
     <string name="passive_spoils">+%1$s XP e ouro ao derrotar um boss</string>
@@ -963,6 +964,7 @@
     <string name="pair_err_not_found">Código inválido ou expirado.</string>
     <string name="pair_err_full">Esse par já está completo.</string>
     <string name="pair_err_limit">Chegaste ao limite de missões em par.</string>
+    <string name="pair_err_daily">Já começaste demasiadas missões de par hoje. Tenta amanhã.</string>
     <string name="toast_pair_both">Missão em par com %1$s cumprida pelos dois: +%2$d XP e +%3$d ouro</string>
     <string name="toast_pair_both_capped">Missão em par com %1$s cumprida pelos dois (os bónus de par de hoje já foram usados)</string>
     <string name="toast_pair_cut">%1$s não fez a sua parte: −%2$d XP e −%3$d ouro</string>

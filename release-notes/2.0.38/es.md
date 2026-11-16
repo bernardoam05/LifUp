@@ -1,0 +1,11 @@
+- [new] Los precios de la tienda siguen tu nivel: el Cristal de XP, el Pase Maestro, el Escudo de la Constancia, la Lágrima de Purificación, el Reloj de Arena y los elixires cuestan la misma parte de tus ingresos en cualquier nivel.
+- [new] Misiones en pareja: puedes cambiar la misión una vez por ciclo en las parejas «cada uno la suya», y solo se pueden empezar 3 parejas al día (5 con CoreQuest+).
+- [fix] El Pase Maestro ya no se gasta en una misión que aún no se puede hacer ni en un límite roto, y ahora también lista las misiones extra y semanales.
+- [fix] Los escudos y los ecos protectores ya no se gastan cuando los días saltados rompen la racha de todos modos.
+- [fix] Las misiones secundarias que cuentan aparecen ahora en el objetivo del día, la barra, el widget y el recordatorio, aunque desactives la opción más tarde.
+- [fix] Las misiones de evitar y de límite mantenidas hasta medianoche ahora dan atributos y cuentan para récords y metas semanales; el bonus madrugador cubre solo de 05:00 a 10:00.
+- [fix] Un día de descanso o una pausa mantiene para el día siguiente la opción de recuperar la racha.
+- [fix] Una misión semanal desactivada y reactivada en la misma semana sigue donde estaba.
+- [fix] Deshacer una misión anterior ya no revive a un jefe que las misiones posteriores ya habían derrotado.
+- [tweak] El Elixir de la Fortuna da ahora +100 % de oro (no en el oro del jefe), y el Reloj de Arena y los elixires son más baratos.
+- [tweak] Las misiones secundarias muestran el XP que realmente pagan, y «marcar como hecha» queda desactivado hasta que la misión esté disponible.

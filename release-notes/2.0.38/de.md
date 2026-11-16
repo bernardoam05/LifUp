@@ -1,0 +1,11 @@
+- [new] Die Shop-Preise folgen deinem Level: XP-Kristall, Meisterpass, Schild der Beständigkeit, Träne der Läuterung, Sanduhr und Elixiere kosten auf jedem Level denselben Anteil deines Einkommens.
+- [new] Paar-Missionen: In Paaren «jeder seine eigene» kannst du die Mission einmal pro Zyklus tauschen, und pro Tag können nur 3 Paare gestartet werden (5 mit CoreQuest+).
+- [fix] Der Meisterpass wird nicht mehr für eine noch nicht machbare Mission oder ein gebrochenes Limit verbraucht und listet jetzt auch Extra- und Wochenmissionen.
+- [fix] Schilde und schützende Echos werden nicht mehr verbraucht, wenn übersprungene Tage die Serie ohnehin brechen.
+- [fix] Nebenaufgaben, die zählen, erscheinen jetzt im Tagesziel, im Balken, im Widget und in der Erinnerung, auch wenn du die Option später ausschaltest.
+- [fix] Vermeiden- und Limit-Missionen, die bis Mitternacht gehalten werden, geben jetzt Attribute und zählen für Rekorde und Wochenziele; der Frühbonus gilt nur von 05:00 bis 10:00.
+- [fix] Ein Ruhetag oder eine Pause behält die Chance, die Serie zurückzuholen, für den nächsten Tag.
+- [fix] Eine Wochenmission, die in derselben Woche aus- und wieder eingeschaltet wird, macht dort weiter, wo sie war.
+- [fix] Das Rückgängigmachen einer früheren Mission belebt keinen Boss mehr wieder, den spätere Missionen schon besiegt hatten.
+- [tweak] Das Elixier des Glücks gibt jetzt +100 % Gold (nicht auf Boss-Gold), und Sanduhr und Elixiere sind günstiger.
+- [tweak] Nebenaufgaben zeigen die XP, die sie wirklich zahlen, und «als erledigt markieren» bleibt deaktiviert, bis die Mission verfügbar ist.

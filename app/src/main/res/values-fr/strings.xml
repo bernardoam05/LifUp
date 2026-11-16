@@ -74,6 +74,7 @@
 
     <string name="rest_day">Repos</string>
     <string name="rest_day_info">Jour de repos : pas de pénalité ce soir, mais la série n\'augmente pas non plus.</string>
+    <string name="rest_too_late">Le jour de repos se demande avant %1$d h.</string>
     <string name="forge">Forge de missions</string>
     <string name="penalty_section">Pénalité</string>
     <string name="penalty_info">Fais ces missions pour la lever plus tôt. D\'ici là, tes apps qui distraient sont bloquées.</string>
@@ -237,7 +238,7 @@
     <string name="passive_streak_xp">+%1$s XP avec une série de %2$d jours (monte jusque-là)</string>
     <string name="passive_portal">+%1$s XP et or dans les portails</string>
     <string name="passive_swap">+1 échange gratuit par jour</string>
-    <string name="passive_early">+%1$s XP sur les missions faites avant %2$d h</string>
+    <string name="passive_early">+%1$s XP sur les missions faites entre %2$d h et %3$d h</string>
     <string name="passive_comeback">+%1$s XP et or le lendemain d\'un jour raté</string>
     <string name="passive_extra">+%1$s XP et or dans les missions extra</string>
     <string name="passive_spoils">+%1$s XP et or en battant un boss</string>
@@ -963,6 +964,7 @@
     <string name="pair_err_not_found">Code invalide ou expiré.</string>
     <string name="pair_err_full">Ce binôme est déjà complet.</string>
     <string name="pair_err_limit">Tu as atteint la limite de missions en binôme.</string>
+    <string name="pair_err_daily">Tu as déjà commencé trop de missions en duo aujourd\'hui. Réessaie demain.</string>
     <string name="toast_pair_both">Mission en binôme avec %1$s réussie par les deux : +%2$d XP et +%3$d or</string>
     <string name="toast_pair_both_capped">Mission en binôme avec %1$s réussie par les deux (les bonus du jour sont épuisés)</string>
     <string name="toast_pair_cut">%1$s n\'a pas fait sa part : −%2$d XP et −%3$d or</string>

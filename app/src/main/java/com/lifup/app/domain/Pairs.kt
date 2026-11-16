@@ -44,6 +44,8 @@ data class PairPart(
     val nudged: Boolean = false,
     /** The part as a mission: same card, sheet, counter, timer and focus credit as any other (null on 2.0.20 saves). */
     val quest: Quest? = null,
+    /** This cycle's mission was swapped already (once a cycle, "each their own" pairs only). */
+    val swapped: Boolean = false,
 )
 
 @Serializable
@@ -108,6 +110,9 @@ data class PairSyncState(
     val bonusUsed: Int = 0,
     val linkDay: String = "",
     val linkReads: Int = 0,
+    /** Pairs created or joined on [newDay], which has a ceiling (see [PairRules.newPerDay]). */
+    val newDay: String = "",
+    val newCount: Int = 0,
 )
 
 object PairRules {
@@ -117,6 +122,12 @@ object PairRules {
     const val EACH = "each"
     /** Pairs at once without CoreQuest+ (with it, [MAX_ACTIVE]). */
     const val FREE_ACTIVE = 1
+    /**
+     * Pairs created or joined in a day, without and with CoreQuest+: enough to set pairs up and change one's mind,
+     * not to make and drop them over and over (each one is a paid mission, and writes to the shared free quota).
+     */
+    const val FREE_NEW_PER_DAY = 3
+    const val PLUS_NEW_PER_DAY = 5
     const val BONUS = 0.25
     const val CUT = 0.10
     const val BOSS_SHARE = 0.50
@@ -221,6 +232,9 @@ fun GameState.pairQuests(): List<Quest> = pairs.filter { !it.ended }.flatMap { p
 fun GameState.pairOf(questId: String): PairQuest? = pairs.firstOrNull { p -> p.parts.any { it.quest?.id == questId } }
 fun GameState.pairLimit() = if (plus) PairRules.MAX_ACTIVE else PairRules.FREE_ACTIVE
 fun GameState.canAddPair() = activePairs().size < pairLimit()
+fun GameState.newPairsPerDay() = if (plus) PairRules.PLUS_NEW_PER_DAY else PairRules.FREE_NEW_PER_DAY
+/** Pairs that can still be created or joined on [day]. */
+fun GameState.newPairsLeft(day: String) = (newPairsPerDay() - if (pairSync.newDay == day) pairSync.newCount else 0).coerceAtLeast(0)
 fun GameState.pairQuotaBlocked(now: Long) = pairSync.quotaBlockedUntil > now
 
 fun GameState.pairDefs(content: Content): List<QuestDef> =
@@ -237,7 +251,8 @@ private fun Tx.updatePair(id: String, f: (PairQuest) -> PairQuest) {
 /** A new pair, this phone being its creator ([PairQuest.invite] set) or having just joined it. */
 fun Tx.addPair(p: PairQuest) {
     if (s.pairs.any { it.id == p.id }) return
-    s = s.copy(pairs = s.pairs + p)
+    val made = if (s.pairSync.newDay == ctx.todayKey) s.pairSync.newCount else 0
+    s = s.copy(pairs = s.pairs + p, pairSync = s.pairSync.copy(newDay = ctx.todayKey, newCount = made + 1))
     ensurePairs()
 }
 
@@ -326,6 +341,29 @@ fun Tx.useLinkRead(): Boolean {
     val sync = s.pairSync.let { if (it.linkDay != ctx.todayKey) it.copy(linkDay = ctx.todayKey, linkReads = 0) else it }
     if (sync.linkReads >= PairRules.LINK_READS_PER_DAY) { s = s.copy(pairSync = sync); return false }
     s = s.copy(pairSync = sync.copy(linkReads = sync.linkReads + 1))
+    return true
+}
+
+/**
+ * Whether a pair mission can be swapped: only in an "each their own" pair, where the draw is this phone's alone
+ * (nothing to agree on with the partner, nothing sent), once a cycle and before it is done.
+ */
+fun GameState.canSwapPair(questId: String, now: Long): Boolean {
+    val p = pairOf(questId)?.takeIf { !it.ended && it.defId == PairRules.EACH } ?: return false
+    val part = p.parts.first { it.quest?.id == questId }
+    return !part.swapped && part.doneAt == null && part.outcome == null && now < p.deadline(part.cycle)
+}
+
+fun Tx.swapPairQuest(questId: String): Boolean {
+    if (!s.canSwapPair(questId, ctx.now)) return false
+    val p = s.pairOf(questId) ?: return false
+    val part = p.parts.first { it.quest?.id == questId }
+    val pool = s.eachPairDefs(content).filter { it.id != part.quest?.defId }.sortedBy { it.id }
+    if (pool.isEmpty()) return false
+    val def = pool[Math.floorMod((p.id + part.cycle + p.myUid + "swap").hashCode(), pool.size)]
+    val q = buildQuest(def, s.player.level, QuestOrigin.PAIR, questId, s.stepOf(def.id), ctx.today)
+    updatePair(p.id) { pq -> pq.copy(parts = pq.parts.map { if (it.cycle == part.cycle) it.copy(target = q.target, xp = q.xp, gold = q.gold, quest = q, swapped = true) else it }) }
+    s = s.copy(timers = s.timers - questId)
     return true
 }
 

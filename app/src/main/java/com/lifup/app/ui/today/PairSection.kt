@@ -310,6 +310,7 @@ private fun failureText(f: PairService.Failure) = when (f) {
     PairService.Failure.NOT_FOUND -> R.string.pair_err_not_found
     PairService.Failure.FULL -> R.string.pair_err_full
     PairService.Failure.LIMIT -> R.string.pair_err_limit
+    PairService.Failure.DAILY -> R.string.pair_err_daily
 }
 
 /** Create a pair, or join one; [initialCode] (from a join link) opens straight on joining, the code filled in. */

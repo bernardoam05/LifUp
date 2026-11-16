@@ -17,6 +17,8 @@ import com.lifup.app.domain.PairRules
 import com.lifup.app.domain.PartnerMark
 import com.lifup.app.domain.activePairs
 import com.lifup.app.domain.canAddPair
+import com.lifup.app.domain.ctx
+import com.lifup.app.domain.newPairsLeft
 import com.lifup.app.domain.addPair
 import com.lifup.app.domain.completePairPart
 import com.lifup.app.domain.deadline
@@ -63,7 +65,7 @@ object PairService {
     private const val RETRY_MS = 15 * 60_000L
     private val mutex = Mutex()
 
-    enum class Failure { NETWORK, QUOTA, NOT_FOUND, FULL, LIMIT }
+    enum class Failure { NETWORK, QUOTA, NOT_FOUND, FULL, LIMIT, DAILY }
 
     private val store get() = LifUpApp.store
 
@@ -112,6 +114,7 @@ object PairService {
     suspend fun create(context: Context, defId: String, recurrence: PairRecurrence): Result<PairQuest> = attempt {
         val s = store.current
         if (!s.canAddPair()) error("limit")
+        if (s.newPairsLeft(s.ctx(store.content, System.currentTimeMillis()).todayKey) == 0) error("daily")
         val zone = ZoneId.systemDefault()
         val p = PairCloud.create(context, defId, recurrence, zone.id, firstCycle(recurrence, zone), s.player.name, s.player.level)
         store.dispatch { addPair(p) }
@@ -122,13 +125,18 @@ object PairService {
     suspend fun join(context: Context, code: String): Result<PairQuest> = attempt {
         val s = store.current
         if (!s.canAddPair()) error("limit")
+        if (s.newPairsLeft(s.ctx(store.content, System.currentTimeMillis()).todayKey) == 0) error("daily")
         val p = PairCloud.join(context, PairLink.normalizeCode(code), s.player.name, s.player.level)
         store.dispatch { addPair(p) }
         schedule(context)
         p
     }
 
-    fun failure(e: Throwable?): Failure = if (e?.message == "limit") Failure.LIMIT else failureOf(e ?: Exception())
+    fun failure(e: Throwable?): Failure = when (e?.message) {
+        "limit" -> Failure.LIMIT
+        "daily" -> Failure.DAILY
+        else -> failureOf(e ?: Exception())
+    }
 
     suspend fun renewInvite(context: Context, id: String): Result<Unit> = attempt {
         val (code, expires) = PairCloud.invite(context, id)

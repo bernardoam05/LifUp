@@ -117,10 +117,14 @@ fun Tx.markSecondSeen() {
 
 fun Tx.damageBoss(amount: Int) {
     val b = s.boss ?: return
-    if (b.defeated || amount <= 0) return
+    if (amount <= 0) return
     val dmg = (amount * (1 + s.passives(content, ctx.now).bossDamage)).roundToInt()
+    if (b.defeated) {
+        s = s.copy(boss = b.copy(overkill = b.overkill + dmg))
+        return
+    }
     val hp = (b.hp - dmg).coerceAtLeast(0)
-    s = s.copy(boss = b.copy(hp = hp))
+    s = s.copy(boss = b.copy(hp = hp, overkill = (dmg - b.hp).coerceAtLeast(0)))
     if (hp == 0) defeatBoss()
 }
 
@@ -134,7 +138,7 @@ private fun Tx.defeatBoss() {
     // Spoils grow with level like missions and chests, so a kill stays worth the week at any rank.
     val level = s.player.level
     val xp = gainXp((def.baseXp * Rules.xpMultiplier(level)).roundToInt(), hitsBoss = false, extra = spoils)
-    val gold = gainGold((def.baseGold * Rules.tierMultiplier(level)).roundToInt(), extra = spoils)
+    val gold = gainGold((def.baseGold * Rules.tierMultiplier(level)).roundToInt(), extra = spoils, buffed = false)
     val loot = if (b.lootGiven) emptyList() else listOf("bau_cacador")
     loot.forEach { addItem(it) }
     s = s.copy(boss = s.boss?.copy(spoils = BossSpoils(xp, gold), lootGiven = true))
@@ -151,11 +155,17 @@ fun Tx.healBoss(amount: Int) {
         s = s.copy(boss = b.copy(hp = minOf(b.maxHp, b.hp + amount)))
         return
     }
+    // Later missions hit it past its health: the undone damage comes off that first.
+    if (amount <= b.overkill) {
+        s = s.copy(boss = b.copy(overkill = b.overkill - amount))
+        return
+    }
+    val back = amount - b.overkill
     b.spoils?.let { loseXp(it.xp); refundGold(it.gold) }
     count(StatKey.BOSSES_DEFEATED, -1)
     if (content.bossById[b.bossId]?.season != null) count(StatKey.SEASONAL_BOSSES, -1)
     val history = s.bossHistory.toMutableList().apply { lastIndexOf(b.bossId).takeIf { it >= 0 }?.let(::removeAt) }
-    s = s.copy(boss = b.copy(defeated = false, hp = minOf(b.maxHp, amount), spoils = null), bossHistory = history)
+    s = s.copy(boss = b.copy(defeated = false, hp = minOf(b.maxHp, back), spoils = null, overkill = 0), bossHistory = history)
     toast(ToastKind.BOSS_REVIVED, b.bossId)
 }
 

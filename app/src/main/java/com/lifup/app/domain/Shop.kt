@@ -64,11 +64,15 @@ fun Tx.rerollShadowOffers(): Boolean {
 fun GameState.price(content: Content, base: Int, now: Long): Int =
     (base * (1 - passives(content, now).shopDiscount)).roundToInt()
 
-/** An item's price before the squad's discount. Chests grow with their level-scaled rewards and by 50% for each one already bought today. */
+/** An item's price before the squad's discount: its cost at the player's level ([ItemDef.scale]); a chest also costs 50% more for each one already bought today. */
 fun GameState.itemBasePrice(item: ItemDef): Int {
-    if (item.id != Rules.ACHIEVEMENT_CHEST) return item.cost
-    val bought = shop.dailyPurchases[item.id] ?: 0
-    return (item.cost * Rules.tierMultiplier(player.level) * (1.0 + bought * 0.5)).roundToInt()
+    val scaled = item.cost * when (item.scale) {
+        PriceScale.FIXED -> 1.0
+        PriceScale.TIER -> Rules.tierMultiplier(player.level)
+        PriceScale.XP -> Rules.xpMultiplier(player.level)
+    }
+    val bought = if (item.id == Rules.ACHIEVEMENT_CHEST) shop.dailyPurchases[item.id] ?: 0 else 0
+    return (scaled * (1.0 + bought * 0.5)).roundToInt()
 }
 
 fun GameState.itemPrice(content: Content, item: ItemDef, now: Long): Int = price(content, itemBasePrice(item), now)
@@ -117,7 +121,8 @@ fun Tx.useItem(id: String, questId: String? = null): Boolean {
     if (s.items(id) <= 0) return false
     val ok = when (item.effect) {
         ItemEffect.COMPLETE_QUEST -> {
-            val q = s.quests.firstOrNull { it.id == questId && it.status == QuestStatus.OPEN } ?: return false
+            // Not one that can't be done yet (it would be spent for nothing), nor a limit already broken.
+            val q = s.quests.firstOrNull { it.id == questId && it.passable(ctx.hour) } ?: return false
             completeQuest(q.id); true
         }
         ItemEffect.DOUBLE_NEXT_XP -> if (s.doubleXpNext) false else { s = s.copy(doubleXpNext = true); true }

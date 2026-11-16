@@ -113,8 +113,10 @@ data class DayGoal(val kept: Int, val needed: Int, val total: Int) {
 
 fun GameState.dayGoal(): DayGoal {
     val daily = countedQuests()
-    val needed = kotlin.math.ceil(daily.size * Rules.passRatio(settings.rigor) - 1e-9).toInt()
-    return DayGoal(daily.count { it.isSuccessful() }, needed, daily.size)
+    // Side quests that count are part of the day, as they are when it closes.
+    val total = daily.size + sidePending()
+    val needed = kotlin.math.ceil(total * Rules.passRatio(settings.rigor) - 1e-9).toInt()
+    return DayGoal(daily.count { it.isSuccessful() }, needed, total)
 }
 
 // ── The streak flame ──────────────────────────────────────────────────────────

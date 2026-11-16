@@ -11,7 +11,11 @@ import java.time.LocalDate
 
 /** One week of a weekly mission. [trial]: the week it was added, which never makes it due. */
 @Serializable
-data class WeekTally(val week: String, val goal: Int, val done: Int = 0, val trial: Boolean = false, val rewarded: Boolean = false) {
+data class WeekTally(
+    val week: String, val goal: Int, val done: Int = 0, val trial: Boolean = false, val rewarded: Boolean = false,
+    /** The mission is switched off: the tally waits out the week, so switching it back on doesn't start it over. */
+    val off: Boolean = false,
+) {
     val needed get() = (goal - done).coerceAtLeast(0)
 
     /** Due when there are exactly as many days left (today included) as sessions to go. */
@@ -57,14 +61,18 @@ private fun GameState.tallyFor(def: QuestDef, ctx: Ctx): WeekTally {
     return when {
         t == null -> WeekTally(ctx.weekKey, proratedGoal(goal, ctx.today), trial = true)
         t.week != ctx.weekKey -> WeekTally(ctx.weekKey, goal)
-        else -> t.copy(goal = minOf(t.goal, goal))
+        else -> t.copy(goal = minOf(t.goal, goal), off = false)
     }
 }
 
 /** Brings every weekly mission's tally to the current week. */
 fun Tx.syncWeekly() {
     val defs = s.availableDefs(content).filter { it.isWeekly() }
-    s = s.copy(weekly = defs.associate { it.id to s.tallyFor(it, ctx) })
+    val on = defs.mapTo(mutableSetOf()) { it.id }
+    // Switched off this week: kept until the week ends (a new week back on is a trial week again).
+    val resting = s.weekly.filter { (id, t) -> id !in on && t.week == ctx.weekKey && s.defOf(id, content)?.isWeekly() == true }
+        .mapValues { it.value.copy(off = true) }
+    s = s.copy(weekly = resting + defs.associate { it.id to s.tallyFor(it, ctx) })
 }
 
 /** Today's instance of a weekly mission: counts for the day only when due. */
@@ -96,7 +104,7 @@ internal fun Tx.tallyWeekly(q: Quest, delta: Int) {
 
 /** The week's results of every weekly mission, for the report. */
 fun GameState.weekLines(week: String): List<WeekLine> =
-    weekly.filter { it.value.week == week && it.value.goal > 0 }.map { (id, t) -> WeekLine(id, t.done, t.goal) }
+    weekly.filter { it.value.week == week && it.value.goal > 0 && !it.value.off }.map { (id, t) -> WeekLine(id, t.done, t.goal) }
 
 // ── Suggesting a weekly mission ───────────────────────────────────────────────
 

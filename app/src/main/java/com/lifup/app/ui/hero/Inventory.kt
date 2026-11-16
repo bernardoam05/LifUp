@@ -1,5 +1,10 @@
 package com.lifup.app.ui.hero
 
+import com.lifup.app.domain.limitBroken
+import com.lifup.app.domain.passable
+import com.lifup.app.domain.xpPreview
+import com.lifup.app.domain.goldPreview
+import com.lifup.app.domain.ctx
 import com.lifup.app.domain.defOf
 import com.lifup.app.ui.guide.InfoButton
 import com.lifup.app.ui.guide.Guide
@@ -138,10 +143,12 @@ private fun InventoryRow(s: GameState, item: ItemDef, isNew: Boolean, onUse: () 
 private fun QuestPicker(s: GameState, itemId: String, onDismiss: () -> Unit) {
     val item = content.itemById[itemId] ?: return
     val swap = item.effect == ItemEffect.SWAP_QUEST
-    val quests = s.dailyQuests.filter { q ->
-        q.status == QuestStatus.OPEN && q.origin == QuestOrigin.DAILY &&
-            (!swap || s.defOf(q.defId, content)?.kind == DefKind.POOL)
-    }
+    val now = System.currentTimeMillis()
+    val hour = s.ctx(content, now).hour
+    // Only what the item can really act on, so it is never spent for nothing: a swap takes an open drawn mission,
+    // a pass any of the day's own missions that can be done by now.
+    val quests = if (swap) s.dailyQuests.filter { q -> q.status == QuestStatus.OPEN && !q.limitBroken() && s.defOf(q.defId, content)?.kind == DefKind.POOL }
+        else s.quests.filter { it.passable(hour) }
     val context = LocalContext.current
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = Lif.colors.panel) {
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -150,7 +157,7 @@ private fun QuestPicker(s: GameState, itemId: String, onDismiss: () -> Unit) {
             quests.forEach { q ->
                 Panel(onClick = { act { useItem(itemId, q.id) }; Feedback.buzz(context); onDismiss() }) {
                     Text(questTitle(q, lang()), style = MaterialTheme.typography.titleMedium)
-                    Text("+${q.xp} XP · +${q.gold}", style = MaterialTheme.typography.labelSmall, color = Lif.colors.accent)
+                    Text("+${s.xpPreview(q, content, now)} XP · +${s.goldPreview(q, content, now)}", style = MaterialTheme.typography.labelSmall, color = Lif.colors.accent)
                 }
             }
         }

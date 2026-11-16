@@ -90,6 +90,8 @@ data class SideQuest(
     val squad: SquadGain = SquadGain(),
     /** When to remind about it, once. */
     val remindAt: Long? = null,
+    /** Whether it counts for its day, as "side quests count" stood when it was written; null on older saves (the setting decides). */
+    val counts: Boolean? = null,
 )
 
 /** [minute]: minutes after midnight. [since]: when it was set, so a time already past that day doesn't ring at once. */
@@ -134,9 +136,14 @@ data class BossState(
     val lootGiven: Boolean = false,
     /** The family whose missions hit it harder (see [Rules.BOSS_WEAK_BONUS]); null on older saves. */
     val weakness: DrawGroup? = null,
+    /** Damage dealt beyond its health, at the kill and after: an undo eats into this before the boss comes back. */
+    val overkill: Int = 0,
 )
 
 fun BossState.challenges() = listOfNotNull(challenge, second)
+
+/** All the damage it has taken, past its health included. */
+fun BossState.taken() = maxHp - hp + overkill
 
 @Serializable
 data class BossSpoils(val xp: Int, val gold: Int)

@@ -80,6 +80,7 @@
     <!-- Today -->
     <string name="rest_day">Ruhetag</string>
     <string name="rest_day_info">Ruhetag: heute Nacht keine Strafe, aber deine Serie wächst auch nicht.</string>
+    <string name="rest_too_late">Ein Ruhetag muss vor %1$d Uhr genommen werden.</string>
     <string name="forge">Missionsschmiede</string>
     <string name="penalty_section">Strafe</string>
     <string name="penalty_info">Erledige diese Missionen, um sie früher aufzuheben. Bis dahin sind deine Ablenkungs-Apps gesperrt.</string>
@@ -249,7 +250,7 @@
     <string name="passive_streak_xp">+%1$s XP bei %2$d Tagen Serie (wächst bis dahin)</string>
     <string name="passive_portal">+%1$s XP und Gold aus Portalen</string>
     <string name="passive_swap">+1 kostenloser Tausch pro Tag</string>
-    <string name="passive_early">+%1$s XP für Missionen vor %2$d Uhr</string>
+    <string name="passive_early">+%1$s XP für Missionen zwischen %2$d und %3$d Uhr</string>
     <string name="passive_comeback">+%1$s XP und Gold am Tag nach einem verpassten Tag</string>
     <string name="passive_extra">+%1$s XP und Gold aus Extra-Missionen</string>
     <string name="passive_spoils">+%1$s XP und Gold beim Besiegen eines Bosses</string>
@@ -981,6 +982,7 @@
     <string name="pair_err_not_found">Ungültiger oder abgelaufener Code.</string>
     <string name="pair_err_full">Diese Partnerschaft ist schon vollständig.</string>
     <string name="pair_err_limit">Du hast die Grenze für Partnermissionen erreicht.</string>
+    <string name="pair_err_daily">Du hast heute schon zu viele Paar-Missionen gestartet. Versuch es morgen wieder.</string>
     <string name="toast_pair_both">Partnermission mit %1$s von beiden geschafft: +%2$d XP und +%3$d Gold</string>
     <string name="toast_pair_both_capped">Partnermission mit %1$s von beiden geschafft (die heutigen Boni sind aufgebraucht)</string>
     <string name="toast_pair_cut">%1$s hat den eigenen Teil nicht gemacht: −%2$d XP und −%3$d Gold</string>

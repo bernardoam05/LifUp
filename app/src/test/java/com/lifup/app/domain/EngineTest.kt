@@ -1574,4 +1574,68 @@ class EngineTest {
         assertEquals(QuestStatus.FAILED, s.quests.first { it.id == avoid.id }.status)
         assertTrue(s.openAvoids().none { it.id == avoid.id })
     }
+
+    @Test fun `a pass is not spent on a mission that can't be done yet`() {
+        val bed = buildQuest(content.questDefById.getValue("pool_sleep"), 1, QuestOrigin.DAILY)
+        var s = fresh().let { it.copy(quests = it.quests + bed, inventory = mapOf("system_pass" to 1)) }
+        s = run(s, "2026-10-14T10:00") { useItem("system_pass", bed.id) }
+        assertEquals(1, s.items("system_pass"))
+        assertEquals(QuestStatus.OPEN, s.quests.first { it.id == bed.id }.status)
+        s = run(s, "2026-10-14T21:30") { useItem("system_pass", bed.id) }
+        assertEquals(0, s.items("system_pass"))
+        assertEquals(QuestStatus.DONE, s.quests.first { it.id == bed.id }.status)
+    }
+
+    @Test fun `no shield is spent when skipped days break the streak anyway`() {
+        var s = fresh().let { it.copy(player = it.player.copy(streak = 4), inventory = mapOf("escudo_constancia" to 1)) }
+        s = run(s, "2026-10-18T09:00")
+        assertEquals(0, s.player.streak)
+        assertEquals(1, s.items("escudo_constancia"))
+    }
+
+    @Test fun `a rest day carries the streak recovery to the next day`() {
+        var s = fresh().let { it.copy(player = it.player.copy(streak = 4), unlockAll = true) }
+        s = run(s, "2026-10-15T08:00")
+        s = run(s, "2026-10-15T09:00") { toggleRestDay() }
+        assertEquals("2026-10-15", s.recovery?.day)
+        s = run(s, "2026-10-16T09:00")
+        assertEquals("2026-10-16", s.recovery?.day)
+        assertEquals(4, s.recovery?.streak)
+    }
+
+    @Test fun `undoing an early mission doesn't revive a boss that later ones covered`() {
+        var s = fresh()
+        val (a, b) = s.dailyQuests.filter { it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT && it.fromHour == null }.take(2)
+        s = s.copy(boss = s.boss!!.copy(maxHp = 10, hp = 10))
+        s = run(s, "2026-10-14T10:00") { completeQuest(a.id) }
+        assertTrue(s.boss!!.defeated)
+        s = run(s, "2026-10-14T10:01") { completeQuest(b.id) }
+        s = run(s, "2026-10-14T10:02") { undoQuest(a.id) }
+        assertTrue(s.boss!!.defeated)
+        s = run(s, "2026-10-14T10:03") { undoQuest(b.id) }
+        assertFalse(s.boss!!.defeated)
+        assertEquals(10, s.boss!!.hp)
+    }
+
+    @Test fun `side quests that count are part of the day's goal, even if the setting is switched off later`() {
+        var s = fresh().let { it.copy(settings = it.settings.copy(sidePenalize = true)) }
+        val before = s.dayGoal().total
+        s = run(s, "2026-10-14T10:00") { addSideQuest("call the bank") }
+        assertEquals(before + 1, s.dayGoal().total)
+        s = run(s, "2026-10-14T23:00") { updateSettings { it.copy(sidePenalize = false) } }
+        assertEquals(before + 1, s.dayGoal().total)
+        s = run(s, "2026-10-15T08:00")
+        assertEquals(1, s.dayLog.last().sideMissed)
+    }
+
+    @Test fun `a gold elixir doesn't double the boss's gold`() {
+        fun kill(buff: Boolean): Int {
+            var s = fresh()
+            s = s.copy(boss = s.boss!!.copy(maxHp = 10, hp = 10), buffs = if (buff) listOf(Buff("elixir_fortuna", "gold", 1.0, at("2026-10-15T09:00"))) else emptyList())
+            val q = s.dailyQuests.first { it.type != QuestType.FORBIDDEN && it.type != QuestType.LIMIT && it.fromHour == null }
+            s = run(s, "2026-10-14T10:00") { completeQuest(q.id) }
+            return s.boss!!.spoils!!.gold
+        }
+        assertEquals(kill(false), kill(true))
+    }
 }

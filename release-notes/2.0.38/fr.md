@@ -1,0 +1,11 @@
+- [new] Les prix de la boutique suivent ton niveau : le Cristal d'XP, la Passe maître, le Bouclier de Constance, la Larme de Purification, le Sablier et les élixirs coûtent la même part de tes revenus à tout niveau.
+- [new] Missions en duo : tu peux changer la mission une fois par cycle dans les duos « chacun la sienne », et seuls 3 duos par jour peuvent être commencés (5 avec CoreQuest+).
+- [fix] La Passe maître n'est plus dépensée sur une mission pas encore faisable ni sur une limite dépassée, et elle liste aussi les missions bonus et hebdomadaires.
+- [fix] Les boucliers et les échos protecteurs ne sont plus dépensés quand les jours sautés brisent la série de toute façon.
+- [fix] Les quêtes secondaires qui comptent apparaissent désormais dans l'objectif du jour, la barre, le widget et le rappel, même si tu désactives l'option plus tard.
+- [fix] Les missions d'évitement et de limite tenues jusqu'à minuit donnent désormais des attributs et comptent pour les records et les objectifs hebdomadaires ; le bonus matinal couvre seulement de 05 h à 10 h.
+- [fix] Un jour de repos ou une pause garde pour le lendemain la chance de retrouver ta série.
+- [fix] Une mission hebdomadaire désactivée puis réactivée la même semaine reprend là où elle en était.
+- [fix] Annuler une mission antérieure ne ressuscite plus un boss que les missions suivantes avaient déjà vaincu.
+- [tweak] L'Élixir de Fortune donne maintenant +100 % d'or (pas sur l'or du boss), et le Sablier et les élixirs coûtent moins cher.
+- [tweak] Les quêtes secondaires montrent l'XP réellement versée, et « marquer comme faite » reste désactivé tant que la mission n'est pas disponible.

@@ -52,7 +52,7 @@ private fun Tx.closeDay(day: LocalDate) {
     val rest = s.daily.rest
     // A side quest counts once, on the night of the day it was written for; after that it's a plain to-do,
     // so one forgotten task can't fail every day that follows.
-    val sideFailed = if (s.settings.sidePenalize && !rest) s.sideQuests.count { !it.done && it.createdDay == day.toString() } else 0
+    val sideFailed = s.sidePending(day.toString())
     val done = daily.count { it.isSuccessful() }
     // Unfinished penalty missions don't feed the next penalty.
     val failed = daily.size - done + sideFailed
@@ -65,10 +65,15 @@ private fun Tx.closeDay(day: LocalDate) {
     // Avoid/limit quests kept until midnight pay out now.
     var bonusXp = 0
     if (!rest) {
+        val passives = s.passives(content, ctx.now)
         daily.filter { it.status == QuestStatus.OPEN && it.isSuccessful() }.forEach { q ->
-            bonusXp += gainXp(q.xp, q.family())
-            gainGold(q.gold)
+            bonusXp += gainXp(q.xp, q.family(), extra = passives.missionXpBonus(s, q, ctx.hour))
+            gainGold(q.gold, extra = passives.missionGoldBonus(s, q))
+            gainAttributes(groupOf(q))
             count(StatKey.QUESTS_COMPLETED)
+            val rec = s.records[q.defId] ?: QuestRecord()
+            s = s.copy(records = s.records + (q.defId to rec.copy(count = rec.count + 1)))
+            tallyWeekly(q, +1)
         }
     }
 
@@ -82,7 +87,12 @@ private fun Tx.closeDay(day: LocalDate) {
     var streakSavedBy: String? = null
     var restored = false
     val recovery = s.recovery
-    s = s.copy(recovery = null)
+    // Days skipped entirely (device off, app never ran) break the streak for good, unless they were paused.
+    val gap = ChronoUnit.DAYS.between(day, ctx.today)
+    val gapPaused = gap > 1 && (1 until gap).all { s.pausedOn(day.plusDays(it).toString()) }
+    val skipped = gap > 1 && !gapPaused
+    // A rest day (or a pause) neither uses nor loses the chance to win the streak back: it moves to the next day.
+    s = s.copy(recovery = recovery?.takeIf { rest && !skipped && it.day == day.toString() }?.copy(day = ctx.todayKey))
     when {
         rest -> Unit
         passed -> {
@@ -99,17 +109,13 @@ private fun Tx.closeDay(day: LocalDate) {
             setStreak((if (restored) recovery!!.streak else s.player.streak) + 1)
         }
         else -> {
-            val result = applyFailure(daily, failed, total, ratio, weekOf(day))
+            val result = applyFailure(daily, failed, total, ratio, weekOf(day), skipped)
             penaltyInfo = result.first
             streakSavedBy = result.second
         }
     }
 
-    // Days skipped entirely (device off, app never ran) break the streak for good, unless they were paused.
-    val gap = ChronoUnit.DAYS.between(day, ctx.today)
-    val gapPaused = gap > 1 && (1 until gap).all { s.pausedOn(day.plusDays(it).toString()) }
     if (gapPaused) markPausedGap(day.plusDays(1), ctx.today.minusDays(1))
-    val skipped = gap > 1 && !gapPaused
     // An echo that absorbs the penalty saves the load as it saves the streak.
     updateLoad(
         (passed || penaltyInfo?.absorbedBy != null) && !rest, perfect && !rest, rest, skipped = skipped,
@@ -137,7 +143,7 @@ private fun Tx.setStreak(value: Int) {
 }
 
 /** Returns the penalty summary and, if the streak survived, what saved it. Immunity spares the losses, not the streak. */
-private fun Tx.applyFailure(daily: List<Quest>, failed: Int, total: Int, ratio: Double, week: String): Pair<PenaltyInfo, String?> {
+private fun Tx.applyFailure(daily: List<Quest>, failed: Int, total: Int, ratio: Double, week: String, skipped: Boolean): Pair<PenaltyInfo, String?> {
     // Still learning: the day counts as failed (no streak) but costs nothing, and no immunity or weekly save is spent on it.
     if (s.inGrace()) return PenaltyInfo(failed, total, 0, 0, 0, grace = true) to null
     val info = tryCooldownPassive(Passive.PENALTY_IMMUNITY)?.let { shadow ->
@@ -145,7 +151,8 @@ private fun Tx.applyFailure(daily: List<Quest>, failed: Int, total: Int, ratio: 
         squadAdded(SquadGain(saves = 1))
         PenaltyInfo(failed, total, 0, 0, 0, absorbedBy = shadow.id)
     } ?: penalize(daily, failed, total, ratio)
-    return info to saveStreak(week)
+    // Skipped days after this one break the streak whatever happens: no shield or echo is spent on it.
+    return info to (if (skipped) null else saveStreak(week))
 }
 
 /** The ISO week a day belongs to: a Sunday closed after midnight still counts for its own week. */

@@ -1,6 +1,9 @@
 package com.lifup.app.ui.today
 
 import com.lifup.app.domain.ctx
+import com.lifup.app.domain.limitBroken
+import com.lifup.app.domain.canSwapPair
+import com.lifup.app.domain.swapPairQuest
 import com.lifup.app.ui.difficultyLabel
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalView
@@ -284,7 +287,7 @@ private fun CompleteAction(q: Quest, onDismiss: () -> Unit) {
     val complete = { act { completeQuest(q.id) }; onDismiss() }
     val available = q.availableAt(com.lifup.app.LifUpApp.store.current.ctx(content, System.currentTimeMillis()).hour)
     if (!available) Text(stringResource(R.string.available_from, q.fromHour ?: 0), style = MaterialTheme.typography.bodySmall, color = p.gold)
-    if (tracked) GhostButton(stringResource(R.string.mark_done_manual), onClick = complete, modifier = Modifier.fillMaxWidth(), icon = Icons.Rounded.Check)
+    if (tracked) GhostButton(stringResource(R.string.mark_done_manual), onClick = complete, modifier = Modifier.fillMaxWidth(), enabled = available, icon = Icons.Rounded.Check)
     else PrimaryButton(stringResource(R.string.complete), onClick = complete, modifier = Modifier.fillMaxWidth(), enabled = available, icon = Icons.Rounded.Check)
 }
 
@@ -293,11 +296,13 @@ private fun CompleteAction(q: Quest, onDismiss: () -> Unit) {
 private fun SideActions(s: GameState, q: Quest, def: QuestDef?, onEdit: ((String) -> Unit)?, onDismiss: () -> Unit) {
     val p = Lif.colors
     val own = q.origin in setOf(QuestOrigin.DAILY, QuestOrigin.EXTRA, QuestOrigin.WEEKLY)
-    val swappable = q.status == QuestStatus.OPEN && q.origin == QuestOrigin.DAILY && def?.kind == DefKind.POOL
+    val swappable = q.status == QuestStatus.OPEN && q.origin == QuestOrigin.DAILY && def?.kind == DefKind.POOL && !q.limitBroken()
     val undoable = q.status == QuestStatus.DONE && own
     // Edits change the mission from tomorrow on, so today's target can't be lowered to finish it.
     val editable = onEdit != null && def != null && own
-    if (!swappable && !undoable && !editable) return
+    // An "each their own" pair mission can be swapped once: the draw is this phone's alone.
+    val pairSwap = q.origin == QuestOrigin.PAIR && s.canSwapPair(q.id, System.currentTimeMillis())
+    if (!swappable && !undoable && !editable && !pairSwap) return
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         if (swappable) {
             val free = s.daily.swapsUsed < s.freeSwaps(content, System.currentTimeMillis())
@@ -306,7 +311,8 @@ private fun SideActions(s: GameState, q: Quest, def: QuestDef?, onEdit: ((String
                 if (free) stringResource(R.string.swap_free) else stringResource(R.string.swap_scroll, scrolls), Icons.Rounded.SwapHoriz, p.text,
                 enabled = free || scrolls > 0,
             ) { act { swapQuest(q.id) }; onDismiss() }
-        } else if (undoable) SheetLink(stringResource(R.string.undo), Icons.AutoMirrored.Rounded.Undo, p.text) { act { undoQuest(q.id) }; onDismiss() }
+        } else if (pairSwap) SheetLink(stringResource(R.string.swap_free), Icons.Rounded.SwapHoriz, p.text) { act { swapPairQuest(q.id) }; onDismiss() }
+        else if (undoable) SheetLink(stringResource(R.string.undo), Icons.AutoMirrored.Rounded.Undo, p.text) { act { undoQuest(q.id) }; onDismiss() }
         Spacer(Modifier.weight(1f))
         if (editable) SheetLink(stringResource(R.string.edit_mission), Icons.Rounded.Edit, p.muted) { onEdit!!(def!!.id) }
     }

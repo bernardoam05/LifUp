@@ -17,11 +17,12 @@
    "es": "Completa automáticamente una misión diaria a tu elección.",
    "fr": "Termine automatiquement une mission quotidienne de ton choix.",
    "de": "Schließt automatisch eine tägliche Mission deiner Wahl ab."
-  }
+  },
+  "scale": "TIER"
  },
  {
   "id": "relogio_ampulheta",
-  "cost": 300,
+  "cost": 120,
   "effect": "DOUBLE_NEXT_XP",
   "name": {
    "pt": "Relógio de Ampulheta",
@@ -36,7 +37,8 @@
    "es": "Tu próxima misión completada otorga el doble de XP.",
    "fr": "Ta prochaine mission terminée rapporte le double d'XP.",
    "de": "Deine nächste abgeschlossene Mission gibt doppelte XP."
-  }
+  },
+  "scale": "TIER"
  },
  {
   "id": "lagrima_purificacao",
@@ -56,7 +58,8 @@
    "es": "Elimina al instante la penalización activa y su bloqueo.",
    "fr": "Supprime immédiatement la pénalité active et son blocage.",
    "de": "Entfernt sofort die aktive Strafe und ihre Sperre."
-  }
+  },
+  "scale": "TIER"
  },
  {
   "id": "escudo_constancia",
@@ -76,11 +79,12 @@
    "es": "Protege tu racha una vez. Se gasta solo en tu próximo día fallido.",
    "fr": "Protège ta série une fois. S'utilise automatiquement lors de ta prochaine journée ratée.",
    "de": "Schützt deine Serie einmal. Wird automatisch an deinem nächsten verpassten Tag verbraucht."
-  }
+  },
+  "scale": "TIER"
  },
  {
   "id": "elixir_sabedoria",
-  "cost": 400,
+  "cost": 120,
   "effect": "BUFF_XP",
   "value": 0.2,
   "hours": 24,
@@ -97,13 +101,14 @@
    "es": "+20 % de XP durante 24 horas.",
    "fr": "+20 % d'XP pendant 24 heures.",
    "de": "+20 % XP für 24 Stunden."
-  }
+  },
+  "scale": "TIER"
  },
  {
   "id": "elixir_fortuna",
-  "cost": 400,
+  "cost": 120,
   "effect": "BUFF_GOLD",
-  "value": 0.2,
+  "value": 1.0,
   "hours": 24,
   "name": {
    "pt": "Elixir da Fortuna",
@@ -113,12 +118,13 @@
    "de": "Elixier des Glücks"
   },
   "description": {
-   "pt": "+20% ouro durante 24 horas.",
-   "en": "+20% gold for 24 hours.",
-   "es": "+20 % de oro durante 24 horas.",
-   "fr": "+20 % d'or pendant 24 heures.",
-   "de": "+20 % Gold für 24 Stunden."
-  }
+   "pt": "+100% ouro durante 24 horas (menos no ouro do boss).",
+   "en": "+100% gold for 24 hours (not on boss gold).",
+   "es": "+100 % de oro durante 24 horas (salvo el oro del jefe).",
+   "fr": "+100 % d'or pendant 24 heures (sauf l'or du boss).",
+   "de": "+100 % Gold für 24 Stunden (nicht auf Boss-Gold)."
+  },
+  "scale": "TIER"
  },
  {
   "id": "essencia_sombria",
@@ -194,7 +200,8 @@
    "es": "Puede contener oro, XP o un objeto raro.",
    "fr": "Peut contenir de l'or, de l'XP ou un objet rare.",
    "de": "Kann Gold, XP oder ein seltenes Item enthalten."
-  }
+  },
+  "scale": "TIER"
  },
  {
   "id": "cristal_xp",
@@ -214,6 +221,7 @@
    "es": "XP al instante, lo que valen unas dos misiones. Se usa al comprar.",
    "fr": "De l'XP tout de suite, l'équivalent d'environ deux missions. S'utilise à l'achat.",
    "de": "Sofort XP, etwa so viel wie zwei Missionen. Wird beim Kauf benutzt."
-  }
+  },
+  "scale": "XP"
  }
 ]

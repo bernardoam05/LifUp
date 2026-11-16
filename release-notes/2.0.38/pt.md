@@ -1,0 +1,11 @@
+- [new] Os preços da loja acompanham o teu nível: o Cristal de XP, o Passe Mestre, o Escudo da Constância, a Lágrima da Purificação, a Ampulheta e os elixires custam a mesma fração do teu rendimento em qualquer nível.
+- [new] Missões de par: podes trocar a missão uma vez por ciclo nos pares «cada um a sua», e só podem começar-se 3 pares por dia (5 com o CoreQuest+).
+- [fix] O Passe Mestre já não é gasto numa missão que ainda não se pode fazer nem num limite quebrado, e passa a listar também as missões extra e semanais.
+- [fix] Escudos e ecos de proteção já não são gastos quando os dias saltados quebram a sequência de qualquer forma.
+- [fix] As side quests que contam aparecem agora no objetivo do dia, na barra, no widget e no lembrete, mesmo que desligues a opção mais tarde.
+- [fix] As missões de evitar e de limite mantidas até à meia-noite dão agora atributos e contam para recordes e metas semanais; o bónus de madrugador cobre só das 05:00 às 10:00.
+- [fix] Um dia de descanso ou uma pausa mantém para o dia seguinte a hipótese de recuperares a sequência.
+- [fix] Uma missão semanal desligada e religada na mesma semana continua onde estava.
+- [fix] Desfazer uma missão antiga já não ressuscita um boss que as missões seguintes já tinham derrotado.
+- [tweak] O Elixir da Fortuna dá agora +100% de ouro (não no ouro do boss), e a Ampulheta e os elixires ficam mais baratos.
+- [tweak] As side quests mostram o XP que realmente pagam, e «marcar como feita» fica desativado até a missão estar disponível.

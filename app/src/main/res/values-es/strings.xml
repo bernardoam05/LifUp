@@ -80,6 +80,7 @@
     <!-- Today -->
     <string name="rest_day">Descanso</string>
     <string name="rest_day_info">Día de descanso: sin penalización esta noche, pero la racha tampoco crece.</string>
+    <string name="rest_too_late">El día de descanso se pide antes de las %1$d:00.</string>
     <string name="forge">Forja de misiones</string>
     <string name="penalty_section">Penalización</string>
     <string name="penalty_info">Haz estas misiones para levantarla antes. Mientras tanto, tus apps de distracción quedan bloqueadas.</string>
@@ -249,7 +250,7 @@
     <string name="passive_streak_xp">+%1$s XP con una racha de %2$d días (crece hasta ahí)</string>
     <string name="passive_portal">+%1$s XP y oro en los portales</string>
     <string name="passive_swap">+1 cambio gratis al día</string>
-    <string name="passive_early">+%1$s XP en misiones hechas antes de las %2$d:00</string>
+    <string name="passive_early">+%1$s XP en misiones hechas entre las %2$d:00 y las %3$d:00</string>
     <string name="passive_comeback">+%1$s XP y oro el día después de un día fallido</string>
     <string name="passive_extra">+%1$s XP y oro en las misiones extra</string>
     <string name="passive_spoils">+%1$s XP y oro al derrotar a un jefe</string>
@@ -981,6 +982,7 @@
     <string name="pair_err_not_found">Código no válido o caducado.</string>
     <string name="pair_err_full">Esa pareja ya está completa.</string>
     <string name="pair_err_limit">Has llegado al límite de misiones en pareja.</string>
+    <string name="pair_err_daily">Ya has empezado demasiadas misiones en pareja hoy. Inténtalo mañana.</string>
     <string name="toast_pair_both">Misión en pareja con %1$s cumplida por los dos: +%2$d XP y +%3$d oro</string>
     <string name="toast_pair_both_capped">Misión en pareja con %1$s cumplida por los dos (los bonus de pareja de hoy ya se usaron)</string>
     <string name="toast_pair_cut">%1$s no hizo su parte: −%2$d XP y −%3$d oro</string>

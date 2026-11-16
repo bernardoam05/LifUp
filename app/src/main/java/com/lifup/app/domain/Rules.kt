@@ -283,8 +283,9 @@ object Rules {
         // Added to the normal 25% pair bonus; it is still subject to the two-bonuses-per-day limit.
         Passive.PAIR_BOND to doubleArrayOf(.03, .05, .08, .12, .15),
     )
-    /** Missions finished before this hour count as early. */
+    /** Missions finished from [EARLY_FROM] and before this hour count as early. */
     const val EARLY_HOUR = 10
+    const val EARLY_FROM = 5
     const val STREAK_XP_FULL_DAYS = 30
 
     /**

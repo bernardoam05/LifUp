@@ -1,6 +1,8 @@
 package com.lifup.app.ui.today
 
 import com.lifup.app.domain.ctx
+import com.lifup.app.domain.sidePending
+import com.lifup.app.domain.sideXpPreview
 import com.lifup.app.domain.penaltyBlocks
 import com.lifup.app.domain.has
 import com.lifup.app.domain.showStarter
@@ -145,7 +147,8 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
             val ctx = s.ctx(content, now)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 // One line: the count that matters, with the date as a quiet suffix.
-                Text("$done / ${counted.size}", style = MaterialTheme.typography.headlineSmall)
+                // Side quests that count are part of the total, as they are when the day closes.
+                Text("$done / ${counted.size + s.sidePending()}", style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.width(8.dp))
                 val date = LocalDate.parse(s.day.ifEmpty { LocalDate.now().toString() }).format(DateTimeFormatter.ofPattern("EEE, d MMM"))
                 Text(stringResource(R.string.today_count_suffix, date), style = MaterialTheme.typography.labelMedium, color = p.muted, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
@@ -169,7 +172,12 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
                 stringResource(R.string.pause_today, LocalDate.parse(s.pauseUntil ?: s.day).format(DateTimeFormatter.ofPattern("d MMM"))),
                 style = MaterialTheme.typography.bodySmall, color = p.purple,
             ) else if (s.daily.rest) Text(stringResource(R.string.rest_day_info), style = MaterialTheme.typography.bodySmall, color = p.purple)
-            s.recovery?.takeIf { it.day == s.day }?.let { r ->
+            // After noon the chip is just greyed out: say why.
+            if (!s.daily.rest && !s.daily.paused && s.restDaysLeft(ctx.weekKey) > 0 && ctx.hour >= Rules.REST_DEADLINE_HOUR) {
+                Text(stringResource(R.string.rest_too_late, Rules.REST_DEADLINE_HOUR), style = MaterialTheme.typography.bodySmall, color = p.dim)
+            }
+            // A rest day can't win the streak back; the chance moves on to the next day.
+            s.recovery?.takeIf { it.day == s.day && !s.daily.rest }?.let { r ->
                 Text(stringResource(R.string.streak_recovery, r.streak), style = MaterialTheme.typography.bodySmall, color = p.gold, modifier = Modifier.padding(top = 4.dp))
             }
         }
@@ -230,7 +238,7 @@ fun TodayScreen(s: GameState, openForge: () -> Unit, openDef: (String) -> Unit, 
                     when {
                         sq.done && !paid -> Pill(stringResource(R.string.side_no_reward), p.dim)
                         !sq.done && s.sideRewardsLeft() == 0 -> Pill(stringResource(R.string.side_no_reward), p.gold)
-                        else -> Pill("+${if (sq.done) sq.xpGained else sq.xp} XP", p.accent)
+                        else -> Pill("+${if (sq.done) sq.xpGained else s.sideXpPreview(sq, content, now)} XP", p.accent)
                     }
                     if (!sq.done) IconButton(onClick = { remindSide = sq.id }) {
                         Icon(Icons.Rounded.Alarm, stringResource(R.string.reminder_title), tint = if (sq.remindAt != null) p.accent else p.dim, modifier = Modifier.size(20.dp))

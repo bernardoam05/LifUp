@@ -1,0 +1,11 @@
+- [new] Shop prices follow your level: the XP Crystal, Master Pass, Shield of Constancy, Tear of Purification, Hourglass and elixirs cost the same share of your income at any level.
+- [new] Pair missions: you can swap the mission once a cycle in "each their own" pairs, and at most 3 pairs a day can be started (5 with CoreQuest+).
+- [fix] The Master Pass is no longer spent on a mission that can't be done yet or on a broken limit, and it now lists extra and weekly missions too.
+- [fix] Shields and protecting echoes are no longer spent when skipped days break the streak anyway.
+- [fix] Side quests that count now show in the day's goal, bar, widget and reminder, even if you switch the setting off later.
+- [fix] Avoid and limit missions kept until midnight now give attributes and count for records and weekly goals; the early bonus covers 05:00 to 10:00 only.
+- [fix] A rest day or pause keeps the chance to win your streak back for the next day.
+- [fix] A weekly mission switched off and on again in the same week carries on where it was.
+- [fix] Undoing an early mission no longer revives a boss that later missions had already defeated.
+- [tweak] Elixir of Fortune now gives +100% gold (not on boss gold), and the Hourglass and elixirs are cheaper.
+- [tweak] Side quests show the XP they really pay, and "mark as done" stays disabled until the mission is available.

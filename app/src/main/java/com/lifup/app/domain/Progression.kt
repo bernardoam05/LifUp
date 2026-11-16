@@ -32,9 +32,9 @@ fun Tx.gainXp(base: Int, family: DrawGroup? = null, hitsBoss: Boolean = true, bo
 
 /** [gainXp] that also reports the boss HP it removed, so an undo can give it back. Returns (xp, damage). */
 fun Tx.gainXpTracked(base: Int, family: DrawGroup?, bossShare: Double = 1.0, extra: Double = 0.0): Pair<Int, Int> {
-    val hpBefore = s.boss?.takeUnless { it.defeated }?.hp
+    val before = s.boss?.taken()
     val xp = gainXp(base, family, bossShare = bossShare, extra = extra)
-    return xp to (hpBefore?.let { it - (s.boss?.hp ?: it) } ?: 0)
+    return xp to (before?.let { (s.boss?.taken() ?: it) - it } ?: 0)
 }
 
 private fun Tx.onLevelReached(level: Int) {
@@ -74,6 +74,10 @@ fun GameState.xpPreview(q: Quest, content: Content, now: Long): Int =
 fun GameState.goldPreview(q: Quest, content: Content, now: Long): Int =
     if (q.origin.boosted()) passives(content, now).let { p -> (q.gold * (1 + p.portalShare(q)) * (1 + p.goldShare(p.missionGoldBonus(this, q))) * penaltyCut()).roundToInt() } else q.gold
 
+/** What ticking a side quest pays now, boosts and penalty cut included (see completeSideQuest). */
+fun GameState.sideXpPreview(sq: SideQuest, content: Content, now: Long): Int =
+    (sq.xp * (1 + passives(content, now).xpShare(null)) * penaltyCut()).roundToInt()
+
 private fun hourAt(now: Long) = java.time.Instant.ofEpochMilli(now).atZone(java.time.ZoneId.systemDefault()).hour
 
 /** The day after a failed one (not a rest day), which the comeback echoes reward. */
@@ -83,9 +87,15 @@ private fun Quest.ownMission() = origin == QuestOrigin.DAILY || origin == QuestO
 
 /** Extra XP share the timing echoes add to one of the player's own missions: early in the day, the day after a miss. */
 fun Passives.missionXpBonus(s: GameState, q: Quest, hour: Int): Double =
-    if (!q.ownMission()) 0.0 else (if (hour < Rules.EARLY_HOUR) earlyXp else 0.0) + (if (s.comebackDay()) comeback else 0.0) + extraShare(q)
+    if (!q.ownMission()) 0.0 else (if (q.earlyAt(hour)) earlyXp else 0.0) + (if (s.comebackDay()) comeback else 0.0) + extraShare(q)
 
 fun Passives.missionGoldBonus(s: GameState, q: Quest): Double = if (!q.ownMission()) 0.0 else (if (s.comebackDay()) comeback else 0.0) + extraShare(q)
+
+/**
+ * Early is a morning ([Rules.EARLY_FROM] to [Rules.EARLY_HOUR]), not a night owl's small hours. Avoid and limit
+ * missions pay when the day closes, so the hour they are looked at says nothing.
+ */
+private fun Quest.earlyAt(hour: Int) = hour >= Rules.EARLY_FROM && hour < Rules.EARLY_HOUR && type != QuestType.FORBIDDEN && type != QuestType.LIMIT
 
 private fun Passives.extraShare(q: Quest) = if (q.origin == QuestOrigin.EXTRA) extraBoost else 0.0
 
@@ -96,12 +106,14 @@ private fun Passives.portalShare(q: Quest) = if (q.origin == QuestOrigin.PORTAL)
 
 private fun QuestOrigin.boosted() = this == QuestOrigin.DAILY || this == QuestOrigin.EXTRA || this == QuestOrigin.WEEKLY || this == QuestOrigin.PORTAL
 
-fun Tx.gainGold(base: Int, boosted: Boolean = true, extra: Double = 0.0): Int {
+/** [buffed]: whether a gold elixir counts too; not for a boss's spoils, which one drink would double once a week. */
+fun Tx.gainGold(base: Int, boosted: Boolean = true, extra: Double = 0.0, buffed: Boolean = true): Int {
     if (base <= 0) return 0
     val passives = s.passives(content, ctx.now)
     val cut = if (boosted) s.penaltyCut() else 1.0
-    val amount = if (boosted) (base * (1 + passives.goldShare(extra)) * cut).roundToInt() else base
-    if (boosted) squadAdded(SquadGain(gold = amount - (base * (1 + passives.buffGold) * cut).roundToInt()))
+    val buff = if (buffed) passives.buffGold else 0.0
+    val amount = if (boosted) (base * (1 + passives.goldShare(extra) - passives.buffGold + buff) * cut).roundToInt() else base
+    if (boosted) squadAdded(SquadGain(gold = amount - (base * (1 + buff) * cut).roundToInt()))
     s = s.copy(player = s.player.copy(gold = s.player.gold + amount))
     count(StatKey.GOLD_EARNED, amount.toLong())
     return amount

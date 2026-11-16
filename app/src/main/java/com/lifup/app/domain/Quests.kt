@@ -120,6 +120,12 @@ private fun Tx.updateQuest(id: String, f: (Quest) -> Quest) {
 
 fun Quest.availableAt(hour: Int) = fromHour == null || hour >= fromHour
 
+/** A limit counted by hand that went over: it stays open (the count can be corrected) but is no longer kept. */
+fun Quest.limitBroken() = type == QuestType.LIMIT && status == QuestStatus.OPEN && progress > target
+
+/** Whether a pass can finish this mission now: open, already doable at [hour], and not a broken limit. */
+fun Quest.passable(hour: Int) = status == QuestStatus.OPEN && availableAt(hour) && !limitBroken()
+
 fun Tx.completeQuest(id: String) {
     val q = s.allQuests.firstOrNull { it.id == id } ?: return
     if (q.status != QuestStatus.OPEN || !q.availableAt(ctx.hour)) return
@@ -274,7 +280,8 @@ fun GameState.freeSwaps(content: Content, now: Long) = Rules.FREE_SWAPS_PER_DAY 
 fun Tx.swapQuest(id: String): Boolean {
     val q = s.dailyQuests.firstOrNull { it.id == id } ?: return false
     val def = s.defOf(q.defId, content) ?: return false
-    if (q.status != QuestStatus.OPEN || def.kind != DefKind.POOL) return false
+    // A broken limit can't be swapped away: that would undo the miss.
+    if (q.status != QuestStatus.OPEN || def.kind != DefKind.POOL || q.limitBroken()) return false
     val free = s.daily.swapsUsed < s.freeSwaps(content, ctx.now)
     if (!free && s.items("pergaminho_troca") == 0) return false
     val replacement = drawOne(midDayDefs()) ?: return false
@@ -359,13 +366,20 @@ fun Tx.addSideQuest(title: String) {
     val level = s.player.level
     val xp = (Rules.SIDE_XP * Rules.xpMultiplier(level)).roundToInt()
     val gold = (Rules.SIDE_GOLD * Rules.tierMultiplier(level)).roundToInt()
-    s = s.copy(sideQuests = s.sideQuests + SideQuest("side_${s.nextId}", title.trim(), ctx.todayKey, QuestRank.E, xp, gold))
+    s = s.copy(sideQuests = s.sideQuests + SideQuest("side_${s.nextId}", title.trim(), ctx.todayKey, QuestRank.E, xp, gold, counts = s.settings.sidePenalize))
     s = s.copy(nextId = s.nextId + 1)
 }
 
 private fun Tx.updateSide(id: String, f: (SideQuest) -> SideQuest) {
     s = s.copy(sideQuests = s.sideQuests.map { if (it.id == id) f(it) else it })
 }
+
+/**
+ * Side quests that will count as failures when [day] closes if left undone: the ones written that day while
+ * "side quests count" was on, so switching it off in the evening doesn't let them go.
+ */
+fun GameState.sidePending(day: String = this.day): Int =
+    if (daily.rest) 0 else sideQuests.count { !it.done && it.createdDay == day && (it.counts ?: settings.sidePenalize) }
 
 fun GameState.sideRewardsLeft() = (Rules.SIDE_REWARDS_PER_DAY - daily.sideRewarded).coerceAtLeast(0)
 

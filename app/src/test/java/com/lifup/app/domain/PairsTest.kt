@@ -2,6 +2,7 @@ package com.lifup.app.domain
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -351,5 +352,27 @@ class PairsTest {
         assertEquals(listOf("p1", "old"), merged.pairs.map { it.id })
         assertEquals(5, merged.pairs.first().streak)
         assertFalse(merged.plus)
+    }
+
+    @Test fun `an each-their-own pair mission swaps once a cycle, a shared one never`() {
+        var s = withPair(pair().copy(defId = PairRules.EACH))
+        val q = s.pairQuests().single()
+        assertTrue(s.canSwapPair(q.id, at("2026-11-11T09:01")))
+        s = run(s, "2026-11-11T09:01") { swapPairQuest(q.id) }
+        val swapped = s.pairQuests().single()
+        assertEquals(q.id, swapped.id)
+        assertNotEquals(q.defId, swapped.defId)
+        assertFalse(s.canSwapPair(q.id, at("2026-11-11T09:02")))
+        assertEquals(swapped, run(s, "2026-11-11T09:02") { swapPairQuest(q.id) }.pairQuests().single())
+        val shared = withPair(pair().copy(defId = PairRules.RANDOM))
+        assertFalse(shared.canSwapPair(shared.pairQuests().single().id, at("2026-11-11T09:01")))
+    }
+
+    @Test fun `pairs started in a day have a ceiling, higher with CoreQuest+`() {
+        var s = GameState(onboarded = true)
+        repeat(3) { i -> s = run(s, "2026-11-11T09:00") { addPair(pair().copy(id = "p$i")); leavePair("p$i") } }
+        assertEquals(0, s.newPairsLeft("2026-11-11"))
+        assertEquals(2, s.copy(plus = true).newPairsLeft("2026-11-11"))
+        assertEquals(3, s.newPairsLeft("2026-11-12"))
     }
 }
