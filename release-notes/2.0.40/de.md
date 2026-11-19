@@ -1,0 +1,1 @@
+- [fix] „Letzte Aktivitäten“ füllt nicht mehr den ganzen Bildschirm und zittert beim Schließen nicht mehr. Eine lange Liste scrollt jetzt im Fenster.

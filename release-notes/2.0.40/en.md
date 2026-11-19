@@ -1,0 +1,1 @@
+- [fix] "Recent activity" no longer fills the whole screen or shakes when it closes. A long list now scrolls inside the panel.

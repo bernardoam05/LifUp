@@ -1,0 +1,1 @@
+- [fix] « Activité récente » n'occupe plus tout l'écran et ne tremble plus à la fermeture. Une longue liste défile maintenant dans le panneau.

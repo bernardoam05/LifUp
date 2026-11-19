@@ -1,0 +1,1 @@
+- [fix] «Atividade recente» já não ocupa o ecrã todo nem treme ao fechar. Uma lista longa passa a deslizar dentro da janela.
