@@ -321,7 +321,8 @@ private fun Tx.settledToday(def: QuestDef): Boolean {
     }?.div(60.0) ?: return true
     val now = ctx.hour + ctx.dateTime.minute / 60.0
     val awake = (now - Rules.WAKE_HOUR).coerceAtLeast(1.0)
-    val projected = hours + hours / awake * (24 - now)
+    // The day runs to its end hour, which after midnight reads 24 and up (see Ctx.hour).
+    val projected = hours + hours / awake * (24 + ctx.dayEnd - now)
     return hours > target * Rules.SWAP_LIMIT_FREE_SHARE || projected > target
 }
 

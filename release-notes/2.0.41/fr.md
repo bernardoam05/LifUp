@@ -1,0 +1,4 @@
+- [fix] Les apparences Mécanique, Océan abyssal et Porcelaine sakura ne décalent plus les accessoires : le Core a maintenant la même taille et la même position que dans les autres apparences.
+- [fix] Le Diadème de chasseur, le Casque feuillu et le Bandeau d’aventurier tiennent sur la tête à toutes les formes, à la bonne taille et avec la bonne inclinaison.
+- [fix] Une session de concentration qui dépasse minuit compte pour la mission de la veille : les minutes faites avant la fin de la journée ne sont plus perdues ni données à la mission du jour du même nom.
+- [fix] Après minuit, avec une heure de fin de journée repoussée, une mission de limite d’écran n’est plus proposée par un échange ou en extra alors qu’elle allait déjà échouer.

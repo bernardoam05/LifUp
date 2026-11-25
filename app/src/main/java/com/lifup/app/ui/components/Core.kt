@@ -149,52 +149,48 @@ fun CoreAvatar(
     }
 }
 
-/** The artwork used by each accessory. Shop accessories have one fitted canvas per Core stage. */
-private fun art(skin: CoreSkin, stage: Int): Int {
-    val s = stage.coerceIn(1, Core.STAGES)
-    return when (skin) {
+/** The artwork used by each accessory: one picture, sized and placed per form by [PLACE]. */
+private fun art(skin: CoreSkin): Int = when (skin) {
     CoreSkin.PUMPKIN -> R.drawable.core_acc_pumpkin
     CoreSkin.SCARF -> R.drawable.core_acc_scarf
     CoreSkin.PARTY_HAT -> R.drawable.core_acc_party_hat
     CoreSkin.FLOWER_CROWN -> R.drawable.core_acc_flower_crown
     CoreSkin.SUNGLASSES -> R.drawable.core_acc_sunglasses
-    CoreSkin.HUNTER_CROWN -> listOf(R.drawable.core_acc_hunter_crown_s1, R.drawable.core_acc_hunter_crown_s2, R.drawable.core_acc_hunter_crown_s3, R.drawable.core_acc_hunter_crown_s4, R.drawable.core_acc_hunter_crown_s5, R.drawable.core_acc_hunter_crown_s6)[s - 1]
-    CoreSkin.HEADPHONES -> listOf(R.drawable.core_acc_headphones_s1, R.drawable.core_acc_headphones_s2, R.drawable.core_acc_headphones_s3, R.drawable.core_acc_headphones_s4, R.drawable.core_acc_headphones_s5, R.drawable.core_acc_headphones_s6)[s - 1]
-    CoreSkin.ADVENTURER_BAND -> listOf(R.drawable.core_acc_adventurer_band_s1, R.drawable.core_acc_adventurer_band_s2, R.drawable.core_acc_adventurer_band_s3, R.drawable.core_acc_adventurer_band_s4, R.drawable.core_acc_adventurer_band_s5, R.drawable.core_acc_adventurer_band_s6)[s - 1]
-    }
+    CoreSkin.HUNTER_CROWN -> R.drawable.core_acc_hunter_crown
+    CoreSkin.HEADPHONES -> R.drawable.core_acc_headphones
+    CoreSkin.ADVENTURER_BAND -> R.drawable.core_acc_adventurer_band
 }
 
-private fun aspect(skin: CoreSkin, stage: Int): Float = when (skin) {
+/** Each artwork's height over its width. */
+private fun aspect(skin: CoreSkin): Float = when (skin) {
     CoreSkin.PUMPKIN -> 0.869f
     CoreSkin.SCARF -> 0.817f
     CoreSkin.PARTY_HAT -> 1.081f
     CoreSkin.FLOWER_CROWN -> 0.625f
     CoreSkin.SUNGLASSES -> 0.434f
-    // Generated shop accessories are tightly alpha-cropped. Preserve each variant's own proportions;
-    // stretching them back to a shared canvas makes the arcs and ear cups visibly inconsistent.
-    CoreSkin.HUNTER_CROWN -> listOf(57f / 90f, 59f / 111f, 60f / 125f, 65f / 128f, 69f / 140f, 74f / 159f)[stage.coerceIn(1, Core.STAGES) - 1]
-    CoreSkin.HEADPHONES -> listOf(95f / 109f, 106f / 117f, 108f / 127f, 116f / 138f, 120f / 134f, 120f / 144f)[stage.coerceIn(1, Core.STAGES) - 1]
-    CoreSkin.ADVENTURER_BAND -> listOf(88f / 108f, 95f / 128f, 97f / 139f, 99f / 147f, 97f / 144f, 104f / 156f)[stage.coerceIn(1, Core.STAGES) - 1]
+    CoreSkin.HUNTER_CROWN -> 65f / 128f
+    CoreSkin.HEADPHONES -> 95f / 109f
+    CoreSkin.ADVENTURER_BAND -> 88f / 108f
 }
 
-/** Where each accessory sits on each form: left, top and width as fractions of the sprite, and its tilt in degrees (laid out by hand). */
+/** Where each accessory sits on each form: left, top and width as fractions of the sprite, and its tilt in degrees (measured from the layout in design/Untitled design-1.pdf). */
 private val PLACE: Map<CoreSkin, List<FloatArray>> = mapOf(
     CoreSkin.PUMPKIN to listOf(floatArrayOf(0.2636f, 0.1402f, 0.5357f, 6.6f), floatArrayOf(0.2602f, 0.1003f, 0.4872f, 0.0f), floatArrayOf(0.2868f, 0.0722f, 0.4650f, 0.0f), floatArrayOf(0.3407f, 0.1286f, 0.4104f, 0.0f), floatArrayOf(0.4187f, 0.1799f, 0.2790f, 11.5f), floatArrayOf(0.3713f, 0.2131f, 0.2851f, -6.5f)),
     CoreSkin.SCARF to listOf(floatArrayOf(0.3906f, 0.6393f, 0.2828f, 0.0f), floatArrayOf(0.2887f, 0.5330f, 0.4334f, 0.0f), floatArrayOf(0.3309f, 0.5233f, 0.4022f, 0.0f), floatArrayOf(0.3965f, 0.5133f, 0.3145f, 0.0f), floatArrayOf(0.4111f, 0.4685f, 0.2487f, 0.0f), floatArrayOf(0.4196f, 0.4936f, 0.2249f, 0.0f)),
     CoreSkin.PARTY_HAT to listOf(floatArrayOf(0.2606f, 0.0328f, 0.3879f, -9.1f), floatArrayOf(0.2840f, -0.0223f, 0.3832f, -7.3f), floatArrayOf(0.2929f, -0.0499f, 0.3832f, -7.3f), floatArrayOf(0.3010f, -0.0061f, 0.3631f, -9.1f), floatArrayOf(0.3790f, 0.1242f, 0.2225f, -16.0f), floatArrayOf(0.3625f, 0.1557f, 0.2303f, -17.8f)),
     CoreSkin.FLOWER_CROWN to listOf(floatArrayOf(0.3075f, 0.3172f, 0.4464f, 0.0f), floatArrayOf(0.2944f, 0.2493f, 0.4464f, 0.0f), floatArrayOf(0.3095f, 0.2101f, 0.4464f, 0.0f), floatArrayOf(0.3738f, 0.2735f, 0.3087f, -10.9f), floatArrayOf(0.3910f, 0.2678f, 0.2733f, -3.1f), floatArrayOf(0.3906f, 0.3070f, 0.2733f, -3.1f)),
     CoreSkin.SUNGLASSES to listOf(floatArrayOf(0.3480f, 0.3131f, 0.3674f, 0.0f), floatArrayOf(0.3211f, 0.2423f, 0.4033f, 0.0f), floatArrayOf(0.3333f, 0.2199f, 0.4033f, 0.0f), floatArrayOf(0.4024f, 0.2752f, 0.2914f, 0.0f), floatArrayOf(0.4171f, 0.2735f, 0.2429f, 0.0f), floatArrayOf(0.4230f, 0.3105f, 0.2217f, 0.0f)),
-    CoreSkin.HUNTER_CROWN to listOf(floatArrayOf(0.300f, 0.230f, 0.400f, 0f), floatArrayOf(0.285f, 0.180f, 0.430f, 0f), floatArrayOf(0.280f, 0.190f, 0.455f, 0f), floatArrayOf(0.340f, 0.245f, 0.330f, 0f), floatArrayOf(0.385f, 0.250f, 0.230f, 0f), floatArrayOf(0.395f, 0.285f, 0.215f, -4f)),
-    CoreSkin.HEADPHONES to listOf(floatArrayOf(0.245f, 0.220f, 0.510f, 0f), floatArrayOf(0.245f, 0.145f, 0.510f, 0f), floatArrayOf(0.285f, 0.145f, 0.450f, 0f), floatArrayOf(0.345f, 0.185f, 0.320f, 0f), floatArrayOf(0.385f, 0.210f, 0.235f, 0f), floatArrayOf(0.398f, 0.255f, 0.210f, -4f)),
-    CoreSkin.ADVENTURER_BAND to listOf(floatArrayOf(0.285f, 0.140f, 0.430f, 0f), floatArrayOf(0.285f, 0.090f, 0.430f, 0f), floatArrayOf(0.285f, 0.145f, 0.450f, 0f), floatArrayOf(0.345f, 0.205f, 0.320f, 0f), floatArrayOf(0.390f, 0.235f, 0.225f, 0f), floatArrayOf(0.400f, 0.275f, 0.205f, -4f)),
+    CoreSkin.HUNTER_CROWN to listOf(floatArrayOf(0.2430f, 0.3216f, 0.4975f, -4.4f), floatArrayOf(0.2621f, 0.2620f, 0.4832f, -3.4f), floatArrayOf(0.2573f, 0.2279f, 0.5122f, -2.9f), floatArrayOf(0.3625f, 0.2711f, 0.3662f, -6.0f), floatArrayOf(0.3654f, 0.2616f, 0.3268f, -4.4f), floatArrayOf(0.3915f, 0.3091f, 0.2641f, -4.8f)),
+    CoreSkin.HEADPHONES to listOf(floatArrayOf(0.2407f, 0.2040f, 0.5395f, -3.7f), floatArrayOf(0.2614f, 0.1430f, 0.5094f, -3.1f), floatArrayOf(0.2469f, 0.1041f, 0.5566f, -1.4f), floatArrayOf(0.3139f, 0.1459f, 0.4623f, -1.4f), floatArrayOf(0.3598f, 0.1866f, 0.3427f, -1.4f), floatArrayOf(0.3532f, 0.2208f, 0.3470f, -3.9f)),
+    CoreSkin.ADVENTURER_BAND to listOf(floatArrayOf(0.2642f, 0.1149f, 0.5455f, -1.8f), floatArrayOf(0.2882f, 0.0738f, 0.4974f, 0.0f), floatArrayOf(0.2715f, 0.0217f, 0.5586f, 0.0f), floatArrayOf(0.3223f, 0.0728f, 0.4498f, -1.8f), floatArrayOf(0.3434f, 0.1367f, 0.3525f, -8.6f), floatArrayOf(0.3559f, 0.1663f, 0.3459f, -2.7f)),
 )
 
 @Composable
 private fun Accessory(skin: CoreSkin, stage: Int, size: Dp) {
     val p = PLACE.getValue(skin)[stage.coerceIn(1, Core.STAGES) - 1]
     Image(
-        painterResource(art(skin, stage)), null,
-        modifier = Modifier.offset(x = size * p[0], y = size * p[1]).size(size * p[2], size * p[2] * aspect(skin, stage))
+        painterResource(art(skin)), null,
+        modifier = Modifier.offset(x = size * p[0], y = size * p[1]).size(size * p[2], size * p[2] * aspect(skin))
             .graphicsLayer { rotationZ = p[3] },
     )
 }

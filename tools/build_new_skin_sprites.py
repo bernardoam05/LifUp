@@ -5,6 +5,9 @@ they are one form ahead: cara2.png shows form 3, cara3.png form 4, cara4.png for
 and 6 and is not used; cara6.png is form 6. No sheet shows form 2: its faces are put together here instead, from the
 form in the line-up (pele_<skin>.png) and the eyes and symbols of the standard form-2 sprites, in the skin's eye colour.
 
+The sheets also drew the Core bigger and higher than the standard sprites, so every form is then scaled and moved
+(the same for all its faces) to lie over the standard form, where the accessories are fitted.
+
 Sprites are saved like the older skins: 320 px, lossy WebP with a lossless alpha channel. Needs Pillow and NumPy.
 """
 from collections import deque
@@ -240,9 +243,64 @@ def fitted(res, resource):
 
 
 
+# -- Lining each form up with the standard sprites ---------------------------------------------
+
+REG = 160  # registration size
+
+
+def _masks(image: Image.Image):
+    a = np.array(image.convert("RGBA").resize((REG, REG), Image.Resampling.LANCZOS)).astype(float)
+    body = a[..., 3] > 96
+    return body, body & (a[..., :3].max(2) < 70)
+
+
+def _moved(mask, k, dx, dy):
+    size = round(REG * k)
+    small = mask_img(mask).resize((size, size), Image.Resampling.BILINEAR)
+    out = Image.new("L", (REG, REG))
+    out.paste(small, (round(REG / 2 - size / 2 + dx), round(REG / 2 - size / 2 + dy)))
+    return np.array(out) > 127
+
+
+def _overlap(a, b):
+    union = (a | b).sum()
+    return (a & b).sum() / union if union else 0
+
+
+def registration(sprite: Image.Image, stage: int):
+    """The scale and shift (in fractions of the canvas) that lay [sprite] over the standard form: outline and face."""
+    body, face = _masks(Image.open(DRAWABLES / f"core_s{stage}_neutral.webp"))
+    own_body, own_face = _masks(sprite)
+
+    def score(k, dx, dy):
+        return _overlap(body, _moved(own_body, k, dx, dy)) + 2 * _overlap(face, _moved(own_face, k, dx, dy))
+
+    best = max(((score(k, dx, dy), k, dx, dy) for k in np.arange(0.70, 1.10, 0.02)
+                for dx in range(-16, 17, 2) for dy in range(-16, 17, 2)))
+    _, k0, x0, y0 = best
+    best = max([best] + [(score(k, dx, dy), k, dx, dy) for k in np.arange(k0 - 0.02, k0 + 0.021, 0.005)
+                         for dx in range(x0 - 2, x0 + 3) for dy in range(y0 - 2, y0 + 3)])
+    _, k, dx, dy = best
+    return k, dx / REG, dy / REG
+
+
+def aligned(sprites: dict, stage: int) -> dict:
+    k, dx, dy = registration(sprites["neutral"], stage)
+    print(f"    form {stage}: scale {k:.3f}, shift {dx:+.3f} {dy:+.3f}")
+    out = {}
+    for mood, sprite in sprites.items():
+        size = round(CANVAS * k)
+        small = sprite.resize((size, size), Image.Resampling.LANCZOS)
+        canvas = Image.new("RGBA", (CANVAS, CANVAS))
+        canvas.alpha_composite(small, (round(CANVAS / 2 - size / 2 + dx * CANVAS), round(CANVAS / 2 - size / 2 + dy * CANVAS)))
+        out[mood] = canvas
+    return out
+
+
 if __name__ == "__main__":
     for source_name, resource_name in SKINS.items():
-        for mood, sprite in form2(source_name, resource_name).items():
+        print(source_name)
+        for mood, sprite in aligned(form2(source_name, resource_name), 2).items():
             save(sprite, f"{resource_name}_s2_{mood}")
         for stage, sheet_number in SHEET_FOR_STAGE.items():
             sheet = Image.open(SOURCE / source_name / f"cara{sheet_number}.png").convert("RGBA")
@@ -259,5 +317,6 @@ if __name__ == "__main__":
                 canvas = Image.new("RGBA", (CANVAS, CANVAS))
                 canvas.paste(cell, ((CANVAS - cell.width) // 2, (CANVAS - cell.height) // 2), cell)
                 cells[mood] = canvas
-                save(canvas, f"{resource_name}_s{stage}_{mood}")
-            save(without_note(cells["relaxed"], cells["neutral"]), f"{resource_name}_s{stage}_sleeping")
+            cells["sleeping"] = without_note(cells["relaxed"], cells["neutral"])
+            for mood, sprite in aligned(cells, stage).items():
+                save(sprite, f"{resource_name}_s{stage}_{mood}")

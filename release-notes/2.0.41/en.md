@@ -1,0 +1,4 @@
+- [fix] The Clockwork, Abyssal Ocean and Sakura Porcelain skins no longer knock accessories out of place: the Core now has the same size and position as in the other skins.
+- [fix] The Hunter diadem, Leaf headphones and Adventurer band sit on the head on every form, at the right size and tilt.
+- [fix] A focus session that runs past midnight counts for yesterday's mission: the minutes done before the day ended are no longer lost or given to today's mission of the same name.
+- [fix] After midnight, with a later day-end hour, a screen-time limit mission is no longer handed out by a swap or as an extra when it was already going to fail.

@@ -331,6 +331,24 @@ class EngineTest {
         assertEquals(1L, s.count(StatKey.FOCUS_SESSIONS))
     }
 
+    @Test fun `a focus session across the day's end counts for the day it was started in`() {
+        var s = fresh()
+        val fq = buildQuest(content.questDefById.getValue("pool_deepwork"), 1, QuestOrigin.DAILY)
+        s = s.copy(quests = s.quests.filterNot { it.defId == fq.defId } + fq)
+        s = run(s, "2026-10-14T22:50") { startFocus(FocusSession(0, 90, questId = fq.id)) }
+        // 70 of its minutes came before midnight: enough for yesterday's 60-minute mission, judged at the close.
+        s = run(s, "2026-10-15T00:05")
+        assertEquals(1, s.records[fq.defId]?.count)
+        assertNotNull(s.focus)
+        // Today's mission of the same name starts from nothing; the session still counts as focus when it ends.
+        if (s.quests.none { it.id == fq.id }) s = s.copy(quests = s.quests + fq)
+        s = run(s, "2026-10-15T00:21")
+        assertNull(s.focus)
+        assertEquals(QuestStatus.OPEN, s.quests.first { it.id == fq.id }.status)
+        assertEquals(0.0, s.quests.first { it.id == fq.id }.progress, 0.0)
+        assertEquals(90L, s.count(StatKey.FOCUS_MINUTES))
+    }
+
     @Test fun `focus minutes go only to the session's mission`() {
         var s = fresh()
         val a = buildQuest(content.questDefById.getValue("pool_journal"), 1, QuestOrigin.EXTRA, "fa")

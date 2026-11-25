@@ -1,0 +1,4 @@
+- [fix] As peles Mecânica, Oceano Abissal e Porcelana Sakura já não desencaixam os acessórios: o Core tem agora o mesmo tamanho e posição que nas outras peles.
+- [fix] O Diadema de caçador, os Auscultadores de folhas e a Faixa de aventureiro assentam na cabeça em todas as formas, com o tamanho e a inclinação certos.
+- [fix] Uma sessão de foco que passa da meia-noite conta para a missão de ontem: os minutos feitos antes do fim do dia já não se perdem nem vão para a missão de hoje com o mesmo nome.
+- [fix] Depois da meia-noite, com a hora de fim do dia adiada, uma missão de limite de ecrã já não é dada numa troca ou como extra quando já ia falhar.

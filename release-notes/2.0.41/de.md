@@ -1,0 +1,4 @@
+- [fix] Die Skins Uhrwerk, Tiefsee und Sakura-Porzellan verschieben keine Accessoires mehr: Der Core hat jetzt dieselbe Größe und Position wie in den anderen Skins.
+- [fix] Jägerdiadem, Blatt-Kopfhörer und Abenteurer-Stirnband sitzen in jeder Form auf dem Kopf, in der richtigen Größe und Neigung.
+- [fix] Eine Fokussitzung über Mitternacht hinaus zählt für die Mission von gestern: Die Minuten vor Tagesende gehen nicht mehr verloren und landen nicht bei der gleichnamigen Mission von heute.
+- [fix] Nach Mitternacht, mit späterem Tagesende, wird eine Bildschirmzeit-Limit-Mission nicht mehr per Tausch oder als Extra vergeben, wenn sie ohnehin scheitern würde.

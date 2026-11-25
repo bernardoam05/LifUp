@@ -18,6 +18,7 @@ fun Tx.ensureDay() {
     } else if (LocalDate.parse(s.day) < ctx.today) {
         // Only move forward: a clock set back (manual change, timezone hop) never re-closes a day.
         val last = LocalDate.parse(s.day)
+        splitFocusAtDayEnd(last)
         closeDay(last)
         s.settings.rigorNext?.let { r -> s = s.copy(settings = s.settings.copy(rigor = r, rigorNext = null)) }
         rollWeek()
@@ -45,6 +46,21 @@ fun Tx.ensureDay() {
     ensureShop()
     expirePortal()
     ensurePairs()
+}
+
+/**
+ * A focus session for one of the day's missions that is still running when the day closes (or ended unseen): the
+ * minutes before the day's end go to that mission, which is about to be judged, and the session carries on without
+ * one. Today's missions reuse their definitions' ids, so otherwise the minutes would land on today's namesake.
+ */
+private fun Tx.splitFocusAtDayEnd(day: LocalDate) {
+    val f = s.focus ?: return
+    val questId = f.questId?.takeIf { id -> s.quests.any { it.id == id } } ?: return
+    val end = ctx.dayStart(day.plusDays(1))
+    if (f.startedAt >= end) return
+    s = s.copy(focus = f.copy(questId = null))
+    // Statistics and XP come when the session ends, for all its minutes.
+    creditFocus(f.creditableMinutes(minOf(end, ctx.now)), questId, pomodoro = f.pomodoro != null, counted = 0.0)
 }
 
 private fun Tx.closeDay(day: LocalDate) {
