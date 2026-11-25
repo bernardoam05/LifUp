@@ -5,3 +5,8 @@ local.properties
 *.iml
 .kotlin/
 captures/
+
+# Play upload key: never commit (the repo is public)
+*.jks
+*.jks.b64
+/password

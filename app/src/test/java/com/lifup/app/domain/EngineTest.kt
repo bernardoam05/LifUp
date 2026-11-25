@@ -10,6 +10,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.random.Random
@@ -329,6 +330,30 @@ class EngineTest {
         assertNull(s.focus)
         assertEquals(QuestStatus.DONE, s.quests.first { it.id == fq.id }.status)
         assertEquals(1L, s.count(StatKey.FOCUS_SESSIONS))
+    }
+
+    @Test fun `moving the day-end hour every day never keeps a day from closing`() {
+        var s = fresh()
+        // The engine reads the day-end hour from the state, as the store does.
+        fun at(state: GameState, time: String, action: Tx.() -> Unit = {}) =
+            Engine.run(state, Ctx(content, at(time), zone, Random(1), state.settings.dayEndHour), action = action)
+        val hours = listOf(5, 0, 3, 1, 4, 2, 5)
+        hours.forEachIndexed { i, h ->
+            val day = LocalDate.parse("2026-10-14").plusDays(i.toLong())
+            // Mid-morning, past any day-end hour: it can always move, and today stays today.
+            s = at(s, "${day}T10:00") { setDayEnd(h) }
+            assertEquals(h, s.settings.dayEndHour)
+            assertEquals(day.toString(), s.day)
+        }
+        // In the small hours it can't move, so the day can't be stretched: at 01:00 with the day ending at 5, setting 0 does nothing.
+        val last = LocalDate.parse("2026-10-14").plusDays(hours.size - 1L)
+        s = at(s, "${last.plusDays(1)}T01:00") { setDayEnd(0) }
+        assertEquals(5, s.settings.dayEndHour)
+        assertEquals(last.toString(), s.day)
+        // At 05:00 the day closes as set.
+        s = at(s, "${last.plusDays(1)}T05:00")
+        assertEquals(last.plusDays(1).toString(), s.day)
+        assertEquals(hours.size, s.dayLog.size)
     }
 
     @Test fun `a focus session across the day's end counts for the day it was started in`() {
