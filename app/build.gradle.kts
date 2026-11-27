@@ -62,6 +62,8 @@ android {
         create("play") {
             dimension = "store"
             buildConfigField("boolean", "SELF_UPDATE", "false")
+            // CoreQuest+ free for everyone while the app is in closed testing. Set to false before production.
+            buildConfigField("boolean", "PLUS_FREE", "true")
             signingConfig = signingConfigs.getByName(if (System.getenv("UPLOAD_KEYSTORE") != null) "upload" else "debug")
         }
     }

@@ -1,1 +1,2 @@
 - [fix] Reinstalar a app (por exemplo, para passar para a versão do Google Play) e importar uma cópia de segurança já não termina as tuas missões em par: a app volta a ocupar o teu lugar em cada par sozinha.
+- [tweak] Na versão do Google Play, o CoreQuest+ vem incluído de graça enquanto a app está em teste.

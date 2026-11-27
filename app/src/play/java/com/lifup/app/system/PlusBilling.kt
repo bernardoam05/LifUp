@@ -14,6 +14,7 @@ import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
+import com.lifup.app.BuildConfig
 import com.lifup.app.LifUpApp
 import com.lifup.app.domain.PlusProducts
 import com.lifup.app.domain.setPlus
@@ -23,7 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * CoreQuest+ and tips through Google Play Billing. CoreQuest+ is a one-time product, acknowledged once bought; tips are
  * consumed so they can be given again. What Play reports as owned is the truth: the game state only mirrors it,
- * and a failed query never takes CoreQuest+ away.
+ * and a failed query never takes CoreQuest+ away. During closed testing ([BuildConfig.PLUS_FREE]) everyone has it.
  */
 object PlusBilling {
     private const val TAG = "PlusBilling"
@@ -40,6 +41,7 @@ object PlusBilling {
     private val details = mutableMapOf<String, ProductDetails>()
 
     fun start(context: Context) {
+        if (BuildConfig.PLUS_FREE) LifUpApp.store.fire { setPlus(true) }
         if (client != null) return
         val c = BillingClient.newBuilder(context.applicationContext)
             .setListener { result, purchases -> if (result.responseCode == BillingClient.BillingResponseCode.OK) purchases?.forEach(::handle) }
@@ -77,7 +79,7 @@ object PlusBilling {
             if (result.responseCode != BillingClient.BillingResponseCode.OK) return@queryPurchasesAsync
             purchases.forEach(::handle)
             val owned = purchases.any { PlusProducts.PLUS in it.products && it.purchaseState == Purchase.PurchaseState.PURCHASED }
-            LifUpApp.store.fire { setPlus(owned) }
+            LifUpApp.store.fire { setPlus(owned || BuildConfig.PLUS_FREE) }
         }
     }
 

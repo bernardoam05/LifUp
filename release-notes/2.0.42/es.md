@@ -1,1 +1,2 @@
 - [fix] Reinstalar la app (por ejemplo, para pasar a la versión de Google Play) e importar una copia de seguridad ya no termina tus misiones en pareja: la app recupera tu sitio en cada pareja por sí sola.
+- [tweak] En la versión de Google Play, CoreQuest+ viene incluido gratis mientras la app está en pruebas.

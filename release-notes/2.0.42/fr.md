@@ -1,1 +1,2 @@
 - [fix] Réinstaller l'app (par exemple pour passer à la version Google Play) et importer une sauvegarde ne termine plus tes missions en binôme : l'app reprend ta place dans chaque binôme toute seule.
+- [tweak] Dans la version Google Play, CoreQuest+ est inclus gratuitement tant que l'app est en test.

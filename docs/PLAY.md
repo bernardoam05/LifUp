@@ -51,6 +51,8 @@ Em Actions → **Play bundle** → Run workflow. O `.aab` aparece em Artifacts. 
 
 ## 4. Teste fechado (obrigatório em contas pessoais novas)
 
+Durante o teste o CoreQuest+ é gratuito no build da Play (`PLUS_FREE` no flavour `play`, em `app/build.gradle.kts`). **Pôr a `false` antes da produção.**
+
 Pelo menos **12 testadores** inscritos durante **14 dias seguidos** antes de pedir acesso à produção. Cria a faixa de teste fechado, junta os emails (amigos, colegas) e pede-lhes que instalem e usem a app.
 
 ## 5. Quem já usa a versão do GitHub

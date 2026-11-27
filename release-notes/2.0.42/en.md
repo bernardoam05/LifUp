@@ -1,1 +1,2 @@
 - [fix] Reinstalling the app (for example to switch to the Google Play version) and importing a backup no longer ends your pair missions: the app takes your place back in each pair on its own.
+- [tweak] In the Google Play version, CoreQuest+ is included for free while the app is in testing.
