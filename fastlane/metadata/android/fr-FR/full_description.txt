@@ -1,4 +1,4 @@
-Transforme tes habitudes en RPG. Chaque jour apporte un ensemble de missions — sport, sommeil, concentration, études, maison — et les accomplir rapporte de l'XP, de l'or et des attributs. Les rater a un vrai coût. Sans compte et sans publicité : tout reste sur ton téléphone.
+Transforme tes habitudes en RPG. Chaque jour apporte un ensemble de missions — sport, sommeil, concentration, études, maison — et les accomplir rapporte de l'XP, de l'or et des attributs. Les rater a un vrai coût. Sans compte et sans publicité : tout reste sur ton téléphone, sauf les missions en binôme (facultatives).
 
 <b>Des missions quotidiennes qui grandissent avec toi</b>
 • Des missions tirées d'un catalogue de 95, avec une charge qui augmente à mesure que tu tiens tes journées
@@ -18,7 +18,7 @@ Transforme tes habitudes en RPG. Chaque jour apporte un ensemble de missions —
 • Des rangs de chasseur de E à SS et 27 succès
 
 <b>Voici Core</b>
-Ta compagne grandit avec ton rang à travers cinq formes, de Potentiel à Légende, et son visage suit ta journée : concentrée, détendue, endormie la nuit, heureuse quand tu as tout fait.
+Ta compagne grandit avec ton rang à travers six formes, de Potentiel à Transcendance, et son visage suit ta journée : concentrée, détendue, endormie la nuit, heureuse quand tu as tout fait.
 
 <b>Moins de gestes</b>
 • Les pas et le GPS cochent certaines missions tout seuls
@@ -26,6 +26,6 @@ Ta compagne grandit avec ton rang à travers cinq formes, de Potentiel à Légen
 • Bilans du jour, de la semaine et du mois, et un calendrier d'activité
 
 <b>Rien qu'à toi</b>
-• Sans compte, sans serveur, sans publicité, sans pistage
+• Sans compte, sans publicité, sans pistage
 • Sauvegarde dans un fichier quand tu veux, plus des copies quotidiennes automatiques
 • En français, anglais, portugais, espagnol et allemand

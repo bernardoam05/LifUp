@@ -1,4 +1,4 @@
-Convierte tus hábitos en un RPG. Cada día trae un conjunto de misiones — ejercicio, sueño, concentración, estudio, casa — y cumplirlas da XP, oro y atributos. Fallarlas tiene un coste real. Sin cuenta y sin anuncios: todo se queda en tu móvil.
+Convierte tus hábitos en un RPG. Cada día trae un conjunto de misiones — ejercicio, sueño, concentración, estudio, casa — y cumplirlas da XP, oro y atributos. Fallarlas tiene un coste real. Sin cuenta y sin anuncios: todo se queda en tu móvil, salvo las misiones en pareja (opcionales).
 
 <b>Misiones diarias que crecen contigo</b>
 • Misiones sorteadas de un catálogo de 95, con una carga que sube a medida que mantienes los días
@@ -18,7 +18,7 @@ Convierte tus hábitos en un RPG. Cada día trae un conjunto de misiones — eje
 • Rangos de cazador de E a SS y 27 logros
 
 <b>Conoce a Core</b>
-Tu compañera crece con tu rango a través de cinco formas, de Potencial a Leyenda, y su cara sigue tu día: concentrada, relajada, dormida por la noche, feliz cuando lo cumples todo.
+Tu compañera crece con tu rango a través de seis formas, de Potencial a Trascendencia, y su cara sigue tu día: concentrada, relajada, dormida por la noche, feliz cuando lo cumples todo.
 
 <b>Menos toques</b>
 • Los pasos y el GPS marcan algunas misiones solos
@@ -26,6 +26,6 @@ Tu compañera crece con tu rango a través de cinco formas, de Potencial a Leyen
 • Resúmenes del día, la semana y el mes, y un calendario de actividad
 
 <b>Solo tuyo</b>
-• Sin cuenta, sin servidor, sin anuncios, sin rastreo
+• Sin cuenta, sin anuncios, sin rastreo
 • Copia de seguridad en archivo cuando quieras, y copias diarias automáticas
 • En español, inglés, portugués, francés y alemán

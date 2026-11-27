@@ -1,4 +1,4 @@
-Mach deine Gewohnheiten zum RPG. Jeder Tag bringt eine Reihe von Missionen — Sport, Schlaf, Fokus, Lernen, Haushalt — und wer sie schafft, bekommt XP, Gold und Attribute. Verpasste Missionen kosten wirklich etwas. Kein Konto, keine Werbung: Alles bleibt auf deinem Handy.
+Mach deine Gewohnheiten zum RPG. Jeder Tag bringt eine Reihe von Missionen — Sport, Schlaf, Fokus, Lernen, Haushalt — und wer sie schafft, bekommt XP, Gold und Attribute. Verpasste Missionen kosten wirklich etwas. Kein Konto, keine Werbung: Alles bleibt auf deinem Handy, außer optionalen Partnermissionen.
 
 <b>Tägliche Missionen, die mit dir wachsen</b>
 • Missionen aus einem Katalog von 95, deren Umfang steigt, je länger du durchhältst
@@ -18,7 +18,7 @@ Mach deine Gewohnheiten zum RPG. Jeder Tag bringt eine Reihe von Missionen — S
 • Jägerränge von E bis SS und 27 Erfolge
 
 <b>Lerne Core kennen</b>
-Deine Begleiterin wächst mit deinem Rang durch fünf Gestalten, von Potenzial bis Legende, und ihr Gesicht folgt deinem Tag: konzentriert, entspannt, nachts schlafend, glücklich, wenn du alles geschafft hast.
+Deine Begleiterin wächst mit deinem Rang durch sechs Gestalten, von Potenzial bis Transzendenz, und ihr Gesicht folgt deinem Tag: konzentriert, entspannt, nachts schlafend, glücklich, wenn du alles geschafft hast.
 
 <b>Weniger tippen</b>
 • Schritte und GPS haken manche Missionen von selbst ab
@@ -26,6 +26,6 @@ Deine Begleiterin wächst mit deinem Rang durch fünf Gestalten, von Potenzial b
 • Tages-, Wochen- und Monatsberichte sowie ein Aktivitätskalender
 
 <b>Nur für dich</b>
-• Kein Konto, kein Server, keine Werbung, kein Tracking
+• Kein Konto, keine Werbung, kein Tracking
 • Sicherung als Datei, wann immer du willst, plus automatische tägliche Kopien
 • Auf Deutsch, Englisch, Portugiesisch, Spanisch und Französisch

@@ -1,4 +1,4 @@
-Turn your habits into an RPG. Every day brings a set of missions — exercise, sleep, focus, study, home — and keeping them earns XP, gold and attributes. Missing them has a real cost. No account, no ads: everything stays on your phone.
+Turn your habits into an RPG. Every day brings a set of missions — exercise, sleep, focus, study, home — and keeping them earns XP, gold and attributes. Missing them has a real cost. No account, no ads: everything stays on your phone, except optional pair missions.
 
 <b>Daily missions that grow with you</b>
 • Missions drawn from a catalogue of 95, with a load that rises as you keep your days
@@ -18,7 +18,7 @@ Turn your habits into an RPG. Every day brings a set of missions — exercise, s
 • Hunter ranks from E to SS and 27 achievements
 
 <b>Meet Core</b>
-Your companion grows with your rank through five forms, from Potential to Legend, and her face follows your day: focused, relaxed, asleep at night, happy when you get it all done.
+Your companion grows with your rank through six forms, from Potential to Transcendence, and her face follows your day: focused, relaxed, asleep at night, happy when you get it all done.
 
 <b>Less tapping</b>
 • Steps and GPS tick some missions by themselves
@@ -26,6 +26,6 @@ Your companion grows with your rank through five forms, from Potential to Legend
 • Daily, weekly and monthly reports, plus an activity calendar
 
 <b>Yours only</b>
-• No account, no server, no ads, no tracking
+• No account, no ads, no tracking
 • Back up to a file whenever you like, plus automatic daily copies
 • In English, Portuguese, Spanish, French and German

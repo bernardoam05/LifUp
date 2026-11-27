@@ -1,4 +1,4 @@
-Transforma os teus hábitos num RPG. Cada dia traz um conjunto de missões — exercício, sono, foco, estudo, casa — e cumpri-las dá XP, ouro e atributos. Falhá-las tem custo real. Sem conta e sem anúncios: tudo fica no teu telemóvel.
+Transforma os teus hábitos num RPG. Cada dia traz um conjunto de missões — exercício, sono, foco, estudo, casa — e cumpri-las dá XP, ouro e atributos. Falhá-las tem custo real. Sem conta e sem anúncios: tudo fica no teu telemóvel, exceto as missões em par (opcionais).
 
 <b>Missões diárias que crescem contigo</b>
 • Missões sorteadas de um catálogo de 95, com uma carga que sobe à medida que manténs os dias
@@ -18,7 +18,7 @@ Transforma os teus hábitos num RPG. Cada dia traz um conjunto de missões — e
 • Ranks de caçador de E a SS e 27 conquistas
 
 <b>Conhece a Core</b>
-A tua companheira cresce com o teu rank ao longo de cinco formas, de Potencial a Lenda, e a cara dela acompanha o teu dia: focada, relaxada, a dormir à noite, feliz quando cumpres tudo.
+A tua companheira cresce com o teu rank ao longo de seis formas, de Potencial a Transcendência, e a cara dela acompanha o teu dia: focada, relaxada, a dormir à noite, feliz quando cumpres tudo.
 
 <b>Menos toques</b>
 • Passos e GPS marcam algumas missões sozinhos
@@ -26,6 +26,6 @@ A tua companheira cresce com o teu rank ao longo de cinco formas, de Potencial a
 • Resumos do dia, da semana e do mês, e um calendário de atividade
 
 <b>Só teu</b>
-• Sem conta, sem servidor, sem anúncios, sem rastreio
+• Sem conta, sem anúncios, sem rastreio
 • Cópia de segurança para ficheiro quando quiseres, e cópias diárias automáticas
 • Em português, inglês, espanhol, francês e alemão
