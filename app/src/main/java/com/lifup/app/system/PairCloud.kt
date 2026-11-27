@@ -193,6 +193,28 @@ object PairCloud {
         Unit
     }
 
+    /**
+     * After a reinstall the anonymous sign-in is a new one, while the pair came back with the backup. Proves this phone
+     * was in the pair with its secret, puts the new id in place of [PairQuest.myUid] and starts a fresh part (the old
+     * one's completions can't be copied, since the server stamps them; the partner has already read them). Returns the
+     * new id; null when the id didn't change, or when the pair can't be reclaimed (it changed meanwhile), in which case
+     * the next read finds this phone out of it and ends the pair as before.
+     */
+    suspend fun reclaim(context: Context, p: PairQuest, name: String, level: Int): String? = call {
+        val me = uid(context)
+        if (me == p.myUid) return@call null
+        val ref = db(context).collection("pairs").document(p.id)
+        try {
+            ref.update(mapOf("members" to listOfNotNull(p.partnerUid, me), "proof" to p.secret, "reclaimed" to p.myUid, "expireAt" to expiry())).await()
+        } catch (e: FirebaseFirestoreException) {
+            if (e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED || e.code == FirebaseFirestoreException.Code.NOT_FOUND) return@call null
+            throw e
+        }
+        ref.collection("parts").document(me).set(partDoc(name, level)).await()
+        runCatching { ref.collection("parts").document(p.myUid).delete().await() }
+        me
+    }
+
     /** Tells the partner about this player's pause ("first/last" day), or with null that it is over. */
     suspend fun setPause(context: Context, p: PairQuest, pause: String?) = call {
         uid(context)

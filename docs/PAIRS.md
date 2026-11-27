@@ -77,7 +77,7 @@ A alternativa era o ntfy. Só fazia sentido com verificações frequentes, porqu
 ```
 invites/{code}                 { pairId, by, expireAt }                       código de 8 letras, válido 24 h
 pairs/{pairId}                 { createdBy, members[≤2], quest, recurrence,
-                                 tz, start, secret, invite?, expireAt }
+                                 tz, start, secret, invite?, proof?, reclaimed?, expireAt }
 pairs/{pairId}/parts/{uid}     { name, level, last, done: { "<ciclo>": { at, amount } }, expireAt }
 ```
 
@@ -97,6 +97,7 @@ Os testes estão em `firebase/test/rules.test.js`.
 - **Convite:** só quem está sozinho no par o pode criar. O código tem o formato certo, dura no máximo 1 dia e só se lê se ainda não expirou.
 - **Entrar num par:** só com um convite válido para esse par, e só te acrescentas a ti, sem mudar mais nada.
 - **Membros:** podem renovar o `expireAt`, sair ou terminar o par para os dois. Ninguém de fora o pode fazer.
+- **Voltar depois de reinstalar:** a sessão anónima não passa na cópia de segurança, por isso quem reinstala e importa tem um id novo. Com o `secret` do par (que veio na cópia) em `proof` e o id antigo em `reclaimed`, troca o id antigo pelo novo em `members`, sem mudar mais nada. Depois cria uma parte nova e apaga a antiga. Se o par mudou entretanto, a troca é recusada e o par acaba como antes.
 - **A parte de cada um:** só o dono a escreve e os dois membros leem ambas. As conclusões não podem ter hora antiga, não podem ser reescritas e não podem acrescentar dois ciclos de uma vez. O tamanho fica limitado.
 
 ### Fluxos
@@ -110,6 +111,7 @@ Os testes estão em `firebase/test/rules.test.js`.
 | Aviso das 20h (só se a tua parte ainda não está feita) | — | 1 a 3 |
 | Acerto (1 ou 2 leituras) | — | 2 a 6 |
 | Sair ou terminar | 1 a 3 | 1 a 2 |
+| Voltar depois de reinstalar (uma vez) | 3 (par, parte nova, apagar a antiga) | 2 |
 
 A partilha do código é feita por QR no ecrã ou pela folha de partilha do Android. A sincronização normal não depende de links: o código só serve para entrar no par, e o link de aviso (1.5) é opcional.
 

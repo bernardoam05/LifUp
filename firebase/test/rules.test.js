@@ -102,6 +102,27 @@ describe('pairs', () => {
     await assertFails(deleteDoc(doc(db('eva'), 'pairs/p1')));
     await assertSucceeds(deleteDoc(doc(db('ana'), 'pairs/p1')));
   });
+
+  it('after a reinstall, the secret swaps your old id for the new one', async () => {
+    await seed({ joined: true });
+    const swap = (over = {}) => ({ members: ['rui', 'ana2'], proof: 'k'.repeat(43), reclaimed: 'ana', expireAt: days(30), ...over });
+    await assertFails(updateDoc(doc(db('ana2'), 'pairs/p1'), swap({ proof: 'x'.repeat(43) })));        // wrong secret
+    await assertFails(updateDoc(doc(db('ana2'), 'pairs/p1'), swap({ reclaimed: 'eva' })));             // not a member
+    await assertFails(updateDoc(doc(db('ana2'), 'pairs/p1'), swap({ members: ['ana2'] })));            // dropping Rui
+    await assertFails(updateDoc(doc(db('ana2'), 'pairs/p1'), swap({ members: ['rui', 'ana2', 'eva'] })));
+    await assertFails(updateDoc(doc(db('ana2'), 'pairs/p1'), swap({ quest: 'run' })));
+    await assertFails(updateDoc(doc(db('rui'), 'pairs/p1'), swap({ members: ['rui', 'rui'] })));        // already in
+    await assertSucceeds(updateDoc(doc(db('ana2'), 'pairs/p1'), swap()));
+    await assertSucceeds(getDoc(doc(db('ana2'), 'pairs/p1')));
+    await assertFails(getDoc(doc(db('ana'), 'pairs/p1')));
+    await assertSucceeds(setDoc(doc(db('ana2'), 'pairs/p1/parts/ana2'), part()));
+    await assertSucceeds(deleteDoc(doc(db('ana2'), 'pairs/p1/parts/ana')));
+  });
+
+  it('a lone member can come back too', async () => {
+    await seed();
+    await assertSucceeds(updateDoc(doc(db('ana2'), 'pairs/p1'), { members: ['ana2'], proof: 'k'.repeat(43), reclaimed: 'ana', expireAt: days(30) }));
+  });
 });
 
 describe('parts', () => {

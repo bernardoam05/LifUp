@@ -102,6 +102,12 @@ fun GameState.pairsOwedPause(todayKey: String): List<PairQuest> =
 
 fun Tx.pairPauseSent(id: String, pause: String) = updatePair(id) { it.copy(pauseSent = pause) }
 
+/**
+ * This phone took its place back in the pair under a new anonymous id (after a reinstall). Its part in the cloud is a
+ * fresh one, so nothing there needs pruning and its pause has to be told again.
+ */
+fun Tx.pairReclaimed(id: String, uid: String) = updatePair(id) { it.copy(myUid = uid, sentCycles = emptyList(), pauseSent = null) }
+
 /** Sync bookkeeping: the free quota, the bonus cap and links opened today. */
 @Serializable
 data class PairSyncState(

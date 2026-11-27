@@ -1,0 +1,1 @@
+- [fix] Réinstaller l'app (par exemple pour passer à la version Google Play) et importer une sauvegarde ne termine plus tes missions en binôme : l'app reprend ta place dans chaque binôme toute seule.

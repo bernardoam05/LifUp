@@ -28,6 +28,7 @@ import com.lifup.app.domain.droppable
 import com.lifup.app.domain.isCycleDay
 import com.lifup.app.domain.joined
 import com.lifup.app.domain.pairPauseSent
+import com.lifup.app.domain.pairReclaimed
 import com.lifup.app.domain.pairsOwedPause
 import com.lifup.app.domain.pauseToShare
 import com.lifup.app.domain.leavePair
@@ -202,6 +203,7 @@ object PairService {
         if (store.current.pairs.isEmpty()) { cancel(context); return@withLock }
         if (store.current.pairQuotaBlocked(System.currentTimeMillis())) { schedule(context); return@withLock }
         try {
+            reclaim(context)
             sendCompletions(context)
             readPartners(context, foreground, force)
             sendPause(context)
@@ -216,6 +218,15 @@ object PairService {
             return@withLock
         }
         schedule(context)
+    }
+
+    /** After a reinstall (a new anonymous id), takes this phone's place back in its pairs before anything else. */
+    private suspend fun reclaim(context: Context) {
+        val s = store.current
+        s.pairs.filter { !it.ended }.forEach { p ->
+            val uid = PairCloud.reclaim(context, p, s.player.name, s.player.level) ?: return@forEach
+            store.dispatch { pairReclaimed(p.id, uid) }
+        }
     }
 
     private suspend fun sendCompletions(context: Context) {

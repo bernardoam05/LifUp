@@ -1,0 +1,1 @@
+- [fix] Die App neu zu installieren (etwa um zur Google-Play-Version zu wechseln) und eine Sicherung zu importieren, beendet deine Partnermissionen nicht mehr: Die App nimmt deinen Platz in jeder Partnerschaft von selbst wieder ein.

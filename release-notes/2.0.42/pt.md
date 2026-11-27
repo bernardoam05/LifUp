@@ -1,0 +1,1 @@
+- [fix] Reinstalar a app (por exemplo, para passar para a versão do Google Play) e importar uma cópia de segurança já não termina as tuas missões em par: a app volta a ocupar o teu lugar em cada par sozinha.

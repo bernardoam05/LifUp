@@ -89,7 +89,19 @@ service cloud.firestore {
         return me() in members() && newMembers() == members().removeAll([me()])
           && only(['members']);
       }
-      allow update: if signedIn() && (joining() || staying() || leaving());
+      // Coming back after a reinstall: the app has a new anonymous id but kept the pair (from a backup), so it
+      // proves it was in it with the pair's secret and puts its new id in place of the old one.
+      function reclaiming() {
+        let old = request.resource.data.reclaimed;
+        return !(me() in members())
+          && request.resource.data.proof == resource.data.secret
+          && old is string && old in members()
+          && newMembers().size() == members().size()
+          && newMembers().toSet() == members().toSet().difference([old].toSet()).union([me()].toSet())
+          && only(['members', 'proof', 'reclaimed', 'expireAt'])
+          && expiresSoon(request.resource.data);
+      }
+      allow update: if signedIn() && (joining() || staying() || leaving() || reclaiming());
 
       // Either member can end the pair for both.
       allow delete: if signedIn() && me() in members();

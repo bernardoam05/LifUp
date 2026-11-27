@@ -184,6 +184,16 @@ class PairsTest {
         assertTrue(s.pairs.isEmpty())
     }
 
+    @Test fun `coming back under a new id keeps the pair and tells the pause again`() {
+        var s = withPair(pair().copy(sentCycles = listOf("2026-11-10"), pauseSent = "2026-11-20/2026-11-25"))
+        s = run(s, "2026-11-11T10:00") { pairReclaimed("p1", "ana2") }
+        assertEquals("ana2", s.p().myUid)
+        assertEquals("rui", s.p().partnerUid)
+        assertTrue(s.p().sentCycles.isEmpty())
+        assertEquals(null, s.p().pauseSent)
+        assertFalse(s.p().ended)
+    }
+
     @Test fun `one pair without CoreQuest+, three with it`() {
         var s = run(GameState(onboarded = true), "2026-11-11T09:00") { addPair(pair().copy(id = "p0")) }
         assertFalse(s.canAddPair())
